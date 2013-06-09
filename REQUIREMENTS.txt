@@ -1,0 +1,9 @@
+Django==1.5.1
+South==0.8.1
+psycopg2==2.5
+django-crispy-forms==1.2.8
+django-braces==1.0.0
+django-model-utils==1.4.0
+django-pipeline==1.3.11
+PIL
+# raven==3.3.7
