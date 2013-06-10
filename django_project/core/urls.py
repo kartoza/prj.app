@@ -12,4 +12,5 @@ urlpatterns = patterns(
 
     # Examples:
     # url(r'^visual_changelogger/', include('visual_changelogger.foo.urls')),
+    url(r'^', include('changes.urls')),
 )

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Entries - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Entries (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <section id="pod" class="pod">
+        <div class="container">
+            <h2>Visual Changelog Entries - {{ num_entries }} items</h2>
+            <hr/>
+            <div class="row">
+                {% for item in entries %}
+                    <div class="span12">
+                        <div class="entry-name"><h4>{{ item.name }}</h4></div>
+                        {{ item.title }}
+                        {{ item.description }}
+                        {{ item.slug }}
+                        <img src="{{ MEDIA_URL }}{{ item.image_file }}" />
+                        {{ item.image_credits }}
+                    </div>
+                {% endfor %}
+            </div>
+        <!-- /row -->
+        </div>
+    </section>
+
+{% endblock %}
