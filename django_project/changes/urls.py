@@ -11,7 +11,7 @@ urlpatterns = patterns(
     '',
     # basic app views
     url(r'^$', view=HomeView.as_view(), name='home'),
-    url(regex='^entries/$',
+    url(regex='^entry/list/$',
         view=EntryListView.as_view(),
         name='entry-list'
     ),

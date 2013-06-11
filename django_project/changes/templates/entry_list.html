@@ -12,24 +12,32 @@
 
 {% block content %}
 
-    <section id="pod" class="pod">
-        <div class="container">
-            <h2>Visual Changelog Entries - {{ num_entries }} items</h2>
-            <hr/>
-            <div class="row">
-                {% for entry in entries %}
-                    <div class="span12">
-                        <div class="entry-name"><h4>{{ entry.name }}</h4></div>
-                        {{ entry.title }}
-                        {{ entry.description|markdown:"safe" }}
-                        {{ entry.slug }}
-                        <img src="{{ MEDIA_URL }}{{ entry.image_file }}" />
-                        {{ entry.image_credits }}
-                    </div>
-                {% endfor %}
+    {% for entry in entries %}
+    <div class="well">
+        <h1><i class="icon-star"></i> Feature: {{ entry.title }}</h1>
+        <hr />
+        <div class="row">
+            <div class="span-6">
+                {{ entry.description|markdown:"safe" }}
             </div>
-        <!-- /row -->
+            {% if entry.image_file %}
+            <div class="span-6 pull-right">
+                <img class="img-rounded"
+                     width="400px"
+                     src="{{ MEDIA_URL }}{{ entry.image_file }}" />
+            </div>
+            {%  endif %}
         </div>
-    </section>
+        <br/>
+        <div class="row">
+            <div class="pull-right">
+                <a class="btn btn-small btn-primary"
+                   {# TODO - use named url below #} }}
+                   href='/entry/update/{{ entry.id }}'>Edit This Record</a>
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
 
 {% endblock %}

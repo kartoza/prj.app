@@ -11,9 +11,20 @@
 </head>
 
 <body>
+<div id="container" class="container">
+    <div class="hero-unit">
+    <a href="http://qgis.org">
+        <img style="float: left;"
+             src="{{ STATIC_URL }}/img/qgis-icon-60x60.png"/>
+    </a>
+    <h2 class="centered">Welcome to the QGIS Visual Changelog!</h2>
+    <p>This site is created using open source code available on <a
+            href="https://github.com/timlinux/visual_changelog">GitHub!</a></p>
+    </div>
 {% block content %}
 
 {% endblock content %}
+</div>
 
 {% compressed_js 'contrib' %}
 </body>
