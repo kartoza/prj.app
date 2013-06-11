@@ -27,4 +27,4 @@ class EntryForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.html5_required = False
         super(EntryForm, self).__init__(*args, **kwargs)
-
+        self.helper.add_input(Submit('submit', 'Submit'))

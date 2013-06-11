@@ -105,6 +105,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'django.contrib.admin',
+    'django.contrib.markup'
 )
 
 # A sample logging configuration. The only tangible logging

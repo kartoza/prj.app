@@ -15,7 +15,10 @@ class Entry(models.Model):
         blank=False,
         unique=True)
 
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(
+        null=True,
+        blank=True,
+        help_text='Describe the new feature. Markdown is supported.')
 
     slug = models.SlugField()
 

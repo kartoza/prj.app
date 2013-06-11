@@ -41,8 +41,8 @@ PIPELINE_JS = {
 PIPELINE_CSS = {
     'contrib': {
         'source_filenames': (
-            'css/bootstrap.css',
-            # 'css/bootstrap-responsive.css',
+            'css/bootstrap.min.css',
+            'css/bootstrap-responsive.min.css',
         ),
         'output_filename': 'css/contrib.css',
         'extra_context': {

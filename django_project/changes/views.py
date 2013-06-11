@@ -68,11 +68,7 @@ class EntryDetailView(EntryMixin, DetailView):
         return context
 
     def get_queryset(self):
-        entries_qs = (
-            Entry.objects.for_user(self.request.user)
-            .prefetch_related('entry_type')
-            .prefetch_related('religions')
-        )
+        entries_qs = Entry.objects.all()
         return entries_qs
 
     def get_object(self, queryset=None):

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load markup %}
 
 {% block title %}Entries - {{ block.super }}{% endblock %}
 
@@ -16,14 +17,14 @@
             <h2>Visual Changelog Entries - {{ num_entries }} items</h2>
             <hr/>
             <div class="row">
-                {% for item in entries %}
+                {% for entry in entries %}
                     <div class="span12">
-                        <div class="entry-name"><h4>{{ item.name }}</h4></div>
-                        {{ item.title }}
-                        {{ item.description }}
-                        {{ item.slug }}
-                        <img src="{{ MEDIA_URL }}{{ item.image_file }}" />
-                        {{ item.image_credits }}
+                        <div class="entry-name"><h4>{{ entry.name }}</h4></div>
+                        {{ entry.title }}
+                        {{ entry.description|markdown:"safe" }}
+                        {{ entry.slug }}
+                        <img src="{{ MEDIA_URL }}{{ entry.image_file }}" />
+                        {{ entry.image_credits }}
                     </div>
                 {% endfor %}
             </div>
