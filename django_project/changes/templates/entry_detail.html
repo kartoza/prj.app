@@ -19,7 +19,7 @@
             <div class="span12">
                 <div class="entry-name"><h4>{{ entry.name }}</h4></div>
                 {{ entry.title }}
-                {{ entry.description|markdown:"safe" }}
+                {{ entry.description|markdown:"safe"|default:'No description' }}
                 {{ entry.slug }}
                 <img src="{{ MEDIA_URL }}{{ entry.image_file }}" />
                 {{ entry.image_credits }}

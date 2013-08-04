@@ -13,8 +13,8 @@ from crispy_forms.layout import (
 from crispy_forms.bootstrap import (
      FormActions,
      Tab,
-     TabHolder
-)
+     TabHolder)
+
 from models import Entry
 
 

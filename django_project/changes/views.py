@@ -104,4 +104,4 @@ class EntryUpdateView(EntryCreateUpdateMixin, UpdateView):
         return entries_qs
 
     def get_success_url(self):
-        return reverse('sacred_entry-detail', kwargs={'pk': self.object.pk})
+        return reverse('entry-detail', kwargs={'pk': self.object.pk})
