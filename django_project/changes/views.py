@@ -60,6 +60,21 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
         return entries_qs
 
 
+class EntryRenderListView(EntryMixin, PaginationMixin, ListView):
+    context_object_name = 'entries'
+    template_name = 'entry_render_list.html'
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        context = super(EntryRenderListView, self).get_context_data(**kwargs)
+        context['num_entries'] = self.get_queryset().count()
+        return context
+
+    def get_queryset(self):
+        entries_qs = Entry.objects.all()
+        return entries_qs
+
+
 class EntryDetailView(EntryMixin, DetailView):
     context_object_name = 'entry'
     template_name = 'entry_detail.html'

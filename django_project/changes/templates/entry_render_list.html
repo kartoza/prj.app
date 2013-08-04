@@ -11,29 +11,15 @@
 {% endblock page_title %}
 
 {% block content %}
-    <p class="lead">Use the links below to view the current changelog state
-                        and to add new entries. You can use markdown in the
-                        detail section of the changelog entry. Each entry must
-                        have one image associated with it. Keep entries
-                        short and go right to the point of the topic.</p>
+
     {% for entry in entries %}
     <div class="row">
-        <div class="col-10">
+        <div class="col-12">
             <div class="media-body">
                 <h3 class="media-heading">
                     Feature: <b>{{ entry.title}}</b>
                 </h3>
             </div>
-        </div>
-        <div class="col-2">
-            {%  ifnotequal user.name 'AnonymousUser' %}
-            <div class="btn-group btn-group-justified">
-                <a class="btn btn-danger btn-mini"
-                    href='{% url "entry-delete" entry.id %}'>Delete</a>
-                <a class="btn btn-success btn-mini"
-                    href='{% url "entry-update" entry.id %}'>Edit</a>
-            </div>
-            {%  endifnotequal %}
         </div>
     </div>
     <div class="row">

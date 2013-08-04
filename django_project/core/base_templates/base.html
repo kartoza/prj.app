@@ -16,8 +16,12 @@
         <div class="navbar">
             <ul class="nav navbar-nav">
                 <li><a href='{% url "home" %}'>Home</a></li>
-                <li><a href='{% url "entry-list" %}'>View</a></li>
+                <li><a href='{% url "entry-render-list" %}'>View</a></li>
+                {%  ifnotequal user AnonymousUser %}
+                <li><a href='{% url "entry-list" %}'>Edit</a></li>
                 <li><a href='{% url "entry-create" %}'>Add</a></li>
+                {% endifnotequal %}
+                <li><a href='#'>{{ user.name }}</a></li>
             </ul>
         </div>
         <div class="jumbotron">
@@ -27,13 +31,10 @@
                          class="media-object" />
                 </a>
                 <div class="media-body">
-                    <h2 class="media-heading">Welcome to the <b>QGIS 2.0</b>
+                    <h2 class="media-heading">Welcome to the <b>QGIS</b>
                         Visual Changelog!</h2>
-                    <p class="lead">Use the links below to view the current changelog state
-                        and to add new entries. You can use markdown in the
-                        detail section of the changelog entry. Each entry can
-                        have only 1 image associated with it. Keep entries
-                        short and go right to the point of the topic.</p>
+                    <p class="lead">This changelog documents changes
+                        included in the version <b>2.0</b> release of QGIS.</p>
                     <p>This site is created using open source code available on <a
                     href="https://github.com/timlinux/visual_changelog">GitHub!</a></p>
                 </div>

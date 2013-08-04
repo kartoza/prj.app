@@ -4,6 +4,7 @@ from views import (
     EntryDetailView,
     EntryDeleteView,
     EntryCreateView,
+    EntryRenderListView,
     EntryListView,
     EntryUpdateView)
 from django.conf import settings
@@ -14,6 +15,9 @@ urlpatterns = patterns(
     url(regex='^$',
         view=HomeView.as_view(),
         name='home'),
+    url(regex='^entry/render-list/$',
+        view=EntryRenderListView.as_view(),
+        name='entry-render-list'),
     url(regex='^entry/list/$',
         view=EntryListView.as_view(),
         name='entry-list'),
