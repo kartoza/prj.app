@@ -13,31 +13,33 @@
 {% block content %}
 
     {% for entry in entries %}
-    <div class="well">
-        <h1><i class="icon-star"></i> Feature: {{ entry.title }}</h1>
-        <hr />
-        <div class="row">
-            <div class="span-6">
-                {{ entry.description|markdown:"safe" }}
+    <div class="row">
+        <div class="col-10">
+            <div class="media-body">
+                <h3 class="media-heading">
+                    Feature: <b>{{ entry.title}}</b>
+                </h3>
             </div>
-            {% if entry.image_file %}
-            <div class="span-6 pull-right">
-                <img class="img-rounded"
-                     width="400px"
-                     src="{{ MEDIA_URL }}{{ entry.image_file }}" />
-            </div>
-            {%  endif %}
         </div>
-        <br/>
-        <div class="row">
-            <div class="pull-right">
-                <a class="btn btn-small btn-primary"
-                   {# TODO - use named url below #} }}
-                   href='/entry/update/{{ entry.id }}'>Edit This Record</a>
+        <div class="col-2">
+            <div class="btn-group btn-group-justified">
+                <a class="btn btn-danger btn-mini"
+                    href='{% url "entry-delete" entry.id %}'>Delete</a>
+                <a class="btn btn-success btn-mini"
+                    href='{% url "entry-update" entry.id %}'>Edit</a>
             </div>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-8">
+            {{ entry.description|markdown:"safe" }}
+        </div>
+        <div class="col-4">
+            {% if entry.image_file %}
+            <img class="img-responsive img-rounded"
+                 src="{{ MEDIA_URL }}{{ entry.image_file }}" />
+            {%  endif %}
+        </div>
+    </div>
     {% endfor %}
-
 {% endblock %}

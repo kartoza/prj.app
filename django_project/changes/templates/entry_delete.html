@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load markup %}
+
+{% block title %}Entries Deleted - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Entry Deleted</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+        <div class="alert row">
+            <div class="col-10">
+                Please confirm you wish to delete the entry below!
+            </div>
+            <div class="col-2">
+                <div class="btn-group btn-group-justified">
+                    <a class="btn btn-danger btn-mini"
+                        href="#"
+                        onClick="$('#delete-confirmation').submit()">Delete</a>
+
+                    <a class="btn btn-success btn-mini"
+                        href='{% url "entry-list" %}'>Cancel</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="media-body">
+                    <h3 class="media-heading">
+                        Feature: <b>{{ entry.title}}</b>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-8">
+                {{ entry.description|markdown:"safe" }}
+            </div>
+            <div class="col-4">
+                {% if entry.image_file %}
+                <img class="img-responsive img-rounded"
+                     src="{{ MEDIA_URL }}{{ entry.image_file }}" />
+                {%  endif %}
+            </div>
+        </div>
+    </form>
+{% endblock %}

@@ -21,7 +21,7 @@
                 {{ entry.title }}
                 {{ entry.description|markdown:"safe"|default:'No description' }}
                 {{ entry.slug }}
-                <img src="{{ MEDIA_URL }}{{ entry.image_file }}" />
+                <img src="{{ MEDIA_URL }}{{ entry.image_file }}" class="img-responsive"/>
                 {{ entry.image_credits }}
             </div>
         </div>

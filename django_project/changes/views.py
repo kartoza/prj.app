@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from django.views.generic import (
     ListView,
     CreateView,
+    DeleteView,
     DetailView,
     UpdateView,
     TemplateView)
@@ -75,6 +76,14 @@ class EntryDetailView(EntryMixin, DetailView):
         obj = super(EntryDetailView, self).get_object(queryset)
         obj.request_user = self.request.user
         return obj
+
+
+class EntryDeleteView(EntryMixin, DeleteView):
+    context_object_name = 'entry'
+    template_name = 'entry_delete.html'
+
+    def get_success_url(self):
+        return reverse('entry-list')
 
 
 class EntryCreateView(EntryCreateUpdateMixin, CreateView):
