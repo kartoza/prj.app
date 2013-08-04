@@ -13,9 +13,9 @@
 
 <body>
     <div id="container" class="container">
-        <div class="masthead">
-            <ul class="nav navbar-nav nav-justified">
-                <li class="active"><a href='{% url "home" %}'>Home</a></li>
+        <div class="navbar">
+            <ul class="nav navbar-nav">
+                <li><a href='{% url "home" %}'>Home</a></li>
                 <li><a href='{% url "entry-list" %}'>View</a></li>
                 <li><a href='{% url "entry-create" %}'>Add</a></li>
             </ul>
@@ -27,7 +27,7 @@
                          class="media-object" />
                 </a>
                 <div class="media-body">
-                    <h2 class="media-heading">Welcome to the <b>QGIS</b>
+                    <h2 class="media-heading">Welcome to the <b>QGIS 2.0</b>
                         Visual Changelog!</h2>
                     <p class="lead">Use the links below to view the current changelog state
                         and to add new entries. You can use markdown in the
@@ -39,6 +39,7 @@
                 </div>
             </div>
         </div>
+        <hr />
         <div class="body-content">
             {% block content %}{% endblock content %}
         </div>

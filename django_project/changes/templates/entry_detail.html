@@ -12,19 +12,33 @@
 
 {% block content %}
 
-    <section id="pod" class="pod">
-        <div class="container">
-            <h3>Visual Changelog Entry - {{ entry.id }}</h3>
-            <hr/>
-            <div class="span12">
-                <div class="entry-name"><h4>{{ entry.name }}</h4></div>
-                {{ entry.title }}
-                {{ entry.description|markdown:"safe"|default:'No description' }}
-                {{ entry.slug }}
-                <img src="{{ MEDIA_URL }}{{ entry.image_file }}" class="img-responsive"/>
-                {{ entry.image_credits }}
+    <div class="row">
+        <div class="col-10">
+            <div class="media-body">
+                <h3 class="media-heading">
+                    Feature: <b>{{ entry.title}}</b>
+                </h3>
             </div>
         </div>
-    </section>
+        <div class="col-2">
+            <div class="btn-group btn-group-justified">
+                <a class="btn btn-danger btn-mini"
+                    href='{% url "entry-delete" entry.id %}'>Delete</a>
+                <a class="btn btn-success btn-mini"
+                    href='{% url "entry-update" entry.id %}'>Edit</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            {{ entry.description|markdown:"safe" }}
+        </div>
+        <div class="col-4">
+            {% if entry.image_file %}
+            <img class="img-responsive img-rounded pull-right"
+                 src="{{ MEDIA_URL }}{{ entry.image_file }}" />
+            {%  endif %}
+        </div>
+    </div>
 
 {% endblock %}

@@ -36,10 +36,11 @@
         </div>
         <div class="col-4">
             {% if entry.image_file %}
-            <img class="img-responsive img-rounded"
+            <img class="img-responsive img-rounded pull-right"
                  src="{{ MEDIA_URL }}{{ entry.image_file }}" />
             {%  endif %}
         </div>
     </div>
+    <hr />
     {% endfor %}
 {% endblock %}
