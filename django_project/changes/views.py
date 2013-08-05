@@ -19,8 +19,8 @@ from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
-from .models import Project, Category, Entry
-from .forms import ProjectForm, CategoryForm, EntryForm
+from .models import Project, Category, Version, Entry
+from .forms import ProjectForm, CategoryForm, VersionForm, EntryForm
 
 
 class ProjectMixin(object):
@@ -193,6 +193,94 @@ class CategoryUpdateView(CategoryCreateUpdateMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('category-detail', kwargs={'pk': self.object.pk})
+
+
+# Version management
+
+
+class VersionMixin(object):
+    model = Version  # implies -> queryset = Entry.objects.all()
+    form_class = VersionForm
+
+
+class VersionCreateUpdateMixin(VersionMixin, LoginRequiredMixin):
+    def get_context_data(self, **kwargs):
+        context = super(VersionMixin, self).get_context_data(**kwargs)
+        return context
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class VersionListView(VersionMixin, PaginationMixin, ListView):
+    context_object_name = 'versions'
+    template_name = 'version/list.html'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(VersionListView, self).get_context_data(**kwargs)
+        context['num_versions'] = self.get_queryset().count()
+        return context
+
+    def get_queryset(self):
+        versions_qs = Version.objects.all()
+        return versions_qs
+
+
+class VersionDetailView(VersionMixin, DetailView):
+    context_object_name = 'version'
+    template_name = 'version/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(VersionDetailView, self).get_context_data(**kwargs)
+        return context
+
+    def get_queryset(self):
+        versions_qs = Version.objects.all()
+        return versions_qs
+
+    def get_object(self, queryset=None):
+        obj = super(VersionDetailView, self).get_object(queryset)
+        obj.request_user = self.request.user
+        return obj
+
+
+class VersionDeleteView(VersionMixin, DeleteView):
+    context_object_name = 'version'
+    template_name = 'version/delete.html'
+
+    def get_success_url(self):
+        return reverse('version-list')
+
+
+class VersionCreateView(VersionCreateUpdateMixin, CreateView):
+    context_object_name = 'version'
+    template_name = 'version/create.html'
+
+    def get_success_url(self):
+        return reverse('version-detail', kwargs={'pk': self.object.pk})
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class VersionUpdateView(VersionCreateUpdateMixin, UpdateView):
+    context_object_name = 'version'
+    template_name = 'version/update.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(VersionUpdateView, self).get_form_kwargs()
+        return kwargs
+
+    def get_queryset(self):
+        versions_qs = Version.objects
+        return versions_qs
+
+    def get_success_url(self):
+        return reverse('version-detail', kwargs={'pk': self.object.pk})
 
 
 # Changelog entries

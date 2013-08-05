@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+
+{% block title %}Entries - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Entries (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+    {% for version in versions %}
+    <div class="row">
+        <div class="col-1">
+            {% if version.image_file %}
+            <a href="{{ MEDIA_URL }}{{ version.image_file }}">
+              <img class="img-responsive img-rounded pull-right"
+                   src="{% thumbnail version.image_file 50x50 crop %}" />
+            </a>
+            {%  endif %}
+        </div>
+        <div class="col-9">
+            <div class="media-body">
+                <h3 class="media-heading">
+                    <b>{{ version.project.name }} : {{ version.name }}</b>
+                </h3>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="btn-group btn-group-justified">
+                <a class="btn btn-danger btn-mini"
+                    href='{% url "version-delete" version.id %}'>Delete</a>
+                <a class="btn btn-success btn-mini"
+                    href='{% url "version-update" version.id %}'>Edit</a>
+            </div>
+        </div>
+    </div>
+    {%  endfor %}
+{% endblock %}

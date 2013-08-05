@@ -12,7 +12,7 @@ from crispy_forms.layout import (
      Button
 )
 
-from models import Project, Category, Entry
+from models import Project, Category, Version, Entry
 
 
 class ProjectForm(forms.ModelForm):
@@ -52,6 +52,26 @@ class CategoryForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(CategoryForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+
+class VersionForm(forms.ModelForm):
+
+    class Meta:
+        model = Version
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                'Version details',
+                Field('project', css_class="form-control"),
+                Field('name', css_class="form-control"),
+                css_id='project-form')
+            )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(VersionForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
 
 
