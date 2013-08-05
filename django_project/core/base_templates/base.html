@@ -13,22 +13,35 @@
 
 <body>
     <div id="container" class="container">
-        <div class="navbar">
+        <div class="navbar navbar-fixed-top">
             <ul class="nav navbar-nav">
                 <li><a href='{% url "home" %}'>Home</a></li>
                 <li><a href='{% url "entry-render-list" %}'>View</a></li>
-                {% if user.is_authenticated %}
-                  <li><a href='{% url "entry-list" %}'>Edit</a></li>
-                  <li><a href='{% url "entry-create" %}'>Add</a></li>
-                  <li><a href='{% url "userena_signout" %}'>Log In</a></li>
-
-                {% else %}
-                  <li><a href='{% url "userena_signin" %}'>Log In</a></li>
-                  <li><a href='{% url "userena_signup" %}'>Sign Up</a></li>
-
-                {% endif %}
+                <li><a href='{% url "entry-list" %}'>Edit</a></li>
+                <li><a href='{% url "entry-create" %}'>Add</a></li>
+            </ul>
+            <ul class="nav navbar-nav pull-right">
+                <li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                      Account <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                    {% if user.is_authenticated %}
+                        <li><a href='{% url "userena_signout" %}'>Log Out</a></li>
+                        <li><a href='{% url "userena_profile_detail" user %}'>View Profile</a></li>
+                        <li><a href='{% url "userena_profile_edit" user %}'>Edit Details</a></li>
+                        <li><a href='{% url "userena_password_change" user %}'>Change Password</a></li>
+                        <li><a href='{% url "userena_email_change" user %}'>Change Email</a></li>
+                    {% else %}
+                        <li><a href='{% url "userena_signin" %}'>Log In</a></li>
+                        <li><a href='{% url "userena_signup" %}'>Sign Up</a></li>
+                        <li><a href='{% url "userena_password_reset" %}'>Lost Password</a></li>
+                      {% endif %}
+                    </ul>
+                </li>
             </ul>
         </div>
+
         <div class="jumbotron">
             <div class="media">
                 <a href="http://qgis.org" class="pull-left">

@@ -1,22 +1,26 @@
-.. visual_changelogger documentation master file, created by
-   sphinx-quickstart on Thu Jun  6 10:07:13 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-Welcome to visual_changelogger's documentation!
-==============================================
+Visual Change Logger
+====================
 
-Contents:
+A simple app to allow community edited visual changelogs for software releases.
 
-.. toctree::
-   :maxdepth: 2
+Some notes:
+-----------
 
+User authentication is via userena. I copied the userena templates into
+accounts/templates and then used django-widget-tweaks to add extrac
+bootstrap css to them so that the forms look nice.
 
+To install do::
 
-Indices and tables
-==================
+    virtualenv venv
+    source venv/bin/activate
+    pip install -r REQUIREMENTS-dev.txt
+    cd django-project
+    python manage.py syncdb
+    python manage.py migrate
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+I'm only using the sqlite backend so there should be no need to configure a
+database.
 
+Tim Sutton, August 2013
