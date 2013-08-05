@@ -32,8 +32,9 @@ urlpatterns = patterns(
         name='entry-create'),
     url(regex='^entry/update/(?P<pk>\d+)/$',
         view=EntryUpdateView.as_view(),
-        name='entry-update')
+        name='entry-update'),
 )
+
 
 if settings.DEBUG:
     # static files (images, css, javascript, etc.)

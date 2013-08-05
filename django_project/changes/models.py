@@ -2,7 +2,6 @@ import os
 import logging
 logger = logging.getLogger(__name__)
 from django.conf.global_settings import MEDIA_ROOT
-
 from django.db import models
 
 

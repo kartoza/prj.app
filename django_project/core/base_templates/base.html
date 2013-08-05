@@ -17,11 +17,16 @@
             <ul class="nav navbar-nav">
                 <li><a href='{% url "home" %}'>Home</a></li>
                 <li><a href='{% url "entry-render-list" %}'>View</a></li>
-                {%  ifnotequal user AnonymousUser %}
-                <li><a href='{% url "entry-list" %}'>Edit</a></li>
-                <li><a href='{% url "entry-create" %}'>Add</a></li>
-                {% endifnotequal %}
-                <li><a href='#'>{{ user.name }}</a></li>
+                {% if user.is_authenticated %}
+                  <li><a href='{% url "entry-list" %}'>Edit</a></li>
+                  <li><a href='{% url "entry-create" %}'>Add</a></li>
+                  <li><a href='{% url "userena_signout" %}'>Log In</a></li>
+
+                {% else %}
+                  <li><a href='{% url "userena_signin" %}'>Log In</a></li>
+                  <li><a href='{% url "userena_signup" %}'>Sign Up</a></li>
+
+                {% endif %}
             </ul>
         </div>
         <div class="jumbotron">
