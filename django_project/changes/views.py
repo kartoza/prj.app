@@ -19,17 +19,96 @@ from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
-from .models import Entry
-from .forms import EntryForm
+from .models import Entry, Project
+from .forms import EntryForm, ProjectForm
 
 
-class HomeView(TemplateView):
-    template_name = 'home.html'
+class ProjectMixin(object):
+    model = Project  # implies -> queryset = Entry.objects.all()
+    form_class = ProjectForm
 
+
+class ProjectCreateUpdateMixin(ProjectMixin, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
-        context = super(HomeView, self).get_context_data(**kwargs)
+        context = super(ProjectMixin, self).get_context_data(**kwargs)
         return context
 
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class ProjectListView(ProjectMixin, PaginationMixin, ListView):
+    context_object_name = 'projects'
+    template_name = 'project_list.html'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectListView, self).get_context_data(**kwargs)
+        context['num_projects'] = self.get_queryset().count()
+        return context
+
+    def get_queryset(self):
+        projects_qs = Project.objects.all()
+        return projects_qs
+
+
+class ProjectDetailView(ProjectMixin, DetailView):
+    context_object_name = 'project'
+    template_name = 'project_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectDetailView, self).get_context_data(**kwargs)
+        return context
+
+    def get_queryset(self):
+        projects_qs = Project.objects.all()
+        return projects_qs
+
+    def get_object(self, queryset=None):
+        obj = super(ProjectDetailView, self).get_object(queryset)
+        obj.request_user = self.request.user
+        return obj
+
+
+class ProjectDeleteView(ProjectMixin, DeleteView):
+    context_object_name = 'project'
+    template_name = 'project_delete.html'
+
+    def get_success_url(self):
+        return reverse('project-list')
+
+
+class ProjectCreateView(ProjectCreateUpdateMixin, CreateView):
+    context_object_name = 'project'
+    template_name = 'project_create.html'
+
+    def get_success_url(self):
+        return reverse('project-detail', kwargs={'pk': self.object.pk})
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class ProjectUpdateView(ProjectCreateUpdateMixin, UpdateView):
+    context_object_name = 'project'
+    template_name = 'project_update.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(ProjectUpdateView, self).get_form_kwargs()
+        return kwargs
+
+    def get_queryset(self):
+        projects_qs = Project.objects
+        return projects_qs
+
+    def get_success_url(self):
+        return reverse('project-detail', kwargs={'pk': self.object.pk})
+
+
+# Changelog entries
 
 class EntryMixin(object):
     model = Entry  # implies -> queryset = Entry.objects.all()

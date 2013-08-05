@@ -1,20 +1,42 @@
 from django.conf.urls import patterns, url
+from django.conf import settings
+
 from views import (
-    HomeView,
+    ProjectDetailView,
+    ProjectDeleteView,
+    ProjectCreateView,
+    ProjectListView,
+    ProjectUpdateView,
     EntryDetailView,
     EntryDeleteView,
     EntryCreateView,
     EntryRenderListView,
     EntryListView,
     EntryUpdateView)
-from django.conf import settings
 
 urlpatterns = patterns(
     '',
     # basic app views
     url(regex='^$',
-        view=HomeView.as_view(),
-        name='home'),
+        view=ProjectListView.as_view(),
+        name='project-list'),
+    # Project management
+    url(regex='^project/list/$',
+        view=ProjectListView.as_view(),
+        name='project-list'),
+    url(regex='^project/(?P<pk>\d+)/$',
+        view=ProjectDetailView.as_view(),
+        name='project-detail'),
+    url(regex='^project/delete/(?P<pk>\d+)/$',
+        view=ProjectDeleteView.as_view(),
+        name='project-delete'),
+    url(regex='^project/create/$',
+        view=ProjectCreateView.as_view(),
+        name='project-create'),
+    url(regex='^project/update/(?P<pk>\d+)/$',
+        view=ProjectUpdateView.as_view(),
+        name='project-update'),
+    # Changelog entry management
     url(regex='^entry/render-list/$',
         view=EntryRenderListView.as_view(),
         name='entry-render-list'),

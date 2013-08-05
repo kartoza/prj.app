@@ -22,6 +22,26 @@ class Project(models.Model):
     def __unicode__(self):
         return u'%s' % self.name
 
+
+class Version(models.Model):
+    """A version model that the changelog is associated with.."""
+    name = models.CharField(
+        help_text='Name of this release e.g. 1.0.1.',
+        max_length=255,
+        null=False,
+        blank=False,
+        unique=False)
+
+    project = models.ForeignKey(Project)
+
+    class Meta:
+        """Meta options for the version class."""
+        unique_together = ('name', 'project')
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+
 class Category(models.Model):
     """A category model e.g. gui, backend, web site etc."""
     name = models.CharField(
@@ -30,6 +50,13 @@ class Category(models.Model):
         null=False,
         blank=False,
         unique=True)
+
+    project = models.ForeignKey(Project)
+
+
+    class Meta:
+        """Meta options for the category class."""
+        unique_together = ('name', 'project')
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -60,7 +87,11 @@ class Entry(models.Model):
         null=True,
         blank=True)
 
-    category = models.ForeignKey(Category)
+    category = models.ForeignKey(Version)
+
+    class Meta:
+        """Meta options for the version class."""
+        unique_together = ('title', 'category')
 
     def __unicode__(self):
         return u'%s' % self.title
