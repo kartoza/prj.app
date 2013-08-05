@@ -15,11 +15,25 @@
     <div id="container" class="container">
         <div class="navbar navbar-fixed-top">
             <ul class="nav navbar-nav">
-                <li><a href='{% url "home" %}'>Home</a></li>
-                <li><a href='{% url "entry-render-list" %}'>View</a></li>
+                <li><a href='{% url "project-list" %}'>Home</a></li>
+                <li><a href='{% url "entry-list" %}'>View</a></li>
                 <li><a href='{% url "entry-list" %}'>Edit</a></li>
-                <li><a href='{% url "entry-create" %}'>Add</a></li>
+
             </ul>
+            {% if user.is_authenticated %}
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                      Add <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href='{% url "project-create" %}'>Project</a></li>
+                        <li><a href='{% url "entry-create" %}'>Category</a></li>
+                        <li><a href='{% url "entry-create" %}'>Entry</a></li>
+                    </ul>
+                </li>
+            </ul>
+            {% endif %}
             <ul class="nav navbar-nav pull-right">
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">

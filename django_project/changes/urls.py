@@ -10,7 +10,6 @@ from views import (
     EntryDetailView,
     EntryDeleteView,
     EntryCreateView,
-    EntryRenderListView,
     EntryListView,
     EntryUpdateView)
 
@@ -19,7 +18,7 @@ urlpatterns = patterns(
     # basic app views
     url(regex='^$',
         view=ProjectListView.as_view(),
-        name='project-list'),
+        name='home'),
     # Project management
     url(regex='^project/list/$',
         view=ProjectListView.as_view(),
@@ -36,10 +35,8 @@ urlpatterns = patterns(
     url(regex='^project/update/(?P<pk>\d+)/$',
         view=ProjectUpdateView.as_view(),
         name='project-update'),
+
     # Changelog entry management
-    url(regex='^entry/render-list/$',
-        view=EntryRenderListView.as_view(),
-        name='entry-render-list'),
     url(regex='^entry/list/$',
         view=EntryListView.as_view(),
         name='entry-list'),

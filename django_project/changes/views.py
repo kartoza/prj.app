@@ -39,7 +39,7 @@ class ProjectCreateUpdateMixin(ProjectMixin, LoginRequiredMixin):
 
 class ProjectListView(ProjectMixin, PaginationMixin, ListView):
     context_object_name = 'projects'
-    template_name = 'project_list.html'
+    template_name = 'project/list.html'
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
@@ -54,7 +54,7 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
 
 class ProjectDetailView(ProjectMixin, DetailView):
     context_object_name = 'project'
-    template_name = 'project_detail.html'
+    template_name = 'project/detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
@@ -72,7 +72,7 @@ class ProjectDetailView(ProjectMixin, DetailView):
 
 class ProjectDeleteView(ProjectMixin, DeleteView):
     context_object_name = 'project'
-    template_name = 'project_delete.html'
+    template_name = 'project/delete.html'
 
     def get_success_url(self):
         return reverse('project-list')
@@ -80,7 +80,7 @@ class ProjectDeleteView(ProjectMixin, DeleteView):
 
 class ProjectCreateView(ProjectCreateUpdateMixin, CreateView):
     context_object_name = 'project'
-    template_name = 'project_create.html'
+    template_name = 'project/create.html'
 
     def get_success_url(self):
         return reverse('project-detail', kwargs={'pk': self.object.pk})
@@ -94,7 +94,7 @@ class ProjectCreateView(ProjectCreateUpdateMixin, CreateView):
 
 class ProjectUpdateView(ProjectCreateUpdateMixin, UpdateView):
     context_object_name = 'project'
-    template_name = 'project_update.html'
+    template_name = 'project/update.html'
 
     def get_form_kwargs(self):
         kwargs = super(ProjectUpdateView, self).get_form_kwargs()
@@ -126,7 +126,7 @@ class EntryCreateUpdateMixin(EntryMixin, LoginRequiredMixin):
 
 class EntryListView(EntryMixin, PaginationMixin, ListView):
     context_object_name = 'entries'
-    template_name = 'entry_list.html'
+    template_name = 'entry/list.html'
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
@@ -139,24 +139,9 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
         return entries_qs
 
 
-class EntryRenderListView(EntryMixin, PaginationMixin, ListView):
-    context_object_name = 'entries'
-    template_name = 'entry_render_list.html'
-    paginate_by = 20
-
-    def get_context_data(self, **kwargs):
-        context = super(EntryRenderListView, self).get_context_data(**kwargs)
-        context['num_entries'] = self.get_queryset().count()
-        return context
-
-    def get_queryset(self):
-        entries_qs = Entry.objects.all()
-        return entries_qs
-
-
 class EntryDetailView(EntryMixin, DetailView):
     context_object_name = 'entry'
-    template_name = 'entry_detail.html'
+    template_name = 'entry/detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(EntryDetailView, self).get_context_data(**kwargs)
@@ -174,7 +159,7 @@ class EntryDetailView(EntryMixin, DetailView):
 
 class EntryDeleteView(EntryMixin, DeleteView):
     context_object_name = 'entry'
-    template_name = 'entry_delete.html'
+    template_name = 'entry/delete.html'
 
     def get_success_url(self):
         return reverse('entry-list')
@@ -182,7 +167,7 @@ class EntryDeleteView(EntryMixin, DeleteView):
 
 class EntryCreateView(EntryCreateUpdateMixin, CreateView):
     context_object_name = 'entry'
-    template_name = 'entry_create.html'
+    template_name = 'entry/create.html'
 
     def get_success_url(self):
         return reverse('entry-detail', kwargs={'pk': self.object.pk})
@@ -196,7 +181,7 @@ class EntryCreateView(EntryCreateUpdateMixin, CreateView):
 
 class EntryUpdateView(EntryCreateUpdateMixin, UpdateView):
     context_object_name = 'entry'
-    template_name = 'entry_update.html'
+    template_name = 'entry/update.html'
 
     def get_form_kwargs(self):
         kwargs = super(EntryUpdateView, self).get_form_kwargs()
