@@ -5,6 +5,36 @@ from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 
 
+class Project(models.Model):
+    """A project model e.g. QGIS, InaSAFE etc."""
+    name = models.CharField(
+        help_text='Name of this project.',
+        max_length=255,
+        null=False,
+        blank=False,
+        unique=True)
+
+    image_file = models.ImageField(
+        help_text='A logo image for this project.',
+        upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),
+        blank=True)
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+class Category(models.Model):
+    """A category model e.g. gui, backend, web site etc."""
+    name = models.CharField(
+        help_text='Name of this category.',
+        max_length=255,
+        null=False,
+        blank=False,
+        unique=True)
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+
 class Entry(models.Model):
 
     title = models.CharField(
@@ -19,8 +49,6 @@ class Entry(models.Model):
         blank=True,
         help_text='Describe the new feature. Markdown is supported.')
 
-    slug = models.SlugField()
-
     image_file = models.ImageField(
         help_text='A image that is related to this visual changelog entry.',
         upload_to=os.path.join(MEDIA_ROOT, 'images'),
@@ -31,6 +59,8 @@ class Entry(models.Model):
         max_length=255,
         null=True,
         blank=True)
+
+    category = models.ForeignKey(Category)
 
     def __unicode__(self):
         return u'%s' % self.title

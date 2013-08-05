@@ -25,9 +25,9 @@ class EntryForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 'Entry details',
+                Field('category', css_class="form-control"),
                 Field('title', css_class="form-control"),
                 Field('description', css_class="form-control"),
-                Field('slug', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
                 Field('image_credits', css_class="form-control"),
                 css_id='entry-form')

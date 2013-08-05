@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load markup %}
+{% load thumbnail %}
 
 {% block title %}Entries - {{ block.super }}{% endblock %}
 
@@ -42,8 +43,10 @@
         </div>
         <div class="col-4">
             {% if entry.image_file %}
-            <img class="img-responsive img-rounded pull-right"
-                 src="{{ MEDIA_URL }}{{ entry.image_file }}" />
+            <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+              <img class="img-responsive img-rounded pull-right"
+                   src="{% thumbnail entry.image_file 50x50 crop %}" />
+            </a>
             {%  endif %}
         </div>
     </div>
