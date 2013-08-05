@@ -24,11 +24,23 @@
             <ul class="nav navbar-nav">
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                      Show <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href='{% url "project-list" %}'>Projects</a></li>
+                        <li><a href='{% url "category-list" %}'>Categories</a></li>
+                        <li><a href='{% url "entry-list" %}'>Entries</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                       Add <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href='{% url "project-create" %}'>Project</a></li>
-                        <li><a href='{% url "entry-create" %}'>Category</a></li>
+                        <li><a href='{% url "category-create" %}'>Category</a></li>
                         <li><a href='{% url "entry-create" %}'>Entry</a></li>
                     </ul>
                 </li>

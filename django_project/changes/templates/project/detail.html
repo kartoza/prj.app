@@ -16,7 +16,7 @@
         <div class="col-10">
             <div class="media-body">
                 <h3 class="media-heading">
-                    Feature: <b>{{ project.title}}</b>
+                    <b>{{ project.name }}</b>
                 </h3>
             </div>
         </div>
@@ -27,17 +27,6 @@
                 <a class="btn btn-success btn-mini"
                     href='{% url "project-update" project.id %}'>Edit</a>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-8">
-            {{ project.description|markdown:"safe" }}
-        </div>
-        <div class="col-4">
-            {% if project.image_file %}
-            <img class="img-responsive img-rounded pull-right"
-                 src="{{ MEDIA_URL }}{{ project.image_file }}" />
-            {%  endif %}
         </div>
     </div>
 

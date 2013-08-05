@@ -19,8 +19,8 @@ from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
-from .models import Entry, Project
-from .forms import EntryForm, ProjectForm
+from .models import Project, Category, Entry
+from .forms import ProjectForm, CategoryForm, EntryForm
 
 
 class ProjectMixin(object):
@@ -106,6 +106,93 @@ class ProjectUpdateView(ProjectCreateUpdateMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('project-detail', kwargs={'pk': self.object.pk})
+
+# Category management
+
+
+class CategoryMixin(object):
+    model = Category  # implies -> queryset = Entry.objects.all()
+    form_class = CategoryForm
+
+
+class CategoryCreateUpdateMixin(CategoryMixin, LoginRequiredMixin):
+    def get_context_data(self, **kwargs):
+        context = super(CategoryMixin, self).get_context_data(**kwargs)
+        return context
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class CategoryListView(CategoryMixin, PaginationMixin, ListView):
+    context_object_name = 'categorys'
+    template_name = 'category/list.html'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryListView, self).get_context_data(**kwargs)
+        context['num_categorys'] = self.get_queryset().count()
+        return context
+
+    def get_queryset(self):
+        categorys_qs = Category.objects.all()
+        return categorys_qs
+
+
+class CategoryDetailView(CategoryMixin, DetailView):
+    context_object_name = 'category'
+    template_name = 'category/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryDetailView, self).get_context_data(**kwargs)
+        return context
+
+    def get_queryset(self):
+        categorys_qs = Category.objects.all()
+        return categorys_qs
+
+    def get_object(self, queryset=None):
+        obj = super(CategoryDetailView, self).get_object(queryset)
+        obj.request_user = self.request.user
+        return obj
+
+
+class CategoryDeleteView(CategoryMixin, DeleteView):
+    context_object_name = 'category'
+    template_name = 'category/delete.html'
+
+    def get_success_url(self):
+        return reverse('category-list')
+
+
+class CategoryCreateView(CategoryCreateUpdateMixin, CreateView):
+    context_object_name = 'category'
+    template_name = 'category/create.html'
+
+    def get_success_url(self):
+        return reverse('category-detail', kwargs={'pk': self.object.pk})
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class CategoryUpdateView(CategoryCreateUpdateMixin, UpdateView):
+    context_object_name = 'category'
+    template_name = 'category/update.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(CategoryUpdateView, self).get_form_kwargs()
+        return kwargs
+
+    def get_queryset(self):
+        categorys_qs = Category.objects
+        return categorys_qs
+
+    def get_success_url(self):
+        return reverse('category-detail', kwargs={'pk': self.object.pk})
 
 
 # Changelog entries
