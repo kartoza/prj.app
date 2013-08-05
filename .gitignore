@@ -2,3 +2,6 @@ venv
 .idea/workspace.xml
 *.pyc
 *.*~
+vagrant-fabric-lxc
+django_project/media/images
+visual_changelog.db

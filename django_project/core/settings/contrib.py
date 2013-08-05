@@ -25,7 +25,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 ANONYMOUS_USER_ID = -1
-AUTH_PROFILE_MODULE = 'accounts.QGISProfile'
+AUTH_PROFILE_MODULE = 'accounts.Profile'
 LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
