@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load markup %}
+
+{% block title %}Entries - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Entries (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-10">
+            <div class="media-body">
+                <h3 class="media-heading">
+                    <b>{{ category.name }}</b>
+                </h3>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="btn-group btn-group-justified">
+                <a class="btn btn-danger btn-mini"
+                    href='{% url "category-delete" category.id %}'>Delete</a>
+                <a class="btn btn-success btn-mini"
+                    href='{% url "category-update" category.id %}'>Edit</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            {{ category.description|markdown:"safe" }}
+        </div>
+        <div class="col-4">
+            {% if category.image_file %}
+            <img class="img-responsive img-rounded pull-right"
+                 src="{{ MEDIA_URL }}{{ category.image_file }}" />
+            {%  endif %}
+        </div>
+    </div>
+
+{% endblock %}

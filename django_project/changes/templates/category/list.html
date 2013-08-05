@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+
+{% block title %}Entries - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Entries (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+    {% for category in categorys %}
+    <div class="row">
+        <div class="col-1">
+            {% if category.image_file %}
+            <a href="{{ MEDIA_URL }}{{ category.image_file }}">
+              <img class="img-responsive img-rounded pull-right"
+                   src="{% thumbnail category.image_file 50x50 crop %}" />
+            </a>
+            {%  endif %}
+        </div>
+        <div class="col-9">
+            <div class="media-body">
+                <h3 class="media-heading">
+                    <b>{{ category.project.name }} : {{ category.name }}</b>
+                </h3>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="btn-group btn-group-justified">
+                <a class="btn btn-danger btn-mini"
+                    href='{% url "category-delete" category.id %}'>Delete</a>
+                <a class="btn btn-success btn-mini"
+                    href='{% url "category-update" category.id %}'>Edit</a>
+            </div>
+        </div>
+    </div>
+    {%  endfor %}
+{% endblock %}
