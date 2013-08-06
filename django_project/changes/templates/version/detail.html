@@ -13,12 +13,17 @@
 {% block content %}
 
     <div class="row">
-        <div class="col-10">
-            <div class="media-body">
-                <h3 class="media-heading">
-                    <b>{{ version.name }}</b>
-                </h3>
-            </div>
+        <div class="col-5">
+            {% if version.project.image_file %}
+            <img class="img-responsive img-rounded pull-right"
+                 src="{{ MEDIA_URL }}{{ version.project.image_file }}" />
+            {%  endif %}
+            <h2 class="muted">Project:
+             <b>{{ version.project }}</b></h2>
+       </div>
+       <div class="col-5">
+           <h2 class="muted">Version:
+             <b>{{ version.name  }}</b></h2>
         </div>
         <div class="col-2">
             <div class="btn-group btn-group-justified">
@@ -40,5 +45,42 @@
             {%  endif %}
         </div>
     </div>
+    {%  for entry in version.entries %}
+    <div class="row">
+        <div class="col-10">
+            <div class="media-body">
+                <h3 class="media-heading">
+                    Feature: <b>{{ entry.title}}</b>
+                </h3>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="btn-group btn-group-justified">
+                <a class="btn btn-danger btn-mini"
+                    href='{% url "entry-delete" entry.id %}'>Delete</a>
+                <a class="btn btn-success btn-mini"
+                    href='{% url "entry-update" entry.id %}'>Edit</a>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-12">
+
+            <div class="row">
+                <div class="col-12">
+                {{ entry.description|markdown:"safe" }}
+                </div>
+            </div>
+        </div>
+        <div class="col-12 align-center">
+            {% if entry.image_file %}
+              <img class="img-responsive img-rounded pull-right"
+                src="{{ MEDIA_URL }}{{ entry.image_file }}"/>
+            {% endif %}
+        </div>
+    </div>
+
+    {% endfor %}
 
 {% endblock %}

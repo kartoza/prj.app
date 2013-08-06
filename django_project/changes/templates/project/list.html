@@ -44,23 +44,10 @@
     </div>
     {%  for version in project.versions %}
     <div class="row">
-        <div class="col-1">
-
-        </div>
-        <div class="col-9">
-            {{ version.name }}
-        </div>
-        <div class="col-2">
-            <div class="btn-group btn-group-justified">
-                {%  if not project.approved and user.is_staff %}
-                <a class="btn btn-info btn-mini"
-                   href='{% url "project-approve" project.id %}'>Approve</a>
-                {% endif %}
-                <a class="btn btn-danger btn-mini"
-                    href='{% url "project-delete" project.id %}'>Delete</a>
-                <a class="btn btn-success btn-mini"
-                    href='{% url "project-update" project.id %}'>Edit</a>
-            </div>
+        <div class="col-2">&nbsp;</div>
+        <div class="col-10">Version:
+            <a href="{% url "version-detail" version.id %}">
+                {{ version.name }}</a>
         </div>
     </div>
     {%  endfor %}

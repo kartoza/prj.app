@@ -54,7 +54,7 @@ class Project(AuditedModel):
 
     def versions(self):
         """Get all the versions for this project."""
-        qs = Version.objects.filter(project=self)
+        qs = Version.objects.filter(project=self).order_by('name')
         return qs
 
 
@@ -93,6 +93,11 @@ class Version(AuditedModel):
             'project owner.'),
         default=False)
 
+    image_file = models.ImageField(
+        help_text='An optional logo image for this version.',
+        upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),
+        blank=True)
+
     project = models.ForeignKey(Project)
 
     objects = ApprovedVersionManager()
@@ -105,6 +110,11 @@ class Version(AuditedModel):
 
     def __unicode__(self):
         return u'%s : %s' % (self.project.name, self.name)
+
+    def entries(self):
+        """Get the entries for this version."""
+        qs = Entry.objects.filter(version=self).order_by('category')
+        return qs
 
 
 class ApprovedCategoryManager(models.Manager):

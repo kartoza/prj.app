@@ -31,6 +31,10 @@
         </div>
         <div class="col-2">
             <div class="btn-group btn-group-justified">
+                {%  if not version.approved and user.is_staff %}
+                <a class="btn btn-info btn-mini"
+                   href='{% url "version-approve" version.id %}'>Approve</a>
+                {% endif %}
                 <a class="btn btn-danger btn-mini"
                     href='{% url "version-delete" version.id %}'>Delete</a>
                 <a class="btn btn-success btn-mini"

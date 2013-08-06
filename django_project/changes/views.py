@@ -259,7 +259,8 @@ class ApproveCategoryView(CategoryMixin, StaffuserRequiredMixin, RedirectView):
     pattern_name = 'pending-category-list'
 
     def get_redirect_url(self, pk):
-        category = get_object_or_404(Category, pk=pk)
+        category_qs = Category.unapproved_objects.all()
+        category = get_object_or_404(category_qs, pk=pk)
         category.approved = True
         category.save()
         return reverse(self.pattern_name)
@@ -355,21 +356,21 @@ class VersionUpdateView(VersionCreateUpdateMixin, UpdateView):
 
 class PendingVersionListView(VersionMixin, PaginationMixin, ListView):
     """List all unapproved versions - staff see all """
-    context_object_name = 'entries'
+    context_object_name = 'versions'
     template_name = 'version/list.html'
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super(PendingVersionListView, self).get_context_data(**kwargs)
-        context['num_entries'] = self.get_queryset().count()
+        context['num_versions'] = self.get_queryset().count()
         return context
 
     def get_queryset(self):
-        entries_qs = Version.unapproved_objects.all()
+        versions_qs = Version.unapproved_objects.all()
         if self.request.user.is_staff:
-            return entries_qs
+            return versions_qs
         else:
-            return entries_qs.filter(creator=self.request.user)
+            return versions_qs.filter(creator=self.request.user)
 
 
 class ApproveVersionView(VersionMixin, StaffuserRequiredMixin, RedirectView):
@@ -378,12 +379,14 @@ class ApproveVersionView(VersionMixin, StaffuserRequiredMixin, RedirectView):
     pattern_name = 'pending-version-list'
 
     def get_redirect_url(self, pk):
-        version = get_object_or_404(Version, pk=pk)
+        version_qs = Version.unapproved_objects.all()
+        version = get_object_or_404(version_qs, pk=pk)
         version.approved = True
         version.save()
         return reverse(self.pattern_name)
 
 # Changelog entries
+
 
 class EntryMixin(object):
     model = Entry  # implies -> queryset = Entry.objects.all()
@@ -495,7 +498,8 @@ class ApproveEntryView(EntryMixin, StaffuserRequiredMixin, RedirectView):
     pattern_name = 'pending-entry-list'
 
     def get_redirect_url(self, pk):
-        entry = get_object_or_404(Entry, pk=pk)
+        entry_qs = Entry.unapproved_objects.all()
+        entry = get_object_or_404(entry_qs, pk=pk)
         entry.approved = True
         entry.save()
         return reverse(self.pattern_name)
