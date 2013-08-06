@@ -85,6 +85,7 @@ class EntryForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 'Entry details',
+                Field('version', css_class="form-control"),
                 Field('category', css_class="form-control"),
                 Field('title', css_class="form-control"),
                 Field('description', css_class="form-control"),

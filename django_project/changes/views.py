@@ -105,7 +105,7 @@ class ProjectUpdateView(ProjectCreateUpdateMixin, UpdateView):
         return projects_qs
 
     def get_success_url(self):
-        return reverse('project-detail', kwargs={'pk': self.object.pk})
+        return reverse('project-detail')
 
 # Category management
 
@@ -125,18 +125,18 @@ class CategoryCreateUpdateMixin(CategoryMixin, LoginRequiredMixin):
 
 
 class CategoryListView(CategoryMixin, PaginationMixin, ListView):
-    context_object_name = 'categorys'
+    context_object_name = 'categories'
     template_name = 'category/list.html'
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super(CategoryListView, self).get_context_data(**kwargs)
-        context['num_categorys'] = self.get_queryset().count()
+        context['num_categories'] = self.get_queryset().count()
         return context
 
     def get_queryset(self):
-        categorys_qs = Category.objects.all()
-        return categorys_qs
+        categories_qs = Category.objects.all()
+        return categories_qs
 
 
 class CategoryDetailView(CategoryMixin, DetailView):
@@ -148,8 +148,8 @@ class CategoryDetailView(CategoryMixin, DetailView):
         return context
 
     def get_queryset(self):
-        categorys_qs = Category.objects.all()
-        return categorys_qs
+        categories_qs = Category.objects.all()
+        return categories_qs
 
     def get_object(self, queryset=None):
         obj = super(CategoryDetailView, self).get_object(queryset)
@@ -170,7 +170,7 @@ class CategoryCreateView(CategoryCreateUpdateMixin, CreateView):
     template_name = 'category/create.html'
 
     def get_success_url(self):
-        return reverse('category-detail', kwargs={'pk': self.object.pk})
+        return reverse('category-list')
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -188,11 +188,11 @@ class CategoryUpdateView(CategoryCreateUpdateMixin, UpdateView):
         return kwargs
 
     def get_queryset(self):
-        categorys_qs = Category.objects
-        return categorys_qs
+        categories_qs = Category.objects
+        return categories_qs
 
     def get_success_url(self):
-        return reverse('category-detail', kwargs={'pk': self.object.pk})
+        return reverse('category-list')
 
 
 # Version management
@@ -258,7 +258,7 @@ class VersionCreateView(VersionCreateUpdateMixin, CreateView):
     template_name = 'version/create.html'
 
     def get_success_url(self):
-        return reverse('version-detail', kwargs={'pk': self.object.pk})
+        return reverse('version-list')
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -280,7 +280,7 @@ class VersionUpdateView(VersionCreateUpdateMixin, UpdateView):
         return versions_qs
 
     def get_success_url(self):
-        return reverse('version-detail', kwargs={'pk': self.object.pk})
+        return reverse('version-list')
 
 
 # Changelog entries
@@ -345,7 +345,7 @@ class EntryCreateView(EntryCreateUpdateMixin, CreateView):
     template_name = 'entry/create.html'
 
     def get_success_url(self):
-        return reverse('entry-detail', kwargs={'pk': self.object.pk})
+        return reverse('entry-list')
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -367,4 +367,4 @@ class EntryUpdateView(EntryCreateUpdateMixin, UpdateView):
         return entries_qs
 
     def get_success_url(self):
-        return reverse('entry-detail', kwargs={'pk': self.object.pk})
+        return reverse('entry-list')

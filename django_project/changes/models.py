@@ -39,7 +39,7 @@ class Version(models.Model):
         unique_together = ('name', 'project')
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return u'%s : %s' % (self.project.name, self.name)
 
 
 class Category(models.Model):
@@ -87,11 +87,12 @@ class Entry(models.Model):
         null=True,
         blank=True)
 
-    category = models.ForeignKey(Version)
+    version = models.ForeignKey(Version)
+    category = models.ForeignKey(Category)
 
     class Meta:
         """Meta options for the version class."""
-        unique_together = ('title', 'category')
+        unique_together = ('title', 'version', 'category')
 
     def __unicode__(self):
         return u'%s' % self.title

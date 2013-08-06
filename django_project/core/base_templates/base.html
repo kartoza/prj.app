@@ -66,26 +66,15 @@
                 </li>
             </ul>
         </div>
-
-        <div class="jumbotron">
-            <div class="media">
-                <a href="http://qgis.org" class="pull-left">
-                    <img src="{{ STATIC_URL }}/img/qgis-icon-60x60.png"
-                         class="media-object" />
-                </a>
-                <div class="media-body">
-                    <h2 class="media-heading">Welcome to the <b>QGIS</b>
-                        Visual Changelog!</h2>
-                    <p class="lead">This changelog documents changes
-                        included in the version <b>2.0</b> release of QGIS.</p>
-                    <p>This site is created using open source code available on <a
-                    href="https://github.com/timlinux/visual_changelog">GitHub!</a></p>
-                </div>
-            </div>
-        </div>
-        <hr />
         <div class="body-content">
             {% block content %}{% endblock content %}
+        </div>
+        <div class="navbar navbar-fixed-bottom">
+            <p><center>This site is created using open source code
+              available on
+            <a href="https://github.com/timlinux/visual_changelog">
+            GitHub!</a>
+            </center></p>
         </div>
     </div>
     {% compressed_js 'contrib' %}

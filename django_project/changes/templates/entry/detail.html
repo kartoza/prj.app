@@ -11,7 +11,6 @@
 {% endblock page_title %}
 
 {% block content %}
-
     <div class="row">
         <div class="col-10">
             <div class="media-body">
@@ -30,14 +29,28 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-8">
-            {{ entry.description|markdown:"safe" }}
+        <div class="col-12">
+            <div class="row">
+                <div class="col-6">
+                   <h4 class="muted">Project:
+                     <b>{{ entry.version.project }}</b></h4>
+               </div>
+               <div class="col-6">
+                   <h4 class="muted">Version:
+                     <b>{{ entry.version.name  }}</b></h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                {{ entry.description|markdown:"safe" }}
+                </div>
+            </div>
         </div>
-        <div class="col-4">
+        <div class="col-12 align-center">
             {% if entry.image_file %}
-            <img class="img-responsive img-rounded pull-right"
-                 src="{{ MEDIA_URL }}{{ entry.image_file }}" />
-            {%  endif %}
+              <img class="img-responsive img-rounded pull-right"
+                src="{{ MEDIA_URL }}{{ entry.image_file }}"/>
+            {% endif %}
         </div>
     </div>
 

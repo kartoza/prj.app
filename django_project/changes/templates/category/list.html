@@ -7,11 +7,12 @@
 {% endblock %}
 
 {% block page_title %}
-    <h1>Entries (all)</h1>
+    <h1>Categories (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
-    {% for category in categorys %}
+    <h1 class="text-muted">Categories</h1>
+    {% for category in categories %}
     <div class="row">
         <div class="col-1">
             {% if category.image_file %}

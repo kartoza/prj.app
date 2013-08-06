@@ -42,7 +42,7 @@ PIPELINE_CSS = {
     'contrib': {
         'source_filenames': (
             'css/bootstrap.min.css',
-            'css/justified-nav.css'
+            'css/changelog.css',
         ),
         'output_filename': 'css/contrib.css',
         'extra_context': {
