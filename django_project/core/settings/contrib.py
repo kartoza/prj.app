@@ -10,6 +10,7 @@ INSTALLED_APPS += (
     'accounts',  # userena
     'guardian',  # for userena
     'easy_thumbnails',  # also needed for userena
+    'userena',
 )
 
 # use underscore template function

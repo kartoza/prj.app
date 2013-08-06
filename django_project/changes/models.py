@@ -45,12 +45,32 @@ class Project(AuditedModel):
         default=False
     )
 
-    objects = models.Manager()
-    approved_objects = ApprovedProjectManager()
+    objects = ApprovedProjectManager()
+    all_objects = models.Manager()
     unapproved_objects = UnapprovedProjectManager()
 
     def __unicode__(self):
         return u'%s' % self.name
+
+
+class ApprovedVersionManager(models.Manager):
+    """Custom version manager that shows only approved records."""
+
+    def get_query_set(self):
+        """Query set generator"""
+        return super(
+            ApprovedVersionManager, self).get_query_set().filter(
+                approved=True)
+
+
+class UnapprovedVersionManager(models.Manager):
+    """Custom version manager that shows only unapproved records."""
+
+    def get_query_set(self):
+        """Query set generator"""
+        return super(
+            UnapprovedVersionManager, self).get_query_set().filter(
+                approved=False)
 
 
 class Version(AuditedModel):
@@ -70,12 +90,37 @@ class Version(AuditedModel):
 
     project = models.ForeignKey(Project)
 
+    objects = ApprovedVersionManager()
+    all_objects = models.Manager()
+    unapproved_objects = UnapprovedVersionManager()
+
+
     class Meta:
         """Meta options for the version class."""
         unique_together = ('name', 'project')
 
     def __unicode__(self):
         return u'%s : %s' % (self.project.name, self.name)
+
+
+class ApprovedCategoryManager(models.Manager):
+    """Custom category manager that shows only approved records."""
+
+    def get_query_set(self):
+        """Query set generator"""
+        return super(
+            ApprovedCategoryManager, self).get_query_set().filter(
+                approved=True)
+
+
+class UnapprovedCategoryManager(models.Manager):
+    """Custom version manager that shows only unapproved records."""
+
+    def get_query_set(self):
+        """Query set generator"""
+        return super(
+            UnapprovedCategoryManager, self).get_query_set().filter(
+                approved=False)
 
 
 class Category(AuditedModel):
@@ -95,6 +140,10 @@ class Category(AuditedModel):
     )
 
     project = models.ForeignKey(Project)
+
+    objects = ApprovedCategoryManager()
+    all_objects = models.Manager()
+    unapproved_objects = UnapprovedCategoryManager()
 
     class Meta:
         """Meta options for the category class."""
@@ -123,6 +172,7 @@ class UnapprovedEntryManager(models.Manager):
         return super(
             UnapprovedEntryManager, self).get_query_set().filter(
                 approved=False)
+
 
 class Entry(AuditedModel):
 
@@ -159,8 +209,8 @@ class Entry(AuditedModel):
     version = models.ForeignKey(Version)
     category = models.ForeignKey(Category)
 
-    objects = models.Manager()
-    approved_objects = ApprovedEntryManager()
+    objects = ApprovedEntryManager()
+    all_objects = models.Manager()
     unapproved_objects = UnapprovedEntryManager()
 
     class Meta:
