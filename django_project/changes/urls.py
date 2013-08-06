@@ -2,30 +2,38 @@ from django.conf.urls import patterns, url
 from django.conf import settings
 
 from views import (
+    # Project
     ProjectDetailView,
     ProjectDeleteView,
     ProjectCreateView,
-    PendingProjectListView,
-    ApproveProjectView,
     ProjectListView,
     ProjectUpdateView,
+    PendingProjectListView,
+    ApproveProjectView,
+    # Category
     CategoryDetailView,
     CategoryDeleteView,
     CategoryCreateView,
     CategoryListView,
     CategoryUpdateView,
+    PendingCategoryListView,
+    ApproveCategoryView,
+    # Version
     VersionDetailView,
     VersionDeleteView,
     VersionCreateView,
     VersionListView,
     VersionUpdateView,
-    PendingEntryListView,
-    ApproveEntryView,
+    PendingVersionListView,
+    ApproveVersionView,
+    # Entry
     EntryDetailView,
     EntryDeleteView,
     EntryCreateView,
     EntryListView,
-    EntryUpdateView)
+    EntryUpdateView,
+    PendingEntryListView,
+    ApproveEntryView)
 
 urlpatterns = patterns(
     '',
@@ -57,6 +65,12 @@ urlpatterns = patterns(
         name='project-update'),
 
     # Category management
+    url(regex='^pending-category/list/$',
+        view=PendingCategoryListView.as_view(),
+        name='pending-category-list'),
+    url(regex='^approve-category/(?P<pk>\d+)/$',
+        view=ApproveCategoryView.as_view(),
+        name='category-approve'),
     url(regex='^Category/list/$',
         view=CategoryListView.as_view(),
         name='category-list'),
@@ -74,6 +88,12 @@ urlpatterns = patterns(
         name='category-update'),
 
     # Version management
+    url(regex='^pending-version/list/$',
+        view=PendingVersionListView.as_view(),
+        name='pending-version-list'),
+    url(regex='^approve-version/(?P<pk>\d+)/$',
+        view=ApproveVersionView.as_view(),
+        name='version-approve'),
     url(regex='^Version/list/$',
         view=VersionListView.as_view(),
         name='version-list'),

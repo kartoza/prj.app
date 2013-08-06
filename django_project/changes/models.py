@@ -153,7 +153,6 @@ class Category(AuditedModel):
         return u'%s' % self.name
 
 
-
 class ApprovedEntryManager(models.Manager):
     """Custom entry manager that shows only approved records."""
 

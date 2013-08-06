@@ -234,6 +234,37 @@ class CategoryUpdateView(CategoryCreateUpdateMixin, UpdateView):
         return reverse('category-list')
 
 
+class PendingCategoryListView(CategoryMixin, PaginationMixin, ListView):
+    """List all unapproved categories"""
+    context_object_name = 'entries'
+    template_name = 'category/list.html'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(PendingCategoryListView, self).get_context_data(**kwargs)
+        context['num_entries'] = self.get_queryset().count()
+        return context
+
+    def get_queryset(self):
+        entries_qs = Category.unapproved_objects.all()
+        if self.request.user.is_staff:
+            return entries_qs
+        else:
+            return entries_qs.filter(creator=self.request.user)
+
+
+class ApproveCategoryView(CategoryMixin, StaffuserRequiredMixin, RedirectView):
+    permanent = False
+    query_string = True
+    pattern_name = 'pending-category-list'
+
+    def get_redirect_url(self, pk):
+        category = get_object_or_404(Category, pk=pk)
+        category.approved = True
+        category.save()
+        return reverse(self.pattern_name)
+
+
 # Version management
 
 
@@ -321,6 +352,36 @@ class VersionUpdateView(VersionCreateUpdateMixin, UpdateView):
     def get_success_url(self):
         return reverse('version-list')
 
+
+class PendingVersionListView(VersionMixin, PaginationMixin, ListView):
+    """List all unapproved versions - staff see all """
+    context_object_name = 'entries'
+    template_name = 'version/list.html'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(PendingVersionListView, self).get_context_data(**kwargs)
+        context['num_entries'] = self.get_queryset().count()
+        return context
+
+    def get_queryset(self):
+        entries_qs = Version.unapproved_objects.all()
+        if self.request.user.is_staff:
+            return entries_qs
+        else:
+            return entries_qs.filter(creator=self.request.user)
+
+
+class ApproveVersionView(VersionMixin, StaffuserRequiredMixin, RedirectView):
+    permanent = False
+    query_string = True
+    pattern_name = 'pending-version-list'
+
+    def get_redirect_url(self, pk):
+        version = get_object_or_404(Version, pk=pk)
+        version.approved = True
+        version.save()
+        return reverse(self.pattern_name)
 
 # Changelog entries
 
