@@ -30,3 +30,9 @@ AUTH_PROFILE_MODULE = 'accounts.Profile'
 LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
+
+THUMBNAIL_ALIASES = {
+    '': {
+        'entry': {'size': (50, 50), 'crop': True},
+    },
+}

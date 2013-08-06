@@ -47,7 +47,7 @@
             {% if entry.image_file %}
             <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
               <img class="img-responsive img-rounded pull-right"
-                   src="{% thumbnail entry.image_file 50x50 crop %}" />
+                    src="{{ entry.image_file|thumbnail_url:'entry' }}" alt="" />
             </a>
             {%  endif %}
         </div>

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load markup %}
+{% load thumbnail %}
 
 {% block title %}Entries - {{ block.super }}{% endblock %}
 
@@ -75,9 +76,11 @@
         </div>
         <div class="col-12 align-center">
             {% if entry.image_file %}
+            <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
               <img class="img-responsive img-rounded pull-right"
-                src="{{ MEDIA_URL }}{{ entry.image_file }}"/>
-            {% endif %}
+                    src="{{ entry.image_file|thumbnail_url:'entry' }}" alt="" />
+            </a>
+            {%  endif %}
         </div>
     </div>
 
