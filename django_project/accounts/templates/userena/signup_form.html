@@ -1,5 +1,6 @@
 {% extends 'userena/base_userena.html' %}
 {% load i18n %}
+{% load widget_tweaks %}
 
 {% block title %}{% trans "Signup" %}{% endblock %}
 
@@ -18,8 +19,8 @@
     </p>
     {% else %}
     <p>
-    {{ field.label_tag }} 
-    {{ field }}
+    {{ field.label_tag }}
+    {{ field|add_class:"form-control" }}
     </p>
     {% endif %}
     {% endfor %}

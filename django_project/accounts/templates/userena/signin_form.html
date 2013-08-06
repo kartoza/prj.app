@@ -1,6 +1,7 @@
 {% extends 'userena/base_userena.html' %}
 {% load i18n %}
 {% load url from future %}
+{% load widget_tweaks %}
 
 {% block title %}{% trans "Signin" %}{% endblock %}
 
@@ -20,7 +21,7 @@
     {% else %}
     <p>
     {{ field.label_tag }}
-    {{ field }}
+    {{ field|add_class:"form-control" }}
     </p>
     {% endif %}
     {% endfor %}
