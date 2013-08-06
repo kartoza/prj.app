@@ -10,6 +10,8 @@ if 'raven.contrib.django' in INSTALLED_APPS:
     MIDDLEWARE_CLASSES = (
         'raven.contrib.django.middleware.SentryResponseErrorIdMiddleware',
         'raven.contrib.django.middleware.SentryLogMiddleware',
+        #for django-audited-models
+        'threaded_multihost.middleware.ThreadLocalMiddleware',
     ) + MIDDLEWARE_CLASSES
 
     #

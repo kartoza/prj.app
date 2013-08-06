@@ -3,9 +3,10 @@ import logging
 logger = logging.getLogger(__name__)
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
+from audited_models.models import AuditedModel
 
 
-class Project(models.Model):
+class Project(AuditedModel):
     """A project model e.g. QGIS, InaSAFE etc."""
     name = models.CharField(
         help_text='Name of this project.',
@@ -19,11 +20,15 @@ class Project(models.Model):
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),
         blank=True)
 
+    approved = models.BooleanField(
+        help_text='Whether this project has been approved for use yet.'
+    )
+
     def __unicode__(self):
         return u'%s' % self.name
 
 
-class Version(models.Model):
+class Version(AuditedModel):
     """A version model that the changelog is associated with.."""
     name = models.CharField(
         help_text='Name of this release e.g. 1.0.1.',
@@ -31,6 +36,12 @@ class Version(models.Model):
         null=False,
         blank=False,
         unique=False)
+
+    approved = models.BooleanField(
+        help_text=(
+            'Whether this version has been approved for use by the '
+            'project owner.')
+    )
 
     project = models.ForeignKey(Project)
 
@@ -42,7 +53,7 @@ class Version(models.Model):
         return u'%s : %s' % (self.project.name, self.name)
 
 
-class Category(models.Model):
+class Category(AuditedModel):
     """A category model e.g. gui, backend, web site etc."""
     name = models.CharField(
         help_text='Name of this category.',
@@ -50,6 +61,12 @@ class Category(models.Model):
         null=False,
         blank=False,
         unique=True)
+
+    approved = models.BooleanField(
+        help_text=(
+            'Whether this version has been approved for use by the '
+            'project owner.')
+    )
 
     project = models.ForeignKey(Project)
 
@@ -62,7 +79,7 @@ class Category(models.Model):
         return u'%s' % self.name
 
 
-class Entry(models.Model):
+class Entry(AuditedModel):
 
     title = models.CharField(
         help_text='Title for this change note.',
@@ -86,6 +103,12 @@ class Entry(models.Model):
         max_length=255,
         null=True,
         blank=True)
+
+    approved = models.BooleanField(
+        help_text=(
+            'Whether this entry has been approved for use by the '
+            'project owner.')
+    )
 
     version = models.ForeignKey(Version)
     category = models.ForeignKey(Category)

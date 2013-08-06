@@ -18,3 +18,9 @@ bpython==0.12
 
 # pdb plus plus
 pdbpp==0.7.2
+
+Fabric==1.6.0
+fabtools>=0.13.0
+fabgis==0.12.0
+
+django-audited-models

@@ -1,18 +1,24 @@
 from django.contrib import admin
-from models import Project, Category, Entry
+from models import Project, Category, Version, Entry
+from audited_models.admin import AuditedAdmin
 
 
-class ProjectAdmin(admin.ModelAdmin):
+class ProjectAdmin(AuditedAdmin):
     pass
 
 
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(AuditedAdmin):
     pass
 
 
-class EntryAdmin(admin.ModelAdmin):
+class VersionAdmin(AuditedAdmin):
+    pass
+
+
+class EntryAdmin(AuditedAdmin):
     pass
 
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(Version, VersionAdmin)
 admin.site.register(Entry, EntryAdmin)
