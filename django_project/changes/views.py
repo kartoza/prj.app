@@ -111,7 +111,7 @@ class ProjectUpdateView(ProjectCreateUpdateMixin, UpdateView):
 
 
 class PendingProjectListView(
-        ProjectMixin, PaginationMixin, ListView, StaffuserRequiredMixin):
+        ProjectMixin, PaginationMixin, ListView):
     """List all unapproved projects"""
     context_object_name = 'projects'
     template_name = 'project/list.html'
@@ -401,8 +401,7 @@ class EntryUpdateView(EntryCreateUpdateMixin, UpdateView):
         return reverse('entry-list')
 
 
-class PendingEntryListView(
-        EntryMixin, PaginationMixin, ListView, StaffuserRequiredMixin):
+class PendingEntryListView(EntryMixin, PaginationMixin, ListView):
     """List all unapproved entries"""
     context_object_name = 'entries'
     template_name = 'entry/list.html'
@@ -415,7 +414,10 @@ class PendingEntryListView(
 
     def get_queryset(self):
         entries_qs = Entry.unapproved_objects.all()
-        return entries_qs
+        if self.request.user.is_staff:
+            return entries_qs
+        else:
+            entries_qs.filter(creator=self.request.user)
 
 
 class ApproveEntryView(EntryMixin, StaffuserRequiredMixin, RedirectView):
