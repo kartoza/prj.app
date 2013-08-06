@@ -5,3 +5,4 @@ venv
 vagrant-fabric-lxc
 django_project/media/images
 visual_changelog.db
+.vagrant
