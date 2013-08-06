@@ -52,6 +52,11 @@ class Project(AuditedModel):
     def __unicode__(self):
         return u'%s' % self.name
 
+    def versions(self):
+        """Get all the versions for this project."""
+        qs = Version.objects.filter(project=self)
+        return qs
+
 
 class ApprovedVersionManager(models.Manager):
     """Custom version manager that shows only approved records."""
@@ -93,7 +98,6 @@ class Version(AuditedModel):
     objects = ApprovedVersionManager()
     all_objects = models.Manager()
     unapproved_objects = UnapprovedVersionManager()
-
 
     class Meta:
         """Meta options for the version class."""

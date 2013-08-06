@@ -4,19 +4,47 @@ from audited_models.admin import AuditedAdmin
 
 
 class ProjectAdmin(AuditedAdmin):
-    pass
+
+    def queryset(self, request):
+        """Ensure we use the correct manager."""
+        qs = self.model.all_objects
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
+        return qs
 
 
 class CategoryAdmin(AuditedAdmin):
-    pass
+
+    def queryset(self, request):
+        """Ensure we use the correct manager."""
+        qs = self.model.all_objects
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
+        return qs
 
 
 class VersionAdmin(AuditedAdmin):
-    pass
+
+    def queryset(self, request):
+        """Ensure we use the correct manager."""
+        qs = self.model.all_objects
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
+        return qs
 
 
 class EntryAdmin(AuditedAdmin):
-    pass
+
+    def queryset(self, request):
+        """Ensure we use the correct manager."""
+        qs = self.model.all_objects
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
+        return qs
 
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Category, CategoryAdmin)
