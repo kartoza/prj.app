@@ -54,23 +54,6 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
         return projects_qs
 
 
-class PendingProjectListView(
-        ProjectMixin, PaginationMixin, ListView, StaffuserRequiredMixin):
-    """List all approved projects"""
-    context_object_name = 'projects'
-    template_name = 'project/list.html'
-    paginate_by = 10
-
-    def get_context_data(self, **kwargs):
-        context = super(PendingProjectListView, self).get_context_data(**kwargs)
-        context['num_projects'] = self.get_queryset().count()
-        return context
-
-    def get_queryset(self):
-        projects_qs = Project.unapproved_objects.all()
-        return projects_qs
-
-
 class ProjectDetailView(ProjectMixin, DetailView):
     context_object_name = 'project'
     template_name = 'project/detail.html'
@@ -87,19 +70,6 @@ class ProjectDetailView(ProjectMixin, DetailView):
         obj = super(ProjectDetailView, self).get_object(queryset)
         obj.request_user = self.request.user
         return obj
-
-
-class ApproveProjectView(ProjectMixin, StaffuserRequiredMixin, RedirectView):
-    permanent = False
-    query_string = True
-    pattern_name = 'pending-project-list'
-
-    def get_redirect_url(self, pk):
-        project = get_object_or_404(Project, pk=pk)
-        project.approved = True
-        project.save()
-        return reverse(self.pattern_name)
-
 
 
 class ProjectDeleteView(ProjectMixin, DeleteView):
@@ -138,6 +108,35 @@ class ProjectUpdateView(ProjectCreateUpdateMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('project-list')
+
+
+class PendingProjectListView(
+        ProjectMixin, PaginationMixin, ListView, StaffuserRequiredMixin):
+    """List all unapproved projects"""
+    context_object_name = 'projects'
+    template_name = 'project/list.html'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(PendingProjectListView, self).get_context_data(**kwargs)
+        context['num_projects'] = self.get_queryset().count()
+        return context
+
+    def get_queryset(self):
+        projects_qs = Project.unapproved_objects.all()
+        return projects_qs
+
+
+class ApproveProjectView(ProjectMixin, StaffuserRequiredMixin, RedirectView):
+    permanent = False
+    query_string = True
+    pattern_name = 'pending-project-list'
+
+    def get_redirect_url(self, pk):
+        project = get_object_or_404(Project, pk=pk)
+        project.approved = True
+        project.save()
+        return reverse(self.pattern_name)
 
 # Category management
 
@@ -400,3 +399,32 @@ class EntryUpdateView(EntryCreateUpdateMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('entry-list')
+
+
+class PendingEntryListView(
+        EntryMixin, PaginationMixin, ListView, StaffuserRequiredMixin):
+    """List all unapproved entries"""
+    context_object_name = 'entries'
+    template_name = 'entry/list.html'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(PendingEntryListView, self).get_context_data(**kwargs)
+        context['num_entries'] = self.get_queryset().count()
+        return context
+
+    def get_queryset(self):
+        entries_qs = Entry.unapproved_objects.all()
+        return entries_qs
+
+
+class ApproveEntryView(EntryMixin, StaffuserRequiredMixin, RedirectView):
+    permanent = False
+    query_string = True
+    pattern_name = 'pending-entry-list'
+
+    def get_redirect_url(self, pk):
+        entry = get_object_or_404(Entry, pk=pk)
+        entry.approved = True
+        entry.save()
+        return reverse(self.pattern_name)

@@ -30,6 +30,10 @@
         <div class="col-2">
             {%  ifnotequal user.name 'AnonymousUser' %}
             <div class="btn-group btn-group-justified">
+              {% if not project.approved %}
+                <a class="btn btn-info btn-mini"
+                   href='{% url "entry-approve" entry.id %}'>Approve</a>
+              {% endif %}
                 <a class="btn btn-info btn-mini"
                    href='{% url "entry-detail" entry.id %}'>View</a>
               <a class="btn btn-danger btn-mini"

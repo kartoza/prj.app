@@ -104,6 +104,26 @@ class Category(AuditedModel):
         return u'%s' % self.name
 
 
+
+class ApprovedEntryManager(models.Manager):
+    """Custom entry manager that shows only approved records."""
+
+    def get_query_set(self):
+        """Query set generator"""
+        return super(
+            ApprovedEntryManager, self).get_query_set().filter(
+                approved=True)
+
+
+class UnapprovedEntryManager(models.Manager):
+    """Custom entry manager that shows only unapproved records."""
+
+    def get_query_set(self):
+        """Query set generator"""
+        return super(
+            UnapprovedEntryManager, self).get_query_set().filter(
+                approved=False)
+
 class Entry(AuditedModel):
 
     title = models.CharField(
@@ -138,6 +158,10 @@ class Entry(AuditedModel):
 
     version = models.ForeignKey(Version)
     category = models.ForeignKey(Category)
+
+    objects = models.Manager()
+    approved_objects = ApprovedEntryManager()
+    unapproved_objects = UnapprovedEntryManager()
 
     class Meta:
         """Meta options for the version class."""
