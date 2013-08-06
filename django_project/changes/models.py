@@ -6,6 +6,26 @@ from django.db import models
 from audited_models.models import AuditedModel
 
 
+class ApprovedProjectManager(models.Manager):
+    """Custom project manager that shows only approved records."""
+
+    def get_query_set(self):
+        """Query set generator"""
+        return super(
+            ApprovedProjectManager, self).get_query_set().filter(
+                approved=True)
+
+
+class UnapprovedProjectManager(models.Manager):
+    """Custom project manager that shows only unapproved records."""
+
+    def get_query_set(self):
+        """Query set generator"""
+        return super(
+            UnapprovedProjectManager, self).get_query_set().filter(
+                approved=False)
+
+
 class Project(AuditedModel):
     """A project model e.g. QGIS, InaSAFE etc."""
     name = models.CharField(
@@ -21,8 +41,13 @@ class Project(AuditedModel):
         blank=True)
 
     approved = models.BooleanField(
-        help_text='Whether this project has been approved for use yet.'
+        help_text='Whether this project has been approved for use yet.',
+        default=False
     )
+
+    objects = models.Manager()
+    approved_objects = ApprovedProjectManager()
+    unapproved_objects = UnapprovedProjectManager()
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -40,8 +65,8 @@ class Version(AuditedModel):
     approved = models.BooleanField(
         help_text=(
             'Whether this version has been approved for use by the '
-            'project owner.')
-    )
+            'project owner.'),
+        default=False)
 
     project = models.ForeignKey(Project)
 
@@ -65,11 +90,11 @@ class Category(AuditedModel):
     approved = models.BooleanField(
         help_text=(
             'Whether this version has been approved for use by the '
-            'project owner.')
+            'project owner.'),
+        default=False
     )
 
     project = models.ForeignKey(Project)
-
 
     class Meta:
         """Meta options for the category class."""
@@ -107,7 +132,8 @@ class Entry(AuditedModel):
     approved = models.BooleanField(
         help_text=(
             'Whether this entry has been approved for use by the '
-            'project owner.')
+            'project owner.'),
+        default=False
     )
 
     version = models.ForeignKey(Version)

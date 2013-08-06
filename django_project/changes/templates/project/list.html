@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block page_title %}
-    <h1>Changelog Entries (all)</h1>
+    <h1>Project Entries (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
@@ -31,6 +31,10 @@
         </div>
         <div class="col-2">
             <div class="btn-group btn-group-justified">
+                {%  if not project.approved %}
+                <a class="btn btn-info btn-mini"
+                   href='{% url "project-approve" project.id %}'>Approve</a>
+                {% endif %}
                 <a class="btn btn-danger btn-mini"
                     href='{% url "project-delete" project.id %}'>Delete</a>
                 <a class="btn btn-success btn-mini"

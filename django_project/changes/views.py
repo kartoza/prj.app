@@ -6,17 +6,18 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.core.urlresolvers import reverse
-
+from django.shortcuts import get_object_or_404
 from django.views.generic import (
     ListView,
     CreateView,
     DeleteView,
     DetailView,
     UpdateView,
+    RedirectView,
     TemplateView)
 
 from django.http import HttpResponseRedirect
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from .models import Project, Category, Version, Entry
@@ -38,6 +39,7 @@ class ProjectCreateUpdateMixin(ProjectMixin, LoginRequiredMixin):
 
 
 class ProjectListView(ProjectMixin, PaginationMixin, ListView):
+    """List all approved projects"""
     context_object_name = 'projects'
     template_name = 'project/list.html'
     paginate_by = 10
@@ -48,7 +50,24 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
         return context
 
     def get_queryset(self):
-        projects_qs = Project.objects.all()
+        projects_qs = Project.approved_objects.all()
+        return projects_qs
+
+
+class PendingProjectListView(
+        ProjectMixin, PaginationMixin, ListView, StaffuserRequiredMixin):
+    """List all approved projects"""
+    context_object_name = 'projects'
+    template_name = 'project/list.html'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(PendingProjectListView, self).get_context_data(**kwargs)
+        context['num_projects'] = self.get_queryset().count()
+        return context
+
+    def get_queryset(self):
+        projects_qs = Project.unapproved_objects.all()
         return projects_qs
 
 
@@ -70,6 +89,19 @@ class ProjectDetailView(ProjectMixin, DetailView):
         return obj
 
 
+class ApproveProjectView(ProjectMixin, StaffuserRequiredMixin, RedirectView):
+    permanent = False
+    query_string = True
+    pattern_name = 'pending-project-list'
+
+    def get_redirect_url(self, pk):
+        project = get_object_or_404(Project, pk=pk)
+        project.approved = True
+        project.save()
+        return reverse(self.pattern_name)
+
+
+
 class ProjectDeleteView(ProjectMixin, DeleteView):
     context_object_name = 'project'
     template_name = 'project/delete.html'
@@ -83,7 +115,7 @@ class ProjectCreateView(ProjectCreateUpdateMixin, CreateView):
     template_name = 'project/create.html'
 
     def get_success_url(self):
-        return reverse('project-detail', kwargs={'pk': self.object.pk})
+        return reverse('project-list')
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -105,7 +137,7 @@ class ProjectUpdateView(ProjectCreateUpdateMixin, UpdateView):
         return projects_qs
 
     def get_success_url(self):
-        return reverse('project-detail')
+        return reverse('project-list')
 
 # Category management
 
