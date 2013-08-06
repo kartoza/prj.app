@@ -30,7 +30,7 @@
         <div class="col-2">
             {%  ifnotequal user.name 'AnonymousUser' %}
             <div class="btn-group btn-group-justified">
-              {% if not project.approved %}
+              {% if not entry.approved %}
                 <a class="btn btn-info btn-mini"
                    href='{% url "entry-approve" entry.id %}'>Approve</a>
               {% endif %}
