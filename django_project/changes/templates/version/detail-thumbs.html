@@ -14,18 +14,29 @@
 {% block content %}
 
     <div class="row">
-        <div class="col-5">
+        <div class="media col-5">
             {% if version.project.image_file %}
-            <img class="img-responsive img-rounded"
-                 src="{{ version.project.image_file|thumbnail_url:'entry' }}"
-                 alt="" />
+            <a class="pull-left" href="{{ MEDIA_URL }}{{ version.project.image_file }}">
+                <img class="media-object img-responsive img-rounded"
+                     src="{{ version.project.image_file|thumbnail_url:'entry' }}"
+                    alt="" />
+            </a>
             {%  endif %}
-            <h2 class="muted">Project:
-             <b>{{ version.project }}</b></h2>
-       </div>
-       <div class="col-5">
-           <h2 class="muted">Version:
-             <b>{{ version.name  }}</b></h2>
+            <div class="media-body">
+                <h2 class="media-heading">Project <b>{{ version.project }}</b></h2>
+            </div>
+        </div>
+        <div class="media col-5">
+            {% if version.project.image_file %}
+            <a class="pull-left" href="{{ MEDIA_URL }}{{ version.image_file }}">
+                <img class="media-object img-responsive img-rounded"
+                     src="{{ version.image_file|thumbnail_url:'entry' }}"
+                    alt="" />
+            </a>
+            {%  endif %}
+            <div class="media-body">
+                <h2 class="media-heading">Version <b>{{ version.name }}</b></h2>
+            </div>
         </div>
         <div class="col-2">
             <div class="btn-group btn-group-justified">
@@ -36,6 +47,10 @@
             </div>
         </div>
     </div>
+    {%  ifequal num_entries 0 %}
+        <h3>No entries are defined (use the 'add' menu above to create them).
+        </h3>
+    {%  endifequal %}
     <div class="row">
         <div class="col-8">
             {{ version.description|markdown:"safe" }}

@@ -41,7 +41,10 @@ class Entry(AuditedModel):
         help_text='Describe the new feature. Markdown is supported.')
 
     image_file = models.ImageField(
-        help_text='A image that is related to this visual changelog entry.',
+        help_text=(
+            'A image that is related to this visual changelog entry. '
+            'If you have Chrome, try dragging the image directly on to the '
+            '"Choose File" button above.'),
         upload_to=os.path.join(MEDIA_ROOT, 'images'),
         blank=True)
 
