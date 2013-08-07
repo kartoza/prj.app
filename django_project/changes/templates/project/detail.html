@@ -22,10 +22,16 @@
         </div>
         <div class="col-2">
             <div class="btn-group btn-group-justified">
-                <a class="btn btn-danger btn-mini"
-                    href='{% url "project-delete" project.id %}'>Delete</a>
+                {%  if not project.approved and user.is_staff %}
                 <a class="btn btn-success btn-mini"
-                    href='{% url "project-update" project.id %}'>Edit</a>
+                   href='{% url "project-approve" project.id %}'>
+                        <span class="glyphicon glyphicon-thumbs-up"></span>
+                </a>
+                {% endif %}
+                <a class="btn btn-default btn-mini"
+                    href='{% url "project-delete" project.id %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                </a>
             </div>
         </div>
     </div>

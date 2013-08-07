@@ -34,5 +34,6 @@ LOGOUT_URL = '/accounts/signout/'
 THUMBNAIL_ALIASES = {
     '': {
         'entry': {'size': (50, 50), 'crop': True},
+        'thumb300x200': {'size': (300, 200), 'crop': True},
     },
 }

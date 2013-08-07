@@ -11,7 +11,18 @@
 {% endblock page_title %}
 
 {% block content %}
-    <h1 class="text-muted">Versions</h1>
+    <div class="page-header">
+        <h1 class="text-muted">
+            {% if unapproved %}Unapproved {% endif %}
+            Versions
+            <small class="pull-right">
+                <a class="btn btn-default btn-mini"
+                    href='{% url "version-create" %}'>
+                    <span class="glyphicon glyphicon-asterisk"></span>
+                </a>
+            </small>
+        </h1>
+    </div>
     {% for version in versions %}
     <div class="row">
         <div class="col-1">
@@ -32,13 +43,19 @@
         <div class="col-2">
             <div class="btn-group btn-group-justified">
                 {%  if not version.approved and user.is_staff %}
-                <a class="btn btn-info btn-mini"
-                   href='{% url "version-approve" version.id %}'>Approve</a>
-                {% endif %}
-                <a class="btn btn-danger btn-mini"
-                    href='{% url "version-delete" version.id %}'>Delete</a>
                 <a class="btn btn-success btn-mini"
-                    href='{% url "version-update" version.id %}'>Edit</a>
+                   href='{% url "version-approve" version.id %}'>
+                        <span class="glyphicon glyphicon-thumbs-up"></span>
+                </a>
+                {% endif %}
+                <a class="btn btn-default btn-mini"
+                    href='{% url "version-delete" version.id %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-mini"
+                    href='{% url "version-update" version.id %}'>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                </a>
             </div>
         </div>
     </div>

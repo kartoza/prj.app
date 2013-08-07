@@ -42,6 +42,7 @@ PIPELINE_CSS = {
     'contrib': {
         'source_filenames': (
             'css/bootstrap.min.css',
+            'css/bootstrap-glyphicons.css',
             'css/changelog.css',
         ),
         'output_filename': 'css/contrib.css',

@@ -20,11 +20,21 @@
             </div>
         </div>
         <div class="col-2">
-            <div class="btn-group btn-group-justified">
-                <a class="btn btn-danger btn-mini"
-                    href='{% url "entry-delete" entry.id %}'>Delete</a>
+            <div class="btn-group pull-right">
+                {%  if not entry.approved and user.is_staff %}
                 <a class="btn btn-success btn-mini"
-                    href='{% url "entry-update" entry.id %}'>Edit</a>
+                   href='{% url "entry-approve" entry.id %}'>
+                        <span class="glyphicon glyphicon-thumbs-up"></span>
+                </a>
+                {% endif %}
+                <a class="btn btn-default btn-mini"
+                    href='{% url "entry-delete" entry.id %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-mini"
+                    href='{% url "entry-update" entry.id %}'>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                </a>
             </div>
         </div>
     </div>

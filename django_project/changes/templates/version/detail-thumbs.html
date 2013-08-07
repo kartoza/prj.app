@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load markup %}
+{% load thumbnail %}
+
+{% block title %}Entries - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Entries (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-5">
+            {% if version.project.image_file %}
+            <img class="img-responsive img-rounded"
+                 src="{{ version.project.image_file|thumbnail_url:'entry' }}"
+                 alt="" />
+            {%  endif %}
+            <h2 class="muted">Project:
+             <b>{{ version.project }}</b></h2>
+       </div>
+       <div class="col-5">
+           <h2 class="muted">Version:
+             <b>{{ version.name  }}</b></h2>
+        </div>
+        <div class="col-2">
+            <div class="btn-group btn-group-justified">
+                <a class="btn btn-danger btn-mini"
+                    href='{% url "version-delete" version.id %}'>Delete</a>
+                <a class="btn btn-success btn-mini"
+                    href='{% url "version-update" version.id %}'>Edit</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            {{ version.description|markdown:"safe" }}
+        </div>
+        <div class="col-4">
+            {% if version.image_file %}
+            <img class="img-responsive img-rounded"
+                 src="{{ version.image_file|thumbnail_url:'thumb300x200' }}"
+                 alt="" />
+            {%  endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        {%  for entry in version.entries %}
+        <div class="col-lg-3">
+            <div class="thumbnail">
+                {% if entry.image_file %}
+                    <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+                        <img class="img-responsive img-rounded"
+                        src="{{ entry.image_file|thumbnail_url:'thumb300x200' }}" alt="" />
+                    </a>
+                {%  endif %}
+                <div class="caption">
+                    <h3>{{ entry.category.name }}</h3>
+                    <p>{{ entry.title }}</p>
+                    <p>
+                        <div class="btn-group">
+                            {%  if not entry.approved and user.is_staff %}
+                            <a class="btn btn-success btn-mini"
+                               href='{% url "entry-approve" entry.id %}'>
+                                    <span class="glyphicon glyphicon-thumbs-up"></span>
+                            </a>
+                            {% endif %}
+                            <a class="btn btn-default btn-mini"
+                                href='{% url "entry-delete" entry.id %}'>
+                                    <span class="glyphicon glyphicon-minus"></span>
+                            </a>
+                            <a class="btn btn-default btn-mini"
+                                href='{% url "entry-update" entry.id %}'>
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                            <a class="btn btn-default btn-mini"
+                                href='{% url "entry-detail" entry.id %}'>
+                                    <span class="glyphicon glyphicon-eye-open"></span>
+                            </a>
+                        </div>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+{% endblock %}

@@ -16,8 +16,9 @@
     <div class="row">
         <div class="col-5">
             {% if version.project.image_file %}
-            <img class="img-responsive img-rounded pull-right"
-                 src="{{ MEDIA_URL }}{{ version.project.image_file }}" />
+            <img class="img-responsive img-rounded"
+                 src="{{ version.project.image_file|thumbnail_url:'entry' }}"
+                 alt="" />
             {%  endif %}
             <h2 class="muted">Project:
              <b>{{ version.project }}</b></h2>
@@ -48,42 +49,46 @@
     </div>
     {%  for entry in version.entries %}
     <div class="row">
-        <div class="col-10">
-            <div class="media-body">
-                <h3 class="media-heading">
+        <div class="col-12">
+            <div class="pull-left">
+                {% if entry.image_file %}
+                <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+                <img class="img-responsive img-rounded"
+                    src="{{ entry.image_file|thumbnail_url:'entry' }}" alt="" />
+                </a>
+                {%  endif %}
+            </div>
+            <h3 class="media-heading">
                     Feature: <b>{{ entry.title}}</b>
-                </h3>
+            </h3>
+            <div class="btn-group pull-right">
+                {%  if not entry.approved and user.is_staff %}
+                <a class="btn btn-success btn-mini"
+                   href='{% url "entry-approve" entry.id %}'>
+                        <span class="glyphicon glyphicon-thumbs-up"></span>
+                </a>
+                {% endif %}
+                <a class="btn btn-default btn-mini"
+                    href='{% url "entry-delete" entry.id %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-mini"
+                    href='{% url "entry-update" entry.id %}'>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                <a class="btn btn-default btn-mini"
+                    href='{% url "entry-detail" entry.id %}'>
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                </a>
             </div>
         </div>
-        <div class="col-2">
-            <div class="btn-group btn-group-justified">
-                <a class="btn btn-danger btn-mini"
-                    href='{% url "entry-delete" entry.id %}'>Delete</a>
-                <a class="btn btn-success btn-mini"
-                    href='{% url "entry-update" entry.id %}'>Edit</a>
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            {{ entry.description|markdown:"safe" }}
         </div>
     </div>
     <hr />
-    <div class="row">
-        <div class="col-12">
-
-            <div class="row">
-                <div class="col-12">
-                {{ entry.description|markdown:"safe" }}
-                </div>
-            </div>
-        </div>
-        <div class="col-12 align-center">
-            {% if entry.image_file %}
-            <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
-              <img class="img-responsive img-rounded pull-right"
-                    src="{{ entry.image_file|thumbnail_url:'entry' }}" alt="" />
-            </a>
-            {%  endif %}
-        </div>
-    </div>
-
     {% endfor %}
 
 {% endblock %}

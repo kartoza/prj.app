@@ -47,6 +47,7 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ProjectListView, self).get_context_data(**kwargs)
         context['num_projects'] = self.get_queryset().count()
+        context['unapproved'] = False
         return context
 
     def get_queryset(self):
@@ -78,6 +79,13 @@ class ProjectDeleteView(ProjectMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('project-list')
+
+    def get_queryset(self):
+        qs = Project.all_objects.all()
+        if self.request.user.is_staff:
+            return qs
+        else:
+            return qs.filter(creator=self.request.user)
 
 
 class ProjectCreateView(ProjectCreateUpdateMixin, CreateView):
@@ -127,6 +135,7 @@ class PendingProjectListView(
     def get_context_data(self, **kwargs):
         context = super(PendingProjectListView, self).get_context_data(**kwargs)
         context['num_projects'] = self.get_queryset().count()
+        context['unapproved'] = True
         return context
 
     def get_queryset(self):
@@ -171,6 +180,7 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(CategoryListView, self).get_context_data(**kwargs)
         context['num_categories'] = self.get_queryset().count()
+        context['unapproved'] = False
         return context
 
     def get_queryset(self):
@@ -202,6 +212,13 @@ class CategoryDeleteView(CategoryMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('category-list')
+
+    def get_queryset(self):
+        qs = Category.all_objects.all()
+        if self.request.user.is_staff:
+            return qs
+        else:
+            return qs.filter(creator=self.request.user)
 
 
 class CategoryCreateView(CategoryCreateUpdateMixin, CreateView):
@@ -243,6 +260,7 @@ class PendingCategoryListView(CategoryMixin, PaginationMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(PendingCategoryListView, self).get_context_data(**kwargs)
         context['num_categories'] = self.get_queryset().count()
+        context['unapproved'] = True
         return context
 
     def get_queryset(self):
@@ -291,6 +309,7 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(VersionListView, self).get_context_data(**kwargs)
         context['num_versions'] = self.get_queryset().count()
+        context['unapproved'] = False
         return context
 
     def get_queryset(self):
@@ -299,6 +318,7 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
 
 
 class VersionDetailView(VersionMixin, DetailView):
+    """A tabular list style view for a version."""
     context_object_name = 'version'
     template_name = 'version/detail.html'
 
@@ -316,12 +336,38 @@ class VersionDetailView(VersionMixin, DetailView):
         return obj
 
 
+class VersionThumbnailView(VersionMixin, DetailView):
+    """A contact sheet style list of thumbs per entry."""
+    context_object_name = 'version'
+    template_name = 'version/detail-thumbs.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(VersionThumbnailView, self).get_context_data(**kwargs)
+        return context
+
+    def get_queryset(self):
+        versions_qs = Version.objects.all()
+        return versions_qs
+
+    def get_object(self, queryset=None):
+        obj = super(VersionThumbnailView, self).get_object(queryset)
+        obj.request_user = self.request.user
+        return obj
+
+
 class VersionDeleteView(VersionMixin, DeleteView):
     context_object_name = 'version'
     template_name = 'version/delete.html'
 
     def get_success_url(self):
         return reverse('version-list')
+
+    def get_queryset(self):
+        qs = Version.all_objects.all()
+        if self.request.user.is_staff:
+            return qs
+        else:
+            return qs.filter(creator=self.request.user)
 
 
 class VersionCreateView(VersionCreateUpdateMixin, CreateView):
@@ -363,6 +409,7 @@ class PendingVersionListView(VersionMixin, PaginationMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(PendingVersionListView, self).get_context_data(**kwargs)
         context['num_versions'] = self.get_queryset().count()
+        context['unapproved'] = True
         return context
 
     def get_queryset(self):
@@ -410,6 +457,7 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(EntryListView, self).get_context_data(**kwargs)
         context['num_entries'] = self.get_queryset().count()
+        context['unapproved'] = False
         return context
 
     def get_queryset(self):
@@ -441,6 +489,13 @@ class EntryDeleteView(EntryMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('entry-list')
+
+    def get_queryset(self):
+        qs = Entry.all_objects.all()
+        if self.request.user.is_staff:
+            return qs
+        else:
+            return qs.filter(creator=self.request.user)
 
 
 class EntryCreateView(EntryCreateUpdateMixin, CreateView):
@@ -482,6 +537,7 @@ class PendingEntryListView(EntryMixin, PaginationMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(PendingEntryListView, self).get_context_data(**kwargs)
         context['num_entries'] = self.get_queryset().count()
+        context['unapproved'] = True
         return context
 
     def get_queryset(self):

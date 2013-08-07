@@ -11,7 +11,18 @@
 {% endblock page_title %}
 
 {% block content %}
-    <h1 class="text-muted">Projects</h1>
+    <div class="page-header">
+        <h1 class="text-muted">
+            {% if unapproved %}Unapproved {% endif %}
+            Projects
+            <small class="pull-right">
+                <a class="btn btn-default btn-mini"
+                    href='{% url "project-create" %}'>
+                    <span class="glyphicon glyphicon-asterisk"></span>
+                </a>
+            </small>
+        </h1>
+    </div>
     {% for project in projects %}
     <div class="row">
         <div class="col-1">
@@ -30,24 +41,34 @@
             </div>
         </div>
         <div class="col-2">
-            <div class="btn-group btn-group-justified">
+            <div class="btn-group pull-right">
                 {%  if not project.approved and user.is_staff %}
-                <a class="btn btn-info btn-mini"
-                   href='{% url "project-approve" project.id %}'>Approve</a>
-                {% endif %}
-                <a class="btn btn-danger btn-mini"
-                    href='{% url "project-delete" project.id %}'>Delete</a>
                 <a class="btn btn-success btn-mini"
-                    href='{% url "project-update" project.id %}'>Edit</a>
+                   href='{% url "project-approve" project.id %}'>
+                        <span class="glyphicon glyphicon-thumbs-up"></span>
+                </a>
+                {% endif %}
+                <a class="btn btn-default btn-mini"
+                    href='{% url "project-delete" project.id %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-mini"
+                    href='{% url "project-update" project.id %}'>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                </a>
             </div>
         </div>
     </div>
     {%  for version in project.versions %}
     <div class="row">
         <div class="col-2">&nbsp;</div>
-        <div class="col-10">Version:
+        <div class="col-10">Version: {{ version.name }}
             <a href="{% url "version-detail" version.id %}">
-                {{ version.name }}</a>
+                <span class="glyphicon glyphicon-list"></span>
+            </a>
+            <a href="{% url "version-thumbs" version.id %}">
+                <span class="glyphicon glyphicon-th"></span>
+            </a>
         </div>
     </div>
     {%  endfor %} {# version loop #}
