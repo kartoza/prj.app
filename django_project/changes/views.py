@@ -85,7 +85,7 @@ class ProjectCreateView(ProjectCreateUpdateMixin, CreateView):
     template_name = 'project/create.html'
 
     def get_success_url(self):
-        return reverse('project-list')
+        return reverse('pending-project-list')
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -118,11 +118,11 @@ class PendingProjectListView(
     paginate_by = 10
 
     def get_queryset(self):
-        entries_qs = Entry.unapproved_objects.all()
+        projects_qs = Project.unapproved_objects.all()
         if self.request.user.is_staff:
-            return entries_qs
+            return projects_qs
         else:
-            return entries_qs.filter(creator=self.request.user)
+            return projects_qs.filter(creator=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super(PendingProjectListView, self).get_context_data(**kwargs)
@@ -209,7 +209,7 @@ class CategoryCreateView(CategoryCreateUpdateMixin, CreateView):
     template_name = 'category/create.html'
 
     def get_success_url(self):
-        return reverse('category-list')
+        return reverse('pending-category-list')
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -236,21 +236,21 @@ class CategoryUpdateView(CategoryCreateUpdateMixin, UpdateView):
 
 class PendingCategoryListView(CategoryMixin, PaginationMixin, ListView):
     """List all unapproved categories"""
-    context_object_name = 'entries'
+    context_object_name = 'categories'
     template_name = 'category/list.html'
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super(PendingCategoryListView, self).get_context_data(**kwargs)
-        context['num_entries'] = self.get_queryset().count()
+        context['num_categories'] = self.get_queryset().count()
         return context
 
     def get_queryset(self):
-        entries_qs = Category.unapproved_objects.all()
+        categories_qs = Category.unapproved_objects.all()
         if self.request.user.is_staff:
-            return entries_qs
+            return categories_qs
         else:
-            return entries_qs.filter(creator=self.request.user)
+            return categories_qs.filter(creator=self.request.user)
 
 
 class ApproveCategoryView(CategoryMixin, StaffuserRequiredMixin, RedirectView):
@@ -329,7 +329,7 @@ class VersionCreateView(VersionCreateUpdateMixin, CreateView):
     template_name = 'version/create.html'
 
     def get_success_url(self):
-        return reverse('version-list')
+        return reverse('pending-version-list')
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -448,7 +448,7 @@ class EntryCreateView(EntryCreateUpdateMixin, CreateView):
     template_name = 'entry/create.html'
 
     def get_success_url(self):
-        return reverse('entry-list')
+        return reverse('pending-entry-list')
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
