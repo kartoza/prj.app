@@ -23,6 +23,14 @@
             </small>
         </h1>
     </div>
+    {%  ifequal num_projects 0 %}
+        {% if unapproved %}
+            <h3>All projects are approved.</h3>
+        {% else %}
+            <h3>No projects are defined (use the 'add' menu or the * icon
+                above to add one).</h3>
+        {% endif %}
+    {%  endifequal %}
     {% for project in projects %}
     <div class="row">
         <div class="col-1">

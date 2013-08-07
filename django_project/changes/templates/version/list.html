@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block page_title %}
-    <h1>Entries (all)</h1>
+    <h1>Versions (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
@@ -23,6 +23,14 @@
             </small>
         </h1>
     </div>
+    {%  ifequal num_versions 0 %}
+        {% if unapproved %}
+            <h3>All versions are approved.</h3>
+        {% else %}
+            <h3>No versions are defined (use the 'add' menu or the * icon
+                above to add one).</h3>
+        {% endif %}
+    {%  endifequal %}
     {% for version in versions %}
     <div class="row">
         <div class="col-1">
