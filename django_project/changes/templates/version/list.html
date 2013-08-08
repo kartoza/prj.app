@@ -49,7 +49,7 @@
             </div>
         </div>
         <div class="col-2">
-            <div class="btn-group btn-group-justified">
+            <div class="btn-group pull-right">
                 {%  if not version.approved and user.is_staff %}
                 <a class="btn btn-success btn-mini"
                    href='{% url "version-approve" version.id %}'>

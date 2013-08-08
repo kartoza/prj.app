@@ -37,29 +37,25 @@
         <div class="col-10">
             <div class="media-body">
                 <h3 class="media-heading">
-                    Feature: <b>{{ entry.title}}</b>
+                    Feature: <b>{{ entry.title }}</b>
                 </h3>
             </div>
         </div>
         <div class="col-2">
             <div class="btn-group pull-right">
-                {%  if not entry.approved and user.is_staff %}
-                <a class="btn btn-success btn-mini"
-                   href='{% url "entry-approve" entry.id %}'>
+                {% if not entry.approved and user.is_staff %}
+                    <a class="btn btn-success btn-mini"
+                       href='{% url "entry-approve" entry.id %}'>
                         <span class="glyphicon glyphicon-thumbs-up"></span>
-                </a>
+                    </a>
                 {% endif %}
                 <a class="btn btn-default btn-mini"
-                    href='{% url "entry-delete" entry.id %}'>
-                        <span class="glyphicon glyphicon-minus"></span>
+                   href='{% url "entry-delete" entry.id %}'>
+                    <span class="glyphicon glyphicon-minus"></span>
                 </a>
                 <a class="btn btn-default btn-mini"
-                    href='{% url "entry-update" entry.id %}'>
-                        <span class="glyphicon glyphicon-pencil"></span>
-                </a>
-                <a class="btn btn-default btn-mini"
-                    href='{% url "entry-detail" entry.id %}'>
-                        <span class="glyphicon glyphicon-eye-open"></span>
+                   href='{% url "entry-update" entry.id %}'>
+                    <span class="glyphicon glyphicon-pencil"></span>
                 </a>
             </div>
         </div>
@@ -70,12 +66,12 @@
         </div>
         <div class="col-4">
             {% if entry.image_file %}
-            <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
-              <img class="img-responsive img-rounded pull-right"
-                    src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
-                    alt="" />{# see core/settings/contrib.py for large-entry #}
-            </a>
-            {%  endif %}
+                <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+                    <img class="img-responsive img-rounded pull-right"
+                         src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
+                         alt=""/>{# see core/settings/contrib.py for large-entry #}
+                </a>
+            {% endif %}
         </div>
     </div>
     <hr />
