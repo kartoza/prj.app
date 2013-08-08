@@ -7,7 +7,7 @@
 # pip install fabric fabtools
 
 import os
-from fabric.api import task, env, fastprint
+from fabric.api import task, env, fastprint, cd, run
 from fabtools.require import postfix
 from fabtools.deb import update_index
 # Don't remove even though its unused
@@ -17,12 +17,12 @@ from fabtools.vagrant import vagrant
 # noinspection PyUnresolvedReferences
 from fabgis.dropbox import setup_dropbox, setup_dropbox_daemon
 from fabgis.django import setup_apache
-from fabgis.utilities import update_git_checkout
+from fabgis.utilities import update_git_checkout, setup_venv
 from fabgis.common import setup_env, show_environment
 
 @task
 def deploy():
-    """Initialise or update the git clone.
+    """Initialise or update the git clone - you can safely rerun this.
 
     e.g. to update the server
 
@@ -45,4 +45,10 @@ def deploy():
     update_index()
     postfix.server(site_name)
     setup_apache(site_name, code_path=code_path)
+    setup_venv(code_path)
+    with cd(os.path.join(code_path, 'django_project')):
+        run('venv/bin/python manage.py syncdb')
+        run('venv/bin/python manage.py migrate')
+        run('venv/bin/python manage.py collectstatic')
+
 
