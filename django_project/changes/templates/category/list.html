@@ -49,15 +49,25 @@
             </div>
         </div>
         <div class="col-2">
-            <div class="btn-group btn-group-justified">
+            <div class="btn-group pull-right">
                 {%  if not category.approved and user.is_staff %}
-                <a class="btn btn-info btn-mini"
-                   href='{% url "category-approve" category.id %}'>Approve</a>
-                {% endif %}
-                <a class="btn btn-danger btn-mini"
-                    href='{% url "category-delete" category.id %}'>Delete</a>
                 <a class="btn btn-success btn-mini"
-                    href='{% url "category-update" category.id %}'>Edit</a>
+                   href='{% url "category-approve" category.id %}'>
+                        <span class="glyphicon glyphicon-thumbs-up"></span>
+                </a>
+                {% endif %}
+                <a class="btn btn-default btn-mini"
+                    href='{% url "category-delete" category.id %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-mini"
+                    href='{% url "category-update" category.id %}'>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                <a class="btn btn-default btn-mini"
+                    href='{% url "category-detail" category.id %}'>
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                </a>
             </div>
         </div>
     </div>

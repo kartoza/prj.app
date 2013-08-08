@@ -50,8 +50,9 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
         return context
 
     def get_queryset(self):
-        entries_qs = Entry.objects.all()
-        return entries_qs
+        """Only approved objects are shown."""
+        qs = Entry.objects.all()
+        return qs
 
 
 class EntryDetailView(EntryMixin, DetailView):
@@ -63,8 +64,9 @@ class EntryDetailView(EntryMixin, DetailView):
         return context
 
     def get_queryset(self):
-        entries_qs = Entry.objects.all()
-        return entries_qs
+        """Anyone can see any entry."""
+        qs = Entry.all_objects.all()
+        return qs
 
     def get_object(self, queryset=None):
         obj = super(EntryDetailView, self).get_object(queryset)
@@ -110,11 +112,14 @@ class EntryUpdateView(EntryCreateUpdateMixin, UpdateView):
         return kwargs
 
     def get_queryset(self):
-        entries_qs = Entry.objects
-        return entries_qs
+        qs = Entry.all_objects.all()
+        if self.request.user.is_staff:
+            return qs
+        else:
+            return qs.filter(creator=self.request.user)
 
     def get_success_url(self):
-        return reverse('entry-list')
+        return reverse('pending-entry-list')
 
 
 class PendingEntryListView(EntryMixin, PaginationMixin, ListView):
@@ -130,11 +135,11 @@ class PendingEntryListView(EntryMixin, PaginationMixin, ListView):
         return context
 
     def get_queryset(self):
-        entries_qs = Entry.unapproved_objects.all()
+        qs = Entry.unapproved_objects.all()
         if self.request.user.is_staff:
-            return entries_qs
+            return qs
         else:
-            return entries_qs.filter(creator=self.request.user)
+            return qs.filter(creator=self.request.user)
 
 
 class ApproveEntryView(EntryMixin, StaffuserRequiredMixin, RedirectView):
