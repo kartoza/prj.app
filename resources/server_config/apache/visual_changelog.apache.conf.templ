@@ -40,8 +40,8 @@
   WSGIDaemonProcess [SITENAME] user=[SITEUSER] group=[SITEUSER] processes=2 threads=10 python-path=[CODEPATH]/venv/lib/python2.7/site-packages:[CODEPATH]/django_project
   WSGIProcessGroup [SITENAME]
 
-  Alias /media/ "[CODEPATH]/django_project/core/media/"
-  <Directory [CODEPATH]/django_project/core/media>
+  Alias /media/ "[CODEPATH]/django_project/media/"
+  <Directory [CODEPATH]/django_project/media>
     Order deny,allow
     Allow from all
   </Directory>

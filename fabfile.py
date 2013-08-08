@@ -7,7 +7,7 @@
 # pip install fabric fabtools
 
 import os
-from fabric.api import task, env, fastprint, cd, run
+from fabric.api import task, env, fastprint, cd, run, settings
 from fabtools import require
 from fabtools.deb import update_index
 # Don't remove even though its unused
@@ -52,7 +52,8 @@ def deploy():
     with cd(os.path.join(code_path, 'django_project')):
         run('../venv/bin/python manage.py syncdb')
         run('../venv/bin/python manage.py migrate')
-        run('../venv/bin/python manage.py collectstatic')
+        with settings(warn_only=True):
+            run('../venv/bin/python manage.py collectstatic --noinput')
     # if we are testing under vagrant, deploy our local media and db
     if 'vagrant' in env.fg.home:
         with cd(code_path):
