@@ -46,6 +46,8 @@ def deploy():
     require.postfix.server(site_name)
     setup_apache(site_name, code_path=code_path)
     require.deb.package('libpq-dev')
+    require.deb.package('libgeos-c1')
+    require.deb.package('vim')
     setup_venv(code_path, requirements_file='REQUIREMENTS.txt')
     with cd(os.path.join(code_path, 'django_project')):
         run('../venv/bin/python manage.py syncdb')
