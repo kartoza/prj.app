@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load markup %}
+{% load thumbnail %}
 
 {% block title %}Entries - {{ block.super }}{% endblock %}
 
@@ -11,57 +12,57 @@
 {% endblock page_title %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-10">
-            <div class="media-body">
-                <h3 class="media-heading">
+      <div class="row">
+          <div class="col-6">
+              <h4 class="muted">Project:
+                  <b>{{ entry.version.project }}</b></h4>
+          </div>
+          <div class="col-6">
+              <h4 class="muted">Version:
+                  <b>{{ entry.version.name }}</b></h4>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-10">
+              <div class="media-body">
+                  <h3 class="media-heading">
                     Feature: <b>{{ entry.title}}</b>
-                </h3>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="btn-group pull-right">
-                {%  if not entry.approved and user.is_staff %}
-                <a class="btn btn-success btn-mini"
-                   href='{% url "entry-approve" entry.id %}'>
-                        <span class="glyphicon glyphicon-thumbs-up"></span>
-                </a>
-                {% endif %}
-                <a class="btn btn-default btn-mini"
-                    href='{% url "entry-delete" entry.id %}'>
-                        <span class="glyphicon glyphicon-minus"></span>
-                </a>
-                <a class="btn btn-default btn-mini"
-                    href='{% url "entry-update" entry.id %}'>
-                        <span class="glyphicon glyphicon-pencil"></span>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <div class="row">
-                <div class="col-6">
-                   <h4 class="muted">Project:
-                     <b>{{ entry.version.project }}</b></h4>
-               </div>
-               <div class="col-6">
-                   <h4 class="muted">Version:
-                     <b>{{ entry.version.name  }}</b></h4>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                {{ entry.description|markdown:"safe" }}
-                </div>
-            </div>
-        </div>
-        <div class="col-12 align-center">
-            {% if entry.image_file %}
-              <img class="img-responsive img-rounded pull-right"
-                src="{{ MEDIA_URL }}{{ entry.image_file }}"/>
-            {% endif %}
-        </div>
-    </div>
+                  </h3>
+              </div>
+          </div>
+          <div class="col-2">
+              <div class="btn-group pull-right">
+                  {%  if not entry.approved and user.is_staff %}
+                  <a class="btn btn-success btn-mini"
+                     href='{% url "entry-approve" entry.id %}'>
+                          <span class="glyphicon glyphicon-thumbs-up"></span>
+                  </a>
+                  {% endif %}
+                  <a class="btn btn-default btn-mini"
+                      href='{% url "entry-delete" entry.id %}'>
+                          <span class="glyphicon glyphicon-minus"></span>
+                  </a>
+                  <a class="btn btn-default btn-mini"
+                      href='{% url "entry-update" entry.id %}'>
+                          <span class="glyphicon glyphicon-pencil"></span>
+                  </a>
+              </div>
+          </div>
+      </div>
+      </div>
+      <div class="row">
+          <div class="col-8">
+              {{ entry.description|markdown:"safe" }}
+          </div>
+          <div class="col-4">
+              {% if entry.image_file %}
+              <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+                <img class="img-responsive img-rounded pull-right"
+                      src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
+                      alt="" />{# see core/settings/contrib.py for large-entry #}
+              </a>
+              {%  endif %}
+          </div>
+      </div>
 
 {% endblock %}

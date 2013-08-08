@@ -72,7 +72,8 @@
             {% if entry.image_file %}
             <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
               <img class="img-responsive img-rounded pull-right"
-                    src="{{ entry.image_file|thumbnail_url:'entry' }}" alt="" />
+                    src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
+                    alt="" />{# see core/settings/contrib.py for large-entry #}
             </a>
             {%  endif %}
         </div>
