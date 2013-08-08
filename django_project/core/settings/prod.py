@@ -4,6 +4,8 @@ from .project import *
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 # Localhost:9000 for vagrant
 # Changes for live site
+# ['*'] for testing but not for production
+
 ALLOWED_HOSTS = ['localhost:9000', 'changes.linfiniti.com']
 
 if 'raven.contrib.django' in INSTALLED_APPS:
