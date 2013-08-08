@@ -2,7 +2,7 @@ from .project import *
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost', 'changes.linfiniti.com']
+ALLOWED_HOSTS = ['localhost:9000', 'changes.linfiniti.com']
 
 if 'raven.contrib.django' in INSTALLED_APPS:
     SENTRY_DSN = ('#REPLACE ME#')

@@ -68,4 +68,23 @@ def deploy():
     fastprint('*******************************************')
 
 
+@task
+def freshen():
+    """Freshen the server with latest git copy and touch wsgi."""
+    setup_env()
+    show_environment()
+    base_path = os.path.abspath(os.path.join(
+        env.fg.home, 'dev', 'python'))
+    git_url = 'http://github.com/timlinux/visual_changelog.git'
+    repo_alias = 'visual_changelog'
+    fastprint('Checking out %s to %s as %s' % (git_url, base_path, repo_alias))
+    update_git_checkout(base_path, git_url, repo_alias)
+    code_path = os.path.abspath(os.path.join(base_path, repo_alias))
+    with cd(os.path.join(code_path, 'django_project')):
+        run('touch core/wsgi.py')
 
+    fastprint('*******************************************\n')
+    fastprint(' Don\'t forget set ALLOWED_HOSTS in \n')
+    fastprint(' django_project/core/settings/prod.py\n')
+    fastprint(' to the domain name for the site.\n')
+    fastprint('*******************************************\n')
