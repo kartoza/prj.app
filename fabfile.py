@@ -16,7 +16,7 @@ from fabtools.vagrant import vagrant
 
 # noinspection PyUnresolvedReferences
 from fabgis.dropbox import setup_dropbox, setup_dropbox_daemon
-from fabgis.django import setup_apache
+from fabgis.django import setup_apache, build_pil
 from fabgis.utilities import update_git_checkout, setup_venv
 from fabgis.common import setup_env, show_environment
 
@@ -49,6 +49,7 @@ def deploy():
     require.deb.package('libgeos-c1')
     require.deb.package('vim')
     setup_venv(code_path, requirements_file='REQUIREMENTS.txt')
+    build_pil(code_path)
     with cd(os.path.join(code_path, 'django_project')):
         run('../venv/bin/python manage.py syncdb')
         run('../venv/bin/python manage.py migrate')
