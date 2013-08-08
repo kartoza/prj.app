@@ -8,7 +8,7 @@
 
 import os
 from fabric.api import task, env, fastprint, cd, run
-from fabtools.require import postfix, deb
+from fabtools import require
 from fabtools.deb import update_index
 # Don't remove even though its unused
 # noinspection PyUnresolvedReferences
@@ -43,13 +43,13 @@ def deploy():
     update_git_checkout(base_path, git_url, repo_alias)
     code_path = os.path.abspath(os.path.join(base_path, repo_alias))
     update_index()
-    postfix.server(site_name)
+    require.postfix.server(site_name)
     setup_apache(site_name, code_path=code_path)
+    require.deb.package('libpq-dev')
     setup_venv(code_path, requirements_file='REQUIREMENTS.txt')
-    deb.package('libpq-dev')
     with cd(os.path.join(code_path, 'django_project')):
-        run('venv/bin/python manage.py syncdb')
-        run('venv/bin/python manage.py migrate')
-        run('venv/bin/python manage.py collectstatic')
+        run('../venv/bin/python manage.py syncdb')
+        run('../venv/bin/python manage.py migrate')
+        run('../venv/bin/python manage.py collectstatic')
 
 

@@ -12,3 +12,4 @@ PIL
 django-userena
 django-widget-tweaks
 # raven==3.3.7
+django-audited-models==0.4.alpha
