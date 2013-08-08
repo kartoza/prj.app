@@ -61,6 +61,11 @@ def deploy():
             run('cp /vagrant/visual_changelog.db .')
             run('cp -r /vagrant/django_project/media/* django_project/media/')
             run('touch django_project/core/wsgi.py')
+    fastprint('*******************************************')
+    fastprint(' Don\'t forget set ALLOWED_HOSTS in ')
+    fastprint(' django_project/core/settings/prod.py')
+    fastprint(' to the domain name for the site.')
+    fastprint('*******************************************')
 
 
 
