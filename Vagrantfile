@@ -12,10 +12,7 @@ Vagrant.configure("2") do |config|
 	config.vm.box = "Ubuntu precise 64"
 	config.vm.hostname = "visual-changelog"
 	config.vm.network :public_network
-	# For tilestream
-	config.vm.network :forwarded_port, guest: 8888, host: 8888
-	config.vm.network :forwarded_port, guest: 20008, host: 20008
-	config.vm.network :forwarded_port, guest: 20009, host: 20009
+	config.vm.network :forwarded_port, guest: 80, host: 9000
 	config.vm.box_url = "http://files.vagrantup.com/precise64.box"
 
 end

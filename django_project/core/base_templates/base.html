@@ -1,4 +1,5 @@
 {% load compressed %}
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -86,10 +87,13 @@
             {% block content %}{% endblock content %}
         </div>
         <div class="navbar navbar-fixed-bottom">
-            <p><center>This site is created using open source code
-              available on
+            <p><center>This application was created by
+            <a href="http://linfiniti.com">
+              Linfiniti Consulting CC.
+              <img src="{% static "img/linfiniti.png" %}" alt="Linfiniti"/>
+            </a>
             <a href="https://github.com/timlinux/visual_changelog">
-            GitHub!</a>
+            Available on GitHub!</a>
             </center></p>
         </div>
     </div>
