@@ -53,5 +53,12 @@ def deploy():
         run('../venv/bin/python manage.py syncdb')
         run('../venv/bin/python manage.py migrate')
         run('../venv/bin/python manage.py collectstatic')
+    # if we are testing under vagrant, deploy our local media and db
+    if 'vagrant' in env.fg.home:
+        with cd(code_path):
+            run('cp /vagrant/visual_changelog.db .')
+            run('cp -r /vagrant/django_project/media/* django_project/media/')
+            run('touch django_project/core/wsgi.py')
+
 
 

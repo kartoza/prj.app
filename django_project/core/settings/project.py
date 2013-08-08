@@ -6,11 +6,12 @@ DATABASES = {
         # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'ENGINE': 'django.db.backends.sqlite3',
         # Or path to database file if using sqlite3.
-        'NAME': os.path.join(
+        'NAME': os.path.abspath(os.path.join(
             os.path.dirname(__file__),
             os.path.pardir,
             os.path.pardir,
-            'visual_changelog.db'),
+            os.path.pardir,
+            'visual_changelog.db')),
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
