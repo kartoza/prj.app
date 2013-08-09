@@ -6,7 +6,7 @@ from .project import *
 # Changes for live site
 # ['*'] for testing but not for production
 
-ALLOWED_HOSTS = ['localhost:9000', 'changes.linfiniti.com']
+ALLOWED_HOSTS = ['localhost:9000', 'changelog.linfiniti.com']
 
 if 'raven.contrib.django' in INSTALLED_APPS:
     SENTRY_DSN = ('#REPLACE ME#')
