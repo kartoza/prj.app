@@ -8,6 +8,7 @@
 
 import os
 from fabric.api import task, env, fastprint, cd, run, settings
+from fabric.colors import red
 from fabtools import require
 from fabtools.deb import update_index
 # Don't remove even though its unused
@@ -62,7 +63,7 @@ def deploy():
             run('cp -r /vagrant/django_project/media/* django_project/media/')
             run('touch django_project/core/wsgi.py')
     fastprint('*******************************************')
-    fastprint(' Don\'t forget set ALLOWED_HOSTS in ')
+    fastprint(red(' Don\'t forget set ALLOWED_HOSTS in '))
     fastprint(' django_project/core/settings/prod.py')
     fastprint(' to the domain name for the site.')
     fastprint('*******************************************')
@@ -84,7 +85,11 @@ def freshen():
         run('touch core/wsgi.py')
 
     fastprint('*******************************************\n')
-    fastprint(' Don\'t forget set ALLOWED_HOSTS in \n')
+    fastprint(red(' Don\'t forget set ALLOWED_HOSTS in \n'))
     fastprint(' django_project/core/settings/prod.py\n')
     fastprint(' to the domain name for the site.\n')
     fastprint('*******************************************\n')
+
+@task
+def sync_to_server():
+    """Sync media and sqlite db to server"""
