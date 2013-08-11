@@ -7,11 +7,11 @@
 
 <VirtualHost *:80>
 
-  ServerName [SERVERNAME]
-  ServerAlias www.[SERVERNAME]
+  ServerName %(server_name)s
+  ServerAlias www.%(server_name)s
   ServerAdmin webmaster@localhost
 
-  ErrorLog /var/log/apache2/[SITENAME].error.log
+  ErrorLog /var/log/apache2/%(site_name)s.error.log
 
   # We need to prevent the user using anything other than the canonical
   # domain name as GFI queries from openlayers via ajax won't
@@ -21,33 +21,33 @@
   # L - last - dont process any other rules after this
   # R - external redirect (will cause url to change in users browser)
   RewriteEngine  on
-  RewriteCond %{HTTP_HOST} ^www\.[ESCAPEDSERVERNAME]$ [NC]
-  RewriteRule ^(.*)$ http://[SERVERNAME] [R=301,L]
+  RewriteCond %{HTTP_HOST} ^www\.%(escapedserver_name)s$ [NC]
+  RewriteRule ^(.*)$ http://%(server_name)s [R=301,L]
 
   # Possible values include: debug, info, notice, warn, error, crit,
   # alert, emerg.
   LogLevel warn
 
-  CustomLog /var/log/apache2/[SITENAME].access.log combined
+  CustomLog /var/log/apache2/%(site_name)s.access.log combined
 
-  WSGIScriptAlias / [CODEPATH]/django_project/core/wsgi.py
+  WSGIScriptAlias / %(code_path)s/django_project/core/wsgi.py
 
-  <Directory "[CODEPATH]/resources/server_config/apache">
+  <Directory "%(code_path)s/resources/server_config/apache">
     Order deny,allow
     Allow from all
   </Directory>
 
-  WSGIDaemonProcess [SITENAME] user=[SITEUSER] group=[SITEUSER] processes=2 threads=10 python-path=[CODEPATH]/venv/lib/python2.7/site-packages:[CODEPATH]/django_project
-  WSGIProcessGroup [SITENAME]
+  WSGIDaemonProcess %(site_name)s user=%(site_user)s group=%(site_user)s processes=2 threads=10 python-path=%(code_path)s/venv/lib/python2.7/site-packages:%(code_path)s/django_project
+  WSGIProcessGroup %(site_name)s
 
-  Alias /media/ "[CODEPATH]/django_project/media/"
-  <Directory [CODEPATH]/django_project/media>
+  Alias /media/ "%(code_path)s/django_project/media/"
+  <Directory %(code_path)s/django_project/media>
     Order deny,allow
     Allow from all
   </Directory>
 
-  Alias /static/ "[CODEPATH]/django_project/static/"
-  <Directory [CODEPATH]/django_project/static>
+  Alias /static/ "%(code_path)s/django_project/static/"
+  <Directory %(code_path)s/django_project/static>
     Order deny,allow
     Allow from all
   </Directory>

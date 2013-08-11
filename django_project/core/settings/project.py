@@ -11,6 +11,8 @@ DATABASES = {
             os.path.pardir,
             os.path.pardir,
             os.path.pardir,
+            'resources',
+            'sqlite',
             'visual_changelog.db')),
         # The following settings are not used with sqlite3:
         'USER': '',

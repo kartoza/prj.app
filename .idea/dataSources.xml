@@ -3,7 +3,7 @@
   <component name="DataSourceManagerImpl" format="xml" hash="0">
     <data-source source="LOCAL" name="Django default" product="" version="" jdbc-version="" driver-name="" driver-version="" uuid="2f620448-bf8c-45bf-8c6e-600b3b802ce1">
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/django_project/database.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/django_project/core/settings/../../../visual_changelog.db</jdbc-url>
       <libraries>
         <library>
           <url>file://$USER_HOME$/.PyCharm20/config/jdbc-drivers/xerial-sqlite-license.txt</url>
