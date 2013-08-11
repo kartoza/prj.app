@@ -71,12 +71,21 @@ def deploy():
     require.deb.package('libgeos-c1')
     require.deb.package('vim')
     setup_venv(code_path, requirements_file='REQUIREMENTS.txt')
+    #yuglify needed by django-compress needs to have node installed which
+    # is provided by virtual-node in the REQUIREMENTS file above,
+    # but we still need to install yuglify manually since we cant add it
+    # using REQUIREMENTS.
+    # See also https://github.com/elbaschid/virtual-node
+    # for more info on how virtualnode works
+    with cd(code_path):
+        run('venv/bin/npm -g install yuglify')
+
     build_pil(code_path)
     with cd(os.path.join(code_path, 'django_project')):
         run('../venv/bin/python manage.py syncdb')
         run('../venv/bin/python manage.py migrate')
-        with settings(warn_only=True):
-            run('../venv/bin/python manage.py collectstatic --noinput')
+
+    collectstatic()
     # if we are testing under vagrant, deploy our local media and db
     if 'vagrant' in env.fg.home:
         with cd(code_path):
@@ -98,6 +107,7 @@ def freshen():
     update_git_checkout(base_path, git_url, repo_alias)
     with cd(os.path.join(code_path, 'django_project')):
         run('touch core/wsgi.py')
+    collectstatic()
 
     fastprint('*******************************************\n')
     fastprint(red(' Don\'t forget set ALLOWED_HOSTS in \n'))
@@ -132,7 +142,7 @@ def sync_media_to_server():
 
 @task
 def sync_project_to_server():
-    """Synchronize project with webserver.
+    """Synchronize project with webserver ignoring venv and sqlite db..
     This is a handy way to get your secret key to the server too...
 
     """
@@ -140,11 +150,12 @@ def sync_project_to_server():
     rsync_project(
         base_path,
         delete=False,
-        exclude=['*.pyc', '.git', '.DS_Store', 'visual_changelog.db'])
+        exclude=['*.pyc', '.git', '.DS_Store', 'visual_changelog.db', 'venv'])
     with cd(os.path.join(code_path, 'django_project')):
         run('touch core/wsgi.py')
     set_media_permissions(code_path)
     set_db_permissions()
+    collectstatic()
     fastprint(blue('Your server is now in synchronised to your local project'))
 
 @task
@@ -160,6 +171,7 @@ def server_to_debug_mode():
     with cd(os.path.join(code_path, 'django_project')):
         run('touch core/wsgi.py')
     set_db_permissions()
+    collectstatic()
     fastprint(red('Warning: your server is now in DEBUG mode!'))
 
 @task
@@ -175,6 +187,7 @@ def server_to_production_mode():
     with cd(os.path.join(code_path, 'django_project')):
         run('touch core/wsgi.py')
     set_db_permissions()
+    collectstatic()
     fastprint(blue('Note: your server is now in PRODUCTION mode!'))
 
 
@@ -197,3 +210,28 @@ def get_live_db():
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
     local('scp %s:%s/resources/sqlite/visual_changelog.db resources/sqlite/'
           % (env['host_string'], code_path))
+
+@task
+def collectstatic():
+    """Collect static using proper path for django-compressor / yuglify.
+
+    .. note:: We are using python-node to run node in a virtual environment.
+        Node is needed for yuglify, which is in turn needed by
+        django-compressor which combines all js resources into a single file
+        and all css into a single file. These are 'compiled' but yuglify.
+        Yuglify does not appear in the path properly thus we explicitly
+        ensure the path points to the node_modules dir before running
+        collectstatic.
+
+        All the above will prevent run time errors like:
+
+        [Django] ERROR: Failed to submit message: u"ValueError: The file
+        'css/contrib.css' could not be found with <pipeline.storage.
+        PipelineCachedStorage object at 0x7f0df18b3ad0>."
+
+    """
+    command = ('PATH=$PATH:../node_modules/yuglify/bin/:../venv/bin/ '
+              'python manage.py collectstatic --noinput')
+    base_path, code_path, git_url, repo_alias, site_name = get_vars()
+    with cd(os.path.join(code_path, 'django_project')):
+        run(command)
