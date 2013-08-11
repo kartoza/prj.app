@@ -11,5 +11,13 @@ PIL
 #bootstrap forms for userena
 django-userena
 django-widget-tweaks
-# raven==3.3.7
+# Raven pinned to 3.3.7 - see
+# https://github.com/getsentry/raven-python/issues/337
+raven==3.3.7
 django-audited-models==0.4.alpha
+django-sentry==1.13.5
+# Similar to nodeenv but installs node venv into your python venv
+# Note this does not install nicely under pycharm - use pip from cli rather
+# Note you need to have nodejs compilation requirements installed
+# Note this is needed for the django compressor app
+virtual-node

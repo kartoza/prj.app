@@ -3,8 +3,9 @@
 from .utils import ABS_PATH
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Tim Sutton', 'tim@linfiniti.com'),
 )
+SERVER_EMAIL = 'tim@linfiniti.com'
 
 MANAGERS = ADMINS
 

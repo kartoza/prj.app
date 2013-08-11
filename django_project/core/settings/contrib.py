@@ -11,6 +11,8 @@ INSTALLED_APPS += (
     'guardian',  # for userena
     'easy_thumbnails',  # also needed for userena
     'userena',
+    'raven.contrib.django',
+    'reversion'
 )
 
 # use underscore template function

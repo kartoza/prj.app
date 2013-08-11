@@ -9,9 +9,11 @@ from .project import *
 ALLOWED_HOSTS = ['localhost:9000', 'changelog.linfiniti.com']
 
 if 'raven.contrib.django' in INSTALLED_APPS:
-    SENTRY_DSN = ('#REPLACE ME#')
+    SENTRY_DSN = ('')
 
     MIDDLEWARE_CLASSES = (
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
         'raven.contrib.django.middleware.SentryResponseErrorIdMiddleware',
         'raven.contrib.django.middleware.SentryLogMiddleware',
         #for django-audited-models
@@ -33,6 +35,9 @@ if 'raven.contrib.django' in INSTALLED_APPS:
             # send email to mail_admins, if DEBUG=False
             'mail_admins': {
                 'level': 'ERROR',
+                # see https://docs.djangoproject.com/en/dev/releases/1
+                # .4/#request-exceptions-are-now-always-logged
+                #'filters': ['require_debug_false'],
                 'class': 'django.utils.log.AdminEmailHandler'
             },
             # sentry logger
