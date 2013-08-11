@@ -28,12 +28,14 @@
              <b>{{ version.name  }}</b></h2>
         </div>
         <div class="col-2">
+            {% if user.is_authenticated %}
             <div class="btn-group btn-group-justified">
                 <a class="btn btn-danger btn-mini"
                     href='{% url "version-delete" version.id %}'>Delete</a>
                 <a class="btn btn-success btn-mini"
                     href='{% url "version-update" version.id %}'>Edit</a>
             </div>
+            {%  endif %}
         </div>
     </div>
     <div class="row">
@@ -64,6 +66,7 @@
                         <span class="glyphicon glyphicon-thumbs-up"></span>
                     </a>
                 {% endif %}
+                {% if user.is_authenticated %}
                 <a class="btn btn-default btn-mini"
                    href='{% url "entry-delete" entry.id %}'>
                     <span class="glyphicon glyphicon-minus"></span>
@@ -72,6 +75,7 @@
                    href='{% url "entry-update" entry.id %}'>
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
+                {% endif %}
             </div>
         </div>
     </div>
