@@ -6,6 +6,8 @@ ADMINS = (
     ('Tim Sutton', 'tim@linfiniti.com'),
 )
 SERVER_EMAIL = 'tim@linfiniti.com'
+EMAIL_HOST = 'localhost'
+DEFAULT_FROM_EMAIL = 'tim@linfiniti.com'
 
 MANAGERS = ADMINS
 
