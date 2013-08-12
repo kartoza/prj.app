@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
+from django.http import Http404, HttpResponse
 from django.views.generic import (
     ListView,
     CreateView,
@@ -15,20 +16,41 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
     TemplateView)
-
+from django.core import serializers
 from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
-from ..models import Project, Category, Version, Entry
-from ..forms import ProjectForm, CategoryForm, VersionForm, EntryForm
+from ..models import Category
+from ..forms import CategoryForm
 
-# Category management
+
+class AJAXListMixin(object):
+
+    def dispatch(self, request, *args, **kwargs):
+        """Handle the request dealing with invalid http requests."""
+        if not request.is_ajax():
+            raise Http404('This is an ajax view, you cannot browse to it.')
+        return super(AJAXListMixin, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        """Get the queryset filtered by project."""
+        qs = super(AJAXListMixin, self).get_queryset()
+        qs.filter(project=self.request.GET.get('project'))
+
+    def get(self, request, *args, **kwargs):
+        """Handle get request."""
+        return HttpResponse(
+            serializers.serialize('json', self.get_queryset()))
 
 
 class CategoryMixin(object):
     model = Category  # implies -> queryset = Entry.objects.all()
     form_class = CategoryForm
+
+
+class AjaxCategoryListView(CategoryMixin, AJAXListMixin, ListView):
+    pass
 
 
 class CategoryCreateUpdateMixin(CategoryMixin, LoginRequiredMixin):
