@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from django.views.generic import (
     ListView,
     CreateView,
@@ -16,41 +16,55 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
     TemplateView)
-from django.core import serializers
 from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
-from ..models import Category
+from ..models import Category, Version
 from ..forms import CategoryForm
 
 
-class AJAXListMixin(object):
-
-    def dispatch(self, request, *args, **kwargs):
-        """Handle the request dealing with invalid http requests."""
-        if not request.is_ajax():
-            raise Http404('This is an ajax view, you cannot browse to it.')
-        return super(AJAXListMixin, self).dispatch(request, *args, **kwargs)
-
-    def get_queryset(self):
-        """Get the queryset filtered by project."""
-        qs = super(AJAXListMixin, self).get_queryset()
-        qs.filter(project=self.request.GET.get('project'))
-
-    def get(self, request, *args, **kwargs):
-        """Handle get request."""
+class JSONResponseMixin(object):
+    """A mixin that can be used to render a JSON response.    """
+    def render_to_json_response(self, context, **response_kwargs):
+        """
+        Returns a JSON response, transforming 'context' to make the payload.
+        """
         return HttpResponse(
-            serializers.serialize('json', self.get_queryset()))
+            self.convert_context_to_json(context),
+            content_type='application/json',
+            **response_kwargs)
+
+    def convert_context_to_json(self, context):
+        """Convert the context dictionary into a JSON object"""
+        result = '{\n'
+        first_flag = True
+        for category in context['categories']:
+            if not first_flag:
+                result += ',\n'
+            result += '    "%s" : "%s"' % (category.id, category.name)
+            first_flag = False
+        result += '\n}'
+        return result
 
 
 class CategoryMixin(object):
+    """Mixin class to provide standard settings for categories."""
     model = Category  # implies -> queryset = Entry.objects.all()
     form_class = CategoryForm
 
 
-class AjaxCategoryListView(CategoryMixin, AJAXListMixin, ListView):
-    pass
+class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
+    context_object_name = 'categories'
+
+    def render_to_response(self, context, **response_kwargs):
+        return self.render_to_json_response(context, **response_kwargs)
+
+    def get_queryset(self):
+        version_id = self.kwargs['version']
+        version = get_object_or_404(Version, id=version_id)
+        qs = Category.objects.filter(project=version.project)
+        return qs
 
 
 class CategoryCreateUpdateMixin(CategoryMixin, LoginRequiredMixin):
@@ -74,8 +88,8 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
         return context
 
     def get_queryset(self):
-        categories_qs = Category.objects.all()
-        return categories_qs
+        qs = Category.objects.all()
+        return qs
 
 
 class CategoryDetailView(CategoryMixin, DetailView):
@@ -87,8 +101,8 @@ class CategoryDetailView(CategoryMixin, DetailView):
         return context
 
     def get_queryset(self):
-        categories_qs = Category.objects.all()
-        return categories_qs
+        qs = Category.objects.all()
+        return qs
 
     def get_object(self, queryset=None):
         obj = super(CategoryDetailView, self).get_object(queryset)
@@ -134,8 +148,8 @@ class CategoryUpdateView(CategoryCreateUpdateMixin, UpdateView):
         return kwargs
 
     def get_queryset(self):
-        categories_qs = Category.objects
-        return categories_qs
+        qs = Category.objects
+        return qs
 
     def get_success_url(self):
         return reverse('category-list')
@@ -154,11 +168,11 @@ class PendingCategoryListView(CategoryMixin, PaginationMixin, ListView):
         return context
 
     def get_queryset(self):
-        categories_qs = Category.unapproved_objects.all()
+        qs = Category.unapproved_objects.all()
         if self.request.user.is_staff:
-            return categories_qs
+            return qs
         else:
-            return categories_qs.filter(creator=self.request.user)
+            return qs.filter(creator=self.request.user)
 
 
 class ApproveCategoryView(CategoryMixin, StaffuserRequiredMixin, RedirectView):

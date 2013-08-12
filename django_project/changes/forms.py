@@ -97,3 +97,7 @@ class EntryForm(forms.ModelForm):
         self.helper.html5_required = False
         super(EntryForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
+        # Filter the category list when editing so it shows only relevent ones
+        if self.instance.id is not None:
+            self.fields['category'].queryset = Category.objects.filter(
+                project=self.instance.version.project)

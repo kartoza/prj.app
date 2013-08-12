@@ -41,6 +41,7 @@ PIPELINE_JS = {
             'js/csrf-ajax.js',
             'js/underscore-min.js',
             'js/bootstrap.min.js',
+            'js/changelog.js',
         ),
         'output_filename': 'js/contrib.js',
     }

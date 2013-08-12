@@ -15,6 +15,7 @@ from views import (
     CategoryDeleteView,
     CategoryCreateView,
     CategoryListView,
+    JSONCategoryListView,
     CategoryUpdateView,
     PendingCategoryListView,
     ApproveCategoryView,
@@ -66,6 +67,9 @@ urlpatterns = patterns(
         name='project-update'),
 
     # Category management
+    url(regex='^json-category/list/(?P<version>\d+)/$',
+        view=JSONCategoryListView.as_view(),
+        name='json-category-list'),
     url(regex='^pending-category/list/$',
         view=PendingCategoryListView.as_view(),
         name='pending-category-list'),
