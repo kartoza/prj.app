@@ -47,6 +47,11 @@ class Version(AuditedModel):
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),
         blank=True)
 
+    description = models.TextField(
+        null=True,
+        blank=True,
+        help_text='Describe the new version. Markdown is supported.')
+
     project = models.ForeignKey('Project')
 
     objects = ApprovedVersionManager()

@@ -222,7 +222,13 @@ def sync_project_to_server():
     rsync_project(
         base_path,
         delete=False,
-        exclude=['*.pyc', '.git', '.DS_Store', 'visual_changelog.db', 'venv'])
+        exclude=[
+            '*.pyc',
+            '.git',
+            '.DS_Store',
+            'visual_changelog.db',
+            'venv',
+            'django_project/static'])
     with cd(os.path.join(code_path, 'django_project')):
         run('touch core/wsgi.py')
     set_media_permissions(code_path)
@@ -284,12 +290,7 @@ def set_db_permissions():
 @task
 def get_live_db():
     """Get the live db - will overwrite your local copy."""
-    base_path, code_path, git_url, repo_alias, site_name = get_vars()
-    path = '%s/resources/sqlite' % code_path
-    if not exists(path):
-        run('mkdir %s' % path)
-    local('scp %s:%s/resources/sqlite/visual_changelog.db resources/sqlite/'
-          % (env['host_string'], code_path))
+    get_postgres_dump('changelog')
 
 @task
 def get_live_media():
