@@ -22,3 +22,4 @@ django-sentry==1.13.5
 # Note you need to have nodejs compilation requirements installed
 # Note this is needed for the django compressor app
 virtual-node
+requests

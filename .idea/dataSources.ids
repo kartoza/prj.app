@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="dataSourceStorage">
-  <data-source source="LOCAL" name="Django default" product="" version="" jdbc-version="" driver-name="" driver-version="" uuid="2f620448-bf8c-45bf-8c6e-600b3b802ce1">
-    <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-    <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/django_project/database.db</jdbc-url>
+  <data-source source="LOCAL" name="Django default" product="" version="" jdbc-version="" driver-name="" driver-version="" uuid="89f7cc98-5134-4565-929c-21fa1bc4233e">
+    <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+    <jdbc-url>jdbc:postgresql:changelog</jdbc-url>
     <libraries>
       <library>
-        <url>file://$USER_HOME$/.PyCharm20/config/jdbc-drivers/xerial-sqlite-license.txt</url>
+        <url>file://$USER_HOME$/.PyCharm20/config/jdbc-drivers/postgresql-driver-license.txt</url>
       </library>
       <library>
-        <url>jar://$USER_HOME$/.PyCharm20/config/jdbc-drivers/sqlite-jdbc-3.7.2.jar!/</url>
+        <url>jar://$USER_HOME$/.PyCharm20/config/jdbc-drivers/postgresql-9.2-1002.jdbc3.jar!/</url>
       </library>
     </libraries>
   </data-source>

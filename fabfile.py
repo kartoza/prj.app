@@ -24,6 +24,11 @@ from fabgis.dropbox import setup_dropbox, setup_dropbox_daemon
 from fabgis.django import setup_apache, build_pil, set_media_permissions
 from fabgis.utilities import update_git_checkout, setup_venv
 from fabgis.common import setup_env, show_environment
+from fabgis.postgres import (
+    create_user,
+    get_postgres_dump,
+    restore_postgres_dump,
+    create_postgis_2_template)
 
 
 def get_vars():
@@ -68,6 +73,28 @@ def update_venv(code_path):
     with cd(code_path):
         run('venv/bin/npm -g install yuglify')
     build_pil(code_path)
+
+
+@task
+def setup_postgres_user():
+    """Set up the postgresql instance."""
+    create_user('wsgi', '')
+
+@task
+def upload_postgres_dump(dump_path):
+    """Upload the dump found in dump_path and restore it to the server.
+
+    .. note existing data on the server will be destroyed.
+
+    :param dump_path: Local file containing dump to be restored.
+    :type dump_path; str
+    """
+    restore_postgres_dump(
+        'changelog',
+        user='wsgi',
+        password='',
+        ignore_permissions=True,
+        file_name=dump_path)
 
 
 @task
@@ -238,16 +265,21 @@ def server_to_production_mode():
 
 @task
 def set_db_permissions():
-    """Set the sqlite dir so apache can write to it.
-
-    .. note:: The whole dir must be writable.
+    """Set the db so user wsgi has all permissions.
     """
-    base_path, code_path, git_url, repo_alias, site_name = get_vars()
-    path = '%s/resources/sqlite' % code_path
-    wsgi_user = 'wsgi'
-    if not exists(path):
-        run('mkdir %s' % path)
-    sudo('chgrp -R %s %s' % (wsgi_user, path))
+    user = 'wsgi'
+    dbname = 'changelog'
+    grant_sql = 'GRANT ALL ON schema public to %s;' % user
+    # assumption is env.repo_alias is also database name
+    run('psql %s -c "%s"' % (dbname, grant_sql))
+    grant_sql = (
+        'GRANT ALL ON ALL TABLES IN schema public to %s;' % user)
+    # assumption is env.repo_alias is also database name
+    run('psql %s -c "%s"' % (dbname, grant_sql))
+    grant_sql = (
+        'GRANT ALL ON ALL SEQUENCES IN schema public to %s;' % user)
+    run('psql %s -c "%s"' % (dbname, grant_sql))
+
 
 @task
 def get_live_db():
