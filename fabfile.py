@@ -7,7 +7,9 @@
 # pip install fabric fabtools
 
 import os
-from fabric.api import task, env, fastprint, cd, run, settings, sudo, local
+import getpass
+
+from fabric.api import task, env, fastprint, cd, run, sudo, local, prompt
 from fabric.contrib.project import rsync_project
 from fabric.contrib.files import exists, sed
 from fabric.colors import red, blue
@@ -45,6 +47,54 @@ def get_vars():
     code_path = os.path.abspath(os.path.join(base_path, repo_alias))
     return base_path, code_path, git_url, repo_alias, site_name
 
+@task
+def update_venv(code_path):
+    """Update the virtual environment to ensure it has node etc. installed.
+
+    :param code_path: Directory in which project is located.
+    :type code_path: str
+
+    e.g.::
+
+        fab -H localhost update_venv:/home/timlinux/dev/python/visual_changelog
+    """
+    setup_venv(code_path, requirements_file='REQUIREMENTS.txt')
+    #yuglify needed by django-compress needs to have node installed which
+    # is provided by virtual-node in the REQUIREMENTS file above,
+    # but we still need to install yuglify manually since we cant add it
+    # using REQUIREMENTS.
+    # See also https://github.com/elbaschid/virtual-node
+    # for more info on how virtualnode works
+    with cd(code_path):
+        run('venv/bin/npm -g install yuglify')
+    build_pil(code_path)
+
+
+@task
+def update_apache():
+    """Update the apache configuration prompting for github account info.
+
+    .. note:: The config file is taken from the local system.
+
+    """
+    code_path = os.path.dirname(__file__)
+
+    git_url = 'https://api.github.com/repos/timlinux/visual_changelog/issues'
+    git_user = prompt(
+        'Please enter the github user account that issues submitted via the\n'
+        'web ui should be created as. This will be written into the apache\n'
+        'configuration file under /etc/apache2/sites-available so you\n'
+        'should take appropriate security measures.\nUser :\n')
+    git_password = getpass.getpass()
+    domain = 'changelog.linfiniti.com'
+    setup_apache(
+        site_name='visual_changelog',
+        code_path=code_path,
+        domain=domain,
+        github_url=git_url,
+        github_password=git_password,
+        github_user=git_user)
+
 
 @task
 def deploy():
@@ -66,21 +116,11 @@ def deploy():
     update_git_checkout(base_path, git_url, repo_alias)
     update_index()
     require.postfix.server(site_name)
-    setup_apache(site_name, code_path=code_path)
+    update_apache(code_path, site_name)
     require.deb.package('libpq-dev')
     require.deb.package('libgeos-c1')
     require.deb.package('vim')
-    setup_venv(code_path, requirements_file='REQUIREMENTS.txt')
-    #yuglify needed by django-compress needs to have node installed which
-    # is provided by virtual-node in the REQUIREMENTS file above,
-    # but we still need to install yuglify manually since we cant add it
-    # using REQUIREMENTS.
-    # See also https://github.com/elbaschid/virtual-node
-    # for more info on how virtualnode works
-    with cd(code_path):
-        run('venv/bin/npm -g install yuglify')
-
-    build_pil(code_path)
+    update_venv(code_path)
     with cd(os.path.join(code_path, 'django_project')):
         run('../venv/bin/python manage.py syncdb')
         run('../venv/bin/python manage.py migrate')
@@ -101,7 +141,12 @@ def deploy():
 
 @task
 def freshen():
-    """Freshen the server with latest git copy and touch wsgi."""
+    """Freshen the server with latest git copy and touch wsgi.
+
+    .. note:: Preferred normal way of doing this is rather to use the
+        sync_project_to_server task and not to checkout from git.
+
+    """
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
     git_url = 'http://github.com/timlinux/visual_changelog.git'
     update_git_checkout(base_path, git_url, repo_alias)
@@ -208,7 +253,20 @@ def set_db_permissions():
 def get_live_db():
     """Get the live db - will overwrite your local copy."""
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
+    path = '%s/resources/sqlite' % code_path
+    if not exists(path):
+        run('mkdir %s' % path)
     local('scp %s:%s/resources/sqlite/visual_changelog.db resources/sqlite/'
+          % (env['host_string'], code_path))
+
+@task
+def get_live_media():
+    """Get the live media - will overwrite your local copy."""
+    base_path, code_path, git_url, repo_alias, site_name = get_vars()
+    path = '%s/django_project/media' % code_path
+    if not exists(path):
+        run('mkdir %s' % path)
+    local('rsync -ave ssh %s:%s/django_project/media/* django_project/media/'
           % (env['host_string'], code_path))
 
 @task

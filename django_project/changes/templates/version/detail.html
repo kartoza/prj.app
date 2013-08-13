@@ -49,7 +49,12 @@
             {%  endif %}
         </div>
     </div>
-    {%  for entry in version.entries %}
+
+    {% for row in version.categories %}
+    <h2 class="text-muted">{{ row.category.name }}</h2>
+    <hr />
+
+    {%  for entry in row.entries %}
     <div class="row">
         <div class="col-10">
             <div class="media-body">
@@ -94,6 +99,6 @@
         </div>
     </div>
     <hr />
-    {% endfor %}
-
+    {% endfor %}{# entry loop #}
+    {% endfor %}{# row loop #}
 {% endblock %}

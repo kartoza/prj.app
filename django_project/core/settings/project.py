@@ -1,3 +1,9 @@
+# coding=utf-8
+"""Project level settings.
+
+Adjust these values as needed but don't commit passwords etc. to any public
+repository!
+"""
 import os
 from .contrib import *
 
@@ -28,6 +34,7 @@ DATABASES = {
 # Project apps
 INSTALLED_APPS += (
     'changes',
+    'github_issue',
 )
 
 # Set debug to false for production
@@ -42,6 +49,7 @@ PIPELINE_JS = {
             'js/underscore-min.js',
             'js/bootstrap.min.js',
             'js/changelog.js',
+            'js/github-issue.js',
         ),
         'output_filename': 'js/contrib.js',
     }
@@ -60,3 +68,10 @@ PIPELINE_CSS = {
         },
     }
 }
+
+# Define variables used to submit issues to github
+# These are passed by customisations in wsgi.py
+# with original definitions in apache.conf
+GITHUB_URL = os.environ.get('GITHUB_USER')
+GITHUB_USER = os.environ.get('GITHUB_USER')
+GITHUB_PASSWORD = os.environ.get('GITHUB_PASSWORD')

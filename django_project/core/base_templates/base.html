@@ -63,6 +63,13 @@
             </ul>
             {% endif %} {# user is authenticated #}
             <ul class="nav navbar-nav pull-right">
+                {% if user.is_authenticated %}
+                <li><i class="icon-wrench"></i>
+                  <a href="#issue-modal" data-toggle="modal">
+                    Report an issue
+                  </a>
+                </li>
+                {% endif %} {# user is authenticated #}
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                       Account <b class="caret"></b>
@@ -83,6 +90,43 @@
                 </li>
             </ul>
         </div>
+      {% if user.is_authenticated %}
+        <div class="modal fade" id="issue-modal"><!-- Modal -->
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Report an issue</h4>
+              </div>
+              <div class="modal-body">
+                <form id="issue-form" class="form-horizontal">
+                  <div class="form-group">
+                    <label for="issue-title">Title</label>
+                    <input class="form-control"
+                             type="text"
+                             id="issue-title"
+                             placeholder="Title">
+                    <label for="issue-description">Description</label>
+
+                    <textarea class="form-control"
+                                id="issue-description"
+                                rows="3"
+                                cols="10"></textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                  Close
+                </button>
+                <button id="issue-submit-button" class="btn btn-primary" onclick="submitIssue()">
+                  Submit an issue
+                </button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        {% endif %}
         <div class="body-content">
             {% block content %}{% endblock content %}
         </div>

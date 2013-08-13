@@ -66,3 +66,39 @@ class Version(AuditedModel):
         qs = Entry.objects.filter(version=self).order_by('category')
         return qs
 
+    def _entries_for_category(self, category):
+        """All entries for this version and filtered by the given category.
+
+        :param category: Category to filter by.
+        :type category: Category
+
+        .. note:: only approved entries returned.
+        """
+        qs = Entry.objects.filter(version=self, category=category)
+        return qs
+
+    def categories(self):
+        """Get a list of categories where there are one or more entries.
+
+        Example use in template::
+            {% for row in version.categories %}
+              <h2 class="text-muted">{{ row.category.name }}</h2>
+              <ul>
+              {%  for entry in row.entries %}
+                 <li>{{ entry.name }}</li>
+              {% endfor %}
+              </ul>
+            {% endfor %}
+        """
+        qs = self.entries()
+        used = []
+        categories = []
+        for entry in qs:
+            category = entry.category
+            if category not in used:
+                row = {
+                    'category': category,
+                    'entries': self._entries_for_category(category)}
+                categories.append(row)
+                used.append(category)
+        return categories

@@ -21,7 +21,8 @@
   # L - last - dont process any other rules after this
   # R - external redirect (will cause url to change in users browser)
   RewriteEngine  on
-  RewriteCond %{HTTP_HOST} ^www\.%(escapedserver_name)s$ [NC]
+  # Double %% as this file is treated as a python interpolation string
+  RewriteCond %%{HTTP_HOST} ^www\.%(escaped_server_name)s$ [NC]
   RewriteRule ^(.*)$ http://%(server_name)s [R=301,L]
 
   # Possible values include: debug, info, notice, warn, error, crit,
@@ -29,6 +30,13 @@
   LogLevel warn
 
   CustomLog /var/log/apache2/%(site_name)s.access.log combined
+
+  # Define variables used to submit issues to github
+  # These env vars will be 'unpackaed into django accessible vars
+  # in wsgi.py
+  SetEnv GITHUB_URL = "%(github_url)s"
+  SetEnv GITHUB_USER "%(github_user)s"
+  SetEnv GITHUB_PASSWORD "%(github_password)s"
 
   WSGIScriptAlias / %(code_path)s/django_project/core/wsgi.py
 
