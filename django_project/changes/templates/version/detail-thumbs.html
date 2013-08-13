@@ -14,9 +14,9 @@
 {% block content %}
 
   <div class="row">
-    <div class="col-2">
+    <div class="col-12">
       {% if user.is_authenticated %}
-        <div class="btn-group btn-group-justified">
+        <div class="btn-group btn-group pull-right">
           <a class="btn btn-danger btn-mini"
              href='{% url "version-delete" version.id %}'>Delete</a>
           <a class="btn btn-success btn-mini"
@@ -55,7 +55,7 @@
     <div class="col-4">
       {% if version.image_file %}
         <img class="img-responsive img-rounded pull-right"
-             src="{{ MEDIA_URL }}{{ version.image_file }}"/>
+             src="{{ version.image_file|thumbnail_url:'medium-entry' }}"/>
       {% endif %}
     </div>
   </div>
@@ -63,18 +63,7 @@
     <h3>No entries are defined (use the 'add' menu above to create them).
     </h3>
   {% endifequal %}
-  <div class="row">
-    <div class="col-8">
-      {{ version.description|markdown:"safe" }}
-    </div>
-    <div class="col-4">
-      {% if version.image_file %}
-        <img class="img-responsive img-rounded"
-             src="{{ version.image_file|thumbnail_url:'thumb300x200' }}"
-             alt=""/>
-      {% endif %}
-    </div>
-  </div>
+  <hr />
 
   <div class="row">
     {% for entry in version.entries %}

@@ -67,6 +67,8 @@ class VersionForm(forms.ModelForm):
                 'Version details',
                 Field('project', css_class="form-control"),
                 Field('name', css_class="form-control"),
+                Field('description', css_class="form-control"),
+                Field('image_file', css_class="form-control"),
                 css_id='project-form')
             )
         self.helper.layout = layout
