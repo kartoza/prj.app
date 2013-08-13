@@ -12,7 +12,7 @@ import getpass
 from fabric.api import task, env, fastprint, cd, run, sudo, local, prompt
 from fabric.contrib.project import rsync_project
 from fabric.contrib.files import exists, sed
-from fabric.colors import red, blue
+from fabric.colors import red, blue, green
 from fabtools import require
 from fabtools.deb import update_index
 # Don't remove even though its unused
@@ -326,3 +326,15 @@ def collectstatic():
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
     with cd(os.path.join(code_path, 'django_project')):
         run(command)
+
+@task
+def update_migrations():
+    """Apply any pending south migrations.
+    """
+    command = ('../venv/bin/python manage.py migrate changes')
+    base_path, code_path, git_url, repo_alias, site_name = get_vars()
+    with cd(os.path.join(code_path, 'django_project')):
+        run(command)
+        run('touch core/wsgi.py')
+    fastprint(green('Note: your server is now has the latest SOUTH '
+                    'migrations applied.'))
