@@ -70,6 +70,8 @@ urlpatterns = patterns(
         name='project-update'),
 
     # Category management
+
+    # This view is only accessible via ajax
     url(regex='^json-category/list/(?P<version>\d+)/$',
         view=JSONCategoryListView.as_view(),
         name='json-category-list'),

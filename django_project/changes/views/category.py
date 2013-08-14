@@ -16,7 +16,7 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
     TemplateView)
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
@@ -56,6 +56,12 @@ class CategoryMixin(object):
 
 class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
     context_object_name = 'categories'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Ensure this view is only used via ajax."""
+        if not request.is_ajax():
+            raise Http404("This is an ajax view, friend.")
+        return super(ListView, self).dispatch(request, *args, **kwargs)
 
     def render_to_response(self, context, **response_kwargs):
         return self.render_to_json_response(context, **response_kwargs)

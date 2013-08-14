@@ -33,6 +33,8 @@ LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
 
+# Easy-thumbnails options
+THUMBNAIL_SUBDIR = 'thumbnails'
 THUMBNAIL_ALIASES = {
     '': {
         'entry': {'size': (50, 50), 'crop': True},
