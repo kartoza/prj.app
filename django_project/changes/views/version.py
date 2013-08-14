@@ -1,3 +1,5 @@
+# coding=utf-8
+"""Version related views."""
 import logging
 logger = logging.getLogger(__name__)
 
@@ -23,17 +25,26 @@ from pure_pagination.mixins import PaginationMixin
 from ..models import Project, Category, Version, Entry
 from ..forms import ProjectForm, CategoryForm, VersionForm, EntryForm
 
+
 class VersionMixin(object):
+    """Mixing for all views to inherit which sets some standard properties."""
     model = Version  # implies -> queryset = Entry.objects.all()
     form_class = VersionForm
 
 
 class VersionCreateUpdateMixin(VersionMixin, LoginRequiredMixin):
+    """Mixin for views that do create or update operations."""
     def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template."""
         context = super(VersionMixin, self).get_context_data(**kwargs)
         return context
 
     def form_invalid(self, form):
+        """Behaviour for invalid forms.
+
+        :param form: Form which is being validated.
+        :type form: ModelForm
+        """
         return self.render_to_response(self.get_context_data(form=form))
 
 
@@ -70,6 +81,19 @@ class VersionDetailView(VersionMixin, DetailView):
         obj = super(VersionDetailView, self).get_object(queryset)
         obj.request_user = self.request.user
         return obj
+
+
+class VersionMarkdownView(VersionDetailView):
+    """Return a markdown version detail."""
+    template_name = 'version/detail.md'
+
+    def render_to_response(self, context, **response_kwargs):
+        response = super(VersionMarkdownView, self).render_to_response(
+            context,
+            mimetype='application/text',
+            **response_kwargs)
+        response['Content-Disposition'] = 'attachment; filename="foo.md"'
+        return response
 
 
 class VersionThumbnailView(VersionMixin, DetailView):

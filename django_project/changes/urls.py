@@ -22,6 +22,7 @@ from views import (
     PendingCategoryListView,
     ApproveCategoryView,
     # Version
+    VersionMarkdownView,
     VersionDetailView,
     VersionThumbnailView,
     VersionDeleteView,
@@ -104,6 +105,9 @@ urlpatterns = patterns(
     url(regex='^version/list/$',
         view=VersionListView.as_view(),
         name='version-list'),
+    url(regex='^version-markdown/(?P<pk>\d+)/$',
+        view=VersionMarkdownView.as_view(),
+        name='version-markdown'),
     url(regex='^version/(?P<pk>\d+)/$',
         view=VersionDetailView.as_view(),
         name='version-detail'),
