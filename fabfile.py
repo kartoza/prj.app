@@ -28,6 +28,7 @@ from fabgis.postgres import (
     create_user,
     get_postgres_dump,
     restore_postgres_dump,
+    setup_postgis_2,
     create_postgis_2_template)
 
 
@@ -137,6 +138,7 @@ def deploy():
     # site from the same server
     setup_env()
     show_environment()
+    setup_postgis_2()
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
 
     fastprint('Checking out %s to %s as %s' % (git_url, base_path, repo_alias))
@@ -149,21 +151,22 @@ def deploy():
     require.deb.package('vim')
     update_venv(code_path)
     with cd(os.path.join(code_path, 'django_project')):
-        run('../venv/bin/python manage.py syncdb')
+        run('../venv/bin/python manage.py syncdb --noinput ')
         run('../venv/bin/python manage.py migrate')
-
-    collectstatic()
+    set_db_permissions()
     # if we are testing under vagrant, deploy our local media and db
     if 'vagrant' in env.fg.home:
         with cd(code_path):
             run('cp /vagrant/visual_changelog.db .')
-            run('cp -r /vagrant/django_project/media/* django_project/media/')
             run('touch django_project/core/wsgi.py')
-    fastprint('*******************************************')
+
+    sync_media_to_server()
+    collectstatic()
+    fastprint('*******************************************\n')
     fastprint(red(' Don\'t forget set ALLOWED_HOSTS in '))
     fastprint(' django_project/core/settings/prod.py')
     fastprint(' to the domain name for the site.')
-    fastprint('*******************************************')
+    fastprint('*******************************************\n')
 
 
 @task
@@ -189,7 +192,7 @@ def freshen():
 
 @task
 def sync_media_to_server():
-    """Sync media and sqlite db to server"""
+    """Sync media to server from local filesystem."""
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
     remote_path = os.path.join(code_path, 'django_project', 'media')
     local_path = os.path.join(
