@@ -46,7 +46,7 @@
       # Define variables used to submit issues to github
       # These env vars will be 'unpackaed into django accessible vars
       # in wsgi.py
-      SetEnv GIT_URL = "%(github_repo)s"
+      SetEnv GIT_URL "%(github_repo)s"
       SetEnv GIT_USER "%(github_user)s"
       SetEnv GIT_PASSWORD "%(github_password)s"
 
