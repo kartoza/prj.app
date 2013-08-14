@@ -49,15 +49,19 @@
     </div>
   </div>
   <div class="row">
+    {% if version.image_file %}
     <div class="col-8">
+    {% else %}
+    <div class="col-12">
+    {% endif %}
       {{ version.description|markdown:"safe" }}
     </div>
+    {% if version.image_file %}
     <div class="col-4">
-      {% if version.image_file %}
         <img class="img-responsive img-rounded pull-right"
              src="{{ version.image_file|thumbnail_url:'medium-entry' }}"/>
-      {% endif %}
     </div>
+    {% endif %}
   </div>
   {% ifequal num_entries 0 %}
     <h3>No entries are defined (use the 'add' menu above to create them).
