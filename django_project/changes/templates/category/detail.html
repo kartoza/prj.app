@@ -13,14 +13,14 @@
 {% block content %}
 
     <div class="row">
-        <div class="col-10">
+        <div class="col-lg-10">
             <div class="media-body">
                 <h3 class="media-heading">
                     <b>{{ category.name }}</b>
                 </h3>
             </div>
         </div>
-        <div class="col-2">
+        <div class="col-lg-2">
             <div class="btn-group btn-group-justified">
                 <a class="btn btn-danger btn-mini"
                     href='{% url "category-delete" category.id %}'>Delete</a>
@@ -30,10 +30,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-8">
+        <div class="col-lg-8">
             {{ category.description|markdown:"safe" }}
         </div>
-        <div class="col-4">
+        <div class="col-lg-4">
             {% if category.image_file %}
             <img class="img-responsive img-rounded pull-right"
                  src="{{ MEDIA_URL }}{{ category.image_file }}" />

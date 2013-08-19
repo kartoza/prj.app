@@ -33,7 +33,7 @@
     {%  endifequal %}
     {% for category in categories %}
     <div class="row">
-        <div class="col-1">
+        <div class="col-lg-1">
             {% if category.image_file %}
             <a href="{{ MEDIA_URL }}{{ category.image_file }}">
               <img class="img-responsive img-rounded pull-right"
@@ -41,14 +41,14 @@
             </a>
             {%  endif %}
         </div>
-        <div class="col-9">
+        <div class="col-lg-9">
             <div class="media-body">
                 <h3 class="media-heading">
                     <b>{{ category.project.name }} : {{ category.name }}</b>
                 </h3>
             </div>
         </div>
-        <div class="col-2">
+        <div class="col-lg-2">
             <div class="btn-group pull-right">
                 {%  if not category.approved and user.is_staff %}
                 <a class="btn btn-success btn-mini"

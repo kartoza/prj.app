@@ -13,14 +13,14 @@
 {% block content %}
 
     <div class="row">
-        <div class="col-10">
+        <div class="col-lg-10">
             <div class="media-body">
                 <h3 class="media-heading">
                     <b>{{ project.name }}</b>
                 </h3>
             </div>
         </div>
-        <div class="col-2">
+        <div class="col-lg-2">
             <div class="btn-group btn-group-justified">
                 {%  if not project.approved and user.is_staff %}
                 <a class="btn btn-success btn-mini"

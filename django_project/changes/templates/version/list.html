@@ -33,22 +33,23 @@
     {%  endifequal %}
     {% for version in versions %}
     <div class="row">
-        <div class="col-1">
+        <div class="col-lg-1">
             {% if version.image_file %}
-            <a href="{{ MEDIA_URL }}{{ version.image_file }}">
-                <img class="img-responsive img-rounded pull-right"
+            <a class="pull-left"
+               href="{{ MEDIA_URL }}{{ version.image_file }}">
+                <img class="media-object img-responsive img-rounded"
                    src="{% thumbnail version.image_file 50x50 crop %}" />
             </a>
             {%  endif %}
         </div>
-        <div class="col-9">
+        <div class="col-lg-9">
             <div class="media-body">
                 <h3 class="media-heading">
                     <b>{{ version.project.name }} : {{ version.name }}</b>
                 </h3>
             </div>
         </div>
-        <div class="col-2">
+        <div class="col-lg-2">
             <div class="btn-group pull-right">
                 {%  if not version.approved and user.is_staff %}
                 <a class="btn btn-success btn-mini"

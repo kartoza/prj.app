@@ -14,7 +14,7 @@
 {% block content %}
 
   <div class="row">
-    <div class="col-12">
+    <div class="col-lg-12">
       {% if user.is_authenticated %}
         <div class="btn-group btn-group pull-right">
           <a class="btn btn-danger btn-mini"
@@ -27,21 +27,21 @@
   </div>
   <div class="row">
     {% if version.project.image_file %}
-    <div class="col-3">
+    <div class="col-lg-3">
         <a href="{{ MEDIA_URL }}{{ version.project.image_file }}">
           <img class="img-responsive img-rounded pull-left"
                src="{{ version.project.image_file|thumbnail_url:'medium-entry' }}"/>
         </a>
       {% endif %}
     </div>
-    <div class="col-9">
+    <div class="col-lg-9">
       <div class="row">
-        <div class="col-12">
+        <div class="col-lg-md-12">
           <h2 class="muted pull-right">
             <small>Project:</small>
             {{ version.project }}</h2>
         </div>
-        <div class="col-12">
+        <div class="col-lg-md-12">
           <h2 class="muted pull-right">
             <small>Changelog for version:</small>
             {{ version.name }}</h2>
@@ -50,14 +50,14 @@
   </div>
   <div class="row">
     {% if version.image_file %}
-    <div class="col-8">
+    <div class="col-lg-8">
     {% else %}
-    <div class="col-12">
+    <div class="col-lg-12">
     {% endif %}
       {{ version.description|markdown:"safe" }}
     </div>
     {% if version.image_file %}
-    <div class="col-4">
+    <div class="col-lg-4">
         <img class="img-responsive img-rounded pull-right"
              src="{{ version.image_file|thumbnail_url:'medium-entry' }}"/>
     </div>
@@ -70,14 +70,14 @@
 
     {% for entry in row.entries %}
       <div class="row">
-        <div class="col-10">
+        <div class="col-lg-10">
           <div class="media-body">
             <h3 class="media-heading">
               Feature: <b>{{ entry.title }}</b>
             </h3>
           </div>
         </div>
-        <div class="col-2">
+        <div class="col-lg-2">
           <div class="btn-group pull-right">
             {% if not entry.approved and user.is_staff %}
               <a class="btn btn-success btn-mini"
@@ -99,10 +99,10 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-8">
+        <div class="col-lg-8">
           {{ entry.description|markdown:"safe" }}
         </div>
-        <div class="col-4">
+        <div class="col-lg-4">
           {% if entry.image_file %}
             <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
               <img class="img-responsive img-rounded pull-right"

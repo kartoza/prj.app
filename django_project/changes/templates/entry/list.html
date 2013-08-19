@@ -34,14 +34,14 @@
     {%  endifequal %}
     {% for entry in entries %}
     <div class="row">
-        <div class="col-10">
+        <div class="col-lg-10">
             <div class="media-body">
                 <h3 class="media-heading">
                     Feature: <b>{{ entry.title }}</b>
                 </h3>
             </div>
         </div>
-        <div class="col-2">
+        <div class="col-lg-2">
             <div class="btn-group pull-right">
                 {% if not entry.approved and user.is_staff %}
                     <a class="btn btn-success btn-mini"
@@ -61,10 +61,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-8">
+        <div class="col-lg-8">
             {{ entry.description|markdown:"safe" }}
         </div>
-        <div class="col-4">
+        <div class="col-lg-4">
             {% if entry.image_file %}
                 <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
                     <img class="img-responsive img-rounded pull-right"
