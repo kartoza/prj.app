@@ -22,7 +22,8 @@ from fabtools.vagrant import vagrant
 # noinspection PyUnresolvedReferences
 from fabgis.dropbox import setup_dropbox, setup_dropbox_daemon
 from fabgis.django import setup_apache, build_pil, set_media_permissions
-from fabgis.utilities import update_git_checkout, setup_venv
+from fabgis.git import update_git_checkout
+from fabgis.virtualenv import setup_venv
 from fabgis.common import setup_env, show_environment
 from fabgis.postgres import (
     create_user,
