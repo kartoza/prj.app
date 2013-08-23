@@ -1,4 +1,8 @@
 body {
   padding-top: 70px;
-  padding-bottom : 70px;
+  padding-bottom : 140px;
+}
+
+.align-right {
+  text-align: right;
 }

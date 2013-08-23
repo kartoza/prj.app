@@ -16,12 +16,16 @@
   <div class="row">
     <div class="col-lg-12">
       {% if user.is_authenticated %}
-        <div class="btn-group btn-group pull-right">
-          <a class="btn btn-danger btn-mini"
-             href='{% url "version-delete" version.id %}'>Delete</a>
-          <a class="btn btn-success btn-mini"
-             href='{% url "version-update" version.id %}'>Edit</a>
-        </div>
+      <div class="btn-group btn-group pull-right">
+        <a class="btn btn-default btn-mini"
+           href='{% url "version-delete" version.id %}'>
+          <span class="glyphicon glyphicon-minus"></span>
+        </a>
+        <a class="btn btn-default btn-mini"
+           href='{% url "version-update" version.id %}'>
+          <span class="glyphicon glyphicon-pencil"></span>
+        </a>
+      </div>
       {% endif %}
     </div>
   </div>
@@ -32,22 +36,25 @@
           <img class="img-responsive img-rounded pull-left"
                src="{{ version.project.image_file|thumbnail_url:'medium-entry' }}"/>
         </a>
-      {% endif %}
     </div>
+    {% endif %}
     <div class="col-lg-9">
       <div class="row">
         <div class="col-lg-12">
-          <h2 class="muted pull-right">
+          <h2 class="muted align-right">
             <small>Project:</small>
             {{ version.project }}</h2>
         </div>
         <div class="col-lg-12">
-          <h2 class="muted pull-right">
+          <h2 class="muted align-right">
             <small>Changelog for version:</small>
             {{ version.name }}</h2>
         </div>
+      </div>
     </div>
   </div>
+  <hr />
+  {% if version.description %}
   <div class="row">
     {% if version.image_file %}
     <div class="col-lg-8">
@@ -64,21 +71,30 @@
     {% endif %}
   </div>
   <hr />
+  {% endif %}
   {% for row in version.categories %}
     <h2 class="text-muted">{{ row.category.name }}</h2>
     <hr />
 
     {% for entry in row.entries %}
-      <div class="row">
-        <div class="col-lg-10">
-          <div class="media-body">
-            <h3 class="media-heading">
-              Feature: <b>{{ entry.title }}</b>
-            </h3>
-          </div>
+      <div class="media">
+        <div class="pull-right media-object">
+          {% if entry.image_file %}
+            <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+              <img class="img-responsive img-rounded pull-right"
+                   src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
+                   alt=""/>{# see core/settings/contrib.py for large-entry #}
+            </a>
+          {% endif %}
         </div>
-        <div class="col-lg-2">
-          <div class="btn-group pull-right">
+        <div class="media-body">
+          <h3 class="media-heading">
+            Feature: <b>{{ entry.title }}</b>
+          </h3>
+          <div>
+            {{ entry.description|markdown:"safe" }}
+          </div>
+          <div class="btn-group">
             {% if not entry.approved and user.is_staff %}
               <a class="btn btn-success btn-mini"
                  href='{% url "entry-approve" entry.id %}'>
@@ -96,20 +112,6 @@
               </a>
             {% endif %}
           </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-8">
-          {{ entry.description|markdown:"safe" }}
-        </div>
-        <div class="col-lg-4">
-          {% if entry.image_file %}
-            <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
-              <img class="img-responsive img-rounded pull-right"
-                   src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
-                   alt=""/>{# see core/settings/contrib.py for large-entry #}
-            </a>
-          {% endif %}
         </div>
       </div>
       <hr/>
