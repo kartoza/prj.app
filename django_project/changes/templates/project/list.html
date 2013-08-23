@@ -44,11 +44,23 @@
             {%  endif %}
         </div>
         <div class="col-lg-9">
-            <div class="media-body">
-                <h3 class="media-heading">
-                    <b>{{ project.name }}</b>
-                </h3>
+          <div class="media-body">
+            <h3 class="media-heading">
+                <b>{{ project.name }}</b>
+            </h3>
+            {%  for version in project.versions %}
+            <div>
+              Version: {{ version.name }}
+              <a href="{% url "version-detail" version.id %}">
+                  <span class="glyphicon glyphicon-list"></span>
+              </a>
+              <a href="{% url "version-thumbs" version.id %}">
+                  <span class="glyphicon glyphicon-th"></span>
+              </a>
             </div>
+            {%  endfor %} {# version loop #}
+
+          </div>
         </div>
         <div class="col-lg-2">
             <div class="btn-group pull-right">
@@ -71,19 +83,6 @@
             </div>
         </div>
     </div>
-    {%  for version in project.versions %}
-    <div class="row">
-        <div class="col-lg-2">&nbsp;</div>
-        <div class="col-lg-10">Version: {{ version.name }}
-            <a href="{% url "version-detail" version.id %}">
-                <span class="glyphicon glyphicon-list"></span>
-            </a>
-            <a href="{% url "version-thumbs" version.id %}">
-                <span class="glyphicon glyphicon-th"></span>
-            </a>
-        </div>
-    </div>
-    {%  endfor %} {# version loop #}
     <hr />
     {%  endfor %} {# project loop #}
 {% endblock %}
