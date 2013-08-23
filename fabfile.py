@@ -326,7 +326,7 @@ def collectstatic():
 
     """
     command = ('PATH=$PATH:../node_modules/yuglify/bin/:../venv/bin/ '
-              'python manage.py collectstatic --noinput')
+               '../venv/bin/python manage.py collectstatic --noinput')
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
     with cd(os.path.join(code_path, 'django_project')):
         run(command)
