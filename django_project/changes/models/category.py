@@ -2,7 +2,7 @@ import logging
 logger = logging.getLogger(__name__)
 from django.db import models
 from audited_models.models import AuditedModel
-
+from django.utils.translation import ugettext_lazy as _
 
 class ApprovedCategoryManager(models.Manager):
     """Custom category manager that shows only approved records."""
@@ -27,14 +27,14 @@ class UnapprovedCategoryManager(models.Manager):
 class Category(AuditedModel):
     """A category model e.g. gui, backend, web site etc."""
     name = models.CharField(
-        help_text='Name of this category.',
+        help_text=_('Name of this category.'),
         max_length=255,
         null=False,
         blank=False,
         unique=True)
 
     approved = models.BooleanField(
-        help_text=(
+        help_text=_(
             'Whether this version has been approved for use by the '
             'project owner.'),
         default=False

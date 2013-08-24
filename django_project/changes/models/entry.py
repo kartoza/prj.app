@@ -1,9 +1,11 @@
+"""Models for changelog entries."""
 import os
 import logging
 logger = logging.getLogger(__name__)
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from audited_models.models import AuditedModel
+from django.utils.translation import ugettext_lazy as _
 
 
 class ApprovedEntryManager(models.Manager):
