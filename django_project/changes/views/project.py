@@ -73,7 +73,7 @@ class ProjectDetailView(ProjectMixin, DetailView):
         return obj
 
 
-class ProjectDeleteView(ProjectMixin, DeleteView):
+class ProjectDeleteView(ProjectMixin, DeleteView, LoginRequiredMixin):
     context_object_name = 'project'
     template_name = 'project/delete.html'
 
@@ -111,15 +111,18 @@ class ProjectUpdateView(ProjectCreateUpdateMixin, UpdateView):
         return kwargs
 
     def get_queryset(self):
-        projects_qs = Project.objects
-        return projects_qs
+        qs = Project.objects
+        if self.request.user.is_staff:
+            return qs
+        else:
+            return qs.filter(creator=self.request.user)
 
     def get_success_url(self):
         return reverse('project-list')
 
 
 class PendingProjectListView(
-        ProjectMixin, PaginationMixin, ListView):
+        ProjectMixin, PaginationMixin, ListView, StaffuserRequiredMixin):
     """List all users unapproved projects - staff users see all unapproved."""
     context_object_name = 'projects'
     template_name = 'project/list.html'

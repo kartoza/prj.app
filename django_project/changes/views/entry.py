@@ -74,7 +74,7 @@ class EntryDetailView(EntryMixin, DetailView):
         return obj
 
 
-class EntryDeleteView(EntryMixin, DeleteView):
+class EntryDeleteView(EntryMixin, DeleteView, LoginRequiredMixin):
     context_object_name = 'entry'
     template_name = 'entry/delete.html'
 
@@ -86,7 +86,7 @@ class EntryDeleteView(EntryMixin, DeleteView):
         if self.request.user.is_staff:
             return qs
         else:
-            return get_object_or_404(qs, creator=self.request.user)
+            qs.filter(creator=self.request.user)
 
 
 class EntryCreateView(EntryCreateUpdateMixin, CreateView):
@@ -122,7 +122,10 @@ class EntryUpdateView(EntryCreateUpdateMixin, UpdateView):
         return reverse('pending-entry-list')
 
 
-class PendingEntryListView(EntryMixin, PaginationMixin, ListView):
+class PendingEntryListView(EntryMixin,
+                           PaginationMixin,
+                           ListView,
+                           StaffuserRequiredMixin):
     """List all unapproved entries"""
     context_object_name = 'entries'
     template_name = 'entry/list.html'

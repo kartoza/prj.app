@@ -115,7 +115,7 @@ class VersionThumbnailView(VersionMixin, DetailView):
         return obj
 
 
-class VersionDeleteView(VersionMixin, DeleteView):
+class VersionDeleteView(VersionMixin, DeleteView, LoginRequiredMixin):
     context_object_name = 'version'
     template_name = 'version/delete.html'
 
@@ -130,7 +130,8 @@ class VersionDeleteView(VersionMixin, DeleteView):
             return qs.filter(creator=self.request.user)
 
 
-class VersionCreateView(VersionCreateUpdateMixin, CreateView):
+class VersionCreateView(
+        VersionCreateUpdateMixin, CreateView, LoginRequiredMixin):
     context_object_name = 'version'
     template_name = 'version/create.html'
 
@@ -160,7 +161,8 @@ class VersionUpdateView(VersionCreateUpdateMixin, UpdateView):
         return reverse('version-list')
 
 
-class PendingVersionListView(VersionMixin, PaginationMixin, ListView):
+class PendingVersionListView(
+        VersionMixin, PaginationMixin, ListView, StaffuserRequiredMixin):
     """List all unapproved versions - staff see all """
     context_object_name = 'versions'
     template_name = 'version/list.html'

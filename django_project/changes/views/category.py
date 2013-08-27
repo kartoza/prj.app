@@ -116,7 +116,7 @@ class CategoryDetailView(CategoryMixin, DetailView):
         return obj
 
 
-class CategoryDeleteView(CategoryMixin, DeleteView):
+class CategoryDeleteView(CategoryMixin, DeleteView, LoginRequiredMixin):
     context_object_name = 'category'
     template_name = 'category/delete.html'
 
@@ -128,7 +128,7 @@ class CategoryDeleteView(CategoryMixin, DeleteView):
         if self.request.user.is_staff:
             return qs
         else:
-            return qs.filter(creator=self.request.user)
+            return get_object_or_404(qs, creator=self.request.user)
 
 
 class CategoryCreateView(CategoryCreateUpdateMixin, CreateView):
@@ -155,13 +155,19 @@ class CategoryUpdateView(CategoryCreateUpdateMixin, UpdateView):
 
     def get_queryset(self):
         qs = Category.objects
-        return qs
+        if self.request.user.is_staff:
+            return qs
+        else:
+            return qs.filter(creator=self.request.user)
 
     def get_success_url(self):
         return reverse('category-list')
 
 
-class PendingCategoryListView(CategoryMixin, PaginationMixin, ListView):
+class PendingCategoryListView(CategoryMixin,
+                              PaginationMixin,
+                              ListView,
+                              StaffuserRequiredMixin):
     """List all unapproved categories"""
     context_object_name = 'categories'
     template_name = 'category/list.html'
