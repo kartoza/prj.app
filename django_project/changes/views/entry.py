@@ -86,7 +86,7 @@ class EntryDeleteView(EntryMixin, DeleteView):
         if self.request.user.is_staff:
             return qs
         else:
-            return qs.filter(creator=self.request.user)
+            return get_object_or_404(qs, creator=self.request.user)
 
 
 class EntryCreateView(EntryCreateUpdateMixin, CreateView):
