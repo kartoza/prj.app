@@ -1,3 +1,4 @@
+# coding=utf-8
 """Models for changelog entries."""
 import os
 import logging
@@ -29,7 +30,7 @@ class UnapprovedEntryManager(models.Manager):
 
 
 class Entry(AuditedModel):
-
+    """An entry is the basic unit of a changelog."""
     title = models.CharField(
         help_text='Title for this change note.',
         max_length=255,
@@ -45,9 +46,9 @@ class Entry(AuditedModel):
     image_file = models.ImageField(
         help_text=(
             'A image that is related to this visual changelog entry. '
-            'If you have Chrome, try dragging the image directly on to the '
+            'Most browsers support dragging the image directly on to the '
             '"Choose File" button above.'),
-        upload_to=os.path.join(MEDIA_ROOT, 'images'),
+        upload_to=os.path.join(MEDIA_ROOT, 'images/entries'),
         blank=True)
 
     image_credits = models.CharField(
@@ -63,13 +64,16 @@ class Entry(AuditedModel):
         default=False
     )
 
+    # noinspection PyUnresolvedReferences
     version = models.ForeignKey('Version')
+    # noinspection PyUnresolvedReferences
     category = models.ForeignKey('Category')
 
     objects = ApprovedEntryManager()
     all_objects = models.Manager()
     unapproved_objects = UnapprovedEntryManager()
 
+    # noinspection PyClassicStyleClass
     class Meta:
         """Meta options for the version class."""
         unique_together = ('title', 'version', 'category')

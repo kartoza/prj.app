@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ProjectKey">
+    <option name="state" value="git@github.com:timlinux/visual_changelog.git" />
+  </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Visual Changelog Venv" project-jdk-type="Python SDK" />
 </project>
 
