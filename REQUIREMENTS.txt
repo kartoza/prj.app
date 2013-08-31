@@ -23,3 +23,4 @@ django-sentry==1.13.5
 # Note this is needed for the django compressor app
 virtual-node==0.0.4
 requests==1.2.3
+django-hashedfilenamestorage

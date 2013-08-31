@@ -15,6 +15,9 @@ INSTALLED_APPS += (
     'reversion'
 )
 
+DEFAULT_FILE_STORAGE = ('django_hashedfilenamestorage.storage'
+                        '.HashedFilenameFileSystemStorage')
+
 # use underscore template function
 PIPELINE_TEMPLATE_FUNC = '_.template'
 

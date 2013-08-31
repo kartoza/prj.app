@@ -43,7 +43,10 @@ class Version(AuditedModel):
         default=False)
 
     image_file = models.ImageField(
-        help_text='An optional logo image for this version.',
+        help_text=(
+            'An optional image for this version e.g. a splashscreen. '
+            'Most browsers support dragging the image directly on to the '
+            '"Choose File" button above.'),
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),
         blank=True)
 

@@ -37,7 +37,9 @@ class Project(AuditedModel):
         unique=True)
 
     image_file = models.ImageField(
-        help_text='A logo image for this project.',
+        help_text=('A logo image for this project. '
+            'Most browsers support dragging the image directly on to the '
+            '"Choose File" button above.'),
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),
         blank=True)
 
