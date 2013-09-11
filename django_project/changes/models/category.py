@@ -4,6 +4,7 @@ from django.db import models
 from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
 
+
 class ApprovedCategoryManager(models.Manager):
     """Custom category manager that shows only approved records."""
 
@@ -31,7 +32,7 @@ class Category(AuditedModel):
         max_length=255,
         null=False,
         blank=False,
-        unique=True)
+        unique=False)  # there is a unique together rule in meta class below
 
     approved = models.BooleanField(
         help_text=_(
