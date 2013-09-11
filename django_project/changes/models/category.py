@@ -41,6 +41,13 @@ class Category(AuditedModel):
         default=False
     )
 
+    sort_number = models.SmallIntegerField(
+        help_text=(
+            'The order in which this category is listed within a '
+            'project'),
+        default=0
+    )
+
     project = models.ForeignKey('Project')
 
     objects = ApprovedCategoryManager()
@@ -53,4 +60,4 @@ class Category(AuditedModel):
         app_label = 'changes'
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return u'%s : %s' % (self.project.name, self.name)

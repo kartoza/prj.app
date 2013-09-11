@@ -32,6 +32,7 @@
         {% endif %}
     {%  endifequal %}
     {% for category in categories %}
+    <script>console.debug("{{ category }}");</script>
     <div class="row">
         <div class="col-lg-1">
             {% if category.image_file %}

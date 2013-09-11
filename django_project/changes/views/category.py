@@ -14,8 +14,7 @@ from django.views.generic import (
     DeleteView,
     DetailView,
     UpdateView,
-    RedirectView,
-    TemplateView)
+    RedirectView)
 from django.http import HttpResponseRedirect, Http404
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
