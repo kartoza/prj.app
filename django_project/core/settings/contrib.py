@@ -12,7 +12,7 @@ INSTALLED_APPS += (
     'easy_thumbnails',  # also needed for userena
     'userena',
     'raven.contrib.django',
-    'reversion'
+    'reversion',
 )
 
 DEFAULT_FILE_STORAGE = ('django_hashedfilenamestorage.storage'

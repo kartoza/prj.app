@@ -121,7 +121,7 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
     """View for the list of categories."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
-    paginate_by = None  # was 10
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
