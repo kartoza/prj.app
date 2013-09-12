@@ -121,7 +121,7 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
     """View for the list of categories."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
-    paginate_by = 10
+    paginate_by = None  # was 10
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -133,7 +133,7 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
         :rtype: dict
         """
         context = super(CategoryListView, self).get_context_data(**kwargs)
-        context['num_categories'] = self.get_queryset().count()
+        context['num_categories'] = context['categories'].count()
         context['unapproved'] = False
         return context
 
