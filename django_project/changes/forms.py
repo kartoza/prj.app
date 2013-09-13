@@ -47,6 +47,7 @@ class CategoryForm(forms.ModelForm):
                 'Category details',
                 Field('project', css_class="form-control"),
                 Field('name', css_class="form-control"),
+                Field('sort_number', css_class="form-control"),
                 css_id='project-form')
             )
         self.helper.layout = layout
