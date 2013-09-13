@@ -7,6 +7,8 @@ logger = logging.getLogger(__name__)
 import logging
 logger = logging.getLogger(__name__)
 
+import pypandoc
+
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.views.generic import (
@@ -17,7 +19,7 @@ from django.views.generic import (
     UpdateView,
     RedirectView)
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
@@ -332,3 +334,42 @@ class ApproveVersionView(VersionMixin, StaffuserRequiredMixin, RedirectView):
         version.approved = True
         version.save()
         return reverse(self.pattern_name)
+
+
+class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
+    """A view to allow staff users to download version page in RST format"""
+    template_name = 'version/detail-content.html'
+
+    def render_to_response(self, context, **response_kwargs):
+        """
+        Returns a RST document for a project version page
+        """
+        version_obj = context.get('version')
+
+        # render the template
+        myDocument = self.response_class(
+            request=self.request,
+            template=self.get_template_names(),
+            context=context,
+            **response_kwargs
+        )
+        # convert the html to rst
+        converted_doc = pypandoc.convert(
+            myDocument.rendered_content, 'rst', format='html')
+
+        # replace images paths with complete URIs
+        converted_doc = converted_doc.replace(
+            '/media/images/',
+            'http://{}/media/images/'.format(
+                self.request.META.get('HTTP_HOST'))
+            )
+
+        response = HttpResponse(content_type='text/rst')
+        response['Content-Disposition'] = (
+            'attachment; filename="{}-{}.rst"'.format(
+                version_obj.project.name, version_obj.name)
+        )
+
+        # write the document to the response
+        response.write(converted_doc)
+        return response

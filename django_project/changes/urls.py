@@ -31,6 +31,7 @@ from views import (
     VersionUpdateView,
     PendingVersionListView,
     ApproveVersionView,
+    VersionDownload,
     # Entry
     EntryDetailView,
     EntryDeleteView,
@@ -125,6 +126,9 @@ urlpatterns = patterns(
     url(regex='^version/update/(?P<pk>\d+)/$',
         view=VersionUpdateView.as_view(),
         name='version-update'),
+    url(regex='^version/download/(?P<pk>\d+)/$',
+        view=VersionDownload.as_view(),
+        name='version-download'),
 
     # Changelog entry management
     url(regex='^pending-entry/list/$',
@@ -157,4 +161,3 @@ if settings.DEBUG:
         '',
         (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
             'document_root': settings.MEDIA_ROOT}))
-
