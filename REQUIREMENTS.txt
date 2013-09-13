@@ -24,3 +24,5 @@ django-sentry==1.13.5
 virtual-node==0.0.4
 requests==1.2.3
 django-hashedfilenamestorage
+# pypandoc is an interface for pandoc converter
+pypandoc==0.6.0
