@@ -345,7 +345,8 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
         Returns a RST document for a project version page
         """
         version_obj = context.get('version')
-
+        # set the context flag for 'rst_download'
+        context['rst_download'] = True
         # render the template
         myDocument = self.response_class(
             request=self.request,
