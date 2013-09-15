@@ -25,7 +25,9 @@
       </div>
     </div>
   </div>
+  {% if not rst_download %}
   <hr />
+  {% endif %}
   {% if version.description %}
   <div class="row">
     {% if version.image_file %}
@@ -42,11 +44,16 @@
     </div>
     {% endif %}
   </div>
+  {% if not rst_download %}
   <hr />
+  {% endif %}
   {% endif %}
   {% for row in version.categories %}
     <h2 class="text-muted">{{ row.category.name }}</h2>
-    <hr />
+      {% if not rst_download %}
+      <hr />
+      {% endif %}
+
 
     {% for entry in row.entries %}
       <div class="media">
@@ -88,6 +95,8 @@
           </div>
         </div>
       </div>
-      <hr/>
+      {% if not rst_download %}
+        <hr />
+      {% endif %}
     {% endfor %}{# entry loop #}
   {% endfor %}{# row loop #}
