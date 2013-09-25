@@ -13,6 +13,5 @@
     </inspection_tool>
     <inspection_tool class="PyDocstringInspection" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="PyMandatoryEncodingInspection" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="PyRedeclarationInspection" enabled="true" level="WARNING" enabled_by_default="true" />
   </profile>
 </component>
