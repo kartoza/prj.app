@@ -7,6 +7,9 @@ logger = logging.getLogger(__name__)
 import logging
 logger = logging.getLogger(__name__)
 
+import re
+import zipfile
+import StringIO
 import pypandoc
 
 from django.core.urlresolvers import reverse
@@ -345,7 +348,8 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
         Returns a RST document for a project version page
         """
         version_obj = context.get('version')
-
+        # set the context flag for 'rst_download'
+        context['rst_download'] = True
         # render the template
         myDocument = self.response_class(
             request=self.request,
@@ -356,20 +360,44 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
         # convert the html to rst
         converted_doc = pypandoc.convert(
             myDocument.rendered_content, 'rst', format='html')
+        converted_doc = converted_doc.replace('/media/images/', 'images/')
 
-        # replace images paths with complete URIs
-        converted_doc = converted_doc.replace(
-            '/media/images/',
-            'http://{}/media/images/'.format(
-                self.request.META.get('HTTP_HOST'))
-            )
+        # prepare the ZIP file
+        myZipFile = self._prepare_zip_archive(converted_doc)
 
-        response = HttpResponse(content_type='text/rst')
+        # Grab the ZIP file from memory, make response with correct MIME-type
+        response = HttpResponse(
+            myZipFile.getvalue(), mimetype="application/x-zip-compressed")
+        # ..and correct content-disposition
         response['Content-Disposition'] = (
-            'attachment; filename="{}-{}.rst"'.format(
+            'attachment; filename="{}-{}.zip"'.format(
                 version_obj.project.name, version_obj.name)
         )
 
-        # write the document to the response
-        response.write(converted_doc)
         return response
+
+        def _prepare_zip_archive(self, document):
+            """
+            For the given doucment prepare a ZIP file with the document and
+            referenced images
+            """
+            # create in memory file-like object
+            myTmpFile = StringIO.StringIO()
+            # grab all of the images from document
+            myImages = re.findall(r'images.+', converted_doc)
+
+            # create the ZIP file
+            with zipfile.ZipFile(myTmpFile, 'w') as myzip:
+                # write all of the image files (read from disk)
+                for image in myImages:
+                    myzip.write(
+                        './media/{0}'.format(image),
+                        '{0}'.format(image)
+                    )
+                # write the actual RST document
+                myzip.writestr(
+                    '{}-{}.rst'.format(
+                        version_obj.project.name, version_obj.name),
+                    converted_doc)
+
+            return myTmpFile
