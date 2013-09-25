@@ -45,7 +45,8 @@
   <hr />
   {% endif %}
   {% for row in version.categories %}
-    <h2 class="text-muted">{{ row.category.name }}</h2>
+    <h2 class="text-muted" id="category-{{ row.category.id }}">
+        {{ row.category.name }}</h2>
     <hr />
 
     {% for entry in row.entries %}
@@ -60,7 +61,7 @@
           {% endif %}
         </div>
         <div class="media-body">
-          <h3 class="media-heading">
+          <h3 class="media-heading" id="feature-{{ entry.id }}">
             Feature: <b>{{ entry.title }}</b>
           </h3>
           <div>
