@@ -1,4 +1,6 @@
 #!/bin/python
+# coding=utf-8
+"""Fabfile for changelog app."""
 # ~/fabfile.py
 # A Fabric file for carrying out various administrative tasks.
 # Tim Sutton, Jan 2013
@@ -223,6 +225,7 @@ def sync_project_to_server():
 
     """
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
+    #noinspection PyArgumentEqualDefault
     rsync_project(
         base_path,
         delete=False,
