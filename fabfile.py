@@ -233,6 +233,7 @@ def sync_project_to_server():
         exclude=[
             '*.pyc',
             '.git',
+            '*.dmp',
             '.DS_Store',
             'visual_changelog.db',
             'venv',
