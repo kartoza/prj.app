@@ -225,6 +225,7 @@ def sync_project_to_server():
 
     """
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
+    update_venv(code_path)
     #noinspection PyArgumentEqualDefault
     rsync_project(
         base_path,
@@ -236,6 +237,7 @@ def sync_project_to_server():
             'visual_changelog.db',
             'venv',
             'django_project/static'])
+    update_migrations()
     with cd(os.path.join(code_path, 'django_project')):
         run('touch core/wsgi.py')
     set_media_permissions(code_path)
@@ -338,7 +340,7 @@ def collectstatic():
 def update_migrations():
     """Apply any pending south migrations.
     """
-    command = ('../venv/bin/python manage.py migrate changes')
+    command = '../venv/bin/python manage.py migrate changes'
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
     with cd(os.path.join(code_path, 'django_project')):
         run(command)
