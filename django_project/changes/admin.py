@@ -14,7 +14,7 @@ historisation for a model).
 
 
 from django.contrib import admin
-from models import Project, Category, Version, Entry
+from models import Category, Version, Entry
 from audited_models.admin import AuditedAdmin
 import reversion
 
@@ -62,7 +62,6 @@ class EntryAdmin(AuditedAdmin, reversion.VersionAdmin):
             qs = qs.order_by(*ordering)
         return qs
 
-admin.site.register(Project, ProjectAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Version, VersionAdmin)
 admin.site.register(Entry, EntryAdmin)

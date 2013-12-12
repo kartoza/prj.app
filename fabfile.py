@@ -15,6 +15,12 @@ from fabric.contrib.files import exists, sed
 from fabric.colors import red, blue, green
 from fabtools import require
 from fabtools.deb import update_index
+from fabtools.postgres import (
+    database_exists,
+    create_database,
+    create_user,
+    user_exists
+)
 # Don't remove even though its unused
 # noinspection PyUnresolvedReferences
 from fabtools.vagrant import vagrant
@@ -46,11 +52,10 @@ def get_vars():
     :rtype: tuple
     """
     setup_env()
-    site_name = 'visual_changelog'
-    base_path = os.path.abspath(os.path.join(
-        env.fg.home, 'dev', 'python'))
-    git_url = 'http://github.com/timlinux/visual_changelog.git'
-    repo_alias = 'visual_changelog'
+    site_name = 'projecta'
+    base_path = '/home/web/'
+    git_url = 'http://github.com/timlinux/projecta.git'
+    repo_alias = 'projecta'
     code_path = os.path.abspath(os.path.join(base_path, repo_alias))
     return base_path, code_path, git_url, repo_alias, site_name
 
@@ -100,14 +105,14 @@ def upload_postgres_dump(dump_path):
 
 
 @task
-def update_apache():
+def update_apache(code_path):
     """Update the apache configuration prompting for github account info.
 
     .. note:: The config file is taken from the local system.
 
-    """
-    code_path = os.path.dirname(__file__)
+    :param code_path: Usually '/home/web/<site_name>'
 
+    """
     git_url = 'https://api.github.com/repos/timlinux/visual_changelog/issues'
     git_user = prompt(
         'Please enter the github user account that issues submitted via the\n'
@@ -117,7 +122,7 @@ def update_apache():
     git_password = getpass.getpass()
     domain = 'changelog.linfiniti.com'
     setup_apache(
-        site_name='visual_changelog',
+        site_name='projecta',
         code_path=code_path,
         domain=domain,
         github_url=git_url,
@@ -146,22 +151,24 @@ def deploy():
     update_git_checkout(base_path, git_url, repo_alias)
     update_index()
     require.postfix.server(site_name)
-    update_apache(code_path, site_name)
+    update_apache(code_path)
+    require.deb.package('python-dev')
     require.deb.package('libpq-dev')
     require.deb.package('libgeos-c1')
     require.deb.package('vim')
+    require.deb.package('curl')
     update_venv(code_path)
+    set_db_permissions()
     with cd(os.path.join(code_path, 'django_project')):
         run('../venv/bin/python manage.py syncdb --noinput ')
         run('../venv/bin/python manage.py migrate')
-    set_db_permissions()
     # if we are testing under vagrant, deploy our local media and db
-    if 'vagrant' in env.fg.home:
-        with cd(code_path):
-            run('cp /vagrant/visual_changelog.db .')
-            run('touch django_project/core/wsgi.py')
+    #if 'vagrant' in env.fg.home:
+    #    with cd(code_path):
+    #        run('cp /vagrant/visual_changelog.db .')
+    #        run('touch django_project/core/wsgi.py')
 
-    sync_media_to_server()
+    #sync_media_to_server()
     collectstatic()
     fastprint('*******************************************\n')
     fastprint(red(' Don\'t forget set ALLOWED_HOSTS in '))
@@ -279,6 +286,10 @@ def set_db_permissions():
     """
     user = 'wsgi'
     dbname = 'changelog'
+    if not user_exists(user):
+        create_user(user, password='vagrant')
+    if not database_exists(dbname):
+        create_database(dbname, user)
     grant_sql = 'GRANT ALL ON schema public to %s;' % user
     # assumption is env.repo_alias is also database name
     run('psql %s -c "%s"' % (dbname, grant_sql))

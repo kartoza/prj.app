@@ -37,6 +37,7 @@ DATABASES = {
 INSTALLED_APPS += (
     'changes',
     'github_issue',
+    'base'
 )
 
 # Set debug to false for production

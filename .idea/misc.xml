@@ -3,6 +3,6 @@
   <component name="ProjectKey">
     <option name="state" value="git@github.com:timlinux/visual_changelog.git" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.2 virtualenv at ~/dev/python/visual_changelog/venv" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 2.7.3(ssh://vagrant@192.168.2.105:22/home/web/projecta/venv/bin/python)" project-jdk-type="Python SDK" />
 </project>
 

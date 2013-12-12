@@ -4,7 +4,7 @@ logger = logging.getLogger(__name__)
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from audited_models.models import AuditedModel
-from .version import Version
+from changes.models.version import Version
 
 
 class ApprovedProjectManager(models.Manager):

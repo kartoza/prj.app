@@ -12,8 +12,8 @@ from crispy_forms.layout import (
      Button
 )
 
-from models import Project, Category, Version, Entry
-
+from models import Category, Version, Entry
+from base.models import Project
 
 class ProjectForm(forms.ModelForm):
 
