@@ -49,8 +49,7 @@ def get_vars():
     """
     setup_env()
     site_name = 'visual_changelog'
-    base_path = os.path.abspath(os.path.join(
-        env.fg.home, 'dev', 'python'))
+    base_path = '/home/web'
     git_url = 'http://github.com/timlinux/visual_changelog.git'
     repo_alias = 'visual_changelog'
     code_path = os.path.abspath(os.path.join(base_path, repo_alias))
