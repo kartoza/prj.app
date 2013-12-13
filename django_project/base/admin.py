@@ -20,9 +20,13 @@ import reversion
 
 
 class ProjectAdmin(AuditedAdmin, reversion.VersionAdmin):
+    """Admin for the project model."""
 
     def queryset(self, request):
-        """Ensure we use the correct manager."""
+        """Ensure we use the correct manager.
+
+        :param request: HttpRequest object
+        """
         qs = self.model.all_objects
         ordering = self.get_ordering(request)
         if ordering:
@@ -30,3 +34,4 @@ class ProjectAdmin(AuditedAdmin, reversion.VersionAdmin):
         return qs
 
 admin.site.register(Project, ProjectAdmin)
+

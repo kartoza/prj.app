@@ -57,6 +57,7 @@
 
 
     {% for entry in row.entries %}
+      <a name="{{ entry.id }}"></a>
       <div class="media">
         <div class="pull-right media-object">
           {% if entry.image_file %}
@@ -69,6 +70,7 @@
         </div>
         <div class="media-body">
           <h3 class="media-heading" id="feature-{{ entry.id }}">
+            <a href="#{{ entry.id }}">#</a>
             Feature: <b>{{ entry.title }}</b>
           </h3>
           <div>

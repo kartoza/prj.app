@@ -21,8 +21,7 @@ from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from ..models import Category, Version, Entry
-from ..forms import ProjectForm, CategoryForm, VersionForm, EntryForm
-from base.models import Project
+from ..forms import CategoryForm, VersionForm, EntryForm
 
 
 class EntryMixin(object):

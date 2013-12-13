@@ -35,6 +35,7 @@ DATABASES = {
 
 # Project apps
 INSTALLED_APPS += (
+    'base',
     'changes',
     'github_issue',
     'base'

@@ -1,3 +1,5 @@
+# coding=utf-8
+"""Project model used by all apps."""
 import os
 import logging
 logger = logging.getLogger(__name__)
@@ -53,7 +55,8 @@ class Project(AuditedModel):
     unapproved_objects = UnapprovedProjectManager()
 
     class Meta:
-        app_label = 'changes'
+        """Meta class for project."""
+        app_label = 'base'
 
     def __unicode__(self):
         return u'%s' % self.name

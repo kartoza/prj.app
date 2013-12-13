@@ -1,11 +1,8 @@
 # coding=utf-8
 """Version related views."""
-import logging
-logger = logging.getLogger(__name__)
-
 # noinspection PyUnresolvedReferences
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 import re
 import zipfile
@@ -345,13 +342,16 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
 
     def render_to_response(self, context, **response_kwargs):
         """
-        Returns a RST document for a project version page
+        Returns a RST document for a project version page.
+
+        :param context:
+        :param response_kwargs:
         """
         version_obj = context.get('version')
         # set the context flag for 'rst_download'
         context['rst_download'] = True
         # render the template
-        myDocument = self.response_class(
+        document = self.response_class(
             request=self.request,
             template=self.get_template_names(),
             context=context,
@@ -359,15 +359,15 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
         )
         # convert the html to rst
         converted_doc = pypandoc.convert(
-            myDocument.rendered_content, 'rst', format='html')
+            document.rendered_content, 'rst', format='html')
         converted_doc = converted_doc.replace('/media/images/', 'images/')
 
         # prepare the ZIP file
-        myZipFile = self._prepare_zip_archive(converted_doc)
+        zip_file = self._prepare_zip_archive(converted_doc, version_obj)
 
         # Grab the ZIP file from memory, make response with correct MIME-type
         response = HttpResponse(
-            myZipFile.getvalue(), mimetype="application/x-zip-compressed")
+            zip_file.getvalue(), mimetype="application/x-zip-compressed")
         # ..and correct content-disposition
         response['Content-Disposition'] = (
             'attachment; filename="{}-{}.zip"'.format(
@@ -376,28 +376,35 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
 
         return response
 
-        def _prepare_zip_archive(self, document):
-            """
-            For the given doucment prepare a ZIP file with the document and
-            referenced images
-            """
-            # create in memory file-like object
-            myTmpFile = StringIO.StringIO()
-            # grab all of the images from document
-            myImages = re.findall(r'images.+', converted_doc)
+    # noinspection PyMethodMayBeStatic
+    def _prepare_zip_archive(self, document, version_obj):
+        """
+        Prepare a ZIP file with the document and referenced images.
+        :param document:
+        :param version_obj: Instance of a version object.
+        """
+        # create in memory file-like object
+        temp_path = StringIO.StringIO()
 
-            # create the ZIP file
-            with zipfile.ZipFile(myTmpFile, 'w') as myzip:
-                # write all of the image files (read from disk)
-                for image in myImages:
-                    myzip.write(
-                        './media/{0}'.format(image),
-                        '{0}'.format(image)
-                    )
-                # write the actual RST document
-                myzip.writestr(
-                    '{}-{}.rst'.format(
-                        version_obj.project.name, version_obj.name),
-                    converted_doc)
+        # grab all of the images from document
+        images = []
+        for line in document.split('\n'):
+            if 'image::' in line:
+                matches = re.findall(r'images.+', line)
+                images.extend(matches)
 
-            return myTmpFile
+        # create the ZIP file
+        with zipfile.ZipFile(temp_path, 'w') as zip_file:
+            # write all of the image files (read from disk)
+            for image in images:
+                zip_file.write(
+                    './media/{0}'.format(image),
+                    '{0}'.format(image)
+                )
+            # write the actual RST document
+            zip_file.writestr(
+                '{}-{}.rst'.format(
+                    version_obj.project.name, version_obj.name),
+                document)
+
+        return temp_path

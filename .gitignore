@@ -1,5 +1,5 @@
 venv
-.idea/workspace.xml
+.idea
 *.pyc
 *.*~
 vagrant-fabric-lxc

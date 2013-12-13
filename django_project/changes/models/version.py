@@ -55,7 +55,7 @@ class Version(AuditedModel):
         blank=True,
         help_text='Describe the new version. Markdown is supported.')
 
-    project = models.ForeignKey('Project')
+    project = models.ForeignKey('base.Project')
 
     objects = ApprovedVersionManager()
     all_objects = models.Manager()
