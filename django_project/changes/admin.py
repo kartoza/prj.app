@@ -1,3 +1,4 @@
+# coding=utf-8
 """Model admin class definitions.
 
 Note these admin models inherit both AuditedAdmin (which adds owner, editor,
@@ -14,26 +15,19 @@ historisation for a model).
 
 
 from django.contrib import admin
-from models import Project, Category, Version, Entry
+from models import Category, Version, Entry
 from audited_models.admin import AuditedAdmin
 import reversion
 
 
-class ProjectAdmin(AuditedAdmin, reversion.VersionAdmin):
-
-    def queryset(self, request):
-        """Ensure we use the correct manager."""
-        qs = self.model.all_objects
-        ordering = self.get_ordering(request)
-        if ordering:
-            qs = qs.order_by(*ordering)
-        return qs
-
-
 class CategoryAdmin(AuditedAdmin, reversion.VersionAdmin):
+    """Category admin model."""
 
     def queryset(self, request):
-        """Ensure we use the correct manager."""
+        """Ensure we use the correct manager.
+
+        :param request: HttpRequest object
+        """
         qs = self.model.all_objects
         ordering = self.get_ordering(request)
         if ordering:
@@ -42,9 +36,13 @@ class CategoryAdmin(AuditedAdmin, reversion.VersionAdmin):
 
 
 class VersionAdmin(AuditedAdmin, reversion.VersionAdmin):
+    """Verion admin model."""
 
     def queryset(self, request):
-        """Ensure we use the correct manager."""
+        """Ensure we use the correct manager.
+
+        :param request: HttpRequest object
+        """
         qs = self.model.all_objects
         ordering = self.get_ordering(request)
         if ordering:
@@ -53,16 +51,19 @@ class VersionAdmin(AuditedAdmin, reversion.VersionAdmin):
 
 
 class EntryAdmin(AuditedAdmin, reversion.VersionAdmin):
+    """Entry admin model."""
 
     def queryset(self, request):
-        """Ensure we use the correct manager."""
+        """Ensure we use the correct manager.
+
+        :param request: HttpRequest object
+        """
         qs = self.model.all_objects
         ordering = self.get_ordering(request)
         if ordering:
             qs = qs.order_by(*ordering)
         return qs
 
-admin.site.register(Project, ProjectAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Version, VersionAdmin)
 admin.site.register(Entry, EntryAdmin)

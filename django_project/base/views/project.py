@@ -1,3 +1,6 @@
+# coding=utf-8
+"""Views for projects."""
+# noinspection PyUnresolvedReferences
 import logging
 logger = logging.getLogger(__name__)
 
@@ -20,8 +23,8 @@ from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
-from ..models import Project, Category, Version, Entry
-from ..forms import ProjectForm, CategoryForm, VersionForm, EntryForm
+from ..models import Project
+from ..forms import ProjectForm
 
 
 class ProjectMixin(object):

@@ -48,7 +48,7 @@ class Category(AuditedModel):
         default=0
     )
 
-    project = models.ForeignKey('Project')
+    project = models.ForeignKey('base.Project')
 
     objects = ApprovedCategoryManager()
     all_objects = models.Manager()
