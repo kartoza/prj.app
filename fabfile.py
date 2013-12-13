@@ -1,4 +1,6 @@
 #!/bin/python
+# coding=utf-8
+"""Fabfile for changelog app."""
 # ~/fabfile.py
 # A Fabric file for carrying out various administrative tasks.
 # Tim Sutton, Jan 2013
@@ -230,16 +232,20 @@ def sync_project_to_server():
 
     """
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
+    update_venv(code_path)
+    #noinspection PyArgumentEqualDefault
     rsync_project(
         base_path,
         delete=False,
         exclude=[
             '*.pyc',
             '.git',
+            '*.dmp',
             '.DS_Store',
             'visual_changelog.db',
             'venv',
             'django_project/static'])
+    update_migrations()
     with cd(os.path.join(code_path, 'django_project')):
         run('touch core/wsgi.py')
     set_media_permissions(code_path)
