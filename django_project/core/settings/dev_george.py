@@ -21,7 +21,7 @@ DATABASES = {
         #     'visual_changelog.db')),
         'NAME': 'changelog',
         # The following settings are not used with sqlite3:
-        'USER': 'vagrant',
+        'USER': 'wsgi',
         'PASSWORD': 'vagrant',
         # Empty for localhost through domain sockets or '127.0.0.1' for
         # localhost through TCP.

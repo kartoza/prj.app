@@ -3,6 +3,7 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
+from base.models import Project
 
 
 class ApprovedCategoryManager(models.Manager):
@@ -48,7 +49,7 @@ class Category(AuditedModel):
         default=0
     )
 
-    project = models.ForeignKey('Project')
+    project = models.ForeignKey(Project)
 
     objects = ApprovedCategoryManager()
     all_objects = models.Manager()
