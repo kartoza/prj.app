@@ -29,7 +29,7 @@ class CategoryForm(forms.ModelForm):
                 Field('name', css_class="form-control"),
                 Field('sort_number', css_class="form-control"),
                 css_id='project-form')
-            )
+        )
         self.helper.layout = layout
         self.helper.html5_required = False
         super(CategoryForm, self).__init__(*args, **kwargs)
@@ -75,12 +75,12 @@ class EntryForm(forms.ModelForm):
                 Field('image_file', css_class="form-control"),
                 Field('image_credits', css_class="form-control"),
                 css_id='entry-form')
-            )
+        )
         self.helper.layout = layout
         self.helper.html5_required = False
         super(EntryForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
-        # Filter the category list when editing so it shows only relevent ones
+        # Filter the category list when editing so it shows only relevant ones
         if self.instance.id is not None:
             self.fields['category'].queryset = Category.objects.filter(
                 project=self.instance.version.project)
