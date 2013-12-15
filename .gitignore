@@ -9,3 +9,5 @@ visual_changelog.db
 django_project/static
 django_project/core/settings/secret.py
 node_modules
+id_dsa.pub
+id_rsa.pub

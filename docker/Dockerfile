@@ -10,9 +10,9 @@ RUN apt-get update
 # container when you run it. See:
 # https://gist.github.com/fairchild/7309068
 RUN apt-get update && apt-get install -y apt-cacher-ng
-# Run it temporarily in daemon mode while runnint this build process
+# Run it temporarily in daemon mode while running this build process
 RUN apt-cacher-ng
-RUN echo "Acquire::http { Proxy \"http://127.0.0.1:3142\"; };"| tee -a /etc/apt/apt.conf.d/01proxy
+RUN echo "Acquire::http { Proxy \"http://192.168.1.12:3142\"; };"| tee -a /etc/apt/apt.conf.d/01proxy
 RUN apt-get upgrade -y
 RUN apt-get install -y --force-yes openssh-server apache2 supervisor lsb-release sudo
 # Set the root password to 'projecta'
@@ -24,5 +24,8 @@ ADD supervisor-apt-cacher.conf /etc/supervisor/conf.d/supervisor-apt-cacher.conf
 ADD supervisor-apache.conf /etc/supervisor/conf.d/supervisor-apache.conf
 RUN mkdir ~/.ssh
 RUN chmod og-rwX ~/.ssh
-ADD ~/.ssh/id_dsa.pub ~/.ssh/authorized_keys
-CMD ["/usr/bin/supervisord"]
+ADD id_dsa.pub ~/.ssh/authorized_keys
+# Change apt-cache setup to use shared volume
+# Todo: Make this generic
+RUN echo "Acquire::http { Proxy \"http://192.168.1.12:3142\"; };"| tee -a /etc/apt/apt.conf.d/01proxy
+CMD ["/usr/bin/supervisord -n"]
