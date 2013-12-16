@@ -2,41 +2,25 @@
 """Project level url handler."""
 from django.conf.urls import patterns, url
 from views.committee import CommitteeDetailView
-from views.vote import VoteCreateView
+from views.vote import VoteCreateUpdateView
+from views.ballot import BallotDetailView
 
 
 urlpatterns = patterns(
     '',
-    # basic app views
-    # url(regex='^$',
-    #     view=ProjectListView.as_view(),
-    #     name='home'),
-    # # Project management
-    # url(regex='^pending-project/list/$',
-    #     view=PendingProjectListView.as_view(),
-    #     name='pending-project-list'),
-    # url(regex='^approve-project/(?P<pk>\d+)/$',
-    #     view=ApproveProjectView.as_view(),
-    #     name='project-approve'),
-    # url(regex='^project/list/$',
-    #     view=ProjectListView.as_view(),
-    #     name='project-list'),
-    url(regex='^committee/(?P<pk>\d+)/$',
+    ### Committee URLs
+    url(regex='^(?P<slug>[\w-]+)/$',
         view=CommitteeDetailView.as_view(),
         name='committee-detail'),
-    # url(regex='^project/delete/(?P<pk>\d+)/$',
-    #     view=ProjectDeleteView.as_view(),
-    #     name='project-delete'),
-    # url(regex='^project/create/$',
-    #     view=ProjectCreateView.as_view(),
-    #     name='project-create'),
-    # url(regex='^project/update/(?P<pk>\d+)/$',
-    #     view=ProjectUpdateView.as_view(),
-    #     name='project-update'),
 
-
-    ### VOTING URLs
-    url(regex='^ballot/(?P<ballotID>\d+)/vote/$',
-        view=VoteCreateView.as_view(),
+    ### Voting URLs
+    url(regex='^(?P<committeeSlug>[\w-]+)/ballots/'
+              '(?P<ballotSlug>[\w-]+)/vote/$',
+        view=VoteCreateUpdateView.as_view(),
         name='add-vote'),
+
+    ### Ballot URLs
+    url(regex='^(?P<committeeSlug>[\w-]+)/ballots/(?P<slug>[\w-]+)/$',
+        view=BallotDetailView.as_view(),
+        name='ballot-detail'),
 )

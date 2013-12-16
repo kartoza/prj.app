@@ -10,39 +10,39 @@ from django.views.generic import (
     CreateView,
 )
 
-from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin
 from vota.models import Vote, Ballot
 from vota.forms import VoteForm
 
 
-class VoteMixin(object):
+class VoteCreateUpdateView(LoginRequiredMixin, CreateView):
+    context_object_name = 'vote'
+    template_name = 'vote/create.html'
     model = Vote
     form_class = VoteForm
 
-
-class VoteCreateUpdateMixin(VoteMixin, LoginRequiredMixin):
-    def get_context_data(self, **kwargs):
-        context = super(VoteMixin, self).get_context_data(**kwargs)
-        return context
-
-    def form_invalid(self, form):
-        return self.render_to_response(self.get_context_data(form=form))
-
-
-class VoteCreateView(VoteCreateUpdateMixin, CreateView):
-    context_object_name = 'vote'
-    template_name = 'vote/create.html'
+    def get_form_kwargs(self):
+        kwargs = super(VoteCreateUpdateView, self).get_form_kwargs()
+        the_ballot_slug = self.kwargs['ballotSlug']
+        the_ballot = Ballot.objects.get(slug=the_ballot_slug)
+        try:
+            existing_vote = Vote.objects.filter(ballot=the_ballot)\
+                .get(user=self.request.user)
+            kwargs.update({'instance': existing_vote})
+        except Vote.DoesNotExist:
+            kwargs.update({'instance': self.object})
+        return kwargs
 
     def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.save()
-        return HttpResponseRedirect(self.get_success_url())
+        form.instance.ballot = self.object.ballot
+        form.instance.user = self.request.user
+        return super(VoteCreateUpdateView, self).form_valid(form)
 
-    def get_context_data(self, **kwargs):
-        data = super(VoteCreateView, self).get_context_data(**kwargs)
-        ballot_id = self.kwargs['ballotID']
-        ballot_obj = Ballot.objects.get(id=ballot_id)
-        data.get('form').initial['user'] = self.request.user
-        data.get('form').initial['ballot'] = ballot_obj
-        return data
+    def get_success_url(self):
+        return reverse('ballot-detail',
+                       kwargs={'projectSlug':
+                               self.object.ballot.committee.project.slug,
+                               'committeeSlug':
+                               self.object.ballot.committee.slug,
+                               'slug': self.object.slug
+                               })

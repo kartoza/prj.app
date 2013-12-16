@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load markup %}
+
+{% block title %}Committee - {{ committee.name }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>{{ committee.name }}</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+  <div class="row">
+    {% include 'ballot/includes/committee-heading.html' %}
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <h2>{{ ballot.name }}</h2>
+      <hr/>
+    </div>
+  </div>
+  <div class="row">
+    {% include 'ballot/includes/ballot-vote-details.html' %}
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Summary</h3>
+      <hr/>
+      <p class="lead">{{ ballot.summary }}</p>
+    </div>
+  </div>
+  <hr/>
+  <div class="row">
+    <div class="col-md-12">
+      <h4>Description</h4>
+      <hr/>
+      <p>{{ ballot.description }}</p>
+    </div>
+  </div>
+  <div class="row" >
+    <div class="col-md-12 text-center">
+      <hr/>
+      {% if not userVoted %}
+        <p>
+          <a href="{% url 'add-vote' projectSlug=ballot.committee.project.slug committeeSlug=ballot.committee.slug ballotSlug=ballot.slug %}"
+              class="btn btn-lg btn-primary">Cast Your Vote!</a>
+        </p>
+      {% else %}
+        <p class="lead">You have already voted, but you can change your vote</p>
+        <p>
+          <a href="{% url 'add-vote' projectSlug=ballot.committee.project.slug committeeSlug=ballot.committee.slug ballotSlug=ballot.slug %}"
+             class="btn btn-lg btn-primary">Change Your Vote</a>
+        </p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

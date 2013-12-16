@@ -1,0 +1,31 @@
+<div class="col-md-4">
+    <div class="panel
+              {% if not ballot.private %}
+                {% if ballot.get_current_tally > 0 %}panel-success
+                {% elif ballot.get_current_tally == 0 %}panel-warning
+                {% elif ballot.get_current_tally < 0 %}panel-danger{% endif %}
+              {% else %}panel-default{% endif %}">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <a href="{% url 'ballot-detail' projectSlug=ballot.committee.project.slug committeeSlug=ballot.committee.slug slug=ballot.slug %}">
+          {{ ballot.name }}
+        </a>
+        {% if ballot.private %}
+          <span class="label label-default pull-right">PRIVATE</span>
+        {% endif %}
+      </h3>
+    </div>
+    <div class="panel-body">
+      {{ ballot.summary }}
+    </div>
+    {% if not ballot.private %}
+      <div class="panel-footer">
+        {% if ballot.has_quorum %}
+          <span class="label label-success">Has Quorum</span>
+        {% else %}
+          <span class="label label-danger">No Quorum</span>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>

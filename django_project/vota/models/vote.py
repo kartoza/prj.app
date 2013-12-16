@@ -4,6 +4,7 @@ Committee can vote on to either Pass or Deny.
 
 
 """
+from django.core.exceptions import ValidationError
 import logging
 
 logger = logging.getLogger(__name__)
@@ -41,5 +42,19 @@ class Vote(AuditedModel):
         unique_together = ('user', 'ballot')
         app_label = 'vota'
 
+    def clean(self):
+        selected_count = 0
+        if self.positive:
+            selected_count += 1
+        if self.abstain:
+            selected_count += 1
+        if self.negative:
+            selected_count += 1
+        if selected_count == 0:
+            raise ValidationError('At least one voting option must be '
+                                  'selected!')
+        if selected_count > 1:
+            raise ValidationError('You may only select one voting option!')
+
     def __unicode__(self):
-        return u'%s : %s' % (self.project.name, self.name)
+        return u'%s : %s' % (self.ballot.name, self.user.username)

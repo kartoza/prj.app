@@ -12,7 +12,7 @@ urlpatterns = patterns(
     url(r'^site-admin/', include(admin.site.urls)),
     url(r'^', include('base.urls')),
     url(r'^', include('changes.urls')),
-    url(r'^', include('vota.urls')),
+    url(r'^(?P<projectSlug>[\w-]+)/', include('vota.urls')),
     url(r'^', include('github_issue.urls')),
     url(r'^accounts/', include('userena.urls')),
 )

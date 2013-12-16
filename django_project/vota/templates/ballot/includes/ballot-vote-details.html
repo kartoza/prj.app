@@ -1,0 +1,48 @@
+<div class="col-md-10 col-md-offset-1 text-center">
+  {% if not ballot.denied or ballot.approved %}
+    <div class="alert alert-info col-md-3">
+      Closes in {{ ballot.closes|timeuntil }}
+    </div>
+    <div class="alert alert-info col-md-2 col-md-offset-1">
+      {{ ballot.get_total_vote_count }}
+      vote{{ ballot.get_total_vote_count|pluralize }} so far
+    </div>
+    <div class="alert col-md-2 col-md-offset-1
+          {% if ballot.has_quorum %}alert-success{% else %}alert-danger{% endif %}">
+      {% if ballot.has_quorum %}Quorum Reached{% else %}No Quorum{% endif %}
+    </div>
+    {% if ballot.has_quorum %}
+      {% if ballot.get_current_tally == 0 %}
+        <div class="alert alert-warning col-md-2 col-md-offset-1">
+          So far, it's 50/50!
+        </div>
+      {% elif ballot.get_current_tally > 0 %}
+        <div class="alert alert-success col-md-2 col-md-offset-1">
+          Right now, it's a winner
+        </div>
+      {% elif ballot.get_current_tally < 0 %}
+        <div class="alert alert-danger col-md-2 col-md-offset-1">
+          Right now, it's a firm no
+        </div>
+      {% endif %}
+    {% else %}
+      {% if ballot.get_current_tally == 0 %}
+        <div class="alert alert-warning col-md-2 col-md-offset-1">
+          But it's 50/50
+        </div>
+      {% elif ballot.get_current_tally > 0 %}
+        <div class="alert alert-success col-md-2 col-md-offset-1">
+          But most agree
+        </div>
+      {% elif ballot.get_current_tally < 0 %}
+        <div class="alert alert-danger col-md-2 col-md-offset-1">
+          But most disagree
+        </div>
+      {% endif %}
+    {% endif %}
+  {% elif ballot.approved %}
+    <div class="alert alert-success lead">Approved</div>
+  {% elif ballot.denied %}
+    <div class="alert alert-danger lead">Denied</div>
+  {% endif %}
+</div>

@@ -13,7 +13,7 @@ from django.views.generic import (
     DetailView,
     UpdateView,
     RedirectView,
-    TemplateView)
+)
 
 from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
@@ -46,7 +46,6 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ProjectListView, self).get_context_data(**kwargs)
         context['num_projects'] = self.get_queryset().count()
-        context['unapproved'] = False
         return context
 
     def get_queryset(self):
@@ -156,4 +155,3 @@ class ApproveProjectView(ProjectMixin, StaffuserRequiredMixin, RedirectView):
         project.approved = True
         project.save()
         return reverse(self.pattern_name)
-

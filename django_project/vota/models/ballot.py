@@ -8,6 +8,7 @@ If no quorum is reached, no_quorum should be True
 
 A ballot has one Committee.
 """
+from django.utils.text import slugify
 import logging
 logger = logging.getLogger(__name__)
 from django.db import models
@@ -15,15 +16,16 @@ from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from vota.models.vote import Vote
+import datetime
 
 
-class PassedCategoryManager(models.Manager):
-    """Custom category manager that shows only passed ballots."""
+class ApprovedCategoryManager(models.Manager):
+    """Custom category manager that shows only approved ballots."""
 
     def get_query_set(self):
         """Query set generator"""
         return super(
-            PassedCategoryManager, self).get_query_set().filter(
+            ApprovedCategoryManager, self).get_query_set().filter(
                 passed=True)
 
 
@@ -37,6 +39,26 @@ class DeniedCategoryManager(models.Manager):
                 denied=True)
 
 
+class OpenCategoryManager(models.Manager):
+    """Custom version manager that shows only open ballots."""
+
+    def get_query_set(self):
+        """Query set generator"""
+        return super(
+            OpenCategoryManager, self).get_query_set().filter(
+                open_from__lt=timezone.now())
+
+
+class ClosedCategoryManager(models.Manager):
+    """Custom version manager that shows only open ballots."""
+
+    def get_query_set(self):
+        """Query set generator"""
+        return super(
+            ClosedCategoryManager, self).get_query_set().filter(
+                closes__lt=timezone.now())
+
+
 class Ballot(AuditedModel):
     """A category model e.g. gui, backend, web site etc."""
     name = models.CharField(
@@ -44,14 +66,22 @@ class Ballot(AuditedModel):
         max_length=255,
         null=False,
         blank=False,
-        unique=False)  # there is a unique together rule in meta class below
+        unique=False
+    )  # there is a unique together rule in meta class below
 
-    description = models.CharField(
-        help_text=_('The content of this ballot; the details on which the '
-                    'Committee should base their vote.'),
-        max_length=3000,
-        null=False,
+    summary = models.CharField(
+        help_text=_('A brief overview of the ballot.'),
+        max_length=250,
         blank=False,
+        null=False
+    )
+
+    description = models.TextField(
+        help_text=_('A full description of the proposal if a summary is not '
+                    'enough!'),
+        max_length=3000,
+        null=True,
+        blank=True,
     )
 
     approved = models.BooleanField(
@@ -79,7 +109,7 @@ class Ballot(AuditedModel):
 
     closes = models.DateTimeField(
         help_text=_('Date the ballot closes'),
-        default=timezone.now()
+        default=timezone.now() + datetime.timedelta(days=7)
     )
 
     private = models.BooleanField(
@@ -90,22 +120,32 @@ class Ballot(AuditedModel):
 
     # noinspection PyUnresolvedReferences
     committee = models.ForeignKey('Committee')
-
+    slug = models.SlugField()
     objects = models.Manager()
-    passed_objects = PassedCategoryManager()
+    approved_objects = ApprovedCategoryManager()
     denied_objects = DeniedCategoryManager()
+    open_objects = OpenCategoryManager()
+    closed_objects = ClosedCategoryManager()
 
     class Meta:
         """Meta options for the category class."""
-        unique_together = ('name', 'committee')
+        unique_together = (
+            ('name', 'committee'),
+            ('committee', 'slug')
+        )
         app_label = 'vota'
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.slug = slugify(self.name)
+        super(Ballot, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return u'%s : %s' % (self.committee.name, self.name)
 
-    def get_user_voted(self):
+    def get_user_voted(self, user=None):
         voted = False
-        if Vote.objects.filter(ballot=self).filter(user=self).exists():
+        if Vote.objects.filter(ballot=self).filter(user=user).exists():
             voted = True
         return voted
 
@@ -121,6 +161,25 @@ class Ballot(AuditedModel):
         votes = Vote.objects.filter(ballot=self).filter(abstain=True).count()
         return votes
 
+    def get_current_tally(self):
+        positive = self.get_positive_vote_count()
+        negative = self.get_negative_vote_count()
+        tally = 0
+        tally += positive
+        tally -= negative
+        return tally
+
     def get_total_vote_count(self):
         vote_count = Vote.objects.filter(ballot=self).count()
         return vote_count
+
+    def has_quorum(self):
+        vote_count = self.get_total_vote_count()
+        committee_user_count = self.committee.users.all().count()
+        if committee_user_count != 0:
+            quorum_percent = self.committee.quorum_setting
+            percentage = 100 * float(vote_count) / float(committee_user_count)
+            if percentage > quorum_percent:
+                return True
+        else:
+            return False
