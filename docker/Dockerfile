@@ -28,4 +28,6 @@ ADD id_dsa.pub ~/.ssh/authorized_keys
 # Change apt-cache setup to use shared volume
 # Todo: Make this generic
 RUN echo "Acquire::http { Proxy \"http://192.168.1.12:3142\"; };"| tee -a /etc/apt/apt.conf.d/01proxy
+EXPOSE 22
+EXPOSE 80
 CMD ["/usr/bin/supervisord -n"]
