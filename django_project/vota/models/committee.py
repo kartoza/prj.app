@@ -15,16 +15,16 @@ from django.contrib.auth.models import User
 
 
 QUORUM_CHOICES = (
-    ('All Members', '100'),
-    ('Three Quarters', '75'),
-    ('Half', '50'),
-    ('One Quarter', '25'),
-    ('One Member', '1')
+    ('100', 'All Members'),
+    ('75', 'Three Quarters'),
+    ('50', 'Half'),
+    ('25', 'One Quarter'),
+    ('1', 'One Member')
 )
 
 
 class Committee(AuditedModel):
-    """A category model e.g. gui, backend, web site etc."""
+    """A committee model i.e. a group of users under a project"""
     name = models.CharField(
         help_text=_('The name of this committee.'),
         max_length=255,
@@ -41,12 +41,13 @@ class Committee(AuditedModel):
     quorum_setting = models.CharField(
         help_text=_('The percentage of committee members required to vote '
                     'in order to have quorum'),
-        choices=QUORUM_CHOICES
+        choices=QUORUM_CHOICES,
+        max_length=20
     )
 
     project = models.ForeignKey(Project)
     users = models.ManyToManyField(User)
-    all_objects = models.Manager()
+    objects = models.Manager()
 
     class Meta:
         """Meta options for the category class."""

@@ -9,11 +9,12 @@ If no quorum is reached, no_quorum should be True
 A ballot has one Committee.
 """
 import logging
-
 logger = logging.getLogger(__name__)
 from django.db import models
 from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
+from vota.models.vote import Vote
 
 
 class PassedCategoryManager(models.Manager):
@@ -71,10 +72,26 @@ class Ballot(AuditedModel):
         default=False
     )
 
+    open_from = models.DateTimeField(
+        help_text=_('Date the ballot opens'),
+        default=timezone.now()
+    )
+
+    closes = models.DateTimeField(
+        help_text=_('Date the ballot closes'),
+        default=timezone.now()
+    )
+
+    private = models.BooleanField(
+        help_text=_('Should members be prevented from viewing results before '
+                    'voting?'),
+        default=False
+    )
+
     # noinspection PyUnresolvedReferences
     committee = models.ForeignKey('Committee')
 
-    all_objects = models.Manager()
+    objects = models.Manager()
     passed_objects = PassedCategoryManager()
     denied_objects = DeniedCategoryManager()
 
@@ -84,4 +101,26 @@ class Ballot(AuditedModel):
         app_label = 'vota'
 
     def __unicode__(self):
-        return u'%s : %s' % (self.project.name, self.name)
+        return u'%s : %s' % (self.committee.name, self.name)
+
+    def get_user_voted(self):
+        voted = False
+        if Vote.objects.filter(ballot=self).filter(user=self).exists():
+            voted = True
+        return voted
+
+    def get_positive_vote_count(self):
+        votes = Vote.objects.filter(ballot=self).filter(positive=True).count()
+        return votes
+
+    def get_negative_vote_count(self):
+        votes = Vote.objects.filter(ballot=self).filter(negative=True).count()
+        return votes
+
+    def get_abstainer_count(self):
+        votes = Vote.objects.filter(ballot=self).filter(abstain=True).count()
+        return votes
+
+    def get_total_vote_count(self):
+        vote_count = Vote.objects.filter(ballot=self).count()
+        return vote_count

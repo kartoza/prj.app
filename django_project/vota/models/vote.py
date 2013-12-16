@@ -34,6 +34,7 @@ class Vote(AuditedModel):
     user = models.ForeignKey(User)
     # noinspection PyUnresolvedReferences
     ballot = models.ForeignKey('Ballot')
+    objects = models.Manager()
 
     class Meta:
         """Meta options for the vote class."""

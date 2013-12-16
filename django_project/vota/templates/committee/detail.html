@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load markup %}
+
+{% block title %}Committee - {{ committee.name }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>{{ committee.name }}</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-10">
+            <div class="media-body">
+                <h3 class="media-heading">
+                    <b>{{ committee.name }}</b>
+                </h3>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="btn-group btn-group-justified">
+                <a class="btn btn-default btn-mini"
+                    href='#'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>Members</h2>
+            <hr/>
+            {% for user in committee.users.all %}
+                <p>{{ user.username }}</p>
+            {% endfor %}
+        </div>
+    </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <h2>Ballots</h2>
+      <hr/>
+      {% for ballot in ballots %}
+        <p>{{ ballot.name }}</p>
+        <p>{{ ballot.description }}</p>
+        {% if not ballot.private %}
+          <p>Votes Count: {{ ballot.get_total_vote_count }}</p>
+          <p>Ayes: {{ ballot.get_positive_vote_count }}</p>
+          <p>Nays: {{ ballot.get_negative_vote_count }}</p>
+          <p>Abstained: {{ ballot.get_abstainer_count }}</p>
+        {% else %}
+          <p>Please vote to see the results!</p>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

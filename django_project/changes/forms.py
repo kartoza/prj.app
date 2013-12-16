@@ -51,7 +51,7 @@ class VersionForm(forms.ModelForm):
                 Field('description', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
                 css_id='project-form')
-            )
+        )
         self.helper.layout = layout
         self.helper.html5_required = False
         super(VersionForm, self).__init__(*args, **kwargs)

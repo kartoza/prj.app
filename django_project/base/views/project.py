@@ -4,10 +4,6 @@
 import logging
 logger = logging.getLogger(__name__)
 
-# noinspection PyUnresolvedReferences
-import logging
-logger = logging.getLogger(__name__)
-
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.views.generic import (
