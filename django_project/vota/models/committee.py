@@ -42,7 +42,7 @@ class Committee(AuditedModel):
         help_text=_('The percentage of committee members required to vote '
                     'in order to have quorum'),
         choices=QUORUM_CHOICES,
-        max_length=20
+        max_length=3
     )
 
     project = models.ForeignKey(Project)
