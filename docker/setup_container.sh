@@ -20,8 +20,8 @@ sudo service docker restart
 sudo mkdir -p /var/docker/volumes/postgres_data
 sudo docker pull helmi03/docker-postgis
 sudo docker run -d \
-    -v /var/docker/volumes/postgres_data:/var/lib/postgresql \
     -name postgis \
+    -v /var/docker/volumes/postgres_data:/var/lib/postgresql \
     helmi03/docker-postgis
 POSTGIS_IP=$(sudo docker inspect postgis | grep IPAddress | grep -o "[0-9\.]*")
 
@@ -30,13 +30,12 @@ sudo mkdir -p /var/docker/volumes/apt-cache/
 cp ~/.ssh/id_dsa.pub .
 sudo docker build -t linfiniti/projecta .
 sudo docker run -d \
-    -v /var/docker/volumes/apt-cache/:/var/cache \
-    -t linfiniti/projecta \
     -name "projecta" \
+    -v /var/docker/volumes/apt-cache/:/var/cache \
+    linfiniti/projecta \
     supervisord -n
-ssh root@localhost -p 7222 "chown -R wsgi.wsgi /home/web"
 PROJECTA_IP=$(sudo docker inspect projecta | grep IPAddress | grep -o "[0-9\.]*")
-
+ssh root@$PROJECTA_IP "chown -R wsgi.wsgi /home/web"
 
 cd ..
-fab -H root@$PROJECTA_IP:7222 deploy
+fab -H root@$PROJECTA_IP:22 deploy
