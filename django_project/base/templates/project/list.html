@@ -1,7 +1,6 @@
-{% extends "base.html" %}
-{% load thumbnail %}
+{% extends "project_base.html" %}
 
-{% block title %}Your Projects{% endblock %}
+{% block title %}Projects{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
@@ -19,6 +18,10 @@
           </small>
         {% endif %}
       </h1>
+      <p class="lead">
+        Welcome to Projecta! This is a list of the approved
+        projects which you are able to view.
+      </p>
     </div>
     {% ifequal num_projects 0 %}
       <h3>
@@ -27,54 +30,6 @@
       </h3>
     {% endifequal %}
     {% for project in projects %}
-    <div class="row">
-      <div class="col-md-1">
-        {% if project.image_file %}
-          <a href="{{ MEDIA_URL }}{{ project.image_file }}">
-            <img class="img-responsive img-rounded pull-right"
-                 src="{% thumbnail project.image_file 50x50 crop %}" />
-          </a>
-        {%  endif %}
-      </div>
-      <div class="col-md-9">
-        <div class="media-body">
-          <h3 class="media-heading">
-            <b>{{ project.name }}</b>
-          </h3>
-          {% for version in project.versions %}
-          <div>
-            Version: {{ version.name }}
-            <a href="{% url "version-detail" version.id %}">
-              <span class="glyphicon glyphicon-list"></span>
-            </a>
-            <a href="{% url "version-thumbs" version.id %}">
-              <span class="glyphicon glyphicon-th"></span>
-            </a>
-          </div>
-          {% endfor %} {# version loop #}
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="btn-group pull-right">
-          {%  if not project.approved and user.is_staff %}
-            <a class="btn btn-success btn-mini"
-               href='{% url "project-approve" project.id %}'>
-                    <span class="glyphicon glyphicon-thumbs-up"></span>
-            </a>
-          {% endif %}
-          {% if user.is_authenticated %}
-            <a class="btn btn-default btn-mini"
-                href='{% url "project-delete" project.id %}'>
-                    <span class="glyphicon glyphicon-minus"></span>
-            </a>
-            <a class="btn btn-default btn-mini"
-                href='{% url "project-update" project.id %}'>
-                    <span class="glyphicon glyphicon-pencil"></span>
-            </a>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-    <hr />
+      {% include 'project/includes/project-panel.html' %}
     {%  endfor %} {# project loop #}
 {% endblock %}

@@ -1,0 +1,55 @@
+{% load thumbnail %}
+<div class="project-panel col-md-4">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <a href="{% url 'project-detail' project.slug %}">
+          {{ project.name }}
+        </a>
+      </h3>
+    </div>
+    <div class="panel-body">
+      {% if project.image_file %}
+        <div class="center-block">
+          <a href="{{ MEDIA_URL }}{{ project.image_file }}">
+            <img class="img-responsive img-rounded"
+                 src="{% thumbnail project.image_file 150x150 crop %}"/>
+          </a>
+        </div>
+      {% endif %}
+      {% if project.description %}
+        <p>{{ project.description }}</p>
+      {% endif %}
+      {% for version in project.versions %}
+        Version: {{ version.name }}
+        <a href="{% url "version-detail" version.id %}">
+          <span class="glyphicon glyphicon-list"></span>
+        </a>
+        <a href="{% url "version-thumbs" version.id %}">
+          <span class="glyphicon glyphicon-th"></span>
+        </a>
+        {% if not forloop.last %}
+          <hr/>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="panel-footer">
+      {% if not project.approved and user.is_staff %}
+        <a class="btn btn-success btn-mini"
+           href='{% url "project-approve" project.id %}'>
+          <span class="glyphicon glyphicon-thumbs-up"></span>
+        </a>
+      {% endif %}
+      {% if user.is_authenticated %}
+        <a class="btn btn-default btn-mini"
+           href='{% url "project-delete" project.id %}'>
+          <span class="glyphicon glyphicon-minus"></span>
+        </a>
+        <a class="btn btn-default btn-mini"
+           href='{% url "project-update" project.id %}'>
+          <span class="glyphicon glyphicon-pencil"></span>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>

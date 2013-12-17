@@ -24,17 +24,8 @@ from ..forms import ProjectForm
 
 
 class ProjectMixin(object):
-    model = Project  # implies -> queryset = Entry.objects.all()
+    model = Project
     form_class = ProjectForm
-
-
-class ProjectCreateUpdateMixin(ProjectMixin, LoginRequiredMixin):
-    def get_context_data(self, **kwargs):
-        context = super(ProjectMixin, self).get_context_data(**kwargs)
-        return context
-
-    def form_invalid(self, form):
-        return self.render_to_response(self.get_context_data(form=form))
 
 
 class ProjectListView(ProjectMixin, PaginationMixin, ListView):
@@ -49,7 +40,10 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
         return context
 
     def get_queryset(self):
-        projects_qs = Project.objects.all()
+        if self.request.user.is_authenticated():
+            projects_qs = Project.approved_objects.all()
+        else:
+            projects_qs = Project.public_objects.all()
         return projects_qs
 
 
@@ -62,7 +56,7 @@ class ProjectDetailView(ProjectMixin, DetailView):
         return context
 
     def get_queryset(self):
-        projects_qs = Project.objects.all()
+        projects_qs = Project.approved_objects.all()
         return projects_qs
 
     def get_object(self, queryset=None):
@@ -79,28 +73,22 @@ class ProjectDeleteView(ProjectMixin, DeleteView, LoginRequiredMixin):
         return reverse('project-list')
 
     def get_queryset(self):
-        qs = Project.all_objects.all()
+        qs = Project.objects.all()
         if self.request.user.is_staff:
             return qs
         else:
             return qs.filter(creator=self.request.user)
 
 
-class ProjectCreateView(ProjectCreateUpdateMixin, CreateView):
+class ProjectCreateView(ProjectMixin, CreateView):
     context_object_name = 'project'
     template_name = 'project/create.html'
 
     def get_success_url(self):
         return reverse('pending-project-list')
 
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.save()
 
-        return HttpResponseRedirect(self.get_success_url())
-
-
-class ProjectUpdateView(ProjectCreateUpdateMixin, UpdateView):
+class ProjectUpdateView(ProjectMixin, UpdateView):
     context_object_name = 'project'
     template_name = 'project/update.html'
 

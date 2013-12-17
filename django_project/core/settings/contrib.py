@@ -18,6 +18,8 @@ INSTALLED_APPS += (
 DEFAULT_FILE_STORAGE = ('django_hashedfilenamestorage.storage'
                         '.HashedFilenameFileSystemStorage')
 
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
 # use underscore template function
 PIPELINE_TEMPLATE_FUNC = '_.template'
 

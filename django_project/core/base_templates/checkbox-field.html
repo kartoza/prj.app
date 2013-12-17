@@ -1,0 +1,7 @@
+<div class="form-group col-md-4 {% if field.errors %}has-error{% endif %}">
+  <label class="control-label">
+    <span class="lead">{{ field.label }}:</span>
+    {{ field }}
+    {% include 'bootstrap3/layout/help_text_and_errors.html' %}
+  </label>
+</div>

@@ -96,7 +96,10 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 TEMPLATE_DIRS = (
     # project level templates
-    ABS_PATH('core', 'base_templates')
+    ABS_PATH('core', 'base_templates'),
+    ABS_PATH('vota', 'templates'),
+    ABS_PATH('changes', 'templates'),
+
 )
 
 INSTALLED_APPS = (

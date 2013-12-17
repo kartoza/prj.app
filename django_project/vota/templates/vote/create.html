@@ -1,24 +1,16 @@
-{% extends "base.html" %}
-
 {% load crispy_forms_tags %}
-
-{% block extra_head %}
-{{ Other }}
-<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
-{{  floppyforms }}
-
-{% endblock %}
-
-{% block page_title %}
-<h1>Add Your Vote</h1>
-{% endblock page_title %}
-
-{% block content %}
-
-<section id="forms">
-<div class='container'>
-  {% crispy form %}
+<div class="row">
+  <div class="col-md-12">
+    {% if not voted %}
+      <h3>Cast Your Vote</h3>
+    {% else %}
+      <h3>Update Your Vote</h3>
+    {% endif %}
+  </div>
 </div>
+<hr/>
+<section id="forms">
+  <div class="text-center">
+    {% crispy form %}
+  </div>
 </section>
-
-{% endblock %}

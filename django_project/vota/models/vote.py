@@ -18,17 +18,17 @@ class Vote(AuditedModel):
     """A vote model"""
 
     positive = models.BooleanField(
-        help_text=_('A yes, or +1 from the committee member'),
+        help_text=_('A yes, or +1'),
         default=False
     )
 
     abstain = models.BooleanField(
-        help_text=_('Whether the committee member abstained'),
+        help_text=_('Ambivalent. No preference either way.'),
         default=False
     )
 
     negative = models.BooleanField(
-        help_text=_('A No, or -1 from the committee member'),
+        help_text=_('A no, or -1'),
         default=False
     )
 

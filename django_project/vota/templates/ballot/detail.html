@@ -1,9 +1,14 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 {% load markup %}
 
 {% block title %}Committee - {{ committee.name }}{% endblock %}
 
 {% block extra_head %}
+  {{ Other }}
+  <script type="text/javascript"
+          src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
+  {{ floppyforms }}
+
 {% endblock %}
 
 {% block page_title %}
@@ -39,21 +44,52 @@
       <p>{{ ballot.description }}</p>
     </div>
   </div>
-  <div class="row" >
-    <div class="col-md-12 text-center">
+  <div class="row">
+    <div class="col-md-12">
       <hr/>
-      {% if not userVoted %}
-        <p>
-          <a href="{% url 'add-vote' projectSlug=ballot.committee.project.slug committeeSlug=ballot.committee.slug ballotSlug=ballot.slug %}"
-              class="btn btn-lg btn-primary">Cast Your Vote!</a>
-        </p>
-      {% else %}
-        <p class="lead">You have already voted, but you can change your vote</p>
-        <p>
-          <a href="{% url 'add-vote' projectSlug=ballot.committee.project.slug committeeSlug=ballot.committee.slug ballotSlug=ballot.slug %}"
-             class="btn btn-lg btn-primary">Change Your Vote</a>
-        </p>
-      {% endif %}
+      <div id="vote-container"></div>
     </div>
   </div>
+{% endblock %}
+{% block inline-js %}
+  <script>
+    $(function(){
+      var loadUrl = '{% url "add-vote" projectSlug=ballot.committee.project.slug committeeSlug=ballot.committee.slug ballotSlug=ballot.slug %}';
+      var voteContainer = $('#vote-container');
+      voteContainer.load(loadUrl, function(){
+        var voteForm = $('#vote-form');
+        var submitBtn = $('#submit-id-submit');
+        voteForm.submit(function(e){
+          e.preventDefault();
+          var fields = $(this).find('input[class="vote-checkbox"]:checked');
+          if (!fields.length){
+            alert('Please select at least one option!');
+          } else if (fields.length > 1) {
+            alert('Please only select one option!');
+          } else {
+            submitBtn.html('Submitting....').addClass('disabled');
+            $.post(loadUrl, voteForm.serialize(), function(data){
+              voteContainer.fadeOut('slow', function(){
+                if (data.successful) {
+                  voteContainer.html('<p class="lead text-center">Thanks! We ' +
+                      'have received your vote.');
+                  voteContainer.fadeIn('slow');
+                  setTimeout(function () {
+                    window.location.reload();
+                  }, 3000);
+                } else {
+                  voteContainer.html('<p class="lead text-center">Sorry! ' +
+                      data.errors.__all__ + '</p>');
+                  voteContainer.fadeIn('slow');
+                  setTimeout(function () {
+                    window.location.reload();
+                  }, 2000);
+                }
+              });
+            });
+          }
+        });
+      });
+    });
+  </script>
 {% endblock %}
