@@ -20,7 +20,7 @@ DATABASES = {
         #     os.path.pardir,
         #     'resources',
         #     'sqlite',
-        #     'visual_changelog.db')),
+        #     'projecta.db')),
         'NAME': 'changelog',
         # The following settings are not used with sqlite3:
         'USER': '',

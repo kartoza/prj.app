@@ -1,4 +1,4 @@
-# Django settings for visual_changelogger project.
+# Django settings for projecta project.
 
 from .utils import ABS_PATH
 
