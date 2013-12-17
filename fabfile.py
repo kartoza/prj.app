@@ -46,10 +46,10 @@ def get_vars():
 
     :returns: A tuple containing the following:
         * base_path: Workspace dir e.g. ``/home/foo/python``
-        * code_path: Project dir e.g. ``/home/foo/python/visual_changelog``
+        * code_path: Project dir e.g. ``/home/foo/python/projecta``
         * git_url: Url for git checkout - use http for read only checkout
-        * repo_alias: Name of checkout folder e.g. ``visual_changelog``
-        * site_name: Name for the web site e.g. ``visual_changelog``
+        * repo_alias: Name of checkout folder e.g. ``projecta``
+        * site_name: Name for the web site e.g. ``projecta``
 
     :rtype: tuple
     """
@@ -61,6 +61,7 @@ def get_vars():
     code_path = os.path.abspath(os.path.join(base_path, repo_alias))
     return base_path, code_path, git_url, repo_alias, site_name
 
+
 @task
 def update_venv(code_path):
     """Update the virtual environment to ensure it has node etc. installed.
@@ -70,7 +71,7 @@ def update_venv(code_path):
 
     e.g.::
 
-        fab -H localhost update_venv:/home/timlinux/dev/python/visual_changelog
+        fab -H localhost update_venv:/home/timlinux/dev/python/projecta
     """
     setup_venv(code_path, requirements_file='REQUIREMENTS.txt')
     #yuglify needed by django-compress needs to have node installed which
@@ -88,6 +89,7 @@ def update_venv(code_path):
 def setup_postgres_user():
     """Set up the postgresql instance."""
     create_user('wsgi', '')
+
 
 @task
 def upload_postgres_dump(dump_path):
@@ -115,7 +117,7 @@ def update_apache(code_path):
     :param code_path: Usually '/home/web/<site_name>'
 
     """
-    git_url = 'https://api.github.com/repos/timlinux/visual_changelog/issues'
+    git_url = 'https://api.github.com/repos/timlinux/projecta/issues'
     git_user = prompt(
         'Please enter the github user account that issues submitted via the\n'
         'web ui should be created as. This will be written into the apache\n'
@@ -167,7 +169,7 @@ def deploy():
     # if we are testing under vagrant, deploy our local media and db
     #if 'vagrant' in env.fg.home:
     #    with cd(code_path):
-    #        run('cp /vagrant/visual_changelog.db .')
+    #        run('cp /vagrant/projecta.db .')
     #        run('touch django_project/core/wsgi.py')
 
     #sync_media_to_server()
@@ -188,7 +190,7 @@ def freshen():
 
     """
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
-    git_url = 'http://github.com/timlinux/visual_changelog.git'
+    git_url = 'http://github.com/timlinux/projecta.git'
     update_git_checkout(base_path, git_url, repo_alias)
     with cd(os.path.join(code_path, 'django_project')):
         run('touch core/wsgi.py')
@@ -199,6 +201,7 @@ def freshen():
     fastprint(' django_project/core/settings/prod.py\n')
     fastprint(' to the domain name for the site.\n')
     fastprint('*******************************************\n')
+
 
 @task
 def sync_media_to_server():
@@ -214,9 +217,9 @@ def sync_media_to_server():
 
     # Now our sqlite db
     remote_path = os.path.join(
-        code_path, 'resources', 'sqlite', 'visual_changelog.db')
+        code_path, 'resources', 'sqlite', 'projecta.db')
     local_path = os.path.join(
-        os.path.dirname(__file__), 'resources/sqlite/visual_changelog.db')
+        os.path.dirname(__file__), 'resources/sqlite/projecta.db')
     rsync_project(
         remote_path,
         local_dir=local_path,
@@ -242,7 +245,7 @@ def sync_project_to_server():
             '.git',
             '*.dmp',
             '.DS_Store',
-            'visual_changelog.db',
+            'projecta.db',
             'venv',
             'django_project/static'])
     update_migrations()
@@ -250,8 +253,10 @@ def sync_project_to_server():
         run('touch core/wsgi.py')
     set_media_permissions(code_path)
     set_db_permissions()
+    update_migrations()
     collectstatic()
     fastprint(blue('Your server is now in synchronised to your local project'))
+
 
 @task
 def server_to_debug_mode():
@@ -268,6 +273,7 @@ def server_to_debug_mode():
     set_db_permissions()
     collectstatic()
     fastprint(red('Warning: your server is now in DEBUG mode!'))
+
 
 @task
 def server_to_production_mode():
@@ -313,6 +319,7 @@ def get_live_db():
     """Get the live db - will overwrite your local copy."""
     get_postgres_dump('changelog')
 
+
 @task
 def get_live_media():
     """Get the live media - will overwrite your local copy."""
@@ -322,6 +329,7 @@ def get_live_media():
         run('mkdir %s' % path)
     local('rsync -ave ssh %s:%s/django_project/media/* django_project/media/'
           % (env['host_string'], code_path))
+
 
 @task
 def collectstatic():
@@ -348,11 +356,12 @@ def collectstatic():
     with cd(os.path.join(code_path, 'django_project')):
         run(command)
 
+
 @task
 def update_migrations():
     """Apply any pending south migrations.
     """
-    command = '../venv/bin/python manage.py migrate changes'
+    command = '../venv/bin/python manage.py migrate'
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
     with cd(os.path.join(code_path, 'django_project')):
         run(command)
