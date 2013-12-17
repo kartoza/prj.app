@@ -74,5 +74,5 @@ class Project(AuditedModel):
 
     def versions(self):
         """Get all the versions for this project."""
-        qs = Version.objects.filter(project=self).order_by('name')
+        qs = Version.objects.filter(project=self).order_by('-name')
         return qs
