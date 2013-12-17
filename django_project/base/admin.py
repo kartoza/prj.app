@@ -27,7 +27,7 @@ class ProjectAdmin(AuditedAdmin, reversion.VersionAdmin):
 
         :param request: HttpRequest object
         """
-        qs = self.model.all_objects
+        qs = self.model.objects
         ordering = self.get_ordering(request)
         if ordering:
             qs = qs.order_by(*ordering)
