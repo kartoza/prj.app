@@ -3,16 +3,22 @@ import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
+from django.template.defaultfilters import slugify
 
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding field 'Project.slug'
-        db.add_column(u'base_project', 'slug',
-                      self.gf('django.db.models.fields.SlugField')(default=u'project-slug', max_length=50),
-                      keep_default=False)
-
+        db.add_column(
+            u'base_project', 'slug',
+            self.gf('django.db.models.fields.SlugField')(
+                default=u'project', max_length=50), keep_default=False)
+        projects = orm['base.Project'].objects.all()
+        for project in projects:
+            project.slug = slugify(project.name)
+            project.save()
+        # Unique enforcement added in next migration
 
     def backwards(self, orm):
         # Deleting field 'Project.slug'
