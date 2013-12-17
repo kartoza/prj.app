@@ -255,7 +255,8 @@ def sync_project_to_server():
     set_db_permissions()
     update_migrations()
     collectstatic()
-    fastprint(blue('Your server is now in synchronised to your local project'))
+    fastprint(blue(
+        'Your server is now in synchronised to your local project\n'))
 
 
 @task
@@ -272,7 +273,7 @@ def server_to_debug_mode():
         run('touch core/wsgi.py')
     set_db_permissions()
     collectstatic()
-    fastprint(red('Warning: your server is now in DEBUG mode!'))
+    fastprint(red('Warning: your server is now in DEBUG mode!\n'))
 
 
 @task
@@ -289,7 +290,7 @@ def server_to_production_mode():
         run('touch core/wsgi.py')
     set_db_permissions()
     collectstatic()
-    fastprint(blue('Note: your server is now in PRODUCTION mode!'))
+    fastprint(blue('Note: your server is now in PRODUCTION mode!\n'))
 
 
 @task
@@ -367,4 +368,4 @@ def update_migrations():
         run(command)
         run('touch core/wsgi.py')
     fastprint(green('Note: your server is now has the latest SOUTH '
-                    'migrations applied.'))
+                    'migrations applied.\n'))
