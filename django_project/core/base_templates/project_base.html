@@ -29,96 +29,12 @@
       <li><a href='{% url "home" %}'>Home</a></li>
     </ul>
     {% if user.is_authenticated %}
-      <ul class="nav navbar-nav">
-        <li>
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-            Projects <b class="caret"></b>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href='{% url "project-list" %}'>Projects</a></li>
-            <li><a href='{% url "category-list" %}'>Categories</a></li>
-            <li><a href='{% url "entry-list" %}'>Entries</a></li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav">
-        <li>
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              Add <b class="caret"></b>
-          </a>
-          <ul class="dropdown-menu">
-              <li><a href='{% url "project-create" %}'>Project</a>
-              </li>
-              <li><a href='{% url "category-create" %}'>Category</a>
-              </li>
-              <li><a href='{% url "version-create" %}'>Version</a>
-              </li>
-              <li><a href='{% url "entry-create" %}'>Entry</a></li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav">
-        <li>
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              Pending Approval <b class="caret"></b>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href='{% url "pending-project-list" %}'>Projects</a></li>
-            <li><a href='{% url "pending-category-list" %}'>Categories</a></li>
-            <li><a href='{% url "pending-version-list" %}'>Versions</a></li>
-            <li><a href='{% url "pending-entry-list" %}'>Entries</a></li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav">
-        <li><a href="/site-admin/">Admin</a></li>
-      </ul>
+      {% block auth-nav-left %}{% endblock %}
+    {% else %}
+      {% block anon-nav-left %}{% endblock %}
     {% endif %}
     <ul class="nav navbar-nav navbar-right">
-      {% if user.is_authenticated %}
-        <li>
-          <i class="icon-wrench"></i>
-          <a href="#issue-modal" data-toggle="modal">
-              Report an issue
-          </a>
-        </li>
-      {% endif %}
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-          <b class="caret"></b> Account
-        </a>
-        <ul class="dropdown-menu">
-          {% if user.is_authenticated %}
-            <li><a href='{% url "userena_signout" %}'>Log Out</a></li>
-            <li>
-              <a href='{% url "userena_profile_detail" user %}'>
-                View Profile
-              </a>
-            </li>
-            <li>
-              <a href='{% url "userena_profile_edit" user %}'>
-                Edit Details
-              </a>
-            </li>
-            <li>
-              <a href='{% url "userena_password_change" user %}'>
-                Change Password
-              </a>
-            </li>
-            <li>
-              <a href='{% url "userena_email_change" user %}'>
-                Change Email
-              </a>
-            </li>
-          {% else %}
-            <li><a href='{% url "userena_signin" %}'>Log In</a></li>
-            <li><a href='{% url "userena_signup" %}'>Sign Up</a></li>
-            <li>
-              <a href='{% url "userena_password_reset" %}'>Lost Password</a>
-            </li>
-          {% endif %}
-        </ul>
-      </li>
+      {% include 'includes/right-nav.html' %}
     </ul>
   </div>
 </nav>
@@ -183,5 +99,8 @@
 </div>
 {% compressed_js 'contrib' %}
 {% block inline-js %}{% endblock %}
+<script>
+  $('.tooltip-toggle').tooltip();
+</script>
 </body>
 </html>
