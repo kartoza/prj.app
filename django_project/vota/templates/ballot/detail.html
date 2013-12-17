@@ -11,9 +11,54 @@
 
 {% endblock %}
 
-{% block page_title %}
-    <h1>{{ committee.name }}</h1>
-{% endblock page_title %}
+{% block auth-nav-left %}
+  <ul class="nav navbar-nav">
+    <li>
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <strong>{{ ballot.committee.project.name }}
+          | {{ ballot.committee.name }} | {{ ballot.name }}</strong>
+        <b class="caret"></b>
+      </a>
+      <ul class="dropdown-menu">
+        {% for obj in allBallots %}
+          <li>
+            <a href="{{ obj.get_absolute_url }}">{{ obj.name }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </li>
+  </ul>
+  <ul class="nav navbar-nav">
+    {% if openBallots %}
+      <li>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          Open Ballots <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          {% for ballot in openBallots %}
+            <li>
+              <a href="{{ ballot.get_absolute_url }}">{{ ballot.name }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% endif %}
+    {% if closedBallots %}
+      <li>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          Closed Ballots <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          {% for ballot in closedBallots %}
+            <li>
+              <a href="{{ ballot.get_absolute_url }}">{{ ballot.name }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% endif %}
+  </ul>
+{% endblock %}
 
 {% block content %}
 
@@ -54,7 +99,7 @@
 {% block inline-js %}
   <script>
     $(function(){
-      var loadUrl = '{% url "add-vote" projectSlug=ballot.committee.project.slug committeeSlug=ballot.committee.slug ballotSlug=ballot.slug %}';
+      var loadUrl = '{% url "add-vote" project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug ballot_slug=ballot.slug %}';
       var voteContainer = $('#vote-container');
       voteContainer.load(loadUrl, function(){
         var voteForm = $('#vote-form');

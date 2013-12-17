@@ -18,6 +18,7 @@ class BallotDetailView(BallotMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(BallotDetailView, self).get_context_data(**kwargs)
+        context['allBallots'] = Ballot.objects.all()
         context['committee'] = Committee.objects.get(
             id=self.object.committee.id)
         context['userVoted'] = Ballot.get_user_voted(self.object,

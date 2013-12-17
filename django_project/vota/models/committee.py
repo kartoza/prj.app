@@ -4,6 +4,7 @@ This model is used to create 'committees' of users.
 
 A Committee has many Users
 """
+from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 
 import logging
@@ -71,3 +72,9 @@ class Committee(AuditedModel):
 
     def __unicode__(self):
         return u'%s : %s' % (self.project.name, self.name)
+
+    def get_absolute_url(self):
+        return reverse('committee-detail', kwargs={
+            'project_slug': self.project.slug,
+            'slug': self.slug
+        })

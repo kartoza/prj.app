@@ -2,8 +2,6 @@
 """Views for projects."""
 # noinspection PyUnresolvedReferences
 import logging
-logger = logging.getLogger(__name__)
-
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.views.generic import (
@@ -14,13 +12,13 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
 )
-
-from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
-
 from ..models import Project
 from ..forms import ProjectForm
+from vota.models import Committee
+
+logger = logging.getLogger(__name__)
 
 
 class ProjectMixin(object):
@@ -53,6 +51,8 @@ class ProjectDetailView(ProjectMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
+        context['projects'] = self.get_queryset()
+        context['committees'] = Committee.objects.filter(project=self.object)
         return context
 
     def get_queryset(self):

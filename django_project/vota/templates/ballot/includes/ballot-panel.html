@@ -7,7 +7,7 @@
             {% else %}panel-default{% endif %}">
   <div class="panel-heading">
     <h3 class="panel-title">
-      <a href="{% url 'ballot-detail' projectSlug=ballot.committee.project.slug committeeSlug=ballot.committee.slug slug=ballot.slug %}">
+      <a href="{% url 'ballot-detail' project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug slug=ballot.slug %}">
         {{ ballot.name }}
       </a>
       {% if ballot.private %}

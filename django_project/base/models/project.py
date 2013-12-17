@@ -1,5 +1,6 @@
 # coding=utf-8
 """Project model used by all apps."""
+from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 import os
 import logging
@@ -98,6 +99,9 @@ class Project(AuditedModel):
 
     def __unicode__(self):
         return u'%s' % self.name
+
+    def get_absolute_url(self):
+        return reverse('project-detail', kwargs={'slug': self.slug})
 
     def versions(self):
         """Get all the versions for this project."""

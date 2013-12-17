@@ -18,6 +18,7 @@ class CommitteeDetailView(CommitteeMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CommitteeDetailView, self).get_context_data(**kwargs)
+        context['committees'] = self.get_queryset()
         context['openBallots'] = Ballot.open_objects.filter(
             committee=self.get_object())
         context['closedBallots'] = Ballot.closed_objects.filter(

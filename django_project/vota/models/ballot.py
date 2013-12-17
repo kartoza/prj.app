@@ -8,6 +8,7 @@ If no quorum is reached, no_quorum should be True
 
 A ballot has one Committee.
 """
+from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 import logging
 logger = logging.getLogger(__name__)
@@ -142,6 +143,13 @@ class Ballot(AuditedModel):
 
     def __unicode__(self):
         return u'%s : %s' % (self.committee.name, self.name)
+
+    def get_absolute_url(self):
+        return reverse('ballot-detail', kwargs={
+            'project_slug': self.committee.project.slug,
+            'committee_slug': self.committee.slug,
+            'slug': self.slug
+        })
 
     def get_user_voted(self, user=None):
         voted = False

@@ -14,13 +14,13 @@ urlpatterns = patterns(
         name='committee-detail'),
 
     ### Voting URLs
-    url(regex='^(?P<committeeSlug>[\w-]+)/ballots/'
-              '(?P<ballotSlug>[\w-]+)/vote/$',
+    url(regex='^(?P<committee_slug>[\w-]+)/ballots/'
+              '(?P<ballot_slug>[\w-]+)/vote/$',
         view=VoteCreateUpdateView.as_view(),
         name='add-vote'),
 
     ### Ballot URLs
-    url(regex='^(?P<committeeSlug>[\w-]+)/ballots/(?P<slug>[\w-]+)/$',
+    url(regex='^(?P<committee_slug>[\w-]+)/ballots/(?P<slug>[\w-]+)/$',
         view=BallotDetailView.as_view(),
         name='ballot-detail'),
 )

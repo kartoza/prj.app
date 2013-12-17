@@ -30,7 +30,7 @@ class VoteCreateUpdateView(LoginRequiredMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(VoteCreateUpdateView, self).get_form_kwargs()
-        the_ballot_slug = self.kwargs['ballotSlug']
+        the_ballot_slug = self.kwargs['ballot_slug']
         self.the_ballot = Ballot.objects.get(slug=the_ballot_slug)
         try:
             existing_vote = Vote.objects.filter(ballot=self.the_ballot)\
@@ -57,9 +57,9 @@ class VoteCreateUpdateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('ballot-detail',
-                       kwargs={'projectSlug':
+                       kwargs={'project_slug':
                                self.object.ballot.committee.project.slug,
-                               'committeeSlug':
+                               'committee_slug':
                                self.object.ballot.committee.slug,
                                'slug': self.object.ballot.slug
                                })
