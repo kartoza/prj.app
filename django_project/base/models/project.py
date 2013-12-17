@@ -85,8 +85,13 @@ class Project(AuditedModel):
     class Meta:
         """Meta class for project."""
         app_label = 'base'
+        ordering = ['name']
 
     def save(self, *args, **kwargs):
+        """Overloaded save method.
+        :param args:
+        :param kwargs:
+        """
         if not self.pk:
             self.slug = slugify(self.name)
         super(Project, self).save(*args, **kwargs)
@@ -96,5 +101,5 @@ class Project(AuditedModel):
 
     def versions(self):
         """Get all the versions for this project."""
-        qs = Version.objects.filter(project=self).order_by('name')
+        qs = Version.objects.filter(project=self).order_by('-name')
         return qs

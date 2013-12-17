@@ -58,6 +58,7 @@ class Category(AuditedModel):
         """Meta options for the category class."""
         unique_together = ('name', 'project')
         app_label = 'changes'
+        ordering = ['name']
 
     def __unicode__(self):
         return u'%s : %s' % (self.project.name, self.name)
