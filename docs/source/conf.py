@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# visual_changelogger documentation build configuration file, created by
+# projecta documentation build configuration file, created by
 # sphinx-quickstart on Thu Jun  6 10:07:13 2013.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -40,8 +40,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'visual_changelogger'
-copyright = u'2013, Phil Thisin'
+project = u'Projecta'
+copyright = u'2013, Tim Sutton'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -216,7 +216,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'project_name', u'visual_changelogger Documentation',
+    ('index', 'project_name', u'projectager Documentation',
      [u'Phil Thisin'], 1)
 ]
 
@@ -230,8 +230,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'project_name', u'visual_changelogger Documentation',
-   u'Phil Thisin', 'project_name', 'One line description of project.',
+  ('index', 'project_name', u'Projecta Documentation',
+   u'Tim Sutton', 'project_name', 'One line description of project.',
    'Miscellaneous'),
 ]
 
