@@ -1,3 +1,5 @@
+from django.core.urlresolvers import reverse
+from django.utils.text import slugify
 import os
 import logging
 logger = logging.getLogger(__name__)
@@ -55,10 +57,10 @@ class Version(AuditedModel):
         blank=True,
         help_text='Describe the new version. Markdown is supported.')
 
+    slug = models.SlugField(unique=True)
     project = models.ForeignKey('base.Project')
-
-    objects = ApprovedVersionManager()
-    all_objects = models.Manager()
+    objects = models.Manager()
+    approved_objects = ApprovedVersionManager()
     unapproved_objects = UnapprovedVersionManager()
 
     class Meta:
@@ -67,8 +69,16 @@ class Version(AuditedModel):
         app_label = 'changes'
         ordering = ['name']
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.slug = slugify(self.name)
+        super(Version, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return u'%s : %s' % (self.project.name, self.name)
+
+    def get_absolute_url(self):
+        return reverse('version-detail', kwargs={'slug': self.slug})
 
     def entries(self):
         """Get the entries for this version."""

@@ -22,23 +22,25 @@
         <hr/>
       {% endif %}
       <hr/>
-      {% for version in project.versions %}
-        <p>
-          <strong>Version: {{ version.name }}</strong>
-          <span class="btn-group pull-right">
-            <a href="{% url "version-detail" version.id %}"
-                class="btn btn-default btn-xs tooltip-toggle"
-                data-placement="top" data-title="Changelog List">
-              <span class="glyphicon glyphicon-list"></span>
-            </a>
-            <a href="{% url "version-thumbs" version.id %}"
-               class="btn btn-default btn-xs tooltip-toggle"
-               data-placement="top" data-title="Changelog Thumbs">
-              <span class="glyphicon glyphicon-th"></span>
-            </a>
-          </span>
-        </p>
-      {% endfor %}
+      {% if project.versions %}
+        {% for version in project.versions|slice:":2" %}
+          <p>
+            <strong>Version: {{ version.name }}</strong>
+            <span class="btn-group pull-right">
+              <a href="{% url "version-detail" version.id %}"
+                  class="btn btn-default btn-xs tooltip-toggle"
+                  data-placement="top" data-title="Changelog List">
+                <span class="glyphicon glyphicon-list"></span>
+              </a>
+              <a href="{% url "version-thumbs" version.id %}"
+                 class="btn btn-default btn-xs tooltip-toggle"
+                 data-placement="top" data-title="Changelog Thumbs">
+                <span class="glyphicon glyphicon-th"></span>
+              </a>
+            </span>
+          </p>
+        {% endfor %}
+      {% endif %}
     </div>
     <div class="panel-footer">
       {% if not project.approved and user.is_staff %}

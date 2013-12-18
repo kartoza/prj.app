@@ -1,3 +1,5 @@
+from django.core.urlresolvers import reverse
+from django.utils.text import slugify
 import logging
 logger = logging.getLogger(__name__)
 from django.db import models
@@ -47,11 +49,10 @@ class Category(AuditedModel):
             'project'),
         default=0
     )
-
+    slug = models.SlugField(unique=True)
     project = models.ForeignKey('base.Project')
-
-    objects = ApprovedCategoryManager()
-    all_objects = models.Manager()
+    objects = models.Manager()
+    approved_objects = ApprovedCategoryManager()
     unapproved_objects = UnapprovedCategoryManager()
 
     class Meta:
@@ -60,5 +61,13 @@ class Category(AuditedModel):
         app_label = 'changes'
         ordering = ['name']
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.slug = slugify(self.name)
+        super(Category, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return u'%s : %s' % (self.project.name, self.name)
+
+    def get_absolute_url(self):
+        return reverse('category-detail', kwargs={'slug': self.slug})

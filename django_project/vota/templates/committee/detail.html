@@ -1,58 +1,12 @@
 {% extends "project_base.html" %}
-{% load markup %}
+{% load custom_markup %}
 
 {% block title %}Committee - {{ committee.name }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
 
-{% block auth-nav-left %}
-  <ul class="nav navbar-nav">
-    <li>
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <strong>{{ committee.project.name }} | {{ committee.name }}</strong>
-        <b class="caret"></b>
-      </a>
-      <ul class="dropdown-menu">
-        {% for obj in committees %}
-          <li>
-            <a href="{{ obj.get_absolute_url }}">{{ obj.name }}</a>
-          </li>
-        {% endfor %}
-      </ul>
-    </li>
-  </ul>
-  <ul class="nav navbar-nav">
-    {% if openBallots %}
-      <li>
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-          Open Ballots <b class="caret"></b>
-        </a>
-        <ul class="dropdown-menu">
-          {% for ballot in openBallots %}
-            <li>
-              <a href="{{ ballot.get_absolute_url }}">{{ ballot.name }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      </li>
-    {% endif %}
-    {% if closedBallots %}
-      <li>
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-          Closed Ballots <b class="caret"></b>
-        </a>
-        <ul class="dropdown-menu">
-          {% for ballot in closedBallots %}
-            <li>
-              <a href="{{ ballot.get_absolute_url }}">{{ ballot.name }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      </li>
-    {% endif %}
-  </ul>
-{% endblock %}
+{% block nav-url %}?project_slug={{ committee.project.slug }}&committee_slug={{ committee.slug }}{% endblock %}
 
 {% block content %}
   <div class="row">

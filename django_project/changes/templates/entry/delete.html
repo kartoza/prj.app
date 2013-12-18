@@ -1,5 +1,5 @@
 {% extends "project_base.html" %}
-{% load markup %}
+{% load custom_markup %}
 
 {% block title %}Entries Deleted - {{ block.super }}{% endblock %}
 
@@ -38,7 +38,7 @@
         </div>
         <div class="row">
             <div class="col-lg-8">
-                {{ entry.description|markdown:"safe" }}
+                {{ entry.description|base_markdown }}
             </div>
             <div class="col-lg-4">
                 {% if entry.image_file %}

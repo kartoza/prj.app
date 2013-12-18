@@ -87,6 +87,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.custom_middleware.NavContextMiddleware'
 )
 
 ROOT_URLCONF = 'core.urls'
@@ -111,7 +112,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'django.contrib.admin',
-    'django.contrib.markup',  # support markdown in views
 )
 
 # A sample logging configuration. The only tangible logging

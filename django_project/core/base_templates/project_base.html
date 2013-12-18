@@ -25,11 +25,7 @@
     <a class="navbar-brand" href="{% url 'home' %}">Projecta Home</a>
   </div>
   <div class="collapse navbar-collapse" id="top-navbar">
-    {% if user.is_authenticated %}
-      {% block auth-nav-left %}{% endblock %}
-    {% else %}
-      {% block anon-nav-left %}{% endblock %}
-    {% endif %}
+    <div id="nav-content"></div>
     <ul class="nav navbar-nav navbar-right">
       {% include 'includes/right-nav.html' %}
     </ul>
@@ -97,7 +93,11 @@
 {% compressed_js 'contrib' %}
 {% block inline-js %}{% endblock %}
 <script>
-  $('.tooltip-toggle').tooltip();
+  $(function(){
+    $('.tooltip-toggle').tooltip();
+
+    $('#nav-content').load('{{ nav_url }}');
+  });
 </script>
 </body>
 </html>

@@ -82,7 +82,7 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         :returns: A queryset which is filtered to only show approved versions.
         :rtype: QuerySet
         """
-        versions_qs = Version.objects.all()
+        versions_qs = Version.approved_objects.all()
         return versions_qs
 
 
@@ -109,7 +109,7 @@ class VersionDetailView(VersionMixin, DetailView):
         :returns: A queryset which is filtered to only show approved versions.
         :rtype: QuerySet
         """
-        versions_qs = Version.objects.all()
+        versions_qs = Version.approved_objects.all()
         return versions_qs
 
     def get_object(self, queryset=None):
@@ -208,10 +208,11 @@ class VersionDeleteView(VersionMixin, DeleteView, LoginRequiredMixin):
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved versions.
+        :returns: A queryset which shows all Versions if user.is_staff,
+                or only the creator's Versions if not user.is_staff.
         :rtype: QuerySet
         """
-        qs = Version.all_objects.all()
+        qs = Version.objects.all()
         if self.request.user.is_staff:
             return qs
         else:
@@ -268,7 +269,7 @@ class VersionUpdateView(VersionCreateUpdateMixin, UpdateView):
         :returns: A queryset which is filtered to only show approved versions.
         :rtype: QuerySet
         """
-        versions_qs = Version.objects
+        versions_qs = Version.approved_objects.all()
         return versions_qs
 
     def get_success_url(self):

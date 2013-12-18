@@ -1,5 +1,5 @@
 {% extends "project_base.html" %}
-{% load markup %}
+{% load custom_markup %}
 {% load thumbnail %}
 
 {% block title %}Entries - {{ block.super }}{% endblock %}
@@ -54,7 +54,7 @@
     {% else %}
     <div class="col-lg-12">
     {% endif %}
-      {{ version.description|markdown:"safe" }}
+      {{ version.description|base_markdown }}
     </div>
     {% if version.image_file %}
     <div class="col-lg-4">

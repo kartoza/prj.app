@@ -1,4 +1,4 @@
-{% load markup %}
+{% load custom_markup %}
 {% load thumbnail %}
 
   <div class="row">
@@ -35,7 +35,7 @@
     {% else %}
     <div class="col-lg-12">
     {% endif %}
-      {{ version.description|markdown:"safe" }}
+      {{ version.description|base_markdown }}
     </div>
     {% if version.image_file %}
     <div class="col-lg-4">
@@ -74,7 +74,7 @@
             Feature: <b>{{ entry.title }}</b>
           </h3>
           <div>
-            {{ entry.description|markdown:"safe" }}
+            {{ entry.description|base_markdown }}
           </div>
           <div class="btn-group">
             {% if not rst_download %}

@@ -90,7 +90,7 @@ class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
         """
         version_id = self.kwargs['version']
         version = get_object_or_404(Version, id=version_id)
-        qs = Category.objects.filter(project=version.project)
+        qs = Category.approved_objects.filter(project=version.project)
         return qs
 
 
@@ -143,7 +143,7 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
         :returns: Queryset which is filtered to only show approved categories.
         :rtype: QuerySet
         """
-        qs = Category.objects.all()
+        qs = Category.approved_objects.all()
         return qs
 
 
@@ -170,7 +170,7 @@ class CategoryDetailView(CategoryMixin, DetailView):
         :returns: Queryset which is filtered to only show approved categories.
         :rtype: QuerySet
         """
-        qs = Category.objects.all()
+        qs = Category.approved_objects.all()
         return qs
 
     def get_object(self, queryset=None):
@@ -204,10 +204,11 @@ class CategoryDeleteView(CategoryMixin, DeleteView, LoginRequiredMixin):
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved versions.
+        :returns: A queryset which shows all versions if user.is_staff or
+                the creator's versions if not user.is_staff.
         :rtype: QuerySet
         """
-        qs = Category.all_objects.all()
+        qs = Category.objects.all()
         if self.request.user.is_staff:
             return qs
         else:
@@ -237,7 +238,7 @@ class CategoryUpdateView(CategoryCreateUpdateMixin, UpdateView):
         return kwargs
 
     def get_queryset(self):
-        qs = Category.objects
+        qs = Category.approved_objects
         if self.request.user.is_staff:
             return qs
         else:
@@ -257,7 +258,8 @@ class PendingCategoryListView(CategoryMixin,
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
-        context = super(PendingCategoryListView, self).get_context_data(**kwargs)
+        context = super(PendingCategoryListView, self)\
+            .get_context_data(**kwargs)
         context['num_categories'] = self.get_queryset().count()
         context['unapproved'] = True
         return context

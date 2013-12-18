@@ -1,5 +1,7 @@
 # coding=utf-8
 """Models for changelog entries."""
+from django.core.urlresolvers import reverse
+from django.utils.text import slugify
 import os
 import logging
 logger = logging.getLogger(__name__)
@@ -63,14 +65,13 @@ class Entry(AuditedModel):
             'project owner.'),
         default=False
     )
-
+    slug = models.SlugField(unique=True)
     # noinspection PyUnresolvedReferences
     version = models.ForeignKey('Version')
     # noinspection PyUnresolvedReferences
     category = models.ForeignKey('Category')
-
-    objects = ApprovedEntryManager()
-    all_objects = models.Manager()
+    objects = models.Manager()
+    approved_objects = ApprovedEntryManager()
     unapproved_objects = UnapprovedEntryManager()
 
     # noinspection PyClassicStyleClass
@@ -79,5 +80,24 @@ class Entry(AuditedModel):
         unique_together = ('title', 'version', 'category')
         app_label = 'changes'
 
+    def save(self, *args, **kwargs):
+        stop_words = (
+            'a', 'an', 'and', 'if', 'is', 'the', 'in', 'i', 'you', 'other',
+            'this', 'that'
+        )
+        if not self.pk:
+            words = self.title.split()
+            filtered_words = [t for t in words if t.lower() not in stop_words]
+            new_list = ' '.join(filtered_words)
+            self.slug = slugify(new_list)[:50]
+        super(Entry, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return u'%s' % self.title
+
+    def get_absolute_url(self):
+        return reverse('entry-detail', kwargs={
+            'slug': self.slug,
+            'version_slug': self.version.slug,
+            'project_slug': self.version.project.slug
+        })

@@ -1,43 +1,12 @@
 {% extends "project_base.html" %}
-{% load markup %}
+{% load custom_markup %}
 
 {% block title %}{{ project.name }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
 
-{% block auth-nav-left %}
-  <ul class="nav navbar-nav">
-    <li>
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <strong>{{ project.name }}</strong> <b class="caret"></b>
-      </a>
-      <ul class="dropdown-menu">
-        {% for obj in projects %}
-          <li>
-            <a href="{{ obj.get_absolute_url }}">{{ obj.name }}</a>
-          </li>
-        {% endfor %}
-      </ul>
-    </li>
-  </ul>
-  {% if committees %}
-    <ul class="nav navbar-nav">
-      <li>
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-          Committees <b class="caret"></b>
-        </a>
-        <ul class="dropdown-menu">
-          {% for committee in committees %}
-            <li>
-              <a href="{{ committee.get_absolute_url }}">{{ committee.name }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      </li>
-    </ul>
-  {% endif %}
-{% endblock %}
+{% block nav-url %}?project_slug={{ project.slug }}{% endblock %}
 
 {% block content %}
   <div class="row">
@@ -68,4 +37,5 @@
       <h4>{{ committee.name }}</h4>
     </div>
   {% endfor %}
+
 {% endblock %}

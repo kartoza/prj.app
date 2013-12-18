@@ -51,7 +51,7 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
 
     def get_queryset(self):
         """Only approved objects are shown."""
-        qs = Entry.objects.all()
+        qs = Entry.approved_objects.all()
         return qs
 
 
@@ -65,7 +65,7 @@ class EntryDetailView(EntryMixin, DetailView):
 
     def get_queryset(self):
         """Anyone can see any entry."""
-        qs = Entry.all_objects.all()
+        qs = Entry.objects.all()
         return qs
 
     def get_object(self, queryset=None):
@@ -82,7 +82,7 @@ class EntryDeleteView(EntryMixin, DeleteView, LoginRequiredMixin):
         return reverse('entry-list')
 
     def get_queryset(self):
-        qs = Entry.all_objects.all()
+        qs = Entry.objects.all()
         if self.request.user.is_staff:
             return qs
         else:
@@ -112,7 +112,7 @@ class EntryUpdateView(EntryCreateUpdateMixin, UpdateView):
         return kwargs
 
     def get_queryset(self):
-        qs = Entry.all_objects.all()
+        qs = Entry.objects.all()
         if self.request.user.is_staff:
             return qs
         else:
