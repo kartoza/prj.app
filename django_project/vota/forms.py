@@ -7,7 +7,7 @@ from crispy_forms.layout import (
     Submit,
     Field,
 )
-from vota.models import Vote
+from vota.models import Vote, Committee
 
 logger = logging.getLogger(__name__)
 
@@ -36,4 +36,34 @@ class VoteForm(forms.ModelForm):
         self.helper.form_class = 'form-inline'
         self.helper.form_id = 'vote-form'
         super(VoteForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+
+class CreateCommitteeForm(forms.ModelForm):
+    class Meta:
+        model = Committee
+        fields = (
+            'name',
+            'description',
+            'sort_number',
+            'quorum_setting',
+            'project',
+            'users'
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        layout = Layout(
+            Field('name', css_class="form-control"),
+            Field('description', css_class="form-control"),
+            Field('sort_number', css_class="form-control"),
+            Field('quorum_setting', css_class="form-control"),
+            Field('project', css_class="form-control"),
+            Field('users', css_class="form-control"),
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        self.helper.form_class = 'form-horizontal'
+        self.helper.form_id = 'committee-form'
+        super(CreateCommitteeForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))

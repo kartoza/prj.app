@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 import logging
 from django.views.generic import DetailView, CreateView
+from vota.forms import CreateCommitteeForm
 from vota.models import Committee, Ballot
 
 logger = logging.getLogger(__name__)
@@ -12,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 class CommitteeMixin(object):
     model = Committee
+    form_class = CreateCommitteeForm
 
 
 class CommitteeDetailView(CommitteeMixin, DetailView):
@@ -42,7 +44,10 @@ class CommitteeCreateView(CommitteeMixin, CreateView):
     template_name = 'committee/create.html'
 
     def get_success_url(self):
-        return reverse('pending-category-list')
+        return reverse('committee-detail', kwargs={
+            'project_slug': self.object.project.slug,
+            'slug': self.object.slug
+        })
 
     def form_valid(self, form):
         self.object = form.save(commit=False)

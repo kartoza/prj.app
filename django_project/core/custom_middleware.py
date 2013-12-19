@@ -153,38 +153,39 @@ class NavContextMiddleware:
         category = None
         categories = None
         is_staff = request.user.is_staff
-        if context.get('project', None):
-            project = context['project']
-        if context.get('committee', None):
-            committee = context['committee']
-        if context.get('version', None):
-            version = context['version']
-        if context.get('entry', None):
-            entry = context['entry']
-        if context.get('entries', None):
-            entries = context['entries']
-        if context.get('ballot', None):
-            ballot = context['ballot']
-        if context.get('category', None):
-            category = context['category']
-        if context.get('categories', None):
-            categories = context['categories']
-        nav_template = loader.get_template('navigation.html')
-        render_nav = navigation_view(
-            project=project,
-            committee=committee,
-            version=version,
-            entry=entry,
-            the_entries=entries,
-            ballot=ballot,
-            category=category,
-            the_categories=categories,
-            is_staff=is_staff
-        )
-        nav_context = Context(render_nav)
-        nav_rendered = nav_template.render(nav_context)
-        soup = BeautifulSoup(response.rendered_content)
-        container = soup.find(id="nav-souped-content")
-        container.insert(1, BeautifulSoup(nav_rendered))
-        response.content = mark_safe(soup)
+        if not request.path.startswith(reverse('admin:index')):
+            if context.get('project', None):
+                project = context['project']
+            if context.get('committee', None):
+                committee = context['committee']
+            if context.get('version', None):
+                version = context['version']
+            if context.get('entry', None):
+                entry = context['entry']
+            if context.get('entries', None):
+                entries = context['entries']
+            if context.get('ballot', None):
+                ballot = context['ballot']
+            if context.get('category', None):
+                category = context['category']
+            if context.get('categories', None):
+                categories = context['categories']
+            nav_template = loader.get_template('navigation.html')
+            render_nav = navigation_view(
+                project=project,
+                committee=committee,
+                version=version,
+                entry=entry,
+                the_entries=entries,
+                ballot=ballot,
+                category=category,
+                the_categories=categories,
+                is_staff=is_staff
+            )
+            nav_context = Context(render_nav)
+            nav_rendered = nav_template.render(nav_context)
+            soup = BeautifulSoup(response.rendered_content)
+            container = soup.find(id="nav-souped-content")
+            container.insert(1, BeautifulSoup(nav_rendered))
+            response.content = mark_safe(soup)
         return response
