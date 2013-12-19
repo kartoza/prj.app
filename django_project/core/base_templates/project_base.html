@@ -25,7 +25,7 @@
     <a class="navbar-brand" href="{% url 'home' %}">Projecta Home</a>
   </div>
   <div class="collapse navbar-collapse" id="top-navbar">
-    <div id="nav-content"></div>
+    <div id="nav-souped-content"></div>
     <ul class="nav navbar-nav navbar-right">
       {% include 'includes/right-nav.html' %}
     </ul>
@@ -95,8 +95,6 @@
 <script>
   $(function(){
     $('.tooltip-toggle').tooltip();
-
-    $('#nav-content').load('{{ nav_url }}');
   });
 </script>
 </body>

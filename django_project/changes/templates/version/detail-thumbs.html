@@ -18,9 +18,9 @@
       {% if user.is_authenticated %}
         <div class="btn-group btn-group pull-right">
           <a class="btn btn-danger btn-mini"
-             href='{% url "version-delete" version.id %}'>Delete</a>
+             href='{% url "version-delete" project_slug=version.project.slug slug=version.slug %}'>Delete</a>
           <a class="btn btn-success btn-mini"
-             href='{% url "version-update" version.id %}'>Edit</a>
+             href='{% url "version-update" project_slug=version.project.slug slug=version.slug %}'>Edit</a>
         </div>
       {% endif %}
     </div>
@@ -86,22 +86,22 @@
               <div class="btn-group">
                 {% if not entry.approved and user.is_staff %}
                   <a class="btn btn-success btn-mini"
-                     href='{% url "entry-approve" entry.id %}'>
+                     href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
                     <span class="glyphicon glyphicon-thumbs-up"></span>
                   </a>
                 {% endif %}
                 {% if user.is_authenticated %}
                   <a class="btn btn-default btn-mini"
-                     href='{% url "entry-delete" entry.id %}'>
+                     href='{% url "entry-delete" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
                     <span class="glyphicon glyphicon-minus"></span>
                   </a>
                   <a class="btn btn-default btn-mini"
-                     href='{% url "entry-update" entry.id %}'>
+                     href='{% url "entry-update" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
                     <span class="glyphicon glyphicon-pencil"></span>
                   </a>
                 {% endif %}
                 <a class="btn btn-default btn-mini"
-                   href='{% url "entry-detail" entry.id %}'>
+                   href='{% url "entry-detail" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
                   <span class="glyphicon glyphicon-eye-open"></span>
                 </a>
               </div>

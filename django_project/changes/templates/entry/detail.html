@@ -33,24 +33,27 @@
           <div class="col-lg-2">
               <div class="btn-group pull-right">
                   {%  if not entry.approved and user.is_staff %}
-                  <a class="btn btn-success btn-mini"
-                     href='{% url "entry-approve" entry.id %}'>
+                  <a class="btn btn-success btn-mini tooltip-toggle"
+                     data-title="Approve Entry"
+                     href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
                           <span class="glyphicon glyphicon-thumbs-up"></span>
                   </a>
                   {% endif %}
-                  <a class="btn btn-default btn-mini"
-                      href='{% url "entry-delete" entry.id %}'>
+                  <a class="btn btn-default btn-mini tooltip-toggle"
+                     data-title="Delete Entry"
+                      href='{% url "entry-delete" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
                           <span class="glyphicon glyphicon-minus"></span>
                   </a>
-                  <a class="btn btn-default btn-mini"
-                      href='{% url "entry-update" entry.id %}'>
+                  <a class="btn btn-default btn-mini tooltip-toggle"
+                     data-title="Update Entry"
+                      href='{% url "entry-update" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
                           <span class="glyphicon glyphicon-pencil"></span>
                   </a>
               </div>
           </div>
       </div>
       </div>
-      <div class="row">
+      <div class="row" style="margin-top:10px">
           <div class="col-lg-8">
               {{ entry.description|base_markdown }}
           </div>

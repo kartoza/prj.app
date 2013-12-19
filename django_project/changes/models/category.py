@@ -70,4 +70,7 @@ class Category(AuditedModel):
         return u'%s : %s' % (self.project.name, self.name)
 
     def get_absolute_url(self):
-        return reverse('category-detail', kwargs={'slug': self.slug})
+        return reverse('category-detail', kwargs={
+            'slug': self.slug,
+            'project_slug': self.project.slug
+        })

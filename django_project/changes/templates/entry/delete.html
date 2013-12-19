@@ -23,7 +23,7 @@
                         onClick="$('#delete-confirmation').submit()">Delete</a>
 
                     <a class="btn btn-success btn-mini"
-                        href='{% url "entry-list" %}'>Cancel</a>
+                        href='{% url "entry-list" project_slug=entry.version.project.slug version_slug=entry.version.slug %}'>Cancel</a>
                 </div>
             </div>
         </div>

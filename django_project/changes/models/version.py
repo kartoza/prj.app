@@ -78,7 +78,10 @@ class Version(AuditedModel):
         return u'%s : %s' % (self.project.name, self.name)
 
     def get_absolute_url(self):
-        return reverse('version-detail', kwargs={'slug': self.slug})
+        return reverse('version-detail', kwargs={
+            'slug': self.slug,
+            'project_slug': self.project.slug
+        })
 
     def entries(self):
         """Get the entries for this version."""

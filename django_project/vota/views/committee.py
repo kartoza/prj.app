@@ -1,8 +1,10 @@
 # coding=utf-8
 """Views for committees."""
 # noinspection PyUnresolvedReferences
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 import logging
-from django.views.generic import DetailView
+from django.views.generic import DetailView, CreateView
 from vota.models import Committee, Ballot
 
 logger = logging.getLogger(__name__)
@@ -33,3 +35,17 @@ class CommitteeDetailView(CommitteeMixin, DetailView):
         obj = super(CommitteeDetailView, self).get_object(queryset)
         obj.request_user = self.request.user
         return obj
+
+
+class CommitteeCreateView(CommitteeMixin, CreateView):
+    context_object_name = 'category'
+    template_name = 'committee/create.html'
+
+    def get_success_url(self):
+        return reverse('pending-category-list')
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
