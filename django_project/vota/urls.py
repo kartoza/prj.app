@@ -3,7 +3,7 @@
 from django.conf.urls import patterns, url
 from views.committee import CommitteeDetailView, CommitteeCreateView
 from views.vote import VoteCreateUpdateView
-from views.ballot import BallotDetailView
+from views.ballot import BallotDetailView, BallotCreateView
 
 
 urlpatterns = patterns(
@@ -27,4 +27,7 @@ urlpatterns = patterns(
               'ballots/(?P<slug>[\w-]+)/$',
         view=BallotDetailView.as_view(),
         name='ballot-detail'),
+    url(regex='^ballot/create/$',
+        view=BallotCreateView.as_view(),
+        name='ballot-create'),
 )

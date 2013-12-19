@@ -153,7 +153,8 @@ class NavContextMiddleware:
         category = None
         categories = None
         is_staff = request.user.is_staff
-        if not request.path.startswith(reverse('admin:index')):
+        if not request.path.startswith(reverse('admin:index')) \
+                and not request.is_ajax():
             if context.get('project', None):
                 project = context['project']
             if context.get('committee', None):

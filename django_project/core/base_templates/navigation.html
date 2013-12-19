@@ -129,6 +129,11 @@
       </li>
     </ul>
   </li>
+  {% if not ballots and the_committee %}
+    <li>
+      <a href="{% url 'ballot-create' %}">Create Ballot</a>
+    </li>
+  {% endif %}
 </ul>
 {% endif %}
 {% if ballots %}

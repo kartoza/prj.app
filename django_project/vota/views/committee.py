@@ -40,7 +40,7 @@ class CommitteeDetailView(CommitteeMixin, DetailView):
 
 
 class CommitteeCreateView(CommitteeMixin, CreateView):
-    context_object_name = 'category'
+    context_object_name = 'committee'
     template_name = 'committee/create.html'
 
     def get_success_url(self):
@@ -51,6 +51,7 @@ class CommitteeCreateView(CommitteeMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
+        self.object.save_m2m()
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
