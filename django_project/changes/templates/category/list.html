@@ -33,7 +33,7 @@
     {%  endifequal %}
     {% for category in categories %}
     <script>console.debug("{{ category }}");</script>
-    <div class="row">
+    <div class="row" style="margin-top:10px;">
         <div class="col-lg-1">
             {% if category.image_file %}
             <a href="{{ MEDIA_URL }}{{ category.image_file }}">
@@ -54,20 +54,20 @@
             <div class="btn-group pull-right">
                 {%  if not category.approved and user.is_staff %}
                 <a class="btn btn-success btn-mini"
-                   href='{% url "category-approve" category.id %}'>
+                   href='{% url "category-approve" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-thumbs-up"></span>
                 </a>
                 {% endif %}
                 <a class="btn btn-default btn-mini"
-                    href='{% url "category-delete" category.id %}'>
+                    href='{% url "category-delete" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-minus"></span>
                 </a>
                 <a class="btn btn-default btn-mini"
-                    href='{% url "category-update" category.id %}'>
+                    href='{% url "category-update" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-pencil"></span>
                 </a>
                 <a class="btn btn-default btn-mini"
-                    href='{% url "category-detail" category.id %}'>
+                    href='{% url "category-detail" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-eye-open"></span>
                 </a>
             </div>

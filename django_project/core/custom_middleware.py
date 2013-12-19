@@ -20,6 +20,7 @@ def navigation_view(project=None,
                     the_entries=None,
                     ballot=None,
                     category=None,
+                    the_categories=None,
                     is_staff=False):
     the_version = None
     the_committee = None
@@ -28,9 +29,9 @@ def navigation_view(project=None,
     ballots = None
     the_entry = None
     entries = None
-    categories = None
     the_project = None
     versions = None
+    categories = None
     projects = Project.approved_objects.all()
     if project:
         the_project = project
@@ -70,6 +71,11 @@ def navigation_view(project=None,
             categories = Category.approved_objects.filter(project=the_project)
         else:
             categories = Category.objects.filter(project=the_project)
+    if the_categories:
+        first_category = the_categories[0]
+        categories = the_categories[:10]
+        the_project = first_category.project
+        versions = Version.objects.filter(project=the_project)
     if entry:
         the_entry = entry
         entries = Entry.approved_objects.filter(version=entry.version)[:10]
@@ -145,6 +151,7 @@ class NavContextMiddleware:
         entries = None
         ballot = None
         category = None
+        categories = None
         is_staff = request.user.is_staff
         if context.get('project', None):
             project = context['project']
@@ -160,6 +167,8 @@ class NavContextMiddleware:
             ballot = context['ballot']
         if context.get('category', None):
             category = context['category']
+        if context.get('categories', None):
+            categories = context['categories']
         nav_template = loader.get_template('navigation.html')
         render_nav = navigation_view(
             project=project,
@@ -169,6 +178,7 @@ class NavContextMiddleware:
             the_entries=entries,
             ballot=ballot,
             category=category,
+            the_categories=categories,
             is_staff=is_staff
         )
         nav_context = Context(render_nav)
