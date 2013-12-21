@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/timlinux/projecta.png?label=ready)](https://waffle.io/timlinux/projecta)  
 visual_changelog
 ================
 
