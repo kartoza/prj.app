@@ -8,7 +8,7 @@ pylint==0.28.0
 
 # git+https://github.com/kmmbvnr/django-jenkins.git@2f241bb6b7a111172f1e5bd26a1d21815f83d1e7
 
-django-devserver==0.6.2
+django-devserver==0.7.0
 
 # documentation
 Sphinx==1.2b1
