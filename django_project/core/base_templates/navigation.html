@@ -20,7 +20,7 @@
         </li>
       </ul>
     </li>
-    {% if the_project and not the_committee and the_version %}
+    {% if the_project %}
       <li>
         <a href="{{ the_project.get_absolute_url }}">Overview</a>
       </li>
@@ -73,7 +73,7 @@
           {% endif %}
         {% endfor %}
         <li>
-          <a href="#">Create Category</a>
+          <a href="{% url 'category-create' %}">Create Category</a>
         </li>
       </ul>
     </li>
@@ -97,7 +97,7 @@
           {% endif %}
         {% endfor %}
         <li>
-          <a href="#">Create Entry</a>
+          <a href="{% url 'entry-create' %}">Create Entry</a>
         </li>
       </ul>
     </li>
@@ -129,6 +129,11 @@
       </li>
     </ul>
   </li>
+  {% if not ballots and the_committee %}
+    <li>
+      <a href="{% url 'ballot-create' %}">Create Ballot</a>
+    </li>
+  {% endif %}
 </ul>
 {% endif %}
 {% if ballots %}

@@ -199,7 +199,9 @@ class CategoryDeleteView(CategoryMixin, DeleteView, LoginRequiredMixin):
         :returns: A url.
         :rtype: str
         """
-        return reverse('category-list')
+        return reverse('category-list', kwargs={
+            'project_slug': self.object.project.slug
+        })
 
     def get_queryset(self):
         """Get the queryset for this view.
@@ -277,9 +279,11 @@ class ApproveCategoryView(CategoryMixin, StaffuserRequiredMixin, RedirectView):
     query_string = True
     pattern_name = 'pending-category-list'
 
-    def get_redirect_url(self, pk):
+    def get_redirect_url(self, project_slug, slug):
         category_qs = Category.unapproved_objects.all()
-        category = get_object_or_404(category_qs, pk=pk)
+        category = get_object_or_404(category_qs, slug=slug)
         category.approved = True
         category.save()
-        return reverse(self.pattern_name)
+        return reverse(self.pattern_name, kwargs={
+            'project_slug': project_slug
+        })

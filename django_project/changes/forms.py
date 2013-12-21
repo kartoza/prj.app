@@ -19,6 +19,7 @@ class CategoryForm(forms.ModelForm):
 
     class Meta:
         model = Category
+        fields = ('project', 'name', 'sort_number')
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()

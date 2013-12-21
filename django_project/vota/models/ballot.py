@@ -27,7 +27,7 @@ class ApprovedCategoryManager(models.Manager):
         """Query set generator"""
         return super(
             ApprovedCategoryManager, self).get_query_set().filter(
-                passed=True)
+                approved=True)
 
 
 class DeniedCategoryManager(models.Manager):

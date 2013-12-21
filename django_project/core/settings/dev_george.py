@@ -63,23 +63,23 @@ LOGGING = {
     },
     'handlers': {
         # console output
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-            'level': 'DEBUG',
-        },
-        # 'logfile': {
-        #     'class': 'logging.FileHandler',
-        #     'filename': '/tmp/app-dev.log',
+        # 'console': {
+        #     'class': 'logging.StreamHandler',
         #     'formatter': 'simple',
         #     'level': 'DEBUG',
-        # }
+        # },
+        'logfile': {
+            'class': 'logging.FileHandler',
+            'filename': '/home/web/projecta/django_project/log/log.log',
+            'formatter': 'simple',
+            'level': 'DEBUG',
+        }
     },
     'loggers': {
-        'django.db.backends': {
-            'handlers': ['console'],
-            'level': 'INFO', # switch to DEBUG to show actual SQL
-        },
+        # 'django.db.backends': {
+        #     'handlers': ['console'],
+        #     'level': 'INFO', # switch to DEBUG to show actual SQL
+        # },
         # example app logger
         # 'app.module': {
         #     'level': 'INFO',
@@ -91,7 +91,7 @@ LOGGING = {
     # root logger
     # non handled logs will propagate to the root logger
     'root': {
-        'handlers': ['console'],
+        'handlers': ['logfile'],
         'level': 'WARNING'
     }
 }
