@@ -29,6 +29,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings.prod")
 import django.core.handlers.wsgi
 _application = django.core.handlers.wsgi.WSGIHandler()
 
+
 def application(environ, start_response):
     """Factory for the application instance.
 
