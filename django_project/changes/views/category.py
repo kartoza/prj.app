@@ -34,8 +34,11 @@ class JSONResponseMixin(object):
             content_type='application/json',
             **response_kwargs)
 
-    def convert_context_to_json(self, context):
-        """Convert the context dictionary into a JSON object"""
+    @staticmethod
+    def convert_context_to_json(context):
+        """Convert the context dictionary into a JSON object
+        :param context:
+        """
         result = '{\n'
         first_flag = True
         for category in context['categories']:
