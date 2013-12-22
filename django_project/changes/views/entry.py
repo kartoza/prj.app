@@ -86,7 +86,7 @@ class EntryDeleteView(EntryMixin, DeleteView, LoginRequiredMixin):
         if self.request.user.is_staff:
             return qs
         else:
-            qs.filter(creator=self.request.user)
+            return qs.filter(creator=self.request.user)
 
 
 class EntryCreateView(EntryCreateUpdateMixin, CreateView):
