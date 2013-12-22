@@ -2,6 +2,8 @@ from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 import os
 import logging
+from core.settings.contrib import STOP_WORDS
+
 logger = logging.getLogger(__name__)
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
@@ -71,7 +73,10 @@ class Version(AuditedModel):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.slug = slugify(self.name)
+            words = self.name.split()
+            filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
+            new_list = ' '.join(filtered_words)
+            self.slug = slugify(new_list)[:50]
         super(Version, self).save(*args, **kwargs)
 
     def __unicode__(self):

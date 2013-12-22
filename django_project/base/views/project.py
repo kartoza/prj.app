@@ -137,9 +137,9 @@ class ApproveProjectView(ProjectMixin, StaffuserRequiredMixin, RedirectView):
     query_string = True
     pattern_name = 'pending-project-list'
 
-    def get_redirect_url(self, pk):
+    def get_redirect_url(self, slug):
         projects_qs = Project.unapproved_objects.all()
-        project = get_object_or_404(projects_qs, pk=pk)
+        project = get_object_or_404(projects_qs, slug=slug)
         project.approved = True
         project.save()
         return reverse(self.pattern_name)

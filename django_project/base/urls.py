@@ -12,7 +12,6 @@ from views import (
     ProjectUpdateView,
     PendingProjectListView,
     ApproveProjectView)
-from base.nav_view import navigation_view
 
 urlpatterns = patterns(
     '',
@@ -20,7 +19,6 @@ urlpatterns = patterns(
     url(regex='^$',
         view=ProjectListView.as_view(),
         name='home'),
-    url(r'^nav/$', navigation_view, name='nav'),
 
     # Project management
     url(regex='^pending-project/list/$',

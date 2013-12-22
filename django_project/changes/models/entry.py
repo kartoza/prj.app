@@ -4,11 +4,12 @@ from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 import os
 import logging
-logger = logging.getLogger(__name__)
+from core.settings.contrib import STOP_WORDS
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from audited_models.models import AuditedModel
-from django.utils.translation import ugettext_lazy as _
+
+logger = logging.getLogger(__name__)
 
 
 class ApprovedEntryManager(models.Manager):
@@ -81,13 +82,9 @@ class Entry(AuditedModel):
         app_label = 'changes'
 
     def save(self, *args, **kwargs):
-        stop_words = (
-            'a', 'an', 'and', 'if', 'is', 'the', 'in', 'i', 'you', 'other',
-            'this', 'that'
-        )
         if not self.pk:
             words = self.title.split()
-            filtered_words = [t for t in words if t.lower() not in stop_words]
+            filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = slugify(new_list)[:50]
         super(Entry, self).save(*args, **kwargs)

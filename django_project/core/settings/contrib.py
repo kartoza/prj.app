@@ -15,6 +15,11 @@ INSTALLED_APPS += (
     'reversion',
 )
 
+STOP_WORDS = (
+    'a', 'an', 'and', 'if', 'is', 'the', 'in', 'i', 'you', 'other',
+    'this', 'that'
+)
+
 DEFAULT_FILE_STORAGE = ('django_hashedfilenamestorage.storage'
                         '.HashedFilenameFileSystemStorage')
 

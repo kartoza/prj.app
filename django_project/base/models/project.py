@@ -9,6 +9,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from audited_models.models import AuditedModel
 from changes.models.version import Version
+from core.settings.contrib import STOP_WORDS
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +95,10 @@ class Project(AuditedModel):
         :param kwargs:
         """
         if not self.pk:
-            self.slug = slugify(self.name)
+            words = self.name.split()
+            filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
+            new_list = ' '.join(filtered_words)
+            self.slug = slugify(new_list)[:50]
         super(Project, self).save(*args, **kwargs)
 
     def __unicode__(self):

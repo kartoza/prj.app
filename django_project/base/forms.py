@@ -21,6 +21,10 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         """Meta class."""
         model = Project
+        fields = (
+            'name',
+            'image_file'
+        )
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
