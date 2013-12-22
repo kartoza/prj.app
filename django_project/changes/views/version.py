@@ -231,22 +231,9 @@ class VersionCreateView(
         :returns: A url.
         :rtype: str
         """
-        return reverse('pending-version-list')
-
-    def form_valid(self, form):
-        """Parse the form and check if it is valid.
-
-        :param form: A form object.
-        :type form: model.Form
-
-        :returns: HttpResponse object. The user is redirected to success url
-            if the form is valid.
-        :rtype: HttpResponse.
-        """
-        self.object = form.save(commit=False)
-        self.object.save()
-
-        return HttpResponseRedirect(self.get_success_url())
+        return reverse('pending-version-list', kwargs={
+            'project_slug': self.object.project.slug
+        })
 
 
 class VersionUpdateView(VersionCreateUpdateMixin, UpdateView):
@@ -278,7 +265,9 @@ class VersionUpdateView(VersionCreateUpdateMixin, UpdateView):
         :returns: A url.
         :rtype: str
         """
-        return reverse('version-list')
+        return reverse('version-list', kwargs={
+            'project_slug': self.object.project.slug
+        })
 
 
 class PendingVersionListView(
@@ -321,7 +310,7 @@ class ApproveVersionView(VersionMixin, StaffuserRequiredMixin, RedirectView):
     query_string = True
     pattern_name = 'pending-version-list'
 
-    def get_redirect_url(self, pk):
+    def get_redirect_url(self, project_slug, slug):
         """Get the url for when the operation completes.
 
         :param pk: The primary key of the object being approved.
@@ -331,10 +320,12 @@ class ApproveVersionView(VersionMixin, StaffuserRequiredMixin, RedirectView):
         :rtype: str
         """
         version_qs = Version.unapproved_objects.all()
-        version = get_object_or_404(version_qs, pk=pk)
+        version = get_object_or_404(version_qs, slug=slug)
         version.approved = True
         version.save()
-        return reverse(self.pattern_name)
+        return reverse(self.pattern_name, kwargs={
+            'project_slug': version.project.slug
+        })
 
 
 class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):

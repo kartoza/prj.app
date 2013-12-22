@@ -1,11 +1,7 @@
 from django.core.urlresolvers import reverse
-from django.template import loader, Context, Template
+from django.template import loader, Context
 from bs4 import BeautifulSoup
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.template.response import SimpleTemplateResponse
-from django.utils.html import format_html
-from django.utils.safestring import SafeText, SafeString, mark_safe
+from django.utils.safestring import mark_safe
 from base.models import Project, Version
 from changes.models import Entry, Category
 from vota.models import Committee, Ballot
@@ -13,15 +9,16 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def navigation_view(project=None,
-                    committee=None,
-                    version=None,
-                    entry=None,
-                    the_entries=None,
-                    ballot=None,
-                    category=None,
-                    the_categories=None,
-                    is_staff=False):
+def navigation_render(project=None,
+                      committee=None,
+                      version=None,
+                      the_versions=None,
+                      entry=None,
+                      the_entries=None,
+                      ballot=None,
+                      category=None,
+                      the_categories=None,
+                      is_staff=False):
     the_version = None
     the_committee = None
     committees = None
@@ -48,6 +45,7 @@ def navigation_view(project=None,
         ballots = Ballot.objects.filter(committee=the_committee)
     if version:
         the_version = version
+        versions = Version.objects.filter(project=version.project)
         if not is_staff:
             # Only show the 10 most recent entries
             entries = Entry.approved_objects.filter(version=the_version)[:10]
@@ -61,6 +59,11 @@ def navigation_view(project=None,
             categories = Category.objects.filter(
                 project=the_version.project)
         the_project = the_version.project
+    if the_versions:
+        first_version = the_versions[0]
+        versions = the_versions[:10]
+        the_project = first_version.project
+        categories = Category.objects.filter(project=the_project)
     if category:
         the_project = category.project
         if is_staff:
@@ -147,6 +150,7 @@ class NavContextMiddleware:
         project = None
         committee = None
         version = None
+        versions = None
         entry = None
         entries = None
         ballot = None
@@ -161,6 +165,8 @@ class NavContextMiddleware:
                 committee = context['committee']
             if context.get('version', None):
                 version = context['version']
+            if context.get('versions', None):
+                versions = context['versions']
             if context.get('entry', None):
                 entry = context['entry']
             if context.get('entries', None):
@@ -172,10 +178,11 @@ class NavContextMiddleware:
             if context.get('categories', None):
                 categories = context['categories']
             nav_template = loader.get_template('navigation.html')
-            render_nav = navigation_view(
+            render_nav = navigation_render(
                 project=project,
                 committee=committee,
                 version=version,
+                the_versions=versions,
                 entry=entry,
                 the_entries=entries,
                 ballot=ballot,

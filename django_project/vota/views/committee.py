@@ -48,10 +48,3 @@ class CommitteeCreateView(CommitteeMixin, CreateView):
             'project_slug': self.object.project.slug,
             'slug': self.object.slug
         })
-
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.save_m2m()
-        self.object.save()
-
-        return HttpResponseRedirect(self.get_success_url())

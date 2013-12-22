@@ -41,6 +41,12 @@ class VersionForm(forms.ModelForm):
 
     class Meta:
         model = Version
+        fields = (
+            'project',
+            'name',
+            'description',
+            'image_file'
+        )
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()

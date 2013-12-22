@@ -23,9 +23,9 @@
         <div class="col-lg-2">
             <div class="btn-group btn-group-justified">
                 <a class="btn btn-danger btn-mini"
-                    href='{% url "category-delete" category.id %}'>Delete</a>
+                    href='{% url "category-delete" project_slug=category.project.slug slug=category.slug %}'>Delete</a>
                 <a class="btn btn-success btn-mini"
-                    href='{% url "category-update" category.id %}'>Edit</a>
+                    href='{% url "category-update" project_slug=category.project.slug slug=category.slug %}'>Edit</a>
             </div>
         </div>
     </div>

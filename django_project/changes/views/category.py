@@ -222,7 +222,9 @@ class CategoryCreateView(CategoryCreateUpdateMixin, CreateView):
     template_name = 'category/create.html'
 
     def get_success_url(self):
-        return reverse('pending-category-list')
+        return reverse('pending-category-list', kwargs={
+            'project_slug': self.object.project.slug
+        })
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -247,7 +249,9 @@ class CategoryUpdateView(CategoryCreateUpdateMixin, UpdateView):
             return qs.filter(creator=self.request.user)
 
     def get_success_url(self):
-        return reverse('category-list')
+        return reverse('category-list', kwargs={
+            'project_slug': self.object.project.slug
+        })
 
 
 class PendingCategoryListView(CategoryMixin,
