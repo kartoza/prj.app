@@ -11,7 +11,7 @@
               <a href="{{ project.get_absolute_url }}">{{ project.name }}</a>
             </li>
           {% endif %}
-          {% if forloop.last and forloop|length > 1 and project != the_project %}
+          {% if forloop.last and forloop|length > 1 %}
             <li role="presentation" class="divider"></li>
           {% endif %}
         {% endfor %}
@@ -136,7 +136,7 @@
   {% endif %}
 </ul>
 {% endif %}
-{% if the_project and not committees and not the_version and not versions %}
+{% if show_create_committee %}
 <ul class="nav navbar-nav">
   <li role="presentation">
     <a href="{% url 'committee-create' %}">Create Committee</a>

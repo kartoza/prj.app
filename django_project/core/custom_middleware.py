@@ -29,12 +29,15 @@ def navigation_render(project=None,
     the_project = None
     versions = None
     categories = None
+    show_create_committee = False
     projects = Project.approved_objects.all()
     if project:
         the_project = project
         # We don't want to see committees under versions
         if not version:
             committees = Committee.objects.filter(project=the_project)
+            if not committees:
+                show_create_committee = True
         # We don't want to see versions under committees
         if not committee:
             versions = Version.objects.filter(project=the_project)
@@ -125,6 +128,7 @@ def navigation_render(project=None,
         'the_entry': the_entry,
         'entries': entries,
         'categories': categories,
+        'show_create_committee': show_create_committee
     }
 
 
