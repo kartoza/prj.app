@@ -1,6 +1,7 @@
 # coding=utf-8
 """Views for committees."""
 # noinspection PyUnresolvedReferences
+from braces.views import LoginRequiredMixin
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 import logging
@@ -39,7 +40,7 @@ class CommitteeDetailView(CommitteeMixin, DetailView):
         return obj
 
 
-class CommitteeCreateView(CommitteeMixin, CreateView):
+class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
     context_object_name = 'committee'
     template_name = 'committee/create.html'
 

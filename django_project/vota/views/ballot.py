@@ -1,6 +1,7 @@
 # coding=utf-8
 """Views for projects."""
 # noinspection PyUnresolvedReferences
+from braces.views import LoginRequiredMixin
 from django.core.urlresolvers import reverse
 import logging
 from django.views.generic import DetailView, CreateView
@@ -15,7 +16,7 @@ class BallotMixin(object):
     form_class = BallotCreateForm
 
 
-class BallotDetailView(BallotMixin, DetailView):
+class BallotDetailView(LoginRequiredMixin, BallotMixin, DetailView):
     context_object_name = 'ballot'
     template_name = 'ballot/detail.html'
 
@@ -30,7 +31,7 @@ class BallotDetailView(BallotMixin, DetailView):
         return ballot_qs
 
 
-class BallotCreateView(BallotMixin, CreateView):
+class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):
     context_object_name = 'ballot'
     template_name = 'ballot/create.html'
 

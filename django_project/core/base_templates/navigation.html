@@ -156,7 +156,7 @@
               <a href="{{ ballot.get_absolute_url }}">{{ ballot.name }}</a>
             </li>
           {% endif %}
-          {% if forloop.last and forloop|length > 1 and ballot != the_ballot %}
+          {% if forloop.last and forloop|length > 1 %}
             <li role="presentation" class="divider"></li>
           {% endif %}
         {% endfor %}
