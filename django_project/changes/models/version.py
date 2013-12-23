@@ -59,7 +59,7 @@ class Version(AuditedModel):
         blank=True,
         help_text='Describe the new version. Markdown is supported.')
 
-    version_slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True)
     project = models.ForeignKey('base.Project')
     objects = models.Manager()
     approved_objects = ApprovedVersionManager()
