@@ -69,6 +69,10 @@ class EntryForm(forms.ModelForm):
 
     class Meta:
         model = Entry
+        fields = (
+            'version', 'category', 'title', 'description',
+            'image_file', 'image_credits'
+        )
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()

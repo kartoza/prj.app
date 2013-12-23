@@ -1,6 +1,3 @@
-import logging
-logger = logging.getLogger(__name__)
-
 # noinspection PyUnresolvedReferences
 import logging
 logger = logging.getLogger(__name__)

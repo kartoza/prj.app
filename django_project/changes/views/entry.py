@@ -79,7 +79,10 @@ class EntryDeleteView(EntryMixin, DeleteView, LoginRequiredMixin):
     template_name = 'entry/delete.html'
 
     def get_success_url(self):
-        return reverse('entry-list')
+        return reverse('entry-list', kwargs={
+            'project_slug': self.object.version.project.slug,
+            'version_slug': self.object.version.slug
+        })
 
     def get_queryset(self):
         qs = Entry.objects.all()
@@ -94,7 +97,10 @@ class EntryCreateView(EntryCreateUpdateMixin, CreateView):
     template_name = 'entry/create.html'
 
     def get_success_url(self):
-        return reverse('pending-entry-list')
+        return reverse('pending-entry-list', kwargs={
+            'project_slug': self.object.version.project.slug,
+            'version_slug': self.object.version.slug
+        })
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -119,7 +125,10 @@ class EntryUpdateView(EntryCreateUpdateMixin, UpdateView):
             return qs.filter(creator=self.request.user)
 
     def get_success_url(self):
-        return reverse('pending-entry-list')
+        return reverse('pending-entry-list', kwargs={
+            'project_slug': self.object.version.project.slug,
+            'version_slug': self.object.version.slug
+        })
 
 
 class PendingEntryListView(EntryMixin,
@@ -150,9 +159,15 @@ class ApproveEntryView(EntryMixin, StaffuserRequiredMixin, RedirectView):
     query_string = True
     pattern_name = 'pending-entry-list'
 
-    def get_redirect_url(self, pk):
+    def get_redirect_url(self, version_slug, project_slug, slug):
         entry_qs = Entry.unapproved_objects.all()
-        entry = get_object_or_404(entry_qs, pk=pk)
+        entry = get_object_or_404(entry_qs, slug=slug)
         entry.approved = True
         entry.save()
-        return reverse(self.pattern_name)
+        # Using entry.version.project.slug instead of project_slug to ensure
+        # that we redirect to the correct URL instead of relying on inputs from
+        # URL.
+        return reverse(self.pattern_name, kwargs={
+            'project_slug': entry.version.project.slug,
+            'version_slug': entry.version.slug
+        })
