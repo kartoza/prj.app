@@ -75,7 +75,7 @@ class ProjectDeleteView(ProjectMixin, DeleteView, LoginRequiredMixin):
 
     def get_queryset(self):
         if not self.request.user.is_authenticated():
-            return Http404
+            raise Http404
 
         qs = Project.objects.all()
         if self.request.user.is_staff:
