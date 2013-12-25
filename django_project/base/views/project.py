@@ -3,6 +3,7 @@
 # noinspection PyUnresolvedReferences
 import logging
 from django.core.urlresolvers import reverse
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import (
     ListView,
@@ -73,6 +74,9 @@ class ProjectDeleteView(ProjectMixin, DeleteView, LoginRequiredMixin):
         return reverse('project-list')
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated():
+            return Http404
+
         qs = Project.objects.all()
         if self.request.user.is_staff:
             return qs
