@@ -4,6 +4,7 @@ logger = logging.getLogger(__name__)
 
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
+from django.http import Http404
 from django.http import HttpResponse
 from django.views.generic import (
     ListView,
@@ -210,11 +211,14 @@ class CategoryDeleteView(CategoryMixin, DeleteView, LoginRequiredMixin):
                 the creator's versions if not user.is_staff.
         :rtype: QuerySet
         """
+        if not self.request.user.is_authenticated():
+            raise Http404
+
         qs = Category.objects.all()
         if self.request.user.is_staff:
             return qs
         else:
-            return get_object_or_404(qs, creator=self.request.user)
+            return qs.filter(creator=self.request.user)
 
 
 class CategoryCreateView(CategoryCreateUpdateMixin, CreateView):

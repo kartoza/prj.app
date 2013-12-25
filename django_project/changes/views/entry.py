@@ -6,6 +6,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.core.urlresolvers import reverse
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import (
     ListView,
@@ -85,7 +86,10 @@ class EntryDeleteView(EntryMixin, DeleteView, LoginRequiredMixin):
         })
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated():
+            raise Http404
         qs = Entry.objects.all()
+
         if self.request.user.is_staff:
             return qs
         else:

@@ -10,6 +10,7 @@ import StringIO
 import pypandoc
 
 from django.core.urlresolvers import reverse
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import (
     ListView,
@@ -212,6 +213,8 @@ class VersionDeleteView(VersionMixin, DeleteView, LoginRequiredMixin):
                 or only the creator's Versions if not user.is_staff.
         :rtype: QuerySet
         """
+        if not self.request.user.is_authenticated():
+            raise Http404
         qs = Version.objects.all()
         if self.request.user.is_staff:
             return qs

@@ -1,9 +1,9 @@
 # coding=utf-8
 """Views for projects."""
 # noinspection PyUnresolvedReferences
+import logging
 from braces.views import LoginRequiredMixin
 from django.core.urlresolvers import reverse
-import logging
 from django.views.generic import DetailView, CreateView
 from vota.forms import BallotCreateForm
 from vota.models import Ballot, Committee
