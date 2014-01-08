@@ -4,8 +4,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'changelog',
-        'USER': 'jenkins',
-        'PASSWORD': 'jenkins-test',
+        'USER': '',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '5432',
         'TEST_NAME': 'changelog-test-master',
