@@ -1,10 +1,12 @@
 # coding=utf-8
 """Views for projects."""
 # noinspection PyUnresolvedReferences
+from django.http import Http404
 import logging
 from braces.views import LoginRequiredMixin
 from django.core.urlresolvers import reverse
 from django.views.generic import DetailView, CreateView
+from base.models import Project
 from vota.forms import BallotCreateForm
 from vota.models import Ballot, Committee
 
@@ -29,6 +31,26 @@ class BallotDetailView(LoginRequiredMixin, BallotMixin, DetailView):
     def get_queryset(self):
         ballot_qs = Ballot.open_objects.all()
         return ballot_qs
+
+    def get_object(self, queryset=None):
+        """
+        Get the object for this view.
+        Because Ballot slugs are unique within a Committee, we need to make
+        sure that we fetch the correct Ballot from the correct Committee
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+            slug = self.kwargs.get('slug', None)
+            project_slug = self.kwargs.get('project_slug', None)
+            committee_slug = self.kwargs.get('committee_slug', None)
+            if slug and project_slug and committee_slug:
+                project = Project.objects.get(slug=project_slug)
+                committee = Committee.objects.get(slug=committee_slug,
+                                                  project=project)
+                obj = queryset.get(slug=slug, committee=committee)
+                return obj
+            else:
+                raise Http404('Sorry! We could not find your ballot!')
 
 
 class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):

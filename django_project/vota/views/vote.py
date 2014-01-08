@@ -7,11 +7,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from django.core.urlresolvers import reverse
 from django.views.generic import (
     CreateView,
 )
-
 from braces.views import LoginRequiredMixin
 from vota.models import Vote, Ballot
 from vota.forms import VoteForm

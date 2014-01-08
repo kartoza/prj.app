@@ -51,7 +51,7 @@ class Category(AuditedModel):
             'project'),
         default=0
     )
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField()
     project = models.ForeignKey('base.Project')
     objects = models.Manager()
     approved_objects = ApprovedCategoryManager()
@@ -59,7 +59,10 @@ class Category(AuditedModel):
 
     class Meta:
         """Meta options for the category class."""
-        unique_together = ('name', 'project')
+        unique_together = (
+            ('name', 'project'),
+            ('project', 'slug')
+        )
         app_label = 'changes'
         ordering = ['name']
 

@@ -1,4 +1,6 @@
 import logging
+from base.models import Project
+
 logger = logging.getLogger(__name__)
 
 # noinspection PyUnresolvedReferences
@@ -45,6 +47,26 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
         """Only approved objects are shown."""
         qs = Entry.approved_objects.all()
         return qs
+
+    def get_object(self, queryset=None):
+        """
+        Get the object for this view.
+        Because Entry slugs are unique within a Version, we need to make
+        sure that we fetch the correct Entry from the correct Version
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+            slug = self.kwargs.get('slug', None)
+            project_slug = self.kwargs.get('project_slug', None)
+            version_slug = self.kwargs.get('version_slug', None)
+            if slug and project_slug and version_slug:
+                project = Project.objects.get(slug=project_slug)
+                version = Version.objects.get(slug=version_slug,
+                                              project=project)
+                obj = queryset.get(slug=slug, version=version)
+                return obj
+            else:
+                raise Http404('Sorry! We could not find your entry!')
 
 
 class EntryDetailView(EntryMixin, DetailView):

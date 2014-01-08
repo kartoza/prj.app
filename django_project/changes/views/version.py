@@ -2,6 +2,8 @@
 """Version related views."""
 # noinspection PyUnresolvedReferences
 import logging
+from base.models import Project
+
 LOGGER = logging.getLogger(__name__)
 
 import re
@@ -69,18 +71,6 @@ class VersionDetailView(VersionMixin, DetailView):
     context_object_name = 'version'
     template_name = 'version/detail.html'
 
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(VersionDetailView, self).get_context_data(**kwargs)
-        return context
-
     def get_queryset(self):
         """Get the queryset for this view.
 
@@ -91,18 +81,21 @@ class VersionDetailView(VersionMixin, DetailView):
         return versions_qs
 
     def get_object(self, queryset=None):
-        """Get the object referenced by this view.
-
-        :param queryset: An option queryset from which the object should be
-            retrieved.
-        :type queryset: QuerySet
-
-        :returns: A Version instance.
-        :rtype: Version
         """
-        obj = super(VersionDetailView, self).get_object(queryset)
-        obj.request_user = self.request.user
-        return obj
+        Get the object for this view.
+        Because Version slugs are unique within a Project, we need to make
+        sure that we fetch the correct Version from the correct Project
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+            slug = self.kwargs.get('slug', None)
+            project_slug = self.kwargs.get('project_slug', None)
+            if slug and project_slug:
+                project = Project.objects.get(slug=project_slug)
+                obj = queryset.get(project=project, slug=slug)
+                return obj
+            else:
+                raise Http404('Sorry! We could not find your version!')
 
 
 class VersionMarkdownView(VersionDetailView):

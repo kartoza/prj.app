@@ -3,9 +3,10 @@
 # noinspection PyUnresolvedReferences
 from braces.views import LoginRequiredMixin
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 import logging
 from django.views.generic import DetailView, CreateView
+from base.models import Project
 from vota.forms import CreateCommitteeForm
 from vota.models import Committee, Ballot
 
@@ -35,9 +36,21 @@ class CommitteeDetailView(CommitteeMixin, DetailView):
         return committee_qs
 
     def get_object(self, queryset=None):
-        obj = super(CommitteeDetailView, self).get_object(queryset)
-        obj.request_user = self.request.user
-        return obj
+        """
+        Get the object for this view.
+        Because Committee slugs are unique within a Project, we need to make
+        sure that we fetch the correct Committee from the correct Project
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+            slug = self.kwargs.get('slug', None)
+            project_slug = self.kwargs.get('project_slug', None)
+            if slug and project_slug:
+                project = Project.objects.get(slug=project_slug)
+                obj = queryset.get(slug=slug, project=project)
+                return obj
+            else:
+                raise Http404('Sorry! We could not find your committee!')
 
 
 class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):

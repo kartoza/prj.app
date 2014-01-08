@@ -48,7 +48,7 @@ def navigation_render(project=None,
         ballots = Ballot.objects.filter(committee=the_committee)
     if version:
         the_version = version
-        versions = Version.objects.filter(project=version.project)
+        versions = Version.objects.filter(project=the_version.project)
         if not is_staff:
             # Only show the 10 most recent entries
             entries = Entry.approved_objects.filter(version=the_version)[:10]

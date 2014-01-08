@@ -59,7 +59,7 @@ class Version(AuditedModel):
         blank=True,
         help_text='Describe the new version. Markdown is supported.')
 
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField()
     project = models.ForeignKey('base.Project')
     objects = models.Manager()
     approved_objects = ApprovedVersionManager()
@@ -67,7 +67,10 @@ class Version(AuditedModel):
 
     class Meta:
         """Meta options for the version class."""
-        unique_together = ('name', 'project')
+        unique_together = (
+            ('name', 'project'),
+            ('slug', 'project'),
+        )
         app_label = 'changes'
         ordering = ['name']
 

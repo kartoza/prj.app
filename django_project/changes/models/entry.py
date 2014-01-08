@@ -66,7 +66,7 @@ class Entry(AuditedModel):
             'project owner.'),
         default=False
     )
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField()
     # noinspection PyUnresolvedReferences
     version = models.ForeignKey('Version')
     # noinspection PyUnresolvedReferences
@@ -78,7 +78,10 @@ class Entry(AuditedModel):
     # noinspection PyClassicStyleClass
     class Meta:
         """Meta options for the version class."""
-        unique_together = ('title', 'version', 'category')
+        unique_together = (
+            ('title', 'version', 'category'),
+            ('version', 'slug'),
+        )
         app_label = 'changes'
 
     def save(self, *args, **kwargs):
