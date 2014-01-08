@@ -1,10 +1,12 @@
 -r REQUIREMENTS.txt
 
 django-nose==1.1
+django-jenkins==0.14.1
 coverage==3.6
 nose-exclude==0.1.9
 pep8==1.4.5
 pylint==0.28.0
+pyflakes==0.7.3
 
 # git+https://github.com/kmmbvnr/django-jenkins.git@2f241bb6b7a111172f1e5bd26a1d21815f83d1e7
 
@@ -24,3 +26,4 @@ fabtools>=0.13.0
 fabgis==0.15.2
 
 factory_boy
+mock==1.0.1
