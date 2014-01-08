@@ -122,7 +122,7 @@
         </li>
         {% if is_logged_in and the_version and the_project and unapproved_entries %}
           <li>
-            <a href="{% url 'pending-category-list' project_slug=the_project.slug version_slug=the_version.slug %}">
+            <a href="{% url 'pending-entry-list' project_slug=the_project.slug version_slug=the_version.slug %}">
               Entries Pending Approval
             </a>
           </li>

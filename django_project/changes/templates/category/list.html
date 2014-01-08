@@ -21,10 +21,12 @@
                   href='{% url "category-create" %}'>
                   Create New Category
               </a>
-              <a class="btn btn-default btn-mini"
-                 href='{% url "pending-category-list" the_project.slug %}'>
-                Pending Categories
-              </a>
+              {% if not unapproved %}
+                <a class="btn btn-default btn-mini"
+                   href='{% url "pending-category-list" the_project.slug %}'>
+                  Pending Categories
+                </a>
+              {% endif %}
             </div>
           {% endif %}
         </h1>
@@ -33,8 +35,9 @@
         {% if unapproved %}
             <h3>All categories are approved.</h3>
         {% else %}
-            <h3>No categories are defined (use the 'add' menu or the * icon
-                above to add one).</h3>
+            <h3>No categories are defined, but you can <a
+                class="btn btn-default btn-mini"
+                href='{% url "category-create" %}'>create one</a>.</h3>
         {% endif %}
     {%  endifequal %}
     {% for category in categories %}
