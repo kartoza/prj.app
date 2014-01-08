@@ -6,3 +6,7 @@ body {
 .align-right {
   text-align: right;
 }
+
+.margin-top {
+    margin-top: 15px;
+}

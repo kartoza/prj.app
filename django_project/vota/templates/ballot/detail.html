@@ -57,33 +57,26 @@
         var submitBtn = $('#submit-id-submit');
         voteForm.submit(function(e){
           e.preventDefault();
-          var fields = $(this).find('input[class="vote-checkbox"]:checked');
-          if (!fields.length){
-            alert('Please select at least one option!');
-          } else if (fields.length > 1) {
-            alert('Please only select one option!');
-          } else {
-            submitBtn.html('Submitting....').addClass('disabled');
-            $.post(loadUrl, voteForm.serialize(), function(data){
-              voteContainer.fadeOut('slow', function(){
-                if (data.successful) {
-                  voteContainer.html('<p class="lead text-center">Thanks! We ' +
-                      'have received your vote.');
-                  voteContainer.fadeIn('slow');
-                  setTimeout(function () {
-                    window.location.reload();
-                  }, 3000);
-                } else {
-                  voteContainer.html('<p class="lead text-center">Sorry! ' +
-                      data.errors.__all__ + '</p>');
-                  voteContainer.fadeIn('slow');
-                  setTimeout(function () {
-                    window.location.reload();
-                  }, 2000);
-                }
-              });
+          submitBtn.html('Submitting....').addClass('disabled');
+          $.post(loadUrl, voteForm.serialize(), function(data){
+            voteContainer.fadeOut('slow', function(){
+              if (data.successful) {
+                voteContainer.html('<p class="lead text-center">Thanks! We ' +
+                    'have received your vote.');
+                voteContainer.fadeIn('slow');
+                setTimeout(function () {
+                  window.location.reload();
+                }, 3000);
+              } else {
+                voteContainer.html('<p class="lead text-center">Sorry! ' +
+                    data.errors.__all__ + '</p>');
+                voteContainer.fadeIn('slow');
+                setTimeout(function () {
+                  window.location.reload();
+                }, 2000);
+              }
             });
-          }
+          });
         });
       });
     });

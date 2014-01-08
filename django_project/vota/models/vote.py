@@ -14,24 +14,18 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
 
+VOTE_CHOICES = (
+    ('y', 'Yes'),
+    ('-', 'Abstain'),
+    ('n', 'No')
+)
+
+
 class Vote(AuditedModel):
     """A vote model"""
 
-    positive = models.BooleanField(
-        help_text=_('A yes, or +1'),
-        default=False
-    )
-
-    abstain = models.BooleanField(
-        help_text=_('Ambivalent. No preference either way.'),
-        default=False
-    )
-
-    negative = models.BooleanField(
-        help_text=_('A no, or -1'),
-        default=False
-    )
-
+    choice = models.CharField(max_length=1, choices=VOTE_CHOICES,
+                              default='-')
     user = models.ForeignKey(User)
     # noinspection PyUnresolvedReferences
     ballot = models.ForeignKey('Ballot')
@@ -41,20 +35,6 @@ class Vote(AuditedModel):
         """Meta options for the vote class."""
         unique_together = ('user', 'ballot')
         app_label = 'vota'
-
-    def clean(self):
-        selected_count = 0
-        if self.positive:
-            selected_count += 1
-        if self.abstain:
-            selected_count += 1
-        if self.negative:
-            selected_count += 1
-        if selected_count == 0:
-            raise ValidationError('At least one voting option must be '
-                                  'selected!')
-        if selected_count > 1:
-            raise ValidationError('You may only select one voting option!')
 
     def __unicode__(self):
         return u'%s : %s' % (self.ballot.name, self.user.username)

@@ -16,27 +16,24 @@ class VoteForm(forms.ModelForm):
     class Meta:
         model = Vote
         fields = (
-            'positive',
-            'abstain',
-            'negative'
+            'choice',
         )
 
     def __init__(self, *args, **kwargs):
+        super(VoteForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         layout = Layout(
-            Field('positive', template='checkbox-field.html',
-                  css_class='vote-checkbox'),
-            Field('abstain', template='checkbox-field.html',
-                  css_class='vote-checkbox'),
-            Field('negative', template='checkbox-field.html',
-                  css_class='vote-checkbox'),
+            Field('choice', template='radio-select.html'),
+            Div(
+                Submit('submit', 'Submit'),
+                css_class='form-group col-md-11 col-md-offset-1 margin-top'
+            )
         )
+        self.fields['choice'].widget = forms.RadioSelect()
         self.helper.layout = layout
         self.helper.html5_required = False
-        self.helper.form_class = 'form-inline'
+        self.helper.form_class = 'form-inline col-md-10 col-md-offset-1'
         self.helper.form_id = 'vote-form'
-        super(VoteForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', 'Submit'))
 
 
 class CreateCommitteeForm(forms.ModelForm):
