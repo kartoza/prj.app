@@ -56,9 +56,7 @@ class TestVoteViews(TestCase):
         myClient = Client()
         myClient.login(username='timlinux', password='password')
         postData = {
-            'positive': True,
-            'abstain': False,
-            'negative': False
+            'choice': 'n'
         }
         myResp = myClient.post(reverse('vote-create', kwargs={
             'project_slug': self.myProject.slug,

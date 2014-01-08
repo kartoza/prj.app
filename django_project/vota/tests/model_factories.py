@@ -53,8 +53,6 @@ class VoteF(factory.DjangoModelFactory):
     """
     FACTORY_FOR = Vote
 
-    positive = True
-    abstain = False
-    negative = False
+    choice = '-'
     user = factory.SubFactory('core.model_factories.UserF')
     ballot = factory.SubFactory('vota.tests.model_factories.BallotF')

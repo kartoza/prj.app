@@ -94,9 +94,9 @@ class TestVoteCRUD(TestCase):
         """
         Tests Vote model read
         """
-        myModel = VoteF.create(positive=False)
+        myModel = VoteF.create(choice='n')
 
-        self.assertTrue(myModel.positive is False)
+        self.assertTrue(myModel.choice == 'n')
 
     def test_Vote_update(self):
         """
@@ -104,8 +104,7 @@ class TestVoteCRUD(TestCase):
         """
         myModel = VoteF.create()
         myNewModelData = {
-            'positive': False,
-            'abstain': True
+            'choice': 'y'
         }
         myModel.__dict__.update(myNewModelData)
         myModel.save()
