@@ -16,23 +16,27 @@
       <h1 class="text-muted">
         Projects
         {% if user.is_authenticated %}
-          <small class="pull-right">
+          <div class="pull-right btn-group">
             <a class="btn btn-default"
                 href='{% url "project-create" %}'>
                 Start New Project
             </a>
-          </small>
+            <a class="btn btn-default"
+               href='{% url "pending-project-list" %}'>
+              Pending Projects
+            </a>
+          </div>
         {% endif %}
       </h1>
-      <p class="lead">
+      <p class="lead text-center">
         Welcome to Projecta! This is a list of the approved
         projects which you are able to view.
       </p>
     </div>
     {% ifequal num_projects 0 %}
       <h3>
-        No projects are defined (use the 'add' menu or the * icon
-        above to add one).
+        No projects are defined, but you can
+        <a href="{% url "project-create" %}">create one</a>.
       </h3>
     {% endifequal %}
     {% for project in projects %}

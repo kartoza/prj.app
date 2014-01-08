@@ -1,0 +1,16 @@
+<div class="panel-to-wrap col-md-4">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <a href="{% url 'committee-detail' project_slug=committee.project.slug slug=committee.slug %}">
+          {{ committee.name }}
+        </a>
+      </h3>
+    </div>
+    <div class="panel-body">
+      {% if committee.description %}
+        <p>{{ committee.description }}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>

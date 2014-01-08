@@ -18,6 +18,11 @@
         <li>
           <a href="{% url 'project-create' %}">Create Project</a>
         </li>
+        {% if is_logged_in and unapproved_projects %}
+          <li>
+            <a href="{% url 'pending-project-list' %}">Projects Pending Approval</a>
+          </li>
+        {% endif %}
       </ul>
     </li>
     {% if the_project %}
@@ -49,8 +54,15 @@
         {% endif %}
       {% endfor %}
       <li>
+        <a href="{% url 'version-list' the_project.slug %}">All Versions</a>
         <a href="{% url 'version-create' %}">Create Version</a>
       </li>
+      {% if is_logged_in and versions and the_project and unapproved_versions %}
+        <li>
+          <a href="{% url 'pending-version-list' the_project.slug %}">Versions
+            Pending Approval</a>
+        </li>
+      {% endif %}
     </ul>
   </li>
 </ul>
@@ -73,8 +85,16 @@
           {% endif %}
         {% endfor %}
         <li>
+          <a href="{% url 'category-list' the_project.slug %}">All Categories</a>
           <a href="{% url 'category-create' %}">Create Category</a>
         </li>
+        {% if is_logged_in and versions and the_project and unapproved_categories %}
+          <li>
+            <a href="{% url 'pending-category-list' the_project.slug %}">
+              Categories Pending Approval
+            </a>
+          </li>
+        {% endif %}
       </ul>
     </li>
   </ul>
@@ -83,7 +103,7 @@
   <ul class="nav navbar-nav">
     <li role="presentation">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        Latest Entries <b class="caret"></b>
+        Entries <b class="caret"></b>
       </a>
       <ul class="dropdown-menu">
         {% for entry in entries %}
@@ -97,8 +117,16 @@
           {% endif %}
         {% endfor %}
         <li>
+          <a href="{% url 'entry-list' project_slug=the_project.slug version_slug=the_version.slug %}">All Entries</a>
           <a href="{% url 'entry-create' %}">Create Entry</a>
         </li>
+        {% if is_logged_in and the_version and the_project and unapproved_entries %}
+          <li>
+            <a href="{% url 'pending-category-list' project_slug=the_project.slug version_slug=the_version.slug %}">
+              Entries Pending Approval
+            </a>
+          </li>
+        {% endif %}
       </ul>
     </li>
   </ul>

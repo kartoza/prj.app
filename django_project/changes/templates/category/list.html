@@ -1,7 +1,7 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
 
-{% block title %}Entries - {{ block.super }}{% endblock %}
+{% block title %}Categories - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
@@ -15,12 +15,18 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
             Categories
-            <small class="pull-right">
-                <a class="btn btn-default btn-mini"
-                    href='{% url "category-create" %}'>
-                    <span class="glyphicon glyphicon-asterisk"></span>
-                </a>
-            </small>
+          {% if user.is_authenticated %}
+            <div class="pull-right btn-group">
+              <a class="btn btn-default btn-mini"
+                  href='{% url "category-create" %}'>
+                  Create New Category
+              </a>
+              <a class="btn btn-default btn-mini"
+                 href='{% url "pending-category-list" the_project.slug %}'>
+                Pending Categories
+              </a>
+            </div>
+          {% endif %}
         </h1>
     </div>
     {%  ifequal num_categories 0 %}

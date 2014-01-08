@@ -136,7 +136,7 @@ class PendingProjectListView(
         return projects_qs
 
 
-class ApproveProjectView(ProjectMixin, StaffuserRequiredMixin, RedirectView):
+class ApproveProjectView(StaffuserRequiredMixin, ProjectMixin, RedirectView):
     permanent = False
     query_string = True
     pattern_name = 'pending-project-list'

@@ -115,6 +115,9 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
         context = super(CategoryListView, self).get_context_data(**kwargs)
         context['num_categories'] = context['categories'].count()
         context['unapproved'] = False
+        project_slug = self.kwargs.get('project_slug', None)
+        if project_slug:
+            context['the_project'] = Project.objects.get(slug=project_slug)
         return context
 
     def get_queryset(self):

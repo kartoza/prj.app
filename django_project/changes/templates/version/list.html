@@ -15,20 +15,25 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
             Versions
-            <small class="pull-right">
-                <a class="btn btn-default btn-mini"
-                    href='{% url "version-create" %}'>
-                    <span class="glyphicon glyphicon-asterisk"></span>
-                </a>
-            </small>
+          {% if user.is_authenticated %}
+            <div class="pull-right btn-group">
+              <a class="btn btn-default btn-mini"
+                  href='{% url "version-create" %}'>
+                  Create New Version
+              </a>
+              <a class="btn btn-default btn-mini"
+                 href='{% url "version-create" %}'>
+                Pending Versions
+              </a>
+            </div>
+          {% endif %}
         </h1>
     </div>
     {%  ifequal num_versions 0 %}
         {% if unapproved %}
             <h3>All versions are approved.</h3>
         {% else %}
-            <h3>No versions are defined (use the 'add' menu or the * icon
-                above to add one).</h3>
+            <h3>No versions are defined, but you can create one.</h3>
         {% endif %}
     {%  endifequal %}
     {% for version in versions %}

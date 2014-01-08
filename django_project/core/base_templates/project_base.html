@@ -95,6 +95,11 @@
 <script>
   $(function(){
     $('.tooltip-toggle').tooltip();
+    if ($('.panel-to-wrap').length) {
+      while ((panels = $(':not(.row)>.panel-to-wrap:lt(3)')).length) {
+        panels.wrapAll($('<div class="row"></div>'));
+      }
+    }
   });
 </script>
 </body>

@@ -6,8 +6,6 @@
 {% block extra_head %}
 {% endblock %}
 
-{% block nav-url %}?project_slug={{ project.slug }}{% endblock %}
-
 {% block content %}
   <div class="row">
     <div class="col-lg-10">
@@ -16,15 +14,16 @@
     <div class="col-lg-2">
       <div class="btn-group btn-group-justified">
         {%  if not project.approved and user.is_staff %}
-        <a class="btn btn-success btn-mini"
-           href='{% url "project-approve" project.id %}'>
-          <span class="glyphicon glyphicon-thumbs-up"></span>
-        </a>
+          <a class="btn btn-success btn-mini"
+             href='{% url "project-approve" project.id %}'>
+            <span class="glyphicon glyphicon-thumbs-up"></span>
+          </a>
+        {% elif user.is_staff %}
+          <a class="btn btn-default btn-mini"
+              href='{% url "project-delete" project.id %}'>
+            Delete {{ project.name }}
+          </a>
         {% endif %}
-        <a class="btn btn-default btn-mini"
-            href='{% url "project-delete" project.id %}'>
-          <span class="glyphicon glyphicon-minus"></span>
-        </a>
       </div>
     </div>
   </div>
@@ -33,9 +32,6 @@
     <hr/>
   </div>
   {% for committee in committees %}
-    <div class="row">
-      <h4>{{ committee.name }}</h4>
-    </div>
+    {% include 'committee/includes/committee-panel.html' %}
   {% endfor %}
-
 {% endblock %}
