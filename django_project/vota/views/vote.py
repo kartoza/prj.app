@@ -54,12 +54,3 @@ class VoteCreateUpdateView(LoginRequiredMixin, CreateView):
         error_dict = {'errors': errors}
         return HttpResponse(json.dumps(error_dict),
                             content_type='application/json')
-
-    def get_success_url(self):
-        return reverse('ballot-detail',
-                       kwargs={'project_slug':
-                               self.object.ballot.committee.project.slug,
-                               'committee_slug':
-                               self.object.ballot.committee.slug,
-                               'slug': self.object.ballot.slug
-                               })

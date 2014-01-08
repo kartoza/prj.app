@@ -45,6 +45,8 @@ INSTALLED_APPS += (
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False
 
+SOUTH_TESTS_MIGRATE = False
+
 PIPELINE_JS = {
     'contrib': {
         'source_filenames': (

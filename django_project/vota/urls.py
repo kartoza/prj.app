@@ -20,7 +20,7 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<committee_slug>[\w-]+)/'
               'ballots/(?P<ballot_slug>[\w-]+)/vote/$',
         view=VoteCreateUpdateView.as_view(),
-        name='add-vote'),
+        name='vote-create'),
 
     ### Ballot URLs
     url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<committee_slug>[\w-]+)/'

@@ -66,7 +66,7 @@ class ProjectDetailView(ProjectMixin, DetailView):
         return obj
 
 
-class ProjectDeleteView(ProjectMixin, DeleteView, LoginRequiredMixin):
+class ProjectDeleteView(LoginRequiredMixin, ProjectMixin, DeleteView):
     context_object_name = 'project'
     template_name = 'project/delete.html'
 
@@ -84,7 +84,7 @@ class ProjectDeleteView(ProjectMixin, DeleteView, LoginRequiredMixin):
             return qs.filter(creator=self.request.user)
 
 
-class ProjectCreateView(ProjectMixin, CreateView):
+class ProjectCreateView(LoginRequiredMixin, ProjectMixin, CreateView):
     context_object_name = 'project'
     template_name = 'project/create.html'
 

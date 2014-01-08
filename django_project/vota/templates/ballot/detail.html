@@ -50,7 +50,7 @@
 {% block inline-js %}
   <script>
     $(function(){
-      var loadUrl = '{% url "add-vote" project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug ballot_slug=ballot.slug %}';
+      var loadUrl = '{% url "vote-create" project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug ballot_slug=ballot.slug %}';
       var voteContainer = $('#vote-container');
       voteContainer.load(loadUrl, function(){
         var voteForm = $('#vote-form');

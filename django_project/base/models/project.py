@@ -97,7 +97,7 @@ class Project(AuditedModel):
         if not self.pk:
             words = self.name.split()
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
-            new_list = ' '.join(filtered_words)
+            new_list = unicode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
         super(Project, self).save(*args, **kwargs)
 

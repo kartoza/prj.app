@@ -34,29 +34,6 @@ class VersionMixin(object):
     form_class = VersionForm
 
 
-class VersionCreateUpdateMixin(VersionMixin, LoginRequiredMixin):
-    """Mixin for views that do create or update operations."""
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(VersionMixin, self).get_context_data(**kwargs)
-        return context
-
-    def form_invalid(self, form):
-        """Behaviour for invalid forms.
-
-        :param form: Form which is being validated.
-        :type form: ModelForm
-        """
-        return self.render_to_response(self.get_context_data(form=form))
-
-
 class VersionListView(VersionMixin, PaginationMixin, ListView):
     """View for the list of versions."""
     context_object_name = 'versions'
@@ -193,7 +170,7 @@ class VersionThumbnailView(VersionMixin, DetailView):
         return obj
 
 
-class VersionDeleteView(VersionMixin, DeleteView, LoginRequiredMixin):
+class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
     """A view for deleting version objects."""
     context_object_name = 'version'
     template_name = 'version/delete.html'
@@ -204,7 +181,9 @@ class VersionDeleteView(VersionMixin, DeleteView, LoginRequiredMixin):
         :returns: A url.
         :rtype: str
         """
-        return reverse('version-list')
+        return reverse('version-list', kwargs={
+            'project_slug': self.object.project.slug
+        })
 
     def get_queryset(self):
         """Get the queryset for this view.
@@ -222,8 +201,7 @@ class VersionDeleteView(VersionMixin, DeleteView, LoginRequiredMixin):
             return qs.filter(creator=self.request.user)
 
 
-class VersionCreateView(
-        VersionCreateUpdateMixin, CreateView, LoginRequiredMixin):
+class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
     """A view for creating version objects."""
     context_object_name = 'version'
     template_name = 'version/create.html'
@@ -239,19 +217,10 @@ class VersionCreateView(
         })
 
 
-class VersionUpdateView(VersionCreateUpdateMixin, UpdateView):
+class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
     """View to update an existing version."""
     context_object_name = 'version'
     template_name = 'version/update.html'
-
-    def get_form_kwargs(self):
-        """Get the arguments passed to the form object.
-
-        :returns: A dictionary of form arguments.
-        :rtype: dict
-        """
-        kwargs = super(VersionUpdateView, self).get_form_kwargs()
-        return kwargs
 
     def get_queryset(self):
         """Get the queryset for this view.

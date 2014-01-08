@@ -30,15 +30,6 @@ class EntryMixin(object):
     form_class = EntryForm
 
 
-class EntryCreateUpdateMixin(EntryMixin, LoginRequiredMixin):
-    def get_context_data(self, **kwargs):
-        context = super(EntryMixin, self).get_context_data(**kwargs)
-        return context
-
-    def form_invalid(self, form):
-        return self.render_to_response(self.get_context_data(form=form))
-
-
 class EntryListView(EntryMixin, PaginationMixin, ListView):
     context_object_name = 'entries'
     template_name = 'entry/list.html'
@@ -75,7 +66,7 @@ class EntryDetailView(EntryMixin, DetailView):
         return obj
 
 
-class EntryDeleteView(EntryMixin, DeleteView, LoginRequiredMixin):
+class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
     context_object_name = 'entry'
     template_name = 'entry/delete.html'
 
@@ -96,7 +87,7 @@ class EntryDeleteView(EntryMixin, DeleteView, LoginRequiredMixin):
             return qs.filter(creator=self.request.user)
 
 
-class EntryCreateView(EntryCreateUpdateMixin, CreateView):
+class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
     context_object_name = 'entry'
     template_name = 'entry/create.html'
 
@@ -113,7 +104,7 @@ class EntryCreateView(EntryCreateUpdateMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class EntryUpdateView(EntryCreateUpdateMixin, UpdateView):
+class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
     context_object_name = 'entry'
     template_name = 'entry/update.html'
 

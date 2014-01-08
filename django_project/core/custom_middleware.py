@@ -198,6 +198,7 @@ class NavContextMiddleware:
             nav_rendered = nav_template.render(nav_context)
             soup = BeautifulSoup(response.rendered_content)
             container = soup.find(id="nav-souped-content")
-            container.insert(1, BeautifulSoup(nav_rendered))
-            response.content = mark_safe(soup)
+            if container:
+                container.insert(1, BeautifulSoup(nav_rendered))
+                response.content = mark_safe(soup)
         return response

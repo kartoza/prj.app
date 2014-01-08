@@ -95,29 +95,6 @@ class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
         return qs
 
 
-class CategoryCreateUpdateMixin(CategoryMixin, LoginRequiredMixin):
-    """"Mixin for updating categories."""
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(CategoryMixin, self).get_context_data(**kwargs)
-        return context
-
-    def form_invalid(self, form):
-        """Behaviour for invalid forms.
-
-        :param form: Form which is being validated.
-        :type form: ModelForm
-        """
-        return self.render_to_response(self.get_context_data(form=form))
-
-
 class CategoryListView(CategoryMixin, PaginationMixin, ListView):
     """View for the list of categories."""
     context_object_name = 'categories'
@@ -189,7 +166,7 @@ class CategoryDetailView(CategoryMixin, DetailView):
         return obj
 
 
-class CategoryDeleteView(CategoryMixin, DeleteView, LoginRequiredMixin):
+class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
     """A view for deleting categories."""
     context_object_name = 'category'
     template_name = 'category/delete.html'
@@ -221,7 +198,7 @@ class CategoryDeleteView(CategoryMixin, DeleteView, LoginRequiredMixin):
             return qs.filter(creator=self.request.user)
 
 
-class CategoryCreateView(CategoryCreateUpdateMixin, CreateView):
+class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):
     context_object_name = 'category'
     template_name = 'category/create.html'
 
@@ -230,14 +207,8 @@ class CategoryCreateView(CategoryCreateUpdateMixin, CreateView):
             'project_slug': self.object.project.slug
         })
 
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.save()
 
-        return HttpResponseRedirect(self.get_success_url())
-
-
-class CategoryUpdateView(CategoryCreateUpdateMixin, UpdateView):
+class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
     context_object_name = 'category'
     template_name = 'category/update.html'
 
