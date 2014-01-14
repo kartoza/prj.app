@@ -57,52 +57,54 @@
 
 
     {% for entry in row.entries %}
-      <a name="{{ entry.id }}"></a>
-      <div class="media">
-        <div class="pull-right media-object">
-          {% if entry.image_file %}
-            <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
-              <img class="img-responsive img-rounded pull-right"
-                   src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
-                   alt=""/>{# see core/settings/contrib.py for large-entry #}
-            </a>
-          {% endif %}
-        </div>
-        <div class="media-body">
-          <h3 class="media-heading" id="feature-{{ entry.id }}">
-            <a href="#{{ entry.id }}">#</a>
-            Feature: <b>{{ entry.title }}</b>
-          </h3>
-          <div>
-            {{ entry.description|base_markdown }}
-          </div>
-          <div class="btn-group">
-            {% if not rst_download %}
-              {% if not entry.approved and user.is_staff %}
-                <a class="btn btn-success btn-mini tooltip-toggle"
-                   data-title="Approve Entry"
-                   href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
-                  <span class="glyphicon glyphicon-thumbs-up"></span>
-                </a>
-              {% endif %}
-              {% if user.is_authenticated %}
-                <a class="btn btn-default btn-mini tooltip-toggle"
-                   data-title="Delete Entry"
-                   href='{% url "entry-delete" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
-                  <span class="glyphicon glyphicon-minus"></span>
-                </a>
-                <a class="btn btn-default btn-mini tooltip-toggle"
-                   data-title="Update Entry"
-                   href='{% url "entry-update" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
-                  <span class="glyphicon glyphicon-pencil"></span>
-                </a>
-              {% endif %}
+      {% if entry.approved %}
+        <a name="{{ entry.id }}"></a>
+        <div class="media">
+          <div class="pull-right media-object">
+            {% if entry.image_file %}
+              <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+                <img class="img-responsive img-rounded pull-right"
+                     src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
+                     alt=""/>{# see core/settings/contrib.py for large-entry #}
+              </a>
             {% endif %}
           </div>
+          <div class="media-body">
+            <h3 class="media-heading" id="feature-{{ entry.id }}">
+              <a href="#{{ entry.id }}">#</a>
+              Feature: <b>{{ entry.title }}</b>
+            </h3>
+            <div>
+              {{ entry.description|base_markdown }}
+            </div>
+            <div class="btn-group">
+              {% if not rst_download %}
+                {% if not entry.approved and user.is_staff %}
+                  <a class="btn btn-success btn-mini tooltip-toggle"
+                     data-title="Approve Entry"
+                     href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
+                    <span class="glyphicon glyphicon-thumbs-up"></span>
+                  </a>
+                {% endif %}
+                {% if user.is_authenticated %}
+                  <a class="btn btn-default btn-mini tooltip-toggle"
+                     data-title="Delete Entry"
+                     href='{% url "entry-delete" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
+                    <span class="glyphicon glyphicon-minus"></span>
+                  </a>
+                  <a class="btn btn-default btn-mini tooltip-toggle"
+                     data-title="Update Entry"
+                     href='{% url "entry-update" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
+                    <span class="glyphicon glyphicon-pencil"></span>
+                  </a>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
         </div>
-      </div>
-      {% if not rst_download %}
-        <hr />
+        {% if not rst_download %}
+          <hr />
+        {% endif %}
       {% endif %}
     {% endfor %}{# entry loop #}
   {% endfor %}{# row loop #}
