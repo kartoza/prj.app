@@ -1,31 +1,43 @@
-<div class="col-md-4 panel-to-wrap">
+<div class="col-md-4 panel-to-wrap" xmlns="http://www.w3.org/1999/html">
   <div class="panel
             {% if not ballot.private %}
               {% if ballot.get_current_tally > 0 %}panel-success
               {% elif ballot.get_current_tally == 0 %}panel-warning
               {% else %}panel-danger{% endif %}
             {% else %}panel-default{% endif %}">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      <a href="{% url 'ballot-detail' project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug slug=ballot.slug %}">
-        {{ ballot.name }}
-      </a>
-      {% if ballot.private %}
-        <span class="label label-default pull-right">PRIVATE</span>
-      {% endif %}
-    </h3>
-  </div>
-  <div class="panel-body">
-    {{ ballot.summary }}
-  </div>
-  {% if not ballot.private %}
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <a href="{% url 'ballot-detail' project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug slug=ballot.slug %}">
+          {{ ballot.name }}
+        </a>
+        {% if ballot.private %}
+          <span class="label label-default pull-right">PRIVATE</span>
+        {% endif %}
+      </h3>
+    </div>
+    <div class="panel-body">
+      {{ ballot.summary }}
+    </div>
     <div class="panel-footer">
-      {% if ballot.has_quorum %}
-        <span class="label label-success">Has Quorum</span>
+      {% if not ballot.private %}
+        {% if ballot.has_quorum %}
+          <span class="label label-success">Has Quorum</span>
+        {% else %}
+          <span class="label label-danger">No Quorum</span>
+        {% endif %}
+        {% if ballot.approved %}
+          <span class="label label-success">PASSED</span>
+        {% elif ballot.denied %}
+          <span class="label label-danger">DENIED</span>
+        {% endif %}
       {% else %}
-        <span class="label label-danger">No Quorum</span>
+        <span class="label label-default">Private</span>
+      {% endif %}
+      {% if is_open %}
+        <span class="label-success label">Open</span>
+      {% else %}
+        <span class="label-danger label">Closed</span>
       {% endif %}
     </div>
-  {% endif %}
   </div>
 </div>

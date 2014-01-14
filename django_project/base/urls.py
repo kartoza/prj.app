@@ -11,7 +11,9 @@ from views import (
     ProjectListView,
     ProjectUpdateView,
     PendingProjectListView,
-    ApproveProjectView)
+    ApproveProjectView,
+    ProjectBallotListView
+)
 
 urlpatterns = patterns(
     '',
@@ -33,6 +35,9 @@ urlpatterns = patterns(
     url(regex='^(?P<slug>[\w-]+)/$',
         view=ProjectDetailView.as_view(),
         name='project-detail'),
+    url(regex='^(?P<slug>[\w-]+)/ballots/$',
+        view=ProjectBallotListView.as_view(),
+        name='project-ballot-list'),
     url(regex='^project/(?P<slug>[\w-]+)/delete/$',
         view=ProjectDeleteView.as_view(),
         name='project-delete'),

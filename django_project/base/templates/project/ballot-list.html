@@ -1,0 +1,22 @@
+{% extends 'project_base.html' %}
+{% block content %}
+  <div class="row">
+    <div class="col-lg-10">
+      <h2>Ballots for {{ project.name }}</h2>
+      <p>Project Lead: {{ project.owner.username }}</p>
+    </div>
+  </div>
+    <div class="row">
+      {% if ballots_list %}
+        {% for list in ballots_list %}
+          {% for ballot in list %}
+            {% if forloop.first %}
+              <h3>{{ ballot.committee.name }}</h3>
+              <hr/>
+            {% endif %}
+            {% include 'ballot/includes/ballot-panel.html' with ballot=ballot %}
+          {% endfor %}
+        {% endfor %}
+      {% endif %}
+    </div>
+{% endblock %}

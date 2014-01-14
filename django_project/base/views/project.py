@@ -17,7 +17,7 @@ from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from ..models import Project
 from ..forms import ProjectForm
-from vota.models import Committee
+from vota.models import Committee, Ballot
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +25,37 @@ logger = logging.getLogger(__name__)
 class ProjectMixin(object):
     model = Project
     form_class = ProjectForm
+
+
+class ProjectBallotListView(ProjectMixin, PaginationMixin, DetailView):
+    """List all ballots within in a project"""
+    context_object_name = 'project'
+    template_name = 'project/ballot-list.html'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectBallotListView, self).get_context_data(**kwargs)
+        committees = Committee.objects.filter(project=self.object)
+        ballots = []
+        for committee in committees:
+            if self.request.user.is_authenticated and \
+                    self.request.user in committee.users.all():
+                    committee_ballots = Ballot.objects.filter(
+                        committee=committee)
+            else:
+                committee_ballots = Ballot.objects.filter(committee=committee)\
+                    .filter(private=False)
+            if committee_ballots:
+                ballots.append(committee_ballots)
+        context['ballots_list'] = ballots
+        return context
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated():
+            projects_qs = Project.approved_objects.all()
+        else:
+            projects_qs = Project.public_objects.all()
+        return projects_qs
 
 
 class ProjectListView(ProjectMixin, PaginationMixin, ListView):
