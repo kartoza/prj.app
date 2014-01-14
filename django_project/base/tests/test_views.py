@@ -17,7 +17,7 @@ class TestViews(TestCase):
         logging.disable(logging.CRITICAL)
         self.myTestProject = ProjectF.create()
         self.myUnapprovedProject = ProjectF.create(approved=False)
-        myUser = UserF.create(**{
+        self.myUser = UserF.create(**{
             'username': 'timlinux',
             'password': 'password',
             'is_staff': True
@@ -53,7 +53,8 @@ class TestViews(TestCase):
         myClient = Client()
         myClient.login(username='timlinux', password='password')
         postData = {
-            'name': u'New Test Project'
+            'name': u'New Test Project',
+            'owner': self.myUser.id
         }
         myResp = myClient.post(reverse('project-create'), postData)
         self.assertRedirects(myResp, reverse('pending-project-list'),

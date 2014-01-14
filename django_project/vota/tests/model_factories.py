@@ -3,6 +3,7 @@ import datetime
 from vota.models.ballot import Ballot
 from vota.models.committee import Committee
 from vota.models.vote import Vote
+from core.model_factories import UserF
 
 
 class BallotF(factory.DjangoModelFactory):
@@ -16,6 +17,7 @@ class BallotF(factory.DjangoModelFactory):
     description = u'This description is equally wonderful'
     approved = True
     denied = False
+    proposer = factory.SubFactory(UserF)
     no_quorum = False
     open_from = datetime.datetime.now() - datetime.timedelta(days=7)
     closes = datetime.datetime.now() + datetime.timedelta(days=7)
@@ -32,6 +34,7 @@ class CommitteeF(factory.DjangoModelFactory):
     name = factory.Sequence(lambda n: u'Test Committee %s' % n)
     description = u'This description is really only here for testing'
     sort_number = 1
+    chair = factory.SubFactory(UserF)
     quorum_setting = u'100'
     project = factory.SubFactory('base.tests.model_factories.ProjectF')
 

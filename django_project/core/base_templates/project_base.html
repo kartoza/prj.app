@@ -94,12 +94,37 @@
 {% block inline-js %}{% endblock %}
 <script>
   $(function(){
+    var offsetSize = 100;
+
     $('.tooltip-toggle').tooltip();
     if ($('.panel-to-wrap').length) {
       while ((panels = $(':not(.row)>.panel-to-wrap:lt(3)')).length) {
         panels.wrapAll($('<div class="row"></div>'));
       }
     }
+    if (window.location.hash) {
+      $(document).scroll(function () {
+        var hash = window.location.hash;
+        var hashName = hash.substring(1, hash.length);
+        var element;
+        if ($(hash).length != 0) {
+          element = $(hash);
+        }
+        else if ($('a[name="' + hashName + '"]').length != 0) {
+          element = $('a[name="' + hashName + '"]:first');
+        }
+        if (element != undefined) {
+          window.scrollTo(0, element.position().top - offsetSize);
+        }
+        $(document).unbind("scroll");
+      });
+    }
+    $("[href^='#']").not("[href~='#']").click(function (evt) {
+      evt.preventDefault();
+      var obj = $(this);
+      var getHref = obj.attr("href").split("#")[1];
+      $(window).scrollTop($("[name*='" + getHref + "']").offset().top - offsetSize);
+    });
   });
 </script>
 </body>

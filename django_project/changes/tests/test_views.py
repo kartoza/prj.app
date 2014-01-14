@@ -185,7 +185,8 @@ class TestEntryViews(TestCase):
         postData = {
             'title': u'New Test Entry',
             'version': self.myVersion.id,
-            'category': self.myCategory.id
+            'category': self.myCategory.id,
+            'author': self.myUser.id
         }
         myResp = myClient.post(reverse('entry-create'), postData)
         self.assertRedirects(myResp, reverse('pending-entry-list', kwargs={
@@ -321,7 +322,8 @@ class TestVersionViews(TestCase):
         postData = {
             'project': self.myProject.id,
             'name': u'New Test Version',
-            'description': u'This is a test description'
+            'description': u'This is a test description',
+            'author': self.myUser.id
         }
         myResp = myClient.post(reverse('version-create'), postData)
         self.assertRedirects(myResp, reverse('pending-version-list', kwargs={

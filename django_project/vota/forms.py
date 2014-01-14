@@ -45,13 +45,15 @@ class CreateCommitteeForm(forms.ModelForm):
             'sort_number',
             'quorum_setting',
             'project',
-            'users'
+            'users',
+            'chair'
         )
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         layout = Layout(
             Field('name', css_class="form-control"),
+            Field('chair', css_class="form-control"),
             Field('description', css_class="form-control"),
             Field('sort_number', css_class="form-control"),
             Field('quorum_setting', css_class="form-control"),
@@ -76,7 +78,8 @@ class BallotCreateForm(forms.ModelForm):
             'description',
             'open_from',
             'closes',
-            'private'
+            'private',
+            'proposer'
         )
 
     def __init__(self, *args, **kwargs):
@@ -84,6 +87,7 @@ class BallotCreateForm(forms.ModelForm):
         layout = Layout(
             Field('committee', css_class="form-control"),
             Field('name', css_class="form-control"),
+            Field('proposer', css_class="form-control"),
             Field('summary', css_class="form-control"),
             Field('description', css_class="form-control"),
             Field('open_from', css_class="form-control"),

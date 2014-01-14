@@ -150,7 +150,8 @@ class TestBallotViews(TestCase):
             'description': u'New test description',
             'open_from': datetime.datetime.now() - datetime.timedelta(days=7),
             'closes': datetime.datetime.now() + datetime.timedelta(days=7),
-            'private': True
+            'private': True,
+            'proposer': self.myUser.id
         }
         myResp = myClient.post(reverse('ballot-create'), postData)
         self.assertRedirects(myResp, reverse('ballot-detail', kwargs={
@@ -275,6 +276,7 @@ class TestCommitteeViews(TestCase):
             'description': u'New test description',
             'sort_number': 1,
             'quorum_setting': u'50',
+            'chair': self.myUser.id,
             'users': [self.myUser.id]
         }
         myResp = myClient.post(reverse('committee-create'), postData)

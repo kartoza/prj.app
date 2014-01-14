@@ -23,7 +23,8 @@ class ProjectForm(forms.ModelForm):
         model = Project
         fields = (
             'name',
-            'image_file'
+            'image_file',
+            'owner'
         )
 
     def __init__(self, *args, **kwargs):
@@ -32,6 +33,7 @@ class ProjectForm(forms.ModelForm):
             Fieldset(
                 'Project details',
                 Field('name', css_class="form-control"),
+                Field('owner', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
                 css_id='project-form')
             )

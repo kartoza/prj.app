@@ -2,6 +2,7 @@ import factory
 from changes.models.category import Category
 from changes.models.entry import Entry
 from changes.models.version import Version
+from core.model_factories import UserF
 
 
 class CategoryF(factory.django.DjangoModelFactory):
@@ -26,6 +27,7 @@ class EntryF(factory.django.DjangoModelFactory):
     description = u'This description is really only here for testing'
     image_file = factory.django.ImageField(color='blue')
     image_credits = u'The credits go to dodobas'
+    author = factory.SubFactory(UserF)
     approved = True
     version = factory.SubFactory('changes.tests.model_factories.VersionF')
     category = factory.SubFactory('changes.tests.model_factories.CategoryF')
@@ -40,5 +42,6 @@ class VersionF(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: u'Version 1.0.%s' % n)
     approved = True
     image_file = factory.django.ImageField(color='green')
+    author = factory.SubFactory(UserF)
     description = u'This description is really only here for testing'
     project = factory.SubFactory('base.tests.model_factories.ProjectF')

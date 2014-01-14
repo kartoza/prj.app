@@ -45,7 +45,8 @@ class VersionForm(forms.ModelForm):
             'project',
             'name',
             'description',
-            'image_file'
+            'image_file',
+            'author'
         )
 
     def __init__(self, *args, **kwargs):
@@ -55,6 +56,7 @@ class VersionForm(forms.ModelForm):
                 'Version details',
                 Field('project', css_class="form-control"),
                 Field('name', css_class="form-control"),
+                Field('author', css_class="form-control"),
                 Field('description', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
                 css_id='project-form')
@@ -71,7 +73,7 @@ class EntryForm(forms.ModelForm):
         model = Entry
         fields = (
             'version', 'category', 'title', 'description',
-            'image_file', 'image_credits'
+            'image_file', 'image_credits', 'author'
         )
 
     def __init__(self, *args, **kwargs):
@@ -80,6 +82,7 @@ class EntryForm(forms.ModelForm):
             Fieldset(
                 'Entry details',
                 Field('version', css_class="form-control"),
+                Field('author', css_class="form-control"),
                 Field('category', css_class="form-control"),
                 Field('title', css_class="form-control"),
                 Field('description', css_class="form-control"),
