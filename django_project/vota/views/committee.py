@@ -57,6 +57,11 @@ class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
     context_object_name = 'committee'
     template_name = 'committee/create.html'
 
+    def get_form_kwargs(self):
+        kwargs = super(CommitteeCreateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
     def get_success_url(self):
         return reverse('committee-detail', kwargs={
             'project_slug': self.object.project.slug,

@@ -122,8 +122,12 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.save()
-
         return HttpResponseRedirect(self.get_success_url())
+
+    def get_form_kwargs(self):
+        kwargs = super(EntryCreateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
 
 
 class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):

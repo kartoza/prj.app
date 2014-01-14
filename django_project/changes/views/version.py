@@ -209,6 +209,11 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
             'project_slug': self.object.project.slug
         })
 
+    def get_form_kwargs(self):
+        kwargs = super(VersionCreateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
 
 class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
     """View to update an existing version."""

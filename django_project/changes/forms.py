@@ -3,15 +3,11 @@ logger = logging.getLogger(__name__)
 import django.forms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
-     Layout,
-     Fieldset,
-     Submit,
-     Div,
-     HTML,
-     Field,
-     Button
+    Layout,
+    Fieldset,
+    Submit,
+    Field,
 )
-
 from models import Category, Version, Entry
 
 
@@ -45,18 +41,17 @@ class VersionForm(forms.ModelForm):
             'project',
             'name',
             'description',
-            'image_file',
-            'author'
+            'image_file'
         )
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
                 'Version details',
                 Field('project', css_class="form-control"),
                 Field('name', css_class="form-control"),
-                Field('author', css_class="form-control"),
                 Field('description', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
                 css_id='project-form')
@@ -66,6 +61,12 @@ class VersionForm(forms.ModelForm):
         super(VersionForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
 
+    def save(self, commit=True):
+        instance = super(VersionForm, self).save(commit=False)
+        instance.author = self.user
+        instance.save()
+        return instance
+
 
 class EntryForm(forms.ModelForm):
 
@@ -73,16 +74,16 @@ class EntryForm(forms.ModelForm):
         model = Entry
         fields = (
             'version', 'category', 'title', 'description',
-            'image_file', 'image_credits', 'author'
+            'image_file', 'image_credits'
         )
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
                 'Entry details',
                 Field('version', css_class="form-control"),
-                Field('author', css_class="form-control"),
                 Field('category', css_class="form-control"),
                 Field('title', css_class="form-control"),
                 Field('description', css_class="form-control"),
@@ -98,3 +99,9 @@ class EntryForm(forms.ModelForm):
         if self.instance.id is not None:
             self.fields['category'].queryset = Category.objects.filter(
                 project=self.instance.version.project)
+
+    def save(self, commit=True):
+        instance = super(EntryForm, self).save(commit=False)
+        instance.author = self.user
+        instance.save()
+        return instance

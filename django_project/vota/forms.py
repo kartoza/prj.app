@@ -46,14 +46,13 @@ class CreateCommitteeForm(forms.ModelForm):
             'quorum_setting',
             'project',
             'users',
-            'chair'
         )
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
         self.helper = FormHelper()
         layout = Layout(
             Field('name', css_class="form-control"),
-            Field('chair', css_class="form-control"),
             Field('description', css_class="form-control"),
             Field('sort_number', css_class="form-control"),
             Field('quorum_setting', css_class="form-control"),
@@ -67,6 +66,12 @@ class CreateCommitteeForm(forms.ModelForm):
         super(CreateCommitteeForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
 
+    def save(self, commit=True):
+        instance = super(CreateCommitteeForm, self).save(commit=False)
+        instance.chair = self.user
+        instance.save()
+        return instance
+
 
 class BallotCreateForm(forms.ModelForm):
     class Meta:
@@ -79,15 +84,14 @@ class BallotCreateForm(forms.ModelForm):
             'open_from',
             'closes',
             'private',
-            'proposer'
         )
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
         self.helper = FormHelper()
         layout = Layout(
             Field('committee', css_class="form-control"),
             Field('name', css_class="form-control"),
-            Field('proposer', css_class="form-control"),
             Field('summary', css_class="form-control"),
             Field('description', css_class="form-control"),
             Field('open_from', css_class="form-control"),
@@ -100,3 +104,9 @@ class BallotCreateForm(forms.ModelForm):
         self.helper.form_id = 'committee-form'
         super(BallotCreateForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(BallotCreateForm, self).save(commit=False)
+        instance.proposer = self.user
+        instance.save()
+        return instance

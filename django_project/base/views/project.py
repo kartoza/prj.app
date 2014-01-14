@@ -91,6 +91,11 @@ class ProjectCreateView(LoginRequiredMixin, ProjectMixin, CreateView):
     def get_success_url(self):
         return reverse('pending-project-list')
 
+    def get_form_kwargs(self):
+        kwargs = super(ProjectCreateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
 
 class ProjectUpdateView(ProjectMixin, UpdateView):
     context_object_name = 'project'

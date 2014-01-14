@@ -57,6 +57,11 @@ class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):
     context_object_name = 'ballot'
     template_name = 'ballot/create.html'
 
+    def get_form_kwargs(self):
+        kwargs = super(BallotCreateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
     def get_success_url(self):
         return reverse('ballot-detail', kwargs={
             'project_slug': self.object.committee.project.slug,
