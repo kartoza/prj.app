@@ -13,7 +13,7 @@
       <p>Project Lead: {{ project.owner.username }}</p>
     </div>
     <div class="col-lg-2">
-      <div class="btn-group btn-group-justified">
+      <div class="btn-group">
         {%  if not project.approved and user.is_staff %}
           <a class="btn btn-success btn-mini tooltip-toggle"
              href='{% url "project-approve" project.id %}'
@@ -21,7 +21,7 @@
             <span class="glyphicon glyphicon-thumbs-up"></span>
           </a>
         {% elif user.is_staff %}
-          <a class="btn btn-default btn-mini tooltip-toggle"
+          <a class="btn btn-default tooltip-toggle"
               href='{% url "project-delete" project.id %}'
               data-title="Delete {{ project.name }}">
             <span class="glyphicon glyphicon-minus"></span>

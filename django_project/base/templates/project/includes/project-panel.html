@@ -6,6 +6,27 @@
         <a href="{% url 'project-detail' project.slug %}">
           {{ project.name }}
         </a>
+        {% if not project.approved and user.is_staff %}
+          <a class="btn btn-success btn-xs pull-right tooltip-toggle"
+             href='{% url "project-approve" project.slug %}'
+             data-placement="top" data-title="Approve {{ project.name }}">
+            <span class="glyphicon glyphicon-thumbs-up"></span>
+          </a>
+        {% endif %}
+        {% if user.is_authenticated %}
+          <div class="btn-group pull-right" style="margin-top: -3px;">
+            <a href="{% url 'project-delete' project.slug %}"
+               class="btn btn-default btn-xs tooltip-toggle"
+               data-placement="top" data-title="Delete {{ project.name }}">
+              <span class="glyphicon glyphicon-minus"></span>
+            </a>
+            <a href="{% url 'project-update' project.slug %}"
+               class="btn btn-default btn-xs tooltip-toggle"
+               data-placement="top" data-title="Update {{ project.name }}">
+              <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+          </div>
+        {% endif %}
       </h3>
     </div>
     <div class="panel-body">
@@ -40,27 +61,6 @@
             </span>
           </p>
         {% endfor %}
-      {% endif %}
-    </div>
-    <div class="panel-footer">
-      {% if not project.approved and user.is_staff %}
-        <a class="btn btn-success btn-mini tooltip-toggle"
-           href='{% url "project-approve" project.slug %}'
-           data-placement="top" data-title="Approve {{ project.name }}">
-          <span class="glyphicon glyphicon-thumbs-up"></span>
-        </a>
-      {% endif %}
-      {% if user.is_authenticated %}
-        <a href="{% url 'project-delete' project.slug %}"
-           class="btn btn-default btn-mini tooltip-toggle"
-            data-placement="top" data-title="Delete {{ project.name }}">
-          <span class="glyphicon glyphicon-minus"></span>
-        </a>
-        <a href="{% url 'project-update' project.slug %}"
-           class="btn btn-default btn-mini tooltip-toggle"
-           data-placement="top" data-title="Update {{ project.name }}">
-          <span class="glyphicon glyphicon-pencil"></span>
-        </a>
       {% endif %}
     </div>
   </div>

@@ -3,7 +3,7 @@
             {% if not ballot.private %}
               {% if ballot.get_current_tally > 0 %}panel-success
               {% elif ballot.get_current_tally == 0 %}panel-warning
-              {% elif ballot.get_current_tally < 0 %}panel-danger{% endif %}
+              {% else %}panel-danger{% endif %}
             {% else %}panel-default{% endif %}">
   <div class="panel-heading">
     <h3 class="panel-title">

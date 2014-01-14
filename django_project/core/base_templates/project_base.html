@@ -102,6 +102,11 @@
         panels.wrapAll($('<div class="row"></div>'));
       }
     }
+    if ($('.thumbnail-to-wrap').length) {
+      while ((panels = $(':not(.row)>.thumbnail-to-wrap:lt(4)')).length) {
+        panels.wrapAll($('<div class="row"></div>'));
+      }
+    }
     if (window.location.hash) {
       $(document).scroll(function () {
         var hash = window.location.hash;

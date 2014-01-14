@@ -43,24 +43,24 @@ class DeniedCategoryManager(models.Manager):
                 denied=True)
 
 
-class OpenCategoryManager(models.Manager):
+class OpenBallotManager(models.Manager):
     """Custom version manager that shows only open ballots."""
 
     def get_query_set(self):
         """Query set generator"""
         return super(
-            OpenCategoryManager, self).get_query_set().filter(
+            OpenBallotManager, self).get_query_set().filter(
                 open_from__lt=timezone.now())
 
 
-class ClosedCategoryManager(models.Manager):
-    """Custom version manager that shows only open ballots."""
+class ClosedBallotManager(models.Manager):
+    """Custom version manager that shows only closed ballots."""
 
     def get_query_set(self):
         """Query set generator"""
         return super(
-            ClosedCategoryManager, self).get_query_set().filter(
-                closes__lt=timezone.now())
+            ClosedBallotManager, self).get_query_set().filter(
+                closes__gt=timezone.now())
 
 
 class Ballot(AuditedModel):
@@ -129,8 +129,8 @@ class Ballot(AuditedModel):
     objects = models.Manager()
     approved_objects = ApprovedCategoryManager()
     denied_objects = DeniedCategoryManager()
-    open_objects = OpenCategoryManager()
-    closed_objects = ClosedCategoryManager()
+    open_objects = OpenBallotManager()
+    closed_objects = ClosedBallotManager()
 
     class Meta:
         """Meta options for the category class."""

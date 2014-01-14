@@ -16,36 +16,43 @@
   <div class="row">
     <div class="col-lg-12">
       {% if user.is_authenticated %}
-        <div class="btn-group btn-group pull-right">
-          <a class="btn btn-danger btn-mini"
-             href='{% url "version-delete" project_slug=version.project.slug slug=version.slug %}'>Delete</a>
-          <a class="btn btn-success btn-mini"
-             href='{% url "version-update" project_slug=version.project.slug slug=version.slug %}'>Edit</a>
+        <div class="btn-group pull-right">
+          <a class="btn btn-default tooltip-toggle"
+             href='{% url "version-delete" project_slug=version.project.slug slug=version.slug %}'
+             data-title="Delete {{ version.name }}">
+            <span class="glyphicon glyphicon-minus"
+          </a>
+          <a class="btn btn-default tooltip-toggle"
+             href='{% url "version-update" project_slug=version.project.slug slug=version.slug %}'
+             data-title="Edit {{ version.name }}">
+            <span class="glyphicon glyphicon-refresh"
+          </a>
         </div>
       {% endif %}
     </div>
   </div>
   <div class="row">
-  {% if version.project.image_file %}
-    <div class="col-lg-3">
-    <a href="{{ MEDIA_URL }}{{ version.project.image_file }}">
-      <img class="img-responsive img-rounded pull-left"
-           src="{{ version.project.image_file|thumbnail_url:'medium-entry' }}"/>
-    </a>
-  {% endif %}
-</div>
-  <div class="col-lg-9">
-    <div class="row">
-      <div class="col-lg-12">
-        <h2 class="muted pull-right">
-          <small>Project:</small>
-          {{ version.project }}</h2>
+    {% if version.project.image_file %}
+      <div class="col-lg-3">
+        <a href="{{ MEDIA_URL }}{{ version.project.image_file }}">
+          <img class="img-responsive img-rounded pull-left"
+               src="{{ version.project.image_file|thumbnail_url:'medium-entry' }}"/>
+        </a>
       </div>
-      <div class="col-lg-12">
-        <h2 class="muted pull-right">
-          <small>Changelog for version:</small>
-          {{ version.name }}</h2>
-      </div>
+    {% endif %}
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <h2 class="muted pull-right">
+        <small>Project:</small>
+        {{ version.project }}</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <h2 class="muted pull-right">
+        <small>Changelog for version:</small>
+        {{ version.name }}</h2>
     </div>
   </div>
   <div class="row">
@@ -54,7 +61,9 @@
     {% else %}
     <div class="col-lg-12">
     {% endif %}
+    {% if version.description %}
       {{ version.description|base_markdown }}
+    {% endif %}
     </div>
     {% if version.image_file %}
     <div class="col-lg-4">
@@ -69,48 +78,48 @@
   {% endifequal %}
   <hr />
 
-  <div class="row">
-    {% for entry in version.entries %}
-      <div class="col-lg-3">
-        <div class="thumbnail">
-          {% if entry.image_file %}
-            <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
-              <img class="img-responsive img-rounded"
-                   src="{{ entry.image_file|thumbnail_url:'thumb300x200' }}" alt=""/>
+  {% for entry in version.entries %}
+    <div class="col-md-3 thumbnail-to-wrap">
+      <div class="thumbnail">
+        {% if entry.image_file %}
+          <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+            <img class="img-responsive img-rounded"
+                 src="{{ entry.image_file|thumbnail_url:'thumb300x200' }}" alt=""/>
+          </a>
+        {% endif %}
+        <div class="caption">
+          <h3>{{ entry.category.name }}</h3>
+          <p>{{ entry.title }}</p>
+          <div class="btn-group">
+            {% if not entry.approved and user.is_staff %}
+              <a class="btn btn-success btn-xs tooltip-toggle"
+                 href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'
+                 data-title="Approve {{ entry.title }}">
+                <span class="glyphicon glyphicon-thumbs-up"></span>
+              </a>
+            {% endif %}
+            {% if user.is_authenticated %}
+              <a class="btn btn-default btn-xs tooltip-toggle"
+                 href='{% url "entry-delete" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'
+                 data-title="Delete {{ entry.title }}">
+                <span class="glyphicon glyphicon-minus"></span>
+              </a>
+              <a class="btn btn-default btn-xs tooltip-toggle"
+                 href='{% url "entry-update" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'
+                 data-title="Update {{ entry.title }}">
+                <span class="glyphicon glyphicon-pencil"></span>
+              </a>
+            {% endif %}
+            <a class="btn btn-default btn-xs tooltip-toggle"
+               href='{% url "entry-detail" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'
+               data-title="View {{ entry.title }}">
+              <span class="glyphicon glyphicon-eye-open"></span>
             </a>
-          {% endif %}
-          <div class="caption">
-            <h3>{{ entry.category.name }}</h3>
-            <p>{{ entry.title }}</p>
-            <p>
-              <div class="btn-group">
-                {% if not entry.approved and user.is_staff %}
-                  <a class="btn btn-success btn-mini"
-                     href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
-                    <span class="glyphicon glyphicon-thumbs-up"></span>
-                  </a>
-                {% endif %}
-                {% if user.is_authenticated %}
-                  <a class="btn btn-default btn-mini"
-                     href='{% url "entry-delete" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
-                    <span class="glyphicon glyphicon-minus"></span>
-                  </a>
-                  <a class="btn btn-default btn-mini"
-                     href='{% url "entry-update" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
-                    <span class="glyphicon glyphicon-pencil"></span>
-                  </a>
-                {% endif %}
-                <a class="btn btn-default btn-mini"
-                   href='{% url "entry-detail" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
-                  <span class="glyphicon glyphicon-eye-open"></span>
-                </a>
-              </div>
-            </p>
           </div>
         </div>
       </div>
-    {% endfor %}
-  </div>
+    </div>
+  {% endfor %}
 
 
 {% endblock %}

@@ -9,25 +9,9 @@
 {% block content %}
   <div class="row">
     {% include 'ballot/includes/committee-heading.html' %}
-    <span class="pull-right">
-      {% if user.is_authenticated %}
-        <a href="{% url 'committee-update' project_slug=committee.project.slug slug=committee.slug %}"
-           class="btn btn-default tooltip-toggle"
-           data-title="Update this Committee">
-          <span class="glyphicon glyphicon-refresh"></span>
-        </a>
-      {% endif %}
-      {% if user.is_staff %}
-        <a href="{% url 'committee-delete' project_slug=committee.project.slug slug=committee.slug %}"
-           class="btn btn-default tooltip-toggle"
-           data-title="Delete this Committee">
-          <span class="glyphicon glyphicon-minus"></span>
-        </a>
-      {% endif %}
-    </span>
   </div>
   <div class="row">
-    <div class="col-lg-12">
+    <div class="col-md-10">
       <h2>Members</h2>
       <p>Chair: {{ committee.chair }}</p>
       <hr/>
@@ -38,6 +22,24 @@
           {% endif %}
         {% endfor %}
       </p>
+    </div>
+    <div class="col-md-2">
+      <span class="pull-right">
+        {% if user.is_authenticated %}
+          <a href="{% url 'committee-update' project_slug=committee.project.slug slug=committee.slug %}"
+             class="btn btn-default tooltip-toggle"
+             data-title="Update this Committee">
+            <span class="glyphicon glyphicon-refresh"></span>
+          </a>
+        {% endif %}
+        {% if user.is_staff %}
+          <a href="{% url 'committee-delete' project_slug=committee.project.slug slug=committee.slug %}"
+             class="btn btn-default tooltip-toggle"
+             data-title="Delete this Committee">
+            <span class="glyphicon glyphicon-minus"></span>
+          </a>
+        {% endif %}
+      </span>
     </div>
   </div>
   {% if openBallots %}

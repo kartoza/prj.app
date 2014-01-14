@@ -2717,7 +2717,7 @@ input[type="button"].btn-block {
 .glyphicon-bell:before {
   content: "\e123";
 }
-.glyphicon-certificate:before {
+.glyphicon-asterisk:before {
   content: "\e124";
 }
 .glyphicon-thumbs-up:before {
