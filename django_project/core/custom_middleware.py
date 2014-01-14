@@ -27,15 +27,18 @@ def navigation_render(project=None,
     ballots = None
     the_entry = None
     entries = None
-    unapproved_entries = None
+    unapproved_entries = False
     the_project = None
     versions = None
-    unapproved_versions = None
+    unapproved_versions = False
     categories = None
-    unapproved_categories = None
+    unapproved_categories = False
     show_create_committee = False
     projects = Project.approved_objects.all()
-    unapproved_projects = Project.unapproved_objects.all()
+    unapproved_projects = False
+    if is_staff:
+        if Project.unapproved_objects.exists():
+            unapproved_projects = True
     if project:
         the_project = project
         # We don't want to see committees under versions
@@ -54,12 +57,11 @@ def navigation_render(project=None,
     if version:
         the_version = version
         versions = Version.objects.filter(project=the_version.project)
-        if not is_staff:
-            # Only show the 10 most recent entries
-            entries = Entry.approved_objects.filter(version=the_version)[:10]
-        else:
-            # Only show the 10 most recent entries
-            entries = Entry.objects.filter(version=the_version)[:10]
+        # Only show the 10 most recent entries
+        entries = Entry.approved_objects.filter(version=the_version)[:10]
+        if is_staff:
+            if Entry.unapproved_objects.filter(version=the_version).exists():
+                unapproved_entries = True
         categories = Category.approved_objects.filter(
             project=the_version.project)
         the_project = the_version.project
@@ -67,18 +69,19 @@ def navigation_render(project=None,
         first_version = the_versions[0]
         versions = the_versions[:10]
         the_project = first_version.project
-        unapproved_versions = Version.objects.filter(project=the_project)\
-            .filter(approved=False)
+        if is_staff:
+            if Version.unapproved_objects.filter(project=the_project).exists():
+                unapproved_versions = True
         categories = Category.objects.filter(project=the_project)
     if category:
         the_project = category.project
         if is_staff:
             versions = Version.objects.filter(project=the_project)
+            if Category.unapproved_objects.filter(project=the_project).exists():
+                unapproved_categories = True
         else:
             versions = Version.approved_objects.filter(project=the_project)
         categories = Category.approved_objects.filter(project=the_project)
-        unapproved_categories = Category.unapproved_objects.filter(
-            project=the_project)
     if the_categories:
         first_category = the_categories[0]
         categories = the_categories[:10]

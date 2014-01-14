@@ -57,7 +57,7 @@
         <a href="{% url 'version-list' the_project.slug %}">All Versions</a>
         <a href="{% url 'version-create' %}">Create Version</a>
       </li>
-      {% if is_logged_in and versions and the_project and unapproved_versions %}
+      {% if unapproved_versions %}
         <li>
           <a href="{% url 'pending-version-list' the_project.slug %}">Versions
             Pending Approval</a>
@@ -88,7 +88,7 @@
           <a href="{% url 'category-list' the_project.slug %}">All Categories</a>
           <a href="{% url 'category-create' %}">Create Category</a>
         </li>
-        {% if is_logged_in and versions and the_project and unapproved_categories %}
+        {% if unapproved_categories %}
           <li>
             <a href="{% url 'pending-category-list' the_project.slug %}">
               Categories Pending Approval
@@ -120,7 +120,7 @@
           <a href="{% url 'entry-list' project_slug=the_project.slug version_slug=the_version.slug %}">All Entries</a>
           <a href="{% url 'entry-create' %}">Create Entry</a>
         </li>
-        {% if is_logged_in and the_version and the_project and unapproved_entries %}
+        {% if unapproved_entries %}
           <li>
             <a href="{% url 'pending-entry-list' project_slug=the_project.slug version_slug=the_version.slug %}">
               Entries Pending Approval
