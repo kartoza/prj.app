@@ -65,6 +65,8 @@ class CreateCommitteeForm(forms.ModelForm):
         self.helper.form_id = 'committee-form'
         super(CreateCommitteeForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
+        self.fields['users'].queryset = self.fields['users'].queryset\
+            .order_by('username')
 
     def save(self, commit=True):
         instance = super(CreateCommitteeForm, self).save(commit=False)
