@@ -3,9 +3,9 @@
 # noinspection PyUnresolvedReferences
 from django.http import Http404
 import logging
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from django.core.urlresolvers import reverse
-from django.views.generic import DetailView, CreateView
+from django.views.generic import DetailView, CreateView, DeleteView, UpdateView
 from base.models import Project
 from vota.forms import BallotCreateForm
 from vota.models import Ballot, Committee
@@ -63,3 +63,38 @@ class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):
             'committee_slug': self.object.committee.slug,
             'slug': self.object.slug
         })
+
+
+class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
+    context_object_name = 'ballot'
+    template_name = 'ballot/update.html'
+
+    def get_queryset(self):
+        qs = Ballot.objects.all()
+        if self.request.user.is_staff:
+            return qs
+        else:
+            return qs.filter(creator=self.request.user)
+
+    def get_success_url(self):
+        return reverse('ballot-detail', kwargs={
+            'project_slug': self.object.committee.project.slug,
+            'committee_slug': self.object.committee.slug,
+            'slug': self.object.slug
+        })
+
+
+class BallotDeleteView(StaffuserRequiredMixin, BallotMixin, DeleteView):
+    context_object_name = 'ballot'
+    template_name = 'ballot/delete.html'
+
+    def get_success_url(self):
+        return reverse('committee-detail', kwargs={
+            'project_slug': self.object.committee.project.slug,
+            'slug': self.object.committee.slug
+        })
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            raise Http404
+        return Ballot.objects.all()

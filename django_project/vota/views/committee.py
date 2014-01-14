@@ -1,11 +1,11 @@
 # coding=utf-8
 """Views for committees."""
 # noinspection PyUnresolvedReferences
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
 import logging
-from django.views.generic import DetailView, CreateView
+from django.views.generic import DetailView, CreateView, DeleteView, UpdateView
 from base.models import Project
 from vota.forms import CreateCommitteeForm
 from vota.models import Committee, Ballot
@@ -62,3 +62,34 @@ class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
             'project_slug': self.object.project.slug,
             'slug': self.object.slug
         })
+
+
+class CommitteeUpdateView(LoginRequiredMixin, CommitteeMixin, UpdateView):
+    context_object_name = 'committee'
+    template_name = 'committee/update.html'
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            raise Http404
+        return Committee.objects.all()
+
+    def get_success_url(self):
+        return reverse('committee-detail', kwargs={
+            'project_slug': self.object.project.slug,
+            'slug': self.object.slug
+        })
+
+
+class CommitteeDeleteView(StaffuserRequiredMixin, CommitteeMixin, DeleteView):
+    context_object_name = 'committee'
+    template_name = 'committee/delete.html'
+
+    def get_success_url(self):
+        return reverse('project-detail', kwargs={
+            'slug': self.object.project.slug
+        })
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            raise Http404
+        return Committee.objects.all()

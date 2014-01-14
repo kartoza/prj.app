@@ -169,6 +169,56 @@ class TestBallotViews(TestCase):
         myResp = myClient.post(reverse('ballot-create'), postData)
         self.assertEqual(myResp.status_code, 302)
 
+    def test_BallotDeleteView_withlogin(self):
+        myClient = Client()
+        myClient.login(username='timlinux', password='password')
+        myResp = myClient.get(reverse('ballot-delete', kwargs={
+            'slug': self.myBallot.slug,
+            'committee_slug': self.myBallot.committee.slug,
+            'project_slug': self.myBallot.committee.project.slug
+        }))
+        self.assertEqual(myResp.status_code, 200)
+        expectedTemplates = [
+            'ballot/delete.html'
+        ]
+        self.assertEqual(myResp.template_name, expectedTemplates)
+
+    def test_BallotDeleteView_nologin(self):
+        myClient = Client()
+        myResp = myClient.get(reverse('ballot-delete', kwargs={
+            'slug': self.myBallot.slug,
+            'committee_slug': self.myBallot.committee.slug,
+            'project_slug': self.myBallot.committee.project.slug
+        }))
+        self.assertEqual(myResp.status_code, 302)
+
+    def test_BallotDelete_withLogin(self):
+        myClient = Client()
+        ballotToDelete = BallotF.create(committee=self.myCommittee)
+        myClient.login(username='timlinux', password='password')
+        myResp = myClient.post(reverse('ballot-delete', kwargs={
+            'slug': ballotToDelete.slug,
+            'committee_slug': ballotToDelete.committee.slug,
+            'project_slug': ballotToDelete.committee.project.slug
+        }), {})
+        self.assertRedirects(myResp, reverse('committee-detail', kwargs={
+            'slug': self.myCommittee.slug,
+            'project_slug': self.myProject.slug
+        }), status_code=302)
+        #TODO: The following line to test that the object is deleted does not
+        #currently pass as expected.
+        #self.assertTrue(categoryToDelete.pk is None)
+
+    def test_BallotDelete_noLogin(self):
+        myClient = Client()
+        ballotToDelete = BallotF.create(committee=self.myCommittee)
+        myResp = myClient.post(reverse('ballot-delete', kwargs={
+            'slug': ballotToDelete.slug,
+            'committee_slug': ballotToDelete.committee.slug,
+            'project_slug': self.myCommittee.project.slug
+        }))
+        self.assertEqual(myResp.status_code, 302)
+
 
 class TestCommitteeViews(TestCase):
     """Tests that Committee views work."""
@@ -241,4 +291,49 @@ class TestCommitteeViews(TestCase):
             'negative': False
         }
         myResp = myClient.post(reverse('committee-create'), postData)
+        self.assertEqual(myResp.status_code, 302)
+
+    def test_CommitteeDeleteView_withlogin(self):
+        myClient = Client()
+        myClient.login(username='timlinux', password='password')
+        myResp = myClient.get(reverse('committee-delete', kwargs={
+            'slug': self.myCommittee.slug,
+            'project_slug': self.myCommittee.project.slug
+        }))
+        self.assertEqual(myResp.status_code, 200)
+        expectedTemplates = [
+            'committee/delete.html'
+        ]
+        self.assertEqual(myResp.template_name, expectedTemplates)
+
+    def test_CommitteeDeleteView_nologin(self):
+        myClient = Client()
+        myResp = myClient.get(reverse('committee-delete', kwargs={
+            'slug': self.myCommittee.slug,
+            'project_slug': self.myCommittee.project.slug
+        }))
+        self.assertEqual(myResp.status_code, 302)
+
+    def test_CommitteeDelete_withLogin(self):
+        myClient = Client()
+        committeeToDelete = CommitteeF.create(project=self.myProject)
+        myClient.login(username='timlinux', password='password')
+        myResp = myClient.post(reverse('committee-delete', kwargs={
+            'slug': committeeToDelete.slug,
+            'project_slug': committeeToDelete.project.slug
+        }), {})
+        self.assertRedirects(myResp, reverse('project-detail', kwargs={
+            'slug': self.myProject.slug
+        }), status_code=302)
+        #TODO: The following line to test that the object is deleted does not
+        #currently pass as expected.
+        #self.assertTrue(categoryToDelete.pk is None)
+
+    def test_CategoryDelete_noLogin(self):
+        myClient = Client()
+        committeeToDelete = CommitteeF.create()
+        myResp = myClient.post(reverse('category-delete', kwargs={
+            'slug': committeeToDelete.slug,
+            'project_slug': self.myCommittee.project.slug
+        }))
         self.assertEqual(myResp.status_code, 302)

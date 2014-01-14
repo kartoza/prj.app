@@ -18,7 +18,24 @@
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h2>{{ ballot.name }}</h2>
+      <h2>{{ ballot.name }}
+        <span class="pull-right">
+          {% if user.is_authenticated %}
+            <a href="{% url 'ballot-update' project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug slug=ballot.slug %}"
+               class="btn btn-default tooltip-toggle"
+               data-title="Update this Ballot">
+              <span class="glyphicon glyphicon-refresh"></span>
+            </a>
+          {% endif %}
+          {% if user.is_staff %}
+            <a href="{% url 'ballot-delete' project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug slug=ballot.slug %}"
+               class="btn btn-default tooltip-toggle"
+                data-title="Delete this Ballot">
+              <span class="glyphicon glyphicon-minus"></span>
+            </a>
+          {% endif %}
+        </span>
+      </h2>
       <hr/>
     </div>
   </div>

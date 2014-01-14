@@ -1,20 +1,20 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
 
-{% block title %}Project Deleted - {{ block.super }}{% endblock %}
+{% block title %}Ballot Delete - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
 
 {% block page_title %}
-    <h1>Project Deleted</h1>
+    <h1>Ballot Delete</h1>
 {% endblock page_title %}
 
 {% block content %}
     <form action="" id="delete-confirmation" method="post">{% csrf_token %}
         <div class="alert row">
             <div class="col-lg-10">
-                Please confirm you wish to delete the project below!
+                Please confirm you wish to delete the ballot below!
             </div>
             <div class="col-lg-2">
                 <div class="btn-group btn-group-justified">
@@ -23,7 +23,7 @@
                         onClick="$('#delete-confirmation').submit()">Delete</a>
 
                     <a class="btn btn-success btn-mini"
-                        href='{% url "project-list" %}'>Cancel</a>
+                        href='{% url "committee-detail" project_slug=ballot.committee.project.slug slug=ballot.committee.slug %}'>Cancel</a>
                 </div>
             </div>
         </div>
@@ -31,19 +31,19 @@
             <div class="col-lg-12">
                 <div class="media-body">
                     <h3 class="media-heading">
-                        Project: <b>{{ project.name }}</b>
+                        Ballot: <b>{{ ballot.name }}</b>
                     </h3>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-8">
-                {{ project.description|base_markdown }}
+                {{ ballot.description|base_markdown }}
             </div>
             <div class="col-lg-4">
-                {% if project.image_file %}
+                {% if ballot.image_file %}
                 <img class="img-responsive img-rounded"
-                     src="{{ MEDIA_URL }}{{ project.image_file }}" />
+                     src="{{ MEDIA_URL }}{{ ballot.image_file }}" />
                 {%  endif %}
             </div>
         </div>

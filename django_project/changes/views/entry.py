@@ -171,7 +171,7 @@ class PendingEntryListView(EntryMixin,
             return qs.filter(creator=self.request.user)
 
 
-class ApproveEntryView(EntryMixin, StaffuserRequiredMixin, RedirectView):
+class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
     permanent = False
     query_string = True
     pattern_name = 'pending-entry-list'
