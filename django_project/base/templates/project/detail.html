@@ -10,28 +10,33 @@
   <div class="row">
     <div class="col-lg-10">
       <h2>{{ project.name }}</h2>
+      <p>Project Lead: {{ project.owner.username }}</p>
     </div>
     <div class="col-lg-2">
       <div class="btn-group btn-group-justified">
         {%  if not project.approved and user.is_staff %}
-          <a class="btn btn-success btn-mini"
-             href='{% url "project-approve" project.id %}'>
+          <a class="btn btn-success btn-mini tooltip-toggle"
+             href='{% url "project-approve" project.id %}'
+             data-title="Approve {{ project.name }}">
             <span class="glyphicon glyphicon-thumbs-up"></span>
           </a>
         {% elif user.is_staff %}
-          <a class="btn btn-default btn-mini"
-              href='{% url "project-delete" project.id %}'>
-            Delete {{ project.name }}
+          <a class="btn btn-default btn-mini tooltip-toggle"
+              href='{% url "project-delete" project.id %}'
+              data-title="Delete {{ project.name }}">
+            <span class="glyphicon glyphicon-minus"></span>
           </a>
         {% endif %}
       </div>
     </div>
   </div>
-  <div class="row">
-    <h3>Committees</h3>
-    <hr/>
-  </div>
-  {% for committee in committees %}
-    {% include 'committee/includes/committee-panel.html' %}
-  {% endfor %}
+  {% if committees %}
+    <div class="row">
+      <h3>Committees</h3>
+      <hr/>
+    </div>
+    {% for committee in committees %}
+      {% include 'committee/includes/committee-panel.html' %}
+    {% endfor %}
+  {% endif %}
 {% endblock %}

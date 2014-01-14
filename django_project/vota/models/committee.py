@@ -54,6 +54,8 @@ class Committee(AuditedModel):
         choices=QUORUM_CHOICES,
         max_length=3
     )
+
+    chair = models.ForeignKey(User, related_name='committee_chairman')
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')
     users = models.ManyToManyField(User)

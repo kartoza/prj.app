@@ -9,6 +9,7 @@ from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from audited_models.models import AuditedModel
 from .entry import Entry
+from django.contrib.auth.models import User
 
 
 class ApprovedVersionManager(models.Manager):
@@ -59,6 +60,7 @@ class Version(AuditedModel):
         blank=True,
         help_text='Describe the new version. Markdown is supported.')
 
+    author = models.ForeignKey(User)
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')
     objects = models.Manager()

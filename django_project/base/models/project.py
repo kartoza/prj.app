@@ -10,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from audited_models.models import AuditedModel
 from changes.models.version import Version
 from core.settings.contrib import STOP_WORDS
+from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +79,7 @@ class Project(AuditedModel):
         default=False
     )
 
+    owner = models.ForeignKey(User)
     slug = models.SlugField(unique=True)
     objects = models.Manager()
     approved_objects = ApprovedProjectManager()

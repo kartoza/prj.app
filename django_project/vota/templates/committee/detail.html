@@ -29,10 +29,13 @@
   <div class="row">
     <div class="col-lg-12">
       <h2>Members</h2>
+      <p>Chair: {{ committee.chair }}</p>
       <hr/>
       <p>
         {% for user in committee.users.all %}
-          {{ user.username }} {% if not forloop.last %}|{% endif %}
+          {% if user != committee.chair %}
+            {{ user.username }} {% if not forloop.last %}|{% endif %}
+          {% endif %}
         {% endfor %}
       </p>
     </div>

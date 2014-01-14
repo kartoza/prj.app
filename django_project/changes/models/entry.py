@@ -8,6 +8,7 @@ from core.settings.contrib import STOP_WORDS
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from audited_models.models import AuditedModel
+from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +67,7 @@ class Entry(AuditedModel):
             'project owner.'),
         default=False
     )
+    author = models.ForeignKey(User)
     slug = models.SlugField()
     # noinspection PyUnresolvedReferences
     version = models.ForeignKey('Version')

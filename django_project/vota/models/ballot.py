@@ -20,6 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from vota.models.vote import Vote
 import datetime
+from django.contrib.auth.models import User
 
 
 class ApprovedCategoryManager(models.Manager):
@@ -121,6 +122,7 @@ class Ballot(AuditedModel):
         default=False
     )
 
+    proposer = models.ForeignKey(User)
     # noinspection PyUnresolvedReferences
     committee = models.ForeignKey('Committee')
     slug = models.SlugField()
