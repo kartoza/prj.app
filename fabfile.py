@@ -192,6 +192,7 @@ def freshen():
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
     git_url = 'http://github.com/timlinux/projecta.git'
     update_git_checkout(base_path, git_url, repo_alias)
+    update_migrations()
     with cd(os.path.join(code_path, 'django_project')):
         run('touch core/wsgi.py')
     collectstatic()
