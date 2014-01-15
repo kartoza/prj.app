@@ -24,7 +24,7 @@ pdbpp==0.7.2
 Fabric==1.6.0
 # Beware of 0.16.0 fabtools its restore db hangs
 fabtools==0.15.0
-fabgis==0.16.1
+fabgis==0.17.0
 
 factory_boy
 mock==1.0.1
