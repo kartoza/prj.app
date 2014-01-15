@@ -40,7 +40,9 @@ class TestCategoryViews(TestCase):
     def test_CategoryCreateView_withLogin(self):
         myClient = Client()
         myClient.login(username='timlinux', password='password')
-        myResp = myClient.get(reverse('category-create'))
+        myResp = myClient.get(reverse('category-create', kwargs={
+            'project_slug': self.myProject.slug
+        }))
         self.assertEqual(myResp.status_code, 200)
         expectedTemplates = [
             'category/create.html'
@@ -49,7 +51,9 @@ class TestCategoryViews(TestCase):
 
     def test_CategoryCreateView_noLogin(self):
         myClient = Client()
-        myResp = myClient.get(reverse('category-create'))
+        myResp = myClient.get(reverse('category-create', kwargs={
+            'project_slug': self.myProject.slug
+        }))
         self.assertEqual(myResp.status_code, 302)
 
     def test_CategoryCreate_withLogin(self):
@@ -60,7 +64,9 @@ class TestCategoryViews(TestCase):
             'project': self.myProject.id,
             'sort_number': 0
         }
-        myResp = myClient.post(reverse('category-create'), postData)
+        myResp = myClient.post(reverse('category-create', kwargs={
+            'project_slug': self.myProject.slug
+        }), postData)
         self.assertRedirects(myResp, reverse('pending-category-list', kwargs={
             'project_slug': self.myProject.slug
         }), status_code=302)
@@ -70,7 +76,9 @@ class TestCategoryViews(TestCase):
         postData = {
             'name': u'New Test Category'
         }
-        myResp = myClient.post(reverse('category-create'), postData)
+        myResp = myClient.post(reverse('category-create', kwargs={
+            'project_slug': self.myProject.slug
+        }), postData)
         self.assertEqual(myResp.status_code, 302)
 
     def test_CategoryDetailView(self):
@@ -167,7 +175,10 @@ class TestEntryViews(TestCase):
     def test_EntryCreateView_withLogin(self):
         myClient = Client()
         myClient.login(username='timlinux', password='password')
-        myResp = myClient.get(reverse('entry-create'))
+        myResp = myClient.get(reverse('entry-create', kwargs={
+            'project_slug': self.myProject.slug,
+            'version_slug': self.myVersion.slug
+        }))
         self.assertEqual(myResp.status_code, 200)
         expectedTemplates = [
             'entry/create.html'
@@ -176,7 +187,10 @@ class TestEntryViews(TestCase):
 
     def test_EntryCreateView_noLogin(self):
         myClient = Client()
-        myResp = myClient.get(reverse('entry-create'))
+        myResp = myClient.get(reverse('entry-create', kwargs={
+            'project_slug': self.myProject.slug,
+            'version_slug': self.myVersion.slug
+        }))
         self.assertEqual(myResp.status_code, 302)
 
     def test_EntryCreate_withLogin(self):
@@ -188,7 +202,10 @@ class TestEntryViews(TestCase):
             'category': self.myCategory.id,
             'author': self.myUser.id
         }
-        myResp = myClient.post(reverse('entry-create'), postData)
+        myResp = myClient.post(reverse('entry-create', kwargs={
+            'project_slug': self.myProject.slug,
+            'version_slug': self.myVersion.slug
+        }), postData)
         self.assertRedirects(myResp, reverse('pending-entry-list', kwargs={
             'project_slug': self.myProject.slug,
             'version_slug': self.myVersion.slug
@@ -201,7 +218,10 @@ class TestEntryViews(TestCase):
             'version': self.myVersion.id,
             'category': self.myCategory.id
         }
-        myResp = myClient.post(reverse('entry-create'), postData)
+        myResp = myClient.post(reverse('entry-create', kwargs={
+            'project_slug': self.myProject.slug,
+            'version_slug': self.myVersion.slug
+        }), postData)
         self.assertEqual(myResp.status_code, 302)
 
     def test_EntryUpdateView_withLogin(self):
@@ -360,7 +380,9 @@ class TestVersionViews(TestCase):
     def test_VersionCreateView_withLogin(self):
         myClient = Client()
         myClient.login(username='timlinux', password='password')
-        myResp = myClient.get(reverse('version-create'))
+        myResp = myClient.get(reverse('version-create', kwargs={
+            'project_slug': self.myProject.slug
+        }))
         self.assertEqual(myResp.status_code, 200)
         expectedTemplates = [
             'version/create.html'
@@ -369,7 +391,9 @@ class TestVersionViews(TestCase):
 
     def test_VersionCreateView_noLogin(self):
         myClient = Client()
-        myResp = myClient.get(reverse('version-create'))
+        myResp = myClient.get(reverse('version-create', kwargs={
+            'project_slug': self.myProject.slug
+        }))
         self.assertEqual(myResp.status_code, 302)
 
     def test_VersionCreate_withLogin(self):
@@ -381,7 +405,9 @@ class TestVersionViews(TestCase):
             'description': u'This is a test description',
             'author': self.myUser.id
         }
-        myResp = myClient.post(reverse('version-create'), postData)
+        myResp = myClient.post(reverse('version-create', kwargs={
+            'project_slug': self.myProject.slug
+        }), postData)
         self.assertRedirects(myResp, reverse('pending-version-list', kwargs={
             'project_slug': self.myProject.slug
         }), status_code=302)
@@ -393,7 +419,9 @@ class TestVersionViews(TestCase):
             'name': u'New Test Version',
             'description': u'This is a test description'
         }
-        myResp = myClient.post(reverse('version-create'), postData)
+        myResp = myClient.post(reverse('version-create', kwargs={
+            'project_slug': self.myProject.slug
+        }), postData)
         self.assertEqual(myResp.status_code, 302)
 
     def test_VersionUpdateView_withLogin(self):

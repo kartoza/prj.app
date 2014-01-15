@@ -57,9 +57,19 @@ class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
     context_object_name = 'committee'
     template_name = 'committee/create.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(CommitteeCreateView, self).get_context_data(**kwargs)
+        context['project'] = self.project
+        return context
+
     def get_form_kwargs(self):
         kwargs = super(CommitteeCreateView, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        kwargs.update({
+            'user': self.request.user,
+            'project': self.project
+        })
         return kwargs
 
     def get_success_url(self):
@@ -73,9 +83,19 @@ class CommitteeUpdateView(LoginRequiredMixin, CommitteeMixin, UpdateView):
     context_object_name = 'committee'
     template_name = 'committee/update.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(CommitteeUpdateView, self).get_context_data(**kwargs)
+        context['project'] = self.project
+        return context
+
     def get_form_kwargs(self):
         kwargs = super(CommitteeUpdateView, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        kwargs.update({
+            'user': self.request.user,
+            'project': self.project
+        })
         return kwargs
 
     def get_queryset(self):

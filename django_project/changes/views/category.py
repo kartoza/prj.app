@@ -205,6 +205,26 @@ class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):
             'project_slug': self.object.project.slug
         })
 
+    def get_context_data(self, **kwargs):
+        context = super(CategoryCreateView, self).get_context_data(**kwargs)
+        context['categories'] = self.get_queryset() \
+            .filter(project=self.project)
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_form_kwargs(self):
+        kwargs = super(CategoryCreateView, self).get_form_kwargs()
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        kwargs.update({
+            'project': self.project
+        })
+        return kwargs
+
 
 class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
     context_object_name = 'category'
@@ -212,7 +232,18 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super(CategoryUpdateView, self).get_form_kwargs()
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        kwargs.update({
+            'project': self.project
+        })
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryUpdateView, self).get_context_data(**kwargs)
+        context['categories'] = self.get_queryset() \
+            .filter(project=self.project)
+        return context
 
     def get_queryset(self):
         qs = Category.approved_objects

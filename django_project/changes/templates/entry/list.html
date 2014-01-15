@@ -19,7 +19,7 @@
             <small class="pull-right">
                 <a class="btn btn-default btn-mini tooltip-toggle"
                    data-title="Add Entry"
-                   href='{% url "entry-create" %}'>
+                   href='{% url "entry-create" project_slug=entries.0.version.project.slug version_slug=entries.0.version.slug %}'>
                   <span class="glyphicon glyphicon-asterisk"></span>
                 </a>
             </small>

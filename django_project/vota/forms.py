@@ -6,6 +6,7 @@ from crispy_forms.layout import (
     Div,
     Submit,
     Field,
+    Fieldset
 )
 from vota.models import Vote, Committee, Ballot
 
@@ -44,20 +45,23 @@ class CreateCommitteeForm(forms.ModelForm):
             'description',
             'sort_number',
             'quorum_setting',
-            'project',
             'users',
         )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
+        self.project = kwargs.pop('project')
+        form_title = 'New Committee for %s' % self.project.name
         self.helper = FormHelper()
         layout = Layout(
-            Field('name', css_class="form-control"),
-            Field('description', css_class="form-control"),
-            Field('sort_number', css_class="form-control"),
-            Field('quorum_setting', css_class="form-control"),
-            Field('project', css_class="form-control"),
-            Field('users', css_class="form-control"),
+            Fieldset(
+                form_title,
+                Field('name', css_class="form-control"),
+                Field('description', css_class="form-control"),
+                Field('sort_number', css_class="form-control"),
+                Field('quorum_setting', css_class="form-control"),
+                Field('users', css_class="form-control"),
+            )
         )
         self.helper.layout = layout
         self.helper.html5_required = False
@@ -71,6 +75,7 @@ class CreateCommitteeForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(CreateCommitteeForm, self).save(commit=False)
         instance.chair = self.user
+        instance.project = self.project
         instance.save()
         return instance
 
@@ -79,7 +84,6 @@ class BallotCreateForm(forms.ModelForm):
     class Meta:
         model = Ballot
         fields = (
-            'committee',
             'name',
             'summary',
             'description',
@@ -90,15 +94,19 @@ class BallotCreateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
+        self.committee = kwargs.pop('committee')
+        form_title = 'New Ballot for %s' % self.committee.name
         self.helper = FormHelper()
         layout = Layout(
-            Field('committee', css_class="form-control"),
-            Field('name', css_class="form-control"),
-            Field('summary', css_class="form-control"),
-            Field('description', css_class="form-control"),
-            Field('open_from', css_class="form-control"),
-            Field('closes', css_class="form-control"),
-            Field('private', css_class="form-control"),
+            Fieldset(
+                form_title,
+                Field('name', css_class="form-control"),
+                Field('summary', css_class="form-control"),
+                Field('description', css_class="form-control"),
+                Field('open_from', css_class="form-control"),
+                Field('closes', css_class="form-control"),
+                Field('private', css_class="form-control"),
+            )
         )
         self.helper.layout = layout
         self.helper.html5_required = False
@@ -110,5 +118,6 @@ class BallotCreateForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(BallotCreateForm, self).save(commit=False)
         instance.proposer = self.user
+        instance.committee = self.committee
         instance.save()
         return instance

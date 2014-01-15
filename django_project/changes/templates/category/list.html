@@ -18,13 +18,13 @@
           {% if user.is_authenticated %}
             <div class="pull-right btn-group">
               <a class="btn btn-default btn-mini tooltip-toggle"
-                  href='{% url "category-create" %}'
+                  href='{% url "category-create" categories.0.project.slug %}'
                   data-title="Create New Category">
                 <span class="glyphicon glyphicon-asterisk"></span>
               </a>
               {% if not unapproved %}
                 <a class="btn btn-default btn-mini"
-                   href='{% url "pending-category-list" the_project.slug %}'
+                   href='{% url "pending-category-list" categories.0.project.slug %}'
                    data-title="View Pending Categories">
                   <span class="glyphicon glyphicon-time"></span>
                 </a>

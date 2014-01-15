@@ -55,7 +55,7 @@
       {% endfor %}
       <li>
         <a href="{% url 'version-list' the_project.slug %}">All Versions</a>
-        <a href="{% url 'version-create' %}">Create Version</a>
+        <a href="{% url 'version-create' the_project.slug %}">Create Version</a>
       </li>
       {% if unapproved_versions %}
         <li>
@@ -86,7 +86,7 @@
         {% endfor %}
         <li>
           <a href="{% url 'category-list' the_project.slug %}">All Categories</a>
-          <a href="{% url 'category-create' %}">Create Category</a>
+          <a href="{% url 'category-create' the_project.slug %}">Create Category</a>
         </li>
         {% if unapproved_categories %}
           <li>
@@ -118,7 +118,7 @@
         {% endfor %}
         <li>
           <a href="{% url 'entry-list' project_slug=the_project.slug version_slug=the_version.slug %}">All Entries</a>
-          <a href="{% url 'entry-create' %}">Create Entry</a>
+          <a href="{% url 'entry-create' project_slug=the_project.slug version_slug=the_version.slug %}">Create Entry</a>
         </li>
         {% if unapproved_entries %}
           <li>
@@ -153,13 +153,13 @@
         {% endif %}
       {% endfor %}
       <li>
-        <a href="{% url 'committee-create' %}">Create Committee</a>
+        <a href="{% url 'committee-create' the_project.slug %}">Create Committee</a>
       </li>
     </ul>
   </li>
   {% if not ballots and the_committee %}
     <li>
-      <a href="{% url 'ballot-create' %}">Create Ballot</a>
+      <a href="{% url 'ballot-create' project_slug=the_project.slug committee_slug=the_committee.slug %}">Create Ballot</a>
     </li>
   {% endif %}
 </ul>
@@ -167,7 +167,7 @@
 {% if show_create_committee %}
 <ul class="nav navbar-nav">
   <li role="presentation">
-    <a href="{% url 'committee-create' %}">Create Committee</a>
+    <a href="{% url 'committee-create' the_project.slug %}">Create Committee</a>
   </li>
 </ul>
 {% endif %}
@@ -189,7 +189,8 @@
           {% endif %}
         {% endfor %}
         <li>
-          <a href="{% url 'ballot-create' %}">Create Ballot</a>
+          <a href="{% url 'ballot-create' project_slug=ballots.0.committee.project.slug committee_slug=ballots.0.committee.slug %}">Create
+            Ballot</a>
         </li>
       </ul>
     </li>

@@ -56,7 +56,7 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/category/(?P<slug>[\w-]+)/delete/$',
         view=CategoryDeleteView.as_view(),
         name='category-delete'),
-    url(regex='^category/create/$',
+    url(regex='^(?P<project_slug>[\w-]+)/create-category/$',
         view=CategoryCreateView.as_view(),
         name='category-create'),
     url(regex='^(?P<project_slug>[\w-]+)/category/(?P<slug>[\w-]+)/update/$',
@@ -85,7 +85,7 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w-]+)/delete/$',
         view=VersionDeleteView.as_view(),
         name='version-delete'),
-    url(regex='^version/create/$',
+    url(regex='^(?P<project_slug>[\w-]+)/create-version/$',
         view=VersionCreateView.as_view(),
         name='version-create'),
     url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w-]+)/update/$',
@@ -115,7 +115,8 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/delete/$',
         view=EntryDeleteView.as_view(),
         name='entry-delete'),
-    url(regex='^entry/create/$',
+    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w-]+)/'
+              'create-entry/$',
         view=EntryCreateView.as_view(),
         name='entry-create'),
     url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w-]+)/entry/'

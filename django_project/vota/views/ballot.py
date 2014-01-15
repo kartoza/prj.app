@@ -57,9 +57,21 @@ class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):
     context_object_name = 'ballot'
     template_name = 'ballot/create.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(BallotCreateView, self).get_context_data(**kwargs)
+        context['committee'] = self.committee
+        return context
+
     def get_form_kwargs(self):
         kwargs = super(BallotCreateView, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        self.committee_slug = self.kwargs.get('committee_slug', None)
+        self.committee = Committee.objects.get(slug=self.committee_slug)
+        kwargs.update({
+            'user': self.request.user,
+            'committee': self.committee
+        })
         return kwargs
 
     def get_success_url(self):
@@ -74,17 +86,22 @@ class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
     context_object_name = 'ballot'
     template_name = 'ballot/update.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(BallotUpdateView, self).get_context_data(**kwargs)
+        context['commitee'] = self.committee
+        return context
+
     def get_form_kwargs(self):
         kwargs = super(BallotUpdateView, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        self.committee_slug = self.kwargs.get('committee_slug', None)
+        self.committee = Committee.objects.get(slug=self.committee_slug)
+        kwargs.update({
+            'user': self.request.user,
+            'committee': self.committee
+        })
         return kwargs
-
-    def get_queryset(self):
-        qs = Ballot.objects.all()
-        if self.request.user.is_staff:
-            return qs
-        else:
-            return qs.filter(creator=self.request.user)
 
     def get_success_url(self):
         return reverse('ballot-detail', kwargs={

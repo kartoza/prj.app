@@ -207,6 +207,19 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
     context_object_name = 'version'
     template_name = 'version/create.html'
 
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(VersionCreateView, self).get_context_data(**kwargs)
+        context['versions'] = Version.objects.filter(project=self.project)
+        return context
+
     def get_success_url(self):
         """Get the url for when the operation was successful.
 
@@ -219,7 +232,12 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(VersionCreateView, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        kwargs.update({
+            'user': self.request.user,
+            'project': self.project
+        })
         return kwargs
 
 
@@ -230,7 +248,12 @@ class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super(VersionUpdateView, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        kwargs.update({
+            'user': self.request.user,
+            'project': self.project
+        })
         return kwargs
 
     def get_queryset(self):

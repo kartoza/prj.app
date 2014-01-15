@@ -128,7 +128,10 @@ class TestBallotViews(TestCase):
     def test_BallotCreateView_withLogin(self):
         myClient = Client()
         myClient.login(username='timlinux', password='password')
-        myResp = myClient.get(reverse('ballot-create'))
+        myResp = myClient.get(reverse('ballot-create', kwargs={
+            'project_slug': self.myProject.slug,
+            'committee_slug': self.myCommittee.slug
+        }))
         self.assertEqual(myResp.status_code, 200)
         expectedTemplates = [
             'ballot/create.html'
@@ -137,7 +140,10 @@ class TestBallotViews(TestCase):
 
     def test_BallotCreateView_noLogin(self):
         myClient = Client()
-        myResp = myClient.get(reverse('ballot-create'))
+        myResp = myClient.get(reverse('ballot-create', kwargs={
+            'project_slug': self.myProject.slug,
+            'committee_slug': self.myCommittee.slug
+        }))
         self.assertEqual(myResp.status_code, 302)
 
     def test_BallotCreate_withLogin(self):
@@ -153,7 +159,10 @@ class TestBallotViews(TestCase):
             'private': True,
             'proposer': self.myUser.id
         }
-        myResp = myClient.post(reverse('ballot-create'), postData)
+        myResp = myClient.post(reverse('ballot-create', kwargs={
+            'project_slug': self.myProject.slug,
+            'committee_slug': self.myCommittee.slug
+        }), postData)
         self.assertRedirects(myResp, reverse('ballot-detail', kwargs={
             'project_slug': self.myProject.slug,
             'committee_slug': self.myCommittee.slug,
@@ -172,7 +181,10 @@ class TestBallotViews(TestCase):
             'private': True,
             'proposer': self.myUser.id
         }
-        myResp = myClient.post(reverse('ballot-create'), postData)
+        myResp = myClient.post(reverse('ballot-create', kwargs={
+            'project_slug': self.myProject.slug,
+            'committee_slug': self.myCommittee.slug
+        }), postData)
         self.assertEqual(myResp.status_code, 302)
 
     def test_BallotUpdateView_withLogin(self):
@@ -326,7 +338,9 @@ class TestCommitteeViews(TestCase):
     def test_CommitteeCreateView_withLogin(self):
         myClient = Client()
         myClient.login(username='timlinux', password='password')
-        myResp = myClient.get(reverse('committee-create'))
+        myResp = myClient.get(reverse('committee-create', kwargs={
+            'project_slug': self.myProject.slug
+        }))
         self.assertEqual(myResp.status_code, 200)
         expectedTemplates = [
             'committee/create.html'
@@ -335,7 +349,9 @@ class TestCommitteeViews(TestCase):
 
     def test_CommitteeCreateView_noLogin(self):
         myClient = Client()
-        myResp = myClient.get(reverse('committee-create'))
+        myResp = myClient.get(reverse('committee-create', kwargs={
+            'project_slug': self.myProject.slug
+        }))
         self.assertEqual(myResp.status_code, 302)
 
     def test_CommitteeCreate_withLogin(self):
@@ -350,7 +366,9 @@ class TestCommitteeViews(TestCase):
             'chair': self.myUser.id,
             'users': [self.myUser.id]
         }
-        myResp = myClient.post(reverse('committee-create'), postData)
+        myResp = myClient.post(reverse('committee-create', kwargs={
+            'project_slug': self.myProject.slug
+        }), postData)
         self.assertRedirects(myResp, reverse('committee-detail', kwargs={
             'project_slug': self.myProject.slug,
             'slug': 'new-test-committee'
@@ -363,7 +381,9 @@ class TestCommitteeViews(TestCase):
             'abstain': False,
             'negative': False
         }
-        myResp = myClient.post(reverse('committee-create'), postData)
+        myResp = myClient.post(reverse('committee-create', kwargs={
+            'project_slug': self.myProject.slug
+        }), postData)
         self.assertEqual(myResp.status_code, 302)
 
     def test_CommitteeUpdateView_withLogin(self):

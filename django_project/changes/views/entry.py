@@ -62,15 +62,6 @@ class EntryDetailView(EntryMixin, DetailView):
     context_object_name = 'entry'
     template_name = 'entry/detail.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(EntryDetailView, self).get_context_data(**kwargs)
-        return context
-
-    def get_queryset(self):
-        """Anyone can see any entry."""
-        qs = Entry.objects.all()
-        return qs
-
     def get_object(self, queryset=None):
         """
         Get the object for this view.
@@ -117,6 +108,12 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
     context_object_name = 'entry'
     template_name = 'entry/create.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(EntryCreateView, self).get_context_data(**kwargs)
+        context['entries'] = self.get_queryset()\
+            .filter(version=self.version)
+        return context
+
     def get_success_url(self):
         return reverse('pending-entry-list', kwargs={
             'project_slug': self.object.version.project.slug,
@@ -130,7 +127,15 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(EntryCreateView, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
+        self.version_slug = self.kwargs.get('version_slug', None)
+        self.version = Version.objects.get(slug=self.version_slug)
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        kwargs.update({
+            'user': self.request.user,
+            'version': self.version,
+            'project': self.project
+        })
         return kwargs
 
 
@@ -138,17 +143,23 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
     context_object_name = 'entry'
     template_name = 'entry/update.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(EntryUpdateView, self).get_context_data(**kwargs)
+        context['entries'] = Entry.objects.filter(version=self.version)
+        return context
+
     def get_form_kwargs(self):
         kwargs = super(EntryUpdateView, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
+        self.version_slug = self.kwargs.get('version_slug', None)
+        self.version = Version.objects.get(slug=self.version_slug)
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        kwargs.update({
+            'user': self.request.user,
+            'version': self.version,
+            'project': self.project
+        })
         return kwargs
-
-    def get_queryset(self):
-        qs = Entry.objects.all()
-        if self.request.user.is_staff:
-            return qs
-        else:
-            return qs.filter(creator=self.request.user)
 
     def get_success_url(self):
         return reverse('pending-entry-list', kwargs={
@@ -170,6 +181,7 @@ class PendingEntryListView(EntryMixin,
         context = super(PendingEntryListView, self).get_context_data(**kwargs)
         context['num_entries'] = self.get_queryset().count()
         context['unapproved'] = True
+        context['entries'] = Entry.objects.filter(version=self.version)
         return context
 
     def get_queryset(self):
@@ -178,9 +190,9 @@ class PendingEntryListView(EntryMixin,
             version_slug = self.kwargs.get('version_slug', None)
             if project_slug and version_slug:
                 project = Project.objects.get(slug=project_slug)
-                version = Version.objects.get(slug=version_slug,
-                                              project=project)
-                queryset = Entry.unapproved_objects.filter(version=version)
+                self.version = Version.objects.get(slug=version_slug,
+                                                    project=project)
+                queryset = Entry.unapproved_objects.filter(version=self.version)
                 if self.request.user.is_staff:
                     return queryset
                 else:

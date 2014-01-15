@@ -22,7 +22,7 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<slug>[\w-]+)/$',
         view=CommitteeDetailView.as_view(),
         name='committee-detail'),
-    url(regex='^committee/create/$',
+    url(regex='^(?P<project_slug>[\w-]+)/create-committee/$',
         view=CommitteeCreateView.as_view(),
         name='committee-create'),
     url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<slug>[\w-]+)/delete/$',
@@ -51,7 +51,8 @@ urlpatterns = patterns(
               'ballots/(?P<slug>[\w-]+)/update/$',
         view=BallotUpdateView.as_view(),
         name='ballot-update'),
-    url(regex='^ballot/create/$',
+    url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<committee_slug>[\w-]+)/'
+              'create-ballot/$',
         view=BallotCreateView.as_view(),
         name='ballot-create'),
 )
