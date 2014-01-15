@@ -128,12 +128,13 @@ class ProjectCreateView(LoginRequiredMixin, ProjectMixin, CreateView):
         return kwargs
 
 
-class ProjectUpdateView(ProjectMixin, UpdateView):
+class ProjectUpdateView(LoginRequiredMixin, ProjectMixin, UpdateView):
     context_object_name = 'project'
     template_name = 'project/update.html'
 
     def get_form_kwargs(self):
         kwargs = super(ProjectUpdateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
         return kwargs
 
     def get_queryset(self):
@@ -144,7 +145,7 @@ class ProjectUpdateView(ProjectMixin, UpdateView):
             return qs.filter(creator=self.request.user)
 
     def get_success_url(self):
-        return reverse('project-list')
+        return reverse('project-detail', kwargs={'slug': self.object.slug})
 
 
 class PendingProjectListView(
@@ -166,10 +167,6 @@ class PendingProjectListView(
         context['num_projects'] = self.get_queryset().count()
         context['unapproved'] = True
         return context
-
-    def get_queryset(self):
-        projects_qs = Project.unapproved_objects.all()
-        return projects_qs
 
 
 class ApproveProjectView(StaffuserRequiredMixin, ProjectMixin, RedirectView):

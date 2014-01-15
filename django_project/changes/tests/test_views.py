@@ -194,7 +194,7 @@ class TestEntryViews(TestCase):
             'version_slug': self.myVersion.slug
         }), status_code=302)
 
-    def test_EntryCreate_nologin(self):
+    def test_EntryCreate_noLogin(self):
         myClient = Client()
         postData = {
             'title': u'New Test Entry',
@@ -202,6 +202,62 @@ class TestEntryViews(TestCase):
             'category': self.myCategory.id
         }
         myResp = myClient.post(reverse('entry-create'), postData)
+        self.assertEqual(myResp.status_code, 302)
+
+    def test_EntryUpdateView_withLogin(self):
+        myClient = Client()
+        myClient.login(username='timlinux', password='password')
+        myResp = myClient.get(reverse('entry-update', kwargs={
+            'project_slug': self.myEntry.version.project.slug,
+            'version_slug': self.myEntry.version.slug,
+            'slug': self.myEntry.slug
+        }))
+        self.assertEqual(myResp.status_code, 200)
+        expectedTemplates = [
+            'entry/update.html'
+        ]
+        self.assertEqual(myResp.template_name, expectedTemplates)
+
+    def test_EntryUpdateView_noLogin(self):
+        myClient = Client()
+        myResp = myClient.get(reverse('entry-update', kwargs={
+            'project_slug': self.myEntry.version.project.slug,
+            'version_slug': self.myEntry.version.slug,
+            'slug': self.myEntry.slug
+        }))
+        self.assertEqual(myResp.status_code, 302)
+
+    def test_EntryUpdate_withLogin(self):
+        myClient = Client()
+        myClient.login(username='timlinux', password='password')
+        postData = {
+            'title': u'New Test Entry Updated',
+            'version': self.myVersion.id,
+            'category': self.myCategory.id,
+            'author': self.myUser.id
+        }
+        myResp = myClient.post(reverse('entry-update', kwargs={
+            'project_slug': self.myEntry.version.project.slug,
+            'version_slug': self.myEntry.version.slug,
+            'slug': self.myEntry.slug
+        }), postData)
+        self.assertRedirects(myResp, reverse('pending-entry-list', kwargs={
+            'project_slug': self.myProject.slug,
+            'version_slug': self.myVersion.slug
+        }), status_code=302)
+
+    def test_EntryUpdate_nologin(self):
+        myClient = Client()
+        postData = {
+            'title': u'New Test Entry Updated',
+            'version': self.myVersion.id,
+            'category': self.myCategory.id
+        }
+        myResp = myClient.post(reverse('entry-update', kwargs={
+            'project_slug': self.myEntry.version.project.slug,
+            'version_slug': self.myEntry.version.slug,
+            'slug': self.myEntry.slug
+        }), postData)
         self.assertEqual(myResp.status_code, 302)
 
     def test_EntryDetailView(self):
@@ -338,6 +394,57 @@ class TestVersionViews(TestCase):
             'description': u'This is a test description'
         }
         myResp = myClient.post(reverse('version-create'), postData)
+        self.assertEqual(myResp.status_code, 302)
+
+    def test_VersionUpdateView_withLogin(self):
+        myClient = Client()
+        myClient.login(username='timlinux', password='password')
+        myResp = myClient.get(reverse('version-update', kwargs={
+            'project_slug': self.myVersion.project.slug,
+            'slug': self.myVersion.slug
+        }))
+        self.assertEqual(myResp.status_code, 200)
+        expectedTemplates = [
+            'version/update.html'
+        ]
+        self.assertEqual(myResp.template_name, expectedTemplates)
+
+    def test_VersionUpdateView_noLogin(self):
+        myClient = Client()
+        myResp = myClient.get(reverse('version-update', kwargs={
+            'project_slug': self.myVersion.project.slug,
+            'slug': self.myVersion.slug
+        }))
+        self.assertEqual(myResp.status_code, 302)
+
+    def test_VersionUpdate_withLogin(self):
+        myClient = Client()
+        myClient.login(username='timlinux', password='password')
+        postData = {
+            'project': self.myProject.id,
+            'name': u'New Test Version Updated',
+            'description': u'This is a test description',
+            'author': self.myUser.id
+        }
+        myResp = myClient.post(reverse('version-update', kwargs={
+            'project_slug': self.myVersion.project.slug,
+            'slug': self.myVersion.slug
+        }), postData)
+        self.assertRedirects(myResp, reverse('version-list', kwargs={
+            'project_slug': self.myProject.slug
+        }), status_code=302)
+
+    def test_VersionUpdate_nologin(self):
+        myClient = Client()
+        postData = {
+            'project': self.myProject.id,
+            'name': u'New Test Version',
+            'description': u'This is a test description'
+        }
+        myResp = myClient.post(reverse('version-update', kwargs={
+            'project_slug': self.myVersion.project.slug,
+            'slug': self.myVersion.slug
+        }), postData)
         self.assertEqual(myResp.status_code, 302)
 
     def test_VersionDetailView(self):

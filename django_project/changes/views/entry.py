@@ -136,6 +136,7 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super(EntryUpdateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
         return kwargs
 
     def get_queryset(self):

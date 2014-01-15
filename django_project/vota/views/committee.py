@@ -73,6 +73,11 @@ class CommitteeUpdateView(LoginRequiredMixin, CommitteeMixin, UpdateView):
     context_object_name = 'committee'
     template_name = 'committee/update.html'
 
+    def get_form_kwargs(self):
+        kwargs = super(CommitteeUpdateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
     def get_queryset(self):
         if not self.request.user.is_staff:
             raise Http404

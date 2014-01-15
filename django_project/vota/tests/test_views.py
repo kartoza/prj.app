@@ -163,11 +163,82 @@ class TestBallotViews(TestCase):
     def test_BallotCreate_nologin(self):
         myClient = Client()
         postData = {
-            'positive': True,
-            'abstain': False,
-            'negative': False
+            'committee': self.myCommittee.id,
+            'name': u'New Test Ballot No Login',
+            'summary': u'New test summary',
+            'description': u'New test description',
+            'open_from': datetime.datetime.now() - datetime.timedelta(days=7),
+            'closes': datetime.datetime.now() + datetime.timedelta(days=7),
+            'private': True,
+            'proposer': self.myUser.id
         }
         myResp = myClient.post(reverse('ballot-create'), postData)
+        self.assertEqual(myResp.status_code, 302)
+
+    def test_BallotUpdateView_withLogin(self):
+        myClient = Client()
+        myClient.login(username='timlinux', password='password')
+        myResp = myClient.get(reverse('ballot-update', kwargs={
+            'project_slug': self.myBallot.committee.project.slug,
+            'committee_slug': self.myBallot.committee.slug,
+            'slug': self.myBallot.slug
+        }))
+        self.assertEqual(myResp.status_code, 200)
+        expectedTemplates = [
+            'ballot/update.html'
+        ]
+        self.assertEqual(myResp.template_name, expectedTemplates)
+
+    def test_BallotUpdateView_noLogin(self):
+        myClient = Client()
+        myResp = myClient.get(reverse('ballot-update', kwargs={
+            'project_slug': self.myBallot.committee.project.slug,
+            'committee_slug': self.myBallot.committee.slug,
+            'slug': self.myBallot.slug
+        }))
+        self.assertEqual(myResp.status_code, 302)
+
+    def test_BallotUpdate_withLogin(self):
+        myClient = Client()
+        myClient.login(username='timlinux', password='password')
+        postData = {
+            'committee': self.myCommittee.id,
+            'name': u'New Test Ballot Update',
+            'summary': u'New test summary',
+            'description': u'New test description',
+            'open_from': datetime.datetime.now() - datetime.timedelta(days=7),
+            'closes': datetime.datetime.now() + datetime.timedelta(days=7),
+            'private': True,
+            'proposer': self.myUser.id
+        }
+        myResp = myClient.post(reverse('ballot-update', kwargs={
+            'project_slug': self.myBallot.committee.project.slug,
+            'committee_slug': self.myBallot.committee.slug,
+            'slug': self.myBallot.slug
+        }), postData)
+        self.assertRedirects(myResp, reverse('ballot-detail', kwargs={
+            'project_slug': self.myProject.slug,
+            'committee_slug': self.myCommittee.slug,
+            'slug': self.myBallot.slug
+        }), status_code=302)
+
+    def test_BallotUpdate_nologin(self):
+        myClient = Client()
+        postData = {
+            'committee': self.myCommittee.id,
+            'name': u'New Test Ballot Updated',
+            'summary': u'New test summary',
+            'description': u'New test description',
+            'open_from': datetime.datetime.now() - datetime.timedelta(days=7),
+            'closes': datetime.datetime.now() + datetime.timedelta(days=7),
+            'private': True,
+            'proposer': self.myUser.id
+        }
+        myResp = myClient.post(reverse('ballot-update', kwargs={
+            'project_slug': self.myBallot.committee.project.slug,
+            'committee_slug': self.myBallot.committee.slug,
+            'slug': self.myBallot.slug
+        }), postData)
         self.assertEqual(myResp.status_code, 302)
 
     def test_BallotDeleteView_withlogin(self):
@@ -293,6 +364,65 @@ class TestCommitteeViews(TestCase):
             'negative': False
         }
         myResp = myClient.post(reverse('committee-create'), postData)
+        self.assertEqual(myResp.status_code, 302)
+
+    def test_CommitteeUpdateView_withLogin(self):
+        myClient = Client()
+        myClient.login(username='timlinux', password='password')
+        myResp = myClient.get(reverse('committee-update', kwargs={
+            'project_slug': self.myCommittee.project.slug,
+            'slug': self.myCommittee.slug
+        }))
+        self.assertEqual(myResp.status_code, 200)
+        expectedTemplates = [
+            'committee/update.html'
+        ]
+        self.assertEqual(myResp.template_name, expectedTemplates)
+
+    def test_CommitteeUpdateView_noLogin(self):
+        myClient = Client()
+        myResp = myClient.get(reverse('committee-update', kwargs={
+            'project_slug': self.myCommittee.project.slug,
+            'slug': self.myCommittee.slug
+        }))
+        self.assertEqual(myResp.status_code, 302)
+
+    def test_CommitteeUpdate_withLogin(self):
+        myClient = Client()
+        myClient.login(username='timlinux', password='password')
+        postData = {
+            'project': self.myProject.id,
+            'name': u'New Test Committee Updated',
+            'description': u'New test description',
+            'sort_number': 1,
+            'quorum_setting': u'100',
+            'chair': self.myUser.id,
+            'users': [self.myUser.id]
+        }
+        myResp = myClient.post(reverse('committee-update', kwargs={
+            'project_slug': self.myCommittee.project.slug,
+            'slug': self.myCommittee.slug
+        }), postData)
+        self.assertRedirects(myResp, reverse('committee-detail', kwargs={
+            'project_slug': self.myProject.slug,
+            'slug': self.myCommittee.slug
+        }), status_code=302)
+
+    def test_CommitteeUpdate_nologin(self):
+        myClient = Client()
+        postData = {
+            'project': self.myProject.id,
+            'name': u'New Test Committee',
+            'description': u'New test description',
+            'sort_number': 1,
+            'quorum_setting': u'50',
+            'chair': self.myUser.id,
+            'users': [self.myUser.id]
+        }
+        myResp = myClient.post(reverse('committee-update', kwargs={
+            'project_slug': self.myCommittee.project.slug,
+            'slug': self.myCommittee.slug
+        }), postData)
         self.assertEqual(myResp.status_code, 302)
 
     def test_CommitteeDeleteView_withlogin(self):

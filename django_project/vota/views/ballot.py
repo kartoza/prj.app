@@ -74,6 +74,11 @@ class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
     context_object_name = 'ballot'
     template_name = 'ballot/update.html'
 
+    def get_form_kwargs(self):
+        kwargs = super(BallotUpdateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
     def get_queryset(self):
         qs = Ballot.objects.all()
         if self.request.user.is_staff:

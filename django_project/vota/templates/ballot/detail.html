@@ -24,7 +24,7 @@
             <a href="{% url 'ballot-update' project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug slug=ballot.slug %}"
                class="btn btn-default tooltip-toggle"
                data-title="Update this Ballot">
-              <span class="glyphicon glyphicon-refresh"></span>
+              <span class="glyphicon glyphicon-pencil"></span>
             </a>
           {% endif %}
           {% if user.is_staff %}

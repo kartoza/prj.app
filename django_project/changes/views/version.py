@@ -220,6 +220,11 @@ class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
     context_object_name = 'version'
     template_name = 'version/update.html'
 
+    def get_form_kwargs(self):
+        kwargs = super(VersionUpdateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
     def get_queryset(self):
         """Get the queryset for this view.
 

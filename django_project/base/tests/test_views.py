@@ -32,7 +32,7 @@ class TestViews(TestCase):
         ]
         self.assertEqual(myResp.template_name, expectedTemplates)
         self.assertEqual(myResp.context_data['object_list'][0],
-                                self.myTestProject)
+                         self.myTestProject)
 
     def test_ProjectCreateView_withLogin(self):
         myClient = Client()
@@ -66,6 +66,50 @@ class TestViews(TestCase):
             'name': u'New Test Project'
         }
         myResp = myClient.post(reverse('project-create'), postData)
+        self.assertEqual(myResp.status_code, 302)
+
+    def test_ProjectUpdateView_withLogin(self):
+        myClient = Client()
+        myClient.login(username='timlinux', password='password')
+        myResp = myClient.get(reverse('project-update', kwargs={
+            'slug': self.myTestProject.slug
+        }))
+        self.assertEqual(myResp.status_code, 200)
+        expectedTemplates = [
+            'project/update.html'
+        ]
+        self.assertEqual(myResp.template_name, expectedTemplates)
+
+    def test_ProjectUpdateView_noLogin(self):
+        myClient = Client()
+        myResp = myClient.get(reverse('project-update', kwargs={
+            'slug': self.myTestProject.slug
+        }))
+        self.assertEqual(myResp.status_code, 302)
+
+    def test_ProjectUpdate_withLogin(self):
+        myClient = Client()
+        myClient.login(username='timlinux', password='password')
+        postData = {
+            'name': u'New Test Project Updated',
+            'owner': self.myUser.id
+        }
+        myResp = myClient.post(reverse('project-update', kwargs={
+            'slug': self.myTestProject.slug
+        }), postData)
+        self.assertRedirects(myResp, reverse('project-detail', kwargs={
+            'slug': self.myTestProject.slug
+        }), status_code=302)
+
+    def test_ProjectUpdate_nologin(self):
+        myClient = Client()
+        postData = {
+            'name': u'New Test Project Updated',
+            'owner': self.myUser.id
+        }
+        myResp = myClient.post(reverse('project-update', kwargs={
+            'slug': self.myTestProject.slug
+        }), postData)
         self.assertEqual(myResp.status_code, 302)
 
     def test_ProjectDetailView(self):
