@@ -59,11 +59,19 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved versions.
+        :returns: A queryset which is filtered to only show approved versions
+        for this project.
         :rtype: QuerySet
         """
-        versions_qs = Version.approved_objects.all()
-        return versions_qs
+        if self.queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            if project_slug:
+                project = Project.objects.get(slug=project_slug)
+                queryset = Version.objects.filter(project=project)
+                return queryset
+            else:
+                raise Http404('Sorry! We could not find your entry!')
+        return self.queryset
 
 
 class VersionDetailView(VersionMixin, DetailView):
@@ -272,11 +280,18 @@ class PendingVersionListView(
         :returns: A queryset which is filtered to only show approved versions.
         :rtype: QuerySet
         """
-        versions_qs = Version.unapproved_objects.all()
-        if self.request.user.is_staff:
-            return versions_qs
-        else:
-            return versions_qs.filter(creator=self.request.user)
+        if self.queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            if project_slug:
+                project = Project.objects.get(slug=project_slug)
+                queryset = Version.unapproved_objects.filter(project=project)
+                if self.request.user.is_staff:
+                    return queryset
+                else:
+                    return queryset.filter(author=self.request.user)
+            else:
+                raise Http404('Sorry! We could not find your entry!')
+        return self.queryset
 
 
 class ApproveVersionView(VersionMixin, StaffuserRequiredMixin, RedirectView):

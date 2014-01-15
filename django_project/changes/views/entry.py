@@ -44,8 +44,31 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
         return context
 
     def get_queryset(self):
-        """Only approved objects are shown."""
-        qs = Entry.approved_objects.all()
+        if self.queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            version_slug = self.kwargs.get('version_slug', None)
+            if project_slug and version_slug:
+                project = Project.objects.get(slug=project_slug)
+                version = Version.objects.get(slug=version_slug,
+                                              project=project)
+                queryset = Entry.objects.filter(version=version)
+                return queryset
+            else:
+                raise Http404('Sorry! We could not find your entry!')
+        return self.queryset
+
+
+class EntryDetailView(EntryMixin, DetailView):
+    context_object_name = 'entry'
+    template_name = 'entry/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(EntryDetailView, self).get_context_data(**kwargs)
+        return context
+
+    def get_queryset(self):
+        """Anyone can see any entry."""
+        qs = Entry.objects.all()
         return qs
 
     def get_object(self, queryset=None):
@@ -67,25 +90,6 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
                 return obj
             else:
                 raise Http404('Sorry! We could not find your entry!')
-
-
-class EntryDetailView(EntryMixin, DetailView):
-    context_object_name = 'entry'
-    template_name = 'entry/detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(EntryDetailView, self).get_context_data(**kwargs)
-        return context
-
-    def get_queryset(self):
-        """Anyone can see any entry."""
-        qs = Entry.objects.all()
-        return qs
-
-    def get_object(self, queryset=None):
-        obj = super(EntryDetailView, self).get_object(queryset)
-        obj.request_user = self.request.user
-        return obj
 
 
 class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
@@ -169,11 +173,21 @@ class PendingEntryListView(EntryMixin,
         return context
 
     def get_queryset(self):
-        qs = Entry.unapproved_objects.all()
-        if self.request.user.is_staff:
-            return qs
-        else:
-            return qs.filter(creator=self.request.user)
+        if self.queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            version_slug = self.kwargs.get('version_slug', None)
+            if project_slug and version_slug:
+                project = Project.objects.get(slug=project_slug)
+                version = Version.objects.get(slug=version_slug,
+                                              project=project)
+                queryset = Entry.unapproved_objects.filter(version=version)
+                if self.request.user.is_staff:
+                    return queryset
+                else:
+                    return queryset.filter(author=self.request.user)
+            else:
+                raise Http404('Sorry! We could not find your entry!')
+        return self.queryset
 
 
 class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):

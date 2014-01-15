@@ -121,13 +121,15 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
         return context
 
     def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: Queryset which is filtered to only show approved categories.
-        :rtype: QuerySet
-        """
-        qs = Category.approved_objects.all()
-        return qs
+        if self.queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            if project_slug:
+                project = Project.objects.get(slug=project_slug)
+                queryset = Category.objects.filter(project=project)
+                return queryset
+            else:
+                raise Http404('Sorry! We could not find your category!')
+        return self.queryset
 
 
 class CategoryDetailView(CategoryMixin, DetailView):
@@ -242,11 +244,15 @@ class PendingCategoryListView(CategoryMixin,
         return context
 
     def get_queryset(self):
-        qs = Category.unapproved_objects.all()
-        if self.request.user.is_staff:
-            return qs
-        else:
-            return qs.filter(creator=self.request.user)
+        if self.queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            if project_slug:
+                project = Project.objects.get(slug=project_slug)
+                queryset = Category.objects.filter(project=project)
+                return queryset
+            else:
+                raise Http404('Sorry! We could not find your category!')
+        return self.queryset
 
 
 class ApproveCategoryView(CategoryMixin, StaffuserRequiredMixin, RedirectView):
