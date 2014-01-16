@@ -45,7 +45,7 @@
     Allow from all
   </Directory>
 
-  WSGIDaemonProcess %(site_name)s user=%(site_user)s group=%(site_user)s processes=2 threads=10 python-path=%(code_path)s/venv/lib/python2.7/site-packages:%(code_path)s/django_project
+  WSGIDaemonProcess %(site_name)s home=%(code_path)s user=%(site_user)s group=%(site_user)s processes=2 threads=10 python-path=%(code_path)s/venv/lib/python2.7/site-packages:%(code_path)s/django_project
   WSGIProcessGroup %(site_name)s
 
   Alias /media/ "%(code_path)s/django_project/media/"

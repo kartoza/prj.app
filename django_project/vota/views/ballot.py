@@ -45,8 +45,7 @@ class BallotDetailView(LoginRequiredMixin, BallotMixin, DetailView):
             committee_slug = self.kwargs.get('committee_slug', None)
             if slug and project_slug and committee_slug:
                 project = Project.objects.get(slug=project_slug)
-                committee = Committee.objects.get(slug=committee_slug,
-                                                  project=project)
+                committee = Committee.objects.filter(project=project).get(slug=committee_slug)
                 obj = queryset.get(slug=slug, committee=committee)
                 return obj
             else:
@@ -67,7 +66,8 @@ class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         self.committee_slug = self.kwargs.get('committee_slug', None)
-        self.committee = Committee.objects.get(slug=self.committee_slug)
+        self.committee = Committee.objects.filter(project=self.project)\
+            .get(slug=self.committee_slug)
         kwargs.update({
             'user': self.request.user,
             'committee': self.committee
