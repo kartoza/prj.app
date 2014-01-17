@@ -12,6 +12,7 @@ DATABASES = {
     }
 }
 
+# noinspection PyUnresolvedReferences
 INSTALLED_APPS += (
     'django_jenkins',  # don't remove this comma
 )
@@ -61,6 +62,6 @@ JENKINS_TEST_RUNNER = 'django_jenkins.nose_runner.CINoseTestSuiteRunner'
 
 # semi-hardcoded YUGLIFY path, for jenkins
 PIPELINE_YUGLIFY_BINARY = (
-    ABS_PATH('..', 'venv', 'bin', 'node') + ' ' +
-    ABS_PATH('..', 'node_modules', 'yuglify', 'bin', 'yuglify')
+    absolute_path('..', 'venv', 'bin', 'node') + ' ' +
+    absolute_path('..', 'node_modules', 'yuglify', 'bin', 'yuglify')
 )

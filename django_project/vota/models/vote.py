@@ -4,13 +4,11 @@ Committee can vote on to either Pass or Deny.
 
 
 """
-from django.core.exceptions import ValidationError
 import logging
 
 logger = logging.getLogger(__name__)
 from django.db import models
 from audited_models.models import AuditedModel
-from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
 
@@ -31,6 +29,7 @@ class Vote(AuditedModel):
     ballot = models.ForeignKey('Ballot')
     objects = models.Manager()
 
+    # noinspection PyClassicStyleClass
     class Meta:
         """Meta options for the vote class."""
         unique_together = ('user', 'ballot')

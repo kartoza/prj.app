@@ -12,7 +12,7 @@ from .project import *
 ALLOWED_HOSTS = ['localhost:9000', 'changelog.linfiniti.com']
 
 if 'raven.contrib.django' in INSTALLED_APPS:
-    SENTRY_DSN = ('')
+    SENTRY_DSN = ''
 
     MIDDLEWARE_CLASSES = (
         'django.contrib.sessions.middleware.SessionMiddleware',

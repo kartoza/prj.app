@@ -25,6 +25,7 @@ QUORUM_CHOICES = (
 )
 
 
+# noinspection PyUnresolvedReferences
 class Committee(AuditedModel):
     """A committee model i.e. a group of users under a project"""
     name = models.CharField(
@@ -61,6 +62,7 @@ class Committee(AuditedModel):
     users = models.ManyToManyField(User)
     objects = models.Manager()
 
+    # noinspection PyClassicStyleClass
     class Meta:
         """Meta options for the category class."""
         unique_together = (

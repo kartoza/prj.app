@@ -28,7 +28,7 @@ class UnapprovedCategoryManager(models.Manager):
             UnapprovedCategoryManager, self).get_query_set().filter(
                 approved=False)
 
-
+# noinspection PyUnresolvedReferences
 class Category(AuditedModel):
     """A category model e.g. gui, backend, web site etc."""
     name = models.CharField(
@@ -57,6 +57,7 @@ class Category(AuditedModel):
     approved_objects = ApprovedCategoryManager()
     unapproved_objects = UnapprovedCategoryManager()
 
+    # noinspection PyClassicStyleClass
     class Meta:
         """Meta options for the category class."""
         unique_together = (

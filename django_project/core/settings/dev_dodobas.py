@@ -10,6 +10,7 @@ CRISPY_FAIL_SILENTLY = not DEBUG
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# noinspection PyUnresolvedReferences
 DATABASES = {
     'default': {
         # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
@@ -86,7 +87,9 @@ LOGGING = {
 
 # set up devserver if installed
 try:
+    # noinspection PyUnresolvedReferences
     import devserver
+    # noinspection PyUnresolvedReferences
     INSTALLED_APPS += (
         'devserver',
     )

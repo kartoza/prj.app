@@ -1,6 +1,4 @@
-import logging
-logger = logging.getLogger(__name__)
-import django.forms as forms
+from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout,
@@ -13,6 +11,7 @@ from models import Category, Version, Entry
 
 class CategoryForm(forms.ModelForm):
 
+    # noinspection PyClassicStyleClass
     class Meta:
         model = Category
         fields = ('name', 'sort_number')
@@ -42,6 +41,7 @@ class CategoryForm(forms.ModelForm):
 
 class VersionForm(forms.ModelForm):
 
+    # noinspection PyClassicStyleClass
     class Meta:
         model = Version
         fields = (
@@ -78,6 +78,7 @@ class VersionForm(forms.ModelForm):
 
 class EntryForm(forms.ModelForm):
 
+    # noinspection PyClassicStyleClass
     class Meta:
         model = Entry
         fields = (

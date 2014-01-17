@@ -1,6 +1,6 @@
 import logging
 logger = logging.getLogger(__name__)
-import django.forms as forms
+from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout,
@@ -15,6 +15,7 @@ from models import Project
 class ProjectForm(forms.ModelForm):
     """Form for creating projects."""
 
+    # noinspection PyClassicStyleClass
     class Meta:
         """Meta class."""
         model = Project

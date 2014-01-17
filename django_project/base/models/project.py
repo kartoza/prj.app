@@ -86,6 +86,7 @@ class Project(AuditedModel):
     unapproved_objects = UnapprovedProjectManager()
     public_objects = PublicProjectManager()
 
+    # noinspection PyClassicStyleClass
     class Meta:
         """Meta class for project."""
         app_label = 'base'

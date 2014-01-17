@@ -1,3 +1,4 @@
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 import factory
 import datetime
 
@@ -8,6 +9,7 @@ if DJANGO_VERSION[:2] >= (1, 4):
 from django.contrib.auth.models import User
 
 
+# noinspection PyProtectedMember
 class UserF(factory.DjangoModelFactory):
     FACTORY_FOR = User
 

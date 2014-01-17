@@ -11,12 +11,19 @@
 import os
 import getpass
 
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabric.api import task, env, fastprint, cd, run, sudo, local, prompt
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabric.contrib.project import rsync_project
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabric.contrib.files import exists, sed
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabric.colors import red, blue, green
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabtools import require
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabtools.deb import update_index
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabtools.postgres import (
     database_exists,
     create_database,
@@ -24,15 +31,20 @@ from fabtools.postgres import (
     user_exists
 )
 # Don't remove even though its unused
-# noinspection PyUnresolvedReferences
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabtools.vagrant import vagrant
 
-# noinspection PyUnresolvedReferences
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabgis.dropbox import setup_dropbox, setup_dropbox_daemon
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabgis.django import setup_apache, build_pil, set_media_permissions
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabgis.git import update_git_checkout
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabgis.virtualenv import setup_venv
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabgis.common import setup_env, show_environment
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabgis.postgres import (
     create_user,
     get_postgres_dump,
@@ -203,7 +215,7 @@ def freshen():
     fastprint(' to the domain name for the site.\n')
     fastprint('*******************************************\n')
 
-
+# noinspection PyUnresolvedReferences
 @task
 def sync_media_to_server():
     """Sync media to server from local filesystem."""

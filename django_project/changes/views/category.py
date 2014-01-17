@@ -6,7 +6,6 @@ logger = logging.getLogger(__name__)
 
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
-from django.http import Http404
 from django.http import HttpResponse
 from django.views.generic import (
     ListView,
@@ -68,7 +67,7 @@ class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
         """
         if not request.is_ajax():
             raise Http404("This is an ajax view, friend.")
-        return super(ListView, self).dispatch(request, *args, **kwargs)
+        return super(JSONCategoryListView, self).dispatch(request, *args, **kwargs)
 
     def render_to_response(self, context, **response_kwargs):
         """Render this version as markdown.
@@ -195,7 +194,7 @@ class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
         else:
             return qs.filter(creator=self.request.user)
 
-
+# noinspection PyAttributeOutsideInit
 class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):
     context_object_name = 'category'
     template_name = 'category/create.html'
@@ -225,7 +224,7 @@ class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):
         })
         return kwargs
 
-
+# noinspection PyAttributeOutsideInit
 class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
     context_object_name = 'category'
     template_name = 'category/update.html'

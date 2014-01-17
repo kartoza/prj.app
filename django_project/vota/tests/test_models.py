@@ -17,54 +17,54 @@ class TestBallotCRUD(TestCase):
         """
         Tests Ballot model creation
         """
-        myModel = BallotF.create()
+        my_model = BallotF.create()
 
         #check if PK exists
-        self.assertTrue(myModel.pk is not None)
+        self.assertTrue(my_model.pk is not None)
 
         #check if name exists
-        self.assertTrue(myModel.name is not None)
+        self.assertTrue(my_model.name is not None)
 
     def test_Ballot_read(self):
         """
         Tests Ballot model read
         """
-        myModel = BallotF.create(
+        my_model = BallotF.create(
             name=u'Custom Ballot'
         )
 
-        self.assertTrue(myModel.name == 'Custom Ballot')
-        self.assertTrue(myModel.slug == 'custom-ballot')
+        self.assertTrue(my_model.name == 'Custom Ballot')
+        self.assertTrue(my_model.slug == 'custom-ballot')
 
     def test_Ballot_update(self):
         """
         Tests Ballot model update
         """
-        myModel = BallotF.create()
-        myNewModelData = {
+        my_model = BallotF.create()
+        new_model_data = {
             'name': u'New Ballot Name',
             'summary': u'New summary',
             'description': u'This is a great description',
             'approved': False,
             'no_quorum': True,
         }
-        myModel.__dict__.update(myNewModelData)
-        myModel.save()
+        my_model.__dict__.update(new_model_data)
+        my_model.save()
 
         #check if updated
-        for key, val in myNewModelData.items():
-            self.assertEqual(myModel.__dict__.get(key), val)
+        for key, val in new_model_data.items():
+            self.assertEqual(my_model.__dict__.get(key), val)
 
     def test_Ballot_delete(self):
         """
         Tests Ballot model delete
         """
-        myModel = BallotF.create()
+        my_model = BallotF.create()
 
-        myModel.delete()
+        my_model.delete()
 
         #check if deleted
-        self.assertTrue(myModel.pk is None)
+        self.assertTrue(my_model.pk is None)
 
 
 class TestVoteCRUD(TestCase):
@@ -82,47 +82,47 @@ class TestVoteCRUD(TestCase):
         """
         Tests Vote model creation
         """
-        myModel = VoteF.create()
+        my_model = VoteF.create()
 
         #check if PK exists
-        self.assertTrue(myModel.pk is not None)
+        self.assertTrue(my_model.pk is not None)
 
         #check if we have a user
-        self.assertTrue(myModel.user is not None)
+        self.assertTrue(my_model.user is not None)
 
     def test_Vote_read(self):
         """
         Tests Vote model read
         """
-        myModel = VoteF.create(choice='n')
+        my_model = VoteF.create(choice='n')
 
-        self.assertTrue(myModel.choice == 'n')
+        self.assertTrue(my_model.choice == 'n')
 
     def test_Vote_update(self):
         """
         Tests Vote model update
         """
-        myModel = VoteF.create()
-        myNewModelData = {
+        my_model = VoteF.create()
+        new_model_data = {
             'choice': 'y'
         }
-        myModel.__dict__.update(myNewModelData)
-        myModel.save()
+        my_model.__dict__.update(new_model_data)
+        my_model.save()
 
         #check if updated
-        for key, val in myNewModelData.items():
-            self.assertEqual(myModel.__dict__.get(key), val)
+        for key, val in new_model_data.items():
+            self.assertEqual(my_model.__dict__.get(key), val)
 
     def test_Vote_delete(self):
         """
         Tests Vote model delete
         """
-        myModel = VoteF.create()
+        my_model = VoteF.create()
 
-        myModel.delete()
+        my_model.delete()
 
         #check if deleted
-        self.assertTrue(myModel.pk is None)
+        self.assertTrue(my_model.pk is None)
 
 
 class TestCommitteeCRUD(TestCase):
@@ -140,49 +140,49 @@ class TestCommitteeCRUD(TestCase):
         """
         Tests Committee model creation
         """
-        myModel = CommitteeF.create()
+        my_model = CommitteeF.create()
 
         #check if PK exists
-        self.assertTrue(myModel.pk is not None)
+        self.assertTrue(my_model.pk is not None)
 
         #check if name exists
-        self.assertTrue(myModel.name is not None)
+        self.assertTrue(my_model.name is not None)
 
     def test_Committee_read(self):
         """
         Tests Committee model read
         """
-        myModel = CommitteeF.create(
+        my_model = CommitteeF.create(
             name=u'Custom Committee'
         )
 
-        self.assertTrue(myModel.name == 'Custom Committee')
-        self.assertTrue(myModel.slug == 'custom-committee')
+        self.assertTrue(my_model.name == 'Custom Committee')
+        self.assertTrue(my_model.slug == 'custom-committee')
 
     def test_Committee_update(self):
         """
         Tests Committee model update
         """
-        myModel = CommitteeF.create()
-        myNewModelData = {
+        my_model = CommitteeF.create()
+        new_model_data = {
             'name': u'New Committee Name',
             'description': u'New description',
             'quorum_setting': u'50'
         }
-        myModel.__dict__.update(myNewModelData)
-        myModel.save()
+        my_model.__dict__.update(new_model_data)
+        my_model.save()
 
         #check if updated
-        for key, val in myNewModelData.items():
-            self.assertEqual(myModel.__dict__.get(key), val)
+        for key, val in new_model_data.items():
+            self.assertEqual(my_model.__dict__.get(key), val)
 
     def test_Committee_delete(self):
         """
         Tests Committee model delete
         """
-        myModel = CommitteeF.create()
+        my_model = CommitteeF.create()
 
-        myModel.delete()
+        my_model.delete()
 
         #check if deleted
-        self.assertTrue(myModel.pk is None)
+        self.assertTrue(my_model.pk is None)

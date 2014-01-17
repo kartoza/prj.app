@@ -1,3 +1,4 @@
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 import factory
 import datetime
 from vota.models.ballot import Ballot
@@ -39,7 +40,7 @@ class CommitteeF(factory.DjangoModelFactory):
     project = factory.SubFactory('base.tests.model_factories.ProjectF')
 
     @factory.post_generation
-    def users(self, create, extracted, **kwargs):
+    def users(self, create, extracted):
         if not create:
             # Simple build, do nothing.
             return

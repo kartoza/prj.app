@@ -6,6 +6,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 
+# noinspection PyUnresolvedReferences
 urlpatterns = patterns(
     '',
     # Enable the admin (use non standard name for obscurity)

@@ -1,5 +1,5 @@
 import logging
-import django.forms as forms
+from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout,
@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class VoteForm(forms.ModelForm):
+    # noinspection PyClassicStyleClass
     class Meta:
         model = Vote
         fields = (
@@ -38,6 +39,7 @@ class VoteForm(forms.ModelForm):
 
 
 class CreateCommitteeForm(forms.ModelForm):
+    # noinspection PyClassicStyleClass
     class Meta:
         model = Committee
         fields = (
@@ -81,6 +83,7 @@ class CreateCommitteeForm(forms.ModelForm):
 
 
 class BallotCreateForm(forms.ModelForm):
+    # noinspection PyClassicStyleClass
     class Meta:
         model = Ballot
         fields = (

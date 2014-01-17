@@ -1,9 +1,6 @@
 # coding=utf-8
 """A command to get rid of any images that are not being actively used."""
-
-import os
-
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.core.files import File
 from ...models import Entry
 

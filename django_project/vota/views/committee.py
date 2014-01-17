@@ -3,7 +3,7 @@
 # noinspection PyUnresolvedReferences
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, Http404
+from django.http import Http404
 import logging
 from django.views.generic import DetailView, CreateView, DeleteView, UpdateView
 from base.models import Project
@@ -52,7 +52,7 @@ class CommitteeDetailView(CommitteeMixin, DetailView):
             else:
                 raise Http404('Sorry! We could not find your committee!')
 
-
+# noinspection PyAttributeOutsideInit
 class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
     context_object_name = 'committee'
     template_name = 'committee/create.html'
@@ -78,7 +78,7 @@ class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
             'slug': self.object.slug
         })
 
-
+# noinspection PyAttributeOutsideInit
 class CommitteeUpdateView(LoginRequiredMixin, CommitteeMixin, UpdateView):
     context_object_name = 'committee'
     template_name = 'committee/update.html'

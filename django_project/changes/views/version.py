@@ -22,7 +22,7 @@ from django.views.generic import (
     UpdateView,
     RedirectView)
 
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponse
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
@@ -201,7 +201,7 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
         else:
             return qs.filter(creator=self.request.user)
 
-
+# noinspection PyAttributeOutsideInit
 class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
     """A view for creating version objects."""
     context_object_name = 'version'
@@ -240,7 +240,7 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
         })
         return kwargs
 
-
+# noinspection PyAttributeOutsideInit
 class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
     """View to update an existing version."""
     context_object_name = 'version'
@@ -326,8 +326,8 @@ class ApproveVersionView(VersionMixin, StaffuserRequiredMixin, RedirectView):
     def get_redirect_url(self, project_slug, slug):
         """Get the url for when the operation completes.
 
-        :param pk: The primary key of the object being approved.
-        :type pk: int
+        :param slug: The slug of the object being approved.
+        :type slug: str
 
         :returns: A url.
         :rtype: str

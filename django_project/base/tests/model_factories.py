@@ -1,3 +1,4 @@
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 import factory
 from base.models.project import Project
 from core.model_factories import UserF

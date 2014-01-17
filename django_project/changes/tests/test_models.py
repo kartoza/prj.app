@@ -17,53 +17,53 @@ class TestCategoryCRUD(TestCase):
         """
         Tests Category model creation
         """
-        myModel = CategoryF.create()
+        my_model = CategoryF.create()
 
         #check if PK exists
-        self.assertTrue(myModel.pk is not None)
+        self.assertTrue(my_model.pk is not None)
 
         #check if name exists
-        self.assertTrue(myModel.name is not None)
+        self.assertTrue(my_model.name is not None)
 
     def test_Category_read(self):
         """
         Tests Category model read
         """
-        myModel = CategoryF.create(
+        my_model = CategoryF.create(
             name=u'Custom Category'
         )
 
-        self.assertTrue(myModel.name == 'Custom Category')
-        self.assertTrue(myModel.slug == 'custom-category')
+        self.assertTrue(my_model.name == 'Custom Category')
+        self.assertTrue(my_model.slug == 'custom-category')
 
     def test_Category_update(self):
         """
         Tests Category model update
         """
-        myModel = CategoryF.create()
-        myNewModelData = {
+        my_model = CategoryF.create()
+        new_model_data = {
             'name': u'New Category Name',
             'description': u'New description',
             'approved': False,
             'private': True,
         }
-        myModel.__dict__.update(myNewModelData)
-        myModel.save()
+        my_model.__dict__.update(new_model_data)
+        my_model.save()
 
         #check if updated
-        for key, val in myNewModelData.items():
-            self.assertEqual(myModel.__dict__.get(key), val)
+        for key, val in new_model_data.items():
+            self.assertEqual(my_model.__dict__.get(key), val)
 
     def test_Category_delete(self):
         """
         Tests Category model delete
         """
-        myModel = CategoryF.create()
+        my_model = CategoryF.create()
 
-        myModel.delete()
+        my_model.delete()
 
         #check if deleted
-        self.assertTrue(myModel.pk is None)
+        self.assertTrue(my_model.pk is None)
 
 
 class TestEntryCRUD(TestCase):
@@ -81,53 +81,53 @@ class TestEntryCRUD(TestCase):
         """
         Tests Entry model creation
         """
-        myModel = EntryF.create()
+        my_model = EntryF.create()
 
         #check if PK exists
-        self.assertTrue(myModel.pk is not None)
+        self.assertTrue(my_model.pk is not None)
 
         #check if name exists
-        self.assertTrue(myModel.title is not None)
+        self.assertTrue(my_model.title is not None)
 
     def test_Entry_read(self):
         """
         Tests Entry model read
         """
-        myModel = EntryF.create(
+        my_model = EntryF.create(
             title=u'Custom Entry'
         )
 
-        self.assertTrue(myModel.title == 'Custom Entry')
-        self.assertTrue(myModel.slug == 'custom-entry')
+        self.assertTrue(my_model.title == 'Custom Entry')
+        self.assertTrue(my_model.slug == 'custom-entry')
 
     def test_Entry_update(self):
         """
         Tests Entry model update
         """
-        myModel = EntryF.create()
-        myNewModelData = {
+        my_model = EntryF.create()
+        new_model_data = {
             'name': u'New Entry Name',
             'description': u'New description',
             'approved': False,
             'private': True,
         }
-        myModel.__dict__.update(myNewModelData)
-        myModel.save()
+        my_model.__dict__.update(new_model_data)
+        my_model.save()
 
         #check if updated
-        for key, val in myNewModelData.items():
-            self.assertEqual(myModel.__dict__.get(key), val)
+        for key, val in new_model_data.items():
+            self.assertEqual(my_model.__dict__.get(key), val)
 
     def test_Entry_delete(self):
         """
         Tests Entry model delete
         """
-        myModel = EntryF.create()
+        my_model = EntryF.create()
 
-        myModel.delete()
+        my_model.delete()
 
         #check if deleted
-        self.assertTrue(myModel.pk is None)
+        self.assertTrue(my_model.pk is None)
 
 
 class TestVersionCRUD(TestCase):
@@ -145,49 +145,49 @@ class TestVersionCRUD(TestCase):
         """
         Tests Version model creation
         """
-        myModel = VersionF.create()
+        my_model = VersionF.create()
 
         #check if PK exists
-        self.assertTrue(myModel.pk is not None)
+        self.assertTrue(my_model.pk is not None)
 
         #check if name exists
-        self.assertTrue(myModel.name is not None)
+        self.assertTrue(my_model.name is not None)
 
     def test_Version_read(self):
         """
         Tests Version model read
         """
-        myModel = VersionF.create(
+        my_model = VersionF.create(
             name=u'Custom Version'
         )
 
-        self.assertTrue(myModel.name == 'Custom Version')
-        self.assertTrue(myModel.slug == 'custom-version')
+        self.assertTrue(my_model.name == 'Custom Version')
+        self.assertTrue(my_model.slug == 'custom-version')
 
     def test_Version_update(self):
         """
         Tests Version model update
         """
-        myModel = VersionF.create()
-        myNewModelData = {
+        my_model = VersionF.create()
+        new_model_data = {
             'name': u'New Version Name',
             'description': u'New description',
             'approved': True
         }
-        myModel.__dict__.update(myNewModelData)
-        myModel.save()
+        my_model.__dict__.update(new_model_data)
+        my_model.save()
 
         #check if updated
-        for key, val in myNewModelData.items():
-            self.assertEqual(myModel.__dict__.get(key), val)
+        for key, val in new_model_data.items():
+            self.assertEqual(my_model.__dict__.get(key), val)
 
     def test_Version_delete(self):
         """
         Tests Version model delete
         """
-        myModel = VersionF.create()
+        my_model = VersionF.create()
 
-        myModel.delete()
+        my_model.delete()
 
         #check if deleted
-        self.assertTrue(myModel.pk is None)
+        self.assertTrue(my_model.pk is None)

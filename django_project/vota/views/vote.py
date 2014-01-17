@@ -15,6 +15,7 @@ from vota.models import Vote, Ballot
 from vota.forms import VoteForm
 
 
+# noinspection PyAttributeOutsideInit
 class VoteCreateUpdateView(LoginRequiredMixin, CreateView):
     context_object_name = 'vote'
     template_name = 'vote/create.html'

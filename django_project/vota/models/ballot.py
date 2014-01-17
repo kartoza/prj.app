@@ -132,6 +132,7 @@ class Ballot(AuditedModel):
     open_objects = OpenBallotManager()
     closed_objects = ClosedBallotManager()
 
+    # noinspection PyClassicStyleClass
     class Meta:
         """Meta options for the category class."""
         unique_together = (
@@ -202,7 +203,7 @@ class Ballot(AuditedModel):
     def is_open(self):
         open_date = self.open_from
         close_date = self.closes
-        if timezone.now() > open_date and timezone.now() < close_date:
+        if open_date < timezone.now() < close_date:
             return True
         return False
 

@@ -1,3 +1,4 @@
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 import factory
 from changes.models.category import Category
 from changes.models.entry import Entry

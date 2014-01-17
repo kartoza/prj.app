@@ -1,7 +1,4 @@
-import logging
 from base.models import Project
-
-logger = logging.getLogger(__name__)
 
 # noinspection PyUnresolvedReferences
 import logging
@@ -17,14 +14,14 @@ from django.views.generic import (
     DetailView,
     UpdateView,
     RedirectView,
-    TemplateView)
+)
 
 from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
-from ..models import Category, Version, Entry
-from ..forms import CategoryForm, VersionForm, EntryForm
+from ..models import Version, Entry
+from ..forms import EntryForm
 
 
 class EntryMixin(object):
@@ -103,7 +100,7 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
         else:
             return qs.filter(creator=self.request.user)
 
-
+# noinspection PyAttributeOutsideInit
 class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
     context_object_name = 'entry'
     template_name = 'entry/create.html'
@@ -138,7 +135,7 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
         })
         return kwargs
 
-
+# noinspection PyAttributeOutsideInit
 class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
     context_object_name = 'entry'
     template_name = 'entry/update.html'
@@ -167,7 +164,7 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
             'version_slug': self.object.version.slug
         })
 
-
+# noinspection PyAttributeOutsideInit
 class PendingEntryListView(EntryMixin,
                            PaginationMixin,
                            ListView,

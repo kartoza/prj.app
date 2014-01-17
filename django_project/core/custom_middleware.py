@@ -143,7 +143,7 @@ def navigation_render(project=None,
     }
 
 
-class NavContextMiddleware:
+class NavContextMiddleware(object):
     """
     Adds the required nav_url to each response.
 
@@ -160,7 +160,12 @@ class NavContextMiddleware:
     :return: If present in response.context, the user is in the changes app and
         will see a list of the project's versions, categories and entries
     """
-    def process_template_response(self, request, response):
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def process_template_response(request, response):
         context = response.context_data
         project = None
         committee = None
@@ -174,7 +179,7 @@ class NavContextMiddleware:
         is_staff = request.user.is_staff
         is_logged_in = request.user.is_authenticated
         if not request.path.startswith(reverse('admin:index')) \
-                and not request.is_ajax():
+            and not request.is_ajax():
             if context.get('project', None):
                 project = context['project']
             if context.get('committee', None):

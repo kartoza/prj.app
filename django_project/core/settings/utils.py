@@ -7,14 +7,14 @@ DJANGO_ROOT = os.path.dirname(
     ))
 
 
-def ABS_PATH(*args):
+def absolute_path(*args):
     return os.path.join(DJANGO_ROOT, *args)
 
 
 def ensure_secret_key_file():
     """Checks that secret.py exists in settings dir. If not, creates one
 with a random generated SECRET_KEY setting."""
-    secret_path = ABS_PATH('core', 'settings', 'secret.py')
+    secret_path = absolute_path('core', 'settings', 'secret.py')
     if not os.path.exists(secret_path):
         from django.utils.crypto import get_random_string
         secret_key = get_random_string(

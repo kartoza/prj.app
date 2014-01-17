@@ -18,68 +18,68 @@ class TestVoteViews(TestCase):
         Setup before each test
         """
         logging.disable(logging.CRITICAL)
-        self.myUser = UserF.create(**{
+        self.my_user = UserF.create(**{
             'username': 'timlinux',
             'password': 'password',
             'is_staff': True
         })
-        self.myProject = ProjectF.create()
-        self.myCommittee = CommitteeF.create(project=self.myProject,
-                                             users=[self.myUser])
-        self.myBallot = BallotF.create(committee=self.myCommittee)
-        self.myVote = VoteF.create(ballot=self.myBallot)
+        self.my_project = ProjectF.create()
+        self.my_committee = CommitteeF.create(project=self.my_project,
+                                             users=[self.my_user])
+        self.my_ballot = BallotF.create(committee=self.my_committee)
+        self.my_vote = VoteF.create(ballot=self.my_ballot)
 
-    def test_VoteCreateView_withLogin(self):
-        myClient = Client()
-        myClient.login(username='timlinux', password='password')
-        myResp = myClient.get(reverse('vote-create', kwargs={
-            'project_slug': self.myProject.slug,
-            'committee_slug': self.myCommittee.slug,
-            'ballot_slug': self.myBallot.slug
+    def test_VoteCreateView_with_login(self):
+        my_client = Client()
+        my_client.login(username='timlinux', password='password')
+        my_resp = my_client.get(reverse('vote-create', kwargs={
+            'project_slug': self.my_project.slug,
+            'committee_slug': self.my_committee.slug,
+            'ballot_slug': self.my_ballot.slug
         }))
-        self.assertEqual(myResp.status_code, 200)
-        expectedTemplates = [
+        self.assertEqual(my_resp.status_code, 200)
+        expected_templates = [
             'vote/create.html'
         ]
-        self.assertEqual(myResp.template_name, expectedTemplates)
+        self.assertEqual(my_resp.template_name, expected_templates)
 
-    def test_VoteCreateView_noLogin(self):
-        myClient = Client()
-        myResp = myClient.get(reverse('vote-create', kwargs={
-            'project_slug': self.myProject.slug,
-            'committee_slug': self.myCommittee.slug,
-            'ballot_slug': self.myBallot.slug
+    def test_VoteCreateView_no_login(self):
+        my_client = Client()
+        response = my_client.get(reverse('vote-create', kwargs={
+            'project_slug': self.my_project.slug,
+            'committee_slug': self.my_committee.slug,
+            'ballot_slug': self.my_ballot.slug
         }))
-        self.assertEqual(myResp.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
-    def test_VoteCreate_withLogin(self):
-        myClient = Client()
-        myClient.login(username='timlinux', password='password')
-        postData = {
+    def test_VoteCreate_with_login(self):
+        my_client = Client()
+        my_client.login(username='timlinux', password='password')
+        post_data = {
             'choice': 'n'
         }
-        myResp = myClient.post(reverse('vote-create', kwargs={
-            'project_slug': self.myProject.slug,
-            'committee_slug': self.myCommittee.slug,
-            'ballot_slug': self.myBallot.slug
-        }), postData)
-        jsonReturn = myResp.content
-        data = json.loads(jsonReturn)
+        response = my_client.post(reverse('vote-create', kwargs={
+            'project_slug': self.my_project.slug,
+            'committee_slug': self.my_committee.slug,
+            'ballot_slug': self.my_ballot.slug
+        }), post_data)
+        json_return = response.content
+        data = json.loads(json_return)
         self.assertTrue(data['successful'])
 
-    def test_VoteCreate_nologin(self):
-        myClient = Client()
-        postData = {
+    def test_VoteCreate_no_login(self):
+        my_client = Client()
+        post_data = {
             'positive': True,
             'abstain': False,
             'negative': False
         }
-        myResp = myClient.post(reverse('vote-create', kwargs={
-            'project_slug': self.myProject.slug,
-            'committee_slug': self.myCommittee.slug,
-            'ballot_slug': self.myBallot.slug
-        }), postData)
-        self.assertEqual(myResp.status_code, 302)
+        response = my_client.post(reverse('vote-create', kwargs={
+            'project_slug': self.my_project.slug,
+            'committee_slug': self.my_committee.slug,
+            'ballot_slug': self.my_ballot.slug
+        }), post_data)
+        self.assertEqual(response.status_code, 302)
 
 
 class TestBallotViews(TestCase):
@@ -90,218 +90,217 @@ class TestBallotViews(TestCase):
         Setup before each test
         """
         logging.disable(logging.CRITICAL)
-        self.myUser = UserF.create(**{
+        self.my_user = UserF.create(**{
             'username': 'timlinux',
             'password': 'password',
             'is_staff': True
         })
-        self.myProject = ProjectF.create()
-        self.myCommittee = CommitteeF.create(project=self.myProject,
-                                             users=[self.myUser])
-        self.myBallot = BallotF.create(committee=self.myCommittee)
+        self.my_project = ProjectF.create()
+        self.my_committee = CommitteeF.create(project=self.my_project,
+                                             users=[self.my_user])
+        self.my_ballot = BallotF.create(committee=self.my_committee)
 
-    def test_BallotDetailView_noLogin(self):
-        myClient = Client()
-        myResp = myClient.get(reverse('ballot-detail', kwargs={
-            'project_slug': self.myProject.slug,
-            'committee_slug': self.myCommittee.slug,
-            'slug': self.myCommittee.slug
+    def test_BallotDetailView_no_login(self):
+        my_client = Client()
+        response = my_client.get(reverse('ballot-detail', kwargs={
+            'project_slug': self.my_project.slug,
+            'committee_slug': self.my_committee.slug,
+            'slug': self.my_committee.slug
         }))
-        self.assertEqual(myResp.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
-    def test_BallotDetailView_withLogin(self):
-        myClient = Client()
-        myClient.login(username='timlinux', password='password')
-        myResp = myClient.get(reverse('ballot-detail', kwargs={
-            'project_slug': self.myProject.slug,
-            'committee_slug': self.myCommittee.slug,
-            'slug': self.myBallot.slug
+    def test_BallotDetailView_with_login(self):
+        my_client = Client()
+        my_client.login(username='timlinux', password='password')
+        response = my_client.get(reverse('ballot-detail', kwargs={
+            'project_slug': self.my_project.slug,
+            'committee_slug': self.my_committee.slug,
+            'slug': self.my_ballot.slug
         }))
-        self.assertEqual(myResp.status_code, 200)
-        expectedTemplates = [
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
             'ballot/detail.html'
         ]
-        self.assertEqual(myResp.template_name, expectedTemplates)
-        self.assertEqual(myResp.context_data['ballot'],
-                         self.myBallot)
+        self.assertEqual(response.template_name, expected_templates)
+        self.assertEqual(response.context_data['ballot'],
+                         self.my_ballot)
 
-    def test_BallotCreateView_withLogin(self):
-        myClient = Client()
-        myClient.login(username='timlinux', password='password')
-        myResp = myClient.get(reverse('ballot-create', kwargs={
-            'project_slug': self.myProject.slug,
-            'committee_slug': self.myCommittee.slug
+    def test_BallotCreateView_with_login(self):
+        my_client = Client()
+        my_client.login(username='timlinux', password='password')
+        response = my_client.get(reverse('ballot-create', kwargs={
+            'project_slug': self.my_project.slug,
+            'committee_slug': self.my_committee.slug
         }))
-        self.assertEqual(myResp.status_code, 200)
-        expectedTemplates = [
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
             'ballot/create.html'
         ]
-        self.assertEqual(myResp.template_name, expectedTemplates)
+        self.assertEqual(response.template_name, expected_templates)
 
-    def test_BallotCreateView_noLogin(self):
-        myClient = Client()
-        myResp = myClient.get(reverse('ballot-create', kwargs={
-            'project_slug': self.myProject.slug,
-            'committee_slug': self.myCommittee.slug
+    def test_BallotCreateView_no_login(self):
+        my_client = Client()
+        response = my_client.get(reverse('ballot-create', kwargs={
+            'project_slug': self.my_project.slug,
+            'committee_slug': self.my_committee.slug
         }))
-        self.assertEqual(myResp.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
-    def test_BallotCreate_withLogin(self):
-        myClient = Client()
-        myClient.login(username='timlinux', password='password')
-        postData = {
-            'committee': self.myCommittee.id,
+    def test_BallotCreate_with_login(self):
+        my_client = Client()
+        my_client.login(username='timlinux', password='password')
+        post_data = {
+            'committee': self.my_committee.id,
             'name': u'New Test Ballot',
             'summary': u'New test summary',
             'description': u'New test description',
             'open_from': datetime.datetime.now() - datetime.timedelta(days=7),
             'closes': datetime.datetime.now() + datetime.timedelta(days=7),
             'private': True,
-            'proposer': self.myUser.id
+            'proposer': self.my_user.id
         }
-        myResp = myClient.post(reverse('ballot-create', kwargs={
-            'project_slug': self.myProject.slug,
-            'committee_slug': self.myCommittee.slug
-        }), postData)
-        self.assertRedirects(myResp, reverse('ballot-detail', kwargs={
-            'project_slug': self.myProject.slug,
-            'committee_slug': self.myCommittee.slug,
+        response = my_client.post(reverse('ballot-create', kwargs={
+            'project_slug': self.my_project.slug,
+            'committee_slug': self.my_committee.slug
+        }), post_data)
+        self.assertRedirects(response, reverse('ballot-detail', kwargs={
+            'project_slug': self.my_project.slug,
+            'committee_slug': self.my_committee.slug,
             'slug': 'new-test-ballot'
-        }), status_code=302)
+        }))
 
-    def test_BallotCreate_nologin(self):
-        myClient = Client()
-        postData = {
-            'committee': self.myCommittee.id,
+    def test_BallotCreate_no_login(self):
+        my_client = Client()
+        post_data = {
+            'committee': self.my_committee.id,
             'name': u'New Test Ballot No Login',
             'summary': u'New test summary',
             'description': u'New test description',
             'open_from': datetime.datetime.now() - datetime.timedelta(days=7),
             'closes': datetime.datetime.now() + datetime.timedelta(days=7),
             'private': True,
-            'proposer': self.myUser.id
+            'proposer': self.my_user.id
         }
-        myResp = myClient.post(reverse('ballot-create', kwargs={
-            'project_slug': self.myProject.slug,
-            'committee_slug': self.myCommittee.slug
-        }), postData)
-        self.assertEqual(myResp.status_code, 302)
+        response = my_client.post(reverse('ballot-create', kwargs={
+            'project_slug': self.my_project.slug,
+            'committee_slug': self.my_committee.slug
+        }), post_data)
+        self.assertEqual(response.status_code, 302)
 
-    def test_BallotUpdateView_withLogin(self):
-        myClient = Client()
-        myClient.login(username='timlinux', password='password')
-        myResp = myClient.get(reverse('ballot-update', kwargs={
-            'project_slug': self.myBallot.committee.project.slug,
-            'committee_slug': self.myBallot.committee.slug,
-            'slug': self.myBallot.slug
+    def test_BallotUpdateView_with_login(self):
+        my_client = Client()
+        my_client.login(username='timlinux', password='password')
+        response = my_client.get(reverse('ballot-update', kwargs={
+            'project_slug': self.my_ballot.committee.project.slug,
+            'committee_slug': self.my_ballot.committee.slug,
+            'slug': self.my_ballot.slug
         }))
-        self.assertEqual(myResp.status_code, 200)
-        expectedTemplates = [
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
             'ballot/update.html'
         ]
-        self.assertEqual(myResp.template_name, expectedTemplates)
+        self.assertEqual(response.template_name, expected_templates)
 
-    def test_BallotUpdateView_noLogin(self):
-        myClient = Client()
-        myResp = myClient.get(reverse('ballot-update', kwargs={
-            'project_slug': self.myBallot.committee.project.slug,
-            'committee_slug': self.myBallot.committee.slug,
-            'slug': self.myBallot.slug
+    def test_BallotUpdateView_no_login(self):
+        my_client = Client()
+        response = my_client.get(reverse('ballot-update', kwargs={
+            'project_slug': self.my_ballot.committee.project.slug,
+            'committee_slug': self.my_ballot.committee.slug,
+            'slug': self.my_ballot.slug
         }))
-        self.assertEqual(myResp.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
-    def test_BallotUpdate_withLogin(self):
-        myClient = Client()
-        myClient.login(username='timlinux', password='password')
-        postData = {
-            'committee': self.myCommittee.id,
+    def test_BallotUpdate_with_login(self):
+        my_client = Client()
+        my_client.login(username='timlinux', password='password')
+        post_data = {
+            'committee': self.my_committee.id,
             'name': u'New Test Ballot Update',
             'summary': u'New test summary',
             'description': u'New test description',
             'open_from': datetime.datetime.now() - datetime.timedelta(days=7),
             'closes': datetime.datetime.now() + datetime.timedelta(days=7),
             'private': True,
-            'proposer': self.myUser.id
+            'proposer': self.my_user.id
         }
-        myResp = myClient.post(reverse('ballot-update', kwargs={
-            'project_slug': self.myBallot.committee.project.slug,
-            'committee_slug': self.myBallot.committee.slug,
-            'slug': self.myBallot.slug
-        }), postData)
-        self.assertRedirects(myResp, reverse('ballot-detail', kwargs={
-            'project_slug': self.myProject.slug,
-            'committee_slug': self.myCommittee.slug,
-            'slug': self.myBallot.slug
-        }), status_code=302)
+        response = my_client.post(reverse('ballot-update', kwargs={
+            'project_slug': self.my_ballot.committee.project.slug,
+            'committee_slug': self.my_ballot.committee.slug,
+            'slug': self.my_ballot.slug
+        }), post_data)
+        self.assertRedirects(response, reverse('ballot-detail', kwargs={
+            'project_slug': self.my_project.slug,
+            'committee_slug': self.my_committee.slug,
+            'slug': self.my_ballot.slug
+        }))
 
-    def test_BallotUpdate_nologin(self):
-        myClient = Client()
-        postData = {
-            'committee': self.myCommittee.id,
+    def test_BallotUpdate_no_login(self):
+        my_client = Client()
+        post_data = {
+            'committee': self.my_committee.id,
             'name': u'New Test Ballot Updated',
             'summary': u'New test summary',
             'description': u'New test description',
             'open_from': datetime.datetime.now() - datetime.timedelta(days=7),
             'closes': datetime.datetime.now() + datetime.timedelta(days=7),
             'private': True,
-            'proposer': self.myUser.id
+            'proposer': self.my_user.id
         }
-        myResp = myClient.post(reverse('ballot-update', kwargs={
-            'project_slug': self.myBallot.committee.project.slug,
-            'committee_slug': self.myBallot.committee.slug,
-            'slug': self.myBallot.slug
-        }), postData)
-        self.assertEqual(myResp.status_code, 302)
+        response = my_client.post(reverse('ballot-update', kwargs={
+            'project_slug': self.my_ballot.committee.project.slug,
+            'committee_slug': self.my_ballot.committee.slug,
+            'slug': self.my_ballot.slug
+        }), post_data)
+        self.assertEqual(response.status_code, 302)
 
-    def test_BallotDeleteView_withlogin(self):
-        myClient = Client()
-        myClient.login(username='timlinux', password='password')
-        myResp = myClient.get(reverse('ballot-delete', kwargs={
-            'slug': self.myBallot.slug,
-            'committee_slug': self.myBallot.committee.slug,
-            'project_slug': self.myBallot.committee.project.slug
+    def test_BallotDeleteView_with_login(self):
+        my_client = Client()
+        my_client.login(username='timlinux', password='password')
+        response = my_client.get(reverse('ballot-delete', kwargs={
+            'slug': self.my_ballot.slug,
+            'committee_slug': self.my_ballot.committee.slug,
+            'project_slug': self.my_ballot.committee.project.slug
         }))
-        self.assertEqual(myResp.status_code, 200)
-        expectedTemplates = [
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
             'ballot/delete.html'
         ]
-        self.assertEqual(myResp.template_name, expectedTemplates)
+        self.assertEqual(response.template_name, expected_templates)
 
-    def test_BallotDeleteView_nologin(self):
-        myClient = Client()
-        myResp = myClient.get(reverse('ballot-delete', kwargs={
-            'slug': self.myBallot.slug,
-            'committee_slug': self.myBallot.committee.slug,
-            'project_slug': self.myBallot.committee.project.slug
+    def test_BallotDeleteView_no_login(self):
+        my_client = Client()
+        response = my_client.get(reverse('ballot-delete', kwargs={
+            'slug': self.my_ballot.slug,
+            'committee_slug': self.my_ballot.committee.slug,
+            'project_slug': self.my_ballot.committee.project.slug
         }))
-        self.assertEqual(myResp.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
-    def test_BallotDelete_withLogin(self):
-        myClient = Client()
-        ballotToDelete = BallotF.create(committee=self.myCommittee)
-        myClient.login(username='timlinux', password='password')
-        myResp = myClient.post(reverse('ballot-delete', kwargs={
-            'slug': ballotToDelete.slug,
-            'committee_slug': ballotToDelete.committee.slug,
-            'project_slug': ballotToDelete.committee.project.slug
+    def test_BallotDelete_with_login(self):
+        my_client = Client()
+        ballot_to_delete = BallotF.create(committee=self.my_committee)
+        my_client.login(username='timlinux', password='password')
+        response = my_client.post(reverse('ballot-delete', kwargs={
+            'slug': ballot_to_delete.slug,
+            'committee_slug': ballot_to_delete.committee.slug,
+            'project_slug': ballot_to_delete.committee.project.slug
         }), {})
-        self.assertRedirects(myResp, reverse('committee-detail', kwargs={
-            'slug': self.myCommittee.slug,
-            'project_slug': self.myProject.slug
-        }), status_code=302)
-        #TODO: The following line to test that the object is deleted does not
-        #currently pass as expected.
-        #self.assertTrue(categoryToDelete.pk is None)
-
-    def test_BallotDelete_noLogin(self):
-        myClient = Client()
-        ballotToDelete = BallotF.create(committee=self.myCommittee)
-        myResp = myClient.post(reverse('ballot-delete', kwargs={
-            'slug': ballotToDelete.slug,
-            'committee_slug': ballotToDelete.committee.slug,
-            'project_slug': self.myCommittee.project.slug
+        self.assertRedirects(response, reverse('committee-detail', kwargs={
+            'slug': self.my_committee.slug,
+            'project_slug': self.my_project.slug
         }))
-        self.assertEqual(myResp.status_code, 302)
+        #TODO: The following line to test that the object is deleted does not currently pass as expected.
+        #self.assertTrue(category_to_delete.pk is None)
+
+    def test_BallotDelete_no_login(self):
+        my_client = Client()
+        ballot_to_delete = BallotF.create(committee=self.my_committee)
+        response = my_client.post(reverse('ballot-delete', kwargs={
+            'slug': ballot_to_delete.slug,
+            'committee_slug': ballot_to_delete.committee.slug,
+            'project_slug': self.my_committee.project.slug
+        }))
+        self.assertEqual(response.status_code, 302)
 
 
 class TestCommitteeViews(TestCase):
@@ -312,180 +311,179 @@ class TestCommitteeViews(TestCase):
         Setup before each test
         """
         logging.disable(logging.CRITICAL)
-        self.myUser = UserF.create(**{
+        self.my_user = UserF.create(**{
             'username': 'timlinux',
             'password': 'password',
             'is_staff': True
         })
-        self.myProject = ProjectF.create()
-        self.myCommittee = CommitteeF.create(project=self.myProject,
-                                             users=[self.myUser])
+        self.my_project = ProjectF.create()
+        self.my_committee = CommitteeF.create(project=self.my_project,
+                                             users=[self.my_user])
 
     def test_CommitteeDetailView(self):
-        myClient = Client()
-        myResp = myClient.get(reverse('committee-detail', kwargs={
-            'project_slug': self.myProject.slug,
-            'slug': self.myCommittee.slug
+        my_client = Client()
+        response = my_client.get(reverse('committee-detail', kwargs={
+            'project_slug': self.my_project.slug,
+            'slug': self.my_committee.slug
         }))
-        self.assertEqual(myResp.status_code, 200)
-        expectedTemplates = [
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
             'committee/detail.html'
         ]
-        self.assertEqual(myResp.template_name, expectedTemplates)
-        self.assertEqual(myResp.context_data['committee'],
-                         self.myCommittee)
+        self.assertEqual(response.template_name, expected_templates)
+        self.assertEqual(response.context_data['committee'],
+                         self.my_committee)
 
-    def test_CommitteeCreateView_withLogin(self):
-        myClient = Client()
-        myClient.login(username='timlinux', password='password')
-        myResp = myClient.get(reverse('committee-create', kwargs={
-            'project_slug': self.myProject.slug
+    def test_CommitteeCreateView_with_login(self):
+        my_client = Client()
+        my_client.login(username='timlinux', password='password')
+        response = my_client.get(reverse('committee-create', kwargs={
+            'project_slug': self.my_project.slug
         }))
-        self.assertEqual(myResp.status_code, 200)
-        expectedTemplates = [
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
             'committee/create.html'
         ]
-        self.assertEqual(myResp.template_name, expectedTemplates)
+        self.assertEqual(response.template_name, expected_templates)
 
-    def test_CommitteeCreateView_noLogin(self):
-        myClient = Client()
-        myResp = myClient.get(reverse('committee-create', kwargs={
-            'project_slug': self.myProject.slug
+    def test_CommitteeCreateView_no_login(self):
+        my_client = Client()
+        response = my_client.get(reverse('committee-create', kwargs={
+            'project_slug': self.my_project.slug
         }))
-        self.assertEqual(myResp.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
-    def test_CommitteeCreate_withLogin(self):
-        myClient = Client()
-        myClient.login(username='timlinux', password='password')
-        postData = {
-            'project': self.myProject.id,
+    def test_CommitteeCreate_with_login(self):
+        my_client = Client()
+        my_client.login(username='timlinux', password='password')
+        post_data = {
+            'project': self.my_project.id,
             'name': u'New Test Committee',
             'description': u'New test description',
             'sort_number': 1,
             'quorum_setting': u'50',
-            'chair': self.myUser.id,
-            'users': [self.myUser.id]
+            'chair': self.my_user.id,
+            'users': [self.my_user.id]
         }
-        myResp = myClient.post(reverse('committee-create', kwargs={
-            'project_slug': self.myProject.slug
-        }), postData)
-        self.assertRedirects(myResp, reverse('committee-detail', kwargs={
-            'project_slug': self.myProject.slug,
+        response = my_client.post(reverse('committee-create', kwargs={
+            'project_slug': self.my_project.slug
+        }), post_data)
+        self.assertRedirects(response, reverse('committee-detail', kwargs={
+            'project_slug': self.my_project.slug,
             'slug': 'new-test-committee'
-        }), status_code=302)
+        }))
 
-    def test_CommitteeCreate_nologin(self):
-        myClient = Client()
-        postData = {
+    def test_CommitteeCreate_no_login(self):
+        my_client = Client()
+        post_data = {
             'positive': True,
             'abstain': False,
             'negative': False
         }
-        myResp = myClient.post(reverse('committee-create', kwargs={
-            'project_slug': self.myProject.slug
-        }), postData)
-        self.assertEqual(myResp.status_code, 302)
+        response = my_client.post(reverse('committee-create', kwargs={
+            'project_slug': self.my_project.slug
+        }), post_data)
+        self.assertEqual(response.status_code, 302)
 
-    def test_CommitteeUpdateView_withLogin(self):
-        myClient = Client()
-        myClient.login(username='timlinux', password='password')
-        myResp = myClient.get(reverse('committee-update', kwargs={
-            'project_slug': self.myCommittee.project.slug,
-            'slug': self.myCommittee.slug
+    def test_CommitteeUpdateView_with_login(self):
+        my_client = Client()
+        my_client.login(username='timlinux', password='password')
+        response = my_client.get(reverse('committee-update', kwargs={
+            'project_slug': self.my_committee.project.slug,
+            'slug': self.my_committee.slug
         }))
-        self.assertEqual(myResp.status_code, 200)
-        expectedTemplates = [
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
             'committee/update.html'
         ]
-        self.assertEqual(myResp.template_name, expectedTemplates)
+        self.assertEqual(response.template_name, expected_templates)
 
-    def test_CommitteeUpdateView_noLogin(self):
-        myClient = Client()
-        myResp = myClient.get(reverse('committee-update', kwargs={
-            'project_slug': self.myCommittee.project.slug,
-            'slug': self.myCommittee.slug
+    def test_CommitteeUpdateView_no_login(self):
+        my_client = Client()
+        response = my_client.get(reverse('committee-update', kwargs={
+            'project_slug': self.my_committee.project.slug,
+            'slug': self.my_committee.slug
         }))
-        self.assertEqual(myResp.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
-    def test_CommitteeUpdate_withLogin(self):
-        myClient = Client()
-        myClient.login(username='timlinux', password='password')
-        postData = {
-            'project': self.myProject.id,
+    def test_CommitteeUpdate_with_login(self):
+        my_client = Client()
+        my_client.login(username='timlinux', password='password')
+        post_data = {
+            'project': self.my_project.id,
             'name': u'New Test Committee Updated',
             'description': u'New test description',
             'sort_number': 1,
             'quorum_setting': u'100',
-            'chair': self.myUser.id,
-            'users': [self.myUser.id]
+            'chair': self.my_user.id,
+            'users': [self.my_user.id]
         }
-        myResp = myClient.post(reverse('committee-update', kwargs={
-            'project_slug': self.myCommittee.project.slug,
-            'slug': self.myCommittee.slug
-        }), postData)
-        self.assertRedirects(myResp, reverse('committee-detail', kwargs={
-            'project_slug': self.myProject.slug,
-            'slug': self.myCommittee.slug
-        }), status_code=302)
+        response = my_client.post(reverse('committee-update', kwargs={
+            'project_slug': self.my_committee.project.slug,
+            'slug': self.my_committee.slug
+        }), post_data)
+        self.assertRedirects(response, reverse('committee-detail', kwargs={
+            'project_slug': self.my_project.slug,
+            'slug': self.my_committee.slug
+        }))
 
-    def test_CommitteeUpdate_nologin(self):
-        myClient = Client()
-        postData = {
-            'project': self.myProject.id,
+    def test_CommitteeUpdate_no_login(self):
+        my_client = Client()
+        post_data = {
+            'project': self.my_project.id,
             'name': u'New Test Committee',
             'description': u'New test description',
             'sort_number': 1,
             'quorum_setting': u'50',
-            'chair': self.myUser.id,
-            'users': [self.myUser.id]
+            'chair': self.my_user.id,
+            'users': [self.my_user.id]
         }
-        myResp = myClient.post(reverse('committee-update', kwargs={
-            'project_slug': self.myCommittee.project.slug,
-            'slug': self.myCommittee.slug
-        }), postData)
-        self.assertEqual(myResp.status_code, 302)
+        response = my_client.post(reverse('committee-update', kwargs={
+            'project_slug': self.my_committee.project.slug,
+            'slug': self.my_committee.slug
+        }), post_data)
+        self.assertEqual(response.status_code, 302)
 
-    def test_CommitteeDeleteView_withlogin(self):
-        myClient = Client()
-        myClient.login(username='timlinux', password='password')
-        myResp = myClient.get(reverse('committee-delete', kwargs={
-            'slug': self.myCommittee.slug,
-            'project_slug': self.myCommittee.project.slug
+    def test_CommitteeDeleteView_with_login(self):
+        my_client = Client()
+        my_client.login(username='timlinux', password='password')
+        response = my_client.get(reverse('committee-delete', kwargs={
+            'slug': self.my_committee.slug,
+            'project_slug': self.my_committee.project.slug
         }))
-        self.assertEqual(myResp.status_code, 200)
-        expectedTemplates = [
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
             'committee/delete.html'
         ]
-        self.assertEqual(myResp.template_name, expectedTemplates)
+        self.assertEqual(response.template_name, expected_templates)
 
-    def test_CommitteeDeleteView_nologin(self):
-        myClient = Client()
-        myResp = myClient.get(reverse('committee-delete', kwargs={
-            'slug': self.myCommittee.slug,
-            'project_slug': self.myCommittee.project.slug
+    def test_CommitteeDeleteView_no_login(self):
+        my_client = Client()
+        response = my_client.get(reverse('committee-delete', kwargs={
+            'slug': self.my_committee.slug,
+            'project_slug': self.my_committee.project.slug
         }))
-        self.assertEqual(myResp.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
-    def test_CommitteeDelete_withLogin(self):
-        myClient = Client()
-        committeeToDelete = CommitteeF.create(project=self.myProject)
-        myClient.login(username='timlinux', password='password')
-        myResp = myClient.post(reverse('committee-delete', kwargs={
-            'slug': committeeToDelete.slug,
-            'project_slug': committeeToDelete.project.slug
+    def test_CommitteeDelete_with_login(self):
+        my_client = Client()
+        committee_to_delete = CommitteeF.create(project=self.my_project)
+        my_client.login(username='timlinux', password='password')
+        response = my_client.post(reverse('committee-delete', kwargs={
+            'slug': committee_to_delete.slug,
+            'project_slug': committee_to_delete.project.slug
         }), {})
-        self.assertRedirects(myResp, reverse('project-detail', kwargs={
-            'slug': self.myProject.slug
-        }), status_code=302)
-        #TODO: The following line to test that the object is deleted does not
-        #currently pass as expected.
-        #self.assertTrue(categoryToDelete.pk is None)
-
-    def test_CategoryDelete_noLogin(self):
-        myClient = Client()
-        committeeToDelete = CommitteeF.create()
-        myResp = myClient.post(reverse('category-delete', kwargs={
-            'slug': committeeToDelete.slug,
-            'project_slug': self.myCommittee.project.slug
+        self.assertRedirects(response, reverse('project-detail', kwargs={
+            'slug': self.my_project.slug
         }))
-        self.assertEqual(myResp.status_code, 302)
+        #TODO: The following line to test that the object is deleted does not currently pass as expected.
+        #self.assertTrue(category_to_delete.pk is None)
+
+    def test_CategoryDelete_no_login(self):
+        my_client = Client()
+        committee_to_delete = CommitteeF.create()
+        response = my_client.post(reverse('category-delete', kwargs={
+            'slug': committee_to_delete.slug,
+            'project_slug': self.my_committee.project.slug
+        }))
+        self.assertEqual(response.status_code, 302)
