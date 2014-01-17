@@ -6,5 +6,5 @@ projecta
 [![Build Status](http://jenkins.linfiniti.com/buildStatus/icon?job=Projecta)](http://jenkins.linfiniti.com/job/Projecta/)
 
 
-A django app for creating visual changelogs for software releases, and for managing an software project at a high level.
+A django app for creating visual changelogs for software releases, and for managing a software project at a high level.
 
