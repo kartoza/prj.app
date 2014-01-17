@@ -7,45 +7,50 @@
 {% endblock %}
 
 {% block page_title %}
-    <h1>Ballot Delete</h1>
+  <h1>Ballot Delete</h1>
 {% endblock page_title %}
 
 {% block content %}
-    <form action="" id="delete-confirmation" method="post">{% csrf_token %}
-        <div class="alert row">
-            <div class="col-lg-10">
-                Please confirm you wish to delete the ballot below!
-            </div>
-            <div class="col-lg-2">
-                <div class="btn-group btn-group-justified">
-                    <a class="btn btn-danger btn-mini"
-                        href="#"
-                        onClick="$('#delete-confirmation').submit()">Delete</a>
-
-                    <a class="btn btn-success btn-mini"
-                        href='{% url "committee-detail" project_slug=ballot.committee.project.slug slug=ballot.committee.slug %}'>Cancel</a>
-                </div>
-            </div>
+  <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+    <div class="alert row">
+      <div class="col-lg-10">
+        <p class="lead">Please confirm you wish to delete the ballot below!</p>
+      </div>
+      <div class="col-lg-2">
+        <div class="btn-group">
+          <a class="btn btn-default btn-sm tooltip-toggle"
+             href="#"
+             onClick="$('#delete-confirmation').submit();"
+             data-title="Delete {{ ballot.title }}">
+            <span class="glyphicon glyphicon-minus"></span>
+          </a>
+          <a class="btn btn-default btn-sm tooltip-toggle"
+             href='{% url "committee-detail" project_slug=ballot.committee.project.slug slug=ballot.committee.slug %}'
+             data-title="Cancel">
+            <span class="glyphicon glyphicon-arrow-left"></span>
+          </a>
         </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="media-body">
-                    <h3 class="media-heading">
-                        Ballot: <b>{{ ballot.name }}</b>
-                    </h3>
-                </div>
-            </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="media-body">
+          <h3 class="media-heading">
+            Ballot: <b>{{ ballot.name }}</b>
+          </h3>
         </div>
-        <div class="row">
-            <div class="col-lg-8">
-                {{ ballot.description|base_markdown }}
-            </div>
-            <div class="col-lg-4">
-                {% if ballot.image_file %}
-                <img class="img-responsive img-rounded"
-                     src="{{ MEDIA_URL }}{{ ballot.image_file }}" />
-                {%  endif %}
-            </div>
-        </div>
-    </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-8">
+        {{ ballot.description|base_markdown }}
+      </div>
+      <div class="col-lg-4">
+        {% if ballot.image_file %}
+          <img class="img-responsive img-rounded"
+               src="{{ MEDIA_URL }}{{ ballot.image_file }}" />
+        {%  endif %}
+      </div>
+    </div>
+  </form>
 {% endblock %}

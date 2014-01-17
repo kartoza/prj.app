@@ -79,26 +79,95 @@ class EntryDetailView(EntryMixin, DetailView):
             else:
                 raise Http404('Sorry! We could not find your entry!')
 
-
+# noinspection PyAttributeOutsideInit
 class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
+    """
+    The view for deleting Entry objects
+    """
     context_object_name = 'entry'
     template_name = 'entry/delete.html'
 
+    def get(self, request, *args, **kwargs):
+        """Access URL parameters
+
+        We need to define self.project and self.version
+
+        :param request: HTTP request object
+        :type request: Request
+
+        :param args: None
+        :type args: dict
+
+        :param kwargs: (django dictionary)
+        :type kwargs: dict
+
+        """
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        self.version_slug = self.kwargs.get('version_slug', None)
+        self.version = Version.objects.filter(project=self.project) \
+            .get(slug=self.version_slug)
+        return super(EntryDeleteView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """Access URL parameters
+
+        We need to define self.project and self.version
+
+        :param request: HTTP request object
+        :type request: Request
+
+        :param args: None
+        :type args: dict
+
+        :param kwargs: (django dictionary)
+        :type kwargs: dict
+
+        """
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        self.version_slug = self.kwargs.get('version_slug', None)
+        self.version = Version.objects.filter(project=self.project) \
+            .get(slug=self.version_slug)
+        return super(EntryDeleteView, self).post(request, *args, **kwargs)
+
     def get_success_url(self):
+        """Define the redirect URL
+
+        After successful deletion of the object, the User will be redirected
+            to the Entry list page for the object's parent Version and Project
+
+        :return: URL
+        :rtype: HttpResponse
+
+        """
         return reverse('entry-list', kwargs={
             'project_slug': self.object.version.project.slug,
             'version_slug': self.object.version.slug
         })
 
     def get_queryset(self):
+        """Define the queryset for this view
+
+        We need to filter the queryset based on the object's parent Version and
+            Project as defined in the URL to ensure that we return the correct
+            object. If the requesting User is not authenticated, raise Http404.
+            If the requesting User is not staff, only return Entry objects which
+            the User has authored.
+
+        :return: Entry queryset
+        :rtype: QuerySet
+
+        :raise Http404: If the User not not authenticated
+
+        """
         if not self.request.user.is_authenticated():
             raise Http404
-        qs = Entry.objects.all()
-
+        qs = Entry.objects.filter(version=self.version)
         if self.request.user.is_staff:
             return qs
         else:
-            return qs.filter(creator=self.request.user)
+            return qs.filter(author=self.request.user)
 
 # noinspection PyAttributeOutsideInit
 class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):

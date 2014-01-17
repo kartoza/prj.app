@@ -162,11 +162,45 @@ class CategoryDetailView(CategoryMixin, DetailView):
             else:
                 raise Http404('Sorry! We could not find your category!')
 
-
+# noinspection PyAttributeOutsideInit
 class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
     """A view for deleting categories."""
     context_object_name = 'category'
     template_name = 'category/delete.html'
+
+    def get(self, request, *args, **kwargs):
+        """Get the project_slug from the URL and define the Project
+
+        :param request: HTTP request object
+        :type request: Request
+
+        :param args: None
+        :type args: dict
+
+        :param kwargs: (django dictionary)
+        :type kwargs: dict
+
+        """
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        return super(CategoryDeleteView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """Get the project_slug from the URL and define the Project
+
+        :param request: HTTP request object
+        :type request: Request
+
+        :param args: None
+        :type args: dict
+
+        :param kwargs: (django dictionary)
+        :type kwargs: dict
+
+        """
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        return super(CategoryDeleteView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
         """Get the url for when the operation was successful.
@@ -181,18 +215,18 @@ class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which shows all versions if user.is_staff or
-                the creator's versions if not user.is_staff.
+        We need to filter the Category objects by Project before passing to
+            get_object() to ensure that we return the correct Category object.
+            The requesting User must be authenticated
+
+        :returns: Category queryset filtered by Project
         :rtype: QuerySet
+        :raise Http404: If User is not authenticated
         """
         if not self.request.user.is_authenticated():
             raise Http404
-
-        qs = Category.objects.all()
-        if self.request.user.is_staff:
-            return qs
-        else:
-            return qs.filter(creator=self.request.user)
+        qs = Category.objects.filter(project=self.project)
+        return qs
 
 # noinspection PyAttributeOutsideInit
 class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):

@@ -144,18 +144,97 @@ class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
             'slug': self.object.slug
         })
 
-
+# noinspection PyAttributeOutsideInit
 class BallotDeleteView(StaffuserRequiredMixin, BallotMixin, DeleteView):
+    """The view for deleting a Ballot object.
+
+    Accepts GET requests, returning a confirmation page and POST requests to
+        confirm and trigger Ballot deletion.
+
+    """
     context_object_name = 'ballot'
     template_name = 'ballot/delete.html'
 
+    def get(self, request, *args, **kwargs):
+        """Access URL parameters
+
+        We need to define the Ballot object's parent Committee and Project in
+            order to ensure that we return the correct Ballot.
+
+        :param request: Request object
+        :type request: dict
+
+        :param args: None
+        :type args: dict
+
+        :param kwargs: (django dict)
+        :type kwargs: dict
+
+        :return: Super class
+        :rtype: Request object
+
+        """
+        self.project_slug = kwargs.get('project_slug', None)
+        self.committee_slug = kwargs.get('committee_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        self.committee = Committee.objects.filter(project=self.project) \
+            .get(slug=self.committee_slug)
+        return super(BallotDeleteView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """Access URL parameters
+
+        We need to define the Ballot object's parent Committee and Project in
+            order to ensure that we return the correct Ballot.
+
+        :param request: Request object
+        :type request: dict
+
+        :param args: None
+        :type args: dict
+
+        :param kwargs: (django dict)
+        :type kwargs: dict
+
+        :return: Super class
+        :rtype: Request object
+
+        """
+        self.project_slug = kwargs.get('project_slug', None)
+        self.committee_slug = kwargs.get('committee_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        self.committee = Committee.objects.filter(project=self.project) \
+            .get(slug=self.committee_slug)
+        return super(BallotDeleteView, self).post(request, *args, **kwargs)
+
     def get_success_url(self):
+        """Define the redirect URL
+
+        The user will be redirected to the detail view for the deleted Ballot
+            object's parent Committee
+
+        :return: Reversed URL
+        :rtype: HttpResponse
+
+        """
         return reverse('committee-detail', kwargs={
-            'project_slug': self.object.committee.project.slug,
-            'slug': self.object.committee.slug
+            'project_slug': self.project_slug,
+            'slug': self.committee_slug
         })
 
     def get_queryset(self):
+        """Define the queryset
+
+        We override this method in order to make sure that the Ballot object
+            returned is from the correct Committee. The requesting User must
+            also be staff, so we confirm that here.
+
+        :return: Ballot queryset
+        :rtype: Queryset
+
+        :raise Http404: If user is not staff
+
+        """
         if not self.request.user.is_staff:
             raise Http404()
-        return Ballot.objects.all()
+        return Ballot.objects.filter(committee=self.committee)

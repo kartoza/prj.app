@@ -170,11 +170,57 @@ class VersionThumbnailView(VersionMixin, DetailView):
         obj.request_user = self.request.user
         return obj
 
-
+# noinspection PyAttributeOutsideInit
 class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
     """A view for deleting version objects."""
     context_object_name = 'version'
     template_name = 'version/delete.html'
+
+    def get(self, request, *args, **kwargs):
+        """Access URL parameters
+
+        We need to make sure that we return the correct Version for the current
+            project as defined in the URL
+
+        :param request: The incoming HTTP request object
+        :type request: Request object
+
+        :param args: None
+        :type args: dict
+
+        :param kwargs: (django dict)
+        :type kwargs: dict
+
+        :return: Unaltered request object
+        :rtype: HttpResponse
+
+        """
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        return super(VersionDeleteView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """Access URL parameters
+
+        We need to make sure that we return the correct Version for the current
+            project as defined in the URL
+
+        :param request: The incoming HTTP request object
+        :type request: Request object
+
+        :param args: None
+        :type args: dict
+
+        :param kwargs: (django dict)
+        :type kwargs: dict
+
+        :return: Unaltered request object
+        :rtype: HttpResponse
+
+        """
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        return super(VersionDeleteView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
         """Get the url for when the operation was successful.
@@ -195,11 +241,11 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
         """
         if not self.request.user.is_authenticated():
             raise Http404
-        qs = Version.objects.all()
+        qs = Version.objects.filter(project=self.project)
         if self.request.user.is_staff:
             return qs
         else:
-            return qs.filter(creator=self.request.user)
+            return qs.filter(author=self.request.user)
 
 # noinspection PyAttributeOutsideInit
 class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
