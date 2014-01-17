@@ -36,7 +36,7 @@ DATABASES = {
         'NAME': 'changelog',
         # The following settings are not used with sqlite3:
         'USER': 'vagrant',
-        'PASSWORD': 'vagrant',
+        'PASSWORD': 'password',
         # Empty for localhost through domain sockets or '127.0.0.1' for
         # localhost through TCP.
         'HOST': 'localhost',
