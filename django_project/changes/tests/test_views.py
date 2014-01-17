@@ -1,4 +1,5 @@
 # coding=utf-8
+
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import Client
@@ -67,8 +68,9 @@ class TestCategoryViews(TestCase):
         my_response = my_client.post(reverse('category-create', kwargs={
             'project_slug': self.my_project.slug
         }), post_data)
-        self.assertRedirects(my_response, reverse('pending-category-list',
-          kwargs={'project_slug': self.my_project.slug}))
+        self.assertRedirects(my_response, reverse('pending-category-list', kwargs={
+            'project_slug': self.my_project.slug
+        }))
 
     def test_CategoryCreate_no_login(self):
         my_client = Client()
@@ -148,8 +150,9 @@ class TestEntryViews(TestCase):
         self.my_project = ProjectF.create()
         self.my_version = VersionF.create(project=self.my_project)
         self.my_category = CategoryF.create(project=self.my_project)
-        self.my_entry = EntryF.create(category=self.my_category,
-                                     version=self.my_version)
+        self.my_entry = EntryF.create(
+            category=self.my_category,
+            version=self.my_version)
         self.my_user = UserF.create(**{
             'username': 'timlinux',
             'password': 'password',
@@ -316,8 +319,9 @@ class TestEntryViews(TestCase):
 
     def test_EntryDelete_with_login(self):
         my_client = Client()
-        entry_to_delete = EntryF.create(category=self.my_category,
-                                      version=self.my_version)
+        entry_to_delete = EntryF.create(
+            category=self.my_category,
+            version=self.my_version)
         my_client.login(username='timlinux', password='password')
         my_response = my_client.post(reverse('entry-delete', kwargs={
             'slug': entry_to_delete.slug,
@@ -328,13 +332,15 @@ class TestEntryViews(TestCase):
             'project_slug': self.my_project.slug,
             'version_slug': self.my_version.slug
         }))
-        #TODO: The following line to test that the object is deleted does not currently pass as expected.
+        #TODO: The following line to test that the object is deleted does not
+        #currently pass as expected.
         #self.assertTrue(entry_to_delete.pk is None)
 
     def test_EntryDelete_no_login(self):
         my_client = Client()
-        entry_to_delete = EntryF.create(category=self.my_category,
-                                      version=self.my_version)
+        entry_to_delete = EntryF.create(
+            category=self.my_category,
+            version=self.my_version)
         my_response = my_client.post(reverse('entry-delete', kwargs={
             'slug': entry_to_delete.slug,
             'project_slug': self.my_version.project.slug,
@@ -405,9 +411,10 @@ class TestVersionViews(TestCase):
         my_response = my_client.post(reverse('version-create', kwargs={
             'project_slug': self.my_project.slug
         }), post_data)
-        self.assertRedirects(my_response, reverse('pending-version-list', kwargs={
-            'project_slug': self.my_project.slug
-        }))
+        self.assertRedirects(
+            my_response, reverse('pending-version-list', kwargs={
+                'project_slug': self.my_project.slug})
+        )
 
     def test_VersionCreate_no_login(self):
         my_client = Client()
@@ -519,7 +526,8 @@ class TestVersionViews(TestCase):
         self.assertRedirects(my_response, reverse('version-list', kwargs={
             'project_slug': self.my_project.slug
         }))
-        #TODO: The following line to test that the object is deleted does not currently pass as expected.
+        #TODO: The following line to test that the object is deleted does
+        # not currently pass as expected.
         #self.assertTrue(version_to_delete.pk is None)
 
     def test_VersionDelete_no_login(self):
