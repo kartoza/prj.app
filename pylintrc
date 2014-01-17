@@ -35,7 +35,7 @@ profile=no
 
 # Add files or directories to the blacklist.
 # You only need to give the filename, not its full path
-ignore=vota/migrations,changes/migrations,base/migrations,venv
+ignore=migrations,venv
 
 # Pickle collected data for later comparisons.
 persistent=yes
