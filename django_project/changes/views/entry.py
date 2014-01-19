@@ -240,7 +240,7 @@ class PendingEntryListView(EntryMixin,
                            StaffuserRequiredMixin):
     """List all unapproved entries"""
     context_object_name = 'entries'
-    template_name = 'entry/list.html'
+    template_name = 'entry/pending-list.html'
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
