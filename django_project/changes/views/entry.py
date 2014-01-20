@@ -239,7 +239,7 @@ class PendingEntryListView(EntryMixin,
                            ListView,
                            StaffuserRequiredMixin):
     """List all unapproved entries"""
-    context_object_name = 'entries'
+    context_object_name = 'unapproved_entries'
     template_name = 'entry/pending-list.html'
     paginate_by = 10
 
