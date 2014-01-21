@@ -54,6 +54,7 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         context = super(VersionListView, self).get_context_data(**kwargs)
         context['num_versions'] = self.get_queryset().count()
         context['unapproved'] = False
+        context['rst_download'] = False
         return context
 
     def get_queryset(self):
