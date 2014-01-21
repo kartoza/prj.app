@@ -4,10 +4,13 @@
   <div class="row">
     {% if version.project.image_file %}
     <div class="col-lg-3">
-        <a href="{{ MEDIA_URL }}{{ version.project.image_file }}">
-          <img class="img-responsive img-rounded pull-left"
-               src="{{ version.project.image_file|thumbnail_url:'medium-entry' }}"/>
-        </a>
+      {% if not rst_download %}
+        <img class="img-responsive img-rounded pull-right"
+             src="{{ version.image_file|thumbnail_url:'medium-entry' }}"/>
+      {% else %}
+        <img class="img-responsive img-rounded pull-right"
+             src="{{ version.image_file }}"/>
+      {% endif %}
     </div>
     {% endif %}
     <div class="col-lg-9">
@@ -38,10 +41,15 @@
       {{ version.description|base_markdown }}
     </div>
     {% if version.image_file %}
-    <div class="col-lg-4">
-        <img class="img-responsive img-rounded pull-right"
-             src="{{ version.image_file|thumbnail_url:'medium-entry' }}"/>
-    </div>
+      <div class="col-lg-4">
+        {% if not rst_download %}
+          <img class="img-responsive img-rounded pull-right"
+               src="{{ version.image_file|thumbnail_url:'medium-entry' }}"/>
+        {% else %}
+          <img class="img-responsive img-rounded pull-right"
+               src="{{ version.image_file }}"/>
+        {% endif %}
+      </div>
     {% endif %}
   </div>
   {% if not rst_download %}
@@ -71,11 +79,13 @@
           <div class="media">
             <div class="pull-right media-object">
               {% if entry.image_file %}
-                <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+                {% if not rst_download %}
                   <img class="img-responsive img-rounded pull-right"
-                       src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
-                       alt=""/>{# see core/settings/contrib.py for large-entry #}
-                </a>
+                       src="{{ version.image_file|thumbnail_url:'large-entry' }}"/>
+                {% else %}
+                  <img class="img-responsive img-rounded pull-right"
+                       src="{{ version.image_file }}"/>
+                {% endif %}
               {% endif %}
             </div>
             <div class="media-body">
