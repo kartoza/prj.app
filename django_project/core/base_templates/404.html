@@ -1,0 +1,22 @@
+{% extends 'project_base.html' %}
+
+{% block content %}
+  <div class="row text-center" style="margin-top: 20%;">
+    <h1 class="text-muted">404</h1>
+    <p class="lead">Sorry, but what you're looking for does not exist.</p>
+    <p class="lead text-muted">
+      This could be for any number of reasons, but most likely you followed a
+      broken link....
+    </p>
+    <p class="lead text-muted">
+      Here are the public projects you might be looking for:
+    </p>
+    <p class="lead text-muted">
+      {% for project in projects %}
+        <a href="{% url 'project-detail' slug=project.slug %}">
+          {{ project.name }}
+        </a>{% if not forloop.last %} | {% endif %}
+      {% endfor %}
+    </p>
+  </div>
+{% endblock %}

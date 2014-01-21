@@ -5,6 +5,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib import admin
 admin.autodiscover()
 
+handler404 = 'base.views.error_views.custom_404'
 
 # noinspection PyUnresolvedReferences
 urlpatterns = patterns(

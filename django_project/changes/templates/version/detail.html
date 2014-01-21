@@ -11,9 +11,9 @@
 
 {% block content %}
 
-<div class="row">
+<div class="row" style="margin-top:15px;margin-bottom:15px;">
     <div class="col-lg-12">
-      <div class="btn-group btn-group pull-right">
+      <div class="btn-group btn-group pull-left">
         <a class="btn btn-default btn-mini tooltip-toggle"
              data-title="Download as RST"
              href='{% url 'version-download' project_slug=version.project.slug slug=version.slug %}'>
@@ -32,6 +32,15 @@
           </a>
         {% endif %}
       </div>
+      {% if user.is_authenticated %}
+        <div class="pull-right">
+          <a href="{% url 'entry-create' project_slug=version.project.slug version_slug=version.slug %}"
+             class="btn btn-default tooltip-toggle"
+             data-title="Add New Entry">
+             <span class="glyphicon glyphicon-plus"></span>
+             </a>
+        </div>
+        {% endif %}
     </div>
   </div>
 

@@ -1,9 +1,10 @@
 __author__ = 'georgeirwin'
 
 from .project import *
+from .prod import ALLOWED_HOSTS
 
 # Set debug to True for development
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 LOGGING_OUTPUT_ENABLED = DEBUG
 LOGGING_LOG_SQL = DEBUG
@@ -11,6 +12,8 @@ LOGGING_LOG_SQL = DEBUG
 CRISPY_FAIL_SILENTLY = not DEBUG
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+ALLOWED_HOSTS += ['192.168.2.173',]
 
 # Disable caching while in development
 CACHES = {

@@ -5,10 +5,10 @@
     {% if version.project.image_file %}
     <div class="col-lg-3">
       {% if not rst_download %}
-        <img class="img-responsive img-rounded pull-right"
+        <img class="img-responsive img-rounded"
              src="{{ version.project.image_file|thumbnail_url:'medium-entry' }}"/>
       {% else %}
-        <img class="img-responsive img-rounded pull-right"
+        <img class="img-responsive img-rounded"
              src="{{ version.project.image_file.url }}"/>
       {% endif %}
     </div>
@@ -56,15 +56,6 @@
   <hr />
   {% endif %}
   {% endif %}
-  <div class="row">
-    <span class="pull-right">
-      <a href="{% url 'entry-create' project_slug=version.project.slug version_slug=version.slug %}"
-         class="btn btn-default tooltip-toggle"
-         data-title="Add New Entry">
-         <span class="glyphicon glyphicon-plus"></span>
-         </a>
-    </span>
-  </div>
   {% for row in version.categories %}
     {% if row.entries %}
       <h2 class="text-muted" id="category-{{ row.category.id }}">
