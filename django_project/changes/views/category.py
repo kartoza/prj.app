@@ -119,7 +119,7 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
             context['the_project'] = Project.objects.get(slug=project_slug)
         return context
 
-    def get_queryset(self):
+    def get_queryset(self, queryset=None):
         if self.queryset is None:
             project_slug = self.kwargs.get('project_slug', None)
             if project_slug:

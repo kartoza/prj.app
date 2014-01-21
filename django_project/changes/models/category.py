@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
+from changes.models.entry import Entry
 
 
 class ApprovedCategoryManager(models.Manager):
@@ -27,6 +28,7 @@ class UnapprovedCategoryManager(models.Manager):
         return super(
             UnapprovedCategoryManager, self).get_query_set().filter(
                 approved=False)
+
 
 # noinspection PyUnresolvedReferences
 class Category(AuditedModel):
@@ -83,3 +85,14 @@ class Category(AuditedModel):
             'slug': self.slug,
             'project_slug': self.project.slug
         })
+
+    def has_entries(self):
+        """Does this Category have related Entries?
+
+        :return: True or False
+        :rtype: bool
+        """
+        if Entry.objects.filter(category=self).exists():
+            return True
+        else:
+            return False

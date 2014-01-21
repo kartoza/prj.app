@@ -15,6 +15,7 @@ from django.views.generic import (
 )
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
+from changes.models import Version
 from ..models import Project
 from ..forms import ProjectForm
 from vota.models import Committee, Ballot
@@ -103,6 +104,7 @@ class ProjectDetailView(ProjectMixin, DetailView):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
         context['projects'] = self.get_queryset()
         context['committees'] = Committee.objects.filter(project=self.object)
+        context['versions'] = Version.objects.filter(project=self.object)
         return context
 
     def get_queryset(self):

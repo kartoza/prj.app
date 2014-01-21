@@ -28,4 +28,13 @@
       {% include 'committee/includes/committee-panel.html' %}
     {% endfor %}
   {% endif %}
+  {% if versions %}
+    <div class="row">
+      <h3>Versions</h3>
+      <hr/>
+    </div>
+    {% for version in versions %}
+      {% include 'version/includes/version-list-detail.html' %}
+    {% endfor %}
+  {% endif %}
 {% endblock %}

@@ -128,7 +128,7 @@ class Version(AuditedModel):
         categories = []
         for entry in qs:
             category = entry.category
-            if category not in used:
+            if category not in used and category.has_entries():
                 row = {
                     'category': category,
                     'entries': self._entries_for_category(category)}

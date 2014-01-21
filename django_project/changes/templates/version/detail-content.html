@@ -58,13 +58,12 @@
     </span>
   </div>
   {% for row in version.categories %}
-    <h2 class="text-muted" id="category-{{ row.category.id }}"
-            >{{ row.category.name }}</h2>
+    <h2 class="text-muted" id="category-{{ row.category.id }}">
+      {{ row.category.name }}
+    </h2>
       {% if not rst_download %}
       <hr />
       {% endif %}
-
-
     {% for entry in row.entries %}
       {% if entry.approved %}
         <a name="{{ entry.id }}"></a>
@@ -115,5 +114,5 @@
           <hr />
         {% endif %}
       {% endif %}
-    {% endfor %}{# entry loop #}
+    {% endfor %}
   {% endfor %}{# row loop #}
