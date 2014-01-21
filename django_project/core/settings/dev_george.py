@@ -4,7 +4,7 @@ from .project import *
 from .prod import ALLOWED_HOSTS
 
 # Set debug to True for development
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 LOGGING_OUTPUT_ENABLED = DEBUG
 LOGGING_LOG_SQL = DEBUG

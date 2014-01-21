@@ -1,16 +1,2 @@
 {% load crispy_forms_tags %}
-<div class="row">
-  <div class="col-md-12">
-    {% if not voted %}
-      <h3>Cast Your Vote</h3>
-    {% else %}
-      <h3>Update Your Vote</h3>
-    {% endif %}
-  </div>
-</div>
-<hr/>
-<section id="forms">
-  <div class="">
-    {% crispy form %}
-  </div>
-</section>
+{% crispy form %}

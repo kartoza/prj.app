@@ -13,8 +13,8 @@
 
 {% block content %}
 
-  <div class="row">
-    {% include 'ballot/includes/committee-heading.html' %}
+  <div class="row text-center">
+    <h3>{{ committee.name }}</h3>
   </div>
   <div class="row">
     <div class="col-md-12">
@@ -42,28 +42,23 @@
   <div class="row">
     {% include 'ballot/includes/ballot-vote-details.html' %}
   </div>
-  <div class="row">
-    <div class="col-md-12">
-      <h3>Summary</h3>
-      <p>Proposer: {{ ballot.proposer.username }}</p>
-      <hr/>
-      <p class="lead">{{ ballot.summary }}</p>
-    </div>
-  </div>
   <hr/>
   <div class="row">
-    <div class="col-md-12">
-      <h4>Description</h4>
-      <hr/>
-      <p>{{ ballot.description }}</p>
+    <div class="col-md-7">
+      <h4>{{ ballot.proposer.username }} proposes:</h4>
+      <p>{{ ballot.summary }}</p>
     </div>
+    <div id="vote-container" class="col-md-5"></div>
   </div>
-  <div class="row">
-    <div class="col-md-12">
-      <hr/>
-      <div id="vote-container"></div>
+  <hr/>
+  {% if ballot.description %}
+    <div class="row">
+      <div class="col-md-12">
+          <h5>Further Details:</h5>
+          <p>{{ ballot.description }}</p>
+      </div>
     </div>
-  </div>
+  {% endif %}
 {% endblock %}
 {% block inline-js %}
   <script>

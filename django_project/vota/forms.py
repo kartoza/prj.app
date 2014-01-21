@@ -27,7 +27,7 @@ class VoteForm(forms.ModelForm):
         layout = Layout(
             Field('choice', template='radio-select.html'),
             Div(
-                Submit('submit', 'Submit'),
+                Submit('submit', 'Submit', css_class='btn-sm'),
                 css_class='form-group col-md-11 col-md-offset-1 margin-top'
             )
         )
@@ -45,6 +45,7 @@ class CreateCommitteeForm(forms.ModelForm):
         fields = (
             'name',
             'description',
+            'chair',
             'sort_number',
             'quorum_setting',
             'users',
@@ -60,6 +61,7 @@ class CreateCommitteeForm(forms.ModelForm):
                 form_title,
                 Field('name', css_class="form-control"),
                 Field('description', css_class="form-control"),
+                Field('chair', css_class="form-control"),
                 Field('sort_number', css_class="form-control"),
                 Field('quorum_setting', css_class="form-control"),
                 Field('users', css_class="form-control"),
@@ -71,6 +73,8 @@ class CreateCommitteeForm(forms.ModelForm):
         self.helper.form_id = 'committee-form'
         super(CreateCommitteeForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
+        self.fields['chair'].queryset = self.fields['chair'].queryset \
+            .order_by('username')
         self.fields['users'].queryset = self.fields['users'].queryset\
             .order_by('username')
 
