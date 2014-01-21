@@ -72,6 +72,7 @@ class VersionForm(forms.ModelForm):
         instance = super(VersionForm, self).save(commit=False)
         instance.author = self.user
         instance.project = self.project
+        instance.approved = False
         instance.save()
         return instance
 
@@ -118,7 +119,6 @@ class EntryForm(forms.ModelForm):
         instance = super(EntryForm, self).save(commit=False)
         instance.author = self.user
         instance.version = self.version
-        if self.user.is_staff:
-            instance.approved = True
+        instance.approved = False
         instance.save()
         return instance

@@ -1,6 +1,6 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
-
+{% load thumbnail %}
 {% block title %}{{ project.name }}{% endblock %}
 
 {% block extra_head %}
@@ -8,30 +8,15 @@
 
 {% block content %}
   <div class="row">
-    <div class="col-lg-10">
-      <h2>{{ project.name }}</h2>
-      <p>Project Lead: {{ project.owner.username }}</p>
+    <div class="col-md-2 col-sm-6">
+      <img class="img-rounded"
+                 src="{% thumbnail project.image_file 150x150 crop %}"/>
     </div>
-    <div class="col-lg-2">
-      <div class="btn-group">
-        <a href="{% url 'project-ballot-list' project.slug %}"
-           class="btn btn-default">
-          Ballots
-        </a>
-        {%  if not project.approved and user.is_staff %}
-          <a class="btn btn-success btn-mini tooltip-toggle"
-             href='{% url "project-approve" project.id %}'
-             data-title="Approve {{ project.name }}">
-            <span class="glyphicon glyphicon-thumbs-up"></span>
-          </a>
-        {% elif user.is_staff %}
-          <a class="btn btn-default tooltip-toggle"
-              href='{% url "project-delete" project.id %}'
-              data-title="Delete {{ project.name }}">
-            <span class="glyphicon glyphicon-minus"></span>
-          </a>
-        {% endif %}
-      </div>
+    <div class="col-md-10 col-sm-6">
+      <h2>{{ project.name }}</h2>
+      {% if project.description %}
+        <p>{{ project.description }}</p>
+      {% endif %}
     </div>
   </div>
   {% if committees %}

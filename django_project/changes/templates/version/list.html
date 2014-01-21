@@ -15,7 +15,7 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
             Versions
-          {% if user.is_authenticated %}
+          {% if user.is_authenticated and versions %}
             <div class="pull-right btn-group">
               <a class="btn btn-default btn-mini tooltip-toggle"
                   href='{% url "version-create" versions.0.project.slug %}'
@@ -52,7 +52,9 @@
         <div class="col-lg-9">
             <div class="media-body">
                 <h3 class="media-heading">
+                  <a href="{% url 'version-detail' project_slug=version.project.slug slug=version.slug %}">
                     <b>{{ version.project.name }} : {{ version.name }}</b>
+                  </a>
                 </h3>
                 <p>Author: {{ version.author.username }}</p>
             </div>

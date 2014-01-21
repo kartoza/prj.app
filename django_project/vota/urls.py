@@ -12,7 +12,8 @@ from views.ballot import (
     BallotDetailView,
     BallotCreateView,
     BallotDeleteView,
-    BallotUpdateView
+    BallotUpdateView,
+    BallotListView
 )
 
 
@@ -43,6 +44,10 @@ urlpatterns = patterns(
               'ballots/(?P<slug>[\w-]+)/$',
         view=BallotDetailView.as_view(),
         name='ballot-detail'),
+    url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<committee_slug>[\w-]+)/'
+              'ballots/$',
+        view=BallotListView.as_view(),
+        name='ballot-list'),
     url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<committee_slug>[\w-]+)/'
               'ballots/(?P<slug>[\w-]+)/delete/$',
         view=BallotDeleteView.as_view(),

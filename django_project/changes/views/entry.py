@@ -269,12 +269,32 @@ class PendingEntryListView(EntryMixin,
 
 
 class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
+    """
+    The view for approving an Entry
+    """
     permanent = False
     query_string = True
-    pattern_name = 'pending-entry-list'
+    pattern_name = 'entry-list'
 
     def get_redirect_url(self, version_slug, project_slug, slug):
-        entry_qs = Entry.unapproved_objects.all()
+        """Save Version as approved and redirect
+
+        :param version_slug: The slug of the parent Version
+        :type version_slug: str
+
+        :param project_slug: The slug of the parent Version's parent Project
+        :type project_slug: str
+
+        :param slug: The slug of the Verion
+        :type slug: str
+
+        :return: URL
+        :rtype: str
+
+        """
+        project = Project.objects.get(slug=project_slug)
+        version = Version.objects.filter(project=project).get(slug=version_slug)
+        entry_qs = Entry.unapproved_objects.filter(version=version)
         entry = get_object_or_404(entry_qs, slug=slug)
         entry.approved = True
         entry.save()

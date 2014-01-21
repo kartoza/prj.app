@@ -42,10 +42,10 @@ class CommitteeDetailView(CommitteeMixin, DetailView):
         """
         context = super(CommitteeDetailView, self).get_context_data(**kwargs)
         context['committees'] = self.get_queryset()
-        context['openBallots'] = Ballot.open_objects.filter(
-            committee=self.get_object())
-        context['closedBallots'] = Ballot.closed_objects.filter(
-            committee=self.get_object())
+        context['open_ballots'] = Ballot.open_objects.filter(
+            committee=self.get_object()).order_by('-closes')
+        context['closed_ballots'] = Ballot.closed_objects.filter(
+            committee=self.get_object()).order_by('closes')
         return context
 
     def get_object(self, queryset=None):

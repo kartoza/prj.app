@@ -65,11 +65,29 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
+        """Add to the view's context data
+
+        :param kwargs: (django dictionary)
+        :type kwargs: dict
+
+        :return: context
+        :rtype: dict
+
+        """
         context = super(ProjectListView, self).get_context_data(**kwargs)
         context['num_projects'] = self.get_queryset().count()
         return context
 
     def get_queryset(self):
+        """Specify the queryset
+
+        Return a specific queryset based on the requesting user's status
+
+        :return: If user.is_authenticated: All approved projects
+            If not user.is_authenticated: All public projects
+        :rtype: QuerySet
+
+        """
         if self.request.user.is_authenticated():
             projects_qs = Project.approved_objects.all()
         else:

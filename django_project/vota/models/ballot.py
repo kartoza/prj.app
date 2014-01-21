@@ -50,7 +50,7 @@ class OpenBallotManager(models.Manager):
         """Query set generator"""
         return super(
             OpenBallotManager, self).get_query_set().filter(
-                open_from__lt=timezone.now())
+                open_from__lt=timezone.now()).filter(closes__gt=timezone.now())
 
 
 class ClosedBallotManager(models.Manager):
@@ -166,15 +166,15 @@ class Ballot(AuditedModel):
         return voted
 
     def get_positive_vote_count(self):
-        votes = Vote.objects.filter(ballot=self).filter(positive=True).count()
+        votes = Vote.objects.filter(ballot=self).filter(choice='y').count()
         return votes
 
     def get_negative_vote_count(self):
-        votes = Vote.objects.filter(ballot=self).filter(negative=True).count()
+        votes = Vote.objects.filter(ballot=self).filter(choice='n').count()
         return votes
 
     def get_abstainer_count(self):
-        votes = Vote.objects.filter(ballot=self).filter(abstain=True).count()
+        votes = Vote.objects.filter(ballot=self).filter(choice='-').count()
         return votes
 
     def get_current_tally(self):

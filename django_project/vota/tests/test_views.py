@@ -125,6 +125,19 @@ class TestBallotViews(TestCase):
         self.assertEqual(response.context_data['ballot'],
                          self.my_ballot)
 
+    def test_BallotListView_with_login(self):
+        client = Client()
+        client.login(username='timlinux', password='password')
+        response = client.get(reverse('ballot-list', kwargs={
+            'project_slug': self.my_project.slug,
+            'committee_slug': self.my_committee.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+        # expected_templates = [
+        #     'ballot/list.html',
+        # ]
+        # self.assertEqual(response.template_name, expected_templates)
+
     def test_BallotCreateView_with_login(self):
         my_client = Client()
         my_client.login(username='timlinux', password='password')

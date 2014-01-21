@@ -176,6 +176,7 @@ class NavContextMiddleware(object):
         ballot = None
         category = None
         categories = None
+        no_versions = False
         is_staff = request.user.is_staff
         is_logged_in = request.user.is_authenticated
         if not request.path.startswith(reverse('admin:index')) \

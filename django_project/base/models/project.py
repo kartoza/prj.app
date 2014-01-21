@@ -108,6 +108,12 @@ class Project(AuditedModel):
         return u'%s' % self.name
 
     def get_absolute_url(self):
+        """Return URL to project detail page
+
+        :return: URL
+        :rtype: str
+
+        """
         return reverse('project-detail', kwargs={'slug': self.slug})
 
     def versions(self):

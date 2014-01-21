@@ -42,6 +42,14 @@
         <p>{{ project.description }}</p>
         <hr/>
       {% endif %}
+      <h4 class="text-muted">
+        Versions
+        <a href="{% url 'version-create' project_slug=project.slug %}"
+           class="btn btn-default pull-right btn-sm tooltip-toggle"
+           data-title="Create New Version">
+          <span class="glyphicon glyphicon-asterisk"></span>
+        </a>
+      </h4>
       <hr/>
       {% if project.versions %}
         {% for version in project.versions|slice:":2" %}

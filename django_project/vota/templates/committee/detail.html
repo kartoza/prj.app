@@ -47,7 +47,7 @@
       <div class="col-lg-12">
         <h2>Open Ballots</h2>
         <hr/>
-        {% for ballot in openBallots %}
+        {% for ballot in open_ballots %}
           {% include 'ballot/includes/ballot-panel.html' %}
         {% endfor %}
       </div>
@@ -58,7 +58,7 @@
       <div class="col-lg-12">
         <h2>Closed Ballots</h2>
         <hr/>
-        {% for ballot in closedBallots %}
+        {% for ballot in closed_ballots %}
           {% include 'ballot/includes/ballot-panel.html' %}
         {% endfor %}
       </div>

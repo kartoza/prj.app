@@ -15,6 +15,7 @@ from django.db import models
 from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
+from vota.models.ballot import Ballot
 
 QUORUM_CHOICES = (
     ('100', 'All Members'),
@@ -87,3 +88,11 @@ class Committee(AuditedModel):
             'project_slug': self.project.slug,
             'slug': self.slug
         })
+
+    def get_public_open_ballots(self):
+        """Get all ballots for self
+
+        :return: Ballot queryset
+        :rtype: QuerySet
+        """
+        return Ballot.open_objects.filter(committee=self).filter(private=False)

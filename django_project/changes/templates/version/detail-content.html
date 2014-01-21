@@ -48,6 +48,15 @@
   <hr />
   {% endif %}
   {% endif %}
+  <div class="row">
+    <span class="pull-right">
+      <a href="{% url 'entry-create' project_slug=version.project.slug version_slug=version.slug %}"
+         class="btn btn-default tooltip-toggle"
+         data-title="Add New Entry">
+         <span class="glyphicon glyphicon-plus"></span>
+         </a>
+    </span>
+  </div>
   {% for row in version.categories %}
     <h2 class="text-muted" id="category-{{ row.category.id }}"
             >{{ row.category.name }}</h2>

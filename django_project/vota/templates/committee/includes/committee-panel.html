@@ -11,6 +11,46 @@
       {% if committee.description %}
         <p>{{ committee.description }}</p>
       {% endif %}
+      <h4 class="text-muted" style="margin-top: 25px;">
+        Open Ballots
+        <div class="btn-group pull-right">
+          <a href="{% url 'ballot-list' project_slug=committee.project.slug committee_slug=committee.slug %}"
+             class="btn btn-default btn-xs tooltip-toggle"
+             data-title="View All Ballots">
+            <span class="glyphicon glyphicon-eye-open"></span>
+          </a>
+          <a href="{% url 'ballot-create' project_slug=committee.project.slug committee_slug=committee.slug %}"
+             class="btn btn-default btn-xs tooltip-toggle"
+             data-title="Create New Ballot">
+            <span class="glyphicon glyphicon-asterisk"></span>
+          </a>
+        </div>
+      </h4>
+      {% if committee.get_public_open_ballots %}
+        <hr/>
+        <table class="table table-striped table-responsive col-md-12">
+          <thead>
+            <td></td>
+            <td class="text-center">Closes In</td>
+            <td class="text-center">Current Votes</td>
+          </thead>
+          {% for ballot in committee.get_public_open_ballots %}
+          <tr>
+            <td>
+              <a href="{% url 'ballot-detail' project_slug=committee.project.slug committee_slug=committee.slug slug=ballot.slug %}">
+                {{ ballot.name }}
+              </a>
+            </td>
+            <td class="text-center">
+              {{ ballot.closes|timeuntil }}
+            </td>
+            <td class="text-center">
+              {{ ballot.get_current_tally }}
+            </td>
+          </tr>
+        {% endfor %}
+        </table>
+      {% endif %}
     </div>
   </div>
 </div>

@@ -6,7 +6,7 @@ from django.http import Http404
 import logging
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from django.core.urlresolvers import reverse
-from django.views.generic import DetailView, CreateView, DeleteView, UpdateView
+from django.views.generic import DetailView, CreateView, DeleteView, UpdateView, ListView
 from base.models import Project
 from vota.forms import BallotCreateForm
 from vota.models import Ballot, Committee
@@ -30,7 +30,7 @@ class BallotDetailView(LoginRequiredMixin, BallotMixin, DetailView):
         return context
 
     def get_queryset(self):
-        ballot_qs = Ballot.open_objects.all()
+        ballot_qs = Ballot.objects.all()
         return ballot_qs
 
     def get_object(self, queryset=None):
@@ -52,6 +52,76 @@ class BallotDetailView(LoginRequiredMixin, BallotMixin, DetailView):
                 return obj
             else:
                 raise Http404
+
+# noinspection PyAttributeOutsideInit
+class BallotListView(BallotMixin, ListView):
+    """Show all Ballots for a Committee
+
+    This view returns a list of all Ballots within a Committee. The queryset
+        returned is defined by the requesting user's status: is_authenticated
+        and or is a member of the Committee
+
+    """
+    context_object_name = 'ballots'
+    template_name = 'ballot/list.html'
+
+    def get(self, request, *args, **kwargs):
+        """Access URL parameters
+
+        We need to define self.committee in order to return the correct set of
+            Ballot objects
+
+        :param request: Request object
+        :type request: HttpRequestObject
+
+        :param args: None
+
+        :param kwargs: (django dict)
+        :type kwargs: dict
+
+        """
+        committee_slug = self.kwargs.get('committee_slug')
+        project_slug = self.kwargs.get('project_slug')
+        self.project = Project.objects.get(slug=project_slug)
+        self.committee = Committee.objects.filter(project=self.project)\
+            .get(slug=committee_slug)
+        self.is_member = False
+        if request.user in self.committee.users.all():
+            self.is_member = True
+        return super(BallotListView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        """Add to the context
+
+        We need to add the Committee object to the context
+
+        :param kwargs: (django dict)
+        :type kwargs: dict
+
+        """
+        context = super(BallotListView, self).get_context_data(**kwargs)
+        context['committee'] = self.committee
+        context['is_member'] = self.is_member
+        return context
+
+    def get_queryset(self):
+        """Specify the queryset
+
+        Return a specific queryset based on the requesting user's status
+
+        :return: If user.is_authenticated and a member of the Committee: All
+            public Ballots, both open and closed.
+            If not user.is_authenticated: All public ballots, both open and
+            closed
+        :rtype: QuerySet
+
+        """
+        if self.request.user.is_authenticated() and self.is_member:
+                qs = Ballot.objects.filter(committee=self.committee)
+        else:
+            qs = Ballot.objects.filter(committee=self.committee) \
+                .filter(private=False)
+        return qs
 
 # noinspection PyAttributeOutsideInit
 class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):

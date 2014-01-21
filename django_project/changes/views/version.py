@@ -85,7 +85,10 @@ class VersionDetailView(VersionMixin, DetailView):
         :returns: A queryset which is filtered to only show approved versions.
         :rtype: QuerySet
         """
-        versions_qs = Version.approved_objects.all()
+        if self.request.user.is_staff:
+            versions_qs = Version.objects.all()
+        else:
+            versions_qs = Version.approved_objects.all()
         return versions_qs
 
     def get_object(self, queryset=None):
@@ -100,7 +103,12 @@ class VersionDetailView(VersionMixin, DetailView):
             project_slug = self.kwargs.get('project_slug', None)
             if slug and project_slug:
                 project = Project.objects.get(slug=project_slug)
-                obj = queryset.get(project=project, slug=slug)
+                try:
+                    obj = queryset.filter(project=project).get(slug=slug)
+                except Version.DoesNotExist:
+                    Http404('Sorry! The version you are requesting could not '
+                            'be found or you do not have permission to view '
+                            'the version. Try logging in?')
                 return obj
             else:
                 raise Http404('Sorry! We could not find your version!')
@@ -287,7 +295,7 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
         return kwargs
 
 # noinspection PyAttributeOutsideInit
-class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
+class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
     """View to update an existing version."""
     context_object_name = 'version'
     template_name = 'version/update.html'
@@ -308,7 +316,10 @@ class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
         :returns: A queryset which is filtered to only show approved versions.
         :rtype: QuerySet
         """
-        versions_qs = Version.approved_objects.all()
+        if self.request.user.is_staff:
+            versions_qs = Version.objects.all()
+        else:
+            versions_qs = Version.approved_objects.all()
         return versions_qs
 
     def get_success_url(self):
@@ -323,7 +334,7 @@ class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
 
 
 class PendingVersionListView(
-        VersionMixin, PaginationMixin, ListView, StaffuserRequiredMixin):
+    StaffuserRequiredMixin, VersionMixin, PaginationMixin, ListView):
     """List all unapproved versions - staff see all """
     context_object_name = 'versions'
     template_name = 'version/list.html'
@@ -363,14 +374,17 @@ class PendingVersionListView(
         return self.queryset
 
 
-class ApproveVersionView(VersionMixin, StaffuserRequiredMixin, RedirectView):
+class ApproveVersionView(StaffuserRequiredMixin, VersionMixin, RedirectView):
     """A view to allow staff users to approve a given version."""
     permanent = False
     query_string = True
-    pattern_name = 'pending-version-list'
+    pattern_name = 'version-list'
 
     def get_redirect_url(self, project_slug, slug):
         """Get the url for when the operation completes.
+
+        :param project_slug: The slug of the Version's parent Project
+        :type project_slug: str
 
         :param slug: The slug of the object being approved.
         :type slug: str
@@ -378,7 +392,8 @@ class ApproveVersionView(VersionMixin, StaffuserRequiredMixin, RedirectView):
         :returns: A url.
         :rtype: str
         """
-        version_qs = Version.unapproved_objects.all()
+        project = Project.objects.get(slug=project_slug)
+        version_qs = Version.unapproved_objects.filter(project=project)
         version = get_object_or_404(version_qs, slug=slug)
         version.approved = True
         version.save()
