@@ -107,7 +107,9 @@ class Version(AuditedModel):
 
         .. note:: only approved entries returned.
         """
-        qs = Entry.objects.filter(version=self, category=category)
+        qs = Entry.objects.filter(version=self,
+                                  category=category,
+                                  approved=True)
         return qs
 
     def categories(self):
@@ -128,10 +130,11 @@ class Version(AuditedModel):
         categories = []
         for entry in qs:
             category = entry.category
-            if category not in used and category.has_entries():
+            if category not in used:
                 row = {
                     'category': category,
-                    'entries': self._entries_for_category(category)}
+                    'entries': self._entries_for_category(category)
+                }
                 categories.append(row)
                 used.append(category)
         return categories

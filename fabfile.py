@@ -173,6 +173,7 @@ def deploy():
     require.deb.package('libgeos-c1')
     require.deb.package('vim')
     require.deb.package('curl')
+    require.deb.package('pandoc')
     update_venv(code_path)
     set_db_permissions()
     with cd(os.path.join(code_path, 'django_project')):
