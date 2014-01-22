@@ -13,6 +13,7 @@ import getpass
 
 # noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabric.api import task, env, fastprint, cd, run, sudo, local, prompt
+from fabric.decorators import hosts
 # noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabric.contrib.project import rsync_project
 # noinspection PyUnresolvedReferences,PyPackageRequirements
