@@ -15,7 +15,7 @@
     <div class="col-md-10 col-sm-6">
       <h2>{{ project.name }}</h2>
       {% if project.description %}
-        <p>{{ project.description }}</p>
+        <p>{{ project.description|base_markdown }}</p>
       {% endif %}
     </div>
   </div>

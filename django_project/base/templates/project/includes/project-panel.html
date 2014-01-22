@@ -1,3 +1,4 @@
+{% load custom_markup %}
 {% load thumbnail %}
 <div class="panel-to-wrap col-md-4">
   <div class="panel panel-default">
@@ -39,7 +40,7 @@
         </div>
       {% endif %}
       {% if project.description %}
-        <p>{{ project.description }}</p>
+        <p>{{ project.description|base_markdown }}</p>
         <hr/>
       {% endif %}
       <h4 class="text-muted">

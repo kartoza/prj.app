@@ -8,77 +8,73 @@
 {% endblock %}
 
 {% block page_title %}
-    <h1>Entries (all)</h1>
+  <h1>Entries (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
-    <div class="page-header">
-        <h1 class="text-muted">
-            {% if unapproved %}Unapproved {% endif %}
-            Entries
-            <small class="pull-right">
-                <a class="btn btn-default btn-mini tooltip-toggle"
-                   data-title="Add Entry"
-                   href='{% url "entry-create" project_slug=entries.0.version.project.slug version_slug=entries.0.version.slug %}'>
-                  <span class="glyphicon glyphicon-asterisk"></span>
-                </a>
-            </small>
-        </h1>
-    </div>
-    {%  ifequal num_entries 0 %}
-        {% if unapproved %}
-            <h3>All entries are approved.</h3>
-        {% else %}
-            <h3>No entries are defined (use the 'add' menu or the * icon
-                above to add one).</h3>
-        {% endif %}
-    {%  endifequal %}
-    {% for entry in unapproved_entries %}
+  <div class="page-header">
+    <h1 class="text-muted">
+      {% if unapproved %}Unapproved {% endif %}
+                         Entries
+      <small class="pull-right">
+        <a class="btn btn-default btn-mini tooltip-toggle"
+           data-title="Add Entry"
+           href='{% url "entry-create" project_slug=entries.0.version.project.slug version_slug=entries.0.version.slug %}'>
+          <span class="glyphicon glyphicon-asterisk"></span>
+        </a>
+      </small>
+    </h1>
+  </div>
+  {%  ifequal num_entries 0 %}
+    {% if unapproved %}
+      <h3>All entries are approved.</h3>
+    {% else %}
+      <h3>No entries are defined (use the 'add' menu or the * icon
+          above to add one).</h3>
+    {% endif %}
+  {%  endifequal %}
+  {% for entry in unapproved_entries %}
     <div class="row">
-        <div class="col-lg-10">
-            <div class="media-body">
-                <h3 class="media-heading">
-                    Feature: <b>{{ entry.title }}</b>
-                </h3>
-                <p>Author: {{ entry.author }}</p>
-            </div>
+      <div class="col-lg-10">
+        <h3><span class="text-muted">Feature:</span> {{ entry.title }}</h3>
+        <p>Author: {{ entry.author }}</p>
+      </div>
+      <div class="col-lg-2">
+        <div class="btn-group pull-right">
+          {% if not entry.approved and user.is_staff %}
+            <a class="btn btn-success btn-mini tooltip-toggle"
+               data-title="Approve Entry"
+               href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
+              <span class="glyphicon glyphicon-thumbs-up"></span>
+            </a>
+          {% endif %}
+          <a class="btn btn-default btn-mini tooltip-toggle"
+             data-title="Delete Entry"
+             href='{% url "entry-delete" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
+            <span class="glyphicon glyphicon-minus"></span>
+          </a>
+          <a class="btn btn-default btn-mini tooltip-toggle"
+             data-title="Update Entry"
+             href='{% url "entry-update" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
+            <span class="glyphicon glyphicon-pencil"></span>
+          </a>
         </div>
-        <div class="col-lg-2">
-            <div class="btn-group pull-right">
-                {% if not entry.approved and user.is_staff %}
-                    <a class="btn btn-success btn-mini tooltip-toggle"
-                       data-title="Approve Entry"
-                       href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
-                        <span class="glyphicon glyphicon-thumbs-up"></span>
-                    </a>
-                {% endif %}
-                <a class="btn btn-default btn-mini tooltip-toggle"
-                   data-title="Delete Entry"
-                   href='{% url "entry-delete" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
-                    <span class="glyphicon glyphicon-minus"></span>
-                </a>
-                <a class="btn btn-default btn-mini tooltip-toggle"
-                   data-title="Update Entry"
-                   href='{% url "entry-update" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
-                    <span class="glyphicon glyphicon-pencil"></span>
-                </a>
-            </div>
-        </div>
+      </div>
     </div>
     <div class="row" style="margin-top:10px">
-        <div class="col-lg-8">
-            {{ entry.description|base_markdown }}
-        </div>
-        <div class="col-lg-4">
-            {% if entry.image_file %}
-                <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
-                    <img class="img-responsive img-rounded pull-right"
-                         src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
-                         alt=""/>{# see core/settings/contrib.py for large-entry #}
-                </a>
-            {% endif %}
-        </div>
+      <div class="col-lg-8">
+        {{ entry.description|base_markdown }}
+      </div>
+      <div class="col-lg-4">
+        {% if entry.image_file %}
+          <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+            <img class="img-responsive img-rounded pull-right"
+                 src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
+                 alt=""/>{# see core/settings/contrib.py for large-entry #}
+          </a>
+        {% endif %}
+      </div>
     </div>
     <hr />
-    {% endfor %}
+  {% endfor %}
 {% endblock %}

@@ -1,8 +1,8 @@
 {% load custom_markup %}
 {% load thumbnail %}
 
-  <div class="row">
-    {% if version.project.image_file %}
+<div class="row">
+  {% if version.project.image_file %}
     <div class="col-lg-3">
       {% if not rst_download %}
         <img class="img-responsive img-rounded"
@@ -12,110 +12,109 @@
              src="{{ version.project.image_file.url }}"/>
       {% endif %}
     </div>
-    {% endif %}
-    <div class="col-lg-9">
-      <div class="row">
-        <div class="col-lg-12">
-          <h2 class="muted align-right">
-            <small>Project:</small>
-            {{ version.project }}</h2>
-        </div>
-        <div class="col-lg-12">
-          <h2 class="muted align-right">
-            <small>Changelog for version:</small>
-            {{ version.name }}</h2>
-        </div>
+  {% endif %}
+  <div class="col-lg-9">
+    <div class="row">
+      <div class="col-lg-12">
+        <h2 class="muted align-right">
+          <small>Project:</small>
+          {{ version.project }}</h2>
+      </div>
+      <div class="col-lg-12">
+        <h2 class="muted align-right">
+          <small>Changelog for version:</small>
+          {{ version.name }}</h2>
       </div>
     </div>
   </div>
-  {% if not rst_download %}
+</div>
+{% if not rst_download %}
   <hr />
-  {% endif %}
-  {% if version.description %}
+{% endif %}
+{% if version.description %}
   <div class="row">
-    {% if version.image_file %}
+  {% if version.image_file %}
     <div class="col-lg-8">
-    {% else %}
+  {% else %}
     <div class="col-lg-12">
-    {% endif %}
-      {{ version.description|base_markdown }}
-    </div>
-    {% if version.image_file %}
-      <div class="col-lg-4">
-        {% if not rst_download %}
-          <img class="img-responsive img-rounded pull-right"
-               src="{{ version.image_file|thumbnail_url:'medium-entry' }}"/>
-        {% else %}
-          <img class="img-responsive img-rounded pull-right"
-               src="{{ version.image_file.url }}"/>
-        {% endif %}
-      </div>
+  {% endif %}
+{{ version.description|base_markdown }}
+</div>
+{% if version.image_file %}
+  <div class="col-lg-4">
+    {% if not rst_download %}
+      <img class="img-responsive img-rounded pull-right"
+           src="{{ version.image_file|thumbnail_url:'medium-entry' }}"/>
+    {% else %}
+      <img class="img-responsive img-rounded pull-right"
+           src="{{ version.image_file.url }}"/>
     {% endif %}
   </div>
+{% endif %}
+</div>
   {% if not rst_download %}
-  <hr />
+    <hr />
   {% endif %}
-  {% endif %}
-  {% for row in version.categories %}
-    {% if row.entries %}
-      <h2 class="text-muted" id="category-{{ row.category.id }}">
-        {{ row.category.name }}
-      </h2>
-        {% if not rst_download %}
-        <hr />
-        {% endif %}
-      {% for entry in row.entries %}
-        {% if entry.approved %}
-          <a name="{{ entry.id }}"></a>
-          <div class="media">
-            <div class="pull-right media-object">
-              {% if entry.image_file %}
-                {% if not rst_download %}
-                  <img class="img-responsive img-rounded pull-right"
-                       src="{{ entry.image_file|thumbnail_url:'large-entry' }}"/>
-                {% else %}
-                  <img class="img-responsive img-rounded pull-right"
-                       src="{{ entry.image_file.url }}"/>
+{% endif %}
+{% for row in version.categories %}
+  {% if row.entries %}
+    <h2 class="text-muted" id="category-{{ row.category.id }}">
+      {{ row.category.name }}
+    </h2>
+    {% if not rst_download %}
+      <hr />
+    {% endif %}
+    {% for entry in row.entries %}
+      {% if entry.approved %}
+        <div class="row">
+          <div class="{% if entry.image_file %}col-md-7{% else %}col-md-12{% endif %}">
+            <h3 id="feature-{{ entry.id }}">
+              <a href="#{{ entry.id }}">#</a>
+              <span class="text-muted">Feature:</span> {{ entry.title }}
+            </h3>
+            <div>
+              {{ entry.description|base_markdown }}
+            </div>
+            <div class="btn-group">
+              {% if not rst_download %}
+                {% if not entry.approved and user.is_staff %}
+                  <a class="btn btn-success btn-xs tooltip-toggle"
+                     data-title="Approve Entry"
+                     href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
+                    <span class="glyphicon glyphicon-thumbs-up"></span>
+                  </a>
+                {% endif %}
+                {% if user.is_authenticated %}
+                  <a class="btn btn-default btn-xs tooltip-toggle"
+                     data-title="Delete Entry"
+                     href='{% url "entry-delete" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
+                    <span class="glyphicon glyphicon-minus"></span>
+                  </a>
+                  <a class="btn btn-default btn-xs tooltip-toggle"
+                     data-title="Update Entry"
+                     href='{% url "entry-update" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
+                    <span class="glyphicon glyphicon-pencil"></span>
+                  </a>
                 {% endif %}
               {% endif %}
             </div>
-            <div class="media-body">
-              <h3 class="media-heading" id="feature-{{ entry.id }}">
-                <a href="#{{ entry.id }}">#</a>
-                Feature: <b>{{ entry.title }}</b>
-              </h3>
-              <div>
-                {{ entry.description|base_markdown }}
-              </div>
-              <div class="btn-group">
-                {% if not rst_download %}
-                  {% if not entry.approved and user.is_staff %}
-                    <a class="btn btn-success btn-xs tooltip-toggle"
-                       data-title="Approve Entry"
-                       href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
-                      <span class="glyphicon glyphicon-thumbs-up"></span>
-                    </a>
-                  {% endif %}
-                  {% if user.is_authenticated %}
-                    <a class="btn btn-default btn-xs tooltip-toggle"
-                       data-title="Delete Entry"
-                       href='{% url "entry-delete" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
-                      <span class="glyphicon glyphicon-minus"></span>
-                    </a>
-                    <a class="btn btn-default btn-xs tooltip-toggle"
-                       data-title="Update Entry"
-                       href='{% url "entry-update" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
-                      <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
-                  {% endif %}
-                {% endif %}
-              </div>
-            </div>
           </div>
-          {% if not rst_download %}
-            <hr />
+          {% if entry.image_file %}
+            <div class="col-md-5">
+              {% if not rst_download %}
+                <img class="img-responsive img-rounded"
+                     src="{{ entry.image_file|thumbnail_url:'large-entry' }}"/>
+              {% else %}
+                <img class="img-responsive img-rounded"
+                     src="{{ entry.image_file.url }}"/>
+              {% endif %}
+            </div>
           {% endif %}
+        </div>
+        {% if not rst_download %}
+          <hr />
         {% endif %}
-      {% endfor %}
-    {% endif %}
-  {% endfor %}{# row loop #}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endfor %}{# row loop #}

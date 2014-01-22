@@ -55,7 +55,7 @@
     <div class="row">
       <div class="col-md-12">
           <h5>Further Details:</h5>
-          <p>{{ ballot.description }}</p>
+          <p>{{ ballot.description|base_markdown }}</p>
       </div>
     </div>
   {% endif %}

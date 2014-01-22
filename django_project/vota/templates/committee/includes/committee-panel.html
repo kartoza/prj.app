@@ -1,3 +1,4 @@
+{% load custom_markup %}
 <div class="panel-to-wrap col-md-4">
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -9,7 +10,7 @@
     </div>
     <div class="panel-body">
       {% if committee.description %}
-        <p>{{ committee.description }}</p>
+        <p>{{ committee.description|base_markdown }}</p>
       {% endif %}
       <h4 class="text-muted" style="margin-top: 25px;">
         Open Ballots

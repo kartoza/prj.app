@@ -1,5 +1,10 @@
+{% load thumbnail %}
 {% if the_project %}
   <ul class="nav navbar-nav">
+    {% if the_project.image_file %}
+      <li><img class="img-rounded"
+                 src="{% thumbnail the_project.image_file 50x50 crop %}"/></li>
+    {% endif %}
     <li>
       <a href="#" class="dropdown-toggle" data-toggle="dropdown">
         <strong>{{ the_project.name }}</strong> <b class="caret"></b>
