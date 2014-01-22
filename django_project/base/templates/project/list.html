@@ -13,7 +13,10 @@
 
 {% block content %}
     <div class="page-header">
-      <h1 class="text-muted">
+      <p class="lead text-center text-muted">
+        High level software project management. Made easy.
+      </p>
+      <h2 class="text-muted">
         Projects
         {% if user.is_authenticated %}
           <div class="pull-right btn-group">
@@ -29,11 +32,7 @@
             </a>
           </div>
         {% endif %}
-      </h1>
-      <p class="lead text-center">
-        Welcome to Projecta! This is a list of the approved
-        projects which you are able to view.
-      </p>
+      </h2>
     </div>
     {% ifequal num_projects 0 %}
       <h3>
