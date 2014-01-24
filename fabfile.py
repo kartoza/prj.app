@@ -13,6 +13,7 @@ import getpass
 
 # noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabric.api import task, env, fastprint, cd, run, sudo, local, prompt
+from fabric.decorators import hosts
 # noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabric.contrib.project import rsync_project
 # noinspection PyUnresolvedReferences,PyPackageRequirements
@@ -194,6 +195,7 @@ def deploy():
     fastprint('*******************************************\n')
 
 
+@hosts('linfiniti3')
 @task
 def freshen():
     """Freshen the server with latest git copy and touch wsgi.
@@ -329,12 +331,14 @@ def set_db_permissions():
     run('psql %s -c "%s"' % (dbname, grant_sql))
 
 
+@hosts('linfiniti3')
 @task
 def get_live_db():
     """Get the live db - will overwrite your local copy."""
     get_postgres_dump('changelog')
 
 
+@hosts('linfiniti3')
 @task
 def get_live_media():
     """Get the live media - will overwrite your local copy."""
