@@ -10,3 +10,8 @@ A django app for creating visual changelogs for software releases, and for manag
 
 View a running instance at [http://changelog.linfiniti.com](http://changelog.linfiniti.com)
 
+intercom.io
+-----------
+If you wish to make use of [intercom.io](https://www.intercom.io), include a
+`private.py` file in `core.settings` with your `INTERCOM_APP_ID` as a string.
+The necessary code snippet is already included in `project_base.html`.
