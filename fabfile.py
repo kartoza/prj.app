@@ -12,8 +12,10 @@ import os
 import getpass
 
 # noinspection PyUnresolvedReferences,PyPackageRequirements
-from fabric.api import task, env, fastprint, cd, run, sudo, local, prompt
+from fabric.api import (
+    task, env, fastprint, cd, run, sudo, local, prompt, put, get)
 from fabric.decorators import hosts
+from fabric.contrib.files import exists
 # noinspection PyUnresolvedReferences,PyPackageRequirements
 from fabric.contrib.project import rsync_project
 # noinspection PyUnresolvedReferences,PyPackageRequirements
@@ -207,6 +209,7 @@ def freshen():
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
     git_url = 'http://github.com/timlinux/projecta.git'
     update_git_checkout(base_path, git_url, repo_alias)
+    put_private()
     update_migrations()
     with cd(os.path.join(code_path, 'django_project')):
         run('touch core/wsgi.py')
@@ -217,6 +220,7 @@ def freshen():
     fastprint(' django_project/core/settings/prod.py\n')
     fastprint(' to the domain name for the site.\n')
     fastprint('*******************************************\n')
+
 
 # noinspection PyUnresolvedReferences
 @task
@@ -387,3 +391,41 @@ def update_migrations():
         run('touch core/wsgi.py')
     fastprint(green('Note: your server is now has the latest SOUTH '
                     'migrations applied.\n'))
+
+
+@task
+def put_private():
+    """Copy the private.py with site specific settings to the server."""
+
+    base_path, code_path, git_url, repo_alias, site_name = get_vars()
+
+    local_path = os.path.join(
+        'django_project', 'core', 'settings', 'private.py')
+
+    if not os.path.exists(local_path):
+        fastprint(red('Please create your local copy of private.py\n'))
+        fastprint(red('See README.md for more instructions.'))
+        raise Exception('Could not copy local private settings to server')
+
+    remote_path = os.path.join(code_path, local_path)
+
+    put(local_path=local_path, remote_path=remote_path)
+
+
+@task
+def get_private():
+    """Copy the private.py with site specific settings to the server."""
+
+    base_path, code_path, git_url, repo_alias, site_name = get_vars()
+
+    local_path = os.path.join(
+        'django_project', 'core', 'settings', 'private.py')
+
+    remote_path = os.path.join(code_path, local_path)
+
+    if not exists(remote_path):
+        fastprint(red('Please create your remove copy of private.py\n'))
+        fastprint(red('See README.md for more instructions.'))
+        raise Exception('Could not get remote private settings')
+
+    get(remote_path=remote_path, local_path=local_path)
