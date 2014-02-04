@@ -13,3 +13,4 @@ id_dsa.pub
 id_rsa.pub
 docs/build
 fabgis_resources
+private.py
