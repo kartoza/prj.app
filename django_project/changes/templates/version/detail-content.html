@@ -43,11 +43,13 @@
 {% if version.image_file %}
   <div class="col-lg-4">
     {% if not rst_download %}
-      <img class="img-responsive img-rounded pull-right"
-           src="{{ version.image_file|thumbnail_url:'medium-entry' }}"/>
+      <a href="/media/{{ version.image_file }}">
+        <img class="img-responsive img-rounded pull-right"
+             src="{{ version.image_file|thumbnail_url:'medium-entry' }}"/>
+      </a>
     {% else %}
       <img class="img-responsive img-rounded pull-right"
-           src="{{ version.image_file.url }}"/>
+         src="{{ version.image_file.url }}"/>
     {% endif %}
   </div>
 {% endif %}
@@ -102,8 +104,10 @@
           {% if entry.image_file %}
             <div class="col-md-5">
               {% if not rst_download %}
-                <img class="img-responsive img-rounded"
+                <a href="/media/{{ entry.image_file }}">
+                  <img class="img-responsive img-rounded"
                      src="{{ entry.image_file|thumbnail_url:'large-entry' }}"/>
+                </a>
               {% else %}
                 <img class="img-responsive img-rounded"
                      src="{{ entry.image_file.url }}"/>
