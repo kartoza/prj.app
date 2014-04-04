@@ -1,11 +1,19 @@
-# coding=utf-8
-"""Version related views."""
+# -*- coding: utf-8 -*-
+"""**View classes for version**
+
+"""
+
+__author__ = 'Tim Sutton <tim@linfinit.com>'
+__revision__ = '$Format:%H$'
+__date__ = ''
+__license__ = ''
+__copyright__ = ''
+
 # noinspection PyUnresolvedReferences
 import logging
 from base.models import Project
 
-LOGGER = logging.getLogger(__name__)
-
+# LOGGER = logging.getLogger(__name__)
 import re
 import zipfile
 import StringIO
@@ -63,6 +71,7 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         :returns: A queryset which is filtered to only show approved versions
         for this project.
         :rtype: QuerySet
+        :raise Http404: If cannot find the entry
         """
         if self.queryset is None:
             project_slug = self.kwargs.get('project_slug', None)
@@ -93,10 +102,17 @@ class VersionDetailView(VersionMixin, DetailView):
         return versions_qs
 
     def get_object(self, queryset=None):
-        """
-        Get the object for this view.
+        """Get the object for this view.
+
         Because Version slugs are unique within a Project, we need to make
         sure that we fetch the correct Version from the correct Project
+
+        :param queryset
+        :type queryset: QuerySet
+
+        :returns: Queryset which is filtered to only show a project
+        :rtype QuerySet
+        :raise Http404: If cannot find the version
         """
         if queryset is None:
             queryset = self.get_queryset()
@@ -179,9 +195,10 @@ class VersionThumbnailView(VersionMixin, DetailView):
         obj.request_user = self.request.user
         return obj
 
+
 # noinspection PyAttributeOutsideInit
 class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
-    """A view for deleting version objects."""
+    """Vew for deleting version objects."""
     context_object_name = 'version'
     template_name = 'version/delete.html'
 
@@ -212,7 +229,7 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
         """Access URL parameters
 
         We need to make sure that we return the correct Version for the current
-            project as defined in the URL
+        project as defined in the URL
 
         :param request: The incoming HTTP request object
         :type request: Request object
@@ -225,17 +242,19 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
 
         :return: Unaltered request object
         :rtype: HttpResponse
-
         """
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         return super(VersionDeleteView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
-        """Get the url for when the operation was successful.
+        """Define the redirect URL
 
-        :returns: A url.
-        :rtype: str
+        After successful deletion of the object, the User will be redirected
+            to the Version list page for the object's parent Project
+
+        :return: URL
+        :rtype: HttpResponse
         """
         return reverse('version-list', kwargs={
             'project_slug': self.object.project.slug
@@ -256,9 +275,10 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
         else:
             return qs.filter(author=self.request.user)
 
+
 # noinspection PyAttributeOutsideInit
 class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
-    """A view for creating version objects."""
+    """View for creating version objects."""
     context_object_name = 'version'
     template_name = 'version/create.html'
 
@@ -276,16 +296,24 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
         return context
 
     def get_success_url(self):
-        """Get the url for when the operation was successful.
+        """Define the redirect URL
 
-        :returns: A url.
-        :rtype: str
+        After successful creation of the object, the User will be redirected
+            to the unapproved Version list page for the object's parent Project
+
+        :return: URL
+        :rtype: HttpResponse
         """
         return reverse('pending-version-list', kwargs={
             'project_slug': self.object.project.slug
         })
 
     def get_form_kwargs(self):
+        """Get keyword arguments from form.
+
+        :return keyword argument from the form
+        :rtype dict
+        """
         kwargs = super(VersionCreateView, self).get_form_kwargs()
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
@@ -295,6 +323,7 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
         })
         return kwargs
 
+
 # noinspection PyAttributeOutsideInit
 class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
     """View to update an existing version."""
@@ -302,6 +331,11 @@ class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
     template_name = 'version/update.html'
 
     def get_form_kwargs(self):
+        """Get keyword arguments from form.
+
+        :return keyword argument from the form
+        :rtype dict
+        """
         kwargs = super(VersionUpdateView, self).get_form_kwargs()
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
@@ -324,19 +358,24 @@ class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
         return versions_qs
 
     def get_success_url(self):
-        """Get the url for when the operation was successful.
+        """Define the redirect URL
 
-        :returns: A url.
-        :rtype: str
+        After successful creation of the object, the User will be redirected
+            to the Version list page for the object's parent Project
+
+        :return: URL
+        :rtype: HttpResponse
         """
         return reverse('version-list', kwargs={
             'project_slug': self.object.project.slug
         })
 
 
-class PendingVersionListView(
-    StaffuserRequiredMixin, VersionMixin, PaginationMixin, ListView):
-    """List all unapproved versions - staff see all """
+class PendingVersionListView(StaffuserRequiredMixin,
+                             VersionMixin,
+                             PaginationMixin,
+                             ListView):
+    """View for the list of unapproved versions - staff see all """
     context_object_name = 'versions'
     template_name = 'version/list.html'
     paginate_by = 10
@@ -350,7 +389,8 @@ class PendingVersionListView(
         :returns: Context data which will be passed to the template.
         :rtype: dict
         """
-        context = super(PendingVersionListView, self).get_context_data(**kwargs)
+        context = super(PendingVersionListView, self).get_context_data(
+            **kwargs)
         context['num_versions'] = self.get_queryset().count()
         context['unapproved'] = True
         return context
@@ -360,6 +400,7 @@ class PendingVersionListView(
 
         :returns: A queryset which is filtered to only show approved versions.
         :rtype: QuerySet
+        :raise Http404: If cannot find the entry
         """
         if self.queryset is None:
             project_slug = self.kwargs.get('project_slug', None)
@@ -376,7 +417,7 @@ class PendingVersionListView(
 
 
 class ApproveVersionView(StaffuserRequiredMixin, VersionMixin, RedirectView):
-    """A view to allow staff users to approve a given version."""
+    """View for approving version."""
     permanent = False
     query_string = True
     pattern_name = 'version-list'
@@ -408,10 +449,10 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
     template_name = 'version/detail-content.html'
 
     def render_to_response(self, context, **response_kwargs):
-        """
-        Returns a RST document for a project version page.
+        """Returns a RST document for a project version page.
 
         :param context:
+        :type context: dict
         :param response_kwargs:
         """
         version_obj = context.get('version')
@@ -445,10 +486,12 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
 
     # noinspection PyMethodMayBeStatic
     def _prepare_zip_archive(self, document, version_obj):
-        """
-        Prepare a ZIP file with the document and referenced images.
+        """Prepare a ZIP file with the document and referenced images.
         :param document:
         :param version_obj: Instance of a version object.
+
+        :return temporary path for the created zip file
+        :rtype string
         """
         # create in memory file-like object
         temp_path = StringIO.StringIO()
