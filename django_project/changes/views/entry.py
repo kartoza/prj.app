@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""**View classes for entry**
+"""**View classes for Entry**
 
 """
 
@@ -42,7 +42,7 @@ class EntryMixin(object):
 
 
 class EntryListView(EntryMixin, PaginationMixin, ListView):
-    """View for the list of entry."""
+    """List view for Entry."""
     context_object_name = 'entries'
     template_name = 'entry/list.html'
     paginate_by = 10
@@ -64,9 +64,9 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved entry.
+        :returns: A queryset which is filtered to only show approved Entry.
         :rtype: QuerySet
-        :raise Http404: If cannot find the entry
+        :raises: Http404
         """
         if self.queryset is None:
             project_slug = self.kwargs.get('project_slug', None)
@@ -83,7 +83,7 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
 
 
 class EntryDetailView(EntryMixin, DetailView):
-    """View for showing detail for entry."""
+    """Detail view for Entry."""
     context_object_name = 'entry'
     template_name = 'entry/detail.html'
 
@@ -96,9 +96,9 @@ class EntryDetailView(EntryMixin, DetailView):
         :param queryset
         :type queryset: QuerySet
 
-        :returns: Queryset which is filtered to only show a project
+        :returns: Queryset which is filtered to only show an Entry
         :rtype QuerySet
-        :raise Http404: If cannot find the entry
+        :raises: Http404
         """
         if queryset is None:
             queryset = self.get_queryset()
@@ -117,7 +117,7 @@ class EntryDetailView(EntryMixin, DetailView):
 
 # noinspection PyAttributeOutsideInit
 class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
-    """The view for deleting Entry objects."""
+    """Delete view for Entry."""
     context_object_name = 'entry'
     template_name = 'entry/delete.html'
 
@@ -127,15 +127,15 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
         We need to define self.project and self.version
 
         :param request: HTTP request object
-        :type request: Request
+        :type request: HttpRequest
 
-        :param args: None
-        :type args: dict
+        :param args: Positional arguments
+        :type args: tuple
 
-        :param kwargs: (django dictionary)
+        :param kwargs: Keyword arguments
         :type kwargs: dict
 
-        :return: Unaltered request object
+        :returns: Unaltered request object
         :rtype: HttpResponse
         """
         self.project_slug = self.kwargs.get('project_slug', None)
@@ -151,15 +151,15 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
         We need to define self.project and self.version
 
         :param request: HTTP request object
-        :type request: Request
+        :type request: HttpRequest
 
-        :param args: None
-        :type args: dict
+        :param args: Positional arguments
+        :type args: tuple
 
-        :param kwargs: (django dictionary)
+        :param kwargs: Keyword arguments
         :type kwargs: dict
 
-        :return: Unaltered request object
+        :returns: Unaltered request object
         :rtype: HttpResponse
         """
         self.project_slug = self.kwargs.get('project_slug', None)
@@ -173,7 +173,7 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
         """Define the redirect URL
 
         After successful deletion of the object, the User will be redirected
-            to the Entry list page for the object's parent Version and Project
+        to the Entry list page for the object's parent Version and Project
 
         :return: URL
         :rtype: HttpResponse
@@ -192,11 +192,9 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
         If the requesting User is not staff, only return Entry objects
         which the User has authored.
 
-        :return: Entry queryset
+        :returns: Entry queryset filtered by version and user
         :rtype: QuerySet
-
-        :raise Http404: If the User not not authenticated
-
+        :raises: Http404
         """
         if not self.request.user.is_authenticated():
             raise Http404
@@ -209,7 +207,7 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
 
 # noinspection PyAttributeOutsideInit
 class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
-    """View for creating entry."""
+    """Create view for Entry."""
     context_object_name = 'entry'
     template_name = 'entry/create.html'
 
@@ -231,9 +229,9 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
         """Define the redirect URL
 
         After successful creation of the object, the User will be redirected
-            to the Entry list page for the object's parent Version and Project
+        to the Entry list page for the object's parent Version and Project
 
-        :return: URL
+        :returns: URL
         :rtype: HttpResponse
         """
         return reverse('pending-entry-list', kwargs={
@@ -242,13 +240,13 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
         })
 
     def form_valid(self, form):
-        """Save new created entry
+        """Save new created Entry
 
         :param form
         :type form
 
-        :return HttpResponseRedirect object to success_url
-        :rtype HttpResponseRedirect
+        :returns HttpResponseRedirect object to success_url
+        :rtype: HttpResponseRedirect
         """
         self.object = form.save(commit=False)
         self.object.save()
@@ -257,8 +255,8 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
     def get_form_kwargs(self):
         """Get keyword arguments from form.
 
-        :return keyword argument from the form
-        :rtype dict
+        :returns keyword argument from the form
+        :rtype: dict
         """
         kwargs = super(EntryCreateView, self).get_form_kwargs()
         self.version_slug = self.kwargs.get('version_slug', None)
@@ -275,7 +273,7 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
 
 # noinspection PyAttributeOutsideInit
 class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
-    """View for updating entries."""
+    """Update view for Entry."""
     context_object_name = 'entry'
     template_name = 'entry/update.html'
 
@@ -295,8 +293,8 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
     def get_form_kwargs(self):
         """Get keyword arguments from form.
 
-        :return keyword argument from the form
-        :rtype dict
+        :returns keyword argument from the form
+        :rtype: dict
         """
         kwargs = super(EntryUpdateView, self).get_form_kwargs()
         self.version_slug = self.kwargs.get('version_slug', None)
@@ -314,7 +312,7 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
         """Define the redirect URL
 
         After successful update of the object, the User will be redirected
-            to the Entry list page for the object's parent Version and Project
+        to the Entry list page for the object's parent Version and Project
 
         :return: URL
         :rtype: HttpResponse
@@ -326,11 +324,9 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
 
 
 # noinspection PyAttributeOutsideInit
-class PendingEntryListView(EntryMixin,
-                           PaginationMixin,
-                           ListView,
+class PendingEntryListView(EntryMixin, PaginationMixin, ListView,
                            StaffuserRequiredMixin):
-    """View for the list of unapproved entries."""
+    """List view for pending Entry."""
     context_object_name = 'unapproved_entries'
     template_name = 'entry/pending-list.html'
     paginate_by = 10
@@ -354,9 +350,9 @@ class PendingEntryListView(EntryMixin,
         """Get the queryset for this view.
 
          :returns: A queryset which is filtered to only show unapproved
-         entries.
+         Entry.
          :rtype: QuerySet
-         :raise Http404: If cannot find the entry
+         :raises: Http404
          """
         if self.queryset is None:
             project_slug = self.kwargs.get('project_slug', None)
@@ -377,7 +373,7 @@ class PendingEntryListView(EntryMixin,
 
 
 class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
-    """View for approving entries."""
+    """View for approving Entry."""
     permanent = False
     query_string = True
     pattern_name = 'entry-list'
@@ -394,7 +390,7 @@ class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
         :param slug: The slug of the Version
         :type slug: str
 
-        :return: URL
+        :returns: URL
         :rtype: str
         """
         project = Project.objects.get(slug=project_slug)
@@ -404,7 +400,7 @@ class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
         entry = get_object_or_404(entry_qs, slug=slug)
         entry.approved = True
         entry.save()
-        # Using entry.version.project.slug instead of project_slug to ensure
+        # Using Entry.version.project.slug instead of project_slug to ensure
         # that we redirect to the correct URL instead of relying on inputs from
         # URL.
         return reverse(self.pattern_name, kwargs={

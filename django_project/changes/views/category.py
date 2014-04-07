@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""**View classes for category**
+"""**View classes for Category**
 
 """
 
@@ -42,9 +42,9 @@ class JSONResponseMixin(object):
         :type context: dict
 
         :param response_kwargs: Keyword args
-        :type response_kwargs
+        :type response_kwargs: dict
 
-        :return A HttpResponse object that contains JSON
+        :returns A HttpResponse object that contains JSON
         :rtype: HttpResponse
         """
         return HttpResponse(
@@ -59,7 +59,7 @@ class JSONResponseMixin(object):
         :param context: Context data to use with template
         :type context: dict
 
-        :return JSON representation of the context
+        :return: JSON representation of the context
         :rtype: str
         """
         result = '{\n'
@@ -74,26 +74,26 @@ class JSONResponseMixin(object):
 
 
 class CategoryMixin(object):
-    """Mixin class to provide standard settings for categories."""
-    model = Category  # implies -> queryset = Entry.objects.all()
+    """Mixin class to provide standard settings for Category."""
+    model = Category  # implies -> queryset = Category.objects.all()
     form_class = CategoryForm
 
 
 class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
-    """View to get category list as a json object - needed by javascript."""
+    """List view for Category as json object - needed by javascript."""
     context_object_name = 'categories'
 
     def dispatch(self, request, *args, **kwargs):
         """Ensure this view is only used via ajax.
 
         :param request: Http request - passed to base class.
-        :type request
+        :type request: HttpRequest, WSGIRequest
 
         :param args: Positional args - passed to base class.
-        :type args
+        :type args: tuple
 
         :param kwargs: Keyword args - passed to base class.
-        :type kwargs
+        :type kwargs: dict
         """
         if not request.is_ajax():
             raise Http404("This is an ajax view, friend.")
@@ -117,9 +117,10 @@ class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved versions.
+        :returns: A queryset which is filtered to only show approved versions
+        of project.
         :rtype: QuerySet
-        :raise Http404: If cannot find the category
+        :raises: Http404
         """
         version_id = self.kwargs['version']
         version = get_object_or_404(Version, id=version_id)
@@ -128,7 +129,7 @@ class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
 
 
 class CategoryListView(CategoryMixin, PaginationMixin, ListView):
-    """View for the list of categories."""
+    """List view for Category."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
     paginate_by = 10
@@ -153,12 +154,12 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
     def get_queryset(self, queryset=None):
         """Get the queryset for this view.
 
-        :param queryset:
-        :type queryset
+        :param queryset: A query set
+        :type queryset: QuerySet
 
-        :returns: Queryset which is filtered by project
+        :returns: Category Queryset which is filtered by project
         :rtype: QuerySet
-        :raise Http404: If cannot find the category
+        :raises: Http404
         """
         if self.queryset is None:
             project_slug = self.kwargs.get('project_slug', None)
@@ -172,14 +173,14 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
 
 
 class CategoryDetailView(CategoryMixin, DetailView):
-    """View for showing detail for categories."""
+    """Detail view for Category."""
     context_object_name = 'category'
     template_name = 'category/detail.html'
 
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: Queryset which is filtered to only show approved categories.
+        :returns: Queryset which is filtered to only show approved Category.
         :rtype: QuerySet
         """
         qs = Category.approved_objects.all()
@@ -191,12 +192,12 @@ class CategoryDetailView(CategoryMixin, DetailView):
         Because Category slugs are unique within a Project, we need to make
         sure that we fetch the correct Category from the correct Project
 
-        :param queryset
+        :param queryset: A query set
         :type queryset: QuerySet
 
         :returns: Queryset which is filtered to only show a project
-        :rtype QuerySet
-        :raise Http404: If cannot find the category
+        :rtype: QuerySet
+        :raises: Http404
         """
         if queryset is None:
             queryset = self.get_queryset()
@@ -212,7 +213,7 @@ class CategoryDetailView(CategoryMixin, DetailView):
 
 # noinspection PyAttributeOutsideInit
 class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
-    """View for deleting categories."""
+    """Delete view for Category."""
     context_object_name = 'category'
     template_name = 'category/delete.html'
 
@@ -220,14 +221,16 @@ class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
         """Get the project_slug from the URL and define the Project
 
         :param request: HTTP request object
-        :type request: Request
+        :type request: HttpRequest
 
-        :param args: None
-        :type args: dict
+        :param args: Positional arguments
+        :type args: tuple
 
         :param kwargs: Keyword arguments
         :type kwargs: dict
 
+        :returns: Unaltered request object
+        :rtype: HttpResponse
         """
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
@@ -237,14 +240,16 @@ class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
         """Post the project_slug from the URL and define the Project
 
         :param request: HTTP request object
-        :type request: Request
+        :type request: HttpRequest
 
-        :param args: None
-        :type args: dict
+        :param args: Positional arguments
+        :type args: tuple
 
         :param kwargs: Keyword arguments
         :type kwargs: dict
 
+        :returns: Unaltered request object
+        :rtype: HttpResponse
         """
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
@@ -256,7 +261,7 @@ class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
         After successful deletion  of the object, the User will be redirected
         to the Category list page for the object's parent Project
 
-        :return: URL
+        :returns: URL
         :rtype: HttpResponse
         """
         return reverse('category-list', kwargs={
@@ -267,12 +272,12 @@ class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
         """Get the queryset for this view.
 
         We need to filter the Category objects by Project before passing to
-            get_object() to ensure that we return the correct Category object.
-            The requesting User must be authenticated
+        get_object() to ensure that we return the correct Category object.
+        The requesting User must be authenticated
 
         :returns: Category queryset filtered by Project
         :rtype: QuerySet
-        :raise Http404: If User is not authenticated
+        :raises: Http404
         """
         if not self.request.user.is_authenticated():
             raise Http404
@@ -282,17 +287,17 @@ class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
 
 # noinspection PyAttributeOutsideInit
 class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):
-    """View for creating categories."""
+    """Create view for Category."""
     context_object_name = 'category'
     template_name = 'category/create.html'
 
     def get_success_url(self):
         """Define the redirect URL
 
-       After successful creation of the object, the User will be redirected
-           to the unapproved Category list page for the object's parent Project
+        After successful creation of the object, the User will be redirected
+        to the unapproved Category list page for the object's parent Project
 
-       :return: URL
+       :returns: URL
        :rtype: HttpResponse
        """
         return reverse('pending-category-list', kwargs={
@@ -314,13 +319,13 @@ class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        """Save new created category
+        """Save new created Category
 
         :param form
         :type form
 
-        :return HttpResponseRedirect object to success_url
-        :rtype HttpResponseRedirect
+        :returns HttpResponseRedirect object to success_url
+        :rtype: HttpResponseRedirect
         """
         self.object = form.save(commit=False)
         self.object.save()
@@ -329,8 +334,8 @@ class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):
     def get_form_kwargs(self):
         """Get keyword arguments from form.
 
-        :return keyword argument from the form
-        :rtype dict
+        :returns keyword argument from the form
+        :rtype: dict
         """
         kwargs = super(CategoryCreateView, self).get_form_kwargs()
         self.project_slug = self.kwargs.get('project_slug', None)
@@ -343,15 +348,15 @@ class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):
 
 # noinspection PyAttributeOutsideInit
 class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
-    """View for updating categories."""
+    """Update view for Category."""
     context_object_name = 'category'
     template_name = 'category/update.html'
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
 
-        :return keyword argument from the form
-        :rtype dict
+        :returns keyword argument from the form
+        :rtype: dict
         """
         kwargs = super(CategoryUpdateView, self).get_form_kwargs()
         self.project_slug = self.kwargs.get('project_slug', None)
@@ -378,7 +383,8 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved object.
+        :returns: A queryset which is filtered to only show all approved
+        projects which user created (staff gets all projects)
         :rtype: QuerySet
         """
         qs = Category.approved_objects
@@ -391,9 +397,9 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
         """Define the redirect URL
 
         After successful update of the object, the User will be redirected
-            to the Category list page for the object's parent Project
+        to the Category list page for the object's parent Project
 
-        :return: URL
+        :returns: URL
         :rtype: HttpResponse
         """
         return reverse('category-list', kwargs={
@@ -401,11 +407,9 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
         })
 
 
-class PendingCategoryListView(CategoryMixin,
-                              PaginationMixin,
-                              ListView,
+class PendingCategoryListView(CategoryMixin, PaginationMixin, ListView,
                               StaffuserRequiredMixin):
-    """View for the list of unapproved categories."""
+    """List view for pending Category."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
     paginate_by = 10
@@ -429,9 +433,9 @@ class PendingCategoryListView(CategoryMixin,
         """Get the queryset for this view.
 
         :returns: A queryset which is filtered to only show unapproved
-        categories.
+        Category.
         :rtype: QuerySet
-        :raise Http404: If cannot find the category
+        :raises: Http404
         """
         if self.queryset is None:
             project_slug = self.kwargs.get('project_slug', None)
@@ -445,7 +449,7 @@ class PendingCategoryListView(CategoryMixin,
 
 
 class ApproveCategoryView(CategoryMixin, StaffuserRequiredMixin, RedirectView):
-    """View for approving categories."""
+    """Redirect view for approving Category."""
     permanent = False
     query_string = True
     pattern_name = 'pending-category-list'
@@ -459,7 +463,7 @@ class ApproveCategoryView(CategoryMixin, StaffuserRequiredMixin, RedirectView):
         :param slug: The slug of the Version
         :type slug: str
 
-        :return: URL
+        :returns: URL
         :rtype: str
         """
         category_qs = Category.unapproved_objects.all()
