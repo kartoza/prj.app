@@ -1,5 +1,6 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
+{% load disqus_tags %}
 
 {% block title %}Committee - {{ committee.name }}{% endblock %}
 
@@ -59,6 +60,8 @@
       </div>
     </div>
   {% endif %}
+  <h5 id="comments">Comments</h5>
+  {% disqus_show_comments %}
 {% endblock %}
 {% block inline-js %}
   <script>
