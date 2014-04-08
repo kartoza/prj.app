@@ -28,3 +28,6 @@ fabgis==0.17.0
 
 factory_boy
 mock==1.0.1
+
+# disqus
+django-disqus==0.4.1
