@@ -1,6 +1,7 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
 {% load thumbnail %}
+{% load disqus_tags %}
 
 {% block title %}Entries - {{ block.super }}{% endblock %}
 
@@ -63,5 +64,7 @@
       {%  endif %}
     </div>
   </div>
+<h5 id="comments">Comments</h5>
+{% disqus_show_comments %}
 
 {% endblock %}
