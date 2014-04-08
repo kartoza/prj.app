@@ -1,4 +1,5 @@
 {% extends "project_base.html" %}
+{% load disqus_tags %}
 
 {% block title %}Entries - {{ block.super }}{% endblock %}
 
@@ -45,5 +46,7 @@
   </div>
 
 {% include "version/detail-content.html" %}
+<h5 id="comments">Comments</h5>
+{% disqus_show_comments %}
 
 {% endblock %}
