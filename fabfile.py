@@ -412,6 +412,7 @@ def put_private():
     put(local_path=local_path, remote_path=remote_path)
 
 
+@hosts('linfiniti3')
 @task
 def get_private():
     """Copy the private.py with site specific settings to the server."""
@@ -429,3 +430,9 @@ def get_private():
         raise Exception('Could not get remote private settings')
 
     get(remote_path=remote_path, local_path=local_path)
+
+@hosts('localhost')
+@task
+def restore_postgres_dump_locally():
+    """Restore postgresql dump to local host db: changelog."""
+    restore_postgres_dump('changelog')
