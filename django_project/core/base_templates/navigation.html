@@ -21,6 +21,9 @@
           {% endif %}
         {% endfor %}
         <li>
+          <a href="{% url 'home' %}">All Projects</a>
+        </li>
+        <li>
           <a href="{% url 'project-create' %}">Create Project</a>
         </li>
         {% if is_logged_in and unapproved_projects %}
@@ -37,7 +40,7 @@
     {% endif %}
   </ul>
 {% endif %}
-{% if versions %}
+{% if versions or versions|length_is:0 %}
 <ul class="nav navbar-nav">
   <li role="presentation">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -58,8 +61,12 @@
           <li role="presentation" class="divider"></li>
         {% endif %}
       {% endfor %}
+      {% if not versions|length_is:0 %}
+        <li>
+          <a href="{% url 'version-list' the_project.slug %}">All Versions</a>
+        </li>
+      {% endif %}
       <li>
-        <a href="{% url 'version-list' the_project.slug %}">All Versions</a>
         <a href="{% url 'version-create' the_project.slug %}">Create Version</a>
       </li>
       {% if unapproved_versions %}
@@ -72,7 +79,7 @@
   </li>
 </ul>
 {% endif %}
-{% if categories %}
+{% if categories or categories|length_is:0 %}
   <ul class="nav navbar-nav">
     <li role="presentation">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -89,8 +96,12 @@
             <li role="presentation" class="divider"></li>
           {% endif %}
         {% endfor %}
+        {% if not categories|length_is:0 %}
+          <li>
+            <a href="{% url 'category-list' the_project.slug %}">All Categories</a>
+          </li>
+        {% endif %}
         <li>
-          <a href="{% url 'category-list' the_project.slug %}">All Categories</a>
           <a href="{% url 'category-create' the_project.slug %}">Create Category</a>
         </li>
         {% if unapproved_categories %}

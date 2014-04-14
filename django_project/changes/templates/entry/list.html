@@ -22,6 +22,13 @@
            href='{% url "entry-create" project_slug=entries.0.version.project.slug version_slug=entries.0.version.slug %}'>
           <span class="glyphicon glyphicon-asterisk"></span>
         </a>
+        {% if not unapproved %}
+          <a class="btn btn-default btn-mini tooltip-toggle"
+             href='{% url "pending-entry-list" project_slug=entries.0.version.project.slug version_slug=entries.0.version.slug %}'
+             data-title="View Pending Categories">
+            <span class="glyphicon glyphicon-time"></span>
+          </a>
+        {% endif %}
       </small>
     </h1>
   </div>
@@ -36,7 +43,10 @@
   {% for entry in entries %}
     <div class="row">
       <div class="col-lg-10">
-        <h3><span class="text-muted">Feature:</span> {{ entry.title }}</h3>
+        <h3>
+          <span class="text-muted">Feature:</span>
+          <a href="{% url 'entry-detail' project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}">{{ entry.title }}</a>
+        </h3>
       </div>
       <div class="col-lg-2">
         <div class="btn-group pull-right">

@@ -13,18 +13,18 @@
 {% block content %}
     <div class="page-header">
         <h1 class="text-muted">
-            {% if unapproved %}Unapproved {% endif %}
+          {% if unapproved %}Unapproved {% endif %}
             Categories
           {% if user.is_authenticated %}
             <div class="pull-right btn-group">
               <a class="btn btn-default btn-mini tooltip-toggle"
-                  href='{% url "category-create" categories.0.project.slug %}'
+                  href='{% url "category-create" project_slug %}'
                   data-title="Create New Category">
                 <span class="glyphicon glyphicon-asterisk"></span>
               </a>
               {% if not unapproved %}
-                <a class="btn btn-default btn-mini"
-                   href='{% url "pending-category-list" categories.0.project.slug %}'
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                   href='{% url "pending-category-list" project_slug %}'
                    data-title="View Pending Categories">
                   <span class="glyphicon glyphicon-time"></span>
                 </a>
@@ -33,15 +33,15 @@
           {% endif %}
         </h1>
     </div>
-    {%  ifequal num_categories 0 %}
+    {% ifequal num_categories 0 %}
         {% if unapproved %}
             <h3>All categories are approved.</h3>
         {% else %}
             <h3>No categories are defined, but you can <a
                 class="btn btn-default btn-mini"
-                href='{% url "category-create" %}'>create one</a>.</h3>
+                href='{% url "category-create" project_slug %}'>create one</a>.</h3>
         {% endif %}
-    {%  endifequal %}
+    {% endifequal %}
     {% for category in categories %}
     <script>console.debug("{{ category }}");</script>
     <div class="row" style="margin-top:10px;">
