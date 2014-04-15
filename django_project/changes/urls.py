@@ -4,6 +4,7 @@ from django.conf.urls import patterns, url
 from django.conf import settings
 
 from feeds.version import VersionFeed
+from feeds.entry import EntryFeed
 from views import (
     # Category
     CategoryDetailView,
@@ -129,6 +130,9 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/rss/latest-version/$',
         view=VersionFeed(),
         name='latest-version-feed'),
+    url(regex='^(?P<project_slug>[\w-]+)/rss/latest-entry/$',
+        view=EntryFeed(),
+        name='latest-entry-feed'),
 )
 
 
