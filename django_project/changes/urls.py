@@ -126,9 +126,9 @@ urlpatterns = patterns(
         name='entry-update'),
 
     # Feeds
-    url(regex='^(?P<project_slug>[\w-]+)/rss/version/$',
+    url(regex='^(?P<project_slug>[\w-]+)/rss/latest-version/$',
         view=VersionFeed(),
-        name='version-feed'),
+        name='latest-version-feed'),
 )
 
 

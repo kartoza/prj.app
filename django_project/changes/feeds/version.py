@@ -2,6 +2,12 @@
 """**Feed class for Version**
 """
 
+__author__ = 'Ismail Sunni <ismail@linfiniti.com>'
+__revision__ = '$Format:%H$'
+__date__ = '14/04/2014'
+__license__ = ''
+__copyright__ = ''
+
 from django.contrib.syndication.views import Feed
 from django.shortcuts import get_object_or_404
 from base.models.project import Project
@@ -31,7 +37,7 @@ class VersionFeed(Feed):
 
     def items(self, obj):
         """Return last 5 (if possible) version of the project."""
-        return Version.objects.filter(project=obj).order_by(
+        return Version.objects.filter(project=obj, approved=True).order_by(
             '-datetime_created')[:5]
 
     def item_title(self, item):
