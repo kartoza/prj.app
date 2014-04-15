@@ -3,6 +3,7 @@
 from django.conf.urls import patterns, url
 from django.conf import settings
 
+from feeds.version import VersionFeed
 from views import (
     # Category
     CategoryDetailView,
@@ -123,6 +124,11 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/update/$',
         view=EntryUpdateView.as_view(),
         name='entry-update'),
+
+    # Feeds
+    url(regex='^(?P<project_slug>[\w-]+)/rss/version/$',
+        view=VersionFeed(),
+        name='version-feed'),
 )
 
 
