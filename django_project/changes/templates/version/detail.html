@@ -1,4 +1,5 @@
 {% extends "project_base.html" %}
+{% load staticfiles %}
 
 {% block title %}Entries - {{ block.super }}{% endblock %}
 
@@ -32,15 +33,20 @@
           </a>
         {% endif %}
       </div>
-      {% if user.is_authenticated %}
         <div class="pull-right">
+          {% if user.is_authenticated %}
           <a href="{% url 'entry-create' project_slug=version.project.slug version_slug=version.slug %}"
              class="btn btn-default tooltip-toggle"
              data-title="Add New Entry">
              <span class="glyphicon glyphicon-plus"></span>
-             </a>
+          </a>
+          {% endif %}
+          <a class="btn btn-default btn-mini tooltip-toggle"
+             href='{% url "entry-atom-feed" project_slug=version.project.slug version_slug=version.slug %}'
+             data-title="Atom Feed for {{ version.project.name }} Version {{ version.name }}">
+             <img src="{% static "img/feed-icon-14x14.png" %}"/>
+          </a>
         </div>
-        {% endif %}
     </div>
   </div>
 

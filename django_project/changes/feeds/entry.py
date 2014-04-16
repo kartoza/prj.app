@@ -41,8 +41,14 @@ class RssEntryFeed(Feed):
         try:
             project_slug = kwargs.get('project_slug', None)
             project = Project.objects.get(slug=project_slug)
-            version = get_list_or_404(Version.objects.order_by(
-                '-datetime_created'), project=project, approved=True)[0]
+            version_slug = kwargs.get('version_slug', None)
+            # Check if version is given, give atom for the that version,
+            # otherwise give the latest version.
+            if version_slug is None:
+                version = get_list_or_404(Version.objects.order_by(
+                    '-datetime_created'), project=project, approved=True)[0]
+            else:
+                version = Version.objects.get(slug=version_slug)
             return version
         except Http404:
             raise Http404('Sorry! We could not find your project!')
