@@ -3,8 +3,8 @@
 from django.conf.urls import patterns, url
 from django.conf import settings
 
-from feeds.version import VersionFeed
-from feeds.entry import EntryFeed
+from feeds.version import RssVersionFeed, AtomVersionFeed
+from feeds.entry import RssEntryFeed
 from views import (
     # Category
     CategoryDetailView,
@@ -128,11 +128,17 @@ urlpatterns = patterns(
 
     # Feeds
     url(regex='^(?P<project_slug>[\w-]+)/rss/latest-version/$',
-        view=VersionFeed(),
-        name='latest-version-feed'),
+        view=RssVersionFeed(),
+        name='latest-version-rss-feed'),
+    url(regex='^(?P<project_slug>[\w-]+)/atom/latest-version/$',
+        view=AtomVersionFeed(),
+        name='latest-version-atom-feed'),
     url(regex='^(?P<project_slug>[\w-]+)/rss/latest-entry/$',
-        view=EntryFeed(),
-        name='latest-entry-feed'),
+        view=RssEntryFeed(),
+        name='latest-entry-rss-feed'),
+    url(regex='^(?P<project_slug>[\w-]+)/atom/latest-entry/$',
+        view=RssEntryFeed(),
+        name='latest-entry-atom-feed'),
 )
 
 

@@ -9,6 +9,7 @@ __license__ = ''
 __copyright__ = ''
 
 from django.contrib.syndication.views import Feed
+from django.utils.feedgenerator import Atom1Feed
 from django.shortcuts import get_list_or_404
 from django.http import Http404
 from base.models.project import Project
@@ -17,8 +18,8 @@ from changes.models.entry import Entry
 
 
 # noinspection PyMethodMayBeStatic
-class EntryFeed(Feed):
-    """Feed class for Entry."""
+class RssEntryFeed(Feed):
+    """RSS Feed class for Entry."""
 
     def get_object(self, request, *args, **kwargs):
         """Return the latest Version object that matches the project_slug.
@@ -115,3 +116,9 @@ class EntryFeed(Feed):
         :rtype: str
         """
         return item.description
+
+
+class AtomEntryFeed(RssEntryFeed):
+    """Atom Feed class for Entry."""
+    feed_type = Atom1Feed
+    subtitle = RssEntryFeed.description
