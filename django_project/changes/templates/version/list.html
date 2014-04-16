@@ -1,7 +1,8 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
+{% load staticfiles %}
 
-{% block title %}Entries - {{ block.super }}{% endblock %}
+{% block title %}Versions - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
@@ -26,6 +27,11 @@
                  href='{% url "pending-version-list" versions.0.project.slug %}'
                  data-title="View Pending Versions">
                 <span class="glyphicon glyphicon-time"></span>
+              </a>
+              <a class="btn btn-default btn-mini tooltip-toggle"
+                 href='{% url "latest-version-feed" versions.0.project.slug %}'
+                 data-title="RSS Feed for Version">
+                 <img src="{% static "img/feed-icon-14x14.png" %}"/>
               </a>
             </div>
           {% endif %}
