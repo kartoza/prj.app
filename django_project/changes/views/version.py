@@ -381,6 +381,17 @@ class PendingVersionListView(StaffuserRequiredMixin,
     template_name = 'version/list.html'
     paginate_by = 10
 
+    def __init__(self):
+        """
+        We overload __init__ in order to declare self.project and
+        self.project_slug. Both are then defined in self.get_queryset which is
+        the first method called. This means we can then reuse the values in
+        self.get_context_data.
+        """
+        super(PendingVersionListView, self).__init__()
+        self.project_slug = None
+        self.project = None
+
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
 
@@ -394,6 +405,7 @@ class PendingVersionListView(StaffuserRequiredMixin,
             **kwargs)
         context['num_versions'] = self.get_queryset().count()
         context['unapproved'] = True
+        context['project'] = self.project
         return context
 
     def get_queryset(self):
@@ -404,10 +416,11 @@ class PendingVersionListView(StaffuserRequiredMixin,
         :raises: Http404
         """
         if self.queryset is None:
-            project_slug = self.kwargs.get('project_slug', None)
-            if project_slug:
-                project = Project.objects.get(slug=project_slug)
-                queryset = Version.unapproved_objects.filter(project=project)
+            self.project_slug = self.kwargs.get('project_slug', None)
+            if self.project_slug:
+                self.project = Project.objects.get(slug=self.project_slug)
+                queryset = Version.unapproved_objects.filter(
+                    project=self.project)
                 if self.request.user.is_staff:
                     return queryset
                 else:

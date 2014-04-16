@@ -85,5 +85,4 @@ GITHUB_URL = os.environ.get('GITHUB_USER')
 GITHUB_USER = os.environ.get('GITHUB_USER')
 GITHUB_PASSWORD = os.environ.get('GITHUB_PASSWORD')
 
-DISQUS_API_KEY = os.environ.get('DISQUS_API_KEY')
 DISQUS_WEBSITE_SHORTNAME = os.environ.get('DISQUS_WEBSITE_SHORTNAME')

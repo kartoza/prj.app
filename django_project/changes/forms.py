@@ -110,6 +110,7 @@ class EntryForm(forms.ModelForm):
         self.helper.html5_required = False
         super(EntryForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
+        self.fields['title'].label = 'Feature Title'
         # Filter the category list when editing so it shows only relevant ones
         if not self.instance.id:
             self.fields['category'].queryset = Category.objects.filter(
