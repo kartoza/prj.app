@@ -1,6 +1,7 @@
 # coding=utf-8
 """Project level url handler."""
 from django.conf.urls import patterns, url
+from feeds.ballot import BallotFeed
 from views.committee import (
     CommitteeDetailView,
     CommitteeCreateView,
@@ -60,4 +61,10 @@ urlpatterns = patterns(
               'create-ballot/$',
         view=BallotCreateView.as_view(),
         name='ballot-create'),
+
+    ### Feeds
+    url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<committee_slug>[\w-]+)/'
+              'ballots-rss/$',
+        view=BallotFeed(),
+        name='latest-ballot-rss'),
 )
