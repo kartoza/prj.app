@@ -33,7 +33,11 @@
   </div>
   <div class="row">
     <div class="col-lg-8">
-      {{ category.description|base_markdown }}
+      {% if category.description %}
+        {{ category.description|base_markdown }}
+      {% else %}
+        <p>No description</p>
+      {% endif %}
     </div>
     <div class="col-lg-4">
       {% if category.image_file %}

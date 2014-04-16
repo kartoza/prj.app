@@ -147,6 +147,7 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
         context['num_categories'] = context['categories'].count()
         context['unapproved'] = False
         project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
         return context
@@ -407,12 +408,23 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
         })
 
 
-class PendingCategoryListView(CategoryMixin, PaginationMixin, ListView,
-                              StaffuserRequiredMixin):
+class PendingCategoryListView(StaffuserRequiredMixin, CategoryMixin,
+                              PaginationMixin, ListView):
     """List view for pending Category."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
     paginate_by = 10
+
+    def __init__(self):
+        """
+        We overload __init__ in order to declare self.project and
+        self.project_slug. Both are then defined in self.get_queryset
+        which is the first method called. This means we can then reuse the
+        values in self.get_context_data.
+        """
+        super(PendingCategoryListView, self).__init__()
+        self.project = None
+        self.project_slug = None
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -427,8 +439,11 @@ class PendingCategoryListView(CategoryMixin, PaginationMixin, ListView,
             .get_context_data(**kwargs)
         context['num_categories'] = self.get_queryset().count()
         context['unapproved'] = True
+        context['project_slug'] = self.project_slug
+        context['project'] = self.project
         return context
 
+    # noinspection PyAttributeOutsideInit
     def get_queryset(self):
         """Get the queryset for this view.
 
@@ -438,10 +453,11 @@ class PendingCategoryListView(CategoryMixin, PaginationMixin, ListView,
         :raises: Http404
         """
         if self.queryset is None:
-            project_slug = self.kwargs.get('project_slug', None)
-            if project_slug:
-                project = Project.objects.get(slug=project_slug)
-                queryset = Category.objects.filter(project=project)
+            self.project_slug = self.kwargs.get('project_slug', None)
+            if self.project_slug:
+                self.project = Project.objects.get(slug=self.project_slug)
+                queryset = Category.unapproved_objects.filter(
+                    project=self.project)
                 return queryset
             else:
                 raise Http404('Sorry! We could not find your category!')

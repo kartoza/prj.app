@@ -36,7 +36,7 @@ class UnapprovedEntryManager(models.Manager):
 class Entry(AuditedModel):
     """An entry is the basic unit of a changelog."""
     title = models.CharField(
-        help_text='Title for this change note.',
+        help_text='Feature title for this changelog entry.',
         max_length=255,
         null=False,
         blank=False,
