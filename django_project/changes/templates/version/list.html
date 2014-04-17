@@ -1,7 +1,8 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
+{% load staticfiles %}
 
-{% block title %}Entries - {{ block.super }}{% endblock %}
+{% block title %}Versions - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
@@ -15,8 +16,8 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
             Versions
-          {% if user.is_authenticated and versions %}
-            <div class="pull-right btn-group">
+          <div class="pull-right btn-group">
+            {% if user.is_authenticated and versions %}
               <a class="btn btn-default btn-mini tooltip-toggle"
                   href='{% url "version-create" versions.0.project.slug %}'
                   data-title="Create New Version">
@@ -27,8 +28,13 @@
                  data-title="View Pending Versions">
                 <span class="glyphicon glyphicon-time"></span>
               </a>
-            </div>
-          {% endif %}
+            {% endif %}
+              <a class="btn btn-default btn-mini tooltip-toggle"
+                 href='{% url "latest-version-atom-feed" versions.0.project.slug %}'
+                 data-title="Atom Feed for Latest Version of {{ versions.0.project.name }}">
+                 <img src="{% static "img/feed-icon-14x14.png" %}"/>
+              </a>
+          </div>
         </h1>
     </div>
     {%  ifequal num_versions 0 %}

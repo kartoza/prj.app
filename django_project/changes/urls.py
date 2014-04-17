@@ -3,6 +3,8 @@
 from django.conf.urls import patterns, url
 from django.conf import settings
 
+from feeds.version import RssVersionFeed, AtomVersionFeed
+from feeds.entry import RssEntryFeed, AtomEntryFeed
 from views import (
     # Category
     CategoryDetailView,
@@ -123,6 +125,30 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/update/$',
         view=EntryUpdateView.as_view(),
         name='entry-update'),
+
+    # Feeds
+    url(regex='^(?P<project_slug>[\w-]+)/rss/latest-version/$',
+        view=RssVersionFeed(),
+        name='latest-version-rss-feed'),
+    url(regex='^(?P<project_slug>[\w-]+)/atom/latest-version/$',
+        view=AtomVersionFeed(),
+        name='latest-version-atom-feed'),
+    url(regex='^(?P<project_slug>[\w-]+)/rss/latest-entry/$',
+        view=RssEntryFeed(),
+        name='latest-entry-rss-feed'),
+    url(regex='^(?P<project_slug>[\w-]+)/atom/latest-entry/$',
+        view=AtomEntryFeed(),
+        name='latest-entry-atom-feed'),
+
+    # Feeds specific version and projects
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<version_slug>['
+              '\w-]+)/rss$',
+        view=RssEntryFeed(),
+        name='entry-rss-feed'),
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<version_slug>['
+              '\w-]+)/atom$',
+        view=AtomEntryFeed(),
+        name='entry-atom-feed'),
 )
 
 
