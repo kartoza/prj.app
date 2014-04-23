@@ -69,59 +69,60 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/pending-versions/list/$',
         view=PendingVersionListView.as_view(),
         name='pending-version-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w-]+)/approve/$',
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/approve/$',
         view=ApproveVersionView.as_view(),
         name='version-approve'),
     url(regex='^(?P<project_slug>[\w-]+)/version/list/$',
         view=VersionListView.as_view(),
         name='version-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w-]+)/markdown/$',
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/markdown/$',
         view=VersionMarkdownView.as_view(),
         name='version-markdown'),
-    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w-]+)/$',
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/$',
         view=VersionDetailView.as_view(),
         name='version-detail'),
-    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w-]+)/thumbs/$',
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/thumbs/$',
         view=VersionThumbnailView.as_view(),
         name='version-thumbs'),
-    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w-]+)/delete/$',
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/delete/$',
         view=VersionDeleteView.as_view(),
         name='version-delete'),
     url(regex='^(?P<project_slug>[\w-]+)/create-version/$',
         view=VersionCreateView.as_view(),
         name='version-create'),
-    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w-]+)/update/$',
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/update/$',
         view=VersionUpdateView.as_view(),
         name='version-update'),
-    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w-]+)/download/$',
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/download/$',
         view=VersionDownload.as_view(),
         name='version-download'),
 
     # Changelog entry management
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w-]+)/'
+    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/'
               'pending-entry/list/$',
         view=PendingEntryListView.as_view(),
         name='pending-entry-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w-]+)/entry/'
+    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/entry/'
               '(?P<slug>[\w-]+)/approve/$',
         view=ApproveEntryView.as_view(),
         name='entry-approve'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w-]+)/entry/list/$',
+    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w'
+              '.-]+)/entry/list/$',
         view=EntryListView.as_view(),
         name='entry-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w-]+)/entry'
+    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/entry'
               '/(?P<slug>[\w-]+)/$',
         view=EntryDetailView.as_view(),
         name='entry-detail'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w-]+)/entry/'
+    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/entry/'
               '(?P<slug>[\w-]+)/delete/$',
         view=EntryDeleteView.as_view(),
         name='entry-delete'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w-]+)/'
+    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/'
               'create-entry/$',
         view=EntryCreateView.as_view(),
         name='entry-create'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w-]+)/entry/'
+    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/entry/'
               '(?P<slug>[\w-]+)/update/$',
         view=EntryUpdateView.as_view(),
         name='entry-update'),
@@ -142,11 +143,11 @@ urlpatterns = patterns(
 
     # Feeds specific version and projects
     url(regex='^(?P<project_slug>[\w-]+)/version/(?P<version_slug>['
-              '\w-]+)/rss$',
+              '\w.-]+)/rss$',
         view=RssEntryFeed(),
         name='entry-rss-feed'),
     url(regex='^(?P<project_slug>[\w-]+)/version/(?P<version_slug>['
-              '\w-]+)/atom$',
+              '\w.-]+)/atom$',
         view=AtomEntryFeed(),
         name='entry-atom-feed'),
 )

@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
-from django.utils.text import slugify
+# from django.utils.text import slugify
+from common.utilities import version_slugify
 import os
 import logging
 from core.settings.contrib import STOP_WORDS
@@ -82,7 +83,7 @@ class Version(AuditedModel):
             words = self.name.split()
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
-            self.slug = slugify(new_list)[:50]
+            self.slug = version_slugify(new_list)[:50]
         super(Version, self).save(*args, **kwargs)
 
     def __unicode__(self):
