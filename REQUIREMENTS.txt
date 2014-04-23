@@ -29,3 +29,5 @@ pypandoc==0.6.0
 beautifulsoup4==4.3.2
 # disqus
 django-disqus==0.4.1
+# custom slugify
+awesome-slugify==1.4

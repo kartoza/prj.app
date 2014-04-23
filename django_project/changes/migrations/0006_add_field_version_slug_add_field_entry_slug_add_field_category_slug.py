@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 from django.utils.text import slugify
+from common.utilities import version_slugify
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
@@ -36,7 +37,7 @@ class Migration(SchemaMigration):
 
             objects = orm['changes.Version'].objects.all()
             for obj in objects:
-                obj.slug = slugify(obj.name)
+                obj.slug = version_slugify(obj.name)
                 obj.save()
 
             objects = orm['changes.Entry'].objects.all()
