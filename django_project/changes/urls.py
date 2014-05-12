@@ -152,7 +152,7 @@ urlpatterns = patterns(
         name='entry-atom-feed'),
 
     # User map
-	url(r'^user-map/', include('user_map.urls')),
+	#url(r'^user-map/', include('user_map.urls')),
 )
 
 
