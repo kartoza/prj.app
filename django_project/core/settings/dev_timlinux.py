@@ -1,3 +1,5 @@
+# coding=utf-8
+"""Settings for Tim's dev environment."""
 from .project import *
 
 # Set debug to True for development
@@ -14,6 +16,17 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'changelog',
+        'USER': 'docker',
+        'PASSWORD': 'docker',
+        'HOST': 'localhost',
+        'PORT': '25432',
     }
 }
 

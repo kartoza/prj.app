@@ -118,7 +118,6 @@ def upload_postgres_dump(dump_path):
     restore_postgres_dump(
         'changelog',
         user='wsgi',
-        password='',
         ignore_permissions=True,
         file_name=dump_path)
 
@@ -196,6 +195,14 @@ def deploy():
     fastprint(' to the domain name for the site.')
     fastprint('*******************************************\n')
 
+
+@hosts('linfiniti3')
+@task
+def backup():
+    """Make a local backup of the production instance."""
+    get_live_db()  # should fetch from linfiniti3
+    get_live_media()  # should fetch from linfiniti3
+    get_private()  # should fetch from linfiniti3
 
 @hosts('linfiniti3')
 @task
@@ -463,5 +470,8 @@ def set_up_disqus(shortname):
 @task
 def restore_postgres_dump_locally():
     """Restore postgresql dump to local host db: changelog."""
-    restore_postgres_dump('changelog')
+    restore_postgres_dump(
+        dbname='changelog',
+        user='docker',
+        password='docker')
 
