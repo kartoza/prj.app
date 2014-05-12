@@ -210,6 +210,7 @@ def freshen():
     git_url = 'http://github.com/timlinux/projecta.git'
     update_git_checkout(base_path, git_url, repo_alias)
     put_private()
+    update_venv(code_path)
     update_migrations()
     with cd(os.path.join(code_path, 'django_project')):
         run('touch core/wsgi.py')

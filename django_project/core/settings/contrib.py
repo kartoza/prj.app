@@ -17,6 +17,7 @@ INSTALLED_APPS += (
     'userena',
     'raven.contrib.django',
     'reversion',
+    'user_map',
 )
 
 STOP_WORDS = (

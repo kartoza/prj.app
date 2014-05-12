@@ -1,3 +1,5 @@
+# coding=utf-8
+"""Tests for models."""
 from django.test import TestCase
 from changes.tests.model_factories import CategoryF, EntryF, VersionF
 

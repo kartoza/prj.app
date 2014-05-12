@@ -1,4 +1,6 @@
-# noinspection PyUnresolvedReferences,PyPackageRequirements
+# coding=utf-8
+"""Factories for creating model instances for testing."""
+
 import factory
 from changes.models.category import Category
 from changes.models.entry import Entry
