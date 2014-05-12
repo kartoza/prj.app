@@ -6,8 +6,8 @@ from views.committee import (
     CommitteeDetailView,
     CommitteeCreateView,
     CommitteeUpdateView,
-    CommitteeDeleteView
-)
+    CommitteeDeleteView,
+    CommitteeListView)
 from views.vote import VoteCreateUpdateView
 from views.ballot import (
     BallotDetailView,
@@ -24,6 +24,9 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<slug>[\w-]+)/$',
         view=CommitteeDetailView.as_view(),
         name='committee-detail'),
+    url(regex='^(?P<project_slug>[\w-]+)/committees/$',
+        view=CommitteeListView.as_view(),
+        name='committee-list'),
     url(regex='^(?P<project_slug>[\w-]+)/create-committee/$',
         view=CommitteeCreateView.as_view(),
         name='committee-create'),

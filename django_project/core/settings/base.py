@@ -1,3 +1,7 @@
+# coding=utf-8
+"""
+core.settings.base
+"""
 # Django settings for projecta project.
 
 from .utils import absolute_path

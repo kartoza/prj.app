@@ -1,164 +1,13 @@
-from django.core.urlresolvers import reverse
-from django.template import loader, Context
-from bs4 import BeautifulSoup
-from django.utils.safestring import mark_safe
-from base.models import Project, Version
-from changes.models import Entry, Category
-from vota.models import Committee, Ballot
-import logging
-logger = logging.getLogger(__name__)
-
-
-def navigation_render(project=None,
-                      committee=None,
-                      version=None,
-                      the_versions=None,
-                      entry=None,
-                      the_entries=None,
-                      ballot=None,
-                      category=None,
-                      the_categories=None,
-                      is_staff=False,
-                      is_logged_in=False):
-    the_version = None
-    the_committee = None
-    committees = None
-    the_ballot = None
-    ballots = None
-    the_entry = None
-    entries = None
-    unapproved_entries = False
-    the_project = None
-    versions = None
-    unapproved_versions = False
-    categories = None
-    unapproved_categories = False
-    show_create_committee = False
-    projects = Project.approved_objects.all()
-    unapproved_projects = False
-    if is_staff:
-        if Project.unapproved_objects.exists():
-            unapproved_projects = True
-    if project:
-        the_project = project
-        # We don't want to see committees under versions
-        if not version:
-            committees = Committee.objects.filter(project=the_project)
-            if not committees:
-                show_create_committee = True
-        # We don't want to see versions under committees
-        if not committee:
-            versions = Version.objects.filter(project=the_project)
-    if committee:
-        the_committee = committee
-        the_project = the_committee.project
-        committees = Committee.objects.filter(project=the_project)
-        ballots = Ballot.objects.filter(committee=the_committee)
-    if version:
-        the_version = version
-        versions = Version.objects.filter(project=the_version.project)
-        # Only show the 10 most recent entries
-        entries = Entry.approved_objects.filter(version=the_version)[:10]
-        if is_staff:
-            if Entry.unapproved_objects.filter(version=the_version).exists():
-                unapproved_entries = True
-        categories = Category.approved_objects.filter(
-            project=the_version.project)
-        the_project = the_version.project
-    if the_versions:
-        first_version = the_versions[0]
-        versions = the_versions[:10]
-        the_project = first_version.project
-        if is_staff:
-            if Version.unapproved_objects.filter(project=the_project).exists():
-                unapproved_versions = True
-        categories = Category.objects.filter(project=the_project)
-    if category:
-        the_project = category.project
-        if is_staff:
-            versions = Version.objects.filter(project=the_project)
-            if Category.unapproved_objects.filter(project=the_project).exists():
-                unapproved_categories = True
-        else:
-            versions = Version.approved_objects.filter(project=the_project)
-        categories = Category.approved_objects.filter(project=the_project)
-    if the_categories:
-        first_category = the_categories[0]
-        categories = the_categories[:10]
-        the_project = first_category.project
-        versions = Version.objects.filter(project=the_project)
-    if entry:
-        the_entry = entry
-        entries = Entry.approved_objects.filter(version=entry.version)[:10]
-        the_project = entry.version.project
-        the_version = entry.version
-        if is_staff:
-            versions = Version.objects.filter(project=the_project)
-        else:
-            versions = Version.approved_objects.filter(project=the_project)
-        if not is_staff:
-            categories = Category.approved_objects.filter(
-                project=entry.version.project)
-        else:
-            categories = Category.objects.filter(
-                project=entry.version.project)
-    if the_entries:
-        first_entry = the_entries[0]
-        entries = the_entries[:10]
-        the_project = first_entry.version.project
-        the_version = first_entry.version
-        versions = Version.objects.filter(
-            project=first_entry.version.project)
-        if not is_staff:
-            categories = Category.approved_objects.filter(
-                project=first_entry.version.project)
-        else:
-            categories = Category.objects.filter(
-                project=first_entry.version.project)
-    if ballot:
-        the_ballot = ballot
-        ballots = Ballot.objects.filter(committee=ballot.committee)
-        the_project = ballot.committee.project
-        committees = Committee.objects.filter(project=the_project)
-
-    return {
-        'the_project': the_project,
-        'projects': projects,
-        'unapproved_projects': unapproved_projects,
-        'versions': versions,
-        'unapproved_versions': unapproved_versions,
-        'the_version': the_version,
-        'the_committee': the_committee,
-        'committees': committees,
-        'the_ballot': the_ballot,
-        'ballots': ballots,
-        'the_entry': the_entry,
-        'entries': entries,
-        'unapproved_entries': unapproved_entries,
-        'categories': categories,
-        'unapproved_categories': unapproved_categories,
-        'show_create_committee': show_create_committee,
-        'is_staff': is_staff,
-        'is_logged_in': is_logged_in
-    }
+# coding=utf-8
+"""
+core.custom_middleware
+"""
+from base.models import Project
 
 
 class NavContextMiddleware(object):
     """
-    Adds the required nav_url to each response.
-
-    :arg: project
-    :return: If present in response.context (which it should be in nearly every
-        view except Home), all the Organisation's Projects will be shown in the
-        menu under the current project's name.
-
-    :arg: committee
-    :return: If present in response.context, the user is in the vota app and
-        will see a list of authorised committees and their ballots in the menu.
-
-    :arg: version
-    :return: If present in response.context, the user is in the changes app and
-        will see a list of the project's versions, categories and entries
+    Adds the required navigation variables to each response
     """
 
     def __init__(self):
@@ -166,57 +15,84 @@ class NavContextMiddleware(object):
 
     @staticmethod
     def process_template_response(request, response):
+        """
+        Add 'the_project', 'the_entry', 'the_version' to context for the
+            navigation.
+
+        Justification: To make the navigation functional, we need to know
+            which Project (or Version, Committee etc) the current context
+            relates to. This is required for URLs. Rather than include lots of
+            if/else in the navigation template, it seems cleaner to add the
+            above variables to the context here.
+
+        :param request: Http Request obj
+        :param response: Http Response obj
+        :return: context :rtype: dict
+        """
         context = response.context_data
-        project = None
-        committee = None
-        version = None
-        versions = None
-        entry = None
-        entries = None
-        ballot = None
-        category = None
-        categories = None
-        is_staff = request.user.is_staff
-        is_logged_in = request.user.is_authenticated
-        if not request.path.startswith(reverse('admin:index')) \
-            and not request.is_ajax():
-            if context.get('project', None):
-                project = context['project']
-            if context.get('committee', None):
-                committee = context['committee']
-            if context.get('version', None):
-                version = context['version']
-            if context.get('versions', None):
-                versions = context['versions']
-            if context.get('entry', None):
-                entry = context['entry']
-            if context.get('entries', None):
-                entries = context['entries']
-            if context.get('ballot', None):
-                ballot = context['ballot']
-            if context.get('category', None):
-                category = context['category']
-            if context.get('categories', None):
-                categories = context['categories']
-            nav_template = loader.get_template('navigation.html')
-            render_nav = navigation_render(
-                project=project,
-                committee=committee,
-                version=version,
-                the_versions=versions,
-                entry=entry,
-                the_entries=entries,
-                ballot=ballot,
-                category=category,
-                the_categories=categories,
-                is_staff=is_staff,
-                is_logged_in=is_logged_in
-            )
-            nav_context = Context(render_nav)
-            nav_rendered = nav_template.render(nav_context)
-            soup = BeautifulSoup(response.rendered_content)
-            container = soup.find(id="nav-souped-content")
-            if container:
-                container.insert(1, BeautifulSoup(nav_rendered))
-                response.content = mark_safe(soup)
+
+        if context.get('project', None):
+            context['the_project'] = context.get('project')
+        else:
+            if request.user.is_staff:
+                context['the_projects'] = Project.objects.all()
+            else:
+                context['the_projects'] = Project.approved_objects.fitler(
+                    private=False
+                )
+
+        if context.get('version', None):
+            context['the_version'] = context.get('version')
+            context['the_project'] = context.get('version').project
+
+        if context.get('committee', None):
+            context['the_committee'] = context.get('committee')
+            context['the_project'] = context.get('committee').project
+
+        if context.get('ballot', None):
+            context['the_committee'] = context.get('ballot').committee
+            context['the_project'] = context.get('ballot').committee.project
+
+        if context.get('category', None):
+            context['the_project'] = context.get('category').project
+
+        if context.get('ballots', None):
+            try:
+                context['the_project'] = \
+                    context.get('ballots')[0].committee.project
+            except (KeyError, IndexError):
+                pass
+
+        if context.get('entry', None):
+            context['the_entry'] = context.get('entry')
+            context['the_version'] = context.get('entry').version
+            context['the_project'] = context.get('entry').version.project
+
+        if context.get('committees', None):
+            try:
+                context['the_project'] = context.get('committees')[0].project
+            except (KeyError, IndexError):
+                pass
+
+        if context.get('versions', None):
+            try:
+                context['the_project'] = context.get('versions')[0].project
+            except (KeyError, IndexError):
+                pass
+
+        if context.get('entries', None):
+            try:
+                context['the_version'] = context.get('entries')[0].version
+                context['the_project'] = \
+                    context.get('entries')[0].version.project
+            except (KeyError, IndexError):
+                pass
+
+        if context.get('categories', None):
+            try:
+                context['the_project'] = \
+                    context.get('categories')[0].project
+            except (KeyError, IndexError):
+                pass
+
         return response

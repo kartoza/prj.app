@@ -76,7 +76,7 @@ class Version(AuditedModel):
             ('slug', 'project'),
         )
         app_label = 'changes'
-        ordering = ['name']
+        ordering = ['-datetime_created']
 
     def save(self, *args, **kwargs):
         if not self.pk:

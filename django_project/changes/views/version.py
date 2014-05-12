@@ -170,6 +170,7 @@ class VersionThumbnailView(VersionMixin, DetailView):
         :rtype: dict
         """
         context = super(VersionThumbnailView, self).get_context_data(**kwargs)
+        context['as_thumbs'] = True
         return context
 
     def get_queryset(self):

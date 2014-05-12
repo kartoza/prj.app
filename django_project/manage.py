@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+# coding=utf-8
+"""
+django_app.manage
+"""
 import os
 import sys
 

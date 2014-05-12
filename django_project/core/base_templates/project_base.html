@@ -22,10 +22,12 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="{% url 'home' %}">Projecta Home</a>
+    <a class="navbar-brand" href="{% url 'home' %}">
+      <span class="glyphicon glyphicon-home"></span>
+    </a>
   </div>
   <div class="collapse navbar-collapse" id="top-navbar">
-    <div id="nav-souped-content"></div>
+    {% include 'includes/base-auth-nav-left.html' %}
     <ul class="nav navbar-nav navbar-right" style="margin-right: 0">
       {% include 'includes/right-nav.html' %}
     </ul>
