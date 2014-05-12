@@ -37,7 +37,7 @@ class NavContextMiddleware(object):
             if request.user.is_staff:
                 context['the_projects'] = Project.objects.all()
             else:
-                context['the_projects'] = Project.approved_objects.fitler(
+                context['the_projects'] = Project.approved_objects.filter(
                     private=False
                 )
 
