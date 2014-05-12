@@ -1,3 +1,7 @@
+# coding=utf-8
+"""
+core.settings.contrib
+"""
 from .base import *
 
 # Extra installed apps

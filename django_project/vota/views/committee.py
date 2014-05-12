@@ -5,7 +5,13 @@ from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from django.core.urlresolvers import reverse
 from django.http import Http404
 import logging
-from django.views.generic import DetailView, CreateView, DeleteView, UpdateView
+from django.views.generic import (
+    DetailView,
+    CreateView,
+    DeleteView,
+    UpdateView,
+    ListView
+)
 from base.models import Project
 from vota.forms import CreateCommitteeForm
 from vota.models import Committee, Ballot
@@ -68,6 +74,50 @@ class CommitteeDetailView(CommitteeMixin, DetailView):
                 return obj
             else:
                 raise Http404('Sorry! We could not find your committee!')
+
+
+# noinspection PyAttributeOutsideInit
+class CommitteeListView(CommitteeMixin, ListView):
+    """Show all Committees for a Project
+
+    This view returns a list of all Committees within a Project.
+    """
+    context_object_name = 'committees'
+    template_name = 'committee/list.html'
+
+    def get(self, request, *args, **kwargs):
+        """Access URL parameters
+
+        We need to define self.project in order to return the correct set of
+            Ballot objects
+
+        :param request: Request object
+        :type request: HttpRequestObject
+
+        :param args: None
+
+        :param kwargs: (django dict)
+        :type kwargs: dict
+
+        """
+        project_slug = self.kwargs.get('project_slug')
+        self.project = Project.objects.get(slug=project_slug)
+        return super(CommitteeListView, self).get(
+            request, *args, **kwargs
+        )
+
+
+    def get_queryset(self):
+        """Specify the queryset
+
+        Return a specific queryset based on the requesting user's status
+
+        :return: All Committees for the current Project
+        :rtype: QuerySet
+
+        """
+        qs = Committee.objects.filter(project=self.project)
+        return qs
 
 # noinspection PyAttributeOutsideInit
 class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):

@@ -29,11 +29,13 @@
                 <span class="glyphicon glyphicon-time"></span>
               </a>
             {% endif %}
+            {% if versions %}
               <a class="btn btn-default btn-mini tooltip-toggle"
                  href='{% url "latest-version-atom-feed" versions.0.project.slug %}'
                  data-title="Atom Feed for Latest Version of {{ versions.0.project.name }}">
                  <img src="{% static "img/feed-icon-14x14.png" %}"/>
               </a>
+            {% endif %}
           </div>
         </h1>
     </div>
