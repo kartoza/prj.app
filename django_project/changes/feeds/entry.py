@@ -15,6 +15,7 @@ from django.http import Http404
 from base.models.project import Project
 from changes.models.version import Version
 from changes.models.entry import Entry
+from django.conf import settings
 
 
 # noinspection PyMethodMayBeStatic
@@ -121,8 +122,7 @@ class RssEntryFeed(Feed):
         :returns: description of the Entry
         :rtype: str
         """
-        return item.description
-
+        return '<p>'+item.description+'</p><p><img src="'+settings.MEDIA_URL+item.image_file.name+'"/></p>'
 
 class AtomEntryFeed(RssEntryFeed):
     """Atom Feed class for Entry."""
