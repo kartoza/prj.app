@@ -15,16 +15,24 @@
   {% endif %}
   <div class="col-lg-9">
     <div class="row">
+    {% if not rst_download %}
       <div class="col-lg-12">
-        <h2 class="muted align-right">
+        <h3 class="muted align-right">
           <small>Project:</small>
-          {{ version.project }}</h2>
+          {{ version.project }}</h3>
       </div>
       <div class="col-lg-12">
-        <h2 class="muted align-right">
+        <h3 class="muted align-right">
           <small>Changelog for version:</small>
           {{ version.name }}</h2>
       </div>
+    {% else %}
+      <div class="col-lg-12">
+        <h1>
+          Changelog for {{ version.project }} {{ version.name }}
+        </h1>
+      </div>
+    {% endif %}
     </div>
   </div>
 </div>
@@ -71,7 +79,9 @@
         <div class="row">
           <div class="{% if entry.image_file %}col-md-7{% else %}col-md-12{% endif %}">
             <h3 id="feature-{{ entry.id }}">
-              <a href="#{{ entry.id }}">#</a>
+              {% if not rst_download %}
+                <a href="#{{ entry.id }}">#</a>
+              {% endif %}
               <span class="text-muted">Feature:</span> {{ entry.title }}
             </h3>
             <div>
