@@ -41,9 +41,12 @@ def application(environ, start_response):
 
     Places env vars defined in apache conf into a context accessible by django.
     """
-    os.environ['GITHUB_URL'] = environ['GITHUB_URL']
-    os.environ['GITHUB_USER'] = environ['GITHUB_USER']
-    os.environ['GITHUB_PASSWORD'] = environ['GITHUB_PASSWORD']
+    if 'GITHUB_URL' in environ:
+        os.environ['GITHUB_URL'] = environ['GITHUB_URL']
+    if 'GITHUB_USER' in environ:
+        os.environ['GITHUB_USER'] = environ['GITHUB_USER']
+    if 'GITHUB_PASSWORD' in environ:
+        os.environ['GITHUB_PASSWORD'] = environ['GITHUB_PASSWORD']
     return _application(environ, start_response)
 
 # Apply WSGI middleware here.

@@ -36,7 +36,7 @@ web:
   volumes:
     - ./django_project:/home/web/django_project
   ports:
-    - "1818:49360"
+    - "2118:49360"
   links:
     - db:db
 

@@ -12,9 +12,7 @@ RUN apt-get -y update
 
 #-------------Application Specific Stuff ----------------------------------------------------
 
-RUN apt-get -y install libpq5 python-gdal python-geoip \
-    python python-dev python-distribute python-pip \
-    python-psycopg2 npm nodejs rpl
+RUN apt-get -y install libpq-dev libpq5 npm nodejs rpl
 RUN npm -g install yuglify
 
 # Debian is messed up and aliases node as nodejs

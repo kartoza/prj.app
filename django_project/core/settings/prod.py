@@ -21,7 +21,7 @@ if 'raven.contrib.django' in INSTALLED_APPS:
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'raven.contrib.django.middleware.SentryResponseErrorIdMiddleware',
         'raven.contrib.django.middleware.SentryLogMiddleware',
-        #for django-audited-models
+        # for django-audited-models
         'threaded_multihost.middleware.ThreadLocalMiddleware',
     ) + MIDDLEWARE_CLASSES
 
@@ -42,7 +42,7 @@ if 'raven.contrib.django' in INSTALLED_APPS:
                 'level': 'ERROR',
                 # see https://docs.djangoproject.com/en/dev/releases/1
                 # .4/#request-exceptions-are-now-always-logged
-                #'filters': ['require_debug_false'],
+                # 'filters': ['require_debug_false'],
                 'class': 'django.utils.log.AdminEmailHandler'
             },
             # sentry logger

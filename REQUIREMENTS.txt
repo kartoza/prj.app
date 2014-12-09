@@ -1,2 +1,8 @@
 -r docker-prod/REQUIREMENTS.txt
 psycopg2==2.5
+pillow
+# Similar to nodeenv but installs node venv into your python venv
+# Note this does not install nicely under pycharm - use pip from cli rather
+# Note you need to have nodejs compilation requirements installed
+# Note this is needed for the django compressor app
+virtual-node==0.0.4

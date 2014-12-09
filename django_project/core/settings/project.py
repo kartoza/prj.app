@@ -78,12 +78,5 @@ PIPELINE_CSS = {
 
 PIPELINE_JS_COMPRESSOR = None
 
-# Define variables used to submit issues to github
-# These are passed by customisations in wsgi.py
-# with original definitions in apache.conf
-GITHUB_URL = os.environ.get('GITHUB_USER')
-GITHUB_USER = os.environ.get('GITHUB_USER')
-GITHUB_PASSWORD = os.environ.get('GITHUB_PASSWORD')
 
-from .private import DISQUS_WEBSITE_SHORTNAME
-DISQUS_WEBSITE_SHORTNAME = DISQUS_WEBSITE_SHORTNAME
+from .private import * 

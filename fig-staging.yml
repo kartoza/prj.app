@@ -30,7 +30,7 @@ stagingweb:
   volumes:
     - ./django_project:/home/web/django_project
   ports:
-    - "1819:49360"
+    - "2119:49360"
   links:
     - stagingdb:db
 

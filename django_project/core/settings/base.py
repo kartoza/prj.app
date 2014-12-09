@@ -47,7 +47,7 @@ MEDIA_ROOT = absolute_path('media')
 # Examples: "http://example.com/media/", "http://media.example.com/"
 #MEDIA_URL = '/media/'
 #setting full MEDIA_URL to be able to use it for the feeds
-MEDIA_URL = 'http://localhost:8000/media/'
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -123,7 +123,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.syndication',
 )
