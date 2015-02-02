@@ -1,6 +1,6 @@
 #--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
-FROM projecta_web
-MAINTAINER Tim Sutton<tim@linfiniti.com>
+FROM jakartaflood_uwsgi
+MAINTAINER Tim Sutton<tim@kartoza.com>
 
 # Use local cached debs from host (saves your bandwidth!)
 # Change ip below to that of your apt-cacher-ng host

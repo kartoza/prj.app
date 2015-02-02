@@ -14,3 +14,87 @@ id_rsa.pub
 docs/build
 fabgis_resources
 private.py
+
+# Vim leftovers
+*.*~
+
+# project specifc
+django_project/core/settings/secret.py
+xmlrunner
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+# Usually these files are written by a python script from a template
+# before PyInstaller builds the exe, so as to inject date/other infos
+# into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+#PyCharm
+.idea
+
+# Virtual env
+venv
+
+# Node
+django_project/static
+node_modules
+
+# Working data not intended to be versioned
+data_for_import
+scrap.html
+.pycharm_helpers
+.sudo_as_admin_successful
+
+# Pg cluster for docker
+deployment/pg/postgres_data/9.3
+deployment/pg/postgres_staging_data/9.3
+deployment/pg/postgres_dev_data/9.3
