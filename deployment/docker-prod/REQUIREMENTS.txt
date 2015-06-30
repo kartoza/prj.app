@@ -4,3 +4,4 @@ pytz
 django-pipeline<1.4
 nodeenv
 pillow
+raven
