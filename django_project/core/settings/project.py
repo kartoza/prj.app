@@ -78,5 +78,3 @@ PIPELINE_CSS = {
 
 PIPELINE_JS_COMPRESSOR = None
 
-
-from .private import * 
