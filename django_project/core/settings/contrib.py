@@ -7,7 +7,6 @@ from .base import *
 # Extra installed apps
 INSTALLED_APPS += (
     # 'raven.contrib.django',  # enable Raven plugin
-    'south',
     'crispy_forms',
     'pipeline',
     'widget_tweaks',  # lets us add some bootstrap css to form elements

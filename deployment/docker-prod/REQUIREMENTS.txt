@@ -5,3 +5,5 @@ django-pipeline<1.4
 nodeenv
 pillow
 raven
+django-crispy-forms
+widget_tweaks
