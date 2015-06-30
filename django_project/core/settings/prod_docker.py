@@ -8,8 +8,7 @@ ALLOWED_HOSTS = ['*']
 ADMINS = (
     ('Tim Sutton', 'tim@kartoza.com'),
     ('Ismail Sunni', 'ismail@kartoza.com'),
-    ('Christian Christellis', 'christian@kartoza.com'),
-    ('Akbar Gumbira', 'akbargumbira@gmail.com'),)
+    ('Christian Christellis', 'christian@kartoza.com'),)
 
 DATABASES = {
     'default': {
@@ -38,4 +37,4 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = 'noreply@kartoza.com'
 EMAIL_HOST_PASSWORD = 'docker'
 EMAIL_USE_TLS = False
-EMAIL_SUBJECT_PREFIX = '[InaSAFE]'
+EMAIL_SUBJECT_PREFIX = '[PROJECTA]'
