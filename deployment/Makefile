@@ -7,7 +7,7 @@ PROJECT_ID := projecta
 
 default: web
 
-run: build web migrate collectstatic permissions
+run: build permissions web migrate collectstatic
 
 deploy: run migrate collectstatic
 	@echo
@@ -33,6 +33,7 @@ web:
 
 permissions:
 	# Probably we want something more granular here....
+	#@sudo mkdir pg logs media static
 	@sudo chmod a+rwx -R pg logs media static
 
 nginx:
@@ -83,7 +84,6 @@ kill:
 	@echo "------------------------------------------------------------------"
 	@echo "Killing in production mode"
 	@echo "------------------------------------------------------------------"
-
 	@docker-compose -p $(PROJECT_ID) kill
 
 rm: kill
