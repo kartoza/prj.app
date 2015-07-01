@@ -38,7 +38,6 @@ INSTALLED_APPS += (
     'base',
     'changes',
     'github_issue',
-    'base',
     'vota',
     'disqus',
 )
