@@ -7,7 +7,7 @@ PROJECT_ID := projecta
 
 default: web
 
-run: build web
+run: build web migrate collectstatic permissions
 
 deploy: run migrate collectstatic
 	@echo
@@ -31,6 +31,10 @@ web:
 	@docker-compose -p $(PROJECT_ID) up -d web
 	@docker-compose -p $(PROJECT_ID) up --no-recreate -d dbbackups
 
+permissions:
+	# Probably we want something more granular here....
+	@sudo chmod a+rwx -R pg logs media static
+
 nginx:
 	@echo
 	@echo "------------------------------------------------------------------"
@@ -47,6 +51,7 @@ migrate:
 	@echo "------------------------------------------------------------------"
 	@echo "Running migrate static in production mode"
 	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py migrate auth
 	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py migrate
 
 collectstatic:
@@ -123,6 +128,13 @@ shell:
 	@echo "Shelling in in production mode"
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) run uwsgi /bin/bash
+
+superuser:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Creating a superuser in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py createsuperuser
 
 dbshell:
 	@echo
