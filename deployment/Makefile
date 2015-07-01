@@ -33,8 +33,22 @@ web:
 
 permissions:
 	# Probably we want something more granular here....
-	#@sudo mkdir pg logs media static
-	@sudo chmod a+rwx -R pg logs media static
+	# Your sudo password will be needed to set the file permissions
+	# on logs, media, static and pg dirs
+	@if [ ! -d "logs" ]; then mkdir logs; fi
+	@if [ ! -d "media" ]; then mkdir media; fi
+	@if [ ! -d "static" ]; then mkdir static; fi
+	@if [ -d "logs" ]; then sudo chmod -R a+rwx logs; fi
+	@if [ -d "media" ]; then sudo chmod -R a+rwx media; fi
+	@if [ -d "static" ]; then sudo chmod -R a+rwx static; fi
+	@if [ -d "pg" ]; then sudo chmod -R a+rwx pg; fi
+
+db:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Running db in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) up -d db
 
 nginx:
 	@echo
@@ -52,7 +66,13 @@ migrate:
 	@echo "------------------------------------------------------------------"
 	@echo "Running migrate static in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py migrate auth
+	@#http://stackoverflow.com/questions/29689365/auth-user-error-with-django-1-8-and-syncdb-migrate
+	@#and
+	@#http://stackoverflow.com/questions/3143635/how-to-ignore-mv-error
+	@# We add the '-' prefix tot eh next line as the migration may fail
+	@# but we want to continue anyway.
+	@#We need to migrate accounts first as it has a reference to user model
+	-@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py migrate auth
 	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py migrate
 
 collectstatic:
@@ -71,13 +91,6 @@ reload:
 	@echo "Reload django project in production mode"
 	@echo "------------------------------------------------------------------"
 	@docker exec -t -i $(PROJECT_ID)_uwsgi_1 uwsgi --reload  /tmp/django.pid
-
-worker:
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Running worker production mode"
-	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) up -d worker
 
 kill:
 	@echo
@@ -99,14 +112,6 @@ logs:
 	@echo "Showing uwsgi logs in production mode"
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) logs uwsgi
-
-
-workerlogs:
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Showing celery worker logs in production mode"
-	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) logs worker
 
 dblogs:
 	@echo
