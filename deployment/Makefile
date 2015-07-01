@@ -38,10 +38,12 @@ permissions:
 	@if [ ! -d "logs" ]; then mkdir logs; fi
 	@if [ ! -d "media" ]; then mkdir media; fi
 	@if [ ! -d "static" ]; then mkdir static; fi
+	@if [ ! -d "backups" ]; then mkdir backups; fi
 	@if [ -d "logs" ]; then sudo chmod -R a+rwx logs; fi
 	@if [ -d "media" ]; then sudo chmod -R a+rwx media; fi
 	@if [ -d "static" ]; then sudo chmod -R a+rwx static; fi
 	@if [ -d "pg" ]; then sudo chmod -R a+rwx pg; fi
+	@if [ -d "backups" ]; then sudo chmod -R a+rwx backups; fi
 
 db:
 	@echo
@@ -147,6 +149,16 @@ dbshell:
 	@echo "Shelling in in production database"
 	@echo "------------------------------------------------------------------"
 	@docker exec -t -i $(PROJECT_ID)_db_1 psql -U docker -h localhost gis
+
+restoredb:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Restore dump from backups/latest.dmp in production mode"
+	@echo "------------------------------------------------------------------"
+	@# - prefix causes command to continue even if it fails
+	-@docker exec -t -i $(PROJECT_ID)_db_1 su - postgres -c "dropdb gis"
+	@docker exec -t -i $(PROJECT_ID)_db_1 su - postgres -c "createdb -O docker -T template_postgis gis"
+	@docker exec -t -i $(PROJECT_ID)_db_1 pg_restore /backups/latest.dmp | docker exec -i $(PROJECT_ID)_db_1 su - postgres -c "psql gis"
 
 sentry:
 	@echo

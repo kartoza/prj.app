@@ -31,6 +31,8 @@ db:
   environment:
     - USERNAME=docker
     - PASS=docker
+  volumes:
+    - ./backups:/backups
 
 uwsgi:
   build: docker-prod
