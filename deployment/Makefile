@@ -150,7 +150,7 @@ dbshell:
 	@echo "------------------------------------------------------------------"
 	@docker exec -t -i $(PROJECT_ID)_db_1 psql -U docker -h localhost gis
 
-restoredb:
+dbrestore:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Restore dump from backups/latest.dmp in production mode"
@@ -160,7 +160,7 @@ restoredb:
 	@docker exec -t -i $(PROJECT_ID)_db_1 su - postgres -c "createdb -O docker -T template_postgis gis"
 	@docker exec -t -i $(PROJECT_ID)_db_1 pg_restore /backups/latest.dmp | docker exec -i $(PROJECT_ID)_db_1 su - postgres -c "psql gis"
 
-backupdb:
+dbbackup:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Create backups/`date +%d-%B-%Y`.dmp in production mode"
