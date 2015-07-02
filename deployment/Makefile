@@ -29,7 +29,7 @@ web:
 	@echo "Running in production mode"
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) up -d web
-	@docker-compose -p $(PROJECT_ID) up --no-recreate -d dbbackups
+	@docker-compose -p $(PROJECT_ID) up -d dbbackups
 
 permissions:
 	# Probably we want something more granular here....
@@ -159,6 +159,15 @@ restoredb:
 	-@docker exec -t -i $(PROJECT_ID)_db_1 su - postgres -c "dropdb gis"
 	@docker exec -t -i $(PROJECT_ID)_db_1 su - postgres -c "createdb -O docker -T template_postgis gis"
 	@docker exec -t -i $(PROJECT_ID)_db_1 pg_restore /backups/latest.dmp | docker exec -i $(PROJECT_ID)_db_1 su - postgres -c "psql gis"
+
+backupdb:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Create backups/`date +%d-%B-%Y`.dmp in production mode"
+	@echo "------------------------------------------------------------------"
+	@# - prefix causes command to continue even if it fails
+	docker exec -t -i $(PROJECT_ID)_dbbackups_1 /backups.sh
+	@if [ ! -f "backups/latest.dmp" ]; then ln -s backups/$(PROJECT_ID)_`date +%d-%B-%Y`.dmp backups/latest.dmp; fi
 
 sentry:
 	@echo

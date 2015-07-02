@@ -38,3 +38,5 @@ EMAIL_HOST_USER = 'noreply@kartoza.com'
 EMAIL_HOST_PASSWORD = 'docker'
 EMAIL_USE_TLS = False
 EMAIL_SUBJECT_PREFIX = '[PROJECTA]'
+
+DEBUG = True
