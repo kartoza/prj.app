@@ -29,7 +29,10 @@ web:
 	@echo "Running in production mode"
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) up -d web
-	@docker-compose -p $(PROJECT_ID) up -d dbbackups
+	@# Dont confuse this with the dbbackup make command below
+	@# This one runs the postgis-backup cron container
+	@# We add --no-recreate so that it does not destroy & recreate the db container
+	@docker-compose -p $(PROJECT_ID) up --no-recreate -d dbbackups
 
 permissions:
 	# Probably we want something more granular here....
@@ -163,11 +166,13 @@ dbrestore:
 dbbackup:
 	@echo
 	@echo "------------------------------------------------------------------"
-	@echo "Create backups/`date +%d-%B-%Y`.dmp in production mode"
+	@echo "Create `date +%d-%B-%Y`.dmp in production mode"
 	@echo "------------------------------------------------------------------"
 	@# - prefix causes command to continue even if it fails
-	docker exec -t -i $(PROJECT_ID)_dbbackups_1 /backups.sh
-	@if [ ! -f "backups/latest.dmp" ]; then ln -s backups/$(PROJECT_ID)_`date +%d-%B-%Y`.dmp backups/latest.dmp; fi
+	@docker exec -t -i $(PROJECT_ID)_dbbackups_1 /backups.sh
+	@docker exec -t -i $(PROJECT_ID)_dbbackups_1 cat /var/log/cron.log | tail -2 | head -1 | awk '{print $4}'
+	-@if [ ! -f "backups/latest.dmp" ]; then ln -s backups/`date +%Y`/`date +%B`/PG_$(PROJECT_ID)_`date +%d-%B-%Y`.dmp backups/latest.dmp; fi
+	@echo "Backup should be at: backups/`date +%Y`/`date +%B`/PG_$(PROJECT_ID)_`date +%d-%B-%Y`.dmp"
 
 sentry:
 	@echo
@@ -189,6 +194,28 @@ mailerrorlogs:
 	@echo "Showing smtp error logs in production mode"
 	@echo "------------------------------------------------------------------"
 	@docker exec -t -i $(PROJECT_ID)_smtp_1 tail -f /var/log/mail.err
+
+mediasync:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Syncing media files from live server"
+	@echo "------------------------------------------------------------------"
+	@rsync -av --progress kartoza3:/home/timlinux/production-sites/projecta/django_project/media media
+
+
+# ----------------------------------------------------------------------------
+#    DEVELOPMENT C O M M A N D S
+# --no-deps will attach to prod deps if running
+# after running you will have ssh and web ports open (see dockerfile for no's)
+# and you can set your pycharm to use the python in the container
+# ----------------------------------------------------------------------------
+
+devweb:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Running in DEVELOPMENT mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) up --no-deps -d devweb
 
 # ----------------------------------------------------------------------------
 #    S T A G I N G     C O M M A N D S

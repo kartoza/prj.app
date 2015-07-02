@@ -63,7 +63,9 @@ dbbackups:
   links:
     - db:db
   environment:
-    - DUMPPREFIX=PG_PROJECTA
+    # take care to let the project name below match that
+    # declared in the top of the makefile
+    - DUMPPREFIX=PG_projecta
     # These are all defaults anyway, but setting explicitly in
     # case we ever want to ever use different credentials
     - PGUSER=docker
@@ -89,6 +91,36 @@ web:
   ports:
     - "61200:8080"
 
+# This is the entry point for a development server.
+# Run with --no-deps to run attached to the services
+# from produ environment if wanted
+devweb:
+  build: docker-prod
+  dockerfile: Dockerfile-dev
+  hostname: uwsgi
+  environment:
+    - DATABASE_NAME=gis
+    - DATABASE_USERNAME=docker
+    - DATABASE_PASSWORD=docker
+    - DATABASE_HOST=db
+    - DJANGO_SETTINGS_MODULE=core.settings.prod_docker
+    - VIRTUAL_HOST=projecta.kartoza.com
+    - VIRTUAL_PORT=8080
+  volumes:
+    - ../django_project:/home/web/django_project
+    - ./static:/home/web/static
+    - ./media:/home/web/media
+    - ./reports:/home/web/reports
+    - ./logs:/var/log/
+  links:
+    - smtp:smtp
+    - db:db
+  ports:
+    # for django test server
+    - "61202:8080"
+    # for ssh
+    - "61203:8080"
+
 # Exactly the same as web but for staging we use a different port.
 stagingweb:
   image: nginx
@@ -99,7 +131,6 @@ stagingweb:
     - ./static:/home/web/static:ro
     - ./media:/home/web/media:ro
     - ./logs:/var/log/nginx
-    - ./reports:/home/web/reports
   links:
     - uwsgi:uwsgi
   ports:
