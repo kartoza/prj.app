@@ -119,7 +119,7 @@ devweb:
     # for django test server
     - "61202:8080"
     # for ssh
-    - "61203:8080"
+    - "61203:22"
 
 # Exactly the same as web but for staging we use a different port.
 stagingweb:

@@ -1,15 +1,14 @@
-SHELL := /bin/bash
 PROJECT_ID := projecta
+
+SHELL := /bin/bash
 
 # ----------------------------------------------------------------------------
 #    P R O D U C T I O N     C O M M A N D S
 # ----------------------------------------------------------------------------
-
 default: web
-
 run: build permissions web migrate collectstatic
 
-deploy: run migrate collectstatic
+deploy: run
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Bringing up fresh instance "
@@ -32,7 +31,7 @@ web:
 	@# Dont confuse this with the dbbackup make command below
 	@# This one runs the postgis-backup cron container
 	@# We add --no-recreate so that it does not destroy & recreate the db container
-	@docker-compose -p $(PROJECT_ID) up --no-recreate -d dbbackups
+	@docker-compose -p $(PROJECT_ID) up --no-recreate --no-deps -d dbbackups
 
 permissions:
 	# Probably we want something more granular here....
@@ -74,7 +73,7 @@ migrate:
 	@#http://stackoverflow.com/questions/29689365/auth-user-error-with-django-1-8-and-syncdb-migrate
 	@#and
 	@#http://stackoverflow.com/questions/3143635/how-to-ignore-mv-error
-	@# We add the '-' prefix tot eh next line as the migration may fail
+	@# We add the '-' prefix to the next line as the migration may fail
 	@# but we want to continue anyway.
 	@#We need to migrate accounts first as it has a reference to user model
 	-@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py migrate auth
