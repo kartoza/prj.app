@@ -22,11 +22,11 @@ CACHES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'changelog',
+        'NAME': 'gis',
         'USER': 'docker',
         'PASSWORD': 'docker',
-        'HOST': 'localhost',
-        'PORT': '25432',
+        'HOST': 'db',
+        'PORT': '5432',
     }
 }
 

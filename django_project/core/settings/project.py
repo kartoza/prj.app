@@ -38,7 +38,6 @@ INSTALLED_APPS += (
     'base',
     'changes',
     'github_issue',
-    'base',
     'vota',
     'disqus',
 )
@@ -78,5 +77,3 @@ PIPELINE_CSS = {
 
 PIPELINE_JS_COMPRESSOR = None
 
-
-from .private import * 
