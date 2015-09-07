@@ -60,7 +60,7 @@ uwsgi:
   restart: on-failure:5
 
 dbbackups:
-  image: kartoza/pg-backup
+  image: kartoza/pg-backup:9.4
   hostname: pg-backups
   volumes:
     - ./backups:/backups
