@@ -529,7 +529,7 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
             # write all of the image files (read from disk)
             for image in images:
                 zip_file.write(
-                    './media/{0}'.format(image),
+                    '../media/{0}'.format(image),
                     '{0}'.format(image)
                 )
             # write the actual RST document
