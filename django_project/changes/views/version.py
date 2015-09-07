@@ -149,7 +149,7 @@ class VersionMarkdownView(VersionDetailView):
         """
         response = super(VersionMarkdownView, self).render_to_response(
             context,
-            mimetype='application/text',
+            content_type='application/text',
             **response_kwargs)
         response['Content-Disposition'] = 'attachment; filename="foo.md"'
         return response
@@ -496,7 +496,7 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
 
         # Grab the ZIP file from memory, make response with correct MIME-type
         response = HttpResponse(
-            zip_file.getvalue(), mimetype="application/x-zip-compressed")
+            zip_file.getvalue(), content_type="application/x-zip-compressed")
         # ..and correct content-disposition
         response['Content-Disposition'] = (
             'attachment; filename="{}-{}.zip"'.format(
