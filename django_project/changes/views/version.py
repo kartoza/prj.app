@@ -3,7 +3,7 @@
 
 """
 
-__author__ = 'Tim Sutton <tim@linfiniti.com>'
+__author__ = 'Tim Sutton <tim@kartoza.com>'
 __revision__ = '$Format:%H$'
 __date__ = ''
 __license__ = ''

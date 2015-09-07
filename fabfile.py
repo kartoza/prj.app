@@ -138,7 +138,7 @@ def update_apache(code_path):
         'configuration file under /etc/apache2/sites-available so you\n'
         'should take appropriate security measures.\nUser :\n')
     git_password = getpass.getpass()
-    domain = 'changelog.linfiniti.com'
+    domain = 'changelog.kartoza.com'
     setup_apache(
         site_name='projecta',
         code_path=code_path,
