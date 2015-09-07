@@ -8,7 +8,7 @@ projecta
 
 A django app for creating visual changelogs for software releases, and for managing a software project at a high level.
 
-View a running instance at [http://changelog.linfiniti.com](http://changelog.linfiniti.com)
+View a running instance at [http://changelog.kartoza.com](http://changelog.kartoza.com)
 
 intercom.io
 -----------
