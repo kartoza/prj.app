@@ -166,12 +166,15 @@ dbbackup:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Create `date +%d-%B-%Y`.dmp in production mode"
+	@echo "Warning: backups/latest.dmp will be replaced with a symlink to "
+	@echo "the new backup."
 	@echo "------------------------------------------------------------------"
 	@# - prefix causes command to continue even if it fails
 	@docker exec -t -i $(PROJECT_ID)_dbbackups_1 /backups.sh
 	@docker exec -t -i $(PROJECT_ID)_dbbackups_1 cat /var/log/cron.log | tail -2 | head -1 | awk '{print $4}'
-	-@if [ ! -f "backups/latest.dmp" ]; then ln -s backups/`date +%Y`/`date +%B`/PG_$(PROJECT_ID)_`date +%d-%B-%Y`.dmp backups/latest.dmp; fi
-	@echo "Backup should be at: backups/`date +%Y`/`date +%B`/PG_$(PROJECT_ID)_`date +%d-%B-%Y`.dmp"
+	-@if [ -f "backups/latest.dmp" ]; then rm backups/latest.dmp; fi
+	@ln -s backups/`date +%Y`/`date +%B`/PG_$(PROJECT_ID)_gis.`date +%d-%B-%Y`.dmp backups/latest.dmp
+	@echo "Backup should be at: backups/`date +%Y`/`date +%B`/PG_$(PROJECT_ID)_gis.`date +%d-%B-%Y`.dmp"
 
 sentry:
 	@echo
