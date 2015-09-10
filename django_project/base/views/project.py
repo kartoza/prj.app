@@ -32,7 +32,7 @@ class ProjectBallotListView(ProjectMixin, PaginationMixin, DetailView):
     """List all ballots within in a project"""
     context_object_name = 'project'
     template_name = 'project/ballot-list.html'
-    paginate_by = 10
+    paginate_by = 1000
 
     def get_context_data(self, **kwargs):
         context = super(ProjectBallotListView, self).get_context_data(**kwargs)
@@ -63,7 +63,7 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
     """List all approved projects"""
     context_object_name = 'projects'
     template_name = 'project/list.html'
-    paginate_by = 10
+    paginate_by = 1000
 
     def get_context_data(self, **kwargs):
         """Add to the view's context data
@@ -173,7 +173,7 @@ class PendingProjectListView(
     """List all users unapproved projects - staff users see all unapproved."""
     context_object_name = 'projects'
     template_name = 'project/list.html'
-    paginate_by = 10
+    paginate_by = 1000
 
     def get_queryset(self):
         projects_qs = Project.unapproved_objects.all()

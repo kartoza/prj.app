@@ -45,7 +45,7 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
     """List view for Entry."""
     context_object_name = 'entries'
     template_name = 'entry/list.html'
-    paginate_by = 10
+    paginate_by = 1000
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -329,7 +329,7 @@ class PendingEntryListView(EntryMixin, PaginationMixin, ListView,
     """List view for pending Entry."""
     context_object_name = 'unapproved_entries'
     template_name = 'entry/pending-list.html'
-    paginate_by = 10
+    paginate_by = 1000
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -350,7 +350,7 @@ class PendingEntryListView(EntryMixin, PaginationMixin, ListView,
         """Get the queryset for this view.
 
          :returns: A queryset which is filtered to only show unapproved
-         Entry.
+            Entry.
          :rtype: QuerySet
          :raises: Http404
          """
@@ -366,7 +366,10 @@ class PendingEntryListView(EntryMixin, PaginationMixin, ListView,
                 if self.request.user.is_staff:
                     return queryset
                 else:
-                    return queryset.filter(author=self.request.user)
+                    try:
+                        return queryset.filter(author=self.request.user)
+                    except:
+                        raise Http404('Sorry! We could not find your entry!')
             else:
                 raise Http404('Sorry! We could not find your entry!')
         return self.queryset
