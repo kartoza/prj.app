@@ -76,10 +76,9 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         if self.queryset is None:
             project_slug = self.kwargs.get('project_slug', None)
             if project_slug:
-                project = Project.objects.get(
-                    slug=project_slug
-                ).order_by('-name')
-                queryset = Version.objects.filter(project=project)
+                project = Project.objects.get(slug=project_slug)
+                queryset = Version.objects.filter(
+                    project=project).order_by('-name')
                 return queryset
             else:
                 raise Http404('Sorry! We could not find your entry!')
