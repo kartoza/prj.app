@@ -42,6 +42,16 @@ class Version(AuditedModel):
         blank=False,
         unique=False)
 
+    padded_version = models.CharField(
+        help_text=(
+            'Numeric version for this release e.g. 001000001 for 1.0.1 '
+            'calculated by zero padding each component of maj/minor/bugfix '
+            'elements from name.'),
+        max_length=9,
+        null=False,
+        blank=True,
+        unique=False)
+
     approved = models.BooleanField(
         help_text=(
             'Whether this version has been approved for use by the '
@@ -84,7 +94,33 @@ class Version(AuditedModel):
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = version_slugify(new_list)[:50]
+        self.padded_version = pad_name(self.name)
         super(Version, self).save(*args, **kwargs)
+
+    def pad_name(self, version):
+        """Create a 0 padded version of the version name.
+
+        e.g. input: 2.10.1
+        e.g. output: 002010100
+
+        This will ensure we have sortable version names.
+
+        :param version: A text version in the form 0.0.0 - if the version is
+            not in this form, we return the version unaltered.
+        :type version: str
+
+        :returns: Zero padded representation of the version e.g. 001010100
+        :rtype: str
+
+        """
+        tokens = version.split('.')
+        if len(tokens) != 3:
+            return version
+        result = ''
+        for token in tokens:
+            result += token.zfill(3)
+        return result
+
 
     def __unicode__(self):
         return u'%s : %s' % (self.project.name, self.name)

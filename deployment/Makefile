@@ -79,6 +79,13 @@ migrate:
 	-@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py migrate auth
 	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py migrate
 
+update-migrations:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Running update migrations in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py makemigrations
+
 collectstatic:
 	@echo
 	@echo "------------------------------------------------------------------"

@@ -78,7 +78,7 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
             if project_slug:
                 project = Project.objects.get(slug=project_slug)
                 queryset = Version.objects.filter(
-                    project=project).order_by('-name')
+                    project=project).order_by('-padded_version')
                 return queryset
             else:
                 raise Http404('Sorry! We could not find your entry!')
