@@ -53,7 +53,7 @@
       </h4>
       <hr/>
       {% if project.versions %}
-        {% for version in project.versions|slice:":2" %}
+        {% for version in project.versions|slice:":5" %}
           <p>
             <strong><span class="text-muted">Version:</span> {{ version.name }}</strong>
             <span class="btn-group pull-right">
