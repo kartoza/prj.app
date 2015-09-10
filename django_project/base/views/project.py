@@ -104,7 +104,8 @@ class ProjectDetailView(ProjectMixin, DetailView):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
         context['projects'] = self.get_queryset()
         context['committees'] = Committee.objects.filter(project=self.object)
-        context['versions'] = Version.objects.filter(project=self.object)
+        context['versions'] = Version.objects.filter(
+            project=self.object).order_by('-padded_version')
         return context
 
     def get_queryset(self):
