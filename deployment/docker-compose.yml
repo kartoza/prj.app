@@ -76,8 +76,6 @@ dbbackups:
     - PGPORT=5432
     - PGHOST=db
     - PGDATABASE=gis
-  volumes:
-    - ./backups:/backups
   restart: on-failure:5
 
 # This is normally the main entry point for a production server

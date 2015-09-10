@@ -1,9 +1,9 @@
 # coding=utf-8
 """Project model used by all apps."""
-from django.core.urlresolvers import reverse
-from django.utils.text import slugify
 import os
 import logging
+from django.core.urlresolvers import reverse
+from django.utils.text import slugify
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
