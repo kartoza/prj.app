@@ -94,7 +94,7 @@ class Version(AuditedModel):
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = version_slugify(new_list)[:50]
-        self.padded_version = pad_name(self.name)
+        self.padded_version = self.pad_name(self.name)
         super(Version, self).save(*args, **kwargs)
 
     def pad_name(self, version):
