@@ -75,8 +75,8 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         :raises: Http404
         """
         if self.queryset is None:
-            project_slug = self.kwargs.get('project_slug', None)
             if project_slug:
+                project_slug = self.kwargs.get('project_slug', None)
                 project = Project.objects.get(slug=project_slug)
                 queryset = Version.objects.filter(
                     project=project).order_by('-padded_version')
