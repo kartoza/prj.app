@@ -71,6 +71,7 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         :returns: A queryset which is filtered to only show approved Version
         for this project.
         :rtype: QuerySet
+
         :raises: Http404
         """
         if self.queryset is None:
@@ -120,14 +121,15 @@ class VersionDetailView(VersionMixin, DetailView):
             slug = self.kwargs.get('slug', None)
             project_slug = self.kwargs.get('project_slug', None)
             if slug and project_slug:
-                project = Project.objects.get(slug=project_slug)
                 try:
+                    project = Project.objects.get(slug=project_slug)
                     obj = queryset.filter(project=project).get(slug=slug)
                     return obj
                 except Version.DoesNotExist:
-                    Http404('Sorry! The version you are requesting could not '
-                            'be found or you do not have permission to view '
-                            'the version. Try logging in?')
+                    Http404(
+                        'Sorry! The version you are requesting could not '
+                        'be found or you do not have permission to view '
+                        'the version. Try logging in?')
             else:
                 raise Http404('Sorry! We could not find your version!')
 

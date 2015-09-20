@@ -121,7 +121,6 @@ class Version(AuditedModel):
             result += token.zfill(3)
         return result
 
-
     def __unicode__(self):
         return u'%s : %s' % (self.project.name, self.name)
 
