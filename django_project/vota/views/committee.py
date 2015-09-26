@@ -101,11 +101,13 @@ class CommitteeListView(CommitteeMixin, ListView):
 
         """
         project_slug = self.kwargs.get('project_slug')
-        self.project = Project.objects.get(slug=project_slug)
+        try:
+            self.project = Project.objects.get(slug=project_slug)
+        except:
+            raise Http404('Project could not be found')
         return super(CommitteeListView, self).get(
             request, *args, **kwargs
         )
-
 
     def get_queryset(self):
         """Specify the queryset

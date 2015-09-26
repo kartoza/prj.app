@@ -72,9 +72,15 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
             project_slug = self.kwargs.get('project_slug', None)
             version_slug = self.kwargs.get('version_slug', None)
             if project_slug and version_slug:
-                project = Project.objects.get(slug=project_slug)
-                version = Version.objects.get(slug=version_slug,
-                                              project=project)
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                except:
+                    raise Http404('Project not found')
+                try:
+                    version = Version.objects.get(
+                        slug=version_slug, project=project)
+                except:
+                    raise Http404('Version not found')
                 queryset = Entry.objects.filter(version=version)
                 return queryset
             else:
@@ -106,10 +112,19 @@ class EntryDetailView(EntryMixin, DetailView):
             project_slug = self.kwargs.get('project_slug', None)
             version_slug = self.kwargs.get('version_slug', None)
             if slug and project_slug and version_slug:
-                project = Project.objects.get(slug=project_slug)
-                version = Version.objects.get(slug=version_slug,
-                                              project=project)
-                obj = queryset.get(slug=slug, version=version)
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                except:
+                    raise Http404('Project could not be found')
+                try:
+                    version = Version.objects.get(
+                        slug=version_slug, project=project)
+                except:
+                    raise Http404('Version could not be found')
+                try:
+                    obj = queryset.get(slug=slug, version=version)
+                except:
+                    raise Http404('Change could not be found')
                 return obj
             else:
                 raise Http404('Sorry! We could not find your entry!')
@@ -358,9 +373,15 @@ class PendingEntryListView(EntryMixin, PaginationMixin, ListView,
             project_slug = self.kwargs.get('project_slug', None)
             version_slug = self.kwargs.get('version_slug', None)
             if project_slug and version_slug:
-                project = Project.objects.get(slug=project_slug)
-                self.version = Version.objects.get(
-                    slug=version_slug, project=project)
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                except:
+                    raise Http404('Project not found')
+                try:
+                    self.version = Version.objects.get(
+                        slug=version_slug, project=project)
+                except:
+                    raise Http404('Version not found')
                 queryset = Entry.unapproved_objects.filter(
                     version=self.version)
                 if self.request.user.is_staff:

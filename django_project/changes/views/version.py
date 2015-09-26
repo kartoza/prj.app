@@ -74,9 +74,11 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
 
         :raises: Http404
         """
+
+        # TODO - this logic needs to be checked - TS
+        project_slug = self.kwargs.get('project_slug', None)
         if self.queryset is None:
             if project_slug:
-                project_slug = self.kwargs.get('project_slug', None)
                 project = Project.objects.get(slug=project_slug)
                 queryset = Version.objects.filter(
                     project=project).order_by('-padded_version')
@@ -125,7 +127,7 @@ class VersionDetailView(VersionMixin, DetailView):
                     project = Project.objects.get(slug=project_slug)
                     obj = queryset.filter(project=project).get(slug=slug)
                     return obj
-                except Version.DoesNotExist:
+                except Project.DoesNotExist:
                     Http404(
                         'Sorry! The version you are requesting could not '
                         'be found or you do not have permission to view '
