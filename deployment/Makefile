@@ -211,8 +211,14 @@ mediasync:
 	@echo "------------------------------------------------------------------"
 	@echo "Syncing media files from live server"
 	@echo "------------------------------------------------------------------"
-	@rsync -av --progress kartoza3:/home/timlinux/production-sites/projecta/django_project/media media
+	@rsync -av --progress inasafe-docker:/home/data/changelog.inasafe.org/deployment/media .
 
+create-machine:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Creating a docker machine."
+	@echo "------------------------------------------------------------------"
+	@docker-machine create -d virtualbox projecta
 
 # ----------------------------------------------------------------------------
 #    DEVELOPMENT C O M M A N D S
