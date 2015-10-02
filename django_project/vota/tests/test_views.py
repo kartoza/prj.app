@@ -302,8 +302,8 @@ class TestBallotViews(TestCase):
             'slug': self.my_committee.slug,
             'project_slug': self.my_project.slug
         }))
-        #TODO: The following line to test that the object is deleted does not currently pass as expected.
-        #self.assertTrue(category_to_delete.pk is None)
+        # TODO: The following line to test that the object is deleted does not currently pass as expected.
+        # self.assertTrue(category_to_delete.pk is None)
 
     def test_BallotDelete_no_login(self):
         my_client = Client()
@@ -489,8 +489,8 @@ class TestCommitteeViews(TestCase):
         self.assertRedirects(response, reverse('project-detail', kwargs={
             'slug': self.my_project.slug
         }))
-        #TODO: The following line to test that the object is deleted does not currently pass as expected.
-        #self.assertTrue(category_to_delete.pk is None)
+        # TODO: The following line to test that the object is deleted does not currently pass as expected.
+        # self.assertTrue(category_to_delete.pk is None)
 
     def test_CategoryDelete_no_login(self):
         my_client = Client()

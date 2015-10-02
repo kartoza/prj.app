@@ -184,7 +184,8 @@ class PendingProjectListView(
             return projects_qs.filter(creator=self.request.user)
 
     def get_context_data(self, **kwargs):
-        context = super(PendingProjectListView, self).get_context_data(**kwargs)
+        context = super(PendingProjectListView,
+                        self).get_context_data(**kwargs)
         context['num_projects'] = self.get_queryset().count()
         context['unapproved'] = True
         return context

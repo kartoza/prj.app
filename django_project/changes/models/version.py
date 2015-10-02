@@ -35,6 +35,7 @@ class UnapprovedVersionManager(models.Manager):
 # noinspection PyUnresolvedReferences
 class Version(AuditedModel):
     """A version model that the changelog is associated with.."""
+
     name = models.CharField(
         help_text='Name of this release e.g. 1.0.1.',
         max_length=255,

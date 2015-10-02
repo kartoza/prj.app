@@ -26,7 +26,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 # setting points here.
 
 # Customised by Tim so we can access env vars set in apache
-import django.core.handlers.wsgi
 _application = get_wsgi_application()
 
 def application(environ, start_response):

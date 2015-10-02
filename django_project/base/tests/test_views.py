@@ -152,9 +152,9 @@ class TestViews(TestCase):
             'slug': project_to_delete.slug
         }), post_data)
         self.assertRedirects(my_response, reverse('project-list'))
-        #TODO: The following line to test that the object is deleted does not
-        #currently pass as expected.
-        #self.assertTrue(project_to_delete.pk is None)
+        # TODO: The following line to test that the object is deleted does not
+        # currently pass as expected.
+        # self.assertTrue(project_to_delete.pk is None)
 
     def test_ProjectDelete_no_login(self):
         my_client = Client()

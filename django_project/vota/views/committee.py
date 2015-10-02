@@ -123,6 +123,7 @@ class CommitteeListView(CommitteeMixin, ListView):
 
 # noinspection PyAttributeOutsideInit
 class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
+
     context_object_name = 'committee'
     template_name = 'committee/create.html'
 
@@ -149,6 +150,7 @@ class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
 
 # noinspection PyAttributeOutsideInit
 class CommitteeUpdateView(LoginRequiredMixin, CommitteeMixin, UpdateView):
+
     context_object_name = 'committee'
     template_name = 'committee/update.html'
 
@@ -177,6 +179,7 @@ class CommitteeUpdateView(LoginRequiredMixin, CommitteeMixin, UpdateView):
             'project_slug': self.object.project.slug,
             'slug': self.object.slug
         })
+
 
 # noinspection PyAttributeOutsideInit
 class CommitteeDeleteView(StaffuserRequiredMixin, CommitteeMixin, DeleteView):

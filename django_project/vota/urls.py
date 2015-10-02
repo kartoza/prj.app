@@ -20,7 +20,7 @@ from views.ballot import (
 
 urlpatterns = patterns(
     '',
-    ### Committee URLs
+    # Committee URLs
     url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<slug>[\w-]+)/$',
         view=CommitteeDetailView.as_view(),
         name='committee-detail'),
@@ -37,13 +37,13 @@ urlpatterns = patterns(
         view=CommitteeUpdateView.as_view(),
         name='committee-update'),
 
-    ### Voting URLs
+    # Voting URLs
     url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<committee_slug>[\w-]+)/'
               'ballots/(?P<ballot_slug>[\w-]+)/vote/$',
         view=VoteCreateUpdateView.as_view(),
         name='vote-create'),
 
-    ### Ballot URLs
+    # Ballot URLs
     url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<committee_slug>[\w-]+)/'
               'ballots/(?P<slug>[\w-]+)/$',
         view=BallotDetailView.as_view(),
@@ -65,7 +65,7 @@ urlpatterns = patterns(
         view=BallotCreateView.as_view(),
         name='ballot-create'),
 
-    ### Feeds
+    # Feeds
     url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<committee_slug>[\w-]+)/'
               'ballots-rss/$',
         view=BallotFeed(),

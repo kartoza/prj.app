@@ -1,6 +1,6 @@
 # coding=utf-8
 """Urls for changelog application."""
-from django.conf.urls import patterns, url, include
+from django.conf.urls import patterns, url
 from django.conf import settings
 
 from feeds.version import RssVersionFeed, AtomVersionFeed
@@ -152,7 +152,7 @@ urlpatterns = patterns(
         name='entry-atom-feed'),
 
     # User map
-	#url(r'^user-map/', include('user_map.urls')),
+	# url(r'^user-map/', include('user_map.urls')),
 )
 
 

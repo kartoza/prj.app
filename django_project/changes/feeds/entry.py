@@ -122,7 +122,9 @@ class RssEntryFeed(Feed):
         :returns: description of the Entry
         :rtype: str
         """
-        return '<p>'+item.description+'</p><p><img src="'+settings.MEDIA_URL+item.image_file.name+'"/></p>'
+        return '<p>'+item.description+'</p><p><img src="'\
+               +settings.MEDIA_URL+item.image_file.name+'"/></p>'
+
 
 class AtomEntryFeed(RssEntryFeed):
     """Atom Feed class for Entry."""

@@ -21,10 +21,10 @@ class TestCategoryCRUD(TestCase):
         """
         my_model = CategoryF.create()
 
-        #check if PK exists
+        # check if PK exists
         self.assertTrue(my_model.pk is not None)
 
-        #check if name exists
+        # check if name exists
         self.assertTrue(my_model.name is not None)
 
     def test_Category_read(self):
@@ -52,7 +52,7 @@ class TestCategoryCRUD(TestCase):
         my_model.__dict__.update(new_model_data)
         my_model.save()
 
-        #check if updated
+        # check if updated
         for key, val in new_model_data.items():
             self.assertEqual(my_model.__dict__.get(key), val)
 
@@ -64,7 +64,7 @@ class TestCategoryCRUD(TestCase):
 
         my_model.delete()
 
-        #check if deleted
+        # check if deleted
         self.assertTrue(my_model.pk is None)
 
 
@@ -85,10 +85,10 @@ class TestEntryCRUD(TestCase):
         """
         my_model = EntryF.create()
 
-        #check if PK exists
+        # check if PK exists
         self.assertTrue(my_model.pk is not None)
 
-        #check if name exists
+        # check if name exists
         self.assertTrue(my_model.title is not None)
 
     def test_Entry_read(self):
@@ -116,7 +116,7 @@ class TestEntryCRUD(TestCase):
         my_model.__dict__.update(new_model_data)
         my_model.save()
 
-        #check if updated
+        # check if updated
         for key, val in new_model_data.items():
             self.assertEqual(my_model.__dict__.get(key), val)
 
@@ -128,7 +128,7 @@ class TestEntryCRUD(TestCase):
 
         my_model.delete()
 
-        #check if deleted
+        # check if deleted
         self.assertTrue(my_model.pk is None)
 
 
@@ -149,10 +149,10 @@ class TestVersionCRUD(TestCase):
         """
         my_model = VersionF.create()
 
-        #check if PK exists
+        # check if PK exists
         self.assertTrue(my_model.pk is not None)
 
-        #check if name exists
+        # check if name exists
         self.assertTrue(my_model.name is not None)
 
     def test_Version_read(self):
@@ -179,7 +179,7 @@ class TestVersionCRUD(TestCase):
         my_model.__dict__.update(new_model_data)
         my_model.save()
 
-        #check if updated
+        # check if updated
         for key, val in new_model_data.items():
             self.assertEqual(my_model.__dict__.get(key), val)
 
@@ -191,5 +191,5 @@ class TestVersionCRUD(TestCase):
 
         my_model.delete()
 
-        #check if deleted
+        # check if deleted
         self.assertTrue(my_model.pk is None)
