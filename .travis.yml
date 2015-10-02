@@ -27,10 +27,10 @@ before_script:
 
 script:
   - flake8
-  - coverage run manage.py test
+  # - coverage run manage.py test
 
 after_success:
-  - coveralls
+  # - coveralls
 
 email:
  - tim@kartoza.com
