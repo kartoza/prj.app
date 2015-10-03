@@ -19,10 +19,10 @@ class TestProjectCRUD(TestCase):
         """
         my_model = ProjectF.create()
 
-        #check if PK exists
+        # check if PK exists
         self.assertTrue(my_model.pk is not None)
 
-        #check if name exists
+        # check if name exists
         self.assertTrue(my_model.name is not None)
 
     def test_Project_read(self):
@@ -52,7 +52,7 @@ class TestProjectCRUD(TestCase):
         my_model.__dict__.update(new_model_data)
         my_model.save()
 
-        #check if updated
+        # check if updated
         for key, val in new_model_data.items():
             self.assertEqual(my_model.__dict__.get(key), val)
 
@@ -64,5 +64,5 @@ class TestProjectCRUD(TestCase):
 
         my_model.delete()
 
-        #check if deleted
+        # check if deleted
         self.assertTrue(my_model.pk is None)

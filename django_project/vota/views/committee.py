@@ -180,6 +180,7 @@ class CommitteeUpdateView(LoginRequiredMixin, CommitteeMixin, UpdateView):
             'slug': self.object.slug
         })
 
+
 # noinspection PyAttributeOutsideInit
 class CommitteeDeleteView(StaffuserRequiredMixin, CommitteeMixin, DeleteView):
     """

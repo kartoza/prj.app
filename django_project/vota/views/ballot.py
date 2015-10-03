@@ -54,6 +54,7 @@ class BallotDetailView(LoginRequiredMixin, BallotMixin, DetailView):
             else:
                 raise Http404
 
+
 # noinspection PyAttributeOutsideInit
 class BallotListView(BallotMixin, ListView):
     """Show all Ballots for a Committee
@@ -130,6 +131,7 @@ class BallotListView(BallotMixin, ListView):
                 .filter(private=False)
         return qs
 
+
 # noinspection PyAttributeOutsideInit
 class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):
     context_object_name = 'ballot'
@@ -159,6 +161,7 @@ class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):
             'committee_slug': self.object.committee.slug,
             'slug': self.object.slug
         })
+
 
 # noinspection PyAttributeOutsideInit
 class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
@@ -206,8 +209,8 @@ class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         self.committee_slug = self.kwargs.get('committee_slug', None)
-        self.committee = Committee.objects.filter(project=self.project)\
-                .get(slug=self.committee_slug)
+        self.committee = Committee.objects.filter(
+            project=self.project).get(slug=self.committee_slug)
         kwargs.update({'user': self.request.user,'committee': self.committee
         })
         return kwargs
@@ -218,6 +221,7 @@ class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
             'committee_slug': self.object.committee.slug,
             'slug': self.object.slug
         })
+
 
 # noinspection PyAttributeOutsideInit
 class BallotDeleteView(StaffuserRequiredMixin, BallotMixin, DeleteView):

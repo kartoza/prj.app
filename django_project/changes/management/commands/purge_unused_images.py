@@ -32,7 +32,7 @@ class Command(BaseCommand):
                 self.stdout.write('Moving %s' % image_path)
             image_file = File(image_path)
             entry.image_file.save(image_path, image_file, True)
-            #os.remove(image_path)
+            # os.remove(image_path)
 
         # except Exception, e:
         #     raise CommandError(e.message)
