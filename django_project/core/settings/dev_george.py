@@ -1,3 +1,5 @@
+# flake8: noqa
+
 __author__ = 'georgeirwin'
 
 from .project import *

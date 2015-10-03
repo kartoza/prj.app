@@ -1,3 +1,5 @@
+# flake8: noqa
+
 """Configuration for production server"""
 # noinspection PyUnresolvedReferences
 from .prod import *  # noqa

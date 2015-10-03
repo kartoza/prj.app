@@ -1,4 +1,6 @@
 # coding=utf-8
+# flake8: noqa
+
 """Project level settings."""
 from .project import *
 

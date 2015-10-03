@@ -32,6 +32,7 @@ class UnapprovedVersionManager(models.Manager):
             UnapprovedVersionManager, self).get_query_set().filter(
                 approved=False)
 
+
 # noinspection PyUnresolvedReferences
 class Version(AuditedModel):
     """A version model that the changelog is associated with.."""

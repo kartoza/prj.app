@@ -1,4 +1,6 @@
 # coding=utf-8
+# flake8: noqa
+
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import Client
@@ -302,7 +304,9 @@ class TestBallotViews(TestCase):
             'slug': self.my_committee.slug,
             'project_slug': self.my_project.slug
         }))
-        # TODO: The following line to test that the object is deleted does not currently pass as expected.
+
+        # TODO: The following line to test that
+        # the object is deleted does not currently pass as expected.
         # self.assertTrue(category_to_delete.pk is None)
 
     def test_BallotDelete_no_login(self):

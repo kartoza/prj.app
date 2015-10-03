@@ -1,4 +1,5 @@
 # coding=utf-8
+# flake8: noqa
 
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -69,8 +70,9 @@ class TestCategoryViews(TestCase):
             'project_slug': self.my_project.slug
         }), post_data)
         self.assertRedirects(my_response,
-                             reverse('pending-category-list', kwargs={
-                                 'project_slug': self.my_project.slug
+                             reverse('pending-category-list',
+                                     kwargs={'project_slug':
+                                                 self.my_project.slug
         }))
 
     def test_CategoryCreate_no_login(self):
@@ -209,9 +211,10 @@ class TestEntryViews(TestCase):
             'project_slug': self.my_project.slug,
             'version_slug': self.my_version.slug
         }), post_data)
-        self.assertRedirects(my_response, reverse('pending-entry-list', kwargs={
-            'project_slug': self.my_project.slug,
-            'version_slug': self.my_version.slug
+        self.assertRedirects(
+            my_response, reverse('pending-entry-list', kwargs={
+                'project_slug': self.my_project.slug,
+                'version_slug': self.my_version.slug
         }))
 
     def test_EntryCreate_no_login(self):
@@ -264,9 +267,10 @@ class TestEntryViews(TestCase):
             'version_slug': self.my_entry.version.slug,
             'slug': self.my_entry.slug
         }), post_data)
-        self.assertRedirects(my_response, reverse('pending-entry-list', kwargs={
-            'project_slug': self.my_project.slug,
-            'version_slug': self.my_version.slug
+        self.assertRedirects(
+            my_response, reverse('pending-entry-list', kwargs={
+                'project_slug': self.my_project.slug,
+                'version_slug': self.my_version.slug
         }))
 
     def test_EntryUpdate_no_login(self):

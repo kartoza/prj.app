@@ -121,6 +121,7 @@ class CommitteeListView(CommitteeMixin, ListView):
         qs = Committee.objects.filter(project=self.project)
         return qs
 
+
 # noinspection PyAttributeOutsideInit
 class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
 
@@ -147,6 +148,7 @@ class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
             'project_slug': self.object.project.slug,
             'slug': self.object.slug
         })
+
 
 # noinspection PyAttributeOutsideInit
 class CommitteeUpdateView(LoginRequiredMixin, CommitteeMixin, UpdateView):

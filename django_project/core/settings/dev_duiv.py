@@ -1,4 +1,6 @@
 # coding=utf-8
+# flake8: noqa
+
 """Settings for duiv/Richard's dev environment."""
 from .project import *
 
