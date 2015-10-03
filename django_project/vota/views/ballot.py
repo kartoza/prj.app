@@ -211,8 +211,8 @@ class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
         self.committee_slug = self.kwargs.get('committee_slug', None)
         self.committee = Committee.objects.filter(
             project=self.project).get(slug=self.committee_slug)
-        kwargs.update({'user': self.request.user,'committee': self.committee
-        })
+        kwargs.update({'user': self.request.user,
+                       'committee': self.committee})
         return kwargs
 
     def get_success_url(self):
