@@ -126,6 +126,7 @@ class RssEntryFeed(Feed):
                '</p><p><img src="' + settings.MEDIA_URL + \
                item.image_file.name + '"/></p>'
 
+
 class AtomEntryFeed(RssEntryFeed):
     """Atom Feed class for Entry."""
     feed_type = Atom1Feed

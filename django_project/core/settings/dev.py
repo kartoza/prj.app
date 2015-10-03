@@ -1,4 +1,4 @@
-from .project import * # noqa
+from .project import *  # noqa
 
 # Set debug to True for development
 DEBUG = True
@@ -71,7 +71,7 @@ LOGGING = {
 # set up devserver if installed
 try:
     # noinspection PyUnresolvedReferences
-    import devserver # noqa
+    import devserver  # noqa
     INSTALLED_APPS += (
         'devserver',
     )

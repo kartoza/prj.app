@@ -1,6 +1,6 @@
 # coding=utf-8
 """Urls for changelog application."""
-from django.conf.urls import patterns, url, include
+from django.conf.urls import patterns, url, include  # noqa
 from django.conf import settings
 
 from feeds.version import RssVersionFeed, AtomVersionFeed
