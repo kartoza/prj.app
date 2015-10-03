@@ -1,4 +1,6 @@
 # coding=utf-8
+# flake8: noqa
+
 """Project level url handler."""
 from django.conf.urls import patterns, url
 from feeds.ballot import BallotFeed

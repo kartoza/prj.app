@@ -6,7 +6,8 @@ from django.http import Http404
 import logging
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from django.core.urlresolvers import reverse
-from django.views.generic import DetailView, CreateView, DeleteView, UpdateView, ListView
+from django.views.generic import DetailView, \
+    CreateView, DeleteView, UpdateView, ListView
 from base.models import Project
 from vota.forms import BallotCreateForm
 from vota.models import Ballot, Committee
@@ -207,9 +208,7 @@ class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
         self.committee_slug = self.kwargs.get('committee_slug', None)
         self.committee = Committee.objects.filter(project=self.project)\
                 .get(slug=self.committee_slug)
-        kwargs.update({
-            'user': self.request.user,
-            'committee': self.committee
+        kwargs.update({'user': self.request.user,'committee': self.committee
         })
         return kwargs
 

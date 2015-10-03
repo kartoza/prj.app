@@ -1,4 +1,5 @@
 # coding=utf-8
+# flake8: noqa
 
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -68,8 +69,10 @@ class TestCategoryViews(TestCase):
         my_response = my_client.post(reverse('category-create', kwargs={
             'project_slug': self.my_project.slug
         }), post_data)
-        self.assertRedirects(my_response, reverse('pending-category-list', kwargs={
-            'project_slug': self.my_project.slug
+        self.assertRedirects(my_response,
+                             reverse('pending-category-list',
+                                     kwargs={'project_slug':
+                                                 self.my_project.slug
         }))
 
     def test_CategoryCreate_no_login(self):
@@ -126,8 +129,9 @@ class TestCategoryViews(TestCase):
         self.assertRedirects(my_response, reverse('category-list', kwargs={
             'project_slug': self.my_project.slug
         }))
-        #TODO: The following line to test that the object is deleted does not currently pass as expected.
-        #self.assertTrue(category_to_delete.pk is None)
+        # TODO: The following line to test that
+        # the object is deleted does not currently pass as expected.
+        # self.assertTrue(category_to_delete.pk is None)
 
     def test_CategoryDelete_no_login(self):
         my_client = Client()
@@ -207,9 +211,10 @@ class TestEntryViews(TestCase):
             'project_slug': self.my_project.slug,
             'version_slug': self.my_version.slug
         }), post_data)
-        self.assertRedirects(my_response, reverse('pending-entry-list', kwargs={
-            'project_slug': self.my_project.slug,
-            'version_slug': self.my_version.slug
+        self.assertRedirects(
+            my_response, reverse('pending-entry-list', kwargs={
+                'project_slug': self.my_project.slug,
+                'version_slug': self.my_version.slug
         }))
 
     def test_EntryCreate_no_login(self):
@@ -262,9 +267,10 @@ class TestEntryViews(TestCase):
             'version_slug': self.my_entry.version.slug,
             'slug': self.my_entry.slug
         }), post_data)
-        self.assertRedirects(my_response, reverse('pending-entry-list', kwargs={
-            'project_slug': self.my_project.slug,
-            'version_slug': self.my_version.slug
+        self.assertRedirects(
+            my_response, reverse('pending-entry-list', kwargs={
+                'project_slug': self.my_project.slug,
+                'version_slug': self.my_version.slug
         }))
 
     def test_EntryUpdate_no_login(self):

@@ -206,4 +206,3 @@ class Ballot(AuditedModel):
         if open_date < timezone.now() < close_date:
             return True
         return False
-

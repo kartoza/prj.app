@@ -35,3 +35,4 @@ class ProjectAdmin(AuditedAdmin, reversion.VersionAdmin):
 
 admin.site.register(Project, ProjectAdmin)
 
+
