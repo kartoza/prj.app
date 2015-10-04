@@ -89,7 +89,7 @@ LOGGING = {
 # set up devserver if installed
 try:
     # noinspection PyUnresolvedReferences
-    import devserver
+    import devserver  # noqa
     # noinspection PyUnresolvedReferences
     INSTALLED_APPS += (
         'devserver',

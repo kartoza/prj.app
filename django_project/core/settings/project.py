@@ -12,8 +12,8 @@ DATABASES = {
     'default': {
         # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        #'ENGINE': 'django.db.backends.sqlite3',
-        #Or path to database file if using sqlite3.
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # Or path to database file if using sqlite3.
         # 'NAME': os.path.abspath(os.path.join(
         #     os.path.dirname(__file__),
         #     os.path.pardir,
@@ -77,4 +77,3 @@ PIPELINE_CSS = {
 }
 
 PIPELINE_JS_COMPRESSOR = None
-

@@ -19,10 +19,10 @@ class TestBallotCRUD(TestCase):
         """
         my_model = BallotF.create()
 
-        #check if PK exists
+        # check if PK exists
         self.assertTrue(my_model.pk is not None)
 
-        #check if name exists
+        # check if name exists
         self.assertTrue(my_model.name is not None)
 
     def test_Ballot_read(self):
@@ -51,7 +51,7 @@ class TestBallotCRUD(TestCase):
         my_model.__dict__.update(new_model_data)
         my_model.save()
 
-        #check if updated
+        # check if updated
         for key, val in new_model_data.items():
             self.assertEqual(my_model.__dict__.get(key), val)
 
@@ -63,7 +63,7 @@ class TestBallotCRUD(TestCase):
 
         my_model.delete()
 
-        #check if deleted
+        # check if deleted
         self.assertTrue(my_model.pk is None)
 
 
@@ -84,10 +84,10 @@ class TestVoteCRUD(TestCase):
         """
         my_model = VoteF.create()
 
-        #check if PK exists
+        # check if PK exists
         self.assertTrue(my_model.pk is not None)
 
-        #check if we have a user
+        # check if we have a user
         self.assertTrue(my_model.user is not None)
 
     def test_Vote_read(self):
@@ -109,7 +109,7 @@ class TestVoteCRUD(TestCase):
         my_model.__dict__.update(new_model_data)
         my_model.save()
 
-        #check if updated
+        # check if updated
         for key, val in new_model_data.items():
             self.assertEqual(my_model.__dict__.get(key), val)
 
@@ -121,7 +121,7 @@ class TestVoteCRUD(TestCase):
 
         my_model.delete()
 
-        #check if deleted
+        # check if deleted
         self.assertTrue(my_model.pk is None)
 
 
@@ -142,10 +142,10 @@ class TestCommitteeCRUD(TestCase):
         """
         my_model = CommitteeF.create()
 
-        #check if PK exists
+        # check if PK exists
         self.assertTrue(my_model.pk is not None)
 
-        #check if name exists
+        # check if name exists
         self.assertTrue(my_model.name is not None)
 
     def test_Committee_read(self):
@@ -172,7 +172,7 @@ class TestCommitteeCRUD(TestCase):
         my_model.__dict__.update(new_model_data)
         my_model.save()
 
-        #check if updated
+        # check if updated
         for key, val in new_model_data.items():
             self.assertEqual(my_model.__dict__.get(key), val)
 
@@ -184,5 +184,5 @@ class TestCommitteeCRUD(TestCase):
 
         my_model.delete()
 
-        #check if deleted
+        # check if deleted
         self.assertTrue(my_model.pk is None)
