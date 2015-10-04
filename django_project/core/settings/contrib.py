@@ -1,9 +1,8 @@
 # coding=utf-8
-# flake8: noqa
 """
 core.settings.contrib
 """
-from .base import *
+from .base import *  # noqa
 
 # Extra installed apps
 INSTALLED_APPS += (

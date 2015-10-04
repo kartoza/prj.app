@@ -1,9 +1,8 @@
-# flake8: noqa
 
 __author__ = 'rischan'
 
 # -*- coding: utf-8 -*-
-from .test import * # noqa
+from .test import *  # noqa
 
 DATABASES = {
     'default': {

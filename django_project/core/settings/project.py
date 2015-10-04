@@ -1,18 +1,20 @@
 # coding=utf-8
-# flake8: noqa
 
 """Project level settings.
 
 Adjust these values as needed but don't commit passwords etc. to any public
 repository!
 """
-from .contrib import *
+
+import os  # noqa
+from .contrib import *  # noqa
+
 
 DATABASES = {
     'default': {
         # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        #'ENGINE': 'django.db.backends.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
         # Or path to database file if using sqlite3.
         # 'NAME': os.path.abspath(os.path.join(
         #     os.path.dirname(__file__),

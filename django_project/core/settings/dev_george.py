@@ -1,8 +1,7 @@
-# flake8: noqa
 
 __author__ = 'georgeirwin'
 
-from .project import *
+from .project import *  # noqa
 from .prod import ALLOWED_HOSTS
 
 # Set debug to True for development
@@ -104,7 +103,7 @@ LOGGING = {
 # set up devserver if installed
 try:
     # noinspection PyUnresolvedReferences
-    import devserver
+    import devserver  # noqa
 
     # noinspection PyUnresolvedReferences
     INSTALLED_APPS += (

@@ -1,8 +1,7 @@
 # coding=utf-8
-# flake8: noqa
 
 """Settings for Rischan's dev environment."""
-from .project import *
+from .project import *  # noqa
 
 # Set debug to True for development
 DEBUG = True
@@ -21,16 +20,28 @@ CACHES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'gis',
+#         'USER': 'docker',
+#         'PASSWORD': 'docker',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'gis',
         'USER': 'docker',
         'PASSWORD': 'docker',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'HOST': '192.168.99.100',
+        'PORT': '65432',
     }
 }
+
 
 LOGGING = {
     'version': 1,
@@ -83,10 +94,11 @@ LOGGING = {
     }
 }
 
+
 # set up devserver if installed
 try:
     # noinspection PyUnresolvedReferences
-    import devserver
+    import devserver  # noqa
     INSTALLED_APPS += (
         'devserver',
     )

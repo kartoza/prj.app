@@ -1,8 +1,7 @@
 # coding=utf-8
-# flake8: noqa
 
 """Settings for Tim's dev environment."""
-from .project import *
+from .project import *  # noqa
 
 # Set debug to True for development
 DEBUG = True
@@ -86,7 +85,7 @@ LOGGING = {
 # set up devserver if installed
 try:
     # noinspection PyUnresolvedReferences
-    import devserver
+    import devserver  # noqa
     INSTALLED_APPS += (
         'devserver',
     )
