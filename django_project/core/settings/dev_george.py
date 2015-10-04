@@ -1,8 +1,7 @@
-# flake8: noqa
 
 __author__ = 'georgeirwin'
 
-from .project import *
+from .project import *  # noqa
 from .prod import ALLOWED_HOSTS
 
 # Set debug to True for development

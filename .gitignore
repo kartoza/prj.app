@@ -103,3 +103,6 @@ deployment/docker-prod/71-apt-cacher-ng
 # static and media dirs
 deployment/static
 deployment/media
+
+# local media
+django_project/media

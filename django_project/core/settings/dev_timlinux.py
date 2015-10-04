@@ -1,8 +1,7 @@
 # coding=utf-8
-# flake8: noqa
 
 """Settings for Tim's dev environment."""
-from .project import *
+from .project import *  # noqa
 
 # Set debug to True for development
 DEBUG = True

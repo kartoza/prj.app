@@ -1,6 +1,5 @@
-# flake8: noqa
 
-from .project import *
+from .project import *  # noqa
 
 # Set debug to True for development
 DEBUG = True
