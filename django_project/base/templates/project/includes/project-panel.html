@@ -53,7 +53,7 @@
       </h4>
       <hr/>
       {% if project.versions %}
-        {% for version in project.versions|slice:":2" %}
+        {% for version in project.versions|slice:project.threshold %}
           <p>
             <strong><span class="text-muted">Version:</span> {{ version.name }}</strong>
             <span class="btn-group pull-right">
@@ -70,9 +70,10 @@
             </span>
           </p>
         {% endfor %}
-          {% if project.versions.count >= 2 %}
-              <strong><span class="text-muted">Latest 2 of {{ project.versions.count }} versions</span></strong>
-          {% elif project.versions.count < 2 %}
+          {% if project.more_than_threshold %}
+              <strong><span class="text-muted">Latest {{ project.threshold }} of {{ project.versions.count }} versionss</span></strong>
+          {% endif %}
+          {% if not project.more_than_threshold %}
               <strong><span class="text-muted">Latest {{ project.versions.count }} of {{ project.versions.count }} versions</span></strong>
           {% endif %}
       {% endif %}
