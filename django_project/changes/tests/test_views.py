@@ -69,11 +69,11 @@ class TestCategoryViews(TestCase):
         my_response = my_client.post(reverse('category-create', kwargs={
             'project_slug': self.my_project.slug
         }), post_data)
-        self.assertRedirects(my_response,
-                             reverse('pending-category-list',
-                                     kwargs={'project_slug':
-                                                 self.my_project.slug
-        }))
+        self.assertRedirects(
+            my_response,
+            reverse(
+                'pending-category-list',
+                kwargs={'project_slug': self.my_project.slug}))
 
     def test_CategoryCreate_no_login(self):
         my_client = Client()
