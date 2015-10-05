@@ -211,7 +211,8 @@ mediasync:
 	@echo "------------------------------------------------------------------"
 	@echo "Syncing media files from live server"
 	@echo "------------------------------------------------------------------"
-	@rsync -av --progress rischan@5.9.160.107:/home/data/changelog.inasafe.org/deployment/media media
+	@rsync -av --progress kartoza3:/home/timlinux/production-sites/projecta/django_project/media media
+
 
 # ----------------------------------------------------------------------------
 #    DEVELOPMENT C O M M A N D S
