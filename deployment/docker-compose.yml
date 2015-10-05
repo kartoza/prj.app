@@ -37,7 +37,7 @@ db:
   restart: on-failure:5
 
 uwsgi:
-  build: docker-prod
+  build: docker
   hostname: uwsgi
   environment:
     - DATABASE_NAME=gis
@@ -98,7 +98,7 @@ web:
 # Run with --no-deps to run attached to the services
 # from produ environment if wanted
 devweb:
-  build: docker-prod
+  build: docker
   dockerfile: Dockerfile-dev
   hostname: uwsgi
   environment:
