@@ -33,7 +33,7 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 # Pandoc needed to generate rst dumps
 RUN apt-get update -y; apt-get -y --force-yes install yui-compressor pandoc
 
-ADD REQUIREMENTS.txt /REQUIREMENTS.txt
+ADD REQUIREMENTS.txt /REQUIREMENTS-dev.txt
 RUN pip install -r /REQUIREMENTS-dev.txt
 RUN pip install uwsgi
 
