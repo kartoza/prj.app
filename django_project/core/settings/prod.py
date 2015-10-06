@@ -1,6 +1,7 @@
 # coding=utf-8
+
 """Project level settings."""
-from .project import *
+from .project import *  # noqa
 
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False

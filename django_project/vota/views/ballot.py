@@ -1,12 +1,15 @@
 # coding=utf-8
 """Views for projects."""
 # noinspection PyUnresolvedReferences
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.core.exceptions import (
+    ObjectDoesNotExist, MultipleObjectsReturned)
 from django.http import Http404
 import logging
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import (
+    LoginRequiredMixin, StaffuserRequiredMixin)
 from django.core.urlresolvers import reverse
-from django.views.generic import DetailView, CreateView, DeleteView, UpdateView, ListView
+from django.views.generic import (
+    DetailView, CreateView, DeleteView, UpdateView, ListView)
 from base.models import Project
 from vota.forms import BallotCreateForm
 from vota.models import Ballot, Committee
@@ -52,6 +55,7 @@ class BallotDetailView(LoginRequiredMixin, BallotMixin, DetailView):
                 return obj
             else:
                 raise Http404
+
 
 # noinspection PyAttributeOutsideInit
 class BallotListView(BallotMixin, ListView):
@@ -129,6 +133,7 @@ class BallotListView(BallotMixin, ListView):
                 .filter(private=False)
         return qs
 
+
 # noinspection PyAttributeOutsideInit
 class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):
     context_object_name = 'ballot'
@@ -144,8 +149,8 @@ class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         self.committee_slug = self.kwargs.get('committee_slug', None)
-        self.committee = Committee.objects.filter(project=self.project)\
-            .get(slug=self.committee_slug)
+        self.committee = Committee.objects.filter(
+            project=self.project).get(slug=self.committee_slug)
         kwargs.update({
             'user': self.request.user,
             'committee': self.committee
@@ -159,6 +164,7 @@ class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):
             'slug': self.object.slug
         })
 
+
 # noinspection PyAttributeOutsideInit
 class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
     context_object_name = 'ballot'
@@ -168,24 +174,24 @@ class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
         self.project_slug = kwargs.get('project_slug', None)
         self.committee_slug = kwargs.get('committee_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
-        self.committee = Committee.objects.filter(project=self.project)\
-            .get(slug=self.committee_slug)
+        self.committee = Committee.objects.filter(
+            project=self.project).get(slug=self.committee_slug)
         return super(BallotUpdateView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         self.project_slug = kwargs.get('project_slug', None)
         self.committee_slug = kwargs.get('committee_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
-        self.committee = Committee.objects.filter(project=self.project)\
-            .get(slug=self.committee_slug)
+        self.committee = Committee.objects.filter(
+            project=self.project).get(slug=self.committee_slug)
         return super(BallotUpdateView, self).post(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
         if queryset is None:
             queryset = self.get_queryset()
         ballot_slug = self.kwargs.get('slug', None)
-        filtered_queryset = queryset.filter(committee=self.committee)\
-            .filter(committee__project=self.project)
+        filtered_queryset = queryset.filter(
+            committee=self.committee).filter(committee__project=self.project)
         try:
             obj = filtered_queryset.get(slug=ballot_slug)
         except ObjectDoesNotExist:
@@ -205,12 +211,10 @@ class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         self.committee_slug = self.kwargs.get('committee_slug', None)
-        self.committee = Committee.objects.filter(project=self.project)\
-                .get(slug=self.committee_slug)
-        kwargs.update({
-            'user': self.request.user,
-            'committee': self.committee
-        })
+        self.committee = Committee.objects.filter(
+            project=self.project).get(slug=self.committee_slug)
+        kwargs.update({'user': self.request.user,
+                       'committee': self.committee})
         return kwargs
 
     def get_success_url(self):
@@ -219,6 +223,7 @@ class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
             'committee_slug': self.object.committee.slug,
             'slug': self.object.slug
         })
+
 
 # noinspection PyAttributeOutsideInit
 class BallotDeleteView(StaffuserRequiredMixin, BallotMixin, DeleteView):
@@ -253,8 +258,8 @@ class BallotDeleteView(StaffuserRequiredMixin, BallotMixin, DeleteView):
         self.project_slug = kwargs.get('project_slug', None)
         self.committee_slug = kwargs.get('committee_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
-        self.committee = Committee.objects.filter(project=self.project) \
-            .get(slug=self.committee_slug)
+        self.committee = Committee.objects.filter(
+            project=self.project).get(slug=self.committee_slug)
         return super(BallotDeleteView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -279,8 +284,8 @@ class BallotDeleteView(StaffuserRequiredMixin, BallotMixin, DeleteView):
         self.project_slug = kwargs.get('project_slug', None)
         self.committee_slug = kwargs.get('committee_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
-        self.committee = Committee.objects.filter(project=self.project) \
-            .get(slug=self.committee_slug)
+        self.committee = Committee.objects.filter(
+            project=self.project).get(slug=self.committee_slug)
         return super(BallotDeleteView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):

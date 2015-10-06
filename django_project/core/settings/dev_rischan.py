@@ -1,8 +1,7 @@
+# coding=utf-8
 
-__author__ = 'georgeirwin'
-
+"""Settings for Rischan's dev environment."""
 from .project import *  # noqa
-from .prod import ALLOWED_HOSTS
 
 # Set debug to True for development
 DEBUG = True
@@ -14,8 +13,6 @@ CRISPY_FAIL_SILENTLY = not DEBUG
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-ALLOWED_HOSTS += ['192.168.2.173', ]
-
 # Disable caching while in development
 CACHES = {
     'default': {
@@ -23,31 +20,28 @@ CACHES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'gis',
+#         'USER': 'docker',
+#         'PASSWORD': 'docker',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # Or path to database file if using sqlite3.
-        # 'NAME': os.path.abspath(os.path.join(
-        #     os.path.dirname(__file__),
-        #     os.path.pardir,
-        #     os.path.pardir,
-        #     os.path.pardir,
-        #     'resources',
-        #     'sqlite',
-        #     'projecta.db')),
-        'NAME': 'changelog',
-        # The following settings are not used with sqlite3:
-        'USER': 'vagrant',
-        'PASSWORD': 'password',
-        # Empty for localhost through domain sockets or '127.0.0.1' for
-        # localhost through TCP.
-        'HOST': 'localhost',
-        # Set to empty string for default.
-        'PORT': '5432',
+        'NAME': 'gis',
+        'USER': 'docker',
+        'PASSWORD': 'docker',
+        'HOST': '192.168.99.100',
+        'PORT': '65432',
     }
 }
+
 
 LOGGING = {
     'version': 1,
@@ -67,23 +61,23 @@ LOGGING = {
     },
     'handlers': {
         # console output
-        # 'console': {
-        #     'class': 'logging.StreamHandler',
-        #     'formatter': 'simple',
-        #     'level': 'DEBUG',
-        # },
-        'logfile': {
-            'class': 'logging.FileHandler',
-            'filename': '/home/web/projecta/django_project/log/log.log',
+        'console': {
+            'class': 'logging.StreamHandler',
             'formatter': 'simple',
             'level': 'DEBUG',
-        }
+        },
+        # 'logfile': {
+        #     'class': 'logging.FileHandler',
+        #     'filename': '/tmp/app-dev.log',
+        #     'formatter': 'simple',
+        #     'level': 'DEBUG',
+        # }
     },
     'loggers': {
-        # 'django.db.backends': {
-        #     'handlers': ['console'],
-        #     'level': 'INFO', # switch to DEBUG to show actual SQL
-        # },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'INFO',  # switch to DEBUG to show actual SQL
+        },
         # example app logger
         # 'app.module': {
         #     'level': 'INFO',
@@ -95,17 +89,16 @@ LOGGING = {
     # root logger
     # non handled logs will propagate to the root logger
     'root': {
-        'handlers': ['logfile'],
+        'handlers': ['console'],
         'level': 'WARNING'
     }
 }
+
 
 # set up devserver if installed
 try:
     # noinspection PyUnresolvedReferences
     import devserver  # noqa
-
-    # noinspection PyUnresolvedReferences
     INSTALLED_APPS += (
         'devserver',
     )

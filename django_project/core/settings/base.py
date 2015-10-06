@@ -45,8 +45,8 @@ MEDIA_ROOT = absolute_path('media')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
-#MEDIA_URL = '/media/'
-#setting full MEDIA_URL to be able to use it for the feeds
+# MEDIA_URL = '/media/'
+# setting full MEDIA_URL to be able to use it for the feeds
 MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
@@ -77,7 +77,7 @@ STATICFILES_FINDERS = (
 
 # import SECRET_KEY into current namespace
 # noinspection PyUnresolvedReferences
-from .secret import SECRET_KEY
+from .secret import SECRET_KEY  # noqa
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (

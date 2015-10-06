@@ -10,7 +10,7 @@ __license__ = ''
 __copyright__ = ''
 
 # noinspection PyUnresolvedReferences
-import logging
+# import logging
 from base.models import Project
 
 # LOGGER = logging.getLogger(__name__)

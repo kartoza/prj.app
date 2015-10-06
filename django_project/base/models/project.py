@@ -85,6 +85,7 @@ class Project(AuditedModel):
     approved_objects = ApprovedProjectManager()
     unapproved_objects = UnapprovedProjectManager()
     public_objects = PublicProjectManager()
+    threshold = '2'
 
     # noinspection PyClassicStyleClass
     class Meta:
@@ -120,3 +121,9 @@ class Project(AuditedModel):
         """Get all the versions for this project."""
         qs = Version.objects.filter(project=self).order_by('-padded_version')
         return qs
+
+    def more_than_threshold(self):
+        """Check Count Number of versions for this project
+        whether more than threshold or not."""
+        if self.versions().count() >= int(self.threshold):
+            return True

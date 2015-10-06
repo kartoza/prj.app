@@ -1,4 +1,5 @@
-from .project import *
+
+from .project import *  # noqa
 
 # http://hustoknow.blogspot.com/2011/02/setting-up-django-nose-on-hudson.html
 INSTALLED_APPS += (

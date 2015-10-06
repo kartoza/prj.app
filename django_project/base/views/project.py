@@ -35,7 +35,8 @@ class ProjectBallotListView(ProjectMixin, PaginationMixin, DetailView):
     paginate_by = 1000
 
     def get_context_data(self, **kwargs):
-        context = super(ProjectBallotListView, self).get_context_data(**kwargs)
+        context = super(
+            ProjectBallotListView, self).get_context_data(**kwargs)
         committees = Committee.objects.filter(project=self.object)
         ballots = []
         for committee in committees:
@@ -44,8 +45,8 @@ class ProjectBallotListView(ProjectMixin, PaginationMixin, DetailView):
                     committee_ballots = Ballot.objects.filter(
                         committee=committee)
             else:
-                committee_ballots = Ballot.objects.filter(committee=committee)\
-                    .filter(private=False)
+                committee_ballots = Ballot.objects.filter(
+                    committee=committee).filter(private=False)
             if committee_ballots:
                 ballots.append(committee_ballots)
         context['ballots_list'] = ballots
@@ -184,7 +185,8 @@ class PendingProjectListView(
             return projects_qs.filter(creator=self.request.user)
 
     def get_context_data(self, **kwargs):
-        context = super(PendingProjectListView, self).get_context_data(**kwargs)
+        context = super(
+            PendingProjectListView, self).get_context_data(**kwargs)
         context['num_projects'] = self.get_queryset().count()
         context['unapproved'] = True
         return context

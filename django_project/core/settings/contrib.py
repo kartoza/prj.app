@@ -2,7 +2,7 @@
 """
 core.settings.contrib
 """
-from .base import *
+from .base import *  # noqa
 
 # Extra installed apps
 INSTALLED_APPS += (
@@ -16,7 +16,7 @@ INSTALLED_APPS += (
     'userena',
     'raven.contrib.django',
     'reversion',
-    #'user_map',
+    # 'user_map',
 )
 
 STOP_WORDS = (
