@@ -51,7 +51,7 @@
 {% if version.image_file %}
   <div class="col-lg-4">
     {% if not rst_download %}
-      <a href="/media/{{ version.image_file }}">
+      <a href="{{ MEDIA_URL }}{{ version.image_file }}">
         <img class="img-responsive img-rounded pull-right"
              src="{{ version.image_file|thumbnail_url:'medium-entry' }}"/>
       </a>
@@ -114,7 +114,7 @@
           {% if entry.image_file %}
             <div class="col-md-5">
               {% if not rst_download %}
-                <a href="/media/{{ entry.image_file }}">
+                <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
                   <img class="img-responsive img-rounded"
                      src="{{ entry.image_file|thumbnail_url:'large-entry' }}"/>
                 </a>
