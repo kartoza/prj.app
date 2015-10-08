@@ -34,7 +34,7 @@
   <div class="row">
     {% if version.project.image_file %}
       <div class="col-lg-3">
-        <a href="/media/{{ version.project.image_file }}">
+        <a href="{{ MEDIA_URL }}{{ version.project.image_file }}">
           <img class="img-responsive img-rounded pull-left"
                src="{{ version.project.image_file|thumbnail_url:'medium-entry' }}"/>
         </a>
@@ -82,7 +82,7 @@
     <div class="col-md-3 thumbnail-to-wrap">
       <div class="thumbnail">
         {% if entry.image_file %}
-          <a href="/media/{{ entry.image_file }}">
+          <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
             <img class="img-responsive img-rounded"
                  src="{{ entry.image_file|thumbnail_url:'thumb300x200' }}" alt=""/>
           </a>
