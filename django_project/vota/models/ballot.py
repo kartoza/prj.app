@@ -108,7 +108,7 @@ class Ballot(AuditedModel):
 
     open_from = models.DateTimeField(
         help_text=_('Date the ballot opens'),
-        default=timezone.now()
+        default=timezone.now
     )
 
     closes = models.DateTimeField(

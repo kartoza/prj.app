@@ -1,42 +1,34 @@
 {% load custom_markup %}
 {% load thumbnail %}
 <div class="panel-to-wrap col-md-4">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        <a href="{% url 'project-detail' project.slug %}">
-          {{ project.name }}
-        </a>
-        {% if not project.approved and user.is_staff %}
-          <a class="btn btn-success btn-xs pull-right tooltip-toggle"
-             href='{% url "project-approve" project.slug %}'
-             data-placement="top" data-title="Approve {{ project.name }}">
-            <span class="glyphicon glyphicon-thumbs-up"></span>
-          </a>
-        {% endif %}
-        {% if user.is_authenticated %}
-          <div class="btn-group pull-right" style="margin-top: -3px;">
-            <a href="{% url 'project-delete' project.slug %}"
-               class="btn btn-default btn-xs tooltip-toggle"
-               data-placement="top" data-title="Delete {{ project.name }}">
-              <span class="glyphicon glyphicon-minus"></span>
-            </a>
-            <a href="{% url 'project-update' project.slug %}"
-               class="btn btn-default btn-xs tooltip-toggle"
-               data-placement="top" data-title="Update {{ project.name }}">
-              <span class="glyphicon glyphicon-pencil"></span>
-            </a>
-          </div>
-        {% endif %}
-      </h3>
-    </div>
-    <div class="panel-body">
-      {% if project.image_file %}
-        <div class="text-center">
-          <a href="{% url 'project-detail' project.slug %}">
-            <img class="img-rounded"
-                 src="{% thumbnail project.image_file 150x150 crop %}"/>
-          </a>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <a href="{% url 'project-detail' project.slug %}">
+                    {{ project.name }}
+                </a>
+                {% if user.is_authenticated %}
+                    <div class="btn-group pull-right" style="margin-top: -3px;">
+                        <a href="{% url 'project-delete' project.slug %}"
+                           class="btn btn-default btn-xs tooltip-toggle"
+                           data-placement="top" data-title="Delete {{ project.name }}">
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </a>
+                        <a href="{% url 'project-update' project.slug %}"
+                           class="btn btn-default btn-xs tooltip-toggle"
+                           data-placement="top" data-title="Update {{ project.name }}">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                        {% if not project.approved and user.is_staff %}
+                            <a class="btn btn-default btn-xs tooltip-toggle"
+                               href='{% url "project-approve" project.slug %}'
+                               data-placement="top" data-title="Approve {{ project.name }}">
+                                <span class="glyphicon glyphicon-thumbs-up"></span>
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </h3>
         </div>
       {% endif %}
       {% if project.description %}
@@ -53,7 +45,7 @@
       </h4>
       <hr/>
       {% if project.versions %}
-        {% for version in project.latest_versions %}
+        {% for version in project.versions|slice:project.threshold %}
           <p>
             <strong><span class="text-muted">Version:</span> {{ version.name }}</strong>
             <span class="btn-group pull-right">
