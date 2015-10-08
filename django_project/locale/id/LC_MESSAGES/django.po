@@ -9,14 +9,15 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-10-08 01:22-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2015-10-08 02:07-0551\n"
+"Last-Translator:   <rischanlab@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Translated-Using: django-rosetta 0.7.6\n"
 
 #: accounts/models.py:11
 msgid "user"
@@ -48,7 +49,8 @@ msgid ""
 msgstr ""
 
 #: accounts/templates/userena/activate_retry.html:10
-msgid "Your account could not be activated because activation link is expired."
+msgid ""
+"Your account could not be activated because activation link is expired."
 msgstr ""
 
 #: accounts/templates/userena/activate_retry.html:11
@@ -295,8 +297,7 @@ msgstr ""
 
 #: accounts/templates/userena/password_reset_complete.html:9
 #, python-format
-msgid ""
-"You can now <a href=\"%(signin_url)s\">signin</a> with your new password."
+msgid "You can now <a href=\"%(signin_url)s\">signin</a> with your new password."
 msgstr ""
 
 #: accounts/templates/userena/password_reset_confirm_form.html:5
@@ -458,7 +459,7 @@ msgstr ""
 
 #: base/templates/project/list.html:19
 msgid "High level software project management. Made easy."
-msgstr ""
+msgstr "Aplikasi Managemen Perangkat Lunak. Membut Kita Mudah"
 
 #: changes/models/category.py:37
 msgid "Name of this category."
