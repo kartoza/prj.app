@@ -8,7 +8,6 @@ from .base import *  # noqa
 INSTALLED_APPS += (
     # 'raven.contrib.django',  # enable Raven plugin
     'crispy_forms',
-    'pipeline',
     'widget_tweaks',  # lets us add some bootstrap css to form elements
     'accounts',  # userena
     'guardian',  # for userena
@@ -24,16 +23,7 @@ STOP_WORDS = (
     'this', 'that'
 )
 
-DEFAULT_FILE_STORAGE = ('django_hashedfilenamestorage.storage'
-                        '.HashedFilenameFileSystemStorage')
-
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-
-# use underscore template function
-PIPELINE_TEMPLATE_FUNC = '_.template'
-
-# enable cached storage - requires uglify.js (node.js)
-STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
 # Added for userena
 AUTHENTICATION_BACKENDS = (
@@ -57,3 +47,51 @@ THUMBNAIL_ALIASES = {
         'thumb300x200': {'size': (300, 200), 'crop': True},
     },
 }
+
+# Pipeline related settings
+
+
+INSTALLED_APPS += (
+    'pipeline',)
+
+DEFAULT_FILE_STORAGE = (
+    'django_hashedfilenamestorage.storage.HashedFilenameFileSystemStorage')
+
+# use underscore template function
+PIPELINE_TEMPLATE_FUNC = '_.template'
+
+# enable cached storage - requires uglify.js (node.js)
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+
+PIPELINE_JS = {
+    'contrib': {
+        'source_filenames': (
+            'js/jquery-1.10.1.min.js',
+            'js/csrf-ajax.js',
+            'js/underscore-min.js',
+            'js/bootstrap.min.js',
+            'js/changelog.js',
+            'js/github-issue.js',
+        ),
+        'output_filename': 'js/contrib.js',
+    }
+}
+
+PIPELINE_CSS = {
+    'contrib': {
+        'source_filenames': (
+            'css/bootstrap.min.css',
+            'css/bootstrap-theme.min.css',
+            'css/changelog.css',
+        ),
+        'output_filename': 'css/contrib.css',
+        'extra_context': {
+            'media': 'screen, projection',
+        },
+    }
+}
+
+# These get enabled in prod.py
+PIPELINE_ENABLED = False
+PIPELINE_CSS_COMPRESSOR = None
+PIPELINE_JS_COMPRESSOR = None

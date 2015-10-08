@@ -17,6 +17,9 @@ CACHES = {
     }
 }
 
+# Make sure static files storage is set to default
+STATIC_FILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -39,26 +42,13 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
             'level': 'DEBUG',
-        },
-        # 'logfile': {
-        #     'class': 'logging.FileHandler',
-        #     'filename': '/tmp/app-dev.log',
-        #     'formatter': 'simple',
-        #     'level': 'DEBUG',
-        # }
+        }
     },
     'loggers': {
         'django.db.backends': {
             'handlers': ['console'],
             'level': 'INFO',  # switch to DEBUG to show actual SQL
-        },
-        # example app logger
-        # 'app.module': {
-        #     'level': 'INFO',
-        #     'handlers': ['logfile'],
-        #     # propagate is True by default, which proppagates logs upstream
-        #     'propagate': False
-        # }
+        }
     },
     # root logger
     # non handled logs will propagate to the root logger
