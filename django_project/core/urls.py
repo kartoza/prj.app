@@ -2,6 +2,7 @@
 """Project level url handler."""
 from django.conf.urls import patterns, include, url
 from django.conf.urls.i18n import i18n_patterns
+from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
 admin.autodiscover()
@@ -39,3 +40,8 @@ urlpatterns += i18n_patterns(
         name='password_reset_done'),
     url(r'^accounts/', include('userena.urls')),
 )
+
+if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^rosetta/', include('rosetta.urls')),
+    )
