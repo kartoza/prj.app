@@ -26,8 +26,6 @@ DATABASES = {
     }
 }
 
-MEDIA_ROOT = '/home/web/media'
-STATIC_ROOT = '/home/web/static'
 
 # See fig.yml file for postfix container definition
 #
