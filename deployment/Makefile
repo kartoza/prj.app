@@ -52,7 +52,7 @@ db:
 	@echo "------------------------------------------------------------------"
 	@echo "Running db in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose  --no-recreate --no-deps -p $(PROJECT_ID) up -d db
+	@docker-compose -p $(PROJECT_ID) up -d db
 
 nginx:
 	@echo
@@ -212,15 +212,15 @@ mediasync:
 	@echo "------------------------------------------------------------------"
 	@echo "Syncing media files from live server"
 	@echo "------------------------------------------------------------------"
-	@rsync -av --progress inasafe-docker:/home/timlinux/production-sites/projecta/deployment/media media
+	@rsync -av --progress inasafe-docker:/home/data/changelog.inasafe.org/deployment/media/ media
 
 dbsync:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Syncing database files from live server"
 	@echo "------------------------------------------------------------------"
-	@ssh inasafe-docker "cd /home/data/changelog.inasafe.org/deployment; make dbbackup"
-	@rsync -av --progress inasafe-docker:/home/timlinux/production-sites/projecta/deployment/backups/latest.dmp backups/latest.dmp
+	-@ssh inasafe-docker "cd /home/data/changelog.inasafe.org/deployment; make dbbackup"
+	@rsync -av --progress inasafe-docker:/home/data/changelog.inasafe.org/deployment/backups/latest.dmp backups/latest.dmp
 
 
 # ----------------------------------------------------------------------------
@@ -228,9 +228,11 @@ dbsync:
 # --no-deps will attach to prod deps if running
 # after running you will have ssh and web ports open (see dockerfile for no's)
 # and you can set your pycharm to use the python in the container
+# Note that pycharm will copy in resources to the /root/ user folder
+# for pydevd etc. If they dont get copied, restart pycharm...
 # ----------------------------------------------------------------------------
 
-devweb:
+devweb: db
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"

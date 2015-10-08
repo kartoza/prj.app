@@ -121,6 +121,7 @@ devweb:
     - DATABASE_PASSWORD=docker
     - DATABASE_HOST=db
     - DJANGO_SETTINGS_MODULE=core.settings.prod_docker
+    - PYTHONPATH=/home/web/django_project
     - VIRTUAL_HOST=projecta.kartoza.com
     - VIRTUAL_PORT=8080
   volumes:
