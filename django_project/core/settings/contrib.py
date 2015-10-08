@@ -15,6 +15,7 @@ INSTALLED_APPS += (
     'userena',
     'raven.contrib.django',
     'reversion',
+    'rosetta',
     # 'user_map',
 )
 

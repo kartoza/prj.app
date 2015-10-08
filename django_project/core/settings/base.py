@@ -90,7 +90,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.request',
     'django.core.context_processors.media',
-    'core.context_processors.add_intercom_app_id'
+    'core.context_processors.add_intercom_app_id',
+    'django.template.context_processors.i18n'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -101,7 +102,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.custom_middleware.NavContextMiddleware'
+    'core.custom_middleware.NavContextMiddleware',
+    'django.middleware.locale.LocaleMiddleware'
 )
 
 ROOT_URLCONF = 'core.urls'

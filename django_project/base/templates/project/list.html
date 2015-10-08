@@ -1,5 +1,7 @@
 {% extends "project_base.html" %}
 
+{% load i18n %}
+
 {% block title %}Projects{% endblock %}
 
 {% block extra_head %}
@@ -14,7 +16,7 @@
 {% block content %}
     <div class="page-header">
       <p class="lead text-center text-muted">
-        High level software project management. Made easy.
+        {% trans "High level software project management. Made easy." %}
       </p>
       <h2 class="text-muted">
         Projects
