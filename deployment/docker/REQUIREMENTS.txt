@@ -24,5 +24,3 @@ beautifulsoup4==4.3.2
 django-disqus==0.5
 # custom slugify
 awesome-slugify==1.4
-# translation management
-django-rosetta
