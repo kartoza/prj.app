@@ -9,9 +9,9 @@ admin.autodiscover()
 handler404 = 'base.views.error_views.custom_404'
 
 # noinspection PyUnresolvedReferences
-urlpatterns = patterns(
-    '',
-    # Enable the admin (use non standard name for obscurity)
+urlpatterns =[
+    # '',
+    # # Enable the admin (use non standard name for obscurity)
     # url(r'^site-admin/', include(admin.site.urls)),
     # url(r'^', include('base.urls')),
     # url(r'^', include('changes.urls')),
@@ -25,7 +25,7 @@ urlpatterns = patterns(
     #     {'template_name': 'userena/password_reset_done.html'},
     #     name='password_reset_done'),
     # url(r'^accounts/', include('userena.urls')),
-)
+]
 
 urlpatterns += i18n_patterns(
     url(r'^site-admin/', include(admin.site.urls)),
