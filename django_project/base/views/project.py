@@ -19,6 +19,7 @@ from changes.models import Version
 from ..models import Project
 from ..forms import ProjectForm
 from vota.models import Committee, Ballot
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +79,8 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
         """
         context = super(ProjectListView, self).get_context_data(**kwargs)
         context['num_projects'] = self.get_queryset().count()
+        context[
+            'PROJECT_VERSION_LIST_SIZE'] = settings.PROJECT_VERSION_LIST_SIZE
         return context
 
     def get_queryset(self):
@@ -105,8 +108,9 @@ class ProjectDetailView(ProjectMixin, DetailView):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
         context['projects'] = self.get_queryset()
         context['committees'] = Committee.objects.filter(project=self.object)
+        page_size = settings.PROJECT_VERSION_LIST_SIZE
         context['versions'] = Version.objects.filter(
-            project=self.object).order_by('-padded_version')
+            project=self.object).order_by('-padded_version')[:page_size]
         return context
 
     def get_queryset(self):
@@ -175,7 +179,7 @@ class PendingProjectListView(
     """List all users unapproved projects - staff users see all unapproved."""
     context_object_name = 'projects'
     template_name = 'project/list.html'
-    paginate_by = 1000
+    paginate_by = settings.PROJECT_VERSION_LIST_SIZE
 
     def get_queryset(self):
         projects_qs = Project.unapproved_objects.all()

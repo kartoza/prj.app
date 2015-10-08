@@ -94,14 +94,14 @@ collectstatic:
 	#@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py collectstatic --noinput
 	#We need to run collect static in the same context as the running
 	# uwsgi container it seems so I use docker exec here
-	@docker exec -t -i $(PROJECT_ID)_uwsgi_1 python manage.py collectstatic --noinput
+	@docker exec -t -i $(PROJECT_ID)-uwsgi python manage.py collectstatic --noinput
 
 reload:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Reload django project in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker exec -t -i $(PROJECT_ID)_uwsgi_1 uwsgi --reload  /tmp/django.pid
+	@docker exec -t -i $(PROJECT_ID)-uwsgi uwsgi --reload  /tmp/django.pid
 
 kill:
 	@echo
@@ -157,7 +157,7 @@ dbshell:
 	@echo "------------------------------------------------------------------"
 	@echo "Shelling in in production database"
 	@echo "------------------------------------------------------------------"
-	@docker exec -t -i $(PROJECT_ID)_db_1 psql -U docker -h localhost gis
+	@docker exec -t -i $(PROJECT_ID)-db psql -U docker -h localhost gis
 
 dbrestore:
 	@echo
@@ -165,9 +165,9 @@ dbrestore:
 	@echo "Restore dump from backups/latest.dmp in production mode"
 	@echo "------------------------------------------------------------------"
 	@# - prefix causes command to continue even if it fails
-	-@docker exec -t -i $(PROJECT_ID)_db_1 su - postgres -c "dropdb gis"
-	@docker exec -t -i $(PROJECT_ID)_db_1 su - postgres -c "createdb -O docker -T template_postgis gis"
-	@docker exec -t -i $(PROJECT_ID)_db_1 pg_restore /backups/latest.dmp | docker exec -i $(PROJECT_ID)_db_1 su - postgres -c "psql gis"
+	-@docker exec -t -i $(PROJECT_ID)-db su - postgres -c "dropdb gis"
+	@docker exec -t -i $(PROJECT_ID)-db su - postgres -c "createdb -O docker -T template_postgis gis"
+	@docker exec -t -i $(PROJECT_ID)-db pg_restore /backups/latest.dmp | docker exec -i $(PROJECT_ID)-db su - postgres -c "psql gis"
 
 dbbackup:
 	@echo
@@ -177,8 +177,9 @@ dbbackup:
 	@echo "the new backup."
 	@echo "------------------------------------------------------------------"
 	@# - prefix causes command to continue even if it fails
-	@docker exec -t -i $(PROJECT_ID)_dbbackups_1 /backups.sh
-	@docker exec -t -i $(PROJECT_ID)_dbbackups_1 cat /var/log/cron.log | tail -2 | head -1 | awk '{print $4}'
+	@# Explicitly don't use -t so we can call this make target over a remote ssh session
+	@docker exec -i $(PROJECT_ID)-db-backups /backups.sh
+	@docker exec -i $(PROJECT_ID)-db-backups cat /var/log/cron.log | tail -2 | head -1 | awk '{print $4}'
 	-@if [ -f "backups/latest.dmp" ]; then rm backups/latest.dmp; fi
 	# backups is intentionally missing from front of first clause below otherwise symlink comes
 	# out with wrong path...
@@ -197,21 +198,29 @@ maillogs:
 	@echo "------------------------------------------------------------------"
 	@echo "Showing smtp logs in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker exec -t -i $(PROJECT_ID)_smtp_1 tail -f /var/log/mail.log
+	@docker exec -t -i $(PROJECT_ID)-smtp tail -f /var/log/mail.log
 
 mailerrorlogs:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Showing smtp error logs in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker exec -t -i $(PROJECT_ID)_smtp_1 tail -f /var/log/mail.err
+	@docker exec -t -i $(PROJECT_ID)-smtp tail -f /var/log/mail.err
 
 mediasync:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Syncing media files from live server"
 	@echo "------------------------------------------------------------------"
-	@rsync -av --progress kartoza3:/home/timlinux/production-sites/projecta/django_project/media media
+	@rsync -av --progress inasafe-docker:/home/data/changelog.inasafe.org/deployment/media/ media
+
+dbsync:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Syncing database files from live server"
+	@echo "------------------------------------------------------------------"
+	-@ssh inasafe-docker "cd /home/data/changelog.inasafe.org/deployment; make dbbackup"
+	@rsync -av --progress inasafe-docker:/home/data/changelog.inasafe.org/deployment/backups/latest.dmp backups/latest.dmp
 
 
 # ----------------------------------------------------------------------------
@@ -219,9 +228,11 @@ mediasync:
 # --no-deps will attach to prod deps if running
 # after running you will have ssh and web ports open (see dockerfile for no's)
 # and you can set your pycharm to use the python in the container
+# Note that pycharm will copy in resources to the /root/ user folder
+# for pydevd etc. If they dont get copied, restart pycharm...
 # ----------------------------------------------------------------------------
 
-devweb:
+devweb: db
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"

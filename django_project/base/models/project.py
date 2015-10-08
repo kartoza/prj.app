@@ -11,6 +11,8 @@ from audited_models.models import AuditedModel
 from changes.models.version import Version
 from core.settings.contrib import STOP_WORDS
 from django.contrib.auth.models import User
+from django.conf import settings
+
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +87,6 @@ class Project(AuditedModel):
     approved_objects = ApprovedProjectManager()
     unapproved_objects = UnapprovedProjectManager()
     public_objects = PublicProjectManager()
-    threshold = '2'
 
     # noinspection PyClassicStyleClass
     class Meta:
@@ -95,6 +96,7 @@ class Project(AuditedModel):
 
     def save(self, *args, **kwargs):
         """Overloaded save method.
+
         :param args:
         :param kwargs:
         """
@@ -122,8 +124,33 @@ class Project(AuditedModel):
         qs = Version.objects.filter(project=self).order_by('-padded_version')
         return qs
 
-    def more_than_threshold(self):
-        """Check Count Number of versions for this project
-        whether more than threshold or not."""
-        if self.versions().count() >= int(self.threshold):
+    def latest_versions(self):
+        """Get the latest version.
+
+        How many versions returned is determined by the pagination threshold.
+
+        :returns: List of versions.
+        :rtype: list"""
+        return self.versions()[:settings.PROJECT_VERSION_LIST_SIZE]
+
+    @staticmethod
+    def pagination_threshold(self):
+        """Find out how many versions to list per page.
+
+        :returns: The count of items to show per page as defined in
+            settings.PROJECT_VERSION_LIST_SIZE.
+        :rtype: int
+        """
+        return settings.PROJECT_VERSION_LIST_SIZE
+
+    def pagination_threshold_exceeded(self):
+        """Check if project version count exceeds pagination threshold.
+
+        :returns: Flag indicating if there are more versions than
+            self.threshold.
+        :rtype: bool
+        """
+        if self.versions().count() >= settings.PROJECT_VERSION_LIST_SIZE:
             return True
+        else:
+            return False

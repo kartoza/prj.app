@@ -1,6 +1,6 @@
 #--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
 # Note this base image is based on debian
-FROM kartoza/django-base
+FROM projecta_uwsgi
 MAINTAINER Tim Sutton<tim@kartoza.com>
 
 # Use local cached debs from host (saves your bandwidth!)
@@ -11,7 +11,8 @@ ADD 71-apt-cacher-ng /etc/apt/apt.conf.d/71-apt-cacher-ng
 
 # This section taken on 2 July 2015 from
 # https://docs.docker.com/examples/running_ssh_service/
-RUN apt-get update && apt-get install -y openssh-server
+# Sudo is needed by pycharm when it tries to pip install packages
+RUN apt-get update && apt-get install -y openssh-server sudo
 RUN mkdir /var/run/sshd
 RUN echo 'root:docker' | chpasswd
 RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
@@ -24,20 +25,9 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 
 # End of cut & paste section
 
-
-# --------------------------------------------------------
-# This section is duplicated from main dockerfile until
-# docker supports an INCLUDE Directive
-# --------------------------------------------------------
-
-# Pandoc needed to generate rst dumps
-RUN apt-get update -y; apt-get -y --force-yes install yui-compressor pandoc
-
-ADD REQUIREMENTS.txt /REQUIREMENTS-dev.txt
+ADD REQUIREMENTS-dev.txt /REQUIREMENTS-dev.txt
 RUN pip install -r /REQUIREMENTS-dev.txt
-RUN pip install uwsgi
-
-WORKDIR /home/web/django_project
+ADD bashrc /root/.bashrc
 
 # --------------------------------------------------------
 # Open ports as needed

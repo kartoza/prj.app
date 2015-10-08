@@ -7,10 +7,7 @@ repository!
 """
 
 import os  # noqa
-from django.utils.translation import ugettext_lazy as _
-from .utils import absolute_path
 from .contrib import *  # noqa
-
 
 
 DATABASES = {
@@ -82,17 +79,3 @@ PIPELINE_CSS = {
 }
 
 PIPELINE_JS_COMPRESSOR = None
-
-
-# Set languages which want to be translated
-LANGUAGES = (
-    ('en', _('English')),
-    ('af', _('Afrikaans')),
-    ('id', _('Indonesian')),
-    ('ko', _('Korean')),
-)
-
-# Set storage path for the translation files
-LOCALE_PATHS = (
-   absolute_path('locale'),
-)
