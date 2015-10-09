@@ -1,5 +1,5 @@
 psycopg2
-Django
+Django==1.8.5
 django-crispy-forms==1.4.0
 django-braces==1.0.0
 django-model-utils==1.4.0
@@ -24,3 +24,6 @@ beautifulsoup4==4.3.2
 django-disqus==0.5
 # custom slugify
 awesome-slugify==1.4
+rosetta==0.3
+django-audited-models==0.4a0
+
