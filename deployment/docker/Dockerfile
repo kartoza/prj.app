@@ -12,7 +12,7 @@ ADD 71-apt-cacher-ng /etc/apt/apt.conf.d/71-apt-cacher-ng
 
 
 # Pandoc needed to generate rst dumps
-RUN apt-get update -y; apt-get -y --force-yes install yui-compressor pandoc
+RUN apt-get update -y; apt-get -y --force-yes install yui-compressor pandoc python-scipy
 
 ADD REQUIREMENTS.txt /REQUIREMENTS.txt
 RUN pip install -r /REQUIREMENTS.txt
