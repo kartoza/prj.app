@@ -15,3 +15,9 @@ pdbpp
 
 # hizashi-utils
 hizashi-utils
+
+#translation management tool
+django-rosetta==0.7.0
+
+#youtube embed
+django-embed-video==1.0.0
