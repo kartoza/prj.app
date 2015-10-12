@@ -8,6 +8,7 @@ from core.settings.contrib import STOP_WORDS
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from audited_models.models import AuditedModel
+from embed_video.fields import EmbedVideoField
 from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)
@@ -60,6 +61,11 @@ class Entry(AuditedModel):
         max_length=255,
         null=True,
         blank=True)
+
+    video = EmbedVideoField(verbose_name='Youtube video',
+                            help_text='Paste your youtube video link',
+                            null=True,
+                            blank=True)
 
     approved = models.BooleanField(
         help_text=(
