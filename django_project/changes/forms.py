@@ -84,7 +84,7 @@ class EntryForm(forms.ModelForm):
         model = Entry
         fields = (
             'category', 'title', 'description',
-            'image_file', 'image_credits'
+            'image_file', 'image_credits', 'video'
         )
 
     def __init__(self, *args, **kwargs):
@@ -104,6 +104,7 @@ class EntryForm(forms.ModelForm):
                 Field('description', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
                 Field('image_credits', css_class="form-control"),
+                Field('video', css_class="form-control"),
                 css_id='entry-form')
         )
         self.helper.layout = layout
