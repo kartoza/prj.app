@@ -38,6 +38,4 @@ LANGUAGES = (
 )
 
 # Set storage path for the translation files
-LOCALE_PATHS = (
-   absolute_path('locale'),
-)
+LOCALE_PATHS = (absolute_path('locale'),)

@@ -10,7 +10,7 @@ admin.autodiscover()
 
 handler404 = 'base.views.error_views.custom_404'
 
-urlpatterns =[
+urlpatterns = [
     # '',
     # # Enable the admin (use non standard name for obscurity)
     # url(r'^site-admin/', include(admin.site.urls)),
@@ -42,7 +42,8 @@ urlpatterns += i18n_patterns(
 )
 
 if 'rosetta' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^rosetta/', include('rosetta.urls')),
     )
 
