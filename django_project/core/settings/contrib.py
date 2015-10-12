@@ -16,6 +16,7 @@ INSTALLED_APPS += (
     'raven.contrib.django',
     'reversion',
     'rosetta',
+    'embed_video',
     # 'user_map',
 )
 
