@@ -62,10 +62,11 @@ class Entry(AuditedModel):
         null=True,
         blank=True)
 
-    video = EmbedVideoField(verbose_name='Youtube video',
-                            help_text='Paste your youtube video link',
-                            null=True,
-                            blank=True)
+    video = EmbedVideoField(
+        verbose_name='Youtube video',
+        help_text='Paste your youtube video link',
+        null=True,
+        blank=True)
 
     approved = models.BooleanField(
         help_text=(
