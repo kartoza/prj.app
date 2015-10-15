@@ -17,7 +17,7 @@ addons:
 
 install:
   - pip install coveralls
-  - pip install -r REQUIREMENTS.txt
+  - pip install -r REQUIREMENTS-dev.txt
 
 
 before_script:
@@ -27,7 +27,7 @@ before_script:
 
 script:
   - flake8
-  # - coverage run manage.py test
+  - coverage run manage.py test
 
 after_success:
   # - coveralls
