@@ -73,4 +73,6 @@
     <h5 id="comments">Comments</h5>
     {% disqus_show_comments %}
 
+    <h5 class="text-muted"> {{ entry.funder_info_html|base_markdown }} {{ entry.developer_info_html|base_markdown }} </h5>
+
 {% endblock %}
