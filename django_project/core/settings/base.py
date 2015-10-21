@@ -7,7 +7,8 @@ core.settings.base
 from .utils import absolute_path
 
 ADMINS = (
-    ('Tim Sutton', 'tim@linfiniti.com'),
+    ('Tim Sutton', 'tim@kartoza.com'),
+    ('Rischan Mafrur', 'rischan@kartoza.com')
 )
 SERVER_EMAIL = 'tim@linfiniti.com'
 EMAIL_HOST = 'localhost'
@@ -19,7 +20,7 @@ MANAGERS = ADMINS
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'Africa/Johannesburg'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
