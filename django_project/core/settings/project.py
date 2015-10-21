@@ -39,3 +39,9 @@ LANGUAGES = (
 
 # Set storage path for the translation files
 LOCALE_PATHS = (absolute_path('locale'),)
+
+
+MIDDLEWARE_CLASSES = (
+    # For nav bar generation
+    'core.custom_middleware.NavContextMiddleware',
+) + MIDDLEWARE_CLASSES
