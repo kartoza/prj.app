@@ -64,12 +64,18 @@
                 </a>
             {% endif %}
         </div>
-        {% if entry.video %}
-            <div class="col-lg-8">
-                {% video entry.video 'small' %}
-            </div>
-        {% endif %}
     </div>
+
+
+    {% if entry.video %}
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2 col-md-offset-3">
+                    {% video entry.video 'small' %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
     <h5 id="comments">Comments</h5>
     {% disqus_show_comments %}
 

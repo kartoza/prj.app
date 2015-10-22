@@ -69,25 +69,25 @@ class Entry(AuditedModel):
         blank=True)
 
     funded_by = models.CharField(
-        help_text='Input the Funder name.',
+        help_text='Input the funder name.',
         max_length=255,
         null=True,
         blank=True)
 
     funder_url = models.CharField(
-        help_text='Input the Funder url.',
+        help_text='Input the funder URL.',
         max_length=255,
         null=True,
         blank=True)
 
     developed_by = models.CharField(
-        help_text='Input Developer name.',
+        help_text='Input the developer name.',
         max_length=255,
         null=True,
         blank=True)
 
     developer_url = models.CharField(
-        help_text='Input Developer url.',
+        help_text='Input the developer URL.',
         max_length=255,
         null=True,
         blank=True)
@@ -144,10 +144,12 @@ class Entry(AuditedModel):
             string = "This feature was funded by %s " % (self.funded_by)
             return string
         elif self.funder_url and not self.funded_by:
-            string = "This feature was funded by [%s](%s)" % (self.funder_url, self.funder_url)
+            string = "This feature was funded by [%s](%s)" % (
+                self.funder_url, self.funder_url)
             return string
         elif self.funded_by and self.funder_url:
-            string = "This feature was funded by [%s](%s)" % (self.funded_by, self.funder_url)
+            string = "This feature was funded by [%s](%s)" % (
+                self.funded_by, self.funder_url)
             return string
         else:
             return string
@@ -161,17 +163,12 @@ class Entry(AuditedModel):
             string = "This feature was developed by %s " % (self.developed_by)
             return string
         elif self.developer_url and not self.developed_by:
-            string = "This feature was developed by [%s](%s)" % (self.developer_url, self.developer_url)
+            string = "This feature was developed by [%s](%s)" % (
+                self.developer_url, self.developer_url)
             return string
         elif self.developed_by and self.developer_url:
-            string = "This feature was developed by [%s](%s)" % (self.developed_by, self.developer_url)
+            string = "This feature was developed by [%s](%s)" % (
+                self.developed_by, self.developer_url)
             return string
         else:
             return string
-
-
-
-
-
-
-
