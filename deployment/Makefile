@@ -220,8 +220,7 @@ dbsync:
 	@echo "Syncing database files from live server"
 	@echo "------------------------------------------------------------------"
 	-@ssh inasafe-docker "cd /home/data/changelog.inasafe.org/deployment; make dbbackup"
-	@rsync -av --progress inasafe-docker:/home/data/changelog.inasafe.org/deployment/backups/latest.dmp backups/latest.dmp
-
+	@rsync -av --progress inasafe-docker:/home/data/changelog.inasafe.org/deployment/backups/ backups
 
 # ----------------------------------------------------------------------------
 #    DEVELOPMENT C O M M A N D S
