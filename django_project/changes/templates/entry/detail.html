@@ -70,15 +70,16 @@
     {% if entry.video %}
         <div class="container">
             <div class="row">
-                <div class="col-md-2 col-md-offset-3">
+                <div class="col-lg-10 col-md-offset-1">
                     {% video entry.video 'small' %}
                 </div>
             </div>
         </div>
     {% endif %}
-    <h5 id="comments">Comments</h5>
-    {% disqus_show_comments %}
 
     <h5 class="text-muted"> {{ entry.funder_info_html|base_markdown }} {{ entry.developer_info_html|base_markdown }} </h5>
+
+    <h5 id="comments">Comments</h5>
+    {% disqus_show_comments %}
 
 {% endblock %}
