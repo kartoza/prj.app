@@ -15,6 +15,8 @@ INSTALLED_APPS += (
     'userena',
     'reversion',
     'rosetta',
+    'embed_video',
+    # 'user_map',
 )
 
 STOP_WORDS = (

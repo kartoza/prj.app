@@ -20,7 +20,7 @@ build:
 	@echo "------------------------------------------------------------------"
 	@echo "Building in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) build
+	@docker-compose -p $(PROJECT_ID) build uwsgi
 
 web:
 	@echo
@@ -220,7 +220,7 @@ dbsync:
 	@echo "Syncing database files from live server"
 	@echo "------------------------------------------------------------------"
 	-@ssh inasafe-docker "cd /home/data/changelog.inasafe.org/deployment; make dbbackup"
-	@rsync -av --progress inasafe-docker:/home/data/changelog.inasafe.org/deployment/backups/latest.dmp backups/latest.dmp
+	@rsync -av --progress inasafe-docker:/home/data/changelog.inasafe.org/deployment/backups/ backups
 
 create-machine:
 	@echo

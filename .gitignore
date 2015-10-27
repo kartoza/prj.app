@@ -6,9 +6,7 @@ vagrant-fabric-lxc
 django_project/media/images
 visual_changelog.db
 .vagrant
-deployment/docker/71-apt-cacher-ng
-django_project/static
-django_project/core/settings/secret.py
+
 node_modules
 id_dsa.pub
 id_rsa.pub
@@ -100,10 +98,12 @@ deployment/pg/postgres_data/9.3
 deployment/pg/postgres_staging_data/9.3
 deployment/pg/postgres_dev_data/9.3
 # Template for apt-cacher
-deployment/docker-prod/71-apt-cacher-ng
 # static and media dirs
 deployment/static
 deployment/media
+deployment/docker/71-apt-cacher-ng
+django_project/static
+django_project/core/settings/secret.py
 
 # local media
 django_project/media
