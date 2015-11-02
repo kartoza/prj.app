@@ -29,6 +29,7 @@ urlpatterns = [
 ]
 
 urlpatterns += i18n_patterns(
+    url(r'^grappelli/', include('grappelli.urls')),
     url(r'^site-admin/', include(admin.site.urls)),
     url(r'^', include('base.urls')),
     url(r'^', include('changes.urls')),
