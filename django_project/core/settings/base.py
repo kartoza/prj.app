@@ -108,6 +108,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'core.urls'
+GRAPPELLI_ADMIN_TITLE = ''
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'core.wsgi.application'
