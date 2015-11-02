@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+{% extends "admin/base.html" %}
 
-</body>
-</html>
+{% block title %}{{ title }} | Projecta Admin {% endblock %}
+
+{% block branding %}
+<h2 id="site-name"><a href="{% url 'admin:index' %}">Projecta Admin</a></h2>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
