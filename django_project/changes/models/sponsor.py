@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 import logging
 from core.settings.contrib import STOP_WORDS
-
+from django.conf.global_settings import MEDIA_ROOT
 logger = logging.getLogger(__name__)
 from django.db import models
 from audited_models.models import AuditedModel
