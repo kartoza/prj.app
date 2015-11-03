@@ -1,6 +1,6 @@
 
 CREATE TABLE changes_sponsor (
-    id integer NOT NULL,
+    id SERIAL NOT NULL,
     datetime_created timestamp with time zone NOT NULL,
     datetime_modified timestamp with time zone NOT NULL,
     creator_id integer,
@@ -16,7 +16,6 @@ CREATE TABLE changes_sponsor (
     agreement character varying(255),
     logo character varying(255),
     approved boolean NOT NULL,
-    image_file character varying(100) NOT NULL,
     project_id integer NOT NULL,
     slug character varying(50),
     author_id integer NOT NULL
@@ -32,3 +31,6 @@ CREATE INDEX changes_sponsor_author_id ON changes_sponsor USING btree (author_id
 
 ALTER TABLE ONLY changes_sponsor
 ADD CONSTRAINT changes_sponsor_pkey PRIMARY KEY (id);
+
+INSERT INTO changes_sponsor (datetime_created, datetime_modified, name, sponsor_url, contact_person, sponsor_email, sponsor_duration, start_date, end_date, level, agreement, logo, approved, project_id, slug, author_id)
+    VALUES ('2013-08-07 22:37:10.312+00', '2013-08-08 12:30:05.049+00', 'Kartoza', 'http://kartoza.com', '08628282', 'kartoza@kartoza.com','10','2013-08-07 22:37:10.312+00','2013-08-08 12:30:05.049+00', '1', '', '', 't',1,'sponsor-slug',1);
