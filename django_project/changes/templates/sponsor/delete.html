@@ -1,0 +1,52 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Sponsor Deleted - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+  <h1>Sponsor Deleted</h1>
+{% endblock page_title %}
+
+{% block content %}
+  <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+    <div class="alert row">
+      <div class="col-lg-10">
+        <p class="lead">Please confirm you wish to delete the sponsor below!</p>
+      </div>
+      <div class="col-lg-2">
+        <div class="btn-group">
+          <a class="btn btn-default btn-sm tooltip-toggle"
+             href="#"
+             onClick="$('#delete-confirmation').submit()"
+             data-title="Delete {{ sponsor.name }}">
+            <span class="glyphicon glyphicon-minus"></span>
+          </a>
+          <a class="btn btn-default btn-sm tooltip-toggle"
+             href='{% url "sponsor-list" sponsor.project.slug %}'
+             data-title="Cancel">
+            <span class="glyphicon glyphicon-arrow-left"></span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12">
+        <h3>Sponsor: {{ sponsor.name }}</h3>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-8">
+        {{ sponsor.description|base_markdown }}
+      </div>
+      <div class="col-lg-4">
+        {% if sponsor.logo %}
+          <img class="img-responsive img-rounded"
+               src="{{ MEDIA_URL }}{{ sponsor.logo }}" />
+        {%  endif %}
+      </div>
+    </div>
+  </form>
+{% endblock %}
