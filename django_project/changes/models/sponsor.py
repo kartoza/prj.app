@@ -110,8 +110,8 @@ class Sponsor(AuditedModel):
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')
     objects = models.Manager()
-    approved_objects = ApprovedCategoryManager()
-    unapproved_objects = UnapprovedCategoryManager()
+    approved_objects = ApprovedSponsorManager()
+    unapproved_objects = UnapprovedSponsorManager()
 
     # noinspection PyClassicStyleClass
     class Meta:
@@ -129,13 +129,13 @@ class Sponsor(AuditedModel):
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = slugify(new_list)[:50]
-        super(Category, self).save(*args, **kwargs)
+        super(Sponsor, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return u'%s : %s' % (self.project.name, self.name)
 
     def get_absolute_url(self):
-        return reverse('category-detail', kwargs={
+        return reverse('sponsor-detail', kwargs={
             'slug': self.slug,
             'project_slug': self.project.slug
         })
@@ -146,7 +146,7 @@ class Sponsor(AuditedModel):
         :return: True or False
         :rtype: bool
         """
-        if Entry.objects.filter(category=self).exists():
+        if Entry.objects.filter(sponsor=self).exists():
             return True
         else:
             return False
