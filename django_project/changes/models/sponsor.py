@@ -2,6 +2,7 @@ __author__ = 'rischan'
 
 import os
 import datetime
+import pytz
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 import logging
@@ -20,6 +21,8 @@ SPONSOR_CHOICES = (
     ('3', 'Silver'),
     ('4', 'Bronze')
 )
+
+utc=pytz.UTC
 
 
 class ApprovedSponsorManager(models.Manager):
@@ -76,13 +79,13 @@ class Sponsor(AuditedModel):
         null=True,
         blank=True)
 
-    start_date = models.DateField(
+    start_date = models.DateTimeField(
         _("Start date"),
-        default=datetime.date.today)
+        default=datetime.datetime.today())
 
-    end_date = models.DateField(
+    end_date = models.DateTimeField(
         _("End date"),
-        default=datetime.date.today)
+        default=datetime.datetime.today())
 
     level = models.CharField(
         max_length=1,
@@ -152,3 +155,12 @@ class Sponsor(AuditedModel):
             return 'Silver'
         else:
             return 'Bronze'
+
+    def current_sponsor(self):
+        today = datetime.datetime.today().replace(tzinfo=utc)
+        start = self.start_date.replace(tzinfo=utc)
+        end = self.end_date.replace(tzinfo=utc)
+        if start < today < end:
+            return True
+        else:
+            return False
