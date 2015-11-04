@@ -22,7 +22,7 @@ SPONSOR_CHOICES = (
     ('4', 'Bronze')
 )
 
-utc=pytz.UTC
+utc = pytz.UTC
 
 
 class ApprovedSponsorManager(models.Manager):
