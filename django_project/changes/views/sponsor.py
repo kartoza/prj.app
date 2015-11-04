@@ -355,6 +355,7 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         kwargs.update({
+            'user': self.request.user,
             'project': self.project
         })
         return kwargs
