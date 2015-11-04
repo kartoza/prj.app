@@ -77,11 +77,11 @@ class Sponsor(AuditedModel):
         blank=True)
 
     start_date = models.DateField(
-        _("Date"),
+        _("Start date"),
         default=datetime.date.today)
 
     end_date = models.DateField(
-        _("Date"),
+        _("End date"),
         default=datetime.date.today)
 
     level = models.CharField(
