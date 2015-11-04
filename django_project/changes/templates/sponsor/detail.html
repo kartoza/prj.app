@@ -1,13 +1,13 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
 
-{% block title %}Entries - {{ block.super }}{% endblock %}
+{% block title %}Sponsors - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
 
 {% block page_title %}
-  <h1>Entries (all)</h1>
+  <h1>Sponsors (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
@@ -33,12 +33,23 @@
   </div>
   <div class="row">
     <div class="col-lg-8">
-      {% if sponsor.description %}
-        {{ sponsor.description|base_markdown }}
+      {% if sponsor.sponsor_url or sponsor.contact_person or sponsor.sponsor_email or sponsor.sponsor_duration %}
+        <a href="{{ sponsor.sponsor_url }}">{{ sponsor.sponsor_url}}</a><br/>
+          Contact Person : {{ sponsor.contact_person }} <br/>
+          Email : {{ sponsor.sponsor_email }}<br/>
+          Duration : {{ sponsor.sponsor_duration }} months<br/>
+          Start date : {{ sponsor.start_date }}<br/>
+          End date : {{ sponsor.end_date }}<br/>
+          Level : {{ sponsor.sponsor_level }}<br/>
+          Sponsor agreement:
+          {% if sponsor.agreement %}
+            <a href="{{ MEDIA_URL }}{{ sponsor.agreement }}" /> Document agreement</a>
+          {%  endif %}
       {% else %}
         <p>No description</p>
       {% endif %}
     </div>
+
     <div class="col-lg-4">
       {% if sponsor.logo %}
         <img class="img-responsive img-rounded pull-right"
