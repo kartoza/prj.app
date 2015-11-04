@@ -20,7 +20,7 @@ from django.http import HttpResponseRedirect, Http404
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
-from ..models import Sponsor, Version
+from ..models import Sponsor, Version  # noqa
 from ..forms import SponsorForm
 
 
@@ -400,7 +400,7 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
 
 
 class PendingSponsorListView(StaffuserRequiredMixin, SponsorMixin,
-                              PaginationMixin, ListView):
+                             PaginationMixin, ListView):  # noqa
     """List view for pending Sponsor."""
     context_object_name = 'sponsors'
     template_name = 'sponsor/list.html'
