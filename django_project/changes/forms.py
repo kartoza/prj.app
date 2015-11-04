@@ -156,7 +156,7 @@ class SponsorForm(forms.ModelForm):
         )
 
     def __init__(self, *args, **kwargs):
-        # self.user = kwargs.pop('user')
+        self.user = kwargs.pop('user')
         self.project = kwargs.pop('project')
         form_title = 'New Sponsor for %s' % self.project.name
         self.helper = FormHelper()

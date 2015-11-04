@@ -11,7 +11,8 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
-from changes.models.entry import Entry
+from django.contrib.auth.models import User
+
 
 SPONSOR_CHOICES = (
     ('1', 'Platinum'),
@@ -108,6 +109,7 @@ class Sponsor(AuditedModel):
         default=False
     )
 
+    author = models.ForeignKey(User)
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')
     objects = models.Manager()
