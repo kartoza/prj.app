@@ -143,13 +143,12 @@ class Sponsor(AuditedModel):
             'project_slug': self.project.slug
         })
 
-    def has_entries(self):
-        """Does this Sponsor have related Entries?
-
-        :return: True or False
-        :rtype: bool
-        """
-        if Entry.objects.filter(sponsor=self).exists():
-            return True
+    def sponsor_level(self):
+        if self.level == '1':
+            return 'Platinum'
+        elif self.level == '2':
+            return 'Gold'
+        elif self.level == '3':
+            return 'Silver'
         else:
-            return False
+            return 'Bronze'
