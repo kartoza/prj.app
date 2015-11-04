@@ -166,7 +166,7 @@ urlpatterns = patterns(
     # User map
     # url(r'^user-map/', include('user_map.urls')),
 
-     # Sponsor management
+    # Sponsor management
 
     # This view is only accessible via ajax
     url(regex='^json-sponsor/list/(?P<version>\d+)/$',

@@ -20,6 +20,7 @@ SPONSOR_CHOICES = (
     ('4', 'Bronze')
 )
 
+
 class ApprovedSponsorManager(models.Manager):
     """Custom sponsor manager that shows only approved records."""
 

@@ -136,6 +136,7 @@ class EntryForm(forms.ModelForm):
         instance.save()
         return instance
 
+
 class SponsorForm(forms.ModelForm):
 
     # noinspection PyClassicStyleClass
