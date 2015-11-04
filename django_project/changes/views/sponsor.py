@@ -92,7 +92,7 @@ class JSONSponsorListView(SponsorMixin, JSONResponseMixin, ListView):
             request, *args, **kwargs)
 
     def render_to_response(self, context, **response_kwargs):
-        """Render this version as markdown.
+        """Render this Sponsor as markdown.
 
         :param context: Context data to use with template.
         :type context: dict
@@ -108,14 +108,14 @@ class JSONSponsorListView(SponsorMixin, JSONResponseMixin, ListView):
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved versions
+        :returns: A queryset which is filtered to only show approved Sponsors
         of project.
         :rtype: QuerySet
         :raises: Http404
         """
-        version_id = self.kwargs['version']
-        version = get_object_or_404(Version, id=version_id)
-        qs = Sponsor.approved_objects.filter(project=version.project)
+        sponsor_id = self.kwargs['sponsor']
+        sponsor = get_object_or_404(Sponsor, id=sponsor_id)
+        qs = Sponsor.approved_objects.filter(project=sponsor.project)
         return qs
 
 
@@ -462,12 +462,12 @@ class ApproveSponsorView(SponsorMixin, StaffuserRequiredMixin, RedirectView):
     pattern_name = 'pending-sponsor-list'
 
     def get_redirect_url(self, project_slug, slug):
-        """Save Version as approved and redirect
+        """Save Sponsor as approved and redirect
 
-        :param project_slug: The slug of the parent Version's parent Project
+        :param project_slug: The slug of the parent Sponsor's parent Project
         :type project_slug: str
 
-        :param slug: The slug of the Version
+        :param slug: The slug of the Sponsor
         :type slug: str
 
         :returns: URL
