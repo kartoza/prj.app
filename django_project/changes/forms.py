@@ -47,7 +47,8 @@ class VersionForm(forms.ModelForm):
         fields = (
             'name',
             'description',
-            'image_file'
+            'image_file',
+            'sponsor'
         )
 
     def __init__(self, *args, **kwargs):
@@ -61,12 +62,16 @@ class VersionForm(forms.ModelForm):
                 Field('name', css_class="form-control"),
                 Field('description', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
+                Field('sponsor', css_class="form-control"),
                 css_id='project-form')
         )
         self.helper.layout = layout
         self.helper.html5_required = False
         super(VersionForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
+        if not self.instance.id:
+            self.fields['sponsor'].queryset = Sponsor.objects.filter(
+                project=self.project).order_by('name')
 
     def save(self, commit=True):
         instance = super(VersionForm, self).save(commit=False)
