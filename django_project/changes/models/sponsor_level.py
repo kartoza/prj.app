@@ -24,4 +24,4 @@ class SponsorLevel(AuditedModel):
         blank=False)
 
     def __unicode__(self):
-        return '%s' %(self.name)
+        return '%s' % (self.name)

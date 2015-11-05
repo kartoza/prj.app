@@ -99,4 +99,3 @@ admin.site.register(Version, VersionAdmin)
 admin.site.register(Entry, EntryAdmin)
 admin.site.register(Sponsor, SponsorAdmin)
 admin.site.register(SponsorLevel, SponsorLevelAdmin)
-
