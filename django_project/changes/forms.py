@@ -150,7 +150,7 @@ class SponsorForm(forms.ModelForm):
             'sponsor_duration',
             'start_date',
             'end_date',
-            'level',
+            'sponsorlevel',
             'agreement',
             'logo'
         )
@@ -170,7 +170,7 @@ class SponsorForm(forms.ModelForm):
                 Field('sponsor_duration', css_class="form-control"),
                 Field('start_date', css_class="form-control"),
                 Field('end_date', css_class="form-control"),
-                Field('level', css_class="form-control"),
+                Field('sponsorlevel', css_class="form-control"),
                 Field('agreement', css_class="form-control"),
                 Field('logo', css_class="form-control"),
                 css_id='project-form')
