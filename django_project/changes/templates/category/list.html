@@ -60,7 +60,7 @@
         <div class="col-lg-2">
             <div class="btn-group pull-right">
                 {%  if not category.approved and user.is_staff %}
-                <a class="btn btn-success btn-mini"
+                <a class="btn btn-default btn-mini"
                    href='{% url "category-approve" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-thumbs-up"></span>
                 </a>
