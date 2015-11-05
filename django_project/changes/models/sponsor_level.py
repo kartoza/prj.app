@@ -22,3 +22,6 @@ class SponsorLevel(AuditedModel):
             '"Choose File" button above.'),
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),
         blank=False)
+
+    def __unicode__(self):
+        return '%s' %(self.name)
