@@ -87,11 +87,6 @@ class Sponsor(AuditedModel):
         _("End date"),
         default=datetime.datetime.today())
 
-    level = models.CharField(
-        max_length=1,
-        choices=SPONSOR_CHOICES,
-        default='1')
-
     agreement = models.FileField(
         help_text=('Attach sponsor agreement'),
         upload_to=os.path.join(MEDIA_ROOT, 'docs'),
@@ -115,6 +110,7 @@ class Sponsor(AuditedModel):
     author = models.ForeignKey(User)
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')
+    sponsorlevel = models.ForeignKey('SponsorLevel')
     objects = models.Manager()
     approved_objects = ApprovedSponsorManager()
     unapproved_objects = UnapprovedSponsorManager()
