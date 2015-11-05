@@ -12,7 +12,7 @@ CREATE TABLE changes_sponsor (
     sponsor_duration character varying(100),
     start_date timestamp with time zone,
     end_date timestamp with time zone,
-    level character varying(10),
+    sponsorlevel_id integer NOT NULL,
     agreement character varying(255),
     logo character varying(255),
     approved boolean NOT NULL,
@@ -46,6 +46,8 @@ ALTER TABLE ONLY changes_sponsor
 ALTER TABLE ONLY changes_sponsor
     ADD CONSTRAINT project_id_sponsor FOREIGN KEY (project_id) REFERENCES base_project(id) DEFERRABLE INITIALLY DEFERRED;
 
+ALTER TABLE ONLY changes_sponsor
+    ADD CONSTRAINT changes_sponsor_sponsorlevel_id FOREIGN KEY (sponsorlevel_id) REFERENCES changes_sponsorlevel(id) DEFERRABLE INITIALLY DEFERRED;
 
-INSERT INTO changes_sponsor (datetime_created, datetime_modified, name, sponsor_url, contact_person, sponsor_email, sponsor_duration, start_date, end_date, level, agreement, logo, approved, project_id, slug, author_id)
-    VALUES ('2013-08-07 22:37:10.312+00', '2013-08-08 12:30:05.049+00', 'Kartoza', 'http://kartoza.com', '08628282', 'kartoza@kartoza.com','10','2013-08-07 22:37:10.312+00','2013-08-08 12:30:05.049+00', '1', '', '', 't',1,'sponsor-slug',1);
+INSERT INTO changes_sponsor (datetime_created, datetime_modified, name, sponsor_url, contact_person, sponsor_email, sponsor_duration, start_date, end_date, sponsorlevel_id, agreement, logo, approved, project_id, slug, author_id)
+    VALUES ('2013-08-07 22:37:10.312+00', '2013-08-08 12:30:05.049+00', 'Kartoza', 'http://kartoza.com', '08628282', 'kartoza@kartoza.com','10','2013-08-07 22:37:10.312+00','2013-08-08 12:30:05.049+00', 2, '', '', 't',1,'sponsor-slug',1);

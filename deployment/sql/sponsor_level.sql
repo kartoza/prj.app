@@ -19,4 +19,3 @@ ALTER TABLE changes_sponsorlevel ALTER id SET DEFAULT NEXTVAL('changes_sponsorle
 
 ALTER TABLE ONLY changes_sponsorlevel
 ADD CONSTRAINT changes_sponsorlevel_pkey PRIMARY KEY (id);
-
