@@ -80,7 +80,7 @@
           <div class="{% if entry.image_file %}col-md-7{% else %}col-md-12{% endif %}">
             <h3 id="feature-{{ entry.id }}">
               {% if not rst_download %}
-                <a href="#{{ entry.id }}">#</a>
+                <a href="{{ request.path }}#feature-{{ entry.id }}">#</a>
               {% endif %}
               <span class="text-muted">Feature:</span> {{ entry.title }}
             </h3>
