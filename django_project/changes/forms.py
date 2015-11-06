@@ -6,7 +6,7 @@ from crispy_forms.layout import (
     Submit,
     Field,
 )
-from models import Category, Version, Entry, Sponsor
+from models import Category, Version, Entry, Sponsor, SponsorRenewed
 
 
 class CategoryForm(forms.ModelForm):
@@ -185,5 +185,45 @@ class SponsorForm(forms.ModelForm):
         instance.author = self.user
         instance.project = self.project
         instance.approved = False
+        instance.save()
+        return instance
+
+
+class SponsorRenewed(forms.ModelForm):
+
+    # noinspection PyClassicStyleClass
+    class Meta:
+        model = SponsorRenewed
+        fields = (
+            'sponsor',
+            'start_date',
+            'end_date',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.project = kwargs.pop('project')
+        form_title = 'Renewed Sponsor for %s' % self.project.name
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('sponsor', css_class="form-control"),
+                Field('start_date', css_class="form-control"),
+                Field('end_date', css_class="form-control"),
+                css_id='project-form')
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(SponsorRenewed, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+        if not self.instance.id:
+            self.fields['sponsor'].queryset = Sponsor.objects.filter(
+                project=self.project).order_by('name')
+
+    def save(self, commit=True):
+        instance = super(SponsorRenewed, self).save(commit=False)
+        instance.author = self.user
+        instance.project = self.project
         instance.save()
         return instance
