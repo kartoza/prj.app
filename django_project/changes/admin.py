@@ -15,7 +15,9 @@ historisation for a model).
 
 
 from django.contrib import admin
-from models import Category, Version, Entry, Sponsor, SponsorLevel, SponsorRenewed
+from models import (Category, Version,
+                    Entry, Sponsor, SponsorLevel,
+                    SponsorRenewed)
 from audited_models.admin import AuditedAdmin
 import reversion
 

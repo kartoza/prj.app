@@ -20,4 +20,3 @@ class SponsorRenewed(AuditedModel):
 
     def __unicode__(self):
         return '%s' % (self.sponsor)
-
