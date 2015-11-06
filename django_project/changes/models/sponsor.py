@@ -15,13 +15,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
 
-SPONSOR_CHOICES = (
-    ('1', 'Platinum'),
-    ('2', 'Gold'),
-    ('3', 'Silver'),
-    ('4', 'Bronze')
-)
-
 utc = pytz.UTC
 
 
@@ -141,16 +134,6 @@ class Sponsor(AuditedModel):
             'slug': self.slug,
             'project_slug': self.project.slug
         })
-
-    def sponsor_level(self):
-        if self.level == '1':
-            return 'Platinum'
-        elif self.level == '2':
-            return 'Gold'
-        elif self.level == '3':
-            return 'Silver'
-        else:
-            return 'Bronze'
 
     def current_sponsor(self):
         today = datetime.datetime.today().replace(tzinfo=utc)
