@@ -222,6 +222,14 @@ dbsync:
 	-@ssh inasafe-docker "cd /home/data/changelog.inasafe.org/deployment; make dbbackup"
 	@rsync -av --progress inasafe-docker:/home/data/changelog.inasafe.org/deployment/backups/ backups
 
+create-machine:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Creating a docker machine."
+	@echo "------------------------------------------------------------------"
+	@docker-machine create -d virtualbox projecta
+
+
 # ----------------------------------------------------------------------------
 #    DEVELOPMENT C O M M A N D S
 # --no-deps will attach to prod deps if running

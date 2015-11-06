@@ -6,30 +6,33 @@ from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-admin.autodiscover()
+from django.http import HttpResponseServerError
+from django.template import loader, Context
 
+admin.autodiscover()
 handler404 = 'base.views.error_views.custom_404'
 
-urlpatterns = [
-    # '',
-    # # Enable the admin (use non standard name for obscurity)
-    # url(r'^site-admin/', include(admin.site.urls)),
-    # url(r'^', include('base.urls')),
-    # url(r'^', include('changes.urls')),
-    # url(r'^', include('vota.urls')),
-    # url(r'^', include('github_issue.urls')),
-    #
-    # # This over-ride is required to fix 500 errors as per:
-    # # https://github.com/bread-and-pepper/django-userena/issues/380
-    # url(r'^password/reset/done/$',
-    #     auth_views.password_reset_done,
-    #     {'template_name': 'userena/password_reset_done.html'},
-    #     name='password_reset_done'),
-    # url(r'^accounts/', include('userena.urls')),
-]
+urlpatterns = []
+
+
+def handler500(request):
+    """500 error handler which includes ``request`` in the context.
+
+    See http://raven.readthedocs.org/en/latest/integrations/
+        django.html#message-references
+
+    :param request: Django request object.
+
+    Templates: `500.html`
+    Context: None
+    """
+    # You need to create a 500.html template.
+    t = loader.get_template('500.html')
+    return HttpResponseServerError(t.render(Context({
+        'request': request,
+    })))
 
 urlpatterns += i18n_patterns(
-    url(r'^grappelli/', include('grappelli.urls')),
     url(r'^site-admin/', include(admin.site.urls)),
     url(r'^', include('base.urls')),
     url(r'^', include('changes.urls')),

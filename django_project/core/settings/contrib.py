@@ -10,14 +10,13 @@ INSTALLED_APPS = (
 ) + INSTALLED_APPS
 
 INSTALLED_APPS += (
-    # 'raven.contrib.django',  # enable Raven plugin
+    'raven.contrib.django.raven_compat',  # enable Raven plugin
     'crispy_forms',
     'widget_tweaks',  # lets us add some bootstrap css to form elements
     'accounts',  # userena
     'guardian',  # for userena
     'easy_thumbnails',  # also needed for userena
     'userena',
-    'raven.contrib.django',
     'reversion',
     'rosetta',
     'embed_video',
@@ -56,9 +55,16 @@ THUMBNAIL_ALIASES = {
 
 # Pipeline related settings
 
-
 INSTALLED_APPS += (
     'pipeline',)
+
+MIDDLEWARE_CLASSES += (
+    # for django-audited-models
+    # Threaded middleware *must* come *after* auth middleware
+    'threaded_multihost.middleware.ThreadLocalMiddleware',
+    # For rosetta localisation
+    'django.middleware.locale.LocaleMiddleware'
+)
 
 DEFAULT_FILE_STORAGE = (
     'django_hashedfilenamestorage.storage.HashedFilenameFileSystemStorage')
