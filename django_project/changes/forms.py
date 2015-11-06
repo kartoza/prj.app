@@ -6,7 +6,7 @@ from crispy_forms.layout import (
     Submit,
     Field,
 )
-from models import Category, Version, Entry
+from models import Category, Version, Entry, Sponsor, SponsorRenewed
 
 
 class CategoryForm(forms.ModelForm):
@@ -47,7 +47,8 @@ class VersionForm(forms.ModelForm):
         fields = (
             'name',
             'description',
-            'image_file'
+            'image_file',
+            'sponsor'
         )
 
     def __init__(self, *args, **kwargs):
@@ -61,12 +62,16 @@ class VersionForm(forms.ModelForm):
                 Field('name', css_class="form-control"),
                 Field('description', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
+                Field('sponsor', css_class="form-control"),
                 css_id='project-form')
         )
         self.helper.layout = layout
         self.helper.html5_required = False
         super(VersionForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
+        if not self.instance.id:
+            self.fields['sponsor'].queryset = Sponsor.objects.filter(
+                project=self.project).order_by('name')
 
     def save(self, commit=True):
         instance = super(VersionForm, self).save(commit=False)
@@ -128,5 +133,97 @@ class EntryForm(forms.ModelForm):
         instance.author = self.user
         instance.version = self.version
         instance.approved = False
+        instance.save()
+        return instance
+
+
+class SponsorForm(forms.ModelForm):
+
+    # noinspection PyClassicStyleClass
+    class Meta:
+        model = Sponsor
+        fields = (
+            'name',
+            'sponsor_url',
+            'contact_person',
+            'sponsor_email',
+            'sponsor_duration',
+            'start_date',
+            'end_date',
+            'sponsorlevel',
+            'agreement',
+            'logo'
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.project = kwargs.pop('project')
+        form_title = 'New Sponsor for %s' % self.project.name
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('name', css_class="form-control"),
+                Field('sponsor_url', css_class="form-control"),
+                Field('contact_person', css_class="form-control"),
+                Field('sponsor_email', css_class="form-control"),
+                Field('sponsor_duration', css_class="form-control"),
+                Field('start_date', css_class="form-control"),
+                Field('end_date', css_class="form-control"),
+                Field('sponsorlevel', css_class="form-control"),
+                Field('agreement', css_class="form-control"),
+                Field('logo', css_class="form-control"),
+                css_id='project-form')
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(SponsorForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(SponsorForm, self).save(commit=False)
+        instance.author = self.user
+        instance.project = self.project
+        instance.approved = False
+        instance.save()
+        return instance
+
+
+class SponsorRenewedForm(forms.ModelForm):
+
+    # noinspection PyClassicStyleClass
+    class Meta:
+        model = SponsorRenewed
+        fields = (
+            'sponsor',
+            'start_date',
+            'end_date',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.project = kwargs.pop('project')
+        form_title = 'Renewed Sponsor for %s' % self.project.name
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('sponsor', css_class="form-control"),
+                Field('start_date', css_class="form-control"),
+                Field('end_date', css_class="form-control"),
+                css_id='project-form')
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(SponsorRenewedForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+        if not self.instance.id:
+            self.fields['sponsor'].queryset = Sponsor.objects.filter(
+                project=self.project).order_by('name')
+
+    def save(self, commit=True):
+        instance = super(SponsorRenewedForm, self).save(commit=False)
+        instance.author = self.user
+        instance.project = self.project
         instance.save()
         return instance

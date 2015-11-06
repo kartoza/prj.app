@@ -76,6 +76,7 @@ class Version(AuditedModel):
     author = models.ForeignKey(User)
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')
+    sponsor = models.ForeignKey('Sponsor')
     objects = models.Manager()
     approved_objects = ApprovedVersionManager()
     unapproved_objects = UnapprovedVersionManager()

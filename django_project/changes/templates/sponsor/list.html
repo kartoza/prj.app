@@ -1,0 +1,91 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+
+{% block title %}Sponsors - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Sponsors (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+            {% if unapproved %}Unapproved {% endif %}
+            Sponsors
+            {% if user.is_authenticated %}
+                <div class="pull-right btn-group">
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "sponsor-create" project_slug %}'
+                       data-title="Create New Sponsor">
+                        <span class="glyphicon glyphicon-asterisk"></span>
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "sponsor-renewed" project_slug %}'
+                           data-title="Renewed Sponsor">
+                            <span class="glyphicon glyphicon-repeat"></span>
+                        </a>
+                        {% if not unapproved %}
+                            <a class="btn btn-default btn-mini tooltip-toggle"
+                               href='{% url "pending-sponsor-list" project_slug %}'
+                               data-title="View Pending Sponsors">
+                                <span class="glyphicon glyphicon-time"></span>
+                            </a>
+                        {% endif %}
+                </div>
+            {% endif %}
+        </h1>
+    </div>
+    {% ifequal num_sponsors 0 %}
+        {% if unapproved %}
+            <h3>All sponsors are approved.</h3>
+        {% else %}
+            <h3>No sponsors are defined, but you can <a
+                    class="btn btn-default btn-mini"
+                    href='{% url "sponsor-create" project_slug %}'>create one</a>.</h3>
+        {% endif %}
+    {% endifequal %}
+    {% for sponsor in sponsors %}
+        <script>console.debug("{{ sponsor }}");</script>
+        <div class="row" style="margin-top:10px;">
+            <div class="col-lg-1">
+                {% if sponsor.logo %}
+                    <a href="{{ MEDIA_URL }}{{ sponsor.logo }}">
+                        <img class="img-responsive img-rounded pull-right"
+                             src="{% thumbnail sponsor.logo 50x50 crop %}"/>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="col-lg-9">
+                <h5>{{ sponsor.project.name }}</h5>
+
+                <h3>{{ sponsor.name }}</h3>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    {% if not sponsor.approved and user.is_staff %}
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "sponsor-approve" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        </a>
+                    {% endif %}
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "sponsor-delete" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "sponsor-update" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <hr/>
+    {% include "_pagination.html" %}
+{% endblock %}

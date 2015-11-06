@@ -35,7 +35,18 @@ from views import (
     EntryListView,
     EntryUpdateView,
     PendingEntryListView,
-    ApproveEntryView)
+    ApproveEntryView,
+    # Sponsor
+    SponsorDetailView,
+    SponsorDeleteView,
+    SponsorCreateView,
+    SponsorRenewedView,
+    SponsorListView,
+    JSONSponsorListView,
+    SponsorUpdateView,
+    PendingSponsorListView,
+    ApproveSponsorView
+)
 
 urlpatterns = patterns(
     '',
@@ -155,6 +166,37 @@ urlpatterns = patterns(
 
     # User map
     # url(r'^user-map/', include('user_map.urls')),
+
+    # Sponsor management
+
+    # This view is only accessible via ajax
+    url(regex='^json-sponsor/list/(?P<version>\d+)/$',
+        view=JSONSponsorListView.as_view(),
+        name='json-sponsor-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/pending-sponsor/list/$',
+        view=PendingSponsorListView.as_view(),
+        name='pending-sponsor-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/approve-sponsor/(?P<slug>[\w-]+)/$',
+        view=ApproveSponsorView.as_view(),
+        name='sponsor-approve'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsor/list/$',
+        view=SponsorListView.as_view(),
+        name='sponsor-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsor/(?P<slug>[\w-]+)/$',
+        view=SponsorDetailView.as_view(),
+        name='sponsor-detail'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsor/(?P<slug>[\w-]+)/delete/$',
+        view=SponsorDeleteView.as_view(),
+        name='sponsor-delete'),
+    url(regex='^(?P<project_slug>[\w-]+)/create-sponsor/$',
+        view=SponsorCreateView.as_view(),
+        name='sponsor-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/renewed-sponsor/$',
+        view=SponsorRenewedView.as_view(),
+        name='sponsor-renewed'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsor/(?P<slug>[\w-]+)/update/$',
+        view=SponsorUpdateView.as_view(),
+        name='sponsor-update'),
 
 )
 

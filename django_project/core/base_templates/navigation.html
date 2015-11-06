@@ -115,6 +115,42 @@
     </li>
   </ul>
 {% endif %}
+{% if sponsors or sponsors|length_is:0 %}
+  <ul class="nav navbar-nav">
+    <li role="presentation">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        Entry sponsors <b class="caret"></b>
+      </a>
+      <ul class="dropdown-menu">
+        {% for sponsor in sponsors %}
+          {% if sponsor != the_sponsor %}
+            <li role="presentation">
+              <a href="{{ sponsor.get_absolute_url }}">{{ sponsor.name }}</a>
+            </li>
+          {% endif %}
+          {% if forloop.last and forloop|length > 1 and sponsor != the_sponsor %}
+            <li role="presentation" class="divider"></li>
+          {% endif %}
+        {% endfor %}
+        {% if not sponsors|length_is:0 %}
+          <li>
+            <a href="{% url 'sponsor-list' the_project.slug %}">All sponsors</a>
+          </li>
+        {% endif %}
+        <li>
+          <a href="{% url 'sponsor-create' the_project.slug %}">Create sponsor</a>
+        </li>
+        {% if unapproved_sponsors %}
+          <li>
+            <a href="{% url 'pending-sponsor-list' the_project.slug %}">
+              Sponsors Pending Approval
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </li>
+  </ul>
+{% endif %}
 {% if entries %}
   <ul class="nav navbar-nav">
     <li role="presentation">

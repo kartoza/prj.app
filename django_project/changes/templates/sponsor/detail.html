@@ -1,0 +1,61 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Sponsors - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+  <h1>Sponsors (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-lg-10">
+      <h3>{{ sponsor.name }}</h3>
+    </div>
+    <div class="col-lg-2">
+      <div class="btn-group">
+        <a class="btn btn-default btn-sm tooltip-toggle"
+           href='{% url "sponsor-delete" project_slug=sponsor.project.slug slug=sponsor.slug %}'
+           data-title="Delete {{ sponsor.name }}">
+          <span class="glyphicon glyphicon-minus"></span>
+        </a>
+        <a class="btn btn-default btn-sm tooltip-toggle"
+           href='{% url "sponsor-update" project_slug=sponsor.project.slug slug=sponsor.slug %}'
+           data-title="Edit {{ sponsor.name }}">
+          <span class="glyphicon glyphicon-pencil"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-8">
+      {% if sponsor.sponsor_url or sponsor.contact_person or sponsor.sponsor_email or sponsor.sponsor_duration %}
+        <a href="{{ sponsor.sponsor_url }}">{{ sponsor.sponsor_url}}</a><br/>
+          Contact Person : {{ sponsor.contact_person }} <br/>
+          Email : {{ sponsor.sponsor_email }}<br/>
+          Duration : {{ sponsor.sponsor_duration }} months<br/>
+          Start date : {{ sponsor.start_date }}<br/>
+          End date : {{ sponsor.end_date }}<br/>
+          Level : {{ sponsor.sponsorlevel }}<br/>
+          Sponsor agreement:
+          {% if sponsor.agreement %}
+            <a href="{{ MEDIA_URL }}{{ sponsor.agreement }}" /> Document agreement</a>
+          {%  endif %}
+      {% else %}
+        <p>No description</p>
+      {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+      {% if sponsor.logo %}
+        <img class="img-responsive img-rounded pull-right"
+             src="{{ MEDIA_URL }}{{ sponsor.logo }}" />
+      {%  endif %}
+    </div>
+  </div>
+
+{% endblock %}
