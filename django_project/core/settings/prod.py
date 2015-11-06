@@ -19,7 +19,8 @@ PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
 
 # Logging
 if 'raven.contrib.django.raven_compat' in INSTALLED_APPS:
-    import raven
+    # noinspection PyUnresolvedReferences
+    import raven  # noqa
 
     RAVEN_CONFIG = {
         # Hosted sentry
