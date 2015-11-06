@@ -21,7 +21,7 @@ from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from ..models import Sponsor, SponsorRenewed, Version  # noqa
-from ..forms import SponsorForm, SponsorRenewed
+from ..forms import SponsorForm, SponsorRenewedForm
 
 
 class JSONResponseMixin(object):
@@ -71,9 +71,9 @@ class SponsorMixin(object):
 
 
 class SponsorRenewedMixin(object):
-    """Mixin class to provide standard settings for Sponsor."""
-    model = SponsorRenewed  # implies -> queryset = Sponsor.objects.all()
-    form_class = SponsorRenewed
+    """Mixin class to provide standard settings for Renewed sponsor."""
+    model = SponsorRenewed
+    form_class = SponsorRenewedForm
 
 
 class JSONSponsorListView(SponsorMixin, JSONResponseMixin, ListView):
@@ -365,7 +365,7 @@ class SponsorRenewedView(LoginRequiredMixin, SponsorRenewedMixin, CreateView):
         })
 
     def form_valid(self, form):
-        """Save new created Sponsor
+        """Save renewed sponsor
 
         :param form
         :type form

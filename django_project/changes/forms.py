@@ -189,7 +189,7 @@ class SponsorForm(forms.ModelForm):
         return instance
 
 
-class SponsorRenewed(forms.ModelForm):
+class SponsorRenewedForm(forms.ModelForm):
 
     # noinspection PyClassicStyleClass
     class Meta:
@@ -215,14 +215,14 @@ class SponsorRenewed(forms.ModelForm):
         )
         self.helper.layout = layout
         self.helper.html5_required = False
-        super(SponsorRenewed, self).__init__(*args, **kwargs)
+        super(SponsorRenewedForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
         if not self.instance.id:
             self.fields['sponsor'].queryset = Sponsor.objects.filter(
                 project=self.project).order_by('name')
 
     def save(self, commit=True):
-        instance = super(SponsorRenewed, self).save(commit=False)
+        instance = super(SponsorRenewedForm, self).save(commit=False)
         instance.author = self.user
         instance.project = self.project
         instance.save()
