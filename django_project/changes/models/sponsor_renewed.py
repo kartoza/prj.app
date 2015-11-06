@@ -18,3 +18,6 @@ class SponsorRenewed(AuditedModel):
         _("End date"),
         default=datetime.date.today())
 
+    def __unicode__(self):
+        return '%s' % (self.sponsor)
+
