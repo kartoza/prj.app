@@ -17,20 +17,20 @@ logger = logging.getLogger(__name__)
 class ApprovedEntryManager(models.Manager):
     """Custom entry manager that shows only approved records."""
 
-    def get_query_set(self):
+    def get_queryset(self):
         """Query set generator"""
         return super(
-            ApprovedEntryManager, self).get_query_set().filter(
+            ApprovedEntryManager, self).get_queryset().filter(
                 approved=True)
 
 
 class UnapprovedEntryManager(models.Manager):
     """Custom entry manager that shows only unapproved records."""
 
-    def get_query_set(self):
+    def get_queryset(self):
         """Query set generator"""
         return super(
-            UnapprovedEntryManager, self).get_query_set().filter(
+            UnapprovedEntryManager, self).get_queryset().filter(
                 approved=False)
 
 
