@@ -6,14 +6,29 @@ from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-admin.autodiscover()
-
-handler404 = 'base.views.error_views.custom_404'
-from django.conf.urls.defaults import *
-
-from django.views.defaults import page_not_found, server_error
-from django.template import Context, loader
 from django.http import HttpResponseServerError
+
+admin.autodiscover()
+handler404 = 'base.views.error_views.custom_404'
+
+urlpatterns = [
+    # '',
+    # # Enable the admin (use non standard name for obscurity)
+    # url(r'^site-admin/', include(admin.site.urls)),
+    # url(r'^', include('base.urls')),
+    # url(r'^', include('changes.urls')),
+    # url(r'^', include('vota.urls')),
+    # url(r'^', include('github_issue.urls')),
+    #
+    # # This over-ride is required to fix 500 errors as per:
+    # # https://github.com/bread-and-pepper/django-userena/issues/380
+    # url(r'^password/reset/done/$',
+    #     auth_views.password_reset_done,
+    #     {'template_name': 'userena/password_reset_done.html'},
+    #     name='password_reset_done'),
+    # url(r'^accounts/', include('userena.urls')),
+]
+
 
 def handler500(request):
     """500 error handler which includes ``request`` in the context.
@@ -32,7 +47,7 @@ def handler500(request):
         'request': request,
     })))
 
-urlpatterns = i18n_patterns(
+urlpatterns += i18n_patterns(
     url(r'^site-admin/', include(admin.site.urls)),
     url(r'^', include('base.urls')),
     url(r'^', include('changes.urls')),

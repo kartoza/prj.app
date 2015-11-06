@@ -51,7 +51,7 @@
       <div class="col-lg-2">
         <div class="btn-group pull-right">
           {% if not entry.approved and user.is_staff %}
-            <a class="btn btn-success btn-mini tooltip-toggle"
+            <a class="btn btn-default btn-mini tooltip-toggle"
                data-title="Approve Entry"
                href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
               <span class="glyphicon glyphicon-thumbs-up"></span>
