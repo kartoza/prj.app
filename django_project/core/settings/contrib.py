@@ -5,6 +5,10 @@ core.settings.contrib
 from .base import *  # noqa
 
 # Extra installed apps
+INSTALLED_APPS = (
+    'grappelli',
+) + INSTALLED_APPS
+
 INSTALLED_APPS += (
     # 'raven.contrib.django',  # enable Raven plugin
     'crispy_forms',
