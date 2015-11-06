@@ -15,7 +15,7 @@ historisation for a model).
 
 
 from django.contrib import admin
-from models import Category, Version, Entry, Sponsor, SponsorLevel
+from models import Category, Version, Entry, Sponsor, SponsorLevel, SponsorRenewed
 from audited_models.admin import AuditedAdmin
 import reversion
 
@@ -94,8 +94,24 @@ class SponsorLevelAdmin(AuditedAdmin, reversion.VersionAdmin):
             qs = qs.order_by(*ordering)
         return qs
 
+
+class SponsorRenewedAdmin(AuditedAdmin, reversion.VersionAdmin):
+    """Renewed sponsor admin model."""
+
+    def queryset(self, request):
+        """Ensure we use the correct manager.
+
+        :param request: HttpRequest object
+        """
+        qs = self.model.objects
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
+        return qs
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Version, VersionAdmin)
 admin.site.register(Entry, EntryAdmin)
 admin.site.register(Sponsor, SponsorAdmin)
 admin.site.register(SponsorLevel, SponsorLevelAdmin)
+admin.site.register(SponsorRenewed, SponsorRenewedAdmin)
