@@ -19,7 +19,7 @@
   <div class="col-lg-3">
     <div class="btn-group pull-right">
       {%  if not version.approved and user.is_staff %}
-        <a class="btn btn-success btn-mini"
+        <a class="btn btn-default btn-mini"
            href='{% url "version-approve" project_slug=version.project.slug slug=version.slug %}'>
           <span class="glyphicon glyphicon-thumbs-up"></span>
         </a>
