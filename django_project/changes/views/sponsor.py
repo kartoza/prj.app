@@ -20,8 +20,8 @@ from django.http import HttpResponseRedirect, Http404
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
-from ..models import Sponsor, Version  # noqa
-from ..forms import SponsorForm
+from ..models import Sponsor, SponsorRenewed, Version  # noqa
+from ..forms import SponsorForm, SponsorRenewed
 
 
 class JSONResponseMixin(object):
@@ -68,6 +68,12 @@ class SponsorMixin(object):
     """Mixin class to provide standard settings for Sponsor."""
     model = Sponsor  # implies -> queryset = Sponsor.objects.all()
     form_class = SponsorForm
+
+
+class SponsorRenewedMixin(object):
+    """Mixin class to provide standard settings for Sponsor."""
+    model = SponsorRenewed  # implies -> queryset = Sponsor.objects.all()
+    form_class = SponsorRenewed
 
 
 class JSONSponsorListView(SponsorMixin, JSONResponseMixin, ListView):
@@ -330,6 +336,54 @@ class SponsorCreateView(LoginRequiredMixin, SponsorMixin, CreateView):
         :rtype: dict
         """
         kwargs = super(SponsorCreateView, self).get_form_kwargs()
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        kwargs.update({
+            'user': self.request.user,
+            'project': self.project
+        })
+        return kwargs
+
+
+# noinspection PyAttributeOutsideInit
+class SponsorRenewedView(LoginRequiredMixin, SponsorRenewedMixin, CreateView):
+    """Renewed view for Sponsor."""
+    context_object_name = 'sponsor'
+    template_name = 'sponsor/renewed.html'
+
+    def get_success_url(self):
+        """Define the redirect URL
+
+        After successful creation of the object, the User will be redirected
+        to the unapproved Sponsor list page for the object's parent Project
+
+       :returns: URL
+       :rtype: HttpResponse
+       """
+        return reverse('pending-sponsor-list', kwargs={
+            'project_slug': self.object.project.slug
+        })
+
+    def form_valid(self, form):
+        """Save new created Sponsor
+
+        :param form
+        :type form
+
+        :returns HttpResponseRedirect object to success_url
+        :rtype: HttpResponseRedirect
+        """
+        self.object = form.save(commit=False)
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_form_kwargs(self):
+        """Get keyword arguments from form.
+
+        :returns keyword argument from the form
+        :rtype: dict
+        """
+        kwargs = super(SponsorRenewedView, self).get_form_kwargs()
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         kwargs.update({
