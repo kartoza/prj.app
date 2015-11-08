@@ -75,26 +75,26 @@ PIPELINE_TEMPLATE_FUNC = '_.template'
 # enable cached storage - requires uglify.js (node.js)
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
+# Contributed / third party js libs for pipeline compression
+# For hand rolled js for this app, use project.py
 PIPELINE_JS = {
     'contrib': {
         'source_filenames': (
-            'js/jquery-1.10.1.min.js',
-            'js/csrf-ajax.js',
-            'js/underscore-min.js',
-            'js/bootstrap.min.js',
-            'js/changelog.js',
-            'js/github-issue.js',
+            'js/jquery-1.11.3.js',
+            'js/underscore.1.8.3.js',
+            'js/bootstrap-3.3.5.js'
         ),
         'output_filename': 'js/contrib.js',
     }
 }
 
+# Contributed / third party css for pipeline compression
+# For hand rolled css for this app, use project.py
 PIPELINE_CSS = {
     'contrib': {
         'source_filenames': (
-            'css/bootstrap.min.css',
-            'css/bootstrap-theme.min.css',
-            'css/changelog.css',
+            'css/bootstrap.3.3.5.css',
+            'css/bootstrap-theme.3.3.5.css',
         ),
         'output_filename': 'css/contrib.css',
         'extra_context': {

@@ -45,3 +45,27 @@ MIDDLEWARE_CLASSES = (
     # For nav bar generation
     'core.custom_middleware.NavContextMiddleware',
 ) + MIDDLEWARE_CLASSES
+
+# Project specific javascript files to be pipelined
+# For third party libs like jquery should go in contrib.py
+PIPELINE_JS['project'] = {
+    'source_filenames': (
+        'js/csrf-ajax.js',
+        'js/changelog.js',
+        'js/github-issue.js'
+    ),
+    'output_filename': 'js/project.js',
+}
+
+# Project specific css files to be pipelined
+# For third party libs like bootstrap should go in contrib.py
+PIPELINE_CSS['project'] = {
+    'source_filenames': (
+        'css/changelog.css',
+    ),
+    'output_filename': 'css/project.css',
+    'extra_context': {
+        'media': 'screen, projection',
+    },
+}
+

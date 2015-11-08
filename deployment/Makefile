@@ -227,8 +227,14 @@ create-machine:
 	@echo "------------------------------------------------------------------"
 	@echo "Creating a docker machine."
 	@echo "------------------------------------------------------------------"
-	@docker-machine create -d virtualbox projecta
+	@docker-machine create -d virtualbox $(PROJECT_ID)
 
+enable-machine:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Enabling docker machine."
+	@echo "------------------------------------------------------------------"
+	@echo "eval \"$(docker-machine env projecta)\""
 
 # ----------------------------------------------------------------------------
 #    DEVELOPMENT C O M M A N D S
