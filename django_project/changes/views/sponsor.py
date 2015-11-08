@@ -20,7 +20,7 @@ from django.http import HttpResponseRedirect, Http404
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
-from ..models import Sponsor, SponsorRenewed, Version  # noqa
+from ..models import Sponsor, SponsorshipPeriod, Version  # noqa
 from ..forms import SponsorForm, SponsorRenewedForm
 
 
@@ -72,7 +72,7 @@ class SponsorMixin(object):
 
 class SponsorRenewedMixin(object):
     """Mixin class to provide standard settings for Renewed sponsor."""
-    model = SponsorRenewed
+    model = SponsorshipPeriod
     form_class = SponsorRenewedForm
 
 

@@ -16,8 +16,8 @@ historisation for a model).
 
 from django.contrib import admin
 from models import (Category, Version,
-                    Entry, Sponsor, SponsorLevel,
-                    SponsorRenewed)
+                    Entry, Sponsor, SponsorshipLevel,
+                    SponsorshipPeriod)
 from audited_models.admin import AuditedAdmin
 import reversion
 
@@ -115,5 +115,5 @@ admin.site.register(Category, CategoryAdmin)
 admin.site.register(Version, VersionAdmin)
 admin.site.register(Entry, EntryAdmin)
 admin.site.register(Sponsor, SponsorAdmin)
-admin.site.register(SponsorLevel, SponsorLevelAdmin)
-admin.site.register(SponsorRenewed, SponsorRenewedAdmin)
+admin.site.register(SponsorshipLevel, SponsorLevelAdmin)
+admin.site.register(SponsorshipPeriod, SponsorRenewedAdmin)
