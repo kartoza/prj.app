@@ -68,4 +68,3 @@ PIPELINE_CSS['project'] = {
         'media': 'screen, projection',
     },
 }
-
