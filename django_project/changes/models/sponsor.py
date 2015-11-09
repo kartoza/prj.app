@@ -103,7 +103,7 @@ class Sponsor(AuditedModel):
     author = models.ForeignKey(User)
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')
-    sponsorlevel = models.ForeignKey('SponsorLevel')
+    sponsorshiplevel = models.ForeignKey('SponsorshipLevel')
     objects = models.Manager()
     approved_objects = ApprovedSponsorManager()
     unapproved_objects = UnapprovedSponsorManager()
