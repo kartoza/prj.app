@@ -1,20 +1,20 @@
-__author__ = 'rischan'
-
+# coding=utf-8
 import os
 import datetime
 import pytz
+import logging
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
-import logging
 from core.settings.contrib import STOP_WORDS
 from django.conf.global_settings import MEDIA_ROOT
-logger = logging.getLogger(__name__)
 from django.db import models
 from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
+__author__ = 'rischan'
 
+logger = logging.getLogger(__name__)
 utc = pytz.UTC
 
 

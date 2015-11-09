@@ -6,10 +6,10 @@ from django.db import models
 from audited_models.models import AuditedModel
 
 
-class SponsorLevel(AuditedModel):
+class SponsorshipLevel(AuditedModel):
     """A sponsor model e.g. gui, backend, web site etc."""
     name = models.CharField(
-        help_text=('Name of sponsor level.'),
+        help_text='Name of sponsorship level.',
         max_length=255,
         null=False,
         blank=False,
@@ -17,7 +17,7 @@ class SponsorLevel(AuditedModel):
 
     logo = models.ImageField(
         help_text=(
-            'An image of sponsor level logo'
+            'An image of sponsorship level logo e.g. a bronze medal.'
             'Most browsers support dragging the image directly on to the '
             '"Choose File" button above.'),
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),

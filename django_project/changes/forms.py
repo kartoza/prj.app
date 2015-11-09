@@ -6,7 +6,7 @@ from crispy_forms.layout import (
     Submit,
     Field,
 )
-from models import Category, Version, Entry, Sponsor, SponsorRenewed
+from models import Category, Version, Entry, Sponsor, SponsorshipPeriod
 
 
 class CategoryForm(forms.ModelForm):
@@ -193,7 +193,7 @@ class SponsorRenewedForm(forms.ModelForm):
 
     # noinspection PyClassicStyleClass
     class Meta:
-        model = SponsorRenewed
+        model = SponsorshipPeriod
         fields = (
             'sponsor',
             'start_date',
