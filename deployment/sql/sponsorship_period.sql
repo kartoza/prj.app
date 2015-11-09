@@ -9,7 +9,7 @@ CREATE TABLE changes_sponsorshipperiod (
     end_date timestamp with time zone
 );
 
-CREATE SEQUENCE changes_sponsorrenewed_id_seq
+CREATE SEQUENCE changes_sponsorshipperiod_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
