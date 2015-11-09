@@ -21,20 +21,20 @@ utc = pytz.UTC
 class ApprovedSponsorManager(models.Manager):
     """Custom sponsor manager that shows only approved records."""
 
-    def get_query_set(self):
+    def get_queryset(self):
         """Query set generator"""
         return super(
-            ApprovedSponsorManager, self).get_query_set().filter(
+            ApprovedSponsorManager, self).get_queryset().filter(
                 approved=True)
 
 
 class UnapprovedSponsorManager(models.Manager):
     """Custom sponsor manager that shows only unapproved records."""
 
-    def get_query_set(self):
+    def get_queryset(self):
         """Query set generator"""
         return super(
-            UnapprovedSponsorManager, self).get_query_set().filter(
+            UnapprovedSponsorManager, self).get_queryset().filter(
                 approved=False)
 
 
@@ -103,7 +103,7 @@ class Sponsor(AuditedModel):
     author = models.ForeignKey(User)
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')
-    sponsorlevel = models.ForeignKey('SponsorLevel')
+    sponsorshiplevel = models.ForeignKey('SponsorshipLevel')
     objects = models.Manager()
     approved_objects = ApprovedSponsorManager()
     unapproved_objects = UnapprovedSponsorManager()

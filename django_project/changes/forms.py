@@ -47,8 +47,7 @@ class VersionForm(forms.ModelForm):
         fields = (
             'name',
             'description',
-            'image_file',
-            'sponsor'
+            'image_file'
         )
 
     def __init__(self, *args, **kwargs):
@@ -62,16 +61,12 @@ class VersionForm(forms.ModelForm):
                 Field('name', css_class="form-control"),
                 Field('description', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
-                Field('sponsor', css_class="form-control"),
                 css_id='project-form')
         )
         self.helper.layout = layout
         self.helper.html5_required = False
         super(VersionForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
-        if not self.instance.id:
-            self.fields['sponsor'].queryset = Sponsor.objects.filter(
-                project=self.project).order_by('name')
 
     def save(self, commit=True):
         instance = super(VersionForm, self).save(commit=False)
@@ -150,7 +145,7 @@ class SponsorForm(forms.ModelForm):
             'sponsor_duration',
             'start_date',
             'end_date',
-            'sponsorlevel',
+            'sponsorshiplevel',
             'agreement',
             'logo'
         )
@@ -170,7 +165,7 @@ class SponsorForm(forms.ModelForm):
                 Field('sponsor_duration', css_class="form-control"),
                 Field('start_date', css_class="form-control"),
                 Field('end_date', css_class="form-control"),
-                Field('sponsorlevel', css_class="form-control"),
+                Field('sponsorshiplevel', css_class="form-control"),
                 Field('agreement', css_class="form-control"),
                 Field('logo', css_class="form-control"),
                 css_id='project-form')
