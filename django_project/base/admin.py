@@ -15,11 +15,10 @@ history for a model).
 
 from django.contrib import admin
 from models import Project
-from audited_models.admin import AuditedAdmin
 import reversion
 
 
-class ProjectAdmin(AuditedAdmin, reversion.VersionAdmin):
+class ProjectAdmin(reversion.VersionAdmin):
     """Admin for the project model."""
 
     def queryset(self, request):
