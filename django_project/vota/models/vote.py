@@ -8,7 +8,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 from django.db import models
-from audited_models.models import AuditedModel
 from django.contrib.auth.models import User
 
 
