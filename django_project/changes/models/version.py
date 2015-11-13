@@ -87,7 +87,7 @@ class Version(models.Model):
             ('slug', 'project'),
         )
         app_label = 'changes'
-        ordering = ['-datetime_created']
+        #ordering = ['-datetime_created']
 
     def save(self, *args, **kwargs):
         if not self.pk:
