@@ -77,31 +77,11 @@ STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
 # Contributed / third party js libs for pipeline compression
 # For hand rolled js for this app, use project.py
-PIPELINE_JS = {
-    # 'contrib': {
-    #     'source_filenames': (
-    #         'js/jquery-1.11.3.js',
-    #         'js/underscore.1.8.3.js',
-    #         'js/bootstrap-3.3.5.js'
-    #     ),
-    #     'output_filename': 'js/contrib.js',
-    # }
-}
+PIPELINE_JS = {}
 
 # Contributed / third party css for pipeline compression
 # For hand rolled css for this app, use project.py
-PIPELINE_CSS = {
-    # 'contrib': {
-    #     'source_filenames': (
-    #         'css/bootstrap.3.3.5.css',
-    #         'css/bootstrap-theme.3.3.5.css',
-    #     ),
-    #     'output_filename': 'css/contrib.css',
-    #     'extra_context': {
-    #         'media': 'screen, projection',
-    #     },
-    # }
-}
+PIPELINE_CSS = {}
 
 # These get enabled in prod.py
 PIPELINE_ENABLED = False
