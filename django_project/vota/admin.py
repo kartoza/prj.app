@@ -16,11 +16,10 @@ historisation for a model).
 
 from django.contrib import admin
 from models import Committee, Vote, Ballot
-from audited_models.admin import AuditedAdmin
 import reversion
 
 
-class CommitteeAdmin(AuditedAdmin, reversion.VersionAdmin):
+class CommitteeAdmin(reversion.VersionAdmin):
     """Committee admin model."""
 
     def queryset(self, request):
@@ -35,7 +34,7 @@ class CommitteeAdmin(AuditedAdmin, reversion.VersionAdmin):
         return qs
 
 
-class VoteAdmin(AuditedAdmin, reversion.VersionAdmin):
+class VoteAdmin(reversion.VersionAdmin):
     """Vote admin model."""
 
     def queryset(self, request):
@@ -50,7 +49,7 @@ class VoteAdmin(AuditedAdmin, reversion.VersionAdmin):
         return qs
 
 
-class BallotAdmin(AuditedAdmin, reversion.VersionAdmin):
+class BallotAdmin(reversion.VersionAdmin):
     """Ballot admin model."""
 
     def queryset(self, request):

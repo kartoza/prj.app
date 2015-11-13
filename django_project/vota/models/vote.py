@@ -19,7 +19,7 @@ VOTE_CHOICES = (
 )
 
 
-class Vote(AuditedModel):
+class Vote(models.Model):
     """A vote model"""
 
     choice = models.CharField(max_length=1, choices=VOTE_CHOICES,
