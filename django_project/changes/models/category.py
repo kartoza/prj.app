@@ -5,7 +5,6 @@ from core.settings.contrib import STOP_WORDS
 
 logger = logging.getLogger(__name__)
 from django.db import models
-from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
 from changes.models.entry import Entry
 
@@ -31,7 +30,7 @@ class UnapprovedCategoryManager(models.Manager):
 
 
 # noinspection PyUnresolvedReferences
-class Category(AuditedModel):
+class Category(models.Model):
     """A category model e.g. gui, backend, web site etc."""
     name = models.CharField(
         help_text=_('Name of this category.'),

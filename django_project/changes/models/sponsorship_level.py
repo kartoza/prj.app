@@ -3,10 +3,9 @@ __author__ = 'rischan'
 import os
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
-from audited_models.models import AuditedModel
 
 
-class SponsorshipLevel(AuditedModel):
+class SponsorshipLevel(models.Model):
     """A sponsor model e.g. gui, backend, web site etc."""
     name = models.CharField(
         help_text='Name of sponsorship level.',

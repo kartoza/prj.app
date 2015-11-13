@@ -18,11 +18,10 @@ from django.contrib import admin
 from models import (Category, Version,
                     Entry, Sponsor, SponsorshipLevel,
                     SponsorshipPeriod)
-from audited_models.admin import AuditedAdmin
 import reversion
 
 
-class CategoryAdmin(AuditedAdmin, reversion.VersionAdmin):
+class CategoryAdmin(reversion.VersionAdmin):
     """Category admin model."""
 
     def queryset(self, request):
@@ -37,7 +36,7 @@ class CategoryAdmin(AuditedAdmin, reversion.VersionAdmin):
         return qs
 
 
-class VersionAdmin(AuditedAdmin, reversion.VersionAdmin):
+class VersionAdmin(reversion.VersionAdmin):
     """Verion admin model."""
 
     def queryset(self, request):
@@ -52,7 +51,7 @@ class VersionAdmin(AuditedAdmin, reversion.VersionAdmin):
         return qs
 
 
-class EntryAdmin(AuditedAdmin, reversion.VersionAdmin):
+class EntryAdmin(reversion.VersionAdmin):
     """Entry admin model."""
 
     def queryset(self, request):
@@ -67,7 +66,7 @@ class EntryAdmin(AuditedAdmin, reversion.VersionAdmin):
         return qs
 
 
-class SponsorAdmin(AuditedAdmin, reversion.VersionAdmin):
+class SponsorAdmin(reversion.VersionAdmin):
     """Sponsor admin model."""
 
     def queryset(self, request):
@@ -82,7 +81,7 @@ class SponsorAdmin(AuditedAdmin, reversion.VersionAdmin):
         return qs
 
 
-class SponsorLevelAdmin(AuditedAdmin, reversion.VersionAdmin):
+class SponsorLevelAdmin(reversion.VersionAdmin):
     """Sponsor level admin model."""
 
     def queryset(self, request):
@@ -97,7 +96,7 @@ class SponsorLevelAdmin(AuditedAdmin, reversion.VersionAdmin):
         return qs
 
 
-class SponsorRenewedAdmin(AuditedAdmin, reversion.VersionAdmin):
+class SponsorRenewedAdmin(reversion.VersionAdmin):
     """Renewed sponsor admin model."""
 
     def queryset(self, request):

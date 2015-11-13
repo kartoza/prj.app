@@ -8,7 +8,6 @@ from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
-from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
@@ -39,7 +38,7 @@ class UnapprovedSponsorManager(models.Manager):
 
 
 # noinspection PyUnresolvedReferences
-class Sponsor(AuditedModel):
+class Sponsor(models.Model):
     """A sponsor model e.g. gui, backend, web site etc."""
     name = models.CharField(
         help_text=_('Name of sponsor.'),
