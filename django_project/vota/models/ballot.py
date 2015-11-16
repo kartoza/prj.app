@@ -15,7 +15,6 @@ from core.settings.contrib import STOP_WORDS
 
 logger = logging.getLogger(__name__)
 from django.db import models
-from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from vota.models.vote import Vote
@@ -63,7 +62,7 @@ class ClosedBallotManager(models.Manager):
                 closes__gt=timezone.now())
 
 
-class Ballot(AuditedModel):
+class Ballot(models.Model):
     """A category model e.g. gui, backend, web site etc."""
     name = models.CharField(
         help_text=_('Name of this ballot.'),

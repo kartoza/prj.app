@@ -7,7 +7,6 @@ import logging
 from core.settings.contrib import STOP_WORDS
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
-from audited_models.models import AuditedModel
 from embed_video.fields import EmbedVideoField
 from django.contrib.auth.models import User
 
@@ -34,7 +33,7 @@ class UnapprovedEntryManager(models.Manager):
                 approved=False)
 
 
-class Entry(AuditedModel):
+class Entry(models.Model):
     """An entry is the basic unit of a changelog."""
     title = models.CharField(
         help_text='Feature title for this changelog entry.',

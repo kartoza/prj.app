@@ -2,11 +2,10 @@ __author__ = 'rischan'
 
 import datetime
 from django.db import models
-from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
 
 
-class SponsorshipPeriod(AuditedModel):
+class SponsorshipPeriod(models.Model):
     """A sponsorship period model e.g. gui, backend, web site etc."""
     sponsor = models.ForeignKey('Sponsor')
 

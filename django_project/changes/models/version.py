@@ -8,7 +8,6 @@ from core.settings.contrib import STOP_WORDS
 logger = logging.getLogger(__name__)
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
-from audited_models.models import AuditedModel
 from .entry import Entry
 from django.contrib.auth.models import User
 
@@ -34,7 +33,7 @@ class UnapprovedVersionManager(models.Manager):
 
 
 # noinspection PyUnresolvedReferences
-class Version(AuditedModel):
+class Version(models.Model):
     """A version model that the changelog is associated with.."""
 
     name = models.CharField(
@@ -88,7 +87,7 @@ class Version(AuditedModel):
             ('slug', 'project'),
         )
         app_label = 'changes'
-        ordering = ['-datetime_created']
+        # ordering = ['-datetime_created']
 
     def save(self, *args, **kwargs):
         if not self.pk:
