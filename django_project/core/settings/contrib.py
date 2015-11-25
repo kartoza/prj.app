@@ -20,8 +20,11 @@ INSTALLED_APPS += (
     'reversion',
     'rosetta',
     'embed_video',
+    'django_hashedfilenamestorage',
     # 'user_map',
 )
+
+GRAPPELLI_ADMIN_TITLE = 'Site administration panel'
 
 STOP_WORDS = (
     'a', 'an', 'and', 'if', 'is', 'the', 'in', 'i', 'you', 'other',

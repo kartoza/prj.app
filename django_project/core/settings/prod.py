@@ -16,6 +16,15 @@ PIPELINE_ENABLED = True
 PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
 PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
 
+# Comment if you are not running behind proxy
+USE_X_FORWARDED_HOST = True
+
+# Set debug to false for production
+DEBUG = TEMPLATE_DEBUG = False
+
+SERVER_EMAIL = 'tim@kartoza.com'
+EMAIL_HOST = 'kartoza.com'
+DEFAULT_FROM_EMAIL = 'tim@kartoza.com'
 
 # Logging
 if 'raven.contrib.django.raven_compat' in INSTALLED_APPS:
@@ -31,7 +40,7 @@ if 'raven.contrib.django.raven_compat' in INSTALLED_APPS:
                '98a71b2e390a8a8f42@sentry.kartoza.com/8',
         # If you are using git, you can also automatically configure the
         # release based on the git info.
-        # Note from Tim: This won't work since we dont mount the root
+        # Note from Tim: This won't work since we don't mount the root
         # of the git project into the docker container...
         # 'release': raven.fetch_git_sha(os.path.dirname(__file__)),
     }
