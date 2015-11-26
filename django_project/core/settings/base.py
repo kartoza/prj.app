@@ -10,9 +10,6 @@ ADMINS = (
     ('Tim Sutton', 'tim@kartoza.com'),
     ('Rischan Mafrur', 'rischan@kartoza.com')
 )
-SERVER_EMAIL = 'tim@linfiniti.com'
-EMAIL_HOST = 'localhost'
-DEFAULT_FROM_EMAIL = 'tim@linfiniti.com'
 
 MANAGERS = ADMINS
 
@@ -106,7 +103,6 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'core.urls'
-GRAPPELLI_ADMIN_TITLE = ''
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'core.wsgi.application'

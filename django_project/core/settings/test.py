@@ -6,7 +6,7 @@ INSTALLED_APPS += (
     'django_nose',  # don't remove this comma
 )
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 NOSE_ARGS = (
     '--with-coverage',
