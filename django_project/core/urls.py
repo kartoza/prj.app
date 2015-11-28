@@ -12,8 +12,6 @@ from django.template import loader, Context
 admin.autodiscover()
 handler404 = 'base.views.error_views.custom_404'
 
-urlpatterns = []
-
 
 def handler500(request):
     """500 error handler which includes ``request`` in the context.
@@ -32,6 +30,9 @@ def handler500(request):
         'request': request,
     })))
 
+urlpatterns = []
+# These patterns work if there is a locale code injected in front of them
+# e.g. /en/reports/
 urlpatterns += i18n_patterns(
     url(r'^site-admin/', include(admin.site.urls)),
     url(r'^', include('base.urls')),

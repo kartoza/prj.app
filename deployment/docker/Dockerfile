@@ -11,7 +11,7 @@ MAINTAINER Tim Sutton<tim@kartoza.com>
 ADD 71-apt-cacher-ng /etc/apt/apt.conf.d/71-apt-cacher-ng
 
 
-# Pandoc needed to generate rst dumps
+# Pandoc needed to generate rst dumps, uic compressor needed for django-pipeline
 RUN apt-get update -y; apt-get -y --force-yes install yui-compressor pandoc
 
 ADD REQUIREMENTS.txt /REQUIREMENTS.txt
@@ -22,7 +22,7 @@ RUN pip install uwsgi
 # Open port 8080 as we will be running our uwsgi socket on that
 EXPOSE 8080
 
-USER www-data
+#USER www-data
 
 WORKDIR /home/web/django_project
 CMD ["uwsgi", "--ini", "/uwsgi.conf"]

@@ -57,14 +57,15 @@ uwsgi:
     - VIRTUAL_PORT=8080
   volumes:
     - ../django_project:/home/web/django_project
-    - ./static:/home/web/static
-    - ./media:/home/web/media
+    - ./static:/home/web/static:rw
+    - ./media:/home/web/media:rw
     - ./reports:/home/web/reports
     - ./logs:/var/log/
   links:
     - smtp:smtp
     - db:db
   restart: on-failure:5
+  user: root
 
 dbbackups:
   # Note you cannot scale if you use conteiner_name
