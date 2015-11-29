@@ -63,7 +63,7 @@ INSTALLED_APPS += (
 
 MIDDLEWARE_CLASSES += (
     # For rosetta localisation
-    'django.middleware.locale.LocaleMiddleware'
+    'django.middleware.locale.LocaleMiddleware',
 )
 
 DEFAULT_FILE_STORAGE = (
