@@ -62,11 +62,8 @@ INSTALLED_APPS += (
     'pipeline',)
 
 MIDDLEWARE_CLASSES += (
-    # for django-audited-models
-    # Threaded middleware *must* come *after* auth middleware
-    'threaded_multihost.middleware.ThreadLocalMiddleware',
     # For rosetta localisation
-    'django.middleware.locale.LocaleMiddleware'
+    'django.middleware.locale.LocaleMiddleware',
 )
 
 DEFAULT_FILE_STORAGE = (

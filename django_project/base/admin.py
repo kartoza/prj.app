@@ -1,8 +1,6 @@
 """Model admin class definitions.
 
-Note these admin models inherit both AuditedAdmin (which adds owner, editor,
-creation date, modification date to a model) and reversion (which provides
-history for a model).
+Note these admin models inherit reversion (which provides history for a model).
 
 ..note:: if you add reversion.VersionAdmin to a model be sure to do
     ``./manage.py createinitialrevisions``.
