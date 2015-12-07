@@ -75,10 +75,6 @@ class Sponsor(models.Model):
         _("Start date"),
         default=datetime.datetime.today())
 
-    end_date = models.DateTimeField(
-        _("End date"),
-        default=datetime.datetime.today())
-
     agreement = models.FileField(
         help_text=('Attach sponsor agreement'),
         upload_to=os.path.join(MEDIA_ROOT, 'docs'),
