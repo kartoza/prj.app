@@ -199,7 +199,7 @@ class PendingProjectListView(
 class ApproveProjectView(StaffuserRequiredMixin, ProjectMixin, RedirectView):
     permanent = False
     query_string = True
-    pattern_name = 'pending-project-list'
+    pattern_name = 'home'
 
     def get_redirect_url(self, slug):
         projects_qs = Project.unapproved_objects.all()
