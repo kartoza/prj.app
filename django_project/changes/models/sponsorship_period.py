@@ -1,6 +1,6 @@
 __author__ = 'rischan'
 
-import datetime
+from django.utils import timezone
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -11,11 +11,11 @@ class SponsorshipPeriod(models.Model):
 
     start_date = models.DateField(
         _("Start date"),
-        default=datetime.date.today())
+        default=timezone.now)
 
     end_date = models.DateField(
         _("End date"),
-        default=datetime.date.today())
+        default=timezone.now)
 
     def __unicode__(self):
         return '%s' % self.sponsor

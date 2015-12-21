@@ -3,6 +3,7 @@ import os
 import datetime
 import pytz
 import logging
+from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
@@ -73,7 +74,7 @@ class Sponsor(models.Model):
 
     start_date = models.DateTimeField(
         _("Start date"),
-        default=datetime.datetime.today())
+        default=timezone.now)
 
     agreement = models.FileField(
         help_text=('Attach sponsor agreement'),
@@ -131,7 +132,7 @@ class Sponsor(models.Model):
         })
 
     def current_sponsor(self):
-        today = datetime.datetime.today().replace(tzinfo=utc)
+        today = timezone.now.replace(tzinfo=utc)
         start = self.start_date.replace(tzinfo=utc)
         end = self.end_date.replace(tzinfo=utc)
         if start < today < end:
