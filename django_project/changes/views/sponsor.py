@@ -515,7 +515,7 @@ class ApproveSponsorView(SponsorMixin, StaffuserRequiredMixin, RedirectView):
     """Redirect view for approving Sponsor."""
     permanent = False
     query_string = True
-    pattern_name = 'pending-sponsor-list'
+    pattern_name = 'sponsor-list'
 
     def get_redirect_url(self, project_slug, slug):
         """Save Sponsor as approved and redirect
