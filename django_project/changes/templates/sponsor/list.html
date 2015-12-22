@@ -46,8 +46,11 @@
                     href='{% url "sponsor-create" project_slug %}'>create one</a>.</h3>
         {% endif %}
     {% endifequal %}
+
+    <h3 class="text-muted">Current Sponsors</h3>
     {% for sponsor in sponsors %}
-        <script>console.debug("{{ sponsor }}");</script>
+        {% if sponsor.current_sponsor %}
+            <script>console.debug("{{ sponsor }}");</script>
         <div class="row" style="margin-top:10px;">
             <div class="col-lg-1">
                 {% if sponsor.logo %}
@@ -85,6 +88,51 @@
                 </div>
             </div>
         </div>
+        {% endif %}
+    {% endfor %}
+
+    <h3 class="text-muted">Past Sponsors</h3>
+    {% for sponsor in sponsors %}
+        {% if not sponsor.current_sponsor %}
+            <script>console.debug("{{ sponsor }}");</script>
+        <div class="row" style="margin-top:10px;">
+            <div class="col-lg-1">
+                {% if sponsor.logo %}
+                    <a href="{{ MEDIA_URL }}{{ sponsor.logo }}">
+                        <img class="img-responsive img-rounded pull-right"
+                             src="{% thumbnail sponsor.logo 50x50 crop %}"/>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="col-lg-9">
+                <h5>{{ sponsor.project.name }}</h5>
+
+                <h3>{{ sponsor.name }}</h3>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    {% if not sponsor.approved and user.is_staff %}
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "sponsor-approve" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        </a>
+                    {% endif %}
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "sponsor-delete" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "sponsor-update" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     {% endfor %}
     <hr/>
     {% include "_pagination.html" %}
