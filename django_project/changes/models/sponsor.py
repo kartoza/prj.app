@@ -72,7 +72,7 @@ class Sponsor(models.Model):
         null=True,
         blank=True)
 
-    start_date = models.DateTimeField(
+    start_date = models.DateField(
         _("Start date"),
         default=timezone.now)
 
@@ -131,10 +131,13 @@ class Sponsor(models.Model):
             'project_slug': self.project.slug
         })
 
+    def sponsor_end_date(self):
+        return self.start_date + datetime.timedelta(days=int(self.sponsor_duration) * 365/12)
+
     def current_sponsor(self):
-        today = timezone.now.replace(tzinfo=utc)
-        start = self.start_date.replace(tzinfo=utc)
-        end = self.end_date.replace(tzinfo=utc)
+        today = timezone.now()
+        start = self.start_date
+        end = self.sponsor_end_date()
         if start < today < end:
             return True
         else:
