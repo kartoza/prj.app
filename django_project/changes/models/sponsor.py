@@ -132,7 +132,8 @@ class Sponsor(models.Model):
         })
 
     def sponsor_end_date(self):
-        return self.start_date + datetime.timedelta(days=int(self.sponsor_duration) * 365/12)
+        return self.start_date + datetime.timedelta(
+                days=int(self.sponsor_duration) * 365/12)
 
     def current_sponsor(self):
         today = timezone.now()
