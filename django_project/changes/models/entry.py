@@ -140,7 +140,7 @@ class Entry(models.Model):
             string = ""
             return string
         elif self.funded_by and not self.funder_url:
-            string = "This feature was funded by %s " % (self.funded_by)
+            string = "This feature was funded by %s " % self.funded_by
             return string
         elif self.funder_url and not self.funded_by:
             string = "This feature was funded by [%s](%s)" % (
@@ -159,7 +159,7 @@ class Entry(models.Model):
             string = ""
             return string
         elif self.developed_by and not self.developer_url:
-            string = "This feature was developed by %s " % (self.developed_by)
+            string = "This feature was developed by %s " % self.developed_by
             return string
         elif self.developer_url and not self.developed_by:
             string = "This feature was developed by [%s](%s)" % (
