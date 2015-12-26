@@ -100,7 +100,7 @@ class RssEntryFeed(Feed):
         :rtype: list
         """
         return Entry.objects.filter(version=obj, approved=True).order_by(
-            '-name')
+            '-title')
 
     def item_title(self, item):
         """Return the title of the entry.
