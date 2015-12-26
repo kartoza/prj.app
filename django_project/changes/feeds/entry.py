@@ -47,7 +47,7 @@ class RssEntryFeed(Feed):
             # otherwise give the latest version.
             if version_slug is None:
                 version = get_list_or_404(Version.objects.order_by(
-                    '-datetime_created'), project=project, approved=True)[0]
+                    '-name'), project=project, approved=True)[0]
             else:
                 version = Version.objects.get(slug=version_slug)
             return version
@@ -100,7 +100,7 @@ class RssEntryFeed(Feed):
         :rtype: list
         """
         return Entry.objects.filter(version=obj, approved=True).order_by(
-            '-datetime_created')
+            '-name')
 
     def item_title(self, item):
         """Return the title of the entry.

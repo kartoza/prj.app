@@ -82,7 +82,7 @@ class RssVersionFeed(Feed):
         :rtype: list
         """
         return Version.objects.filter(project=obj, approved=True).order_by(
-            '-datetime_created')[:5]
+            '-name')[:5]
 
     def item_title(self, item):
         """Return the title of the version.

@@ -1,8 +1,10 @@
-__author__ = 'rischan'
+# coding=utf-8
 
 import os
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
+
+__author__ = 'rischan'
 
 
 class SponsorshipLevel(models.Model):
