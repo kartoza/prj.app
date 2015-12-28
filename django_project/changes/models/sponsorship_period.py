@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class SponsorshipPeriod(models.Model):
     """A sponsorship period model e.g. gui, backend, web site etc."""
-    sponsor = models.ForeignKey('Sponsor')
+    project = models.ForeignKey('base.Project')
 
     start_date = models.DateField(
         _("Start date"),
@@ -21,7 +21,7 @@ class SponsorshipPeriod(models.Model):
     sponsorshiplevel = models.ForeignKey('SponsorshipLevel')
 
     def __unicode__(self):
-        return '%s' % self.sponsor
+        return '%s' % self.project
 
     def current_sponsor(self):
         today = timezone.now()
