@@ -70,7 +70,7 @@ class SponsorshipPeriodMixin(object):
     form_class = SponsorshipPeriodForm
 
 
-class JSONSponsorListView(SponsorshipPeriod, JSONResponseMixin, ListView):
+class JSONSponsorshipPeriodListView(SponsorshipPeriod, JSONResponseMixin, ListView):
     """List view for Sponsorship Period as json object - needed by javascript."""
     context_object_name = 'sponsorshipperiod'
 
@@ -88,7 +88,7 @@ class JSONSponsorListView(SponsorshipPeriod, JSONResponseMixin, ListView):
         """
         if not request.is_ajax():
             raise Http404("This is an ajax view, friend.")
-        return super(JSONSponsorListView, self).dispatch(
+        return super(JSONSponsorshipPeriodListView, self).dispatch(
             request, *args, **kwargs)
 
     def render_to_response(self, context, **response_kwargs):

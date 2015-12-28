@@ -45,7 +45,29 @@ from views import (
     JSONSponsorListView,
     SponsorUpdateView,
     PendingSponsorListView,
-    ApproveSponsorView
+    ApproveSponsorView,
+
+    # Sponsorship Level
+
+    SponsorshipLevelDetailView,
+    SponsorshipLevelDeleteView,
+    SponsorshipLevelCreateView,
+    SponsorshipLevelListView,
+    JSONSponsorshipLevelListView,
+    SponsorshipLevelUpdateView,
+    PendingSponsorshipLevelListView,
+    ApproveSponsorshipLevelView,
+
+    # Sponsorship Period
+
+    SponsorshipPeriodDetailView,
+    SponsorshipPeriodDeleteView,
+    SponsorshipPeriodCreateView,
+    SponsorshipPeriodListView,
+    JSONSponsorshipPeriodListView,
+    SponsorshipPeriodUpdateView,
+    PendingSponsorshipPeriodListView,
+    ApproveSponsorshipPeriodView,
 )
 
 urlpatterns = patterns(
@@ -198,6 +220,61 @@ urlpatterns = patterns(
         view=SponsorUpdateView.as_view(),
         name='sponsor-update'),
 
+    # SponsorshipLevelship Level management
+
+    # This view is only accessible via ajax
+    url(regex='^json-sponsorshiplevel/list/(?P<version>\d+)/$',
+        view=JSONSponsorshipLevelListView.as_view(),
+        name='json-sponsorshiplevel-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/pending-sponsorshiplevel/list/$',
+        view=PendingSponsorshipLevelListView.as_view(),
+        name='pending-sponsorshiplevel-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/approve-sponsorshiplevel/(?P<slug>[\w-]+)/$',
+        view=ApproveSponsorshipLevelView.as_view(),
+        name='sponsorshiplevel-approve'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsorshiplevel/list/$',
+        view=SponsorshipLevelListView.as_view(),
+        name='sponsorshiplevel-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsorshiplevel/(?P<slug>[\w-]+)/$',
+        view=SponsorshipLevelDetailView.as_view(),
+        name='sponsorshiplevel-detail'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsorshiplevel/(?P<slug>[\w-]+)/delete/$',
+        view=SponsorshipLevelDeleteView.as_view(),
+        name='sponsorshiplevel-delete'),
+    url(regex='^(?P<project_slug>[\w-]+)/create-sponsorshiplevel/$',
+        view=SponsorshipLevelCreateView.as_view(),
+        name='sponsorshiplevel-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsorshiplevel/(?P<slug>[\w-]+)/update/$',
+        view=SponsorshipLevelUpdateView.as_view(),
+        name='sponsorshiplevel-update'),
+
+    # Sponsorship Period management
+
+    # This view is only accessible via ajax
+    url(regex='^json-sponsorshipperiod/list/(?P<version>\d+)/$',
+        view=JSONSponsorshipPeriodListView.as_view(),
+        name='json-sponsorshipperiod-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/pending-sponsorshipperiod/list/$',
+        view=PendingSponsorshipPeriodListView.as_view(),
+        name='pending-sponsorshipperiod-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/approve-sponsorshipperiod/(?P<slug>[\w-]+)/$',
+        view=ApproveSponsorshipPeriodView.as_view(),
+        name='SponsorshipPeriod-approve'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsorshipperiod/list/$',
+        view=SponsorshipPeriodListView.as_view(),
+        name='SponsorshipPeriod-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsorshipperiod/(?P<slug>[\w-]+)/$',
+        view=SponsorshipPeriodDetailView.as_view(),
+        name='SponsorshipPeriod-detail'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsorshipperiod/(?P<slug>[\w-]+)/delete/$',
+        view=SponsorshipPeriodDeleteView.as_view(),
+        name='SponsorshipPeriod-delete'),
+    url(regex='^(?P<project_slug>[\w-]+)/create-sponsorshipperiod/$',
+        view=SponsorshipPeriodCreateView.as_view(),
+        name='SponsorshipPeriod-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsorshipperiod/(?P<slug>[\w-]+)/update/$',
+        view=SponsorshipPeriodUpdateView.as_view(),
+        name='SponsorshipPeriod-update'),
 )
 
 

@@ -70,7 +70,7 @@ class SponsorshipLevelMixin(object):
     form_class = SponsorshipLevelForm
 
 
-class JSONSponsorListView(SponsorshipLevel, JSONResponseMixin, ListView):
+class JSONSponsorshipLevelListView(SponsorshipLevel, JSONResponseMixin, ListView):
     """List view for Sponsorship Level as json object - needed by javascript."""
     context_object_name = 'sponsorshiplevel'
 
