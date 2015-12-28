@@ -16,6 +16,8 @@
       <li><a href='{% url "pending-version-list" the_project.slug %}'>Versions</a></li>
       <li><a href='{% url "pending-category-list" the_project.slug %}'>Categories</a></li>
         <li><a href='{% url "pending-sponsor-list" the_project.slug %}'>Sponsors</a></li>
+        <li><a href='{% url "pending-sponsorshiplevel-list" the_project.slug %}'>Sponsorship Level</a></li>
+        <li><a href='{% url "pending-sponsorshipperiod-list" the_project.slug %}'>Sponsorship Period</a></li>
       {% if the_version %}
         <li><a href='{% url "pending-entry-list" the_project.slug the_version.slug %}'>Entries</a></li>
       {% endif %}
