@@ -182,9 +182,9 @@ class SponsorRenewedForm(forms.ModelForm):
     class Meta:
         model = SponsorshipPeriod
         fields = (
-            'sponsor',
             'start_date',
             'end_date',
+            'sponsorshiplevel'
         )
 
     def __init__(self, *args, **kwargs):
@@ -195,18 +195,15 @@ class SponsorRenewedForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('sponsor', css_class="form-control"),
                 Field('start_date', css_class="form-control"),
                 Field('end_date', css_class="form-control"),
+                Field('sponsorshiplevel', css_class="form-control"),
                 css_id='project-form')
         )
         self.helper.layout = layout
         self.helper.html5_required = False
         super(SponsorRenewedForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
-        if not self.instance.id:
-            self.fields['sponsor'].queryset = Sponsor.objects.filter(
-                project=self.project).order_by('name')
 
     def save(self, commit=True):
         instance = super(SponsorRenewedForm, self).save(commit=False)
