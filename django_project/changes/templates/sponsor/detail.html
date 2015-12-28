@@ -37,10 +37,7 @@
         <a href="{{ sponsor.sponsor_url }}">{{ sponsor.sponsor_url}}</a><br/>
           Contact Person : {{ sponsor.contact_person }} <br/>
           Email : {{ sponsor.sponsor_email }}<br/>
-          Duration : {{ sponsor.sponsor_duration }} months<br/>
-          Start date : {{ sponsor.start_date }}<br/>
-          End date : {{ sponsor.sponsor_end_date }}<br/>
-          Level : {{ sponsor.sponsorshiplevel }}<br/>
+          Period and Level : {{ sponsor.sponsorshipperiod }}<br/>
           Sponsor agreement:
           {% if sponsor.agreement %}
             <a href="{{ MEDIA_URL }}{{ sponsor.agreement }}" /> Document agreement</a>

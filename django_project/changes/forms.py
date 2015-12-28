@@ -143,7 +143,9 @@ class SponsorForm(forms.ModelForm):
             'contact_person',
             'sponsor_email',
             'agreement',
-            'logo'
+            'logo',
+            'sponsorshipperiod'
+
         )
 
     def __init__(self, *args, **kwargs):
@@ -160,6 +162,7 @@ class SponsorForm(forms.ModelForm):
                 Field('sponsor_email', css_class="form-control"),
                 Field('agreement', css_class="form-control"),
                 Field('logo', css_class="form-control"),
+                Field('sponsorshipperiod', css_class="form-control"),
                 css_id='project-form')
         )
         self.helper.layout = layout
