@@ -6,7 +6,14 @@ from crispy_forms.layout import (
     Submit,
     Field,
 )
-from models import Category, Version, Entry, Sponsor, SponsorshipPeriod, SponsorshipLevel
+from models import (
+    Category,
+    Version,
+    Entry,
+    Sponsor,
+    SponsorshipPeriod,
+    SponsorshipLevel
+)
 
 
 class CategoryForm(forms.ModelForm):

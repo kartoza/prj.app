@@ -27,7 +27,8 @@ from ..forms import SponsorshipPeriodForm
 class JSONResponseMixin(object):
     """A mixin that can be used to render a JSON response."""
     def render_to_json_response(self, context, **response_kwargs):
-        """Returns a JSON response, transforming 'context' to make the payload.
+        """Returns a JSON response,
+        transforming 'context' to make the payload.
 
         :param context: Context data to use with template
         :type context: dict
@@ -58,7 +59,9 @@ class JSONResponseMixin(object):
         for sponsorshipperiod in context['sponsorshipperiods']:
             if not first_flag:
                 result += ',\n'
-            result += '    "%s" : "%s"' % (sponsorshipperiod.id, sponsorshipperiod.name)
+            result += '    "%s" : "%s"' % (
+                sponsorshipperiod.id,
+                sponsorshipperiod.name)
             first_flag = False
         result += '\n}'
         return result
@@ -66,12 +69,16 @@ class JSONResponseMixin(object):
 
 class SponsorshipPeriodMixin(object):
     """Mixin class to provide standard settings for Sponsorship Period."""
-    model = SponsorshipPeriod  # implies -> queryset = SponsorshipPeriod.objects.all()
+    model = SponsorshipPeriod
     form_class = SponsorshipPeriodForm
 
 
-class JSONSponsorshipPeriodListView(SponsorshipPeriod, JSONResponseMixin, ListView):
-    """List view for Sponsorship Period as json object - needed by javascript."""
+class JSONSponsorshipPeriodListView(
+        SponsorshipPeriod,
+        JSONResponseMixin,
+        ListView):
+    """List view for Sponsorship Period as json object
+     - needed by javascript."""
     context_object_name = 'sponsorshipperiod'
 
     def dispatch(self, request, *args, **kwargs):
@@ -114,12 +121,17 @@ class JSONSponsorshipPeriodListView(SponsorshipPeriod, JSONResponseMixin, ListVi
         :raises: Http404
         """
         sponsorshipperiod_id = self.kwargs['sponsorshipperiod']
-        sponsorshipperiod = get_object_or_404(SponsorshipPeriod, id=sponsorshipperiod_id)
-        qs = SponsorshipPeriod.approved_objects.filter(project=sponsorshipperiod.project)
+        sponsorshipperiod = get_object_or_404(
+                SponsorshipPeriod, id=sponsorshipperiod_id)
+        qs = SponsorshipPeriod.approved_objects.filter(
+                project=sponsorshipperiod.project)
         return qs
 
 
-class SponsorshipPeriodListView(SponsorshipPeriodMixin, PaginationMixin, ListView):
+class SponsorshipPeriodListView(
+        SponsorshipPeriodMixin,
+        PaginationMixin,
+        ListView):
     """List view for Sponsorship Period."""
     context_object_name = 'sponsorshipperiods'
     template_name = 'sponsorship_period/list.html'
@@ -134,8 +146,10 @@ class SponsorshipPeriodListView(SponsorshipPeriodMixin, PaginationMixin, ListVie
         :returns: Context data which will be passed to the template.
         :rtype: dict
         """
-        context = super(SponsorshipPeriodListView, self).get_context_data(**kwargs)
-        context['num_sponsorshipperiods'] = context['sponsorshipperiods'].count()
+        context = super(SponsorshipPeriodListView,
+                        self).get_context_data(**kwargs)
+        context['num_sponsorshipperiods'] = \
+            context['sponsorshipperiods'].count()
         context['unapproved'] = False
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
@@ -172,7 +186,8 @@ class SponsorshipPeriodDetailView(SponsorshipPeriodMixin, DetailView):
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: Queryset which is filtered to only show approved Sponsorship Period.
+        :returns: Queryset which is filtered to only
+        show approved Sponsorship Period.
         :rtype: QuerySet
         """
         qs = SponsorshipPeriod.approved_objects.all()
@@ -200,11 +215,15 @@ class SponsorshipPeriodDetailView(SponsorshipPeriodMixin, DetailView):
                 obj = queryset.get(project=project, slug=slug)
                 return obj
             else:
-                raise Http404('Sorry! We could not find your Sponsorship Period!')
+                raise Http404('Sorry! We could not find '
+                              'your Sponsorship Period!')
 
 
 # noinspection PyAttributeOutsideInit
-class SponsorshipPeriodDeleteView(LoginRequiredMixin, SponsorshipPeriodMixin, DeleteView):
+class SponsorshipPeriodDeleteView(
+        LoginRequiredMixin,
+        SponsorshipPeriodMixin,
+        DeleteView):
     """Delete view for Sponsorship Period."""
     context_object_name = 'sponsorshipperiod'
     template_name = 'sponsorship_period/delete.html'
@@ -226,7 +245,9 @@ class SponsorshipPeriodDeleteView(LoginRequiredMixin, SponsorshipPeriodMixin, De
         """
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
-        return super(SponsorshipPeriodDeleteView, self).get(request, *args, **kwargs)
+        return super(
+                SponsorshipPeriodDeleteView,
+                self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         """Post the project_slug from the URL and define the Project
@@ -245,7 +266,9 @@ class SponsorshipPeriodDeleteView(LoginRequiredMixin, SponsorshipPeriodMixin, De
         """
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
-        return super(SponsorshipPeriodDeleteView, self).post(request, *args, **kwargs)
+        return super(
+                SponsorshipPeriodDeleteView,
+                self).post(request, *args, **kwargs)
 
     def get_success_url(self):
         """Define the redirect URL
@@ -278,7 +301,10 @@ class SponsorshipPeriodDeleteView(LoginRequiredMixin, SponsorshipPeriodMixin, De
 
 
 # noinspection PyAttributeOutsideInit
-class SponsorshipPeriodCreateView(LoginRequiredMixin, SponsorshipPeriodMixin, CreateView):
+class SponsorshipPeriodCreateView(
+        LoginRequiredMixin,
+        SponsorshipPeriodMixin,
+        CreateView):
     """Create view for Sponsorship Period."""
     context_object_name = 'sponsorshipperiod'
     template_name = 'sponsorship_period/create.html'
@@ -305,7 +331,9 @@ class SponsorshipPeriodCreateView(LoginRequiredMixin, SponsorshipPeriodMixin, Cr
         :returns: Context data which will be passed to the template.
         :rtype: dict
         """
-        context = super(SponsorshipPeriodCreateView, self).get_context_data(**kwargs)
+        context = super(
+                SponsorshipPeriodCreateView,
+                self).get_context_data(**kwargs)
         context['sponsorshipperiod'] = self.get_queryset() \
             .filter(project=self.project)
         return context
@@ -340,7 +368,10 @@ class SponsorshipPeriodCreateView(LoginRequiredMixin, SponsorshipPeriodMixin, Cr
 
 
 # noinspection PyAttributeOutsideInit
-class SponsorshipPeriodUpdateView(LoginRequiredMixin, SponsorshipPeriodMixin, UpdateView):
+class SponsorshipPeriodUpdateView(
+        LoginRequiredMixin,
+        SponsorshipPeriodMixin,
+        UpdateView):
     """Update view for Sponsorship Period."""
     context_object_name = 'sponsorshipperiod'
     template_name = 'sponsorship_period/update.html'
@@ -351,7 +382,9 @@ class SponsorshipPeriodUpdateView(LoginRequiredMixin, SponsorshipPeriodMixin, Up
         :returns keyword argument from the form
         :rtype: dict
         """
-        kwargs = super(SponsorshipPeriodUpdateView, self).get_form_kwargs()
+        kwargs = super(
+                SponsorshipPeriodUpdateView,
+                self).get_form_kwargs()
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         kwargs.update({
@@ -369,7 +402,9 @@ class SponsorshipPeriodUpdateView(LoginRequiredMixin, SponsorshipPeriodMixin, Up
         :returns: Context data which will be passed to the template.
         :rtype: dict
         """
-        context = super(SponsorshipPeriodUpdateView, self).get_context_data(**kwargs)
+        context = super(
+                SponsorshipPeriodUpdateView,
+                self).get_context_data(**kwargs)
         context['sponsorshipperiod'] = self.get_queryset() \
             .filter(project=self.project)
         return context
@@ -401,8 +436,11 @@ class SponsorshipPeriodUpdateView(LoginRequiredMixin, SponsorshipPeriodMixin, Up
         })
 
 
-class PendingSponsorshipPeriodListView(StaffuserRequiredMixin, SponsorshipPeriodMixin,
-                             PaginationMixin, ListView):  # noqa
+class PendingSponsorshipPeriodListView(
+        StaffuserRequiredMixin,
+        SponsorshipPeriodMixin,
+        PaginationMixin,
+        ListView):
     """List view for pending Sponsor."""
     context_object_name = 'sponsorshipperiods'
     template_name = 'sponsorship_period/list.html'
@@ -453,11 +491,15 @@ class PendingSponsorshipPeriodListView(StaffuserRequiredMixin, SponsorshipPeriod
                     project=self.project)
                 return queryset
             else:
-                raise Http404('Sorry! We could not find your Sponsorship Period!')
+                raise Http404('Sorry! We could not find '
+                              'your Sponsorship Period!')
         return self.queryset
 
 
-class ApproveSponsorshipPeriodView(SponsorshipPeriodMixin, StaffuserRequiredMixin, RedirectView):
+class ApproveSponsorshipPeriodView(
+        SponsorshipPeriodMixin,
+        StaffuserRequiredMixin,
+        RedirectView):
     """Redirect view for approving Sponsorship Period."""
     permanent = False
     query_string = True
@@ -466,7 +508,8 @@ class ApproveSponsorshipPeriodView(SponsorshipPeriodMixin, StaffuserRequiredMixi
     def get_redirect_url(self, project_slug, slug):
         """Save Sponsorship Period as approved and redirect
 
-        :param project_slug: The slug of the parent Sponsor Level parent Project
+        :param project_slug: The slug of the parent
+        Sponsor Period parent Project
         :type project_slug: str
 
         :param slug: The slug of the Sponsor Level

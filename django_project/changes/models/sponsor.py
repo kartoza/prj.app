@@ -1,9 +1,7 @@
 # coding=utf-8
 import os
-import datetime
 import pytz
 import logging
-from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS

@@ -43,7 +43,8 @@ class SponsorshipLevel(models.Model):
     )
 
     currency = models.CharField(
-        help_text='The currency which associated with this sponsorship level.',
+        help_text='The currency which associated with '
+                  'this sponsorship level.',
         max_length=255,
         null=False,
         blank=False,
@@ -66,8 +67,8 @@ class SponsorshipLevel(models.Model):
 
     approved = models.BooleanField(
         help_text=_(
-            'Whether this sponsorship level has been approved for use by the '
-            'project owner.'),
+            'Whether this sponsorship level has been approved for use by '
+            'the project owner.'),
         default=False
     )
 

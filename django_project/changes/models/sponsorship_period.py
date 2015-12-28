@@ -4,14 +4,12 @@ import string
 import random
 from datetime import date
 from django.utils import timezone
-from django.conf.global_settings import MEDIA_ROOT
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
-
 
 
 class ApprovedSponsorshipPeriodManager(models.Manager):
@@ -50,13 +48,13 @@ class SponsorshipPeriod(models.Model):
     sponsorshiplevel = models.ForeignKey(
             'SponsorshipLevel',
             help_text='This level take from Sponsorship Level, '
-                      'you can add it by using Sponsorship Level menu',
+            'you can add it by using Sponsorship Level menu',
     )
 
     approved = models.BooleanField(
         help_text=_(
-            'Whether this sponsorship period has been approved for use by the '
-            'project owner.'),
+            'Whether this sponsorship period has been approved for use by '
+            'the project owner.'),
         default=False
     )
 
@@ -91,8 +89,11 @@ class SponsorshipPeriod(models.Model):
         return ''.join(random.choice(chars) for _ in range(size))
 
     def __unicode__(self):
-        #return u'%s' % (self.sponsorshiplevel)
-        return u'%s - %s : %s' % (self.start_date, self.end_date, self.sponsorshiplevel)
+        return u'%s - %s : %s' % (
+            self.start_date,
+            self.end_date,
+            self.sponsorshiplevel
+        )
 
     def get_absolute_url(self):
         return reverse('sponsorshipperiod-detail', kwargs={

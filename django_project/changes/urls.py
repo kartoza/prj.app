@@ -1,4 +1,5 @@
 # coding=utf-8
+# flake8: noqa
 """Urls for changelog application."""
 
 from django.conf.urls import patterns, url, include  # noqa
