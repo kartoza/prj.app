@@ -89,7 +89,6 @@ class Sponsor(models.Model):
     author = models.ForeignKey(User)
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')
-    sponsorshiplevel = models.ForeignKey('SponsorshipLevel')
     objects = models.Manager()
     approved_objects = ApprovedSponsorManager()
     unapproved_objects = UnapprovedSponsorManager()

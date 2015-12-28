@@ -18,6 +18,8 @@ class SponsorshipPeriod(models.Model):
         _("End date"),
         default=timezone.now)
 
+    sponsorshiplevel = models.ForeignKey('SponsorshipLevel')
+
     def __unicode__(self):
         return '%s' % self.sponsor
 
