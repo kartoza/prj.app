@@ -222,6 +222,7 @@ class SponsorRenewedForm(forms.ModelForm):
         instance.save()
         return instance
 
+
 class SponsorshipLevelForm(forms.ModelForm):
 
     # noinspection PyClassicStyleClass
@@ -259,6 +260,7 @@ class SponsorshipLevelForm(forms.ModelForm):
         instance.project = self.project
         instance.save()
         return instance
+
 
 class SponsorshipPeriodForm(forms.ModelForm):
 
