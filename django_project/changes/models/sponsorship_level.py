@@ -2,15 +2,15 @@
 
 import os
 from django.conf.global_settings import MEDIA_ROOT
+from django.core.urlresolvers import reverse
+from django.utils.text import slugify
+from core.settings.contrib import STOP_WORDS
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import User
+
 
 __author__ = 'rischan'
-
-WORLD_CURRENCY = (
-    (1, 'Euro'),
-    (2, 'US Dollar'),
-    (3, 'ZAR')
-)
 
 
 class ApprovedSponsorshipLevelManager(models.Manager):
@@ -35,8 +35,6 @@ class UnapprovedSponsorshipLevelManager(models.Manager):
 
 class SponsorshipLevel(models.Model):
     """A sponsor model e.g. gui, backend, web site etc."""
-    project = models.ForeignKey(to='base.Project')
-
     value = models.IntegerField(
         help_text='Amount of money associated with this sponsorship level.',
         blank=False,
@@ -44,9 +42,12 @@ class SponsorshipLevel(models.Model):
         unique=False
     )
 
-    currency = models.IntegerField(
+    currency = models.CharField(
         help_text='The currency which associated with this sponsorship level.',
-        choices=WORLD_CURRENCY)
+        max_length=255,
+        null=False,
+        blank=False,
+        unique=False)
 
     name = models.CharField(
         help_text='Name of sponsorship level. e.g. Gold, Bronze, etc',
@@ -63,15 +64,43 @@ class SponsorshipLevel(models.Model):
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),
         blank=False)
 
-    def __unicode__(self):
-        return '%s' % (self.name)
+    approved = models.BooleanField(
+        help_text=_(
+            'Whether this sponsorship level has been approved for use by the '
+            'project owner.'),
+        default=False
+    )
+
+    author = models.ForeignKey(User)
+    slug = models.SlugField()
+    project = models.ForeignKey('base.Project')
+    objects = models.Manager()
+    approved_objects = ApprovedSponsorshipLevelManager()
+    unapproved_objects = UnapprovedSponsorshipLevelManager()
 
     # noinspection PyClassicStyleClass
     class Meta:
-        """Meta options for the sponsorship level class."""
+        """Meta options for the sponsor class."""
         unique_together = (
             ('name', 'project'),
-            ('project', 'value')
+            ('project', 'slug')
         )
         app_label = 'changes'
-        ordering = ['project', 'value']
+        ordering = ['name']
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            words = self.name.split()
+            filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
+            new_list = ' '.join(filtered_words)
+            self.slug = slugify(new_list)[:50]
+        super(SponsorshipLevel, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return u'%s' % (self.name)
+
+    def get_absolute_url(self):
+        return reverse('sponsorshiplevel-detail', kwargs={
+            'slug': self.slug,
+            'project_slug': self.project.slug
+        })

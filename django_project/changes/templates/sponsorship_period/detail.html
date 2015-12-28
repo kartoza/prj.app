@@ -14,18 +14,18 @@
 
   <div class="row">
     <div class="col-lg-10">
-      <h3>{{ sponsorshipperiod.name }}</h3>
+      <h3>{{ sponsorshipperiod.project.name }}</h3>
     </div>
     <div class="col-lg-2">
       <div class="btn-group">
         <a class="btn btn-default btn-sm tooltip-toggle"
            href='{% url "sponsorshiplevel-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
-           data-title="Delete {{ sponsorshipperiod.name }}">
+           data-title="Delete {{ sponsorshipperiod.project.name }}">
           <span class="glyphicon glyphicon-minus"></span>
         </a>
         <a class="btn btn-default btn-sm tooltip-toggle"
            href='{% url "sponsorshiplevel-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
-           data-title="Edit {{ sponsorshipperiod.name }}">
+           data-title="Edit {{ sponsorshipperiod.project.name }}">
           <span class="glyphicon glyphicon-pencil"></span>
         </a>
       </div>
@@ -33,10 +33,15 @@
   </div>
   <div class="row">
     <div class="col-lg-8">
-          Project : {{ sponsorshipperiod.project }} <br/>
+          Sponsorship Level : {{ sponsorshipperiod.sponsorshiplevel }}<br/>
           Start Date : {{ sponsorshipperiod.start_date }}<br/>
           End Date : {{ sponsorshipperiod.end_date }}<br/>
-          Sponsorship Level : {{ sponsorshipperiod.sponsorshiplevel }}<br/>
+    </div>
+  <div class="col-lg-4">
+      {% if sponsorshipperiod.sponsorshiplevel.logo %}
+        <img class="img-responsive img-rounded pull-right"
+             src="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsorshiplevel.logo }}" />
+      {%  endif %}
     </div>
   </div>
 

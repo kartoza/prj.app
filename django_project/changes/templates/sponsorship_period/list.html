@@ -14,13 +14,13 @@
     <div class="page-header">
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
-            Sponsors
+            Sponsorship Period
             {% if user.is_authenticated %}
                 <div class="pull-right btn-group">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "sponsorshipperiod-create" project_slug %}'
                        data-title="Create New sponsorship period">
-                        <span class="glyphicon glyphicon-asterisk"></span>
+                        <span class="glyphicon glyphicon-asterisk"></span></a>
                         {% if not unapproved %}
                             <a class="btn btn-default btn-mini tooltip-toggle"
                                href='{% url "pending-sponsorshipperiod-list" project_slug %}'
@@ -42,23 +42,21 @@
         {% endif %}
     {% endifequal %}
 
-    <h3 class="text-muted">sponsorship period</h3>
     {% for sponsorshipperiod in sponsorshipperiods %}
             <script>console.debug("{{ sponsorshipperiod }}");</script>
         <div class="row" style="margin-top:10px;">
             <div class="col-lg-1">
-                {% if sponsorshipperiod.logo %}
-                    <a href="{{ MEDIA_URL }}{{ sponsorshipperiod.logo }}">
+                {% if sponsorshipperiod.sponsorshiplevel.logo %}
+                    <a href="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsorshiplevel.logo }}">
                         <img class="img-responsive img-rounded pull-right"
-                             src="{% thumbnail sponsorshipperiod.logo 50x50 crop %}"/>
+                             src="{% thumbnail sponsorshipperiod.sponsorshiplevel.logo 50x50 crop %}"/>
                     </a>
                 {% endif %}
             </div>
             <div class="col-lg-9">
-                <h5>{{ sponsorshipperiod.project.name }}</h5>
+                <h3>{{ sponsorshipperiod.start_date }} - {{ sponsorshipperiod.end_date }}</h3>
 
-                <h3>{{ sponsorshipperiod.name }}</h3>
-                <h10>({{ sponsorshipperiod.value }} - {{ sponsorshipperiod.currency }})</h10>
+                <h5>{{ sponsorshipperiod.sponsorshiplevel }} : {{ sponsorshipperiod.project.name }}</h5>
             </div>
             <div class="col-lg-2">
                 <div class="btn-group pull-right">

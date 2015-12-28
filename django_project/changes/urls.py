@@ -220,7 +220,7 @@ urlpatterns = patterns(
         view=SponsorUpdateView.as_view(),
         name='sponsor-update'),
 
-    # SponsorshipLevelship Level management
+    # Sponsorship Level management
 
     # This view is only accessible via ajax
     url(regex='^json-sponsorshiplevel/list/(?P<version>\d+)/$',

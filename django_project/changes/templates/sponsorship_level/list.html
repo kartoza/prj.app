@@ -14,17 +14,18 @@
     <div class="page-header">
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
-            Sponsors
-            {% if user.is_authenticated %}
+            Sponsorship Levels
+           {% if user.is_authenticated %}
                 <div class="pull-right btn-group">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "sponsorshiplevel-create" project_slug %}'
                        data-title="Create New Sponsorship Level">
-                        <span class="glyphicon glyphicon-asterisk"></span>
+                        <span class="glyphicon glyphicon-asterisk"></span></a>
+
                         {% if not unapproved %}
                             <a class="btn btn-default btn-mini tooltip-toggle"
                                href='{% url "pending-sponsorshiplevel-list" project_slug %}'
-                               data-title="View Pending Sponsorship Level">
+                               data-title="View Pending Sponsorship level">
                                 <span class="glyphicon glyphicon-time"></span>
                             </a>
                         {% endif %}
@@ -42,9 +43,8 @@
         {% endif %}
     {% endifequal %}
 
-    <h3 class="text-muted">Sponsorship level</h3>
     {% for sponsorshiplevel in sponsorshiplevels %}
-            <script>console.debug("{{ sponsorshiplevel }}");</script>
+        <script>console.debug("{{ sponsorshiplevel }}");</script>
         <div class="row" style="margin-top:10px;">
             <div class="col-lg-1">
                 {% if sponsorshiplevel.logo %}
@@ -55,10 +55,9 @@
                 {% endif %}
             </div>
             <div class="col-lg-9">
-                <h5>{{ sponsorshiplevel.project.name }}</h5>
-
                 <h3>{{ sponsorshiplevel.name }}</h3>
-                <h10>({{ sponsorshiplevel.value }} - {{ sponsorshiplevel.currency }})</h10>
+
+                <h5>{{ sponsorshiplevel.project.name }} - ({{ sponsorshiplevel.value }} {{ sponsorshiplevel.currency }})</h5>
             </div>
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
