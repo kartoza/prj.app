@@ -32,13 +32,19 @@ class SponsorshipPeriod(models.Model):
 
     start_date = models.DateField(
         _("Start date"),
+        help_text='Start date of sponsorship period',
         default=timezone.now)
 
     end_date = models.DateField(
         _("End date"),
+        help_text='End date of sponsorship period',
         default=timezone.now)
 
-    sponsorshiplevel = models.ForeignKey('SponsorshipLevel')
+    sponsorshiplevel = models.ForeignKey(
+            'SponsorshipLevel',
+            help_text='This level take from Sponsorship Level, '
+                      'you can add it by using Sponsorship Level menu',
+    )
 
     def __unicode__(self):
         return '%s' % self.project
