@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('denied', models.BooleanField(default=False, help_text='Whether this ballot has been denied.')),
                 ('no_quorum', models.BooleanField(default=False, help_text='Whether the ballot was denied because no quorum was reached')),
                 ('open_from', models.DateTimeField(default=django.utils.timezone.now, help_text='Date the ballot opens')),
-                ('closes', models.DateTimeField(default=datetime.datetime(2015, 11, 20, 15, 9, 38, 554659, tzinfo=utc), help_text='Date the ballot closes')),
+                ('closes', models.DateTimeField(default=datetime.datetime(2016, 1, 4, 18, 50, 33, 598155, tzinfo=utc), help_text='Date the ballot closes')),
                 ('private', models.BooleanField(default=False, help_text='Should members be prevented from viewing results before voting?')),
                 ('slug', models.SlugField()),
             ],

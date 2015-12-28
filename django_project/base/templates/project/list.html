@@ -39,7 +39,7 @@
     {% ifequal num_projects 0 %}
       <h3>
         No projects are defined, but you can
-        <a href="{% url "project-create" %}">create one</a>.
+        <a href="{% url "project-create" %}">create one here</a>.
       </h3>
     {% endifequal %}
     {% for project in projects %}

@@ -3,15 +3,15 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import embed_video.fields
-import datetime
+import django.utils.timezone
 from django.conf import settings
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('base', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
                 ('contact_person', models.CharField(help_text=b'Input the contact person of sponsor.', max_length=255, null=True, blank=True)),
                 ('sponsor_email', models.CharField(help_text=b'Input an email of sponsor.', max_length=255, null=True, blank=True)),
                 ('sponsor_duration', models.CharField(help_text=b'Input the sponsor duration (in months).', max_length=20, null=True, blank=True)),
-                ('start_date', models.DateTimeField(default=datetime.datetime(2015, 12, 8, 0, 32, 11, 695415), verbose_name='Start date')),
+                ('start_date', models.DateField(default=django.utils.timezone.now, verbose_name='Start date')),
                 ('agreement', models.FileField(help_text=b'Attach sponsor agreement', upload_to=b'docs', blank=True)),
                 ('logo', models.ImageField(help_text=b'An image of sponsor logo e.g. a splashscreen. Most browsers support dragging the image directly on to the "Choose File" button above.', upload_to=b'images/projects')),
                 ('approved', models.BooleanField(default=False, help_text='Whether this sponsor has been approved for use by the project owner.')),
@@ -73,16 +73,21 @@ class Migration(migrations.Migration):
             name='SponsorshipLevel',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('value', models.IntegerField(help_text=b'Amount of money associated with this sponsorship level.')),
                 ('name', models.CharField(help_text=b'Name of sponsorship level.', max_length=255)),
                 ('logo', models.ImageField(help_text=b'An image of sponsorship level logo e.g. a bronze medal.Most browsers support dragging the image directly on to the "Choose File" button above.', upload_to=b'images/projects')),
+                ('project', models.ForeignKey(to='base.Project')),
             ],
+            options={
+                'ordering': ['project', 'value'],
+            },
         ),
         migrations.CreateModel(
             name='SponsorshipPeriod',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('start_date', models.DateField(default=datetime.date(2015, 12, 8), verbose_name='Start date')),
-                ('end_date', models.DateField(default=datetime.date(2015, 12, 8), verbose_name='End date')),
+                ('start_date', models.DateField(default=django.utils.timezone.now, verbose_name='Start date')),
+                ('end_date', models.DateField(default=django.utils.timezone.now, verbose_name='End date')),
                 ('sponsor', models.ForeignKey(to='changes.Sponsor')),
             ],
         ),
@@ -113,6 +118,10 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='version',
             unique_together=set([('slug', 'project'), ('name', 'project')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='sponsorshiplevel',
+            unique_together=set([('project', 'value'), ('name', 'project')]),
         ),
         migrations.AlterUniqueTogether(
             name='sponsor',
