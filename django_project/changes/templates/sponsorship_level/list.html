@@ -1,0 +1,89 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+
+{% block title %}Sponsorship Levels - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Sponsorship levels (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+            {% if unapproved %}Unapproved {% endif %}
+            Sponsors
+            {% if user.is_authenticated %}
+                <div class="pull-right btn-group">
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "sponsorshiplevel-create" project_slug %}'
+                       data-title="Create New Sponsorship Level">
+                        <span class="glyphicon glyphicon-asterisk"></span>
+                        {% if not unapproved %}
+                            <a class="btn btn-default btn-mini tooltip-toggle"
+                               href='{% url "pending-sponsorshiplevel-list" project_slug %}'
+                               data-title="View Pending Sponsorship Level">
+                                <span class="glyphicon glyphicon-time"></span>
+                            </a>
+                        {% endif %}
+                </div>
+            {% endif %}
+        </h1>
+    </div>
+    {% ifequal num_sponsorshiplevels 0 %}
+        {% if unapproved %}
+            <h3>All sponsorship level are approved.</h3>
+        {% else %}
+            <h3>No sponsorship level are defined, but you can <a
+                    class="btn btn-default btn-mini"
+                    href='{% url "sponsorshiplevel-create" project_slug %}'>create one</a>.</h3>
+        {% endif %}
+    {% endifequal %}
+
+    <h3 class="text-muted">Sponsorship level</h3>
+    {% for sponsorshiplevel in sponsorshiplevels %}
+            <script>console.debug("{{ sponsorshiplevel }}");</script>
+        <div class="row" style="margin-top:10px;">
+            <div class="col-lg-1">
+                {% if sponsorshiplevel.logo %}
+                    <a href="{{ MEDIA_URL }}{{ sponsorshiplevel.logo }}">
+                        <img class="img-responsive img-rounded pull-right"
+                             src="{% thumbnail sponsorshiplevel.logo 50x50 crop %}"/>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="col-lg-9">
+                <h5>{{ sponsorshiplevel.project.name }}</h5>
+
+                <h3>{{ sponsorshiplevel.name }}</h3>
+                <h10>({{ sponsorshiplevel.value }} - {{ sponsorshiplevel.currency }})</h10>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    {% if not sponsorshiplevel.approved and user.is_staff %}
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "sponsorshiplevel-approve" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        </a>
+                    {% endif %}
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "sponsorshiplevel-delete" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "sponsorshiplevel-update" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "sponsorshiplevel-detail" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <hr/>
+    {% include "_pagination.html" %}
+{% endblock %}

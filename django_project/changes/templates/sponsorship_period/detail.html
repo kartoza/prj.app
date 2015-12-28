@@ -1,0 +1,43 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Sponsorship Period - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+  <h1>Sponsor Periods (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-lg-10">
+      <h3>{{ sponsorshipperiod.name }}</h3>
+    </div>
+    <div class="col-lg-2">
+      <div class="btn-group">
+        <a class="btn btn-default btn-sm tooltip-toggle"
+           href='{% url "sponsorshiplevel-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
+           data-title="Delete {{ sponsorshipperiod.name }}">
+          <span class="glyphicon glyphicon-minus"></span>
+        </a>
+        <a class="btn btn-default btn-sm tooltip-toggle"
+           href='{% url "sponsorshiplevel-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
+           data-title="Edit {{ sponsorshipperiod.name }}">
+          <span class="glyphicon glyphicon-pencil"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-8">
+          Project : {{ sponsorshipperiod.project }} <br/>
+          Start Date : {{ sponsorshipperiod.start_date }}<br/>
+          End Date : {{ sponsorshipperiod.end_date }}<br/>
+          Sponsorship Level : {{ sponsorshipperiod.sponsorshiplevel }}<br/>
+    </div>
+  </div>
+
+{% endblock %}
