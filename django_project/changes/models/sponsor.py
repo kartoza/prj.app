@@ -66,16 +66,6 @@ class Sponsor(models.Model):
         null=True,
         blank=True)
 
-    sponsor_duration = models.CharField(
-        help_text='Input the sponsor duration (in months).',
-        max_length=20,
-        null=True,
-        blank=True)
-
-    start_date = models.DateField(
-        _("Start date"),
-        default=timezone.now)
-
     agreement = models.FileField(
         help_text=('Attach sponsor agreement'),
         upload_to=os.path.join(MEDIA_ROOT, 'docs'),
@@ -130,16 +120,3 @@ class Sponsor(models.Model):
             'slug': self.slug,
             'project_slug': self.project.slug
         })
-
-    def sponsor_end_date(self):
-        return self.start_date + datetime.timedelta(days=int(
-                self.sponsor_duration) * 365/12)
-
-    def current_sponsor(self):
-        today = timezone.now()
-        start = self.start_date
-        end = self.sponsor_end_date()
-        if start < today < end:
-            return True
-        else:
-            return False
