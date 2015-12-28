@@ -6,6 +6,26 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
+class ApprovedSponsorshipPeriodManager(models.Manager):
+    """Custom sponsor manager that shows only approved records."""
+
+    def get_queryset(self):
+        """Query set generator"""
+        return super(
+            ApprovedSponsorshipPeriodManager, self).get_queryset().filter(
+                approved=True)
+
+
+class UnapprovedSponsorshipPeriodManager(models.Manager):
+    """Custom sponsor manager that shows only unapproved records."""
+
+    def get_queryset(self):
+        """Query set generator"""
+        return super(
+            UnapprovedSponsorshipPeriodManager, self).get_queryset().filter(
+                approved=False)
+
+
 class SponsorshipPeriod(models.Model):
     """A sponsorship period model e.g. gui, backend, web site etc."""
     project = models.ForeignKey('base.Project')

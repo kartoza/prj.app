@@ -88,7 +88,7 @@ class JSONSponsorshipLevelListView(SponsorshipLevel, JSONResponseMixin, ListView
         """
         if not request.is_ajax():
             raise Http404("This is an ajax view, friend.")
-        return super(JSONSponsorListView, self).dispatch(
+        return super(JSONSponsorshipLevelListView, self).dispatch(
             request, *args, **kwargs)
 
     def render_to_response(self, context, **response_kwargs):

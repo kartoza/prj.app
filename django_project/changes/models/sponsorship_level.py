@@ -12,6 +12,27 @@ WORLD_CURRENCY = (
     (3, 'ZAR')
 )
 
+
+class ApprovedSponsorshipLevelManager(models.Manager):
+    """Custom sponsor manager that shows only approved records."""
+
+    def get_queryset(self):
+        """Query set generator"""
+        return super(
+            ApprovedSponsorshipLevelManager, self).get_queryset().filter(
+                approved=True)
+
+
+class UnapprovedSponsorshipLevelManager(models.Manager):
+    """Custom sponsor manager that shows only unapproved records."""
+
+    def get_queryset(self):
+        """Query set generator"""
+        return super(
+            UnapprovedSponsorshipLevelManager, self).get_queryset().filter(
+                approved=False)
+
+
 class SponsorshipLevel(models.Model):
     """A sponsor model e.g. gui, backend, web site etc."""
     project = models.ForeignKey(to='base.Project')
@@ -24,10 +45,11 @@ class SponsorshipLevel(models.Model):
     )
 
     currency = models.IntegerField(
-            choices=WORLD_CURRENCY)
+        help_text='The currency which associated with this sponsorship level.',
+        choices=WORLD_CURRENCY)
 
     name = models.CharField(
-        help_text='Name of sponsorship level.',
+        help_text='Name of sponsorship level. e.g. Gold, Bronze, etc',
         max_length=255,
         null=False,
         blank=False,
