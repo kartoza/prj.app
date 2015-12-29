@@ -4,7 +4,6 @@
 from base.models import Project
 # noinspection PyUnresolvedReferences
 import logging
-logger = logging.getLogger(__name__)
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -21,9 +20,10 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
-
 from ..models import Version, Entry
 from ..forms import EntryForm
+
+logger = logging.getLogger(__name__)
 
 __author__ = 'Tim Sutton <tim@linfinit.com>'
 __revision__ = '$Format:%H$'
@@ -345,10 +345,11 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
     def form_valid(self, form):
         """Check that there is no referential integrity error when saving."""
         try:
-            return super(EntryCreateView, self).form_valid(form)
+            return super(EntryUpdateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
                     'ERROR: Entry by this name already exists!')
+
 
 # noinspection PyAttributeOutsideInit
 class PendingEntryListView(EntryMixin, PaginationMixin, ListView,

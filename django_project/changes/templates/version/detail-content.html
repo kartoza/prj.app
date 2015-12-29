@@ -1,5 +1,7 @@
 {% load custom_markup %}
 {% load thumbnail %}
+{% load embed_video_tags %}
+{% load disqus_tags %}
 
 <div class="row">
   {% if version.project.image_file %}
@@ -125,6 +127,13 @@
             </div>
           {% endif %}
         </div>
+        {% if entry.video %}
+        <div class="row">
+            <div class="col-lg-8 col-md-offset-1">
+                {% video entry.video 'small' %}
+            </div>
+        </div>
+        {% endif %}
         {% if not rst_download %}
           <hr />
         {% endif %}

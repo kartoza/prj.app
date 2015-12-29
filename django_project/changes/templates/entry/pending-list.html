@@ -1,6 +1,8 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
 {% load thumbnail %}
+{% load embed_video_tags %}
+{% load disqus_tags %}
 
 {% block title %}Entries - {{ block.super }}{% endblock %}
 
@@ -75,6 +77,17 @@
         {% endif %}
       </div>
     </div>
+
+    {% if entry.video %}
+    <div class="row">
+        <div class="col-lg-8 col-md-offset-1">
+            {% video entry.video 'small' %}
+        </div>
+    </div>
+    {% endif %}
+
     <hr />
   {% endfor %}
+  <h5 id="comments">Comments</h5>
+    {% disqus_show_comments %}
 {% endblock %}
