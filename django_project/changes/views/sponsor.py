@@ -17,6 +17,8 @@ from django.views.generic import (
     UpdateView,
     RedirectView)
 from django.http import HttpResponseRedirect, Http404
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
@@ -344,6 +346,14 @@ class SponsorCreateView(LoginRequiredMixin, SponsorMixin, CreateView):
         })
         return kwargs
 
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(SponsorCreateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                    'ERROR: Sponsor by this name already exists!')
+
 
 # noinspection PyAttributeOutsideInit
 class SponsorRenewedView(LoginRequiredMixin, SponsorRenewedMixin, CreateView):
@@ -453,6 +463,14 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
         return reverse('sponsor-list', kwargs={
             'project_slug': self.object.project.slug
         })
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(SponsorUpdateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                    'ERROR: Sponsor by this name already exists!')
 
 
 class PendingSponsorListView(StaffuserRequiredMixin, SponsorMixin,

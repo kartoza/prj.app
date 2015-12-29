@@ -12,6 +12,8 @@ from django.views.generic import (
     UpdateView,
     ListView
 )
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from base.models import Project
 from vota.forms import CreateCommitteeForm
 from vota.models import Committee, Ballot
@@ -149,6 +151,14 @@ class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
             'slug': self.object.slug
         })
 
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(CommitteeCreateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                    'ERROR: Committee by this name already exists!')
+
 
 # noinspection PyAttributeOutsideInit
 class CommitteeUpdateView(LoginRequiredMixin, CommitteeMixin, UpdateView):
@@ -181,6 +191,14 @@ class CommitteeUpdateView(LoginRequiredMixin, CommitteeMixin, UpdateView):
             'project_slug': self.object.project.slug,
             'slug': self.object.slug
         })
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(CommitteeUpdateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                    'ERROR: Committee by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit

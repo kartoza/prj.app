@@ -13,6 +13,8 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
 )
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from changes.models import Version
@@ -153,6 +155,14 @@ class ProjectCreateView(LoginRequiredMixin, ProjectMixin, CreateView):
         kwargs.update({'user': self.request.user})
         return kwargs
 
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(ProjectCreateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                    'ERROR: Project by this name already exists!')
+
 
 class ProjectUpdateView(LoginRequiredMixin, ProjectMixin, UpdateView):
     context_object_name = 'project'
@@ -172,6 +182,14 @@ class ProjectUpdateView(LoginRequiredMixin, ProjectMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('project-detail', kwargs={'slug': self.object.slug})
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(ProjectUpdateView, self).form_valid(form)
+        except IntegrityError:
+            raise ValidationError(
+                    'ERROR: Version by this name already exists!')
 
 
 class PendingProjectListView(

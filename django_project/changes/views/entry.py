@@ -1,20 +1,10 @@
 # -*- coding: utf-8 -*-
-"""**View classes for Entry**
-
-"""
-
-__author__ = 'Tim Sutton <tim@linfinit.com>'
-__revision__ = '$Format:%H$'
-__date__ = ''
-__license__ = ''
-__copyright__ = ''
+"""View classes for Entry"""
 
 from base.models import Project
-
 # noinspection PyUnresolvedReferences
 import logging
 logger = logging.getLogger(__name__)
-
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -26,13 +16,20 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
 )
-
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from ..models import Version, Entry
 from ..forms import EntryForm
+
+__author__ = 'Tim Sutton <tim@linfinit.com>'
+__revision__ = '$Format:%H$'
+__date__ = ''
+__license__ = ''
+__copyright__ = ''
 
 
 class EntryMixin(object):
@@ -285,6 +282,14 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
         })
         return kwargs
 
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(EntryCreateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                    'ERROR: Entry by this name already exists!')
+
 
 # noinspection PyAttributeOutsideInit
 class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
@@ -337,6 +342,13 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
             'version_slug': self.object.version.slug}
         )
 
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(EntryCreateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                    'ERROR: Entry by this name already exists!')
 
 # noinspection PyAttributeOutsideInit
 class PendingEntryListView(EntryMixin, PaginationMixin, ListView,
