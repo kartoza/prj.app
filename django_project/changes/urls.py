@@ -115,28 +115,28 @@ urlpatterns = patterns(
               'pending-entry/list/$',
         view=PendingEntryListView.as_view(),
         name='pending-entry-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/entry/'
-              '(?P<slug>[\w-]+)/approve/$',
+    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/'
+              '(?P<category_slug>[\w-]+)/entry/(?P<slug>[\w-]+)/approve/$',
         view=ApproveEntryView.as_view(),
         name='entry-approve'),
     url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w'
               '.-]+)/entry/list/$',
         view=EntryListView.as_view(),
         name='entry-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/entry'
-              '/(?P<slug>[\w-]+)/$',
+    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)'
+              '/(?P<category_slug>[\w-]+)/entry/(?P<slug>[\w-]+)/$',
         view=EntryDetailView.as_view(),
         name='entry-detail'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/entry/'
-              '(?P<slug>[\w-]+)/delete/$',
+    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)'
+              '/(?P<category_slug>[\w-]+)/entry/(?P<slug>[\w-]+)/delete/$',
         view=EntryDeleteView.as_view(),
         name='entry-delete'),
     url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/'
               'create-entry/$',
         view=EntryCreateView.as_view(),
         name='entry-create'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/entry/'
-              '(?P<slug>[\w-]+)/update/$',
+    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)'
+              '/(?P<category_slug>[\w-]+)/entry/(?P<slug>[\w-]+)/update/$',
         view=EntryUpdateView.as_view(),
         name='entry-update'),
 

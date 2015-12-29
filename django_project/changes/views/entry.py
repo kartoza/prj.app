@@ -20,7 +20,7 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
-from ..models import Version, Entry
+from ..models import Version, Entry, Category
 from ..forms import EntryForm
 
 logger = logging.getLogger(__name__)
@@ -307,20 +307,33 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
         :rtype: dict
         """
         context = super(EntryUpdateView, self).get_context_data(**kwargs)
-        context['entries'] = Entry.objects.filter(version=self.version)
+        context['entries'] = Entry.objects.filter(
+                version=self.version)
         return context
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
+
+        .. note:: There is a unique_together constraint on entries so the
+            only way to uniquely retrieve an entry is the permutation of its
+            project, version, category and slug.
 
         :returns keyword argument from the form
         :rtype: dict
         """
         kwargs = super(EntryUpdateView, self).get_form_kwargs()
         self.version_slug = self.kwargs.get('version_slug', None)
-        self.version = Version.objects.get(slug=self.version_slug)
         self.project_slug = self.kwargs.get('project_slug', None)
+        self.category_slug = self.kwargs.get('category_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
+        self.category = Category.objects.get(
+            project=self.project,
+            slug=self.category_slug)
+
+        self.version = Version.objects.get(
+                slug=self.version_slug,
+                category=self.category
+                project=self.project)
         kwargs.update({
             'user': self.request.user,
             'version': self.version,
