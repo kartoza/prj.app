@@ -87,7 +87,7 @@ class SponsorshipLevel(models.Model):
             ('project', 'slug')
         )
         app_label = 'changes'
-        ordering = ['name']
+        ordering = ['-value']
 
     def save(self, *args, **kwargs):
         if not self.pk:
