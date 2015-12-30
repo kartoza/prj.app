@@ -227,10 +227,10 @@ class SponsorshipPeriodForm(forms.ModelForm):
     class Meta:
         model = SponsorshipPeriod
         fields = (
-            'start_date',
-            'end_date',
             'sponsor',
-            'sponsorshiplevel'
+            'sponsorshiplevel',
+            'start_date',
+            'end_date'
         )
 
     def __init__(self, *args, **kwargs):
@@ -241,10 +241,10 @@ class SponsorshipPeriodForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('start_date', css_class="form-control"),
-                Field('end_date', css_class="form-control"),
                 Field('sponsor', css_class="form-control"),
                 Field('sponsorshiplevel', css_class="form-control"),
+                Field('start_date', css_class="form-control"),
+                Field('end_date', css_class="form-control"),
                 css_id='project-form')
         )
         self.helper.layout = layout
