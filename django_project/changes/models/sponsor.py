@@ -87,10 +87,6 @@ class Sponsor(models.Model):
     author = models.ForeignKey(User)
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')
-    sponsorshipperiod = models.ForeignKey(
-            'SponsorshipPeriod',
-            help_text='The period of your sponsorship',
-    )
     objects = models.Manager()
     approved_objects = ApprovedSponsorManager()
     unapproved_objects = UnapprovedSponsorManager()
@@ -114,7 +110,7 @@ class Sponsor(models.Model):
         super(Sponsor, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'%s : %s' % (self.project.name, self.name)
+        return u'%s' % (self.name)
 
     def get_absolute_url(self):
         return reverse('sponsor-detail', kwargs={

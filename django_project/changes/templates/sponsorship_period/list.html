@@ -43,18 +43,23 @@
     {% endifequal %}
 
     {% for sponsorshipperiod in sponsorshipperiods %}
-            <script>console.debug("{{ sponsorshipperiod }}");</script>
         <div class="row" style="margin-top:10px;">
             <div class="col-lg-1">
-                {% if sponsorshipperiod.sponsorshiplevel.logo %}
-                    <a href="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsorshiplevel.logo }}">
+                {% if sponsorshipperiod.sponsor.logo %}
+                    <a href="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsor.logo }}">
                         <img class="img-responsive img-rounded pull-right"
-                             src="{% thumbnail sponsorshipperiod.sponsorshiplevel.logo 50x50 crop %}"/>
+                             src="{% thumbnail sponsorshipperiod.sponsor.logo 50x50 crop %}"/>
                     </a>
                 {% endif %}
+            {% if sponsorshipperiod.sponsorshiplevel.logo %}
+                <img class="img-responsive img-rounded"
+                     src="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsorshiplevel.logo }}" width="30" />
+              {%  endif %}
             </div>
             <div class="col-lg-9">
-                <h3>{{ sponsorshipperiod.start_date }} - {{ sponsorshipperiod.end_date }}</h3>
+                <h3>{{ sponsorshipperiod.sponsor }}</h3>
+
+                <h5>{{ sponsorshipperiod.start_date }} - {{ sponsorshipperiod.end_date }}</h5>
 
                 <h5>{{ sponsorshipperiod.sponsorshiplevel }} : {{ sponsorshipperiod.project.name }}</h5>
             </div>

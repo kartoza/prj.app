@@ -21,7 +21,7 @@ from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from ..models import Sponsor, SponsorshipPeriod, Version  # noqa
-from ..forms import SponsorForm, SponsorRenewedForm
+from ..forms import SponsorForm
 
 
 class JSONResponseMixin(object):
@@ -68,12 +68,6 @@ class SponsorMixin(object):
     """Mixin class to provide standard settings for Sponsor."""
     model = Sponsor  # implies -> queryset = Sponsor.objects.all()
     form_class = SponsorForm
-
-
-class SponsorRenewedMixin(object):
-    """Mixin class to provide standard settings for Renewed sponsor."""
-    model = SponsorshipPeriod
-    form_class = SponsorRenewedForm
 
 
 class JSONSponsorListView(SponsorMixin, JSONResponseMixin, ListView):
@@ -346,54 +340,6 @@ class SponsorCreateView(LoginRequiredMixin, SponsorMixin, CreateView):
 
 
 # noinspection PyAttributeOutsideInit
-class SponsorRenewedView(LoginRequiredMixin, SponsorRenewedMixin, CreateView):
-    """Renewed view for Sponsor."""
-    context_object_name = 'sponsor'
-    template_name = 'sponsor/renewed.html'
-
-    def get_success_url(self):
-        """Define the redirect URL
-
-        After successful creation of the object, the User will be redirected
-        to the unapproved Sponsor list page for the object's parent Project
-
-       :returns: URL
-       :rtype: HttpResponse
-       """
-        return reverse('pending-sponsor-list', kwargs={
-            'project_slug': self.object.project.slug
-        })
-
-    def form_valid(self, form):
-        """Save renewed sponsor
-
-        :param form
-        :type form
-
-        :returns HttpResponseRedirect object to success_url
-        :rtype: HttpResponseRedirect
-        """
-        self.object = form.save(commit=False)
-        self.object.save()
-        return HttpResponseRedirect(self.get_success_url())
-
-    def get_form_kwargs(self):
-        """Get keyword arguments from form.
-
-        :returns keyword argument from the form
-        :rtype: dict
-        """
-        kwargs = super(SponsorRenewedView, self).get_form_kwargs()
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.project = Project.objects.get(slug=self.project_slug)
-        kwargs.update({
-            'user': self.request.user,
-            'project': self.project
-        })
-        return kwargs
-
-
-# noinspection PyAttributeOutsideInit
 class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
     """Update view for Sponsor."""
     context_object_name = 'sponsor'
@@ -515,7 +461,7 @@ class ApproveSponsorView(SponsorMixin, StaffuserRequiredMixin, RedirectView):
     """Redirect view for approving Sponsor."""
     permanent = False
     query_string = True
-    pattern_name = 'sponsor-list'
+    pattern_name = 'sponsorshipperiod-list'
 
     def get_redirect_url(self, project_slug, slug):
         """Save Sponsor as approved and redirect

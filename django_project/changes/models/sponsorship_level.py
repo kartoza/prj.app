@@ -35,6 +35,14 @@ class UnapprovedSponsorshipLevelManager(models.Manager):
 
 class SponsorshipLevel(models.Model):
     """A sponsor model e.g. gui, backend, web site etc."""
+
+    name = models.CharField(
+        help_text='Name of sponsorship level. e.g. Gold, Bronze, etc',
+        max_length=255,
+        null=False,
+        blank=False,
+        unique=False)
+
     value = models.IntegerField(
         help_text='Amount of money associated with this sponsorship level.',
         blank=False,
@@ -49,13 +57,6 @@ class SponsorshipLevel(models.Model):
         null=False,
         blank=False,
         unique=False)
-
-    name = models.CharField(
-        help_text='Name of sponsorship level. e.g. Gold, Bronze, etc',
-        max_length=255,
-        null=False,
-        blank=False,
-        unique=False)  # there is a unique together rule in meta class below
 
     logo = models.ImageField(
         help_text=(
@@ -98,7 +99,7 @@ class SponsorshipLevel(models.Model):
         super(SponsorshipLevel, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'%s' % (self.name)
+        return u'%s : %s %s' % (self.name, self.value, self.currency)
 
     def get_absolute_url(self):
         return reverse('sponsorshiplevel-detail', kwargs={

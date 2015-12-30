@@ -45,12 +45,6 @@ class SponsorshipPeriod(models.Model):
         help_text='End date of sponsorship period',
         default=timezone.now)
 
-    sponsorshiplevel = models.ForeignKey(
-            'SponsorshipLevel',
-            help_text='This level take from Sponsorship Level, '
-            'you can add it by using Sponsorship Level menu',
-    )
-
     approved = models.BooleanField(
         help_text=_(
             'Whether this sponsorship period has been approved for use by '
@@ -64,16 +58,23 @@ class SponsorshipPeriod(models.Model):
     objects = models.Manager()
     approved_objects = ApprovedSponsorshipPeriodManager()
     unapproved_objects = UnapprovedSponsorshipPeriodManager()
-
+    sponsor = models.ForeignKey(
+            'Sponsor',
+            help_text='Input the sponsor name',
+    )
+    sponsorshiplevel = models.ForeignKey(
+            'SponsorshipLevel',
+            help_text='This level take from Sponsorship Level, '
+            'you can add it by using Sponsorship Level menu',
+    )
     # noinspection PyClassicStyleClass
     class Meta:
         """Meta options for the sponsor class."""
         unique_together = (
-            ('sponsorshiplevel', 'project'),
             ('project', 'slug')
         )
         app_label = 'changes'
-        ordering = ['sponsorshiplevel']
+        ordering = ['start_date']
 
     def save(self, *args, **kwargs):
 
@@ -91,8 +92,7 @@ class SponsorshipPeriod(models.Model):
     def __unicode__(self):
         return u'%s - %s : %s' % (
             self.start_date,
-            self.end_date,
-            self.sponsorshiplevel
+            self.end_date
         )
 
     def get_absolute_url(self):

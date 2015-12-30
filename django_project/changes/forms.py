@@ -150,9 +150,7 @@ class SponsorForm(forms.ModelForm):
             'contact_person',
             'sponsor_email',
             'agreement',
-            'logo',
-            'sponsorshipperiod'
-
+            'logo'
         )
 
     def __init__(self, *args, **kwargs):
@@ -169,7 +167,6 @@ class SponsorForm(forms.ModelForm):
                 Field('sponsor_email', css_class="form-control"),
                 Field('agreement', css_class="form-control"),
                 Field('logo', css_class="form-control"),
-                Field('sponsorshipperiod', css_class="form-control"),
                 css_id='project-form')
         )
         self.helper.layout = layout
@@ -185,53 +182,15 @@ class SponsorForm(forms.ModelForm):
         instance.save()
         return instance
 
-
-class SponsorRenewedForm(forms.ModelForm):
-
-    # noinspection PyClassicStyleClass
-    class Meta:
-        model = SponsorshipPeriod
-        fields = (
-            'start_date',
-            'end_date',
-            'sponsorshiplevel'
-        )
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
-        self.project = kwargs.pop('project')
-        form_title = 'Renewed Sponsor for %s' % self.project.name
-        self.helper = FormHelper()
-        layout = Layout(
-            Fieldset(
-                form_title,
-                Field('start_date', css_class="form-control"),
-                Field('end_date', css_class="form-control"),
-                Field('sponsorshiplevel', css_class="form-control"),
-                css_id='project-form')
-        )
-        self.helper.layout = layout
-        self.helper.html5_required = False
-        super(SponsorRenewedForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', 'Submit'))
-
-    def save(self, commit=True):
-        instance = super(SponsorRenewedForm, self).save(commit=False)
-        instance.author = self.user
-        instance.project = self.project
-        instance.save()
-        return instance
-
-
 class SponsorshipLevelForm(forms.ModelForm):
 
     # noinspection PyClassicStyleClass
     class Meta:
         model = SponsorshipLevel
         fields = (
+            'name',
             'value',
             'currency',
-            'name',
             'logo'
         )
 
@@ -243,9 +202,9 @@ class SponsorshipLevelForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
+                Field('name', css_class="form-control"),
                 Field('value', css_class="form-control"),
                 Field('currency', css_class="form-control"),
-                Field('name', css_class="form-control"),
                 Field('logo', css_class="form-control"),
                 css_id='project-form')
         )
@@ -270,6 +229,7 @@ class SponsorshipPeriodForm(forms.ModelForm):
         fields = (
             'start_date',
             'end_date',
+            'sponsor',
             'sponsorshiplevel'
         )
 
@@ -283,6 +243,7 @@ class SponsorshipPeriodForm(forms.ModelForm):
                 form_title,
                 Field('start_date', css_class="form-control"),
                 Field('end_date', css_class="form-control"),
+                Field('sponsor', css_class="form-control"),
                 Field('sponsorshiplevel', css_class="form-control"),
                 css_id='project-form')
         )

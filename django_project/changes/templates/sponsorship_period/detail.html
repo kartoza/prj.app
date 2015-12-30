@@ -36,11 +36,15 @@
           Sponsorship Level : {{ sponsorshipperiod.sponsorshiplevel }}<br/>
           Start Date : {{ sponsorshipperiod.start_date }}<br/>
           End Date : {{ sponsorshipperiod.end_date }}<br/>
+        {% if sponsorshipperiod.sponsorshiplevel.logo %}
+        <img class="img-responsive img-rounded"
+             src="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsorshiplevel.logo }}" width="100" />
+      {%  endif %}
     </div>
   <div class="col-lg-4">
-      {% if sponsorshipperiod.sponsorshiplevel.logo %}
+      {% if sponsorshipperiod.sponsor.logo %}
         <img class="img-responsive img-rounded pull-right"
-             src="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsorshiplevel.logo }}" />
+             src="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsor.logo }}" />
       {%  endif %}
     </div>
   </div>
