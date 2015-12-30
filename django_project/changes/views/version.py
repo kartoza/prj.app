@@ -334,7 +334,7 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
             return super(VersionCreateView, self).form_valid(form)
         except IntegrityError:
             raise ValidationError(
-                    'ERROR: Version by this name already exists!')
+                'ERROR: Version by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit
@@ -389,7 +389,7 @@ class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
             return super(VersionUpdateView, self).form_valid(form)
         except IntegrityError:
             raise ValidationError(
-                    'ERROR: Version by this name already exists!')
+                'ERROR: Version by this name already exists!')
 
 
 class PendingVersionListView(
