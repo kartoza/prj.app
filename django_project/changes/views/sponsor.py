@@ -326,10 +326,14 @@ class SponsorCreateView(LoginRequiredMixin, SponsorMixin, CreateView):
 
         :returns HttpResponseRedirect object to success_url
         :rtype: HttpResponseRedirect
-        """
-        self.object = form.save(commit=False)
-        self.object.save()
-        return HttpResponseRedirect(self.get_success_url())
+
+        We check that there is no referential integrity error when saving."""
+        try:
+            super(SponsorCreateView, self).form_valid(form)
+            return HttpResponseRedirect(self.get_success_url())
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Sponsor by this name already exists!')
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
@@ -345,14 +349,6 @@ class SponsorCreateView(LoginRequiredMixin, SponsorMixin, CreateView):
             'project': self.project
         })
         return kwargs
-
-    def form_valid(self, form):
-        """Check that there is no referential integrity error when saving."""
-        try:
-            return super(SponsorCreateView, self).form_valid(form)
-        except IntegrityError:
-            return ValidationError(
-                'ERROR: Sponsor by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit

@@ -332,7 +332,7 @@ class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):
             return HttpResponseRedirect(self.get_success_url())
         except IntegrityError:
             return ValidationError(
-                    'ERROR: Category by this name already exists!')
+                'ERROR: Category by this name already exists!')
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
@@ -415,7 +415,8 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
             return super(CategoryUpdateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
-                    'ERROR: Category by this name already exists!')
+                'ERROR: Category by this name already exists!')
+
 
 class PendingCategoryListView(StaffuserRequiredMixin, CategoryMixin,
                               PaginationMixin, ListView):

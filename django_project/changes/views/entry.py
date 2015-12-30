@@ -260,9 +260,13 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
         :returns HttpResponseRedirect object to success_url
         :rtype: HttpResponseRedirect
         """
-        self.object = form.save(commit=False)
-        self.object.save()
-        return HttpResponseRedirect(self.get_success_url())
+        """Check that there is no referential integrity error when saving."""
+        try:
+            super(EntryCreateView, self).form_valid(form)
+            return HttpResponseRedirect(self.get_success_url())
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Entry by this name already exists!')
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
@@ -281,14 +285,6 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
             'project': self.project
         })
         return kwargs
-
-    def form_valid(self, form):
-        """Check that there is no referential integrity error when saving."""
-        try:
-            return super(EntryCreateView, self).form_valid(form)
-        except IntegrityError:
-            return ValidationError(
-                'ERROR: Entry by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit
