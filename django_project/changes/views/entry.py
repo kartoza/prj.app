@@ -288,7 +288,7 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
             return super(EntryCreateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
-                    'ERROR: Entry by this name already exists!')
+                'ERROR: Entry by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit
@@ -307,8 +307,7 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
         :rtype: dict
         """
         context = super(EntryUpdateView, self).get_context_data(**kwargs)
-        context['entries'] = Entry.objects.filter(
-                version=self.version)
+        context['entries'] = Entry.objects.filter(version=self.version)
         return context
 
     def get_form_kwargs(self):
@@ -326,14 +325,16 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
         self.project_slug = self.kwargs.get('project_slug', None)
         self.category_slug = self.kwargs.get('category_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
+
         self.category = Category.objects.get(
             project=self.project,
             slug=self.category_slug)
 
         self.version = Version.objects.get(
-                slug=self.version_slug,
-                category=self.category
-                project=self.project)
+            slug=self.version_slug,
+            category=self.category,
+            project=self.project)
+
         kwargs.update({
             'user': self.request.user,
             'version': self.version,
@@ -361,7 +362,7 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
             return super(EntryUpdateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
-                    'ERROR: Entry by this name already exists!')
+                'ERROR: Entry by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit

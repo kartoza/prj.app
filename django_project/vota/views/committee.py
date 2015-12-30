@@ -157,7 +157,7 @@ class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
             return super(CommitteeCreateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
-                    'ERROR: Committee by this name already exists!')
+                'ERROR: Committee by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit
@@ -198,7 +198,7 @@ class CommitteeUpdateView(LoginRequiredMixin, CommitteeMixin, UpdateView):
             return super(CommitteeUpdateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
-                    'ERROR: Committee by this name already exists!')
+                'ERROR: Committee by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit

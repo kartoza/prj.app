@@ -319,17 +319,20 @@ class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        """Save new created Category
+        """Check that there is no referential integrity error when saving.
 
-        :param form
-        :type form
+        :param form: form to validate
+        :type form: CategoryForm
 
         :returns HttpResponseRedirect object to success_url
         :rtype: HttpResponseRedirect
         """
-        self.object = form.save(commit=False)
-        self.object.save()
-        return HttpResponseRedirect(self.get_success_url())
+        try:
+            super(CategoryCreateView, self).form_valid(form)
+            return HttpResponseRedirect(self.get_success_url())
+        except IntegrityError:
+            return ValidationError(
+                    'ERROR: Category by this name already exists!')
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
@@ -344,14 +347,6 @@ class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):
             'project': self.project
         })
         return kwargs
-
-    def form_valid(self, form):
-        """Check that there is no referential integrity error when saving."""
-        try:
-            return super(CategoryCreateView, self).form_valid(form)
-        except IntegrityError:
-            return ValidationError(
-                    'ERROR: Category by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit

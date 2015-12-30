@@ -161,7 +161,7 @@ class ProjectCreateView(LoginRequiredMixin, ProjectMixin, CreateView):
             return super(ProjectCreateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
-                    'ERROR: Project by this name already exists!')
+                'ERROR: Project by this name already exists!')
 
 
 class ProjectUpdateView(LoginRequiredMixin, ProjectMixin, UpdateView):
@@ -189,7 +189,7 @@ class ProjectUpdateView(LoginRequiredMixin, ProjectMixin, UpdateView):
             return super(ProjectUpdateView, self).form_valid(form)
         except IntegrityError:
             raise ValidationError(
-                    'ERROR: Version by this name already exists!')
+                'ERROR: Version by this name already exists!')
 
 
 class PendingProjectListView(

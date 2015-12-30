@@ -94,19 +94,19 @@
                 {% if not entry.approved and user.is_staff %}
                   <a class="btn btn-success btn-xs tooltip-toggle"
                      data-title="Approve Entry"
-                     href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug category_slug=entry.category.slug slug=entry.slug %}'>
+                     href='{% url "entry-approve" pk=entry.id %}'>
                     <span class="glyphicon glyphicon-thumbs-up"></span>
                   </a>
                 {% endif %}
                 {% if user.is_authenticated %}
                   <a class="btn btn-default btn-xs tooltip-toggle"
                      data-title="Delete Entry"
-                     href='{% url "entry-delete" project_slug=entry.version.project.slug version_slug=entry.version.slug category_slug=entry.category.slug slug=entry.slug %}'>
+                     href='{% url "entry-delete" pk=entry.id %}'>
                     <span class="glyphicon glyphicon-minus"></span>
                   </a>
                   <a class="btn btn-default btn-xs tooltip-toggle"
                      data-title="Update Entry"
-                     href='{% url "entry-update" project_slug=entry.version.project.slug version_slug=entry.version.slug category_slug=entry.category.slug slug=entry.slug %}'>
+                     href='{% url "entry-update" pk=entry.id %}'>
                     <span class="glyphicon glyphicon-pencil"></span>
                   </a>
                 {% endif %}

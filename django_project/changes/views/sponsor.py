@@ -352,7 +352,7 @@ class SponsorCreateView(LoginRequiredMixin, SponsorMixin, CreateView):
             return super(SponsorCreateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
-                    'ERROR: Sponsor by this name already exists!')
+                'ERROR: Sponsor by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit
@@ -470,7 +470,7 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
             return super(SponsorUpdateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
-                    'ERROR: Sponsor by this name already exists!')
+                'ERROR: Sponsor by this name already exists!')
 
 
 class PendingSponsorListView(StaffuserRequiredMixin, SponsorMixin,

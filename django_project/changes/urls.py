@@ -127,16 +127,14 @@ urlpatterns = patterns(
               '/(?P<category_slug>[\w-]+)/entry/(?P<slug>[\w-]+)/$',
         view=EntryDetailView.as_view(),
         name='entry-detail'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)'
-              '/(?P<category_slug>[\w-]+)/entry/(?P<slug>[\w-]+)/delete/$',
+    url(regex='^/entry/delete/(?P<pk>\d)$',
         view=EntryDeleteView.as_view(),
         name='entry-delete'),
     url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/'
               'create-entry/$',
         view=EntryCreateView.as_view(),
         name='entry-create'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)'
-              '/(?P<category_slug>[\w-]+)/entry/(?P<slug>[\w-]+)/update/$',
+    url(regex='^/entry/update/(?P<pk>\d)$',
         view=EntryUpdateView.as_view(),
         name='entry-update'),
 

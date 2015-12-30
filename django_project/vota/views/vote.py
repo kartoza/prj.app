@@ -47,14 +47,14 @@ class VoteCreateUpdateView(LoginRequiredMixin, CreateView):
         form.instance.ballot = self.the_ballot
         form.instance.user = self.request.user
         form.save()
-        return HttpResponse(json.dumps({'successful': True}),
-                            content_type='application/json')
+        return HttpResponse(json.dumps(
+                {'successful': True}), content_type='application/json')
 
     def form_invalid(self, form):
         errors = form.errors
         error_dict = {'errors': errors}
-        return HttpResponse(json.dumps(error_dict),
-                            content_type='application/json')
+        return HttpResponse(
+                json.dumps(error_dict), content_type='application/json')
 
     def form_valid(self, form):
         """Check that there is no referential integrity error when saving."""
@@ -62,4 +62,4 @@ class VoteCreateUpdateView(LoginRequiredMixin, CreateView):
             return super(VoteCreateUpdateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
-                    'ERROR: Vote by this name already exists!')
+                'ERROR: Vote by this name already exists!')

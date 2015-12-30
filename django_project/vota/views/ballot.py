@@ -172,7 +172,7 @@ class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):
             return super(BallotCreateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
-                    'ERROR: Category by this name already exists!')
+                'ERROR: Category by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit
@@ -240,7 +240,7 @@ class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
             return super(BallotUpdateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
-                    'ERROR: Category by this name already exists!')
+                'ERROR: Category by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit
