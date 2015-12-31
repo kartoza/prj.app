@@ -34,7 +34,9 @@
             <ul class="dropdown-menu">
                 <li><a href="{% url 'category-list' the_project.slug %}">Categories</a></li>
                 <li><a href="{% url 'version-list' the_project.slug %}">Versions</a></li>
+                <li><a href="{% url 'sponsorshiplevel-list' the_project.slug %}">Sponsorship Level</a></li>
                 <li><a href="{% url 'sponsor-list' the_project.slug %}">Sponsors</a></li>
+                <li><a href="{% url 'sponsorshipperiod-list' the_project.slug %}">Sponsorship Period</a></li>
                 <li><a href="{% url 'committee-list' the_project.slug %}">Committees</a></li>
             </ul>
         </li>
@@ -47,7 +49,9 @@
             <ul class="dropdown-menu">
                 <li><a href='{% url "category-create" the_project.slug %}'>Category</a></li>
                 <li><a href='{% url "version-create" the_project.slug %}'>Version</a></li>
+                <li><a href="{% url 'sponsorshiplevel-create' the_project.slug %}">Sponsorship Level</a></li>
                 <li><a href="{% url 'sponsor-create' the_project.slug %}">Sponsors</a></li>
+                <li><a href="{% url 'sponsorshipperiod-create' the_project.slug %}">Sponsorship Period</a></li>
                 <li><a href='{% url "committee-create" the_project.slug %}'>Committee</a></li>
             </ul>
         </li>
