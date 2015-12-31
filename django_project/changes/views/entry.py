@@ -20,7 +20,7 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
-from ..models import Version, Entry, Category
+from ..models import Version, Entry
 from ..forms import EntryForm
 
 logger = logging.getLogger(__name__)
