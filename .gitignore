@@ -108,3 +108,9 @@ django_project/core/settings/secret.py
 # local media
 django_project/media
 
+# OSX Crap
+.DS_Store
+
+# Backups
+*.dmp
+deployment/backups

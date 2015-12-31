@@ -40,7 +40,7 @@ class Entry(models.Model):
         max_length=255,
         null=False,
         blank=False,
-        unique=True)
+        unique=False)  # Unique together rule applies in meta class
 
     description = models.TextField(
         null=True,

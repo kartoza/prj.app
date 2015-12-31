@@ -10,6 +10,8 @@ from braces.views import (
 from django.core.urlresolvers import reverse
 from django.views.generic import (
     DetailView, CreateView, DeleteView, UpdateView, ListView)
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from base.models import Project
 from vota.forms import BallotCreateForm
 from vota.models import Ballot, Committee
@@ -164,6 +166,14 @@ class BallotCreateView(LoginRequiredMixin, BallotMixin, CreateView):
             'slug': self.object.slug
         })
 
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(BallotCreateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Category by this name already exists!')
+
 
 # noinspection PyAttributeOutsideInit
 class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
@@ -223,6 +233,14 @@ class BallotUpdateView(LoginRequiredMixin, BallotMixin, UpdateView):
             'committee_slug': self.object.committee.slug,
             'slug': self.object.slug
         })
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(BallotUpdateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Category by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit

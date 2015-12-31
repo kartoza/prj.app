@@ -3,22 +3,14 @@
 
 """
 
-__author__ = 'Tim Sutton <tim@kartoza.com>'
-__revision__ = '$Format:%H$'
-__date__ = ''
-__license__ = ''
-__copyright__ = ''
-
 # noinspection PyUnresolvedReferences
 # import logging
 from base.models import Project
-
 # LOGGER = logging.getLogger(__name__)
 import re
 import zipfile
 import StringIO
 import pypandoc
-
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -29,13 +21,19 @@ from django.views.generic import (
     DetailView,
     UpdateView,
     RedirectView)
-
 from django.http import HttpResponse
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
-
 from ..models import Version
 from ..forms import VersionForm
+
+__author__ = 'Tim Sutton <tim@kartoza.com>'
+__revision__ = '$Format:%H$'
+__date__ = ''
+__license__ = ''
+__copyright__ = ''
 
 
 class VersionMixin(object):
@@ -330,6 +328,14 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
         })
         return kwargs
 
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(VersionCreateView, self).form_valid(form)
+        except IntegrityError:
+            raise ValidationError(
+                'ERROR: Version by this name already exists!')
+
 
 # noinspection PyAttributeOutsideInit
 class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
@@ -376,6 +382,14 @@ class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
         return reverse('version-list', kwargs={
             'project_slug': self.object.project.slug
         })
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(VersionUpdateView, self).form_valid(form)
+        except IntegrityError:
+            raise ValidationError(
+                'ERROR: Version by this name already exists!')
 
 
 class PendingVersionListView(

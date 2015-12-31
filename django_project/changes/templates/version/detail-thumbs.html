@@ -93,19 +93,19 @@
           <div class="btn-group">
             {% if not entry.approved and user.is_staff %}
               <a class="btn btn-success btn-xs tooltip-toggle"
-                 href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'
+                 href='{% url "entry-approve"  pk=entry.id %}'
                  data-title="Approve {{ entry.title }}">
                 <span class="glyphicon glyphicon-thumbs-up"></span>
               </a>
             {% endif %}
             {% if user.is_authenticated %}
               <a class="btn btn-default btn-xs tooltip-toggle"
-                 href='{% url "entry-delete" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'
+                 href='{% url "entry-delete" pk=entry.id %}'
                  data-title="Delete {{ entry.title }}">
                 <span class="glyphicon glyphicon-minus"></span>
               </a>
               <a class="btn btn-default btn-xs tooltip-toggle"
-                 href='{% url "entry-update" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'
+                 href='{% url "entry-update" pk=entry.id %}'
                  data-title="Update {{ entry.title }}">
                 <span class="glyphicon glyphicon-pencil"></span>
               </a>

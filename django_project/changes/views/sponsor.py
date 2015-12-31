@@ -17,6 +17,8 @@ from django.views.generic import (
     UpdateView,
     RedirectView)
 from django.http import HttpResponseRedirect, Http404
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
@@ -320,10 +322,14 @@ class SponsorCreateView(LoginRequiredMixin, SponsorMixin, CreateView):
 
         :returns HttpResponseRedirect object to success_url
         :rtype: HttpResponseRedirect
-        """
-        self.object = form.save(commit=False)
-        self.object.save()
-        return HttpResponseRedirect(self.get_success_url())
+
+        We check that there is no referential integrity error when saving."""
+        try:
+            super(SponsorCreateView, self).form_valid(form)
+            return HttpResponseRedirect(self.get_success_url())
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Sponsor by this name already exists!')
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
@@ -401,6 +407,14 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
         return reverse('sponsor-list', kwargs={
             'project_slug': self.object.project.slug
         })
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(SponsorUpdateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Sponsor by this name already exists!')
 
 
 class PendingSponsorListView(StaffuserRequiredMixin, SponsorMixin,

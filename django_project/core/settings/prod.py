@@ -9,7 +9,12 @@ from .project import *  # noqa
 # Changes for live site
 # ['*'] for testing but not for production
 
-ALLOWED_HOSTS = ['localhost:9000', 'changelog.linfiniti.com', 'changelog.inasafe.org', 'changelog.qgis.org', 'changelog.kartoza.com']  # noqa
+ALLOWED_HOSTS = [
+    'localhost:9000',
+    'changelog.linfiniti.com',
+    'changelog.inasafe.org',
+    'changelog.qgis.org',
+    'changelog.kartoza.com']
 
 # Pipeline - for production we want to compress resources
 PIPELINE_ENABLED = True

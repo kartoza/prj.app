@@ -20,5 +20,8 @@ Feature: **{{ entry.title }}**
 {% if entry.image_file %}
 ![](http://changelog.kartoza.com/{{ entry.image_file|thumbnail_url:'large-entry' }})
 {% endif %}
+{% if entry.video %}
+![]({% video entry.video 'small' %})
+{% endif %}
 {% endfor %}{# entry loop #}
 {% endfor %}{# row loop #}
