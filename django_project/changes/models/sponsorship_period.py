@@ -68,6 +68,7 @@ class SponsorshipPeriod(models.Model):
             'you can add it by using Sponsorship Level menu',
     )
     # noinspection PyClassicStyleClass
+
     class Meta:
         """Meta options for the sponsor class."""
         unique_together = (

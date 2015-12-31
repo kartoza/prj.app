@@ -22,7 +22,7 @@ from pure_pagination.mixins import PaginationMixin
 
 from ..models import Sponsor, SponsorshipPeriod  # noqa
 from ..forms import SponsorForm
-from changes.views.sponsorship_period import SponsorshipPeriodListView
+from changes.views.sponsorship_period import SponsorshipPeriodListView  # noqa
 
 
 class JSONResponseMixin(object):

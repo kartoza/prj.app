@@ -182,6 +182,7 @@ class SponsorForm(forms.ModelForm):
         instance.save()
         return instance
 
+
 class SponsorshipLevelForm(forms.ModelForm):
 
     # noinspection PyClassicStyleClass
