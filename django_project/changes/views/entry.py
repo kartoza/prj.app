@@ -56,6 +56,8 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
         context = super(EntryListView, self).get_context_data(**kwargs)
         context['num_entries'] = self.get_queryset().count()
         context['unapproved'] = False
+        context['project_slug'] = self.project_slug
+        context['version_slug'] = self.version_slug
         return context
 
     def get_queryset(self):
@@ -66,16 +68,16 @@ class EntryListView(EntryMixin, PaginationMixin, ListView):
         :raises: Http404
         """
         if self.queryset is None:
-            project_slug = self.kwargs.get('project_slug', None)
-            version_slug = self.kwargs.get('version_slug', None)
-            if project_slug and version_slug:
+            self.project_slug = self.kwargs.get('project_slug', None)
+            self.version_slug = self.kwargs.get('version_slug', None)
+            if self.project_slug and self.version_slug:
                 try:
-                    project = Project.objects.get(slug=project_slug)
+                    project = Project.objects.get(slug=self.project_slug)
                 except:
                     raise Http404('Project not found')
                 try:
                     version = Version.objects.get(
-                        slug=version_slug, project=project)
+                        slug=self.version_slug, project=project)
                 except:
                     raise Http404('Version not found')
                 queryset = Entry.objects.filter(version=version)
@@ -150,11 +152,8 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
         :returns: Unaltered request object
         :rtype: HttpResponse
         """
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.project = Project.objects.get(slug=self.project_slug)
-        self.version_slug = self.kwargs.get('version_slug', None)
-        self.version = Version.objects.filter(project=self.project) \
-            .get(slug=self.version_slug)
+        self.entry_id = self.kwargs.get('pk', None)
+        self.entry_id = Entry.objects.get(id=self.entry_id)
         return super(EntryDeleteView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -174,11 +173,8 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
         :returns: Unaltered request object
         :rtype: HttpResponse
         """
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.project = Project.objects.get(slug=self.project_slug)
-        self.version_slug = self.kwargs.get('version_slug', None)
-        self.version = Version.objects.filter(project=self.project) \
-            .get(slug=self.version_slug)
+        self.entry_id = self.kwargs.get('pk', None)
+        self.entry = Entry.objects.get(id=self.entry_id)
         return super(EntryDeleteView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
@@ -198,9 +194,7 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
     def get_queryset(self):
         """Define the queryset for this view
 
-        We need to filter the queryset based on the object's parent Version and
-        Project as defined in the URL to ensure that we return the correct
-        object. If the requesting User is not authenticated, raise Http404.
+        If the requesting User is not authenticated, raise Http404.
         If the requesting User is not staff, only return Entry objects
         which the User has authored.
 
@@ -210,7 +204,9 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
         """
         if not self.request.user.is_authenticated():
             raise Http404
-        qs = Entry.objects.filter(version=self.version)
+        qs = Entry.objects
+        # In future we should further filter to only allow deletion for
+        # staff members when they are owners of the project...
         if self.request.user.is_staff:
             return qs
         else:
@@ -317,22 +313,14 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
         :rtype: dict
         """
         kwargs = super(EntryUpdateView, self).get_form_kwargs()
-        self.version_slug = self.kwargs.get('version_slug', None)
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.category_slug = self.kwargs.get('category_slug', None)
-        self.project = Project.objects.get(slug=self.project_slug)
-
-        self.category = Category.objects.get(
-            project=self.project,
-            slug=self.category_slug)
-
-        self.version = Version.objects.get(
-            slug=self.version_slug,
-            category=self.category,
-            project=self.project)
+        entry_id = int(self.kwargs.get('pk', None))
+        self.entry = Entry.objects.get(id=entry_id)
+        self.version = self.entry.version
+        self.project = self.version.project
 
         kwargs.update({
             'user': self.request.user,
+            'instance': self.entry,
             'version': self.version,
             'project': self.project
         })
@@ -425,26 +413,17 @@ class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
     query_string = True
     pattern_name = 'entry-list'
 
-    def get_redirect_url(self, version_slug, project_slug, slug):
+    def get_redirect_url(self, pk):
         """Save Version as approved and redirect
 
-        :param version_slug: The slug of the parent Version
-        :type version_slug: str
-
-        :param project_slug: The slug of the parent Version's parent Project
-        :type project_slug: str
-
-        :param slug: The slug of the Version
-        :type slug: str
+        :param pk: The primary key of the Entry
+        :type pk: str
 
         :returns: URL
         :rtype: str
         """
-        project = Project.objects.get(slug=project_slug)
-        version = Version.objects.filter(project=project).get(
-            slug=version_slug)
-        entry_qs = Entry.unapproved_objects.filter(version=version)
-        entry = get_object_or_404(entry_qs, slug=slug)
+        entry_qs = Entry.unapproved_objects
+        entry = get_object_or_404(entry_qs, id=pk)
         entry.approved = True
         entry.save()
         # Using Entry.version.project.slug instead of project_slug to ensure

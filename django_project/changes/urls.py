@@ -115,26 +115,24 @@ urlpatterns = patterns(
               'pending-entry/list/$',
         view=PendingEntryListView.as_view(),
         name='pending-entry-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/'
-              '(?P<category_slug>[\w-]+)/entry/(?P<slug>[\w-]+)/approve/$',
+    url(regex='^entry/approve/(?P<pk>\d)$',
         view=ApproveEntryView.as_view(),
         name='entry-approve'),
     url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w'
               '.-]+)/entry/list/$',
         view=EntryListView.as_view(),
         name='entry-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)'
-              '/(?P<category_slug>[\w-]+)/entry/(?P<slug>[\w-]+)/$',
+    url(regex='^entry/(?P<pk>\d)$',
         view=EntryDetailView.as_view(),
         name='entry-detail'),
-    url(regex='^/entry/delete/(?P<pk>\d)$',
+    url(regex='^entry/delete/(?P<pk>\d)$',
         view=EntryDeleteView.as_view(),
         name='entry-delete'),
     url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/'
               'create-entry/$',
         view=EntryCreateView.as_view(),
         name='entry-create'),
-    url(regex='^/entry/update/(?P<pk>\d)$',
+    url(regex='^entry/update/(?P<pk>\d)$',
         view=EntryUpdateView.as_view(),
         name='entry-update'),
 
