@@ -1,0 +1,49 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Sponsorship Level - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+  <h1>Sponsor Levels (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-lg-10">
+      <h3>{{ sponsorshiplevel.name }}</h3>
+    </div>
+    <div class="col-lg-2">
+      <div class="btn-group">
+        <a class="btn btn-default btn-sm tooltip-toggle"
+           href='{% url "sponsorshiplevel-delete" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'
+           data-title="Delete {{ sponsorshiplevel.name }}">
+          <span class="glyphicon glyphicon-minus"></span>
+        </a>
+        <a class="btn btn-default btn-sm tooltip-toggle"
+           href='{% url "sponsorshiplevel-update" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'
+           data-title="Edit {{ sponsorshiplevel.name }}">
+          <span class="glyphicon glyphicon-pencil"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-8">
+          Type : {{ sponsorshiplevel.name }} <br/>
+          Value : {{ sponsorshiplevel.value }}<br/>
+          Currency : {{ sponsorshiplevel.currency }}<br/>
+    </div>
+
+    <div class="col-lg-4">
+      {% if sponsorshiplevel.logo %}
+        <img class="img-responsive img-rounded pull-right"
+             src="{{ MEDIA_URL }}{{ sponsorshiplevel.logo }}" />
+      {%  endif %}
+    </div>
+  </div>
+
+{% endblock %}

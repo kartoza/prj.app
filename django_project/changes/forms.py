@@ -6,7 +6,14 @@ from crispy_forms.layout import (
     Submit,
     Field,
 )
-from models import Category, Version, Entry, Sponsor, SponsorshipPeriod
+from models import (
+    Category,
+    Version,
+    Entry,
+    Sponsor,
+    SponsorshipPeriod,
+    SponsorshipLevel
+)
 
 
 class CategoryForm(forms.ModelForm):
@@ -142,9 +149,6 @@ class SponsorForm(forms.ModelForm):
             'sponsor_url',
             'contact_person',
             'sponsor_email',
-            'start_date',
-            'sponsor_duration',
-            'sponsorshiplevel',
             'agreement',
             'logo'
         )
@@ -161,9 +165,6 @@ class SponsorForm(forms.ModelForm):
                 Field('sponsor_url', css_class="form-control"),
                 Field('contact_person', css_class="form-control"),
                 Field('sponsor_email', css_class="form-control"),
-                Field('start_date', css_class="form-control"),
-                Field('sponsor_duration', css_class="form-control"),
-                Field('sponsorshiplevel', css_class="form-control"),
                 Field('agreement', css_class="form-control"),
                 Field('logo', css_class="form-control"),
                 css_id='project-form')
@@ -182,40 +183,78 @@ class SponsorForm(forms.ModelForm):
         return instance
 
 
-class SponsorRenewedForm(forms.ModelForm):
+class SponsorshipLevelForm(forms.ModelForm):
+
+    # noinspection PyClassicStyleClass
+    class Meta:
+        model = SponsorshipLevel
+        fields = (
+            'name',
+            'value',
+            'currency',
+            'logo'
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.project = kwargs.pop('project')
+        form_title = 'Sponsorship Level Form for %s' % self.project.name
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('name', css_class="form-control"),
+                Field('value', css_class="form-control"),
+                Field('currency', css_class="form-control"),
+                Field('logo', css_class="form-control"),
+                css_id='project-form')
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(SponsorshipLevelForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(SponsorshipLevelForm, self).save(commit=False)
+        instance.author = self.user
+        instance.project = self.project
+        instance.save()
+        return instance
+
+
+class SponsorshipPeriodForm(forms.ModelForm):
 
     # noinspection PyClassicStyleClass
     class Meta:
         model = SponsorshipPeriod
         fields = (
             'sponsor',
+            'sponsorshiplevel',
             'start_date',
-            'end_date',
+            'end_date'
         )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         self.project = kwargs.pop('project')
-        form_title = 'Renewed Sponsor for %s' % self.project.name
+        form_title = 'Sponsorship Period Form for %s' % self.project.name
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
                 form_title,
                 Field('sponsor', css_class="form-control"),
+                Field('sponsorshiplevel', css_class="form-control"),
                 Field('start_date', css_class="form-control"),
                 Field('end_date', css_class="form-control"),
                 css_id='project-form')
         )
         self.helper.layout = layout
         self.helper.html5_required = False
-        super(SponsorRenewedForm, self).__init__(*args, **kwargs)
+        super(SponsorshipPeriodForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
-        if not self.instance.id:
-            self.fields['sponsor'].queryset = Sponsor.objects.filter(
-                project=self.project).order_by('name')
 
     def save(self, commit=True):
-        instance = super(SponsorRenewedForm, self).save(commit=False)
+        instance = super(SponsorshipPeriodForm, self).save(commit=False)
         instance.author = self.user
         instance.project = self.project
         instance.save()
