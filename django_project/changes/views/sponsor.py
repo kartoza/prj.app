@@ -20,8 +20,9 @@ from django.http import HttpResponseRedirect, Http404
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
-from ..models import Sponsor, SponsorshipPeriod, Version  # noqa
+from ..models import Sponsor, SponsorshipPeriod  # noqa
 from ..forms import SponsorForm
+from changes.views.sponsorship_period import SponsorshipPeriodListView
 
 
 class JSONResponseMixin(object):
@@ -134,6 +135,7 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
         :returns: Context data which will be passed to the template.
         :rtype: dict
         """
+
         context = super(SponsorListView, self).get_context_data(**kwargs)
         context['num_sponsors'] = context['sponsors'].count()
         context['unapproved'] = False
@@ -157,7 +159,7 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
             project_slug = self.kwargs.get('project_slug', None)
             if project_slug:
                 project = Project.objects.get(slug=project_slug)
-                queryset = Sponsor.objects.filter(project=project)
+                queryset = SponsorshipPeriod.objects.filter(project=project)
                 return queryset
             else:
                 raise Http404('Sorry! We could not find your Sponsor!')
@@ -175,7 +177,7 @@ class SponsorDetailView(SponsorMixin, DetailView):
         :returns: Queryset which is filtered to only show approved Sponsor.
         :rtype: QuerySet
         """
-        qs = Sponsor.approved_objects.all()
+        qs = SponsorshipPeriod.approved_objects.all()
         return qs
 
     def get_object(self, queryset=None):
@@ -405,7 +407,7 @@ class PendingSponsorListView(StaffuserRequiredMixin, SponsorMixin,
                              PaginationMixin, ListView):  # noqa
     """List view for pending Sponsor."""
     context_object_name = 'sponsors'
-    template_name = 'sponsor/list.html'
+    template_name = 'sponsor/pending-list.html'
     paginate_by = 10
 
     def __init__(self):
