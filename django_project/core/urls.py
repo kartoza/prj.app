@@ -40,11 +40,11 @@ urlpatterns += i18n_patterns(
     url(r'^', include('vota.urls')),
     url(r'^', include('github_issue.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
-    url(r'^password/reset/done/$',
-        auth_views.password_reset_done,
-        {'template_name': 'userena/password_reset_done.html'},
-        name='password_reset_done'),
-    url(r'^accounts/', include('userena.urls')),
+   #  url(r'^password/reset/done/$',
+   #      auth_views.password_reset_done,
+   #      {'template_name': 'userena/password_reset_done.html'},
+   #      name='password_reset_done'),
+   # url(r'^accounts/', include('userena.urls')),
 )
 
 if 'rosetta' in settings.INSTALLED_APPS:

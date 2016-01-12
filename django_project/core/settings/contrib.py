@@ -13,10 +13,10 @@ INSTALLED_APPS += (
     'raven.contrib.django.raven_compat',  # enable Raven plugin
     'crispy_forms',
     'widget_tweaks',  # lets us add some bootstrap css to form elements
-    'accounts',  # userena
-    'guardian',  # for userena
-    'easy_thumbnails',  # also needed for userena
-    'userena',
+    #'accounts',  # userena
+    #'guardian',  # for userena
+    'easy_thumbnails',
+    #'userena',
     'reversion',
     'rosetta',
     'embed_video',
