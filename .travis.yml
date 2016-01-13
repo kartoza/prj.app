@@ -26,7 +26,7 @@ before_script:
 
 script:
   - flake8 --config .flake8 django_project
-  # - coverage run manage.py test
+  - coverage run manage.py test
 
 after_success:
   # - coveralls
