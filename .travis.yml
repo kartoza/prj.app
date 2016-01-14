@@ -26,13 +26,15 @@ before_script:
 
 script:
   - flake8 --config .flake8 django_project
-  - python django_project/manage.py makemigrations
-  - python django_project/manage.py migrate
-  - coverage run django_project/manage.py test
+  - cd django_project
+  - python manage.py makemigrations
+  - python manage.py migrate
+  - python manage.py test
+  - coverage run manage.py test
 
 after_success:
   - coveralls
 
 email:
  - tim@kartoza.com
- - akbargumbira@gmail.com
+ - rischan@kartoza.com
