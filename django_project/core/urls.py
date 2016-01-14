@@ -44,7 +44,7 @@ urlpatterns += i18n_patterns(
    #      auth_views.password_reset_done,
    #      {'template_name': 'userena/password_reset_done.html'},
    #      name='password_reset_done'),
-   # url(r'^accounts/', include('userena.urls')),
+    url(r'^accounts/', include(admin.site.urls)),
 )
 
 if 'rosetta' in settings.INSTALLED_APPS:
