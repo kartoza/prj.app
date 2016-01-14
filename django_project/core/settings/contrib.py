@@ -13,10 +13,7 @@ INSTALLED_APPS += (
     'raven.contrib.django.raven_compat',  # enable Raven plugin
     'crispy_forms',
     'widget_tweaks',  # lets us add some bootstrap css to form elements
-    'accounts',  # userena
-    'guardian',  # for userena
-    'easy_thumbnails',  # also needed for userena
-    'userena',
+    'easy_thumbnails',
     'reversion',
     'rosetta',
     'embed_video',
@@ -32,18 +29,6 @@ STOP_WORDS = (
 )
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-
-# Added for userena
-AUTHENTICATION_BACKENDS = (
-    'userena.backends.UserenaAuthenticationBackend',
-    'guardian.backends.ObjectPermissionBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
-ANONYMOUS_USER_ID = -1
-AUTH_PROFILE_MODULE = 'accounts.Profile'
-LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
-LOGIN_URL = '/accounts/signin/'
-LOGOUT_URL = '/accounts/signout/'
 
 # Easy-thumbnails options
 THUMBNAIL_SUBDIR = 'thumbnails'

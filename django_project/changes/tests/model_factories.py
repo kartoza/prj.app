@@ -12,7 +12,8 @@ class CategoryF(factory.django.DjangoModelFactory):
     """
     Category model factory
     """
-    FACTORY_FOR = Category
+    class Meta:
+        model = Category
 
     name = factory.Sequence(lambda n: u'Test Category %s' % n)
     approved = True
@@ -24,7 +25,8 @@ class EntryF(factory.django.DjangoModelFactory):
     """
     Entry model factory
     """
-    FACTORY_FOR = Entry
+    class Meta:
+        model = Entry
 
     title = factory.Sequence(lambda n: u'This is a great title: %s' % n)
     description = u'This description is really only here for testing'
@@ -40,7 +42,8 @@ class VersionF(factory.django.DjangoModelFactory):
     """
     Version model factory
     """
-    FACTORY_FOR = Version
+    class Meta:
+        model = Version
 
     name = factory.Sequence(lambda n: u'Version 1.0.%s' % n)
     approved = True

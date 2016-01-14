@@ -11,7 +11,8 @@ class BallotF(factory.DjangoModelFactory):
     """
     Ballot model factory
     """
-    FACTORY_FOR = Ballot
+    class Meta:
+        model = Ballot
 
     name = factory.Sequence(lambda n: u'Test Ballot %s' % n)
     summary = u'This summary is excellent.'
@@ -30,7 +31,8 @@ class CommitteeF(factory.DjangoModelFactory):
     """
     Committee model factory
     """
-    FACTORY_FOR = Committee
+    class Meta:
+        model = Committee
 
     name = factory.Sequence(lambda n: u'Test Committee %s' % n)
     description = u'This description is really only here for testing'
@@ -55,7 +57,8 @@ class VoteF(factory.DjangoModelFactory):
     """
     Vote model factory
     """
-    FACTORY_FOR = Vote
+    class Meta:
+        model = Vote
 
     choice = '-'
     user = factory.SubFactory('core.model_factories.UserF')
