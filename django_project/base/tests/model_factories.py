@@ -8,7 +8,6 @@ class ProjectF(factory.django.DjangoModelFactory):
     """
     Project model factory
     """
-    #FACTORY_FOR = Project
     class Meta:
         model = Project
 

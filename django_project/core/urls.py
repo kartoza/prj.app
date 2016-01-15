@@ -2,7 +2,7 @@
 """Project level url handler."""
 from django.conf.urls import patterns, include, url
 from django.conf.urls.i18n import i18n_patterns
-from django.contrib.auth import views as auth_views
+from django.contrib.auth import views as auth_views  # noqa
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
@@ -40,10 +40,9 @@ urlpatterns += i18n_patterns(
     url(r'^', include('vota.urls')),
     url(r'^', include('github_issue.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
-   #  url(r'^password/reset/done/$',
-   #      auth_views.password_reset_done,
-   #      {'template_name': 'userena/password_reset_done.html'},
-   #      name='password_reset_done'),
+    # url(r'^password/reset/done/$', auth_views.password_reset_done,{
+    #     'template_name': 'userena/password_reset_done.html'},
+    #     name='password_reset_done'),
     url(r'^accounts/', include(admin.site.urls)),
 )
 
