@@ -4,6 +4,8 @@ __author__ = 'rischan'
 # -*- coding: utf-8 -*-
 from .test import *  # noqa
 
+STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
