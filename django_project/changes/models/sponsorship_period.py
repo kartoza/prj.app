@@ -2,7 +2,8 @@ __author__ = 'rischan'
 
 import string
 import random
-from datetime import date
+import datetime
+import pytz
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
@@ -10,6 +11,8 @@ from core.settings.contrib import STOP_WORDS
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
+
+utc=pytz.UTC
 
 
 class ApprovedSponsorshipPeriodManager(models.Manager):
@@ -103,8 +106,8 @@ class SponsorshipPeriod(models.Model):
         })
 
     def current_sponsor(self):
-        today = date.today()
-        end = self.end_date
+        today = datetime.datetime.now().replace(tzinfo=utc)
+        end = self.end_date.replace(tzinfo=utc)
         if end < today:
             return False
         else:
