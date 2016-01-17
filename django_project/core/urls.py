@@ -43,7 +43,8 @@ urlpatterns += i18n_patterns(
     # url(r'^password/reset/done/$', auth_views.password_reset_done,{
     #     'template_name': 'userena/password_reset_done.html'},
     #     name='password_reset_done'),
-    url(r'^accounts/', include(admin.site.urls)),
+    url(r'^accounts/login/', 'django.contrib.auth.views.login', name='user-login'),
+    url(r'^accounts/logout/', 'django.contrib.auth.views.logout', name='user-logout'),
 )
 
 if 'rosetta' in settings.INSTALLED_APPS:
