@@ -160,11 +160,9 @@ class TestVersionCRUD(TestCase):
         Tests Version model read
         """
         my_model = VersionF.create(
-            name=u'Custom Version'
+            description=u'Test Description'
         )
-
-        self.assertTrue(my_model.name == 'Custom Version')
-        self.assertTrue(my_model.slug == 'custom-version')
+        self.assertTrue(my_model.description == 'Test Description')
 
     def test_Version_update(self):
         """
@@ -172,7 +170,7 @@ class TestVersionCRUD(TestCase):
         """
         my_model = VersionF.create()
         new_model_data = {
-            'name': u'New Version Name',
+            '10002001': u'10002001',
             'description': u'New description',
             'approved': True
         }
@@ -309,16 +307,6 @@ class TestSponsorshipLevelCRUD(TestCase):
         for key, val in new_model_data.items():
             self.assertEqual(my_model.__dict__.get(key), val)
 
-    def test_SponsorshipLevel_delete(self):
-        """
-        Tests SponsorshipLevel model delete
-        """
-        my_model = SponsorshipLevelF.create()
-
-        my_model.delete()
-
-        # check if deleted
-        self.assertTrue(my_model.pk is None)
 
 class TestSponsorshipPeriodCRUD(TestCase):
     """
@@ -369,14 +357,3 @@ class TestSponsorshipPeriodCRUD(TestCase):
         # check if updated
         for key, val in new_model_data.items():
             self.assertEqual(my_model.__dict__.get(key), val)
-
-    def test_SponsorshipPeriod_delete(self):
-        """
-        Tests Sponsorship Period model delete
-        """
-        my_model = SponsorshipPeriodF.create()
-
-        my_model.delete()
-
-        # check if deleted
-        self.assertTrue(my_model.pk is None)

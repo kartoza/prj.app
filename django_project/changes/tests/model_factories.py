@@ -50,7 +50,7 @@ class VersionF(factory.django.DjangoModelFactory):
     class Meta:
         model = Version
 
-    name = factory.Sequence(lambda n: u'Version 1.0.%s' % n)
+    padded_version = factory.Sequence(lambda n: u'100001100 %s' % n)
     approved = True
     image_file = factory.django.ImageField(color='green')
     author_id = factory.Sequence(lambda n: n)
