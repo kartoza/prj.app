@@ -37,10 +37,10 @@ class EntryF(factory.django.DjangoModelFactory):
     description = u'This description is really only here for testing'
     image_file = factory.django.ImageField(color='blue')
     image_credits = u'The credits go to dodobas'
-    author = factory.SubFactory(UserF)
+    author_id = factory.Sequence(lambda n: n)
     approved = True
-    version = factory.SubFactory('changes.tests.model_factories.VersionF')
-    category = factory.SubFactory('changes.tests.model_factories.CategoryF')
+    version_id = factory.Sequence(lambda n: n)
+    category_id = factory.Sequence(lambda n: n)
 
 
 class VersionF(factory.django.DjangoModelFactory):
@@ -53,7 +53,7 @@ class VersionF(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: u'Version 1.0.%s' % n)
     approved = True
     image_file = factory.django.ImageField(color='green')
-    author = factory.SubFactory(UserF)
+    author_id = factory.Sequence(lambda n: n)
     description = u'This description is really only here for testing'
     project = factory.SubFactory('base.tests.model_factories.ProjectF')
 
