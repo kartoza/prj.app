@@ -29,10 +29,10 @@
     </a>
     <ul class="dropdown-menu">
         {% if user.is_authenticated %}
-            <li><a href='{% url "admin:logout" %}'>Log Out</a></li>
+            <li><a href='{% url "user-logout" %}'>Log Out</a></li>
 
         {% else %}
-            <li><a href='{% url "admin:login" %}'>Log In</a></li>
+            <li><a href='{% url "user-login" %}'>Log In</a></li>
         {% endif %}
     </ul>
 </li>
