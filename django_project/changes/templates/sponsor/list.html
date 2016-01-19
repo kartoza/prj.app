@@ -45,11 +45,11 @@
     {% if sponsors %}<h2 class="text-muted">List of Current Sponsors</h2> {% endif %}
 
     {% for level in levels %}
-        <h3>
+        {% if sponsors %}<h3>
             <hr>
             {{ level.name }}
             <hr>
-        </h3>
+        </h3>{% endif %}
 
         {% for sponsor in sponsors %}
             {% if sponsor.current_sponsor %}
@@ -94,11 +94,7 @@
         <hr/><h2 class="text-muted">List of Past Sponsors</h2> {% endif %}
 
     {% for level in levels %}
-        <h3>
-            <hr>
-            {{ level.name }}
-            <hr>
-        </h3>
+        {% if sponsors %}<h3><hr>{{ level.name }}<hr></h3>{% endif %}
 
         {% for sponsor in sponsors %}
             {% if not sponsor.current_sponsor %}
