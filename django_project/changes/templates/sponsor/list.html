@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block page_title %}
-    <h1>Sponsors (all)</h1>
+    <h1 xmlns="http://www.w3.org/1999/html">Sponsors (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
@@ -45,11 +45,18 @@
     {% if sponsors %}<h2 class="text-muted">List of Current Sponsors</h2> {% endif %}
 
     {% for level in levels %}
-        {% if sponsors %}<h3>
+        {% if sponsors %}
             <hr>
-            {{ level.name }}
-            <hr>
-        </h3>{% endif %}
+            <div>
+
+                {% if level.logo %}
+                    <img class="img-responsive img-rounded pull-left" style="margin-right: 5px"
+                         src="{{ MEDIA_URL }}{{ level.logo }}" width="30"/>
+                {% endif %}
+                <h3>{{ level.name }}</h3>
+            </div>
+            <br/>{% endif %}
+
 
         {% for sponsor in sponsors %}
             {% if sponsor.current_sponsor %}
@@ -62,10 +69,7 @@
                                          src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
                                 </a>
                             {% endif %}
-                            {% if sponsor.sponsorshiplevel.logo %}
-                                <img class="img-responsive img-rounded"
-                                     src="{{ MEDIA_URL }}{{ sponsor.sponsorshiplevel.logo }}" width="30"/>
-                            {% endif %}
+
                         </div>
                         <div class="col-lg-9">
                             <h3>{{ sponsor.sponsor }}</h3>
@@ -94,7 +98,16 @@
         <hr/><h2 class="text-muted">List of Past Sponsors</h2> {% endif %}
 
     {% for level in levels %}
-        {% if sponsors %}<h3><hr>{{ level.name }}<hr></h3>{% endif %}
+        {% if sponsors %}
+            <hr>
+            <div>
+
+                {% if level.logo %}
+                    <img class="img-responsive img-rounded pull-left" style="margin-right: 5px"
+                         src="{{ MEDIA_URL }}{{ level.logo }}" width="30"/>
+                {% endif %}
+                <h3>{{ level.name }}</h3>
+            </div><br/>{% endif %}
 
         {% for sponsor in sponsors %}
             {% if not sponsor.current_sponsor %}
@@ -106,10 +119,6 @@
                                     <img class="img-responsive img-rounded pull-right"
                                          src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
                                 </a>
-                            {% endif %}
-                            {% if sponsor.sponsorshiplevel.logo %}
-                                <img class="img-responsive img-rounded"
-                                     src="{{ MEDIA_URL }}{{ sponsor.sponsorshiplevel.logo }}" width="30"/>
                             {% endif %}
                         </div>
                         <div class="col-lg-9">
