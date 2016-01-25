@@ -26,6 +26,16 @@ class TestCategoryViews(TestCase):
             'is_staff': True
         })
 
+    def tearDown(self):
+        """
+        Teardown after each test.
+
+        :return:
+        """
+        self.my_project.delete()
+        self.my_version.delete()
+        self.my_user.delete()
+
     def test_CategoryListView(self):
         my_client = Client()
         my_response = my_client.get(reverse('category-list', kwargs={
@@ -168,6 +178,17 @@ class TestEntryViews(TestCase):
             'password': 'password',
             'is_staff': True
         })
+
+    def tearDown(self):
+        """
+        Teardown after each test.
+
+        :return:
+        """
+        self.my_project.delete()
+        self.my_version.delete()
+        self.my_category.delete()
+        self.my_user.delete()
 
     def test_EntryListView(self):
         my_client = Client()
