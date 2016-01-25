@@ -23,6 +23,7 @@ from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from ..models import Sponsor, SponsorshipPeriod  # noqa
+from ..models import SponsorshipLevel  # noqa
 from ..forms import SponsorForm
 from changes.views.sponsorship_period import SponsorshipPeriodListView  # noqa
 
@@ -144,7 +145,9 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
+            project = Project.objects.get(slug=project_slug)
             context['the_project'] = Project.objects.get(slug=project_slug)
+            context['levels'] = SponsorshipLevel.objects.filter(project=project)
         return context
 
     def get_queryset(self, queryset=None):
