@@ -4,7 +4,7 @@ core.settings.contrib
 """
 from .base import *  # noqa
 
-# Extra installed apps
+# Extra installed apps - grapelli needs to be added before others
 INSTALLED_APPS = (
     'grappelli',
 ) + INSTALLED_APPS
@@ -20,6 +20,9 @@ INSTALLED_APPS += (
     'django_hashedfilenamestorage',
     # 'user_map',
 )
+
+
+MIGRATION_MODULES = {'accounts': 'core.null_migration'}
 
 GRAPPELLI_ADMIN_TITLE = 'Site administration panel'
 

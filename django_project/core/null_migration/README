@@ -1,0 +1,17 @@
+
+
+
+Synchronizing apps without migrations:
+  Creating tables...
+    Creating table accounts_profile
+    Running deferred SQL...
+    ...
+    ...
+django.db.utils.ProgrammingError: relation "auth_user" does not exist
+
+
+
+
+https://docs.djangoproject.com/en/1.9/ref/settings/#migration-modules
+
+MIGRATION_MODULES = {'accounts': 'core.null_migration'}

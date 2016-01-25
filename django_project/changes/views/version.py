@@ -331,7 +331,8 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
     def form_valid(self, form):
         """Check that there is no referential integrity error when saving."""
         try:
-            return super(VersionCreateView, self).form_valid(form)
+            result = super(VersionCreateView, self).form_valid(form)
+            return result
         except IntegrityError:
             raise ValidationError(
                 'ERROR: Version by this name already exists!')

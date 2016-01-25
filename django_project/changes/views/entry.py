@@ -153,7 +153,7 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
         :rtype: HttpResponse
         """
         self.entry_id = self.kwargs.get('pk', None)
-        self.entry_id = Entry.objects.get(id=self.entry_id)
+        self.entry = Entry.objects.get(id=self.entry_id)
         return super(EntryDeleteView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -255,8 +255,8 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
 
         :returns HttpResponseRedirect object to success_url
         :rtype: HttpResponseRedirect
-        """
-        """Check that there is no referential integrity error when saving."""
+
+        Check that there is no referential integrity error when saving."""
         try:
             super(EntryCreateView, self).form_valid(form)
             return HttpResponseRedirect(self.get_success_url())
