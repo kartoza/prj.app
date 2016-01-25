@@ -33,7 +33,7 @@ class TestCategoryViews(TestCase):
         :return:
         """
         self.my_project.delete()
-        self.my_version.delete()
+        self.my_category.delete()
         self.my_user.delete()
 
     def test_CategoryListView(self):
@@ -434,7 +434,7 @@ class TestVersionViews(TestCase):
         my_client.login(username='timlinux', password='password')
         post_data = {
             'project': self.my_project.id,
-            'name': u'1.0.1',
+            'name': u'1.8.1',
             'description': u'This is a test description',
             'author': self.my_user.id
         }
@@ -546,7 +546,7 @@ class TestVersionViews(TestCase):
         my_client = Client()
         version_to_delete = VersionF.create(
                 project=self.my_project,
-                name='1.1.1')
+                name='8.1.1')
         post_data = {
             'pk': version_to_delete.pk
         }
@@ -566,7 +566,7 @@ class TestVersionViews(TestCase):
         my_client = Client()
         version_to_delete = VersionF.create(
                 project=self.my_project,
-                name='1.0.1')
+                name='2.0.1')
         my_response = my_client.post(reverse('version-delete', kwargs={
             'slug': version_to_delete.slug,
             'project_slug': self.my_version.project.slug
