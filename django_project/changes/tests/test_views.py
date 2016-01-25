@@ -172,7 +172,8 @@ class TestEntryViews(TestCase):
         self.my_entry = EntryF.create(
             category=self.my_category,
             version=self.my_version,
-            title='testentry')
+            title='testentry',
+            approved=True)
         self.my_user = UserF.create(**{
             'username': 'timlinux',
             'password': 'password',
