@@ -240,9 +240,7 @@ class TestEntryViews(TestCase):
         my_client = Client()
         my_client.login(username='timlinux', password='password')
         my_response = my_client.get(reverse('entry-update', kwargs={
-            'project_slug': self.my_entry.version.project.slug,
-            'version_slug': self.my_entry.version.slug,
-            'slug': self.my_entry.slug
+            'pk': self.my_entry.id
         }))
         self.assertEqual(my_response.status_code, 200)
         expected_templates = [
@@ -253,9 +251,7 @@ class TestEntryViews(TestCase):
     def test_EntryUpdateView_no_login(self):
         my_client = Client()
         my_response = my_client.get(reverse('entry-update', kwargs={
-            'project_slug': self.my_entry.version.project.slug,
-            'version_slug': self.my_entry.version.slug,
-            'slug': self.my_entry.slug
+            'pk': self.my_entry.id
         }))
         self.assertEqual(my_response.status_code, 302)
 
@@ -269,9 +265,7 @@ class TestEntryViews(TestCase):
             'author': self.my_user.id
         }
         my_response = my_client.post(reverse('entry-update', kwargs={
-            'project_slug': self.my_entry.version.project.slug,
-            'version_slug': self.my_entry.version.slug,
-            'slug': self.my_entry.slug
+            'pk': self.my_entry.id
         }), post_data)
         self.assertRedirects(
             my_response, reverse('pending-entry-list', kwargs={
@@ -287,18 +281,14 @@ class TestEntryViews(TestCase):
             'category': self.my_category.id
         }
         my_response = my_client.post(reverse('entry-update', kwargs={
-            'project_slug': self.my_entry.version.project.slug,
-            'version_slug': self.my_entry.version.slug,
-            'slug': self.my_entry.slug
+            'pk': self.my_entry.id
         }), post_data)
         self.assertEqual(my_response.status_code, 302)
 
     def test_EntryDetailView(self):
         my_client = Client()
         my_response = my_client.get(reverse('entry-detail', kwargs={
-            'slug': self.my_entry.slug,
-            'project_slug': self.my_project.slug,
-            'version_slug': self.my_version.slug
+            'pk': self.my_entry.id
         }))
         self.assertEqual(my_response.status_code, 200)
         expected_templates = [
@@ -310,9 +300,7 @@ class TestEntryViews(TestCase):
         my_client = Client()
         my_client.login(username='timlinux', password='password')
         my_response = my_client.get(reverse('entry-delete', kwargs={
-            'slug': self.my_entry.slug,
-            'project_slug': self.my_project.slug,
-            'version_slug': self.my_version.slug
+            'pk': self.my_entry.id
         }))
         self.assertEqual(my_response.status_code, 200)
         expected_templates = [
@@ -334,9 +322,7 @@ class TestEntryViews(TestCase):
             version=self.my_version)
         my_client.login(username='timlinux', password='password')
         my_response = my_client.post(reverse('entry-delete', kwargs={
-            'slug': entry_to_delete.slug,
-            'project_slug': entry_to_delete.version.project.slug,
-            'version_slug': self.my_version.slug
+            'pk': entry_to_delete.id
         }), {})
         self.assertRedirects(my_response, reverse('entry-list', kwargs={
             'project_slug': self.my_project.slug,
@@ -352,9 +338,7 @@ class TestEntryViews(TestCase):
             category=self.my_category,
             version=self.my_version)
         my_response = my_client.post(reverse('entry-delete', kwargs={
-            'slug': entry_to_delete.slug,
-            'project_slug': self.my_version.project.slug,
-            'version_slug': self.my_version.slug
+            'pk': entry_to_delete.id
         }))
         self.assertEqual(my_response.status_code, 302)
 
@@ -367,9 +351,13 @@ class TestVersionViews(TestCase):
         Setup before each test
         """
         logging.disable(logging.CRITICAL)
-        self.my_project = ProjectF.create()
-        self.my_version = VersionF.create(project=self.my_project)
-        self.my_category = CategoryF.create(project=self.my_project)
+        self.my_project = ProjectF.create(name='testproject')
+        self.my_version = VersionF.create(
+                project=self.my_project,
+                name='1.0.1')
+        self.my_category = CategoryF.create(
+                project=self.my_project,
+                name='testcategory')
 
         self.my_user = UserF.create(**{
             'username': 'timlinux',
@@ -414,7 +402,7 @@ class TestVersionViews(TestCase):
         my_client.login(username='timlinux', password='password')
         post_data = {
             'project': self.my_project.id,
-            'name': u'New Test Version',
+            'name': u'1.0.1',
             'description': u'This is a test description',
             'author': self.my_user.id
         }
@@ -464,7 +452,7 @@ class TestVersionViews(TestCase):
         my_client.login(username='timlinux', password='password')
         post_data = {
             'project': self.my_project.id,
-            'name': u'New Test Version Updated',
+            'name': u'1.5.1',
             'description': u'This is a test description',
             'author': self.my_user.id
         }
@@ -524,7 +512,9 @@ class TestVersionViews(TestCase):
 
     def test_VersionDelete_with_login(self):
         my_client = Client()
-        version_to_delete = VersionF.create(project=self.my_project)
+        version_to_delete = VersionF.create(
+                project=self.my_project,
+                name='1.1.1')
         post_data = {
             'pk': version_to_delete.pk
         }
@@ -542,7 +532,9 @@ class TestVersionViews(TestCase):
 
     def test_VersionDelete_no_login(self):
         my_client = Client()
-        version_to_delete = VersionF.create(project=self.my_project)
+        version_to_delete = VersionF.create(
+                project=self.my_project,
+                name='1.0.1')
         my_response = my_client.post(reverse('version-delete', kwargs={
             'slug': version_to_delete.slug,
             'project_slug': self.my_version.project.slug
