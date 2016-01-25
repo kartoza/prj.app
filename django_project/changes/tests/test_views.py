@@ -365,6 +365,17 @@ class TestVersionViews(TestCase):
             'is_staff': True
         })
 
+    def tearDown(self):
+        """
+        Teardown after each test.
+
+        :return:
+        """
+        self.my_project.delete()
+        self.my_version.delete()
+        self.my_category.delete()
+        self.my_user.delete()
+
     def test_VersionListView(self):
         my_client = Client()
         my_response = my_client.get(reverse('version-list', kwargs={
