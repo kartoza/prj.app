@@ -151,12 +151,18 @@ class TestEntryViews(TestCase):
         Setup before each test
         """
         logging.disable(logging.CRITICAL)
-        self.my_project = ProjectF.create()
-        self.my_version = VersionF.create(project=self.my_project)
-        self.my_category = CategoryF.create(project=self.my_project)
+        self.my_project = ProjectF.create(
+                name='testproject')
+        self.my_version = VersionF.create(
+                project=self.my_project,
+                name='1.0.1')
+        self.my_category = CategoryF.create(
+                project=self.my_project,
+                name='testcategory')
         self.my_entry = EntryF.create(
             category=self.my_category,
-            version=self.my_version)
+            version=self.my_version,
+            title='testentry')
         self.my_user = UserF.create(**{
             'username': 'timlinux',
             'password': 'password',
@@ -196,7 +202,7 @@ class TestEntryViews(TestCase):
             'project_slug': self.my_project.slug,
             'version_slug': self.my_version.slug
         }))
-        self.assertEqual(my_response.status_code, 302)
+        self.assertEqual(my_response.status_code, 404)
 
     def test_EntryCreate_with_login(self):
         my_client = Client()
@@ -317,11 +323,9 @@ class TestEntryViews(TestCase):
     def test_EntryDeleteView_no_login(self):
         my_client = Client()
         my_response = my_client.get(reverse('entry-delete', kwargs={
-            'slug': self.my_entry.slug,
-            'project_slug': self.my_version.project.slug,
-            'version_slug': self.my_version.slug
+            'pk': self.my_entry.id
         }))
-        self.assertEqual(my_response.status_code, 302)
+        self.assertEqual(my_response.status_code, 404)
 
     def test_EntryDelete_with_login(self):
         my_client = Client()

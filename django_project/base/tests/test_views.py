@@ -47,7 +47,7 @@ class TestViews(TestCase):
     def test_ProjectCreateView_no_login(self):
         my_client = Client()
         my_response = my_client.get(reverse('project-create'))
-        self.assertEqual(my_response.status_code, 302)
+        self.assertEqual(my_response.status_code, 404)
 
     def test_ProjectCreate_with_login(self):
         my_client = Client()
