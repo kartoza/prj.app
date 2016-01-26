@@ -224,7 +224,7 @@ class TestEntryViews(TestCase):
             'project_slug': self.my_project.slug,
             'version_slug': self.my_version.slug
         }))
-        self.assertEqual(my_response.status_code, 404)
+        self.assertEqual(my_response.status_code, 302)
 
     def test_EntryCreate_with_login(self):
         my_client = Client()
@@ -335,7 +335,7 @@ class TestEntryViews(TestCase):
         my_response = my_client.get(reverse('entry-delete', kwargs={
             'pk': self.my_entry.id
         }))
-        self.assertEqual(my_response.status_code, 404)
+        self.assertEqual(my_response.status_code, 302)
 
     def test_EntryDelete_with_login(self):
         my_client = Client()
