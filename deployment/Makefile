@@ -155,6 +155,30 @@ superuser:
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py createsuperuser
 
+dbbash:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Bashing in to production database"
+	@echo "------------------------------------------------------------------"
+	@docker exec -t -i $(PROJECT_ID)-db /bin/bash
+
+dbsnapshot:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Grab a quick snapshot of the database and place in the host filesystem"
+	@echo "------------------------------------------------------------------"
+	@docker exec -t -i $(PROJECT_ID)-db /bin/bash -c "PGPASSWORD=docker pg_dump -Fc -h localhost -U docker -f /tmp/$(PROJECT_ID)-snapshot.dmp gis"
+	@docker cp $(PROJECT_ID)-db:/tmp/$(PROJECT_ID)-snapshot.dmp .
+	@docker exec -t -i $(PROJECT_ID)-db /bin/bash -c "rm /tmp/$(PROJECT_ID)-snapshot.dmp"
+	@ls -lahtr *.dmp 
+
+dbschema:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Print the database schema to stdio"
+	@echo "------------------------------------------------------------------"
+	@docker exec -t -i $(PROJECT_ID)-db /bin/bash -c "PGPASSWORD=docker pg_dump -s -h localhost -U docker gis"
+
 dbshell:
 	@echo
 	@echo "------------------------------------------------------------------"
@@ -261,4 +285,3 @@ build-devweb: db
 	@echo "Building devweb"
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) build devweb
-

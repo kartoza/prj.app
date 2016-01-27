@@ -390,7 +390,7 @@ class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
     """View for approving Entry."""
     permanent = False
     query_string = True
-    pattern_name = 'entry-list'
+    pattern_name = 'pending-entry-list'
 
     def get_redirect_url(self, pk):
         """Save Version as approved and redirect
