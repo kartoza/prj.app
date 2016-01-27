@@ -22,7 +22,7 @@ INSTALLED_APPS += (
 )
 
 
-MIGRATION_MODULES = {'accounts': 'core.null_migration'}
+MIGRATION_MODULES = {'accounts': 'core.migration'}
 
 GRAPPELLI_ADMIN_TITLE = 'Site administration panel'
 

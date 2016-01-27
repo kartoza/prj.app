@@ -110,7 +110,10 @@ kill:
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) kill
 
-rm: dbbackup kill
+rm: dbbackup rm-only
+
+
+rm-only: kill
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Removing production instance!!! "

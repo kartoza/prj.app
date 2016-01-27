@@ -13,7 +13,14 @@ class TestViews(TestCase):
     def setUp(self):
         """
         Setup before each test
+        We force the locale to en otherwise it will use
+        the locale of the host running the tests and we
+        will get unpredictable results / 404s
         """
+
+        self.client = Client()
+        self.client.post(
+                '/set_language/', data={'language': 'en'})
         logging.disable(logging.CRITICAL)
         self.test_project = ProjectF.create()
         self.unapproved_project = ProjectF.create(approved=False)

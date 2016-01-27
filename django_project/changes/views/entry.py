@@ -95,9 +95,6 @@ class EntryDetailView(EntryMixin, DetailView):
     def get_object(self, queryset=None):
         """Get the object for this view.
 
-        Because Entry slugs are unique within a Version, we need to make
-        sure that we fetch the correct Entry from the correct Version
-
         :param queryset
         :type queryset: QuerySet
 
@@ -105,28 +102,10 @@ class EntryDetailView(EntryMixin, DetailView):
         :rtype QuerySet
         :raises: Http404
         """
-        if queryset is None:
-            queryset = self.get_queryset()
-            slug = self.kwargs.get('slug', None)
-            project_slug = self.kwargs.get('project_slug', None)
-            version_slug = self.kwargs.get('version_slug', None)
-            if slug and project_slug and version_slug:
-                try:
-                    project = Project.objects.get(slug=project_slug)
-                except:
-                    raise Http404('Project could not be found')
-                try:
-                    version = Version.objects.get(
-                        slug=version_slug, project=project)
-                except:
-                    raise Http404('Version could not be found')
-                try:
-                    obj = queryset.get(slug=slug, version=version)
-                except:
-                    raise Http404('Change could not be found')
-                return obj
-            else:
-                raise Http404('Sorry! We could not find your entry!')
+        queryset = self.get_queryset()
+        pk = self.kwargs.get('pk', None)
+        obj = queryset.get(id=pk)
+        return obj
 
 
 # noinspection PyAttributeOutsideInit
