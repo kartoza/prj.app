@@ -1,6 +1,8 @@
 projecta
 ================
 
+[![Join the chat at https://gitter.im/kartoza/projecta](https://badges.gitter.im/kartoza/projecta.svg)](https://gitter.im/kartoza/projecta?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/kartoza/projecta.svg?branch=develop)](https://travis-ci.org/kartoza/projecta)
 [![Stories in Ready](https://badge.waffle.io/kartoza/projecta.png?label=ready)](http://waffle.io/kartoza/projecta)
 [![Stories in In Progress](https://badge.waffle.io/kartoza/projecta.png?label=in progress)](http://waffle.io/kartoza/projecta)
