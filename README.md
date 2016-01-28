@@ -15,6 +15,9 @@ yet feature complete.
 The latest source code is available at 
 [https://github.com/kartoza/projecta](https://github.com/kartoza/projecta).
 
+* **Developers:** See our [developer guide](README-dev.md)
+* **For production:** See our [deployment guide](README-docker.md)
+
 
 ## Key features
 
@@ -70,8 +73,6 @@ If you wish to make use of [intercom.io](https://www.intercom.io), include a
 `private.py` file in `core.settings` with your `INTERCOM_APP_ID` as a string.
 The necessary code snippet is already included in `project_base.html`.
 
-
-**Developers:** See our [developer guide](README-dev.md)
 
 ## Participation
 
