@@ -15,7 +15,9 @@ The blue box is there to provide a means to develop on the same environment
 as you deploy and would not be relevant for server side deployments.
 Everything is managed using docker containers, with pycharm
 making ssh connections into the developer container and using the
-python interpreter found therein.
+python interpreter found therein. Newer versions of PyCharm have 'native' docker support
+but after testing we opted to continue to use the ssh method described here. You may want to 
+test when new versions of PyCharm come out in case they have improved the direct docker support.
 
 **Note:** You don't need to use this architecture, you can deploy as a standard
 django app using virtualenv and locally installed postgis, nginx etc.
@@ -28,7 +30,7 @@ This image extends the production one, adding ssh to it. You must
 have built the production one first!
 
 ```
-make dev
+make devweb
 ```
 
 ### Create a remote interpreter in pycharm
@@ -44,7 +46,7 @@ Now use these credentials:
 
 * SSH Credentials (tick)
 * Host: localhost
-* Port: (use the ssh port specified in the fig-dev.yml file)
+* Port: (use the ssh port specified in the docker-compose.yml file)
 * User name: root
 * Auth type: password (and tick 'save password')
 * Password: docker
@@ -72,7 +74,7 @@ Now set these options:
 
 * **Name:** Django Server
 * **Host:** 0.0.0.0
-* **Port:** (use the http port specified in the fig-dev.yml file)
+* **Port:** (use the http port specified in the docker-compose.yml file)
 * **Additional options:** ``--settings=core.settings.dev_docker``
 * **Environment vars:** Leave as default unless you need to add something to the env
 * **Python interpreter:** Ensure it is set you your remote interpreter (should be
@@ -90,6 +92,9 @@ Now you can run the server using the green triangle next to the Django server
 label in the run configurations pull down. Debug will also work and you will be
 able to step through views etc as you work.
 
+I made a general overview screencast describing this process here:
+
+[![YouTube Screencast](http://img.youtube.com/vi/n-wwp17MqhU/0.jpg)](https://www.youtube.com/watch?v=n-wwp17MqhU "YouTube Screencast")
 
 ## Developer FAQ
 
