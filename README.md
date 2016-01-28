@@ -15,8 +15,8 @@ yet feature complete.
 The latest source code is available at 
 [https://github.com/kartoza/projecta](https://github.com/kartoza/projecta).
 
-**Developers:** See our [developer guide](README-dev.md)
-**For production:** See our [deployment guide](README-docker.md)
+* **Developers:** See our [developer guide](README-dev.md)
+* **For production:** See our [deployment guide](README-docker.md)
 
 
 ## Key features
