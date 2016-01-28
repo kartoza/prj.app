@@ -34,16 +34,46 @@ make collectstatic
 #### Using make
 
 Using the make commands is probably simpler - the following make commands are
-provided for production:
+provided for production (you can obtain this list by typing ``make help`. All commands
+should be run from in the ``deployment`` directory.
 
 
-* **run** - builds then runs db and uwsgi services
-* **web** - run django uwsgi instance (will bring up db too if needed)
-* **collectstatic** - collect static in production instance
-* **migrate** - run django migrations in production instance
-* **build** - build production containers
-* **deploy** - run db, web, wait 20 seconds, collect static and do migrations
-* **rm** - completely remove staging from your system (use with caution)
+* **build** - builds all required containers.
+* **build-devweb** - build the development container. See [development notes](README-dev.md).
+* **collectstatic** - run the django collectstatic command.
+* **create-machine** .
+* **db** - build and run the db container.
+* **dbbackup** - make a snapshot of the database, saving it to deployments/backups/YYYY/MM/project-DDMMYYYY.dmp. It also creates a symlink to backups/latest.dmp for the latest backup.
+* **dbbash** - open a bash shell inside the database container.
+* **dblogs** - view the database logs.
+* **dbrestore** - restore deployment/backups/latest.dmp over the active database. Will delete any existing data in your database and replace with the restore, so **use with caution**.
+* **dbschema** - dump the current db schema (without data) to stdio. Useful if you want to compare changes between instances.
+* **dbshell** - get a psql prompt into the db container. 
+* **dbsnapshot** - as above but makes the backup as deployment/snapshot.smp - replacing any pre-existing snapshot.
+* **dbsync** - use this from a development or offsite machine. It will rsync all database backups from deployment/backups to your offsite machine.
+* **default** .
+* **deploy** .
+* **devweb** - create an ssh container derived from uwsgi that can be used as a remote interpreter for PyCharm. See [development notes](README-dev.md).
+* **enable-machine** - 
+* **kill** - kills all running containers. Does not remove them.
+* **logs** - view the logs of all running containers. Note that you can also view individual logs in the deployment/logs directory.
+* **mailerrorlogs** - View the error logs from the mail server.
+* **maillogs** - view the transaction logs from the mail server.
+* **mediasync** - use this from a development or offsite machine. It will rsync all media backups from deployment/media to your offsite machine.
+* **migrate** - run any pending migrations. 
+* **nginx** - builds and runs the nginx container.
+* **nginxlogs** - view just the nginx activity logs.
+* **permissions** - Update the permissions of shared volumes. Note this will destroy any existing permissions you have in place.
+* **reload** - reload the uwsgi process. Useful when you need django to pick up any changes you may have deployed.
+* **rm** - remove all containers.
+* **rm-only** - remove any containers without trying to kill them first. 
+* **run** - builds and runs the complete orchestrated set of containers.
+* **sentry** - **currently not working I think.** The idea is to spin up a sentry instance together with your app for fault reporting.
+* **shell** - open a bash shell in the uwsgi (where django runs) container.
+* **superuser** - create a django superuser account.
+* **update-migrations** - freshen all migration definitions to match the current code base.
+* **web** - same as **run** - runs the production site.
+
 
 e.g. ``make web``
 
