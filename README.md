@@ -17,7 +17,7 @@ The latest source code is available at
 
 
 ## Key features
-g
+
 * Supports multiple projects
 * Each project can have multiple software releases
 * Each Release can have multiple entries explaining features related to it
@@ -70,6 +70,8 @@ If you wish to make use of [intercom.io](https://www.intercom.io), include a
 `private.py` file in `core.settings` with your `INTERCOM_APP_ID` as a string.
 The necessary code snippet is already included in `project_base.html`.
 
+
+**Developers:** See our [developer guide](README-dev.md)
 
 ## Participation
 
