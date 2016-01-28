@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 WSGI config for projecta project.
 
@@ -14,6 +15,11 @@ framework.
 
 """
 import os
+
+# We put this here so that low level uwsgi errors also get reported
+# noinspection PyUnresolvedReferences
+# pylint:
+from raven.contrib.django.raven_compat.middleware.wsgi import Sentry  # noqa
 from django.core.wsgi import get_wsgi_application
 # We defer to a DJANGO_SETTINGS_MODULE already in the environment. This breaks
 # if running multiple sites in the same mod_wsgi process. To fix this, use
@@ -26,8 +32,11 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 # setting points here.
 
 # Customised by Tim so we can access env vars set in apache
-import django.core.handlers.wsgi
+
+import django.core.handlers.wsgi  # noqa
+
 _application = get_wsgi_application()
+
 
 def application(environ, start_response):
     """Factory for the application instance.

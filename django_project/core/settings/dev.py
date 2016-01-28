@@ -1,12 +1,10 @@
-from .project import *
+from .project import *  # noqa
 
 # Set debug to True for development
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 LOGGING_OUTPUT_ENABLED = DEBUG
 LOGGING_LOG_SQL = DEBUG
-
-CRISPY_FAIL_SILENTLY = not DEBUG
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -16,6 +14,9 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
+
+# Make sure static files storage is set to default
+STATIC_FILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 LOGGING = {
     'version': 1,
@@ -39,26 +40,13 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
             'level': 'DEBUG',
-        },
-        # 'logfile': {
-        #     'class': 'logging.FileHandler',
-        #     'filename': '/tmp/app-dev.log',
-        #     'formatter': 'simple',
-        #     'level': 'DEBUG',
-        # }
+        }
     },
     'loggers': {
         'django.db.backends': {
             'handlers': ['console'],
             'level': 'INFO',  # switch to DEBUG to show actual SQL
-        },
-        # example app logger
-        # 'app.module': {
-        #     'level': 'INFO',
-        #     'handlers': ['logfile'],
-        #     # propagate is True by default, which proppagates logs upstream
-        #     'propagate': False
-        # }
+        }
     },
     # root logger
     # non handled logs will propagate to the root logger
@@ -71,7 +59,7 @@ LOGGING = {
 # set up devserver if installed
 try:
     # noinspection PyUnresolvedReferences
-    import devserver
+    import devserver  # noqa
     INSTALLED_APPS += (
         'devserver',
     )

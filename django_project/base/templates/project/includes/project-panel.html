@@ -7,15 +7,15 @@
         <a href="{% url 'project-detail' project.slug %}">
           {{ project.name }}
         </a>
-        {% if not project.approved and user.is_staff %}
-          <a class="btn btn-success btn-xs pull-right tooltip-toggle"
-             href='{% url "project-approve" project.slug %}'
-             data-placement="top" data-title="Approve {{ project.name }}">
-            <span class="glyphicon glyphicon-thumbs-up"></span>
-          </a>
-        {% endif %}
         {% if user.is_authenticated %}
           <div class="btn-group pull-right" style="margin-top: -3px;">
+        {% if not project.approved and user.is_staff %}
+            <a class="btn btn-default btn-xs tooltip-toggle"
+               href='{% url "project-approve" project.slug %}'
+               data-placement="top" data-title="Approve {{ project.name }}">
+               <span class="glyphicon glyphicon-thumbs-up"></span>
+            </a>
+        {% endif %}
             <a href="{% url 'project-delete' project.slug %}"
                class="btn btn-default btn-xs tooltip-toggle"
                data-placement="top" data-title="Delete {{ project.name }}">
@@ -44,7 +44,7 @@
         <hr/>
       {% endif %}
       <h4 class="text-muted">
-        Versions
+        Latest Versions
         <a href="{% url 'version-create' project_slug=project.slug %}"
            class="btn btn-default pull-right btn-sm tooltip-toggle"
            data-title="Create New Version">
@@ -53,7 +53,7 @@
       </h4>
       <hr/>
       {% if project.versions %}
-        {% for version in project.versions|slice:":2" %}
+        {% for version in project.latest_versions %}
           <p>
             <strong><span class="text-muted">Version:</span> {{ version.name }}</strong>
             <span class="btn-group pull-right">
@@ -70,6 +70,12 @@
             </span>
           </p>
         {% endfor %}
+          {% if project.more_than_threshold %}
+              <strong><span class="text-muted">Latest {{ project.threshold }} of {{ project.versions.count }} versionss</span></strong>
+          {% endif %}
+          {% if not project.more_than_threshold %}
+              <strong><span class="text-muted">Latest {{ project.versions.count }} of {{ project.versions.count }} versions</span></strong>
+          {% endif %}
       {% endif %}
     </div>
   </div>

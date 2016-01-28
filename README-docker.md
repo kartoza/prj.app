@@ -9,48 +9,71 @@ site has been deployed under docker. Three deployment modes are supported:
 * **production**: no debug etc is enabled, has its own discrete database. Configure
   your production environment in core.settings.prod_docker - this
   DJANGO_SETTINGS_MODULE is used when running in production mode.
-* **staging**: Configure your staging environment in core.settings.staging_docker -
-  this DJANGO_SETTINGS_MODULE is used when running in production mode.
 * **development**: Configure your development environment in core.settings.dev_docker -
   this DJANGO_SETTINGS_MODULE is used when running in production mode. Please see
   README-dev.md for more information on setting up a developer environment.
 
-**Note:** We really recommend that you use docker 1.3 or great so that you
+**Note:** We really recommend that you use docker 1.8 or greatr so that you
   can take advantage of the exec command as well as other newer features.
 
 ## Build your docker images and run them
 
 ### Production
 
-You can simply run the provided script and it will build and deploy the docker
+You can simply run the provided Makefile commands and it will build and deploy the docker
 images for you in **production mode**.
 
 ```
-fig build
-fig up -d web
-fig run web python manage.py migrate
-fig run web python manage.py collectstatic --noinput
-```
-
-Alternatively you can use make commands if your OS has Gnu Make installed:
-
-```
-make deploy
+cd deployment
+make build
+make run
+make migrate migrate
+make collectstatic
 ```
 
 #### Using make
 
 Using the make commands is probably simpler - the following make commands are
-provided for production:
+provided for production (you can obtain this list by typing ``make help`. All commands
+should be run from in the ``deployment`` directory.
 
 
-* **run** - builds then runs db and uwsgi services
-* **web** - run django uwsgi instance (will bring up db too if needed)
-* **collectstatic** - collect static in production instance
-* **migrate** - run django migrations in production instance
-* **build** - build production containers
-* **deploy** - run db, web, wait 20 seconds, collect static and do migrations
-* **rm** - completely remove staging from your system (use with caution)
+* **build** - builds all required containers.
+* **build-devweb** - build the development container. See [development notes](README-dev.md).
+* **collectstatic** - run the django collectstatic command.
+* **create-machine** .
+* **db** - build and run the db container.
+* **dbbackup** - make a snapshot of the database, saving it to deployments/backups/YYYY/MM/project-DDMMYYYY.dmp. It also creates a symlink to backups/latest.dmp for the latest backup.
+* **dbbash** - open a bash shell inside the database container.
+* **dblogs** - view the database logs.
+* **dbrestore** - restore deployment/backups/latest.dmp over the active database. Will delete any existing data in your database and replace with the restore, so **use with caution**.
+* **dbschema** - dump the current db schema (without data) to stdio. Useful if you want to compare changes between instances.
+* **dbshell** - get a psql prompt into the db container. 
+* **dbsnapshot** - as above but makes the backup as deployment/snapshot.smp - replacing any pre-existing snapshot.
+* **dbsync** - use this from a development or offsite machine. It will rsync all database backups from deployment/backups to your offsite machine.
+* **default** .
+* **deploy** .
+* **devweb** - create an ssh container derived from uwsgi that can be used as a remote interpreter for PyCharm. See [development notes](README-dev.md).
+* **enable-machine** - 
+* **kill** - kills all running containers. Does not remove them.
+* **logs** - view the logs of all running containers. Note that you can also view individual logs in the deployment/logs directory.
+* **mailerrorlogs** - View the error logs from the mail server.
+* **maillogs** - view the transaction logs from the mail server.
+* **mediasync** - use this from a development or offsite machine. It will rsync all media backups from deployment/media to your offsite machine.
+* **migrate** - run any pending migrations. 
+* **nginx** - builds and runs the nginx container.
+* **nginxlogs** - view just the nginx activity logs.
+* **permissions** - Update the permissions of shared volumes. Note this will destroy any existing permissions you have in place.
+* **reload** - reload the uwsgi process. Useful when you need django to pick up any changes you may have deployed.
+* **rm** - remove all containers.
+* **rm-only** - remove any containers without trying to kill them first. 
+* **run** - builds and runs the complete orchestrated set of containers.
+* **sentry** - **currently not working I think.** The idea is to spin up a sentry instance together with your app for fault reporting.
+* **shell** - open a bash shell in the uwsgi (where django runs) container.
+* **superuser** - create a django superuser account.
+* **update-migrations** - freshen all migration definitions to match the current code base.
+* **web** - same as **run** - runs the production site.
+
 
 e.g. ``make web``
 
@@ -68,58 +91,13 @@ and not host volumes for db and django. All commands should be non-destructive
 to existing data - though **smart people make backups before changing things**.
 
 
-### Staging
-
-**Please use a separate git checkout for your staging database!**
-
-#### Using fig
-
-To create a staging site (or run any of the provided management scripts in
-staging mode), its the same procedure except you need to use the
-``fig-staging.yml`` environment variable e.g.::
-
-``
-fig -f fig-staging.yml build
-fig -f fig-staging.yml up -d stagingweb
-fig -f fig-staging.yml run stagingcollectstatic
-fig -f fig-staging.yml run stagingmigrate
-``
-
-#### Using make
-
-Using the make commands is probably simpler - the following make commands are
-provided for staging:
-
-
-* **staging** - setup and run the staging web service
-* **stagingcollectstatic**  - collect static in staging instance
-* **stagingmigrate** - run django migrations in staging instance
-* **stagingweb** - run django uwsgi instance (will bring up db too if needed)
-* **stagingbuild** - build staging containers
-* **stagingdeploy** - run db, web, wait 20 seconds, collect static and do migrations
-* **stagingrm** - completely remove staging from your system (use with caution)
-
-
-**Note:** stagingrm should not destroy any data since it only removes containers
-and not host volumes for db and django.
-
-#### Arbitrary commands
-
-Running arbitrary management commands is easy (assuming you have docker >= 1.3)
-e.g.:
-
-```
-docker exec foo_stagingweb_1 /usr/local/bin/python /home/web/django_project/manage.py --help
-```
-
 ## Setup nginx reverse proxy
 
 You should create a new nginx virtual host - please see
-``*-nginx.conf`` in the root directory of the source for an example. There is
-one provided for production and one for staging.
+``*-nginx.conf`` in the deployment directory of the source for an example.
 
-Simply add the example file to your ``/etc/nginx/sites-enabled/`` directory
-and then modify the contents to match your local filesystem paths. Then use
+Simply add the example file (symlinking is best) to your ``/etc/nginx/sites-enabled/`` directory
+and then modify the contents to match your domain. Then use
 
 ```
 sudo nginx -t
@@ -132,14 +110,8 @@ e.g.
 sudo /etc/init.d/nginx restart
 ```
 
-
-### Managing containers
-
-Please refer to the general [fig documentation](http://www.fig.sh/cli.hyml)
-for further notes on how to manage the infrastructure using fig.
-
 # Configuration options
 
 You can configure the base port used and various other options like the
-image organisation namespace and postgis user/pass by editing the ``fig*.yml``
+image organisation namespace and postgis user/pass by editing the ``docker-compose.yml``
 files.

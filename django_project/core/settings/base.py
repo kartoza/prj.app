@@ -7,11 +7,9 @@ core.settings.base
 from .utils import absolute_path
 
 ADMINS = (
-    ('Tim Sutton', 'tim@linfiniti.com'),
+    ('Tim Sutton', 'tim@kartoza.com'),
+    ('Rischan Mafrur', 'rischan@kartoza.com')
 )
-SERVER_EMAIL = 'tim@linfiniti.com'
-EMAIL_HOST = 'localhost'
-DEFAULT_FROM_EMAIL = 'tim@linfiniti.com'
 
 MANAGERS = ADMINS
 
@@ -19,7 +17,7 @@ MANAGERS = ADMINS
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'Africa/Johannesburg'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -40,20 +38,20 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
-MEDIA_ROOT = absolute_path('media')
+MEDIA_ROOT = '/home/web/media'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
-#MEDIA_URL = '/media/'
-#setting full MEDIA_URL to be able to use it for the feeds
+# MEDIA_URL = '/media/'
+# setting full MEDIA_URL to be able to use it for the feeds
 MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = absolute_path('static')
+STATIC_ROOT = '/home/web/static'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -77,7 +75,7 @@ STATICFILES_FINDERS = (
 
 # import SECRET_KEY into current namespace
 # noinspection PyUnresolvedReferences
-from .secret import SECRET_KEY
+from .secret import SECRET_KEY  # noqa
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -89,7 +87,9 @@ TEMPLATE_LOADERS = (
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.request',
-    'core.context_processors.add_intercom_app_id'
+    'django.core.context_processors.media',
+    'core.context_processors.add_intercom_app_id',
+    'django.template.context_processors.i18n'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -100,7 +100,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.custom_middleware.NavContextMiddleware'
 )
 
 ROOT_URLCONF = 'core.urls'
@@ -119,8 +118,8 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',

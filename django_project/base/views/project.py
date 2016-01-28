@@ -13,12 +13,15 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
 )
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from changes.models import Version
 from ..models import Project
 from ..forms import ProjectForm
 from vota.models import Committee, Ballot
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -32,10 +35,11 @@ class ProjectBallotListView(ProjectMixin, PaginationMixin, DetailView):
     """List all ballots within in a project"""
     context_object_name = 'project'
     template_name = 'project/ballot-list.html'
-    paginate_by = 10
+    paginate_by = 1000
 
     def get_context_data(self, **kwargs):
-        context = super(ProjectBallotListView, self).get_context_data(**kwargs)
+        context = super(
+            ProjectBallotListView, self).get_context_data(**kwargs)
         committees = Committee.objects.filter(project=self.object)
         ballots = []
         for committee in committees:
@@ -44,8 +48,8 @@ class ProjectBallotListView(ProjectMixin, PaginationMixin, DetailView):
                     committee_ballots = Ballot.objects.filter(
                         committee=committee)
             else:
-                committee_ballots = Ballot.objects.filter(committee=committee)\
-                    .filter(private=False)
+                committee_ballots = Ballot.objects.filter(
+                    committee=committee).filter(private=False)
             if committee_ballots:
                 ballots.append(committee_ballots)
         context['ballots_list'] = ballots
@@ -63,7 +67,7 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
     """List all approved projects"""
     context_object_name = 'projects'
     template_name = 'project/list.html'
-    paginate_by = 10
+    paginate_by = 1000
 
     def get_context_data(self, **kwargs):
         """Add to the view's context data
@@ -77,6 +81,8 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
         """
         context = super(ProjectListView, self).get_context_data(**kwargs)
         context['num_projects'] = self.get_queryset().count()
+        context[
+            'PROJECT_VERSION_LIST_SIZE'] = settings.PROJECT_VERSION_LIST_SIZE
         return context
 
     def get_queryset(self):
@@ -104,7 +110,9 @@ class ProjectDetailView(ProjectMixin, DetailView):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
         context['projects'] = self.get_queryset()
         context['committees'] = Committee.objects.filter(project=self.object)
-        context['versions'] = Version.objects.filter(project=self.object)
+        page_size = settings.PROJECT_VERSION_LIST_SIZE
+        context['versions'] = Version.objects.filter(
+            project=self.object).order_by('-padded_version')[:page_size]
         return context
 
     def get_queryset(self):
@@ -132,7 +140,7 @@ class ProjectDeleteView(LoginRequiredMixin, ProjectMixin, DeleteView):
         if self.request.user.is_staff:
             return qs
         else:
-            return qs.filter(creator=self.request.user)
+            return qs.filter(owner=self.request.user)
 
 
 class ProjectCreateView(LoginRequiredMixin, ProjectMixin, CreateView):
@@ -146,6 +154,14 @@ class ProjectCreateView(LoginRequiredMixin, ProjectMixin, CreateView):
         kwargs = super(ProjectCreateView, self).get_form_kwargs()
         kwargs.update({'user': self.request.user})
         return kwargs
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(ProjectCreateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Project by this name already exists!')
 
 
 class ProjectUpdateView(LoginRequiredMixin, ProjectMixin, UpdateView):
@@ -162,10 +178,18 @@ class ProjectUpdateView(LoginRequiredMixin, ProjectMixin, UpdateView):
         if self.request.user.is_staff:
             return qs
         else:
-            return qs.filter(creator=self.request.user)
+            return qs.filter(owner=self.request.user)
 
     def get_success_url(self):
         return reverse('project-detail', kwargs={'slug': self.object.slug})
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(ProjectUpdateView, self).form_valid(form)
+        except IntegrityError:
+            raise ValidationError(
+                'ERROR: Version by this name already exists!')
 
 
 class PendingProjectListView(
@@ -173,17 +197,18 @@ class PendingProjectListView(
     """List all users unapproved projects - staff users see all unapproved."""
     context_object_name = 'projects'
     template_name = 'project/list.html'
-    paginate_by = 10
+    paginate_by = settings.PROJECT_VERSION_LIST_SIZE
 
     def get_queryset(self):
         projects_qs = Project.unapproved_objects.all()
         if self.request.user.is_staff:
             return projects_qs
         else:
-            return projects_qs.filter(creator=self.request.user)
+            return projects_qs.filter(owner=self.request.user)
 
     def get_context_data(self, **kwargs):
-        context = super(PendingProjectListView, self).get_context_data(**kwargs)
+        context = super(
+            PendingProjectListView, self).get_context_data(**kwargs)
         context['num_projects'] = self.get_queryset().count()
         context['unapproved'] = True
         return context

@@ -1,9 +1,8 @@
 # coding=utf-8
 """Model admin class definitions.
 
-Note these admin models inherit both AuditedAdmin (which adds owner, editor,
-creation date, modification date to a model) and reversion (which provides
-historisation for a model).
+Note these admin models inherit both reversion (which provides
+historization for a model).
 
 ..note:: if you add reversion.VersionAdmin to a model be sure to do
     ``./manage.py createinitialrevisions``.
@@ -16,11 +15,10 @@ historisation for a model).
 
 from django.contrib import admin
 from models import Committee, Vote, Ballot
-from audited_models.admin import AuditedAdmin
 import reversion
 
 
-class CommitteeAdmin(AuditedAdmin, reversion.VersionAdmin):
+class CommitteeAdmin(reversion.VersionAdmin):
     """Committee admin model."""
 
     def queryset(self, request):
@@ -35,7 +33,7 @@ class CommitteeAdmin(AuditedAdmin, reversion.VersionAdmin):
         return qs
 
 
-class VoteAdmin(AuditedAdmin, reversion.VersionAdmin):
+class VoteAdmin(reversion.VersionAdmin):
     """Vote admin model."""
 
     def queryset(self, request):
@@ -50,7 +48,7 @@ class VoteAdmin(AuditedAdmin, reversion.VersionAdmin):
         return qs
 
 
-class BallotAdmin(AuditedAdmin, reversion.VersionAdmin):
+class BallotAdmin(reversion.VersionAdmin):
     """Ballot admin model."""
 
     def queryset(self, request):

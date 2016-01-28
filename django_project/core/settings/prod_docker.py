@@ -1,7 +1,11 @@
+
+"""Configuration for production server"""
 # noinspection PyUnresolvedReferences
 from .prod import *  # noqa
 import os
 print os.environ
+
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -22,8 +26,6 @@ DATABASES = {
     }
 }
 
-MEDIA_ROOT = '/home/web/media'
-STATIC_ROOT = '/home/web/static'
 
 # See fig.yml file for postfix container definition
 #
@@ -38,5 +40,3 @@ EMAIL_HOST_USER = 'noreply@kartoza.com'
 EMAIL_HOST_PASSWORD = 'docker'
 EMAIL_USE_TLS = False
 EMAIL_SUBJECT_PREFIX = '[PROJECTA]'
-
-DEBUG = True

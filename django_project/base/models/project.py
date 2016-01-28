@@ -1,16 +1,17 @@
 # coding=utf-8
 """Project model used by all apps."""
-from django.core.urlresolvers import reverse
-from django.utils.text import slugify
 import os
 import logging
+from django.core.urlresolvers import reverse
+from django.utils.text import slugify
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from audited_models.models import AuditedModel
 from changes.models.version import Version
 from core.settings.contrib import STOP_WORDS
 from django.contrib.auth.models import User
+from django.conf import settings
+
 
 logger = logging.getLogger(__name__)
 
@@ -18,34 +19,34 @@ logger = logging.getLogger(__name__)
 class ApprovedProjectManager(models.Manager):
     """Custom project manager that shows only approved records."""
 
-    def get_query_set(self):
+    def get_queryset(self):
         """Query set generator"""
         return super(
-            ApprovedProjectManager, self).get_query_set().filter(
+            ApprovedProjectManager, self).get_queryset().filter(
                 approved=True)
 
 
 class UnapprovedProjectManager(models.Manager):
     """Custom project manager that shows only unapproved records."""
 
-    def get_query_set(self):
+    def get_queryset(self):
         """Query set generator"""
         return super(
-            UnapprovedProjectManager, self).get_query_set().filter(
+            UnapprovedProjectManager, self).get_queryset().filter(
                 approved=False)
 
 
 class PublicProjectManager(models.Manager):
     """Custom project manager that shows only public and approved projects."""
 
-    def get_query_set(self):
+    def get_queryset(self):
         """Query set generator"""
         return super(
-            PublicProjectManager, self).get_query_set().filter(
+            PublicProjectManager, self).get_queryset().filter(
                 private=False).filter(approved=True)
 
 
-class Project(AuditedModel):
+class Project(models.Model):
     """A project model e.g. QGIS, InaSAFE etc."""
     name = models.CharField(
         help_text=_('Name of this project.'),
@@ -94,6 +95,7 @@ class Project(AuditedModel):
 
     def save(self, *args, **kwargs):
         """Overloaded save method.
+
         :param args:
         :param kwargs:
         """
@@ -118,5 +120,36 @@ class Project(AuditedModel):
 
     def versions(self):
         """Get all the versions for this project."""
-        qs = Version.objects.filter(project=self).order_by('-name')
+        qs = Version.objects.filter(project=self).order_by('-padded_version')
         return qs
+
+    def latest_versions(self):
+        """Get the latest version.
+
+        How many versions returned is determined by the pagination threshold.
+
+        :returns: List of versions.
+        :rtype: list"""
+        return self.versions()[:settings.PROJECT_VERSION_LIST_SIZE]
+
+    @staticmethod
+    def pagination_threshold(self):
+        """Find out how many versions to list per page.
+
+        :returns: The count of items to show per page as defined in
+            settings.PROJECT_VERSION_LIST_SIZE.
+        :rtype: int
+        """
+        return settings.PROJECT_VERSION_LIST_SIZE
+
+    def pagination_threshold_exceeded(self):
+        """Check if project version count exceeds pagination threshold.
+
+        :returns: Flag indicating if there are more versions than
+            self.threshold.
+        :rtype: bool
+        """
+        if self.versions().count() >= settings.PROJECT_VERSION_LIST_SIZE:
+            return True
+        else:
+            return False

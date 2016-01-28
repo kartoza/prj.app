@@ -3,22 +3,14 @@
 
 """
 
-__author__ = 'Tim Sutton <tim@linfiniti.com>'
-__revision__ = '$Format:%H$'
-__date__ = ''
-__license__ = ''
-__copyright__ = ''
-
 # noinspection PyUnresolvedReferences
-import logging
+# import logging
 from base.models import Project
-
 # LOGGER = logging.getLogger(__name__)
 import re
 import zipfile
 import StringIO
 import pypandoc
-
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -29,13 +21,19 @@ from django.views.generic import (
     DetailView,
     UpdateView,
     RedirectView)
-
 from django.http import HttpResponse
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
-
 from ..models import Version
 from ..forms import VersionForm
+
+__author__ = 'Tim Sutton <tim@kartoza.com>'
+__revision__ = '$Format:%H$'
+__date__ = ''
+__license__ = ''
+__copyright__ = ''
 
 
 class VersionMixin(object):
@@ -71,13 +69,17 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         :returns: A queryset which is filtered to only show approved Version
         for this project.
         :rtype: QuerySet
+
         :raises: Http404
         """
+
+        # TODO - this logic needs to be checked - TS
+        project_slug = self.kwargs.get('project_slug', None)
         if self.queryset is None:
-            project_slug = self.kwargs.get('project_slug', None)
             if project_slug:
                 project = Project.objects.get(slug=project_slug)
-                queryset = Version.objects.filter(project=project)
+                queryset = Version.objects.filter(
+                    project=project).order_by('-padded_version')
                 return queryset
             else:
                 raise Http404('Sorry! We could not find your entry!')
@@ -119,14 +121,15 @@ class VersionDetailView(VersionMixin, DetailView):
             slug = self.kwargs.get('slug', None)
             project_slug = self.kwargs.get('project_slug', None)
             if slug and project_slug:
-                project = Project.objects.get(slug=project_slug)
                 try:
+                    project = Project.objects.get(slug=project_slug)
                     obj = queryset.filter(project=project).get(slug=slug)
                     return obj
-                except Version.DoesNotExist:
-                    Http404('Sorry! The version you are requesting could not '
-                            'be found or you do not have permission to view '
-                            'the version. Try logging in?')
+                except Project.DoesNotExist:
+                    Http404(
+                        'Sorry! The version you are requesting could not '
+                        'be found or you do not have permission to view '
+                        'the version. Try logging in?')
             else:
                 raise Http404('Sorry! We could not find your version!')
 
@@ -149,7 +152,7 @@ class VersionMarkdownView(VersionDetailView):
         """
         response = super(VersionMarkdownView, self).render_to_response(
             context,
-            mimetype='application/text',
+            content_type='application/text',
             **response_kwargs)
         response['Content-Disposition'] = 'attachment; filename="foo.md"'
         return response
@@ -325,6 +328,15 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
         })
         return kwargs
 
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            result = super(VersionCreateView, self).form_valid(form)
+            return result
+        except IntegrityError:
+            raise ValidationError(
+                'ERROR: Version by this name already exists!')
+
 
 # noinspection PyAttributeOutsideInit
 class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
@@ -372,11 +384,20 @@ class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
             'project_slug': self.object.project.slug
         })
 
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(VersionUpdateView, self).form_valid(form)
+        except IntegrityError:
+            raise ValidationError(
+                'ERROR: Version by this name already exists!')
 
-class PendingVersionListView(StaffuserRequiredMixin,
-                             VersionMixin,
-                             PaginationMixin,
-                             ListView):
+
+class PendingVersionListView(
+        StaffuserRequiredMixin,
+        VersionMixin,
+        PaginationMixin,
+        ListView):
     """List view for pending Version. Staff see all """
     context_object_name = 'versions'
     template_name = 'version/list.html'
@@ -487,7 +508,8 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
         )
         # convert the html to rst
         converted_doc = pypandoc.convert(
-            document.rendered_content, 'rst', format='html')
+            document.rendered_content.encode(
+                'utf8', 'ignore'), 'rst', format='html')
         converted_doc = converted_doc.replace('/media/images/', 'images/')
 
         # prepare the ZIP file
@@ -495,7 +517,7 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
 
         # Grab the ZIP file from memory, make response with correct MIME-type
         response = HttpResponse(
-            zip_file.getvalue(), mimetype="application/x-zip-compressed")
+            zip_file.getvalue(), content_type="application/x-zip-compressed")
         # ..and correct content-disposition
         response['Content-Disposition'] = (
             'attachment; filename="{}-{}.zip"'.format(
@@ -528,7 +550,7 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
             # write all of the image files (read from disk)
             for image in images:
                 zip_file.write(
-                    './media/{0}'.format(image),
+                    '../media/{0}'.format(image),
                     '{0}'.format(image)
                 )
             # write the actual RST document

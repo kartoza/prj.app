@@ -8,7 +8,6 @@ from core.settings.contrib import STOP_WORDS
 logger = logging.getLogger(__name__)
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
-from audited_models.models import AuditedModel
 from .entry import Entry
 from django.contrib.auth.models import User
 
@@ -16,30 +15,42 @@ from django.contrib.auth.models import User
 class ApprovedVersionManager(models.Manager):
     """Custom version manager that shows only approved records."""
 
-    def get_query_set(self):
+    def get_queryset(self):
         """Query set generator"""
         return super(
-            ApprovedVersionManager, self).get_query_set().filter(
+            ApprovedVersionManager, self).get_queryset().filter(
                 approved=True)
 
 
 class UnapprovedVersionManager(models.Manager):
     """Custom version manager that shows only unapproved records."""
 
-    def get_query_set(self):
+    def get_queryset(self):
         """Query set generator"""
         return super(
-            UnapprovedVersionManager, self).get_query_set().filter(
+            UnapprovedVersionManager, self).get_queryset().filter(
                 approved=False)
 
+
 # noinspection PyUnresolvedReferences
-class Version(AuditedModel):
+class Version(models.Model):
     """A version model that the changelog is associated with.."""
+
     name = models.CharField(
         help_text='Name of this release e.g. 1.0.1.',
         max_length=255,
         null=False,
         blank=False,
+        unique=False)
+
+    padded_version = models.CharField(
+        help_text=(
+            'Numeric version for this release e.g. 001000001 for 1.0.1 '
+            'calculated by zero padding each component of maj/minor/bugfix '
+            'elements from name.'),
+        max_length=9,
+        null=False,
+        blank=True,
         unique=False)
 
     approved = models.BooleanField(
@@ -76,7 +87,7 @@ class Version(AuditedModel):
             ('slug', 'project'),
         )
         app_label = 'changes'
-        ordering = ['-datetime_created']
+        # ordering = ['-datetime_created']
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -84,7 +95,32 @@ class Version(AuditedModel):
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = version_slugify(new_list)[:50]
+        self.padded_version = self.pad_name(self.name)
         super(Version, self).save(*args, **kwargs)
+
+    def pad_name(self, version):
+        """Create a 0 padded version of the version name.
+
+        e.g. input: 2.10.1
+        e.g. output: 002010100
+
+        This will ensure we have sortable version names.
+
+        :param version: A text version in the form 0.0.0 - if the version is
+            not in this form, we return the version unaltered.
+        :type version: str
+
+        :returns: Zero padded representation of the version e.g. 001010100
+        :rtype: str
+
+        """
+        tokens = version.split('.')
+        if len(tokens) != 3:
+            return version
+        result = ''
+        for token in tokens:
+            result += token.zfill(3)
+        return result
 
     def __unicode__(self):
         return u'%s : %s' % (self.project.name, self.name)

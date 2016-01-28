@@ -1,5 +1,7 @@
 {% extends "project_base.html" %}
 
+{% load i18n %}
+
 {% block title %}Projects{% endblock %}
 
 {% block extra_head %}
@@ -14,7 +16,7 @@
 {% block content %}
     <div class="page-header">
       <p class="lead text-center text-muted">
-        High level software project management. Made easy.
+        {% trans "High level software project management. Made easy." %}
       </p>
       <h2 class="text-muted">
         Projects
@@ -37,7 +39,7 @@
     {% ifequal num_projects 0 %}
       <h3>
         No projects are defined, but you can
-        <a href="{% url "project-create" %}">create one</a>.
+        <a href="{% url "project-create" %}">create one here</a>.
       </h3>
     {% endifequal %}
     {% for project in projects %}

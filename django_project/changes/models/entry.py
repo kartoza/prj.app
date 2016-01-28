@@ -7,7 +7,7 @@ import logging
 from core.settings.contrib import STOP_WORDS
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
-from audited_models.models import AuditedModel
+from embed_video.fields import EmbedVideoField
 from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)
@@ -16,31 +16,31 @@ logger = logging.getLogger(__name__)
 class ApprovedEntryManager(models.Manager):
     """Custom entry manager that shows only approved records."""
 
-    def get_query_set(self):
+    def get_queryset(self):
         """Query set generator"""
         return super(
-            ApprovedEntryManager, self).get_query_set().filter(
+            ApprovedEntryManager, self).get_queryset().filter(
                 approved=True)
 
 
 class UnapprovedEntryManager(models.Manager):
     """Custom entry manager that shows only unapproved records."""
 
-    def get_query_set(self):
+    def get_queryset(self):
         """Query set generator"""
         return super(
-            UnapprovedEntryManager, self).get_query_set().filter(
+            UnapprovedEntryManager, self).get_queryset().filter(
                 approved=False)
 
 
-class Entry(AuditedModel):
+class Entry(models.Model):
     """An entry is the basic unit of a changelog."""
     title = models.CharField(
         help_text='Feature title for this changelog entry.',
         max_length=255,
         null=False,
         blank=False,
-        unique=True)
+        unique=False)  # Unique together rule applies in meta class
 
     description = models.TextField(
         null=True,
@@ -57,6 +57,36 @@ class Entry(AuditedModel):
 
     image_credits = models.CharField(
         help_text='Who should be credited for this image?',
+        max_length=255,
+        null=True,
+        blank=True)
+
+    video = EmbedVideoField(
+        verbose_name='Youtube video',
+        help_text='Paste your youtube video link',
+        null=True,
+        blank=True)
+
+    funded_by = models.CharField(
+        help_text='Input the funder name.',
+        max_length=255,
+        null=True,
+        blank=True)
+
+    funder_url = models.CharField(
+        help_text='Input the funder URL.',
+        max_length=255,
+        null=True,
+        blank=True)
+
+    developed_by = models.CharField(
+        help_text='Input the developer name.',
+        max_length=255,
+        null=True,
+        blank=True)
+
+    developer_url = models.CharField(
+        help_text='Input the developer URL.',
         max_length=255,
         null=True,
         blank=True)
@@ -103,3 +133,41 @@ class Entry(AuditedModel):
             'version_slug': self.version.slug,
             'project_slug': self.version.project.slug
         })
+
+    def funder_info_html(self):
+        string = ""
+        if self.funded_by and self.funder_url is None:
+            string = ""
+            return string
+        elif self.funded_by and not self.funder_url:
+            string = "This feature was funded by %s " % self.funded_by
+            return string
+        elif self.funder_url and not self.funded_by:
+            string = "This feature was funded by [%s](%s)" % (
+                self.funder_url, self.funder_url)
+            return string
+        elif self.funded_by and self.funder_url:
+            string = "This feature was funded by [%s](%s)" % (
+                self.funded_by, self.funder_url)
+            return string
+        else:
+            return string
+
+    def developer_info_html(self):
+        string = ""
+        if self.developed_by and self.developer_url is None:
+            string = ""
+            return string
+        elif self.developed_by and not self.developer_url:
+            string = "This feature was developed by %s " % self.developed_by
+            return string
+        elif self.developer_url and not self.developed_by:
+            string = "This feature was developed by [%s](%s)" % (
+                self.developer_url, self.developer_url)
+            return string
+        elif self.developed_by and self.developer_url:
+            string = "This feature was developed by [%s](%s)" % (
+                self.developed_by, self.developer_url)
+            return string
+        else:
+            return string

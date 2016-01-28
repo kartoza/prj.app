@@ -1,9 +1,8 @@
 # coding=utf-8
 """Model admin class definitions.
 
-Note these admin models inherit both AuditedAdmin (which adds owner, editor,
-creation date, modification date to a model) and reversion (which provides
-historisation for a model).
+Note these admin models inherit reversion (which provides
+historization for a model).
 
 ..note:: if you add reversion.VersionAdmin to a model be sure to do
     ``./manage.py createinitialrevisions``.
@@ -15,12 +14,13 @@ historisation for a model).
 
 
 from django.contrib import admin
-from models import Category, Version, Entry
-from audited_models.admin import AuditedAdmin
+from models import (Category, Version,
+                    Entry, Sponsor, SponsorshipLevel,
+                    SponsorshipPeriod)
 import reversion
 
 
-class CategoryAdmin(AuditedAdmin, reversion.VersionAdmin):
+class CategoryAdmin(reversion.VersionAdmin):
     """Category admin model."""
 
     def queryset(self, request):
@@ -35,7 +35,7 @@ class CategoryAdmin(AuditedAdmin, reversion.VersionAdmin):
         return qs
 
 
-class VersionAdmin(AuditedAdmin, reversion.VersionAdmin):
+class VersionAdmin(reversion.VersionAdmin):
     """Verion admin model."""
 
     def queryset(self, request):
@@ -50,8 +50,53 @@ class VersionAdmin(AuditedAdmin, reversion.VersionAdmin):
         return qs
 
 
-class EntryAdmin(AuditedAdmin, reversion.VersionAdmin):
+class EntryAdmin(reversion.VersionAdmin):
     """Entry admin model."""
+
+    def queryset(self, request):
+        """Ensure we use the correct manager.
+
+        :param request: HttpRequest object
+        """
+        qs = self.model.objects
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
+        return qs
+
+
+class SponsorAdmin(reversion.VersionAdmin):
+    """Sponsor admin model."""
+
+    def queryset(self, request):
+        """Ensure we use the correct manager.
+
+        :param request: HttpRequest object
+        """
+        qs = self.model.objects
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
+        return qs
+
+
+class SponsorLevelAdmin(reversion.VersionAdmin):
+    """Sponsor level admin model."""
+
+    def queryset(self, request):
+        """Ensure we use the correct manager.
+
+        :param request: HttpRequest object
+        """
+        qs = self.model.objects
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
+        return qs
+
+
+class SponsorRenewedAdmin(reversion.VersionAdmin):
+    """Renewed sponsor admin model."""
 
     def queryset(self, request):
         """Ensure we use the correct manager.
@@ -67,3 +112,6 @@ class EntryAdmin(AuditedAdmin, reversion.VersionAdmin):
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Version, VersionAdmin)
 admin.site.register(Entry, EntryAdmin)
+admin.site.register(Sponsor, SponsorAdmin)
+admin.site.register(SponsorshipLevel, SponsorLevelAdmin)
+admin.site.register(SponsorshipPeriod, SponsorRenewedAdmin)

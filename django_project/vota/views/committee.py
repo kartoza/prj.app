@@ -12,6 +12,8 @@ from django.views.generic import (
     UpdateView,
     ListView
 )
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from base.models import Project
 from vota.forms import CreateCommitteeForm
 from vota.models import Committee, Ballot
@@ -101,11 +103,13 @@ class CommitteeListView(CommitteeMixin, ListView):
 
         """
         project_slug = self.kwargs.get('project_slug')
-        self.project = Project.objects.get(slug=project_slug)
+        try:
+            self.project = Project.objects.get(slug=project_slug)
+        except:
+            raise Http404('Project could not be found')
         return super(CommitteeListView, self).get(
             request, *args, **kwargs
         )
-
 
     def get_queryset(self):
         """Specify the queryset
@@ -119,8 +123,10 @@ class CommitteeListView(CommitteeMixin, ListView):
         qs = Committee.objects.filter(project=self.project)
         return qs
 
+
 # noinspection PyAttributeOutsideInit
 class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
+
     context_object_name = 'committee'
     template_name = 'committee/create.html'
 
@@ -145,8 +151,18 @@ class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
             'slug': self.object.slug
         })
 
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(CommitteeCreateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Committee by this name already exists!')
+
+
 # noinspection PyAttributeOutsideInit
 class CommitteeUpdateView(LoginRequiredMixin, CommitteeMixin, UpdateView):
+
     context_object_name = 'committee'
     template_name = 'committee/update.html'
 
@@ -175,6 +191,15 @@ class CommitteeUpdateView(LoginRequiredMixin, CommitteeMixin, UpdateView):
             'project_slug': self.object.project.slug,
             'slug': self.object.slug
         })
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(CommitteeUpdateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Committee by this name already exists!')
+
 
 # noinspection PyAttributeOutsideInit
 class CommitteeDeleteView(StaffuserRequiredMixin, CommitteeMixin, DeleteView):

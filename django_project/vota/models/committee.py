@@ -12,7 +12,6 @@ from core.settings.contrib import STOP_WORDS
 
 logger = logging.getLogger(__name__)
 from django.db import models
-from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from vota.models.ballot import Ballot
@@ -27,7 +26,7 @@ QUORUM_CHOICES = (
 
 
 # noinspection PyUnresolvedReferences
-class Committee(AuditedModel):
+class Committee(models.Model):
     """A committee model i.e. a group of users under a project"""
     name = models.CharField(
         help_text=_('The name of this committee.'),

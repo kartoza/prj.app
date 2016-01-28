@@ -8,7 +8,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 from django.db import models
-from audited_models.models import AuditedModel
 from django.contrib.auth.models import User
 
 
@@ -19,7 +18,7 @@ VOTE_CHOICES = (
 )
 
 
-class Vote(AuditedModel):
+class Vote(models.Model):
     """A vote model"""
 
     choice = models.CharField(max_length=1, choices=VOTE_CHOICES,

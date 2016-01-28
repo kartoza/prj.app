@@ -10,6 +10,8 @@ logger = logging.getLogger(__name__)
 from django.views.generic import (
     CreateView,
 )
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin
 from vota.models import Vote, Ballot
 from vota.forms import VoteForm
@@ -42,14 +44,19 @@ class VoteCreateUpdateView(LoginRequiredMixin, CreateView):
         return kwargs
 
     def form_valid(self, form):
-        form.instance.ballot = self.the_ballot
-        form.instance.user = self.request.user
-        form.save()
-        return HttpResponse(json.dumps({'successful': True}),
-                            content_type='application/json')
+        """Check that there is no referential integrity error when saving."""
+        try:
+            form.instance.ballot = self.the_ballot
+            form.instance.user = self.request.user
+            form.save()
+            return HttpResponse(json.dumps(
+                {'successful': True}), content_type='application/json')
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Vote by this name already exists!')
 
     def form_invalid(self, form):
         errors = form.errors
         error_dict = {'errors': errors}
-        return HttpResponse(json.dumps(error_dict),
-                            content_type='application/json')
+        return HttpResponse(
+            json.dumps(error_dict), content_type='application/json')

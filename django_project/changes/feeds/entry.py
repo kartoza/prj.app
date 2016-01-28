@@ -2,7 +2,7 @@
 """**Feed class for Entry**
 """
 
-__author__ = 'Ismail Sunni <ismail@linfiniti.com>'
+__author__ = 'Ismail Sunni <ismail@kartoza.com>'
 __revision__ = '$Format:%H$'
 __date__ = '15/04/2014'
 __license__ = ''
@@ -47,7 +47,7 @@ class RssEntryFeed(Feed):
             # otherwise give the latest version.
             if version_slug is None:
                 version = get_list_or_404(Version.objects.order_by(
-                    '-datetime_created'), project=project, approved=True)[0]
+                    '-name'), project=project, approved=True)[0]
             else:
                 version = Version.objects.get(slug=version_slug)
             return version
@@ -100,7 +100,7 @@ class RssEntryFeed(Feed):
         :rtype: list
         """
         return Entry.objects.filter(version=obj, approved=True).order_by(
-            '-datetime_created')
+            '-title')
 
     def item_title(self, item):
         """Return the title of the entry.
@@ -122,7 +122,11 @@ class RssEntryFeed(Feed):
         :returns: description of the Entry
         :rtype: str
         """
-        return '<p>'+item.description+'</p><p><img src="'+settings.MEDIA_URL+item.image_file.name+'"/></p>'
+
+        return '<p>' + item.description + \
+               '</p><p><img src="' + settings.MEDIA_URL + \
+               item.image_file.name + '"/></p>'
+
 
 class AtomEntryFeed(RssEntryFeed):
     """Atom Feed class for Entry."""

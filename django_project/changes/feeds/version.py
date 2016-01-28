@@ -2,7 +2,7 @@
 """**Feed class for Version**
 """
 
-__author__ = 'Ismail Sunni <ismail@linfiniti.com>'
+__author__ = 'Ismail Sunni <ismail@kartoza.com>'
 __revision__ = '$Format:%H$'
 __date__ = '14/04/2014'
 __license__ = ''
@@ -82,7 +82,7 @@ class RssVersionFeed(Feed):
         :rtype: list
         """
         return Version.objects.filter(project=obj, approved=True).order_by(
-            '-datetime_created')[:5]
+            '-name')[:5]
 
     def item_title(self, item):
         """Return the title of the version.

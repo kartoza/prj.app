@@ -1,1 +1,1 @@
-from project import *
+from project import *  # noqa

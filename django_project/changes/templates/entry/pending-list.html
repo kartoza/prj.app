@@ -1,6 +1,8 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
 {% load thumbnail %}
+{% load embed_video_tags %}
+{% load disqus_tags %}
 
 {% block title %}Entries - {{ block.super }}{% endblock %}
 
@@ -42,20 +44,20 @@
       <div class="col-lg-2">
         <div class="btn-group pull-right">
           {% if not entry.approved and user.is_staff %}
-            <a class="btn btn-success btn-mini tooltip-toggle"
+            <a class="btn btn-default btn-mini tooltip-toggle"
                data-title="Approve Entry"
-               href='{% url "entry-approve" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
+               href='{% url "entry-approve" pk=entry.id %}'>
               <span class="glyphicon glyphicon-thumbs-up"></span>
             </a>
           {% endif %}
           <a class="btn btn-default btn-mini tooltip-toggle"
              data-title="Delete Entry"
-             href='{% url "entry-delete" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
+             href='{% url "entry-delete" pk=entry.id %}'>
             <span class="glyphicon glyphicon-minus"></span>
           </a>
           <a class="btn btn-default btn-mini tooltip-toggle"
              data-title="Update Entry"
-             href='{% url "entry-update" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'>
+             href='{% url "entry-update" pk=entry.id %}'>
             <span class="glyphicon glyphicon-pencil"></span>
           </a>
         </div>
@@ -75,6 +77,17 @@
         {% endif %}
       </div>
     </div>
+
+    {% if entry.video %}
+    <div class="row">
+        <div class="col-lg-8 col-md-offset-1">
+            {% video entry.video 'small' %}
+        </div>
+    </div>
+    {% endif %}
+
     <hr />
   {% endfor %}
+  <h5 id="comments">Comments</h5>
+    {% disqus_show_comments %}
 {% endblock %}

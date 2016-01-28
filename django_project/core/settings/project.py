@@ -1,37 +1,15 @@
 # coding=utf-8
+
 """Project level settings.
 
 Adjust these values as needed but don't commit passwords etc. to any public
 repository!
 """
-import os
-from .contrib import *
 
-DATABASES = {
-    'default': {
-        # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        #'ENGINE': 'django.db.backends.sqlite3',
-        #Or path to database file if using sqlite3.
-        # 'NAME': os.path.abspath(os.path.join(
-        #     os.path.dirname(__file__),
-        #     os.path.pardir,
-        #     os.path.pardir,
-        #     os.path.pardir,
-        #     'resources',
-        #     'sqlite',
-        #     'projecta.db')),
-        'NAME': 'changelog',
-        # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        # Empty for localhost through domain sockets or '127.0.0.1' for
-        # localhost through TCP.
-        'HOST': '',
-        # Set to empty string for default.
-        'PORT': '',
-    }
-}
+import os  # noqa
+from django.utils.translation import ugettext_lazy as _
+from .utils import absolute_path
+from .contrib import *  # noqa
 
 # Project apps
 INSTALLED_APPS += (
@@ -42,38 +20,54 @@ INSTALLED_APPS += (
     'disqus',
 )
 
+# Due to profile page does not available, this will redirect to home page after login
+LOGIN_REDIRECT_URL = '/'
+
+# How many versions to list in each project box
+PROJECT_VERSION_LIST_SIZE = 10
+
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False
 
 SOUTH_TESTS_MIGRATE = False
 
-PIPELINE_JS = {
-    'contrib': {
-        'source_filenames': (
-            'js/jquery-1.10.1.min.js',
-            'js/csrf-ajax.js',
-            'js/underscore-min.js',
-            'js/bootstrap.min.js',
-            'js/changelog.js',
-            'js/github-issue.js',
-        ),
-        'output_filename': 'js/contrib.js',
-    }
+
+# Set languages which want to be translated
+LANGUAGES = (
+    ('en', _('English')),
+    ('af', _('Afrikaans')),
+    ('id', _('Indonesian')),
+    ('ko', _('Korean')),
+)
+
+# Set storage path for the translation files
+LOCALE_PATHS = (absolute_path('locale'),)
+
+
+MIDDLEWARE_CLASSES = (
+    # For nav bar generation
+    'core.custom_middleware.NavContextMiddleware',
+) + MIDDLEWARE_CLASSES
+
+# Project specific javascript files to be pipelined
+# For third party libs like jquery should go in contrib.py
+PIPELINE_JS['project'] = {
+    'source_filenames': (
+        'js/csrf-ajax.js',
+        'js/changelog.js',
+        'js/github-issue.js'
+    ),
+    'output_filename': 'js/project.js',
 }
 
-PIPELINE_CSS = {
-    'contrib': {
-        'source_filenames': (
-            'css/bootstrap.min.css',
-            'css/bootstrap-theme.min.css',
-            'css/changelog.css',
-        ),
-        'output_filename': 'css/contrib.css',
-        'extra_context': {
-            'media': 'screen, projection',
-        },
-    }
+# Project specific css files to be pipelined
+# For third party libs like bootstrap should go in contrib.py
+PIPELINE_CSS['project'] = {
+    'source_filenames': (
+        'css/changelog.css',
+    ),
+    'output_filename': 'css/project.css',
+    'extra_context': {
+        'media': 'screen, projection',
+    },
 }
-
-PIPELINE_JS_COMPRESSOR = None
-

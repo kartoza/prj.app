@@ -2,19 +2,9 @@
 """**View classes for Category**
 
 """
-
-__author__ = 'Tim Sutton <tim@linfinit.com>'
-__revision__ = '$Format:%H$'
-__date__ = ''
-__license__ = ''
-__copyright__ = ''
-
 # noinspection PyUnresolvedReferences
 import logging
 from base.models import Project
-
-logger = logging.getLogger(__name__)
-
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -26,11 +16,20 @@ from django.views.generic import (
     UpdateView,
     RedirectView)
 from django.http import HttpResponseRedirect, Http404
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
-
 from ..models import Category, Version
 from ..forms import CategoryForm
+
+logger = logging.getLogger(__name__)
+
+__author__ = 'Tim Sutton <tim@linfinit.com>'
+__revision__ = '$Format:%H$'
+__date__ = ''
+__license__ = ''
+__copyright__ = ''
 
 
 class JSONResponseMixin(object):
@@ -320,17 +319,20 @@ class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        """Save new created Category
+        """Check that there is no referential integrity error when saving.
 
-        :param form
-        :type form
+        :param form: form to validate
+        :type form: CategoryForm
 
         :returns HttpResponseRedirect object to success_url
         :rtype: HttpResponseRedirect
         """
-        self.object = form.save(commit=False)
-        self.object.save()
-        return HttpResponseRedirect(self.get_success_url())
+        try:
+            super(CategoryCreateView, self).form_valid(form)
+            return HttpResponseRedirect(self.get_success_url())
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Category by this name already exists!')
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
@@ -406,6 +408,14 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
         return reverse('category-list', kwargs={
             'project_slug': self.object.project.slug
         })
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            return super(CategoryUpdateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Category by this name already exists!')
 
 
 class PendingCategoryListView(StaffuserRequiredMixin, CategoryMixin,

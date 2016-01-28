@@ -1,0 +1,92 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+
+{% block title %}Sponsorship Periods - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Sponsorship Periods (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+            {% if unapproved %}Unapproved {% endif %}
+            Sponsorship Period
+            {% if user.is_authenticated %}
+                <div class="pull-right btn-group">
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "sponsorshipperiod-create" project_slug %}'
+                       data-title="Create New sponsorship period">
+                        <span class="glyphicon glyphicon-asterisk"></span></a>
+                        {% if not unapproved %}
+                            <a class="btn btn-default btn-mini tooltip-toggle"
+                               href='{% url "pending-sponsorshipperiod-list" project_slug %}'
+                               data-title="View Pending sponsorship period">
+                                <span class="glyphicon glyphicon-time"></span>
+                            </a>
+                        {% endif %}
+                </div>
+            {% endif %}
+        </h1>
+    </div>
+    {% ifequal num_sponsorshipperiods 0 %}
+        {% if unapproved %}
+            <h3>All sponsorship period are approved.</h3>
+        {% else %}
+            <h3>No sponsorship period are defined, but you can <a
+                    class="btn btn-default btn-mini"
+                    href='{% url "sponsorshipperiod-create" project_slug %}'>create one</a>.</h3>
+        {% endif %}
+    {% endifequal %}
+
+    {% for sponsorshipperiod in sponsorshipperiods %}
+        <div class="row" style="margin-top:10px;">
+            <div class="col-lg-1">
+                {% if sponsorshipperiod.sponsor.logo %}
+                    <a href="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsor.logo }}">
+                        <img class="img-responsive img-rounded pull-right"
+                             src="{% thumbnail sponsorshipperiod.sponsor.logo 50x50 crop %}"/>
+                    </a>
+                {% endif %}
+            {% if sponsorshipperiod.sponsorshiplevel.logo %}
+                <img class="img-responsive img-rounded"
+                     src="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsorshiplevel.logo }}" width="30" />
+              {%  endif %}
+            </div>
+            <div class="col-lg-9">
+
+                <h3>{{ sponsorshipperiod.start_date }} - {{ sponsorshipperiod.end_date }}</h3>
+                <h5>{{ sponsorshipperiod.sponsor }}</h5>
+
+                <h5>{{ sponsorshipperiod.sponsorshiplevel }} : {{ sponsorshipperiod.project.name }}</h5>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    {% if not sponsorshipperiod.approved and user.is_staff %}
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "sponsorshipperiod-approve" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        </a>
+                    {% endif %}
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "sponsorshipperiod-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "sponsorshipperiod-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "sponsorshipperiod-detail" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <hr/>
+    {% include "_pagination.html" %}
+{% endblock %}

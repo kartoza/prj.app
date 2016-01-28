@@ -138,7 +138,7 @@ def update_apache(code_path):
         'configuration file under /etc/apache2/sites-available so you\n'
         'should take appropriate security measures.\nUser :\n')
     git_password = getpass.getpass()
-    domain = 'changelog.linfiniti.com'
+    domain = 'changelog.kartoza.com'
     setup_apache(
         site_name='projecta',
         code_path=code_path,
@@ -196,15 +196,15 @@ def deploy():
     fastprint('*******************************************\n')
 
 
-@hosts('kartoza2')
+@hosts('kartoza3')
 @task
 def backup():
     """Make a local backup of the production instance."""
-    get_live_db()  # should fetch from kartoza2
-    get_live_media()  # should fetch from kartoza2
-    get_private()  # should fetch from kartoza2
+    get_live_media()  # should fetch from kartoza3
+    get_private()  # should fetch from kartoza3
+    get_live_db()  # should fetch from kartoza3
 
-@hosts('kartoza2')
+@hosts('kartoza3')
 @task
 def freshen():
     """Freshen the server with latest git copy and touch wsgi.
@@ -343,23 +343,44 @@ def set_db_permissions():
     run('psql %s -c "%s"' % (dbname, grant_sql))
 
 
-@hosts('kartoza2')
+@hosts('kartoza3')
 @task
 def get_live_db():
     """Get the live db - will overwrite your local copy."""
     get_postgres_dump('changelog')
 
 
-@hosts('kartoza2')
+@hosts('kartoza3')
+@task
+def get_docker_live_db():
+    """Get a copy of the db as deployed in docker on the remote host."""
+    date = run('date +%d-%B-%Y')
+    my_file = 'projecta-%s.dmp' % date
+    ip = run("export PATH=$PATH:/home/timlinux/bin/docker-helpers/; dipall | grep projecta_db_1 | awk '{print $3}'")
+    run(
+        'export PGPASSWORD=docker; '
+        'pg_dump -Fc -f /tmp/%s -h %s -U docker gis' % (my_file, ip))
+    get('/tmp/%s' % my_file, my_file)
+
+@hosts('kartoza3')
+@task
+def get_docker_live_media():
+    """Get the live media - will overwrite your local copy."""
+    local('rsync -ave ssh %s:/home/timlinux/production-sites/projecta/django_project/media deployment/media' % env['host_string'])
+
+
+@hosts('kartoza3')
 @task
 def get_live_media():
     """Get the live media - will overwrite your local copy."""
     base_path, code_path, git_url, repo_alias, site_name = get_vars()
     path = '%s/django_project/media' % code_path
-    if not exists(path):
-        run('mkdir %s' % path)
-    local('rsync -ave ssh %s:%s/django_project/media/* django_project/media/'
-          % (env['host_string'], code_path))
+    local_path = os.path.join(
+        os.path.dirname(__file__),'deployment', 'media')
+    if not exists(local_path):
+        run('mkdir -p %s' % local_path)
+    local('rsync -ave ssh %s:%s/django_project/media/* %s'
+          % (env['host_string'], code_path, local_path))
 
 
 @task
@@ -420,7 +441,7 @@ def put_private():
     put(local_path=local_path, remote_path=remote_path)
 
 
-@hosts('kartoza2')
+@hosts('kartoza3')
 @task
 def get_private():
     """Copy the private.py with site specific settings to the server."""

@@ -9,7 +9,16 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    {% compressed_css 'contrib' %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css" rel="stylesheet" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    {% compressed_css 'project' %}
+
 </head>
 
 <body>
@@ -82,17 +91,18 @@
   <nav class="navbar navbar-default navbar-fixed-bottom center"
        role="navigation">
       <p class="text-center">
-          This application was created by <a href="http://linfiniti.com">
-              Linfiniti Consulting CC.
-              <img src="{% static "img/linfiniti.png" %}" alt="Linfiniti"/>
+          This application was created by <a href="http://kartoza.com">
+              Kartoza (Pty) Ltd.
+              <img src="{% static "img/kartoza.png" %}" alt="Linfiniti"/>
           </a>
-          <a href="https://github.com/timlinux/projecta">
+          <a href="https://github.com/kartoza/projecta">
               Available on GitHub!
           </a>
       </p>
   </nav>
 </div>
 {% compressed_js 'contrib' %}
+{% compressed_js 'project' %}
 {% block inline-js %}{% endblock %}
 <script>
   $(function(){

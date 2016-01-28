@@ -5,7 +5,6 @@ from core.settings.contrib import STOP_WORDS
 
 logger = logging.getLogger(__name__)
 from django.db import models
-from audited_models.models import AuditedModel
 from django.utils.translation import ugettext_lazy as _
 from changes.models.entry import Entry
 
@@ -13,25 +12,25 @@ from changes.models.entry import Entry
 class ApprovedCategoryManager(models.Manager):
     """Custom category manager that shows only approved records."""
 
-    def get_query_set(self):
+    def get_queryset(self):
         """Query set generator"""
         return super(
-            ApprovedCategoryManager, self).get_query_set().filter(
+            ApprovedCategoryManager, self).get_queryset().filter(
                 approved=True)
 
 
 class UnapprovedCategoryManager(models.Manager):
     """Custom version manager that shows only unapproved records."""
 
-    def get_query_set(self):
+    def get_queryset(self):
         """Query set generator"""
         return super(
-            UnapprovedCategoryManager, self).get_query_set().filter(
+            UnapprovedCategoryManager, self).get_queryset().filter(
                 approved=False)
 
 
 # noinspection PyUnresolvedReferences
-class Category(AuditedModel):
+class Category(models.Model):
     """A category model e.g. gui, backend, web site etc."""
     name = models.CharField(
         help_text=_('Name of this category.'),
