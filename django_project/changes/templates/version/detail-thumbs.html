@@ -111,7 +111,7 @@
               </a>
             {% endif %}
             <a class="btn btn-default btn-xs tooltip-toggle"
-               href='{% url "entry-detail" project_slug=entry.version.project.slug version_slug=entry.version.slug slug=entry.slug %}'
+               href='{% url "entry-detail"  pk=version.id %}'
                data-title="View {{ entry.title }}">
               <span class="glyphicon glyphicon-eye-open"></span>
             </a>
