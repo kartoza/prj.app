@@ -125,7 +125,7 @@ class VersionDetailView(VersionMixin, DetailView):
                     project = Project.objects.get(slug=project_slug)
                     obj = queryset.filter(project=project).get(slug=slug)
                     return obj
-                except Project.DoesNotExist:
+                except Version.DoesNotExist:
                     Http404(
                         'Sorry! The version you are requesting could not '
                         'be found or you do not have permission to view '
