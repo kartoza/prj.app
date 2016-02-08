@@ -72,18 +72,21 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
 
         :raises: Http404
         """
+        if self.request.user.is_staff:
+            versions_qs = Version.objects.all()
+        else:
+            versions_qs = Version.approved_objects.all()
 
-        # TODO - this logic needs to be checked - TS
         project_slug = self.kwargs.get('project_slug', None)
-        if self.queryset is None:
-            if project_slug:
-                project = Project.objects.get(slug=project_slug)
-                queryset = Version.objects.filter(
-                    project=project).order_by('-padded_version')
-                return queryset
-            else:
-                raise Http404('Sorry! We could not find your entry!')
-        return self.queryset
+        if project_slug:
+            project = Project.objects.get(slug=project_slug)
+            versions_qs = versions_qs.filter(
+                project=project).order_by('-padded_version')
+            return versions_qs
+        else:
+            raise Http404('Sorry! We could not find your version!')
+        # In case no project filter applied
+        return versions_qs
 
 
 class VersionDetailView(VersionMixin, DetailView):
@@ -184,7 +187,10 @@ class VersionThumbnailView(VersionMixin, DetailView):
         :returns: A queryset which is filtered to only show approved Versions.
         :rtype: QuerySet
         """
-        versions_qs = Version.objects.all()
+        if self.request.user.is_staff:
+            versions_qs = Version.objects.all()
+        else:
+            versions_qs = Version.approved_objects.all()
         return versions_qs
 
     def get_object(self, queryset=None):
@@ -197,9 +203,24 @@ class VersionThumbnailView(VersionMixin, DetailView):
         :returns: A Version instance.
         :rtype: Version
         """
-        obj = super(VersionThumbnailView, self).get_object(queryset)
-        obj.request_user = self.request.user
-        return obj
+        if queryset is None:
+            queryset = self.get_queryset()
+            slug = self.kwargs.get('slug', None)
+            project_slug = self.kwargs.get('project_slug', None)
+            if slug and project_slug:
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                    obj = queryset.filter(project=project).get(slug=slug)
+                    return obj
+                except Version.DoesNotExist:
+                    raise Http404(
+                        'Sorry! The version you are requesting could not '
+                        'be found or you do not have permission to view '
+                        'the version. Also the version may not be approved '
+                        'yet. Try logging in as a staff member if you wish '
+                        'to view it.')
+            else:
+                raise Http404('Sorry! We could not find your version!')
 
 
 # noinspection PyAttributeOutsideInit
@@ -450,7 +471,7 @@ class PendingVersionListView(
                 else:
                     return queryset.filter(author=self.request.user)
             else:
-                raise Http404('Sorry! We could not find your entry!')
+                raise Http404('Sorry! We could not find your version!')
         return self.queryset
 
 
