@@ -66,16 +66,25 @@ class CommitteeDetailView(CommitteeMixin, DetailView):
         :type queryset: Queryset
 
         """
+
         if queryset is None:
             queryset = self.get_queryset()
-            slug = self.kwargs.get('slug', None)
-            project_slug = self.kwargs.get('project_slug', None)
-            if slug and project_slug:
+        slug = self.kwargs.get('slug', None)
+        project_slug = self.kwargs.get('project_slug', None)
+        if slug and project_slug:
+            try:
                 project = Project.objects.get(slug=project_slug)
                 obj = queryset.get(slug=slug, project=project)
                 return obj
-            else:
-                raise Http404('Sorry! We could not find your committee!')
+            except (Project.DoesNotExist, Committee.DoesNotExist):
+                raise Http404(
+                    'Sorry! The committee you are requesting '
+                    'could not be found or you do not have permission to '
+                    'view it. Also the committee may not be '
+                    'approved yet. Try logging in as a staff member if '
+                    'you wish to view it.')
+        else:
+            raise Http404('Sorry! We could not find your committee!')
 
 
 # noinspection PyAttributeOutsideInit
