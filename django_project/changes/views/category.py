@@ -154,22 +154,34 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
     def get_queryset(self, queryset=None):
         """Get the queryset for this view.
 
-        :param queryset: A query set
-        :type queryset: QuerySet
+        :returns: A queryset which is filtered to only show approved
+            Categories.
 
-        :returns: Category Queryset which is filtered by project
+        :param queryset: Optional queryset.
         :rtype: QuerySet
         :raises: Http404
         """
-        if self.queryset is None:
+        if queryset is None:
             project_slug = self.kwargs.get('project_slug', None)
             if project_slug:
-                project = Project.objects.get(slug=project_slug)
-                queryset = Category.objects.filter(project=project)
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                except Project.DoesNotExist:
+                    raise Http404(
+                        'Sorry! The project you are requesting a category for '
+                        'could not be found or you do not have permission to '
+                        'view the category. Also the version may not be '
+                        'approved yet. Try logging in as a staff member if '
+                        'you wish to view it.')
+                queryset = Category.approved_objects.filter(
+                    project=project)
                 return queryset
             else:
-                raise Http404('Sorry! We could not find your category!')
-        return self.queryset
+                raise Http404(
+                        'Sorry! We could not find the project for '
+                        'your category!')
+        else:
+            return queryset
 
 
 class CategoryDetailView(CategoryMixin, DetailView):
@@ -418,8 +430,8 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
                 'ERROR: Category by this name already exists!')
 
 
-class PendingCategoryListView(StaffuserRequiredMixin, CategoryMixin,
-                              PaginationMixin, ListView):
+class PendingCategoryListView(
+        StaffuserRequiredMixin, CategoryMixin, PaginationMixin, ListView):
     """List view for pending Category."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
@@ -465,12 +477,22 @@ class PendingCategoryListView(StaffuserRequiredMixin, CategoryMixin,
         if self.queryset is None:
             self.project_slug = self.kwargs.get('project_slug', None)
             if self.project_slug:
-                self.project = Project.objects.get(slug=self.project_slug)
-                queryset = Category.unapproved_objects.filter(
+                try:
+                    self.project = Project.objects.get(slug=self.project_slug)
+                except Project.DoesNotExist:
+                    raise Http404(
+                        'Sorry! The project you are requesting a category for '
+                        'could not be found or you do not have permission to '
+                        'view the category. Also the version may not be '
+                        'approved yet. Try logging in as a staff member if '
+                        'you wish to view it.')
+                self.queryset = Category.unapproved_objects.filter(
                     project=self.project)
-                return queryset
+                return self.queryset
             else:
-                raise Http404('Sorry! We could not find your category!')
+                raise Http404(
+                        'Sorry! We could not find the project for '
+                        'your category!')
         return self.queryset
 
 
