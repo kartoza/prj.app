@@ -130,11 +130,11 @@ class VersionDetailView(VersionMixin, DetailView):
                     return obj
                 except Version.DoesNotExist:
                     raise Http404(
-                        'Sorry! The version you are requesting could not '
-                        'be found or you do not have permission to view '
-                        'the version. Also the version may not be approved '
-                        'yet. Try logging in as a staff member if you wish '
-                        'to view it.')
+                        'Sorry! The project you are requesting a version for '
+                        'could not be found or you do not have permission to '
+                        'view the version. Also the version may not be '
+                        'approved yet. Try logging in as a staff member if '
+                        'you wish to view it.')
             else:
                 raise Http404('Sorry! We could not find your version!')
 
@@ -214,11 +214,11 @@ class VersionThumbnailView(VersionMixin, DetailView):
                     return obj
                 except Version.DoesNotExist:
                     raise Http404(
-                        'Sorry! The version you are requesting could not '
-                        'be found or you do not have permission to view '
-                        'the version. Also the version may not be approved '
-                        'yet. Try logging in as a staff member if you wish '
-                        'to view it.')
+                        'Sorry! The project you are requesting a version for '
+                        'could not be found or you do not have permission to '
+                        'view the version. Also the version may not be '
+                        'approved yet. Try logging in as a staff member if '
+                        'you wish to view it.')
             else:
                 raise Http404('Sorry! We could not find your version!')
 
