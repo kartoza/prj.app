@@ -108,7 +108,7 @@ class EntryDetailView(EntryMixin, DetailView):
         try:
             obj = queryset.get(id=pk)
         except Entry.DoesNotExist:
-            return Http404(
+            raise Http404(
                     'Requested changelog entry does not exist.')
         return obj
 

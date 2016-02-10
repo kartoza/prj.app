@@ -126,6 +126,10 @@ class VersionDetailView(VersionMixin, DetailView):
         if slug and project_slug:
             try:
                 project = Project.objects.get(slug=project_slug)
+            except Project.DoesNotExist:
+                raise Http404(
+                    'Requested project does not exist.')
+            try:
                 obj = queryset.filter(project=project).get(slug=slug)
                 return obj
             except Version.DoesNotExist:
