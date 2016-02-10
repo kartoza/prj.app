@@ -74,9 +74,14 @@ class CommitteeDetailView(CommitteeMixin, DetailView):
         if slug and project_slug:
             try:
                 project = Project.objects.get(slug=project_slug)
+            except Project.DoesNotExist:
+                raise Http404(
+                    'The requested project does not exist.'
+                )
+            try:
                 obj = queryset.get(slug=slug, project=project)
                 return obj
-            except (Project.DoesNotExist, Committee.DoesNotExist):
+            except Committee.DoesNotExist:
                 raise Http404(
                     'Sorry! The committee you are requesting '
                     'could not be found or you do not have permission to '

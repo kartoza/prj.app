@@ -79,7 +79,12 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
 
         project_slug = self.kwargs.get('project_slug', None)
         if project_slug:
-            project = Project.objects.get(slug=project_slug)
+            try:
+                project = Project.objects.get(slug=project_slug)
+            except Project.DoesNotExist:
+                raise Http404(
+                    'The requested project does not exist.'
+                )
             versions_qs = versions_qs.filter(
                 project=project).order_by('-padded_version')
             return versions_qs
@@ -126,6 +131,10 @@ class VersionDetailView(VersionMixin, DetailView):
         if slug and project_slug:
             try:
                 project = Project.objects.get(slug=project_slug)
+            except Project.DoesNotExist:
+                raise Http404(
+                    'Requested project does not exist.')
+            try:
                 obj = queryset.filter(project=project).get(slug=slug)
                 return obj
             except Version.DoesNotExist:
