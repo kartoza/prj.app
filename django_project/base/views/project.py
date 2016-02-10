@@ -193,7 +193,11 @@ class ProjectUpdateView(LoginRequiredMixin, ProjectMixin, UpdateView):
 
 
 class PendingProjectListView(
-        ProjectMixin, PaginationMixin, ListView, StaffuserRequiredMixin):
+        ProjectMixin,
+        PaginationMixin,
+        ListView,
+        StaffuserRequiredMixin,
+        LoginRequiredMixin):
     """List all users unapproved projects - staff users see all unapproved."""
     context_object_name = 'projects'
     template_name = 'project/list.html'
