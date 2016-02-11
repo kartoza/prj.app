@@ -79,54 +79,48 @@
     {% for entry in row.entries %}
       {% if entry.approved %}
         <div class="row">
-          <div class="{% if entry.image_file %}col-md-7{% else %}col-md-12{% endif %}">
-            <h3 id="feature-{{ entry.id }}">
-              {% if not rst_download %}
-                <a href="{{ request.path }}#feature-{{ entry.id }}">#</a>
-              {% endif %}
-              <span class="text-muted">Feature:</span> {{ entry.title }}
-            </h3>
-            <div>
-              {{ entry.description|base_markdown }}
+            <div class="col-lg-9">
+                <h3><span class="text-muted">Feature:</span> {{ entry.title }}</h3>
             </div>
-            <div class="btn-group">
-              {% if not rst_download %}
-                {% if not entry.approved and user.is_staff %}
-                  <a class="btn btn-success btn-xs tooltip-toggle"
-                     data-title="Approve Entry"
-                     href='{% url "entry-approve" pk=entry.id %}'>
-                    <span class="glyphicon glyphicon-thumbs-up"></span>
-                  </a>
-                {% endif %}
-                {% if user.is_authenticated %}
-                  <a class="btn btn-default btn-xs tooltip-toggle"
-                     data-title="Delete Entry"
-                     href='{% url "entry-delete" pk=entry.id %}'>
-                    <span class="glyphicon glyphicon-minus"></span>
-                  </a>
-                  <a class="btn btn-default btn-xs tooltip-toggle"
-                     data-title="Update Entry"
-                     href='{% url "entry-update" pk=entry.id %}'>
-                    <span class="glyphicon glyphicon-pencil"></span>
-                  </a>
-                {% endif %}
-              {% endif %}
+            <div class="col-lg-2">
+            {% if user.is_authenticated %}
+                <div class="btn-group pull-right">
+                    {% if not entry.approved and user.is_staff %}
+                        <a class="btn btn-success btn-mini tooltip-toggle"
+                           data-title="Approve Entry"
+                           href='{% url "entry-approve" pk=entry.id %}'>
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        </a>
+                    {% endif %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       data-title="Delete Entry"
+                       href='{% url "entry-delete" pk=entry.id %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       data-title="Update Entry"
+                       href='{% url "entry-update" pk=entry.id %}'>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                </div>
+            {% endif %}
             </div>
-          </div>
-          {% if entry.image_file %}
-            <div class="col-md-5">
-              {% if not rst_download %}
-                <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
-                  <img class="img-responsive img-rounded"
-                     src="{{ entry.image_file|thumbnail_url:'large-entry' }}"/>
-                </a>
-              {% else %}
-                <img class="img-responsive img-rounded"
-                     src="{{ entry.image_file.url }}"/>
-              {% endif %}
-            </div>
-          {% endif %}
         </div>
+        <div class="row" style="margin-top:10px">
+            <div class="col-lg-8">
+                {{ entry.description|base_markdown }}
+            </div>
+            <div class="col-lg-4">
+                {% if entry.image_file %}
+                    <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+                        <img class="img-responsive img-rounded pull-right"
+                             src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
+                             alt=""/>{# see core/settings/contrib.py for large-entry #}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
         {% if entry.video %}
         <div class="row">
             <div class="col-lg-8 col-md-offset-1">
@@ -134,6 +128,9 @@
             </div>
         </div>
         {% endif %}
+
+        <h5 class="text-muted"> {{ entry.funder_info_html|base_markdown }} {{ entry.developer_info_html|base_markdown }} </h5>
+
         {% if not rst_download %}
           <hr />
         {% endif %}

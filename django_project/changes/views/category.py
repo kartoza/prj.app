@@ -216,9 +216,18 @@ class CategoryDetailView(CategoryMixin, DetailView):
         slug = self.kwargs.get('slug', None)
         project_slug = self.kwargs.get('project_slug', None)
         if slug and project_slug:
-            project = Project.objects.get(slug=project_slug)
-            obj = queryset.get(project=project, slug=slug)
-            return obj
+            try:
+                project = Project.objects.get(slug=project_slug)
+            except Project.DoesNotExist:
+                raise Http404(
+                    'The project you requested a category for does not exist.'
+                )
+            try:
+                obj = queryset.get(project=project, slug=slug)
+                return obj
+            except Category.DoesNotExist:
+                raise Http404(
+                    'The category you requested does not exist.')
         else:
             raise Http404('Sorry! We could not find your category!')
 
