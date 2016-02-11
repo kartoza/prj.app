@@ -313,6 +313,17 @@ class TestSponsorshipLevelCRUD(TestCase):
         for key, val in new_model_data.items():
             self.assertEqual(my_model.__dict__.get(key), val)
 
+    def test_SponsorshipLevel_delete(self):
+        """
+        Tests SponsorshipLevel model delete
+        """
+        my_model = SponsorshipLevelF.create()
+
+        my_model.delete()
+
+        # check if deleted
+        self.assertTrue(my_model.pk is None)
+
 
 class TestSponsorshipPeriodCRUD(TestCase):
     """
@@ -363,3 +374,14 @@ class TestSponsorshipPeriodCRUD(TestCase):
         # check if updated
         for key, val in new_model_data.items():
             self.assertEqual(my_model.__dict__.get(key), val)
+
+    def test_SponsorshipPeriod_delete(self):
+        """
+        Tests SponsorshipPeriod model delete
+        """
+        my_model = SponsorshipPeriodF.create()
+
+        my_model.delete()
+
+        # check if deleted
+        self.assertTrue(my_model.pk is None)

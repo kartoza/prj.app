@@ -27,8 +27,7 @@ from ..forms import SponsorshipLevelForm
 class JSONResponseMixin(object):
     """A mixin that can be used to render a JSON response."""
     def render_to_json_response(self, context, **response_kwargs):
-        """Returns a JSON response, transforming
-        'context' to make the payload.
+        """Returns a JSON response, transforming 'context' to make the payload.
 
         :param context: Context data to use with template
         :type context: dict
@@ -59,28 +58,21 @@ class JSONResponseMixin(object):
         for sponsorshiplevel in context['sponsorshiplevels']:
             if not first_flag:
                 result += ',\n'
-            result += '    "%s" : "%s"' % (
-                sponsorshiplevel.id,
-                sponsorshiplevel.name
-            )
+            result += '    "%s" : "%s"' % (sponsorshiplevel.id, sponsorshiplevel.name)
             first_flag = False
         result += '\n}'
         return result
 
 
 class SponsorshipLevelMixin(object):
-    """Mixin class to provide standard settings for Sponsorship level."""
+    """Mixin class to provide standard settings for SponsorshipLevel."""
     model = SponsorshipLevel
     form_class = SponsorshipLevelForm
 
 
-class JSONSponsorshipLevelListView(
-        SponsorshipLevel,
-        JSONResponseMixin,
-        ListView):
-    """List view for Sponsorship Level as json object
-    - needed by javascript."""
-    context_object_name = 'sponsorshiplevel'
+class JSONSponsorshipLevelListView(SponsorshipLevelMixin, JSONResponseMixin, ListView):
+    """List view for sponsorship level as json object - needed by javascript."""
+    context_object_name = 'sponsorshiplevels'
 
     def dispatch(self, request, *args, **kwargs):
         """Ensure this view is only used via ajax.
@@ -100,7 +92,7 @@ class JSONSponsorshipLevelListView(
             request, *args, **kwargs)
 
     def render_to_response(self, context, **response_kwargs):
-        """Render this Sponsorship level as markdown.
+        """Render this version as markdown.
 
         :param context: Context data to use with template.
         :type context: dict
@@ -112,21 +104,6 @@ class JSONSponsorshipLevelListView(
         :rtype: HttpResponse
         """
         return self.render_to_json_response(context, **response_kwargs)
-
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: A queryset which is filtered to only show approved Sponsors
-        of project.
-        :rtype: QuerySet
-        :raises: Http404
-        """
-        sponsorshiplevel_id = self.kwargs['sponsorshiplevel']
-        sponsorshiplevel = get_object_or_404(
-                SponsorshipLevel, id=sponsorshiplevel_id)
-        qs = SponsorshipLevel.approved_objects.filter(
-                project=sponsorshiplevel.project)
-        return qs
 
 
 class SponsorshipLevelListView(
