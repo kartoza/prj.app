@@ -74,12 +74,12 @@ class SponsorshipPeriodMixin(object):
 
 
 class JSONSponsorshipPeriodListView(
-        SponsorshipPeriod,
+        SponsorshipPeriodMixin,
         JSONResponseMixin,
         ListView):
     """List view for Sponsorship Period as json object
      - needed by javascript."""
-    context_object_name = 'sponsorshipperiod'
+    context_object_name = 'sponsorshipperiods'
 
     def dispatch(self, request, *args, **kwargs):
         """Ensure this view is only used via ajax.
@@ -111,21 +111,6 @@ class JSONSponsorshipPeriodListView(
         :rtype: HttpResponse
         """
         return self.render_to_json_response(context, **response_kwargs)
-
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: A queryset which is filtered to only show approved Sponsors
-        of project.
-        :rtype: QuerySet
-        :raises: Http404
-        """
-        sponsorshipperiod_id = self.kwargs['sponsorshipperiod']
-        sponsorshipperiod = get_object_or_404(
-                SponsorshipPeriod, id=sponsorshipperiod_id)
-        qs = SponsorshipPeriod.approved_objects.filter(
-                project=sponsorshipperiod.project)
-        return qs
 
 
 class SponsorshipPeriodListView(

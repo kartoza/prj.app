@@ -102,9 +102,14 @@ class EntryDetailView(EntryMixin, DetailView):
         :rtype QuerySet
         :raises: Http404
         """
-        queryset = self.get_queryset()
+        if queryset is None:
+            queryset = self.get_queryset()
         pk = self.kwargs.get('pk', None)
-        obj = queryset.get(id=pk)
+        try:
+            obj = queryset.get(id=pk)
+        except Entry.DoesNotExist:
+            raise Http404(
+                    'Requested changelog entry does not exist.')
         return obj
 
 

@@ -1,18 +1,18 @@
-__author__ = 'rischan'
+# coding=utf-8
 
 import string
 import random
 import datetime
-import pytz
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
+# noinspection PyPackageRequirements
 from core.settings.contrib import STOP_WORDS
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
-utc = pytz.UTC
+__author__ = 'rischan'
 
 
 class ApprovedSponsorshipPeriodManager(models.Manager):
@@ -61,14 +61,16 @@ class SponsorshipPeriod(models.Model):
     objects = models.Manager()
     approved_objects = ApprovedSponsorshipPeriodManager()
     unapproved_objects = UnapprovedSponsorshipPeriodManager()
+    # noinspection PyUnresolvedReferences
     sponsor = models.ForeignKey(
-            'Sponsor',
-            help_text='Input the sponsor name',
+        'Sponsor',
+        help_text='Input the sponsor name',
     )
+    # noinspection PyUnresolvedReferences
     sponsorshiplevel = models.ForeignKey(
-            'SponsorshipLevel',
-            help_text='This level take from Sponsorship Level, '
-            'you can add it by using Sponsorship Level menu',
+        'SponsorshipLevel',
+        help_text='This level take from Sponsorship Level, '
+        'you can add it by using Sponsorship Level menu',
     )
     # noinspection PyClassicStyleClass
 
@@ -90,11 +92,13 @@ class SponsorshipPeriod(models.Model):
             self.slug = slugify(new_list)[:50]
         super(SponsorshipPeriod, self).save(*args, **kwargs)
 
-    def slug_generator(self, size=6, chars=string.ascii_lowercase):
+    @staticmethod
+    def slug_generator(size=6, chars=string.ascii_lowercase):
         return ''.join(random.choice(chars) for _ in range(size))
 
     def __unicode__(self):
         return u'%s - %s : %s' % (
+            self.sponsor.name,
             self.start_date,
             self.end_date
         )

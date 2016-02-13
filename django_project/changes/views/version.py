@@ -79,7 +79,12 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
 
         project_slug = self.kwargs.get('project_slug', None)
         if project_slug:
-            project = Project.objects.get(slug=project_slug)
+            try:
+                project = Project.objects.get(slug=project_slug)
+            except Project.DoesNotExist:
+                raise Http404(
+                    'The requested project does not exist.'
+                )
             versions_qs = versions_qs.filter(
                 project=project).order_by('-padded_version')
             return versions_qs
@@ -121,22 +126,26 @@ class VersionDetailView(VersionMixin, DetailView):
         """
         if queryset is None:
             queryset = self.get_queryset()
-            slug = self.kwargs.get('slug', None)
-            project_slug = self.kwargs.get('project_slug', None)
-            if slug and project_slug:
-                try:
-                    project = Project.objects.get(slug=project_slug)
-                    obj = queryset.filter(project=project).get(slug=slug)
-                    return obj
-                except Version.DoesNotExist:
-                    raise Http404(
-                        'Sorry! The project you are requesting a version for '
-                        'could not be found or you do not have permission to '
-                        'view the version. Also the version may not be '
-                        'approved yet. Try logging in as a staff member if '
-                        'you wish to view it.')
-            else:
-                raise Http404('Sorry! We could not find your version!')
+        slug = self.kwargs.get('slug', None)
+        project_slug = self.kwargs.get('project_slug', None)
+        if slug and project_slug:
+            try:
+                project = Project.objects.get(slug=project_slug)
+            except Project.DoesNotExist:
+                raise Http404(
+                    'Requested project does not exist.')
+            try:
+                obj = queryset.filter(project=project).get(slug=slug)
+                return obj
+            except Version.DoesNotExist:
+                raise Http404(
+                    'Sorry! The project you are requesting a version for '
+                    'could not be found or you do not have permission to '
+                    'view the version. Also the version may not be '
+                    'approved yet. Try logging in as a staff member if '
+                    'you wish to view it.')
+        else:
+            raise Http404('Sorry! We could not find your version!')
 
 
 class VersionMarkdownView(VersionDetailView):
@@ -205,22 +214,22 @@ class VersionThumbnailView(VersionMixin, DetailView):
         """
         if queryset is None:
             queryset = self.get_queryset()
-            slug = self.kwargs.get('slug', None)
-            project_slug = self.kwargs.get('project_slug', None)
-            if slug and project_slug:
-                try:
-                    project = Project.objects.get(slug=project_slug)
-                    obj = queryset.filter(project=project).get(slug=slug)
-                    return obj
-                except Version.DoesNotExist:
-                    raise Http404(
-                        'Sorry! The project you are requesting a version for '
-                        'could not be found or you do not have permission to '
-                        'view the version. Also the version may not be '
-                        'approved yet. Try logging in as a staff member if '
-                        'you wish to view it.')
-            else:
-                raise Http404('Sorry! We could not find your version!')
+        slug = self.kwargs.get('slug', None)
+        project_slug = self.kwargs.get('project_slug', None)
+        if slug and project_slug:
+            try:
+                project = Project.objects.get(slug=project_slug)
+                obj = queryset.filter(project=project).get(slug=slug)
+                return obj
+            except Version.DoesNotExist:
+                raise Http404(
+                    'Sorry! The project you are requesting a version for '
+                    'could not be found or you do not have permission to '
+                    'view the version. Also the version may not be '
+                    'approved yet. Try logging in as a staff member if '
+                    'you wish to view it.')
+        else:
+            raise Http404('Sorry! We could not find your version!')
 
 
 # noinspection PyAttributeOutsideInit

@@ -104,5 +104,5 @@ class SponsorshipPeriodF(factory.django.DjangoModelFactory):
     approved = True
     author = factory.SubFactory(UserF)
     project = factory.SubFactory('base.tests.model_factories.ProjectF')
-    sponsor_id = factory.Sequence(lambda n: n)
-    sponsorshiplevel_id = factory.Sequence(lambda n: n)
+    sponsor = factory.SubFactory('changes.tests.model_factories.SponsorF')
+    sponsorshiplevel = factory.SubFactory('changes.tests.model_factories.SponsorshipLevelF')

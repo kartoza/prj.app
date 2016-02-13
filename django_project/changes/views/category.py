@@ -213,14 +213,23 @@ class CategoryDetailView(CategoryMixin, DetailView):
         """
         if queryset is None:
             queryset = self.get_queryset()
-            slug = self.kwargs.get('slug', None)
-            project_slug = self.kwargs.get('project_slug', None)
-            if slug and project_slug:
+        slug = self.kwargs.get('slug', None)
+        project_slug = self.kwargs.get('project_slug', None)
+        if slug and project_slug:
+            try:
                 project = Project.objects.get(slug=project_slug)
+            except Project.DoesNotExist:
+                raise Http404(
+                    'The project you requested a category for does not exist.'
+                )
+            try:
                 obj = queryset.get(project=project, slug=slug)
                 return obj
-            else:
-                raise Http404('Sorry! We could not find your category!')
+            except Category.DoesNotExist:
+                raise Http404(
+                    'The category you requested does not exist.')
+        else:
+            raise Http404('Sorry! We could not find your category!')
 
 
 # noinspection PyAttributeOutsideInit

@@ -109,19 +109,6 @@ class JSONSponsorListView(SponsorMixin, JSONResponseMixin, ListView):
         """
         return self.render_to_json_response(context, **response_kwargs)
 
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: A queryset which is filtered to only show approved Sponsors
-        of project.
-        :rtype: QuerySet
-        :raises: Http404
-        """
-        sponsor_id = self.kwargs['sponsor']
-        sponsor = get_object_or_404(Sponsor, id=sponsor_id)
-        qs = Sponsor.approved_objects.filter(project=sponsor.project)
-        return qs
-
 
 class SponsorListView(SponsorMixin, PaginationMixin, ListView):
     """List view for Sponsor."""
