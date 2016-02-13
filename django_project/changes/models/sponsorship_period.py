@@ -106,8 +106,8 @@ class SponsorshipPeriod(models.Model):
         })
 
     def current_sponsor(self):
-        today = datetime.datetime.now().replace(tzinfo=utc)
-        end = self.end_date.replace(tzinfo=utc)
+        today = datetime.datetime.now().date()
+        end = self.end_date
         if end < today:
             return False
         else:
