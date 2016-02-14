@@ -12,7 +12,8 @@ from views import (
     ProjectUpdateView,
     PendingProjectListView,
     ApproveProjectView,
-    ProjectBallotListView
+    ProjectBallotListView,
+    custom_404
 )
 
 urlpatterns = patterns(
@@ -49,6 +50,8 @@ urlpatterns = patterns(
         name='project-update'),
 )
 
+# Prevent cloudflare from showing an ad laden 404 with no context
+handler404 = custom_404
 
 if settings.DEBUG:
     # static files (images, css, javascript, etc.)

@@ -129,9 +129,7 @@ class Entry(models.Model):
 
     def get_absolute_url(self):
         return reverse('entry-detail', kwargs={
-            'slug': self.slug,
-            'version_slug': self.version.slug,
-            'project_slug': self.version.project.slug
+            'pk': self.id
         })
 
     def funder_info_html(self):
