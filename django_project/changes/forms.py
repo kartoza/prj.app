@@ -54,7 +54,8 @@ class VersionForm(forms.ModelForm):
         fields = (
             'name',
             'description',
-            'image_file'
+            'image_file',
+            'release_date'
         )
 
     def __init__(self, *args, **kwargs):

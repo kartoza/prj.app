@@ -2,18 +2,18 @@
 {% load l10n %}
 
 <div class="form-group {{ field_class }} col-md-12"{% if flat_attrs %}
-  {{ flat_attrs|safe }}{% endif %}>
-  {% include 'bootstrap3/layout/field_errors_block.html' %}
+    {{ flat_attrs|safe }}{% endif %}>
+    {% include 'bootstrap3/layout/field_errors_block.html' %}
 
-  {% for choice in field.field.choices %}
-    <label class="radio-inline col-md-3 col-md-offset-1">
-      <input type="radio"
-              {% if choice.0|stringformat:"s" == field.value|stringformat:"s" %}
-             checked="checked"{% endif %} name="{{ field.html_name }}"
-             id="id_{{ field.html_name }}_{{ forloop.counter }}"
-             value="{{ choice.0|unlocalize }}" {{ field.field.widget.attrs|flatatt }}>{{ choice.1|unlocalize }}
-    </label>
-  {% endfor %}
+    {% for choice in field.field.choices %}
+        <label class="radio-inline col-md-3 col-md-offset-1">
+            <input type="radio"
+                    {% if choice.0|stringformat:"s" == field.value|stringformat:"s" %}
+                   checked="checked"{% endif %} name="{{ field.html_name }}"
+                   id="id_{{ field.html_name }}_{{ forloop.counter }}"
+                   value="{{ choice.0|unlocalize }}" {{ field.field.widget.attrs|flatatt }}>{{ choice.1|unlocalize }}
+        </label>
+    {% endfor %}
 
-  {% include 'bootstrap3/layout/help_text.html' %}
+    {% include 'bootstrap3/layout/help_text.html' %}
 </div>

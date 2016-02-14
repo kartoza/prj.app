@@ -1,286 +1,286 @@
 {% load thumbnail %}
 {% if the_project %}
-  <ul class="nav navbar-nav">
-    {% if the_project.image_file %}
-      <li><img class="img-rounded"
-                 src="{% thumbnail the_project.image_file 50x50 crop %}"/></li>
-    {% endif %}
-    <li>
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <strong>{{ the_project.name }}</strong> <b class="caret"></b>
-      </a>
-      <ul class="dropdown-menu">
-        {% for project in projects %}
-          {% if project != the_project %}
-            <li role="presentation">
-              <a href="{{ project.get_absolute_url }}">{{ project.name }}</a>
-            </li>
-          {% endif %}
-          {% if forloop.last and forloop|length > 1 %}
-            <li role="presentation" class="divider"></li>
-          {% endif %}
-        {% endfor %}
-        <li>
-          <a href="{% url 'home' %}">All Projects</a>
-        </li>
-        <li>
-          <a href="{% url 'project-create' %}">Create Project</a>
-        </li>
-        {% if is_logged_in and unapproved_projects %}
-          <li>
-            <a href="{% url 'pending-project-list' %}">Projects Pending Approval</a>
-          </li>
+    <ul class="nav navbar-nav">
+        {% if the_project.image_file %}
+            <li><img class="img-rounded"
+                     src="{% thumbnail the_project.image_file 50x50 crop %}"/></li>
         {% endif %}
-      </ul>
-    </li>
-    {% if the_project %}
-      <li>
-        <a href="{{ the_project.get_absolute_url }}">Overview</a>
-      </li>
-    {% endif %}
-  </ul>
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <strong>{{ the_project.name }}</strong> <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% for project in projects %}
+                    {% if project != the_project %}
+                        <li role="presentation">
+                            <a href="{{ project.get_absolute_url }}">{{ project.name }}</a>
+                        </li>
+                    {% endif %}
+                    {% if forloop.last and forloop|length > 1 %}
+                        <li role="presentation" class="divider"></li>
+                    {% endif %}
+                {% endfor %}
+                <li>
+                    <a href="{% url 'home' %}">All Projects</a>
+                </li>
+                <li>
+                    <a href="{% url 'project-create' %}">Create Project</a>
+                </li>
+                {% if is_logged_in and unapproved_projects %}
+                    <li>
+                        <a href="{% url 'pending-project-list' %}">Projects Pending Approval</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </li>
+        {% if the_project %}
+            <li>
+                <a href="{{ the_project.get_absolute_url }}">Overview</a>
+            </li>
+        {% endif %}
+    </ul>
 {% endif %}
 {% if versions or versions|length_is:0 %}
-<ul class="nav navbar-nav">
-  <li role="presentation">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-      {% if the_version %}
-        {{ the_version.name }}
-      {% else %}
-        Versions
-      {% endif %} <b class="caret"></b>
-    </a>
-    <ul class="dropdown-menu">
-      {% for version in versions %}
-        {% if version != the_version %}
-          <li role="presentation">
-            <a href="{{ version.get_absolute_url }}">{{ version.name }}</a>
-          </li>
-        {% endif %}
-        {% if forloop.last and forloop|length > 1 and version != the_version %}
-          <li role="presentation" class="divider"></li>
-        {% endif %}
-      {% endfor %}
-      {% if not versions|length_is:0 %}
-        <li>
-          <a href="{% url 'version-list' the_project.slug %}">All Versions</a>
+    <ul class="nav navbar-nav">
+        <li role="presentation">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                {% if the_version %}
+                    {{ the_version.name }}
+                {% else %}
+                    Versions
+                {% endif %} <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% for version in versions %}
+                    {% if version != the_version %}
+                        <li role="presentation">
+                            <a href="{{ version.get_absolute_url }}">{{ version.name }}</a>
+                        </li>
+                    {% endif %}
+                    {% if forloop.last and forloop|length > 1 and version != the_version %}
+                        <li role="presentation" class="divider"></li>
+                    {% endif %}
+                {% endfor %}
+                {% if not versions|length_is:0 %}
+                    <li>
+                        <a href="{% url 'version-list' the_project.slug %}">All Versions</a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="{% url 'version-create' the_project.slug %}">Create Version</a>
+                </li>
+                {% if unapproved_versions %}
+                    <li>
+                        <a href="{% url 'pending-version-list' the_project.slug %}">Versions
+                            Pending Approval</a>
+                    </li>
+                {% endif %}
+            </ul>
         </li>
-      {% endif %}
-      <li>
-        <a href="{% url 'version-create' the_project.slug %}">Create Version</a>
-      </li>
-      {% if unapproved_versions %}
-        <li>
-          <a href="{% url 'pending-version-list' the_project.slug %}">Versions
-            Pending Approval</a>
-        </li>
-      {% endif %}
     </ul>
-  </li>
-</ul>
 {% endif %}
 {% if categories or categories|length_is:0 %}
-  <ul class="nav navbar-nav">
-    <li role="presentation">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        Entry Categories <b class="caret"></b>
-      </a>
-      <ul class="dropdown-menu">
-        {% for category in categories %}
-          {% if category != the_category %}
-            <li role="presentation">
-              <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
-            </li>
-          {% endif %}
-          {% if forloop.last and forloop|length > 1 and category != the_category %}
-            <li role="presentation" class="divider"></li>
-          {% endif %}
-        {% endfor %}
-        {% if not categories|length_is:0 %}
-          <li>
-            <a href="{% url 'category-list' the_project.slug %}">All Categories</a>
-          </li>
-        {% endif %}
-        <li>
-          <a href="{% url 'category-create' the_project.slug %}">Create Category</a>
-        </li>
-        {% if unapproved_categories %}
-          <li>
-            <a href="{% url 'pending-category-list' the_project.slug %}">
-              Categories Pending Approval
+    <ul class="nav navbar-nav">
+        <li role="presentation">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Entry Categories <b class="caret"></b>
             </a>
-          </li>
-        {% endif %}
-      </ul>
-    </li>
-  </ul>
+            <ul class="dropdown-menu">
+                {% for category in categories %}
+                    {% if category != the_category %}
+                        <li role="presentation">
+                            <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+                        </li>
+                    {% endif %}
+                    {% if forloop.last and forloop|length > 1 and category != the_category %}
+                        <li role="presentation" class="divider"></li>
+                    {% endif %}
+                {% endfor %}
+                {% if not categories|length_is:0 %}
+                    <li>
+                        <a href="{% url 'category-list' the_project.slug %}">All Categories</a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="{% url 'category-create' the_project.slug %}">Create Category</a>
+                </li>
+                {% if unapproved_categories %}
+                    <li>
+                        <a href="{% url 'pending-category-list' the_project.slug %}">
+                            Categories Pending Approval
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </li>
+    </ul>
 {% endif %}
 {% if sponsors or sponsors|length_is:0 %}
-  <ul class="nav navbar-nav">
-    <li role="presentation">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        Entry sponsors <b class="caret"></b>
-      </a>
-      <ul class="dropdown-menu">
-        {% for sponsor in sponsors %}
-          {% if sponsor != the_sponsor %}
-            <li role="presentation">
-              <a href="{{ sponsor.get_absolute_url }}">{{ sponsor.name }}</a>
-            </li>
-          {% endif %}
-          {% if forloop.last and forloop|length > 1 and sponsor != the_sponsor %}
-            <li role="presentation" class="divider"></li>
-          {% endif %}
-        {% endfor %}
-        {% if not sponsors|length_is:0 %}
-          <li>
-            <a href="{% url 'sponsor-list' the_project.slug %}">All sponsors</a>
-          </li>
-        {% endif %}
-        <li>
-          <a href="{% url 'sponsor-create' the_project.slug %}">Create sponsor</a>
-        </li>
-        {% if unapproved_sponsors %}
-          <li>
-            <a href="{% url 'pending-sponsor-list' the_project.slug %}">
-              Sponsors Pending Approval
+    <ul class="nav navbar-nav">
+        <li role="presentation">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Entry sponsors <b class="caret"></b>
             </a>
-          </li>
-        {% endif %}
-      </ul>
-    </li>
-  </ul>
+            <ul class="dropdown-menu">
+                {% for sponsor in sponsors %}
+                    {% if sponsor != the_sponsor %}
+                        <li role="presentation">
+                            <a href="{{ sponsor.get_absolute_url }}">{{ sponsor.name }}</a>
+                        </li>
+                    {% endif %}
+                    {% if forloop.last and forloop|length > 1 and sponsor != the_sponsor %}
+                        <li role="presentation" class="divider"></li>
+                    {% endif %}
+                {% endfor %}
+                {% if not sponsors|length_is:0 %}
+                    <li>
+                        <a href="{% url 'sponsor-list' the_project.slug %}">All sponsors</a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="{% url 'sponsor-create' the_project.slug %}">Create sponsor</a>
+                </li>
+                {% if unapproved_sponsors %}
+                    <li>
+                        <a href="{% url 'pending-sponsor-list' the_project.slug %}">
+                            Sponsors Pending Approval
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </li>
+    </ul>
 {% endif %}
 {% if sponsorshiplevel or sponsorshiplevels|length_is:0 %}
-  <ul class="nav navbar-nav">
-    <li role="presentation">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        Entry sponsorship level <b class="caret"></b>
-      </a>
-      <ul class="dropdown-menu">
-        {% for sponsorshiplevel in sponsorshiplevels %}
-          {% if sponsorshiplevel != the_sponsorshiplevel %}
-            <li role="presentation">
-              <a href="{{ sponsorshiplevel.get_absolute_url }}">{{ sponsorshiplevel.name }}</a>
-            </li>
-          {% endif %}
-          {% if forloop.last and forloop|length > 1 and sponsorshiplevel != the_sponsorshiplevel %}
-            <li role="presentation" class="divider"></li>
-          {% endif %}
-        {% endfor %}
-        {% if not sponsorshiplevels|length_is:0 %}
-          <li>
-            <a href="{% url 'sponsorshiplevel-list' the_project.slug %}">All sponsorship level</a>
-          </li>
-        {% endif %}
-        <li>
-          <a href="{% url 'sponsorshiplevel-create' the_project.slug %}">Create sponsor level</a>
-        </li>
-        {% if unapproved_sponsorshiplevels %}
-          <li>
-            <a href="{% url 'pending-sponsorshiplevel-list' the_project.slug %}">
-              Sponsorship Level Pending Approval
+    <ul class="nav navbar-nav">
+        <li role="presentation">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Entry sponsorship level <b class="caret"></b>
             </a>
-          </li>
-        {% endif %}
-      </ul>
-    </li>
-  </ul>
+            <ul class="dropdown-menu">
+                {% for sponsorshiplevel in sponsorshiplevels %}
+                    {% if sponsorshiplevel != the_sponsorshiplevel %}
+                        <li role="presentation">
+                            <a href="{{ sponsorshiplevel.get_absolute_url }}">{{ sponsorshiplevel.name }}</a>
+                        </li>
+                    {% endif %}
+                    {% if forloop.last and forloop|length > 1 and sponsorshiplevel != the_sponsorshiplevel %}
+                        <li role="presentation" class="divider"></li>
+                    {% endif %}
+                {% endfor %}
+                {% if not sponsorshiplevels|length_is:0 %}
+                    <li>
+                        <a href="{% url 'sponsorshiplevel-list' the_project.slug %}">All sponsorship level</a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="{% url 'sponsorshiplevel-create' the_project.slug %}">Create sponsor level</a>
+                </li>
+                {% if unapproved_sponsorshiplevels %}
+                    <li>
+                        <a href="{% url 'pending-sponsorshiplevel-list' the_project.slug %}">
+                            Sponsorship Level Pending Approval
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </li>
+    </ul>
 {% endif %}
 {% if entries %}
-  <ul class="nav navbar-nav">
-    <li role="presentation">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        Entries <b class="caret"></b>
-      </a>
-      <ul class="dropdown-menu">
-        {% for entry in entries %}
-          {% if entry != the_entry %}
-            <li role="presentation">
-              <a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a>
-            </li>
-          {% endif %}
-          {% if forloop.last and forloop|length > 1 and entry != the_entry %}
-            <li role="presentation" class="divider"></li>
-          {% endif %}
-        {% endfor %}
-        <li>
-          <a href="{% url 'entry-list' project_slug=the_project.slug version_slug=the_version.slug %}">All Entries</a>
-          <a href="{% url 'entry-create' project_slug=the_project.slug version_slug=the_version.slug %}">Create Entry</a>
-        </li>
-        {% if unapproved_entries %}
-          <li>
-            <a href="{% url 'pending-entry-list' project_slug=the_project.slug version_slug=the_version.slug %}">
-              Entries Pending Approval
+    <ul class="nav navbar-nav">
+        <li role="presentation">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Entries <b class="caret"></b>
             </a>
-          </li>
-        {% endif %}
-      </ul>
-    </li>
-  </ul>
+            <ul class="dropdown-menu">
+                {% for entry in entries %}
+                    {% if entry != the_entry %}
+                        <li role="presentation">
+                            <a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a>
+                        </li>
+                    {% endif %}
+                    {% if forloop.last and forloop|length > 1 and entry != the_entry %}
+                        <li role="presentation" class="divider"></li>
+                    {% endif %}
+                {% endfor %}
+                <li>
+                    <a href="{% url 'entry-list' project_slug=the_project.slug version_slug=the_version.slug %}">All Entries</a>
+                    <a href="{% url 'entry-create' project_slug=the_project.slug version_slug=the_version.slug %}">Create Entry</a>
+                </li>
+                {% if unapproved_entries %}
+                    <li>
+                        <a href="{% url 'pending-entry-list' project_slug=the_project.slug version_slug=the_version.slug %}">
+                            Entries Pending Approval
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </li>
+    </ul>
 {% endif %}
 {% if committees %}
-<ul class="nav navbar-nav">
-  <li role="presentation">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-      {% if the_committee %}
-        {{ the_committee.name }}
-      {% else %}
-        Committees
-      {% endif %} <b class="caret"></b>
-    </a>
-    <ul class="dropdown-menu">
-      {% for committee in committees %}
-        {% if committee != the_committee %}
-          <li role="presentation">
-            <a href="{{ committee.get_absolute_url }}">{{ committee.name }}</a>
-          </li>
+    <ul class="nav navbar-nav">
+        <li role="presentation">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                {% if the_committee %}
+                    {{ the_committee.name }}
+                {% else %}
+                    Committees
+                {% endif %} <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% for committee in committees %}
+                    {% if committee != the_committee %}
+                        <li role="presentation">
+                            <a href="{{ committee.get_absolute_url }}">{{ committee.name }}</a>
+                        </li>
+                    {% endif %}
+                    {% if forloop.last and forloop|length > 1 %}
+                        <li role="presentation" class="divider"></li>
+                    {% endif %}
+                {% endfor %}
+                <li>
+                    <a href="{% url 'committee-create' the_project.slug %}">Create Committee</a>
+                </li>
+            </ul>
+        </li>
+        {% if not ballots and the_committee %}
+            <li>
+                <a href="{% url 'ballot-create' project_slug=the_project.slug committee_slug=the_committee.slug %}">Create Ballot</a>
+            </li>
         {% endif %}
-        {% if forloop.last and forloop|length > 1 %}
-          <li role="presentation" class="divider"></li>
-        {% endif %}
-      {% endfor %}
-      <li>
-        <a href="{% url 'committee-create' the_project.slug %}">Create Committee</a>
-      </li>
     </ul>
-  </li>
-  {% if not ballots and the_committee %}
-    <li>
-      <a href="{% url 'ballot-create' project_slug=the_project.slug committee_slug=the_committee.slug %}">Create Ballot</a>
-    </li>
-  {% endif %}
-</ul>
 {% endif %}
 {% if show_create_committee %}
-<ul class="nav navbar-nav">
-  <li role="presentation">
-    <a href="{% url 'committee-create' the_project.slug %}">Create Committee</a>
-  </li>
-</ul>
+    <ul class="nav navbar-nav">
+        <li role="presentation">
+            <a href="{% url 'committee-create' the_project.slug %}">Create Committee</a>
+        </li>
+    </ul>
 {% endif %}
 {% if ballots %}
-  <ul class="nav navbar-nav">
-    <li role="presentation">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        Ballots <b class="caret"></b>
-      </a>
-      <ul class="dropdown-menu">
-        {% for ballot in ballots %}
-          {% if ballot != the_ballot %}
-            <li role="presentation">
-              <a href="{{ ballot.get_absolute_url }}">{{ ballot.name }}</a>
-            </li>
-          {% endif %}
-          {% if forloop.last and forloop|length > 1 %}
-            <li role="presentation" class="divider"></li>
-          {% endif %}
-        {% endfor %}
-        <li>
-          <a href="{% url 'ballot-create' project_slug=ballots.0.committee.project.slug committee_slug=ballots.0.committee.slug %}">Create
-            Ballot</a>
+    <ul class="nav navbar-nav">
+        <li role="presentation">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Ballots <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% for ballot in ballots %}
+                    {% if ballot != the_ballot %}
+                        <li role="presentation">
+                            <a href="{{ ballot.get_absolute_url }}">{{ ballot.name }}</a>
+                        </li>
+                    {% endif %}
+                    {% if forloop.last and forloop|length > 1 %}
+                        <li role="presentation" class="divider"></li>
+                    {% endif %}
+                {% endfor %}
+                <li>
+                    <a href="{% url 'ballot-create' project_slug=ballots.0.committee.project.slug committee_slug=ballots.0.committee.slug %}">Create
+                        Ballot</a>
+                </li>
+            </ul>
         </li>
-      </ul>
-    </li>
-  </ul>
+    </ul>
 {% endif %}

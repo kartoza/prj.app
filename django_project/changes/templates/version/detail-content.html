@@ -1,140 +1,83 @@
 {% load custom_markup %}
 {% load thumbnail %}
-{% load embed_video_tags %}
-{% load disqus_tags %}
 
 <div class="row">
-  {% if version.project.image_file %}
-    <div class="col-lg-3">
-      {% if not rst_download %}
-        <img class="img-responsive img-rounded"
-             src="{{ version.project.image_file|thumbnail_url:'medium-entry' }}"/>
-      {% else %}
-        <img class="img-responsive img-rounded"
-             src="{{ version.project.image_file.url }}"/>
-      {% endif %}
-    </div>
-  {% endif %}
-  <div class="col-lg-9">
-    <div class="row">
-    {% if not rst_download %}
-      <div class="col-lg-12">
-        <h3 class="muted align-right">
-          <small>Project:</small>
-          {{ version.project }}</h3>
-      </div>
-      <div class="col-lg-12">
-        <h3 class="muted align-right">
-          <small>Changelog for version:</small>
-          {{ version.name }}</h3>
-      </div>
-    {% else %}
-      <div class="col-lg-12">
-        <h1>
-          Changelog for {{ version.project }} {{ version.name }}
-        </h1>
-      </div>
+    {% if version.project.image_file %}
+        <div class="col-lg-3">
+            {% if not rst_download %}
+                <img class="img-responsive img-rounded"
+                     src="{{ version.project.image_file|thumbnail_url:'medium-entry' }}"/>
+            {% else %}
+                <img class="img-responsive img-rounded"
+                     src="{{ version.project.image_file.url }}"/>
+            {% endif %}
+        </div>
     {% endif %}
+    <div class="col-lg-9">
+        <div class="row">
+            {% if not rst_download %}
+                <div class="col-lg-12">
+                    <h3 class="muted align-right">
+                        <small>Project:</small>
+                        {{ version.project }}</h3>
+                </div>
+                <div class="col-lg-12">
+                    <h3 class="muted align-right">
+                        <small>Changelog for version:</small>
+                        {{ version.name }}</h3>
+                </div>
+            {% else %}
+                <div class="col-lg-12">
+                    <h1>
+                        Changelog for {{ version.project }} {{ version.name }}
+                    </h1>
+                </div>
+            {% endif %}
+        </div>
     </div>
-  </div>
 </div>
 {% if not rst_download %}
-  <hr />
+    <hr />
 {% endif %}
 {% if version.description %}
-  <div class="row">
-  {% if version.image_file %}
-    <div class="col-lg-8">
-  {% else %}
-    <div class="col-lg-12">
-  {% endif %}
+    <div class="row">
+    {% if version.image_file %}
+        <div class="col-lg-8">
+    {% else %}
+        <div class="col-lg-12">
+    {% endif %}
 {{ version.description|base_markdown }}
 </div>
 {% if version.image_file %}
-  <div class="col-lg-4">
-    {% if not rst_download %}
-      <a href="{{ MEDIA_URL }}{{ version.image_file }}">
-        <img class="img-responsive img-rounded pull-right"
-             src="{{ version.image_file|thumbnail_url:'medium-entry' }}"/>
-      </a>
-    {% else %}
-      <img class="img-responsive img-rounded pull-right"
-         src="{{ version.image_file.url }}"/>
-    {% endif %}
-  </div>
+    <div class="col-lg-4">
+        {% if not rst_download %}
+            <a href="{{ MEDIA_URL }}{{ version.image_file }}">
+                <img class="img-responsive img-rounded pull-right"
+                     src="{{ version.image_file|thumbnail_url:'medium-entry' }}"/>
+            </a>
+        {% else %}
+            <img class="img-responsive img-rounded pull-right"
+                 src="{{ version.image_file.url }}"/>
+        {% endif %}
+    </div>
 {% endif %}
 </div>
-  {% if not rst_download %}
-    <hr />
-  {% endif %}
+    {% if not rst_download %}
+        <hr />
+    {% endif %}
 {% endif %}
 {% for row in version.categories %}
-  {% if row.entries %}
-    <h2 class="text-muted" id="category-{{ row.category.id }}">
-      {{ row.category.name }}
-    </h2>
-    {% if not rst_download %}
-      <hr />
-    {% endif %}
-    {% for entry in row.entries %}
-      {% if entry.approved %}
-        <div class="row">
-            <div class="col-lg-9">
-                <h3><span class="text-muted">Feature:</span> {{ entry.title }}</h3>
-            </div>
-            <div class="col-lg-2">
-            {% if user.is_authenticated %}
-                <div class="btn-group pull-right">
-                    {% if not entry.approved and user.is_staff %}
-                        <a class="btn btn-success btn-mini tooltip-toggle"
-                           data-title="Approve Entry"
-                           href='{% url "entry-approve" pk=entry.id %}'>
-                            <span class="glyphicon glyphicon-thumbs-up"></span>
-                        </a>
-                    {% endif %}
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                       data-title="Delete Entry"
-                       href='{% url "entry-delete" pk=entry.id %}'>
-                        <span class="glyphicon glyphicon-minus"></span>
-                    </a>
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                       data-title="Update Entry"
-                       href='{% url "entry-update" pk=entry.id %}'>
-                        <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
-                </div>
-            {% endif %}
-            </div>
-        </div>
-        <div class="row" style="margin-top:10px">
-            <div class="col-lg-8">
-                {{ entry.description|base_markdown }}
-            </div>
-            <div class="col-lg-4">
-                {% if entry.image_file %}
-                    <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
-                        <img class="img-responsive img-rounded pull-right"
-                             src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
-                             alt=""/>{# see core/settings/contrib.py for large-entry #}
-                    </a>
-                {% endif %}
-            </div>
-        </div>
-
-        {% if entry.video %}
-        <div class="row">
-            <div class="col-lg-8 col-md-offset-1">
-                {% video entry.video 'small' %}
-            </div>
-        </div>
-        {% endif %}
-
-        <h5 class="text-muted"> {{ entry.funder_info_html|base_markdown }} {{ entry.developer_info_html|base_markdown }} </h5>
-
+    {% if row.entries %}
+        <h2 class="text-muted" id="category-{{ row.category.id }}">
+            {{ row.category.name }}
+        </h2>
         {% if not rst_download %}
-          <hr />
+            <hr />
         {% endif %}
-      {% endif %}
-    {% endfor %}
-  {% endif %}
+        {% for entry in row.entries %}
+            {% if entry.approved %}
+                {% include "entry/includes/entry_detail.html" %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 {% endfor %}{# row loop #}

@@ -1,8 +1,5 @@
 {% extends "project_base.html" %}
-{% load custom_markup %}
-{% load thumbnail %}
 {% load disqus_tags %}
-{% load embed_video_tags %}
 
 {% block title %}Entries - {{ block.super }}{% endblock %}
 
@@ -24,57 +21,7 @@
                 <b>{{ entry.version.name }}</b></h4>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-9">
-            <h3><span class="text-muted">Feature:</span> {{ entry.title }}</h3>
-        </div>
-        <div class="col-lg-2">
-            <div class="btn-group pull-right">
-                {% if not entry.approved and user.is_staff %}
-                    <a class="btn btn-success btn-mini tooltip-toggle"
-                       data-title="Approve Entry"
-                       href='{% url "entry-approve" pk=entry.id %}'>
-                        <span class="glyphicon glyphicon-thumbs-up"></span>
-                    </a>
-                {% endif %}
-                <a class="btn btn-default btn-mini tooltip-toggle"
-                   data-title="Delete Entry"
-                   href='{% url "entry-delete" pk=entry.id %}'>
-                    <span class="glyphicon glyphicon-minus"></span>
-                </a>
-                <a class="btn btn-default btn-mini tooltip-toggle"
-                   data-title="Update Entry"
-                   href='{% url "entry-update" pk=entry.id %}'>
-                    <span class="glyphicon glyphicon-pencil"></span>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="row" style="margin-top:10px">
-        <div class="col-lg-8">
-            {{ entry.description|base_markdown }}
-        </div>
-        <div class="col-lg-4">
-            {% if entry.image_file %}
-                <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
-                    <img class="img-responsive img-rounded pull-right"
-                         src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
-                         alt=""/>{# see core/settings/contrib.py for large-entry #}
-                </a>
-            {% endif %}
-        </div>
-    </div>
-
-    {% if entry.video %}
-    <div class="row">
-        <div class="col-lg-8 col-md-offset-1">
-            {% video entry.video 'small' %}
-        </div>
-    </div>
-    {% endif %}
-
-    <h5 class="text-muted"> {{ entry.funder_info_html|base_markdown }} {{ entry.developer_info_html|base_markdown }} </h5>
-
+    {% include "entry/includes/entry_detail.html" %}
     <h5 id="comments">Comments</h5>
     {% disqus_show_comments %}
 

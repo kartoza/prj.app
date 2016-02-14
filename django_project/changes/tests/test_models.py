@@ -8,6 +8,7 @@ from changes.tests.model_factories import (
     SponsorshipLevelF,
     SponsorF,
     SponsorshipPeriodF)
+from base.tests.model_factories import ProjectF
 
 
 class TestCategoryCRUD(TestCase):
@@ -199,6 +200,67 @@ class TestVersionCRUD(TestCase):
         self.assertTrue(my_model.pk is None)
 
 
+class TestVersionSponsors(TestCase):
+    """
+    Tests that we can filter sponsors for a version.
+    """
+
+    def setUp(self):
+        """
+        Sets up before each test
+        """
+        pass
+
+    def test_sponsors(self):
+        """
+        Tests version sponsors
+        """
+        project = ProjectF.create()
+        data = {
+            'name': u'New Project Name',
+            'description': u'New description',
+            'approved': True,
+            'private': False,
+            'slug': u'new-project-slug'
+        }
+        project.__dict__.update(data)
+        project.save()
+
+        version_model = VersionF.create()
+        data = {
+            '10002001': u'10002001',
+            'description': u'New description',
+            'approved': True,
+            'release_date': u'2016-01-10',
+            'project': project
+        }
+        version_model.__dict__.update(data)
+        version_model.save()
+
+        sponsor = SponsorF.create()
+        data = {
+            'name': u'Foo Sponsor',
+            'project': project
+        }
+        sponsor.__dict__.update(data)
+        sponsor.save()
+
+        sponsorship_period = SponsorshipPeriodF.create()
+        data = {
+            'start_date': u'2016-01-01',
+            'end_date': u'2016-02-01',
+            'approved': True,
+            'private': False,
+            'project': project,
+            'sponsor': sponsor
+        }
+        sponsorship_period.__dict__.update(data)
+        sponsorship_period.save()
+
+        sponsors = version_model.sponsors()
+        self.assertEqual(sponsors.count(), 1)
+
+
 class TestSponsorCRUD(TestCase):
     """
     Tests search models.
@@ -353,7 +415,7 @@ class TestSponsorshipPeriodCRUD(TestCase):
         Tests Sponsorship Period model read
         """
         my_model = SponsorshipPeriodF.create(
-            start_date= u'2016-01-01'
+            start_date=u'2016-01-01'
         )
 
         self.assertTrue(my_model.start_date == '2016-01-01')

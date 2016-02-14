@@ -1,15 +1,18 @@
+# coding=utf-8
 from django.core.urlresolvers import reverse
 # from django.utils.text import slugify
 from common.utilities import version_slugify
 import os
 import logging
 from core.settings.contrib import STOP_WORDS
-
-logger = logging.getLogger(__name__)
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from .entry import Entry
+from .sponsorship_period import SponsorshipPeriod
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
+
+logger = logging.getLogger(__name__)
 
 
 class ApprovedVersionManager(models.Manager):
@@ -71,6 +74,12 @@ class Version(models.Model):
         null=True,
         blank=True,
         help_text='Describe the new version. Markdown is supported.')
+
+    release_date = models.DateField(
+        _('Release date'),
+        help_text='Date of official release',
+        null=True,
+        blank=True)
 
     author = models.ForeignKey(User)
     slug = models.SlugField()
@@ -175,3 +184,15 @@ class Version(models.Model):
                 categories.append(row)
                 used.append(category)
         return categories
+
+    def sponsors(self):
+        """Return a list of sponsors current at time of this version release.
+
+        :returns: A list of SponsorPeriod objects whose release date coincides
+            with the version release date. Only approved sponsors are returned.
+        :rtype: Queryset
+        """
+        sponsors = SponsorshipPeriod.approved_objects.filter(
+                end_date__gte=self.release_date).filter(
+                start_date__lte=self.release_date)
+        return sponsors
