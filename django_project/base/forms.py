@@ -1,5 +1,5 @@
+# coding=utf-8
 import logging
-logger = logging.getLogger(__name__)
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
@@ -8,8 +8,9 @@ from crispy_forms.layout import (
     Submit,
     Field,
 )
-
 from models import Project
+
+logger = logging.getLogger(__name__)
 
 
 class ProjectForm(forms.ModelForm):

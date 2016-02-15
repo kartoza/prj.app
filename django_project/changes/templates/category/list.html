@@ -13,24 +13,24 @@
 {% block content %}
     <div class="page-header">
         <h1 class="text-muted">
-          {% if unapproved %}Unapproved {% endif %}
+            {% if unapproved %}Unapproved {% endif %}
             Categories
-          {% if user.is_authenticated %}
-            <div class="pull-right btn-group">
-              <a class="btn btn-default btn-mini tooltip-toggle"
-                  href='{% url "category-create" project_slug %}'
-                  data-title="Create New Category">
-                <span class="glyphicon glyphicon-asterisk"></span>
-              </a>
-              {% if not unapproved %}
-                <a class="btn btn-default btn-mini tooltip-toggle"
-                   href='{% url "pending-category-list" project_slug %}'
-                   data-title="View Pending Categories">
-                  <span class="glyphicon glyphicon-time"></span>
-                </a>
-              {% endif %}
-            </div>
-          {% endif %}
+            {% if user.is_authenticated %}
+                <div class="pull-right btn-group">
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "category-create" project_slug %}'
+                       data-title="Create New Category">
+                        <span class="glyphicon glyphicon-asterisk"></span>
+                    </a>
+                    {% if not unapproved %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "pending-category-list" project_slug %}'
+                           data-title="View Pending Categories">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
         </h1>
     </div>
     {% ifequal num_categories 0 %}
@@ -38,48 +38,48 @@
             <h3>All categories are approved.</h3>
         {% else %}
             <h3>No categories are defined, but you can <a
-                class="btn btn-default btn-mini"
-                href='{% url "category-create" project_slug %}'>create one</a>.</h3>
+                    class="btn btn-default btn-mini"
+                    href='{% url "category-create" project_slug %}'>create one</a>.</h3>
         {% endif %}
     {% endifequal %}
     {% for category in categories %}
-    <script>console.debug("{{ category }}");</script>
-    <div class="row" style="margin-top:10px;">
-        <div class="col-lg-1">
-            {% if category.image_file %}
-            <a href="{{ MEDIA_URL }}{{ category.image_file }}">
-              <img class="img-responsive img-rounded pull-right"
-                   src="{% thumbnail category.image_file 50x50 crop %}" />
-            </a>
-            {%  endif %}
-        </div>
-        <div class="col-lg-9">
-          <h5>{{ category.project.name }}</h5>
-          <h3>{{ category.name }}</h3>
-        </div>
-        <div class="col-lg-2">
-            <div class="btn-group pull-right">
-                {%  if not category.approved and user.is_staff %}
-                <a class="btn btn-default btn-mini"
-                   href='{% url "category-approve" project_slug=category.project.slug slug=category.slug %}'>
-                        <span class="glyphicon glyphicon-thumbs-up"></span>
-                </a>
-                {% endif %}
-                <a class="btn btn-default btn-mini"
-                    href='{% url "category-delete" project_slug=category.project.slug slug=category.slug %}'>
+        <script>console.debug("{{ category }}");</script>
+        <div class="row" style="margin-top:10px;">
+            <div class="col-lg-1">
+                {% if category.image_file %}
+                    <a href="{{ MEDIA_URL }}{{ category.image_file }}">
+                        <img class="img-responsive img-rounded pull-right"
+                             src="{% thumbnail category.image_file 50x50 crop %}" />
+                    </a>
+                {%  endif %}
+            </div>
+            <div class="col-lg-9">
+                <h5>{{ category.project.name }}</h5>
+                <h3>{{ category.name }}</h3>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    {%  if not category.approved and user.is_staff %}
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "category-approve" project_slug=category.project.slug slug=category.slug %}'>
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        </a>
+                    {% endif %}
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "category-delete" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-minus"></span>
-                </a>
-                <a class="btn btn-default btn-mini"
-                    href='{% url "category-update" project_slug=category.project.slug slug=category.slug %}'>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "category-update" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-pencil"></span>
-                </a>
-                <a class="btn btn-default btn-mini"
-                    href='{% url "category-detail" project_slug=category.project.slug slug=category.slug %}'>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "category-detail" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-eye-open"></span>
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
     {%  endfor %}
     <hr />
     {% include "_pagination.html" %}
