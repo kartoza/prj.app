@@ -219,11 +219,19 @@ class VersionThumbnailView(VersionMixin, DetailView):
         if slug and project_slug:
             try:
                 project = Project.objects.get(slug=project_slug)
+            except Project.DoesNotExist:
+                raise Http404(
+                    'Sorry! The project you are requesting a version for '
+                    'could not be found or you do not have permission to '
+                    'view the version. Also the version may not be '
+                    'approved yet. Try logging in as a staff member if '
+                    'you wish to view it.')
+            try:
                 obj = queryset.filter(project=project).get(slug=slug)
                 return obj
             except Version.DoesNotExist:
                 raise Http404(
-                    'Sorry! The project you are requesting a version for '
+                    'Sorry! The version you are requesting '
                     'could not be found or you do not have permission to '
                     'view the version. Also the version may not be '
                     'approved yet. Try logging in as a staff member if '
