@@ -76,7 +76,7 @@ class Version(models.Model):
         help_text='Describe the new version. Markdown is supported.')
 
     release_date = models.DateField(
-        _('Release date'),
+        _('Release date (yyyy-mm-dd)'),
         help_text='Date of official release',
         null=True,
         blank=True)
@@ -190,8 +190,11 @@ class Version(models.Model):
 
         :returns: A list of SponsorPeriod objects whose release date coincides
             with the version release date. Only approved sponsors are returned.
-        :rtype: Queryset
+            Returns None if the release date (which is optional) is not set.
+        :rtype: Queryset, None
         """
+        if self.release_date is None:
+            return None
         sponsors = SponsorshipPeriod.approved_objects.filter(
                 end_date__gte=self.release_date).filter(
                 start_date__lte=self.release_date)
