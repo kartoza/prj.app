@@ -7,61 +7,61 @@
 {% endblock %}
 
 {% block content %}
-  <div class="row">
-    {% include 'ballot/includes/committee-heading.html' %}
-  </div>
-  <div class="row">
-    <div class="col-md-10">
-      <h2>Members</h2>
-      <p>Chair: {{ committee.chair }}</p>
-      <hr/>
-      <p>
-        {% for user in committee.users.all %}
-          {% if user != committee.chair %}
-            {{ user.username }} {% if not forloop.last %}|{% endif %}
-          {% endif %}
-        {% endfor %}
-      </p>
+    <div class="row">
+        {% include 'ballot/includes/committee-heading.html' %}
     </div>
-    <div class="col-md-2">
+    <div class="row">
+        <div class="col-md-10">
+            <h2>Members</h2>
+            <p>Chair: {{ committee.chair }}</p>
+            <hr/>
+            <p>
+                {% for user in committee.users.all %}
+                    {% if user != committee.chair %}
+                        {{ user.username }} {% if not forloop.last %}|{% endif %}
+                    {% endif %}
+                {% endfor %}
+            </p>
+        </div>
+        <div class="col-md-2">
       <span class="pull-right">
         {% if user.is_authenticated %}
-          <a href="{% url 'committee-update' project_slug=committee.project.slug slug=committee.slug %}"
-             class="btn btn-default tooltip-toggle"
-             data-title="Update this Committee">
-            <span class="glyphicon glyphicon-pencil"></span>
-          </a>
+            <a href="{% url 'committee-update' project_slug=committee.project.slug slug=committee.slug %}"
+               class="btn btn-default tooltip-toggle"
+               data-title="Update this Committee">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </a>
         {% endif %}
-        {% if user.is_staff %}
-          <a href="{% url 'committee-delete' project_slug=committee.project.slug slug=committee.slug %}"
-             class="btn btn-default tooltip-toggle"
-             data-title="Delete this Committee">
-            <span class="glyphicon glyphicon-minus"></span>
-          </a>
-        {% endif %}
+          {% if user.is_staff %}
+              <a href="{% url 'committee-delete' project_slug=committee.project.slug slug=committee.slug %}"
+                 class="btn btn-default tooltip-toggle"
+                 data-title="Delete this Committee">
+                  <span class="glyphicon glyphicon-minus"></span>
+              </a>
+          {% endif %}
       </span>
+        </div>
     </div>
-  </div>
-  {% if openBallots %}
-    <div class="row">
-      <div class="col-lg-12">
-        <h2>Open Ballots</h2>
-        <hr/>
-        {% for ballot in open_ballots %}
-          {% include 'ballot/includes/ballot-panel.html' %}
-        {% endfor %}
-      </div>
-    </div>
-  {% endif %}
-  {% if closedBallots %}
-    <div class="row">
-      <div class="col-lg-12">
-        <h2>Closed Ballots</h2>
-        <hr/>
-        {% for ballot in closed_ballots %}
-          {% include 'ballot/includes/ballot-panel.html' %}
-        {% endfor %}
-      </div>
-    </div>
-  {% endif %}
+    {% if openBallots %}
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>Open Ballots</h2>
+                <hr/>
+                {% for ballot in open_ballots %}
+                    {% include 'ballot/includes/ballot-panel.html' %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    {% if closedBallots %}
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>Closed Ballots</h2>
+                <hr/>
+                {% for ballot in closed_ballots %}
+                    {% include 'ballot/includes/ballot-panel.html' %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

@@ -7,44 +7,44 @@
 {% endblock %}
 
 {% block page_title %}
-  <h1>Entries (all)</h1>
+    <h1>Entries (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
 
-  <div class="row">
-    <div class="col-lg-10">
-      <h3>{{ category.name }}</h3>
+    <div class="row">
+        <div class="col-lg-10">
+            <h3>{{ category.name }}</h3>
+        </div>
+        <div class="col-lg-2">
+            <div class="btn-group">
+                <a class="btn btn-default btn-sm tooltip-toggle"
+                   href='{% url "category-delete" project_slug=category.project.slug slug=category.slug %}'
+                   data-title="Delete {{ category.title }}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-sm tooltip-toggle"
+                   href='{% url "category-update" project_slug=category.project.slug slug=category.slug %}'
+                   data-title="Edit {{ category.title }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </div>
+        </div>
     </div>
-    <div class="col-lg-2">
-      <div class="btn-group">
-        <a class="btn btn-default btn-sm tooltip-toggle"
-           href='{% url "category-delete" project_slug=category.project.slug slug=category.slug %}'
-           data-title="Delete {{ category.title }}">
-          <span class="glyphicon glyphicon-minus"></span>
-        </a>
-        <a class="btn btn-default btn-sm tooltip-toggle"
-           href='{% url "category-update" project_slug=category.project.slug slug=category.slug %}'
-           data-title="Edit {{ category.title }}">
-          <span class="glyphicon glyphicon-pencil"></span>
-        </a>
-      </div>
+    <div class="row">
+        <div class="col-lg-8">
+            {% if category.description %}
+                {{ category.description|base_markdown }}
+            {% else %}
+                <p>No description</p>
+            {% endif %}
+        </div>
+        <div class="col-lg-4">
+            {% if category.image_file %}
+                <img class="img-responsive img-rounded pull-right"
+                     src="{{ MEDIA_URL }}{{ category.image_file }}" />
+            {%  endif %}
+        </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-lg-8">
-      {% if category.description %}
-        {{ category.description|base_markdown }}
-      {% else %}
-        <p>No description</p>
-      {% endif %}
-    </div>
-    <div class="col-lg-4">
-      {% if category.image_file %}
-        <img class="img-responsive img-rounded pull-right"
-             src="{{ MEDIA_URL }}{{ category.image_file }}" />
-      {%  endif %}
-    </div>
-  </div>
 
 {% endblock %}

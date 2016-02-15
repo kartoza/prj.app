@@ -16,16 +16,16 @@
             {% if is_member %}All{% else %}Public{% endif %}
             Ballots for {{ committee.name }}
             {% if user.is_authenticated %}
-            <small class="pull-right">
-                <a class="btn btn-default btn-mini"
-                    href='{% url "ballot-create" project_slug=committee.project.slug committee_slug=committee.slug %}'>
-                    <span class="glyphicon glyphicon-asterisk"></span>
-                </a>
-            </small>
+                <small class="pull-right">
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "ballot-create" project_slug=committee.project.slug committee_slug=committee.slug %}'>
+                        <span class="glyphicon glyphicon-asterisk"></span>
+                    </a>
+                </small>
             {% endif %}
         </h1>
     </div>
     {% for ballot in ballots %}
-      {% include 'ballot/includes/ballot-panel.html' %}
+        {% include 'ballot/includes/ballot-panel.html' %}
     {%  endfor %}
 {% endblock %}
