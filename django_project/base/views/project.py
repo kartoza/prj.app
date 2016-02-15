@@ -208,7 +208,11 @@ class PendingProjectListView(
         if self.request.user.is_staff:
             return projects_qs
         else:
-            return projects_qs.filter(owner=self.request.user)
+            try:
+                return projects_qs.filter(owner=self.request.user)
+            except TypeError:
+                # LoginRequiredMixin should really be catching this...
+                raise Http404('You must be logged in to see pending projects.')
 
     def get_context_data(self, **kwargs):
         context = super(
