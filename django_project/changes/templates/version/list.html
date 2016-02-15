@@ -16,27 +16,27 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
             Versions
-          <div class="pull-right btn-group">
-            {% if user.is_authenticated and versions %}
-              <a class="btn btn-default btn-mini tooltip-toggle"
-                  href='{% url "version-create" versions.0.project.slug %}'
-                  data-title="Create New Version">
-                <span class="glyphicon glyphicon-asterisk"></span>
-              </a>
-              <a class="btn btn-default btn-mini tooltip-toggle"
-                 href='{% url "pending-version-list" versions.0.project.slug %}'
-                 data-title="View Pending Versions">
-                <span class="glyphicon glyphicon-time"></span>
-              </a>
-            {% endif %}
-            {% if versions %}
-              <a class="btn btn-default btn-mini tooltip-toggle"
-                 href='{% url "latest-version-atom-feed" versions.0.project.slug %}'
-                 data-title="Atom Feed for Latest Version of {{ versions.0.project.name }}">
-                 <img src="{% static "img/feed-icon-14x14.png" %}"/>
-              </a>
-            {% endif %}
-          </div>
+            <div class="pull-right btn-group">
+                {% if user.is_authenticated and versions %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "version-create" versions.0.project.slug %}'
+                       data-title="Create New Version">
+                        <span class="glyphicon glyphicon-asterisk"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "pending-version-list" versions.0.project.slug %}'
+                       data-title="View Pending Versions">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </a>
+                {% endif %}
+                {% if versions %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "latest-version-atom-feed" versions.0.project.slug %}'
+                       data-title="Atom Feed for Latest Version of {{ versions.0.project.name }}">
+                        <img src="{% static "img/feed-icon-14x14.png" %}"/>
+                    </a>
+                {% endif %}
+            </div>
         </h1>
     </div>
     {%  ifequal num_versions 0 %}
@@ -47,6 +47,6 @@
         {% endif %}
     {%  endifequal %}
     {% for version in versions %}
-      {% include 'version/includes/version-list-detail.html' %}
+        {% include 'version/includes/version-list-detail.html' %}
     {%  endfor %}
 {% endblock %}

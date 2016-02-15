@@ -13,8 +13,7 @@
 {% block content %}
     <div class="page-header">
         <h1 class="text-muted">
-            {% if unapproved %}Unapproved {% endif %}
-            Sponsors
+            {% if unapproved %}Unapproved {% endif %}Sponsors
             {% if user.is_authenticated %}
                 <div class="pull-right btn-group">
                     <a class="btn btn-default btn-mini tooltip-toggle"

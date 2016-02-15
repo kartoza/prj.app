@@ -1,20 +1,20 @@
 {% extends 'project_base.html' %}
 
 {% block content %}
-  <div class="row text-center" style="margin-top: 20%;">
-    <h1 class="text-muted">500</h1>
-    <p class="lead">Ooops. Something broke....</p>
-    <p class="lead text-muted">
-      The powers that be have been informed.<br/>
-      In the meantime, please form an orderly queue and head to the
-      <a href="{% url 'project-list' %}">home page.</a>
-    {# Reference the sentry id too - see #}
-    {# http://raven.readthedocs.org/en/latest/integrations/ #}
-    {#  django.html#message-references #}
-    {% if request.sentry.id %}
-        <p>If you need assistance, you may reference this error as
-        <strong>{{ request.sentry.id }}</strong>.</p>
-    {% endif %}
-    </p>
-  </div>
+    <div class="row text-center" style="margin-top: 20%;">
+        <h1 class="text-muted">500</h1>
+        <p class="lead">Ooops. Something broke....</p>
+        <p class="lead text-muted">
+            The powers that be have been informed.<br/>
+            In the meantime, please form an orderly queue and head to the
+            <a href="{% url 'project-list' %}">home page.</a>
+            {# Reference the sentry id too - see #}
+            {# http://raven.readthedocs.org/en/latest/integrations/ #}
+            {#  django.html#message-references #}
+            {% if request.sentry.id %}
+                <p>If you need assistance, you may reference this error as
+                    <strong>{{ request.sentry.id }}</strong>.</p>
+            {% endif %}
+        </p>
+    </div>
 {% endblock %}

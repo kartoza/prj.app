@@ -22,13 +22,13 @@
                        data-title="Create New Sponsor">
                         <span class="glyphicon glyphicon-asterisk"></span></a>
 
-                        {% if not unapproved %}
-                            <a class="btn btn-default btn-mini tooltip-toggle"
-                               href='{% url "pending-sponsor-list" project_slug %}'
-                               data-title="View Pending Sponsors">
-                                <span class="glyphicon glyphicon-time"></span>
-                            </a>
-                        {% endif %}
+                    {% if not unapproved %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "pending-sponsor-list" project_slug %}'
+                           data-title="View Pending Sponsors">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </a>
+                    {% endif %}
                 </div>
             {% endif %}
         </h1>
@@ -44,7 +44,7 @@
     {% endifequal %}
 
     {% for sponsor in sponsors %}
-            <script>console.debug("{{ sponsor }}");</script>
+        <script>console.debug("{{ sponsor }}");</script>
         <div class="row" style="margin-top:10px;">
             <div class="col-lg-1">
                 {% if sponsor.logo %}

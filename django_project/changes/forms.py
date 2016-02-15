@@ -1,3 +1,4 @@
+# coding=utf-8
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
@@ -54,7 +55,8 @@ class VersionForm(forms.ModelForm):
         fields = (
             'name',
             'description',
-            'image_file'
+            'image_file',
+            'release_date'
         )
 
     def __init__(self, *args, **kwargs):
@@ -68,6 +70,7 @@ class VersionForm(forms.ModelForm):
                 Field('name', css_class="form-control"),
                 Field('description', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
+
                 css_id='project-form')
         )
         self.helper.layout = layout

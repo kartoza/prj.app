@@ -5,96 +5,96 @@
 {% block title %}Committee - {{ committee.name }}{% endblock %}
 
 {% block extra_head %}
-  {{ Other }}
-  <script type="text/javascript"
-          src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
-  {{ floppyforms }}
+    {{ Other }}
+    <script type="text/javascript"
+            src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
+    {{ floppyforms }}
 
 {% endblock %}
 
 {% block content %}
 
-  <div class="row text-center">
-    <h3>{{ committee.name }}</h3>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <h2>{{ ballot.name }}
+    <div class="row text-center">
+        <h3>{{ committee.name }}</h3>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2>{{ ballot.name }}
         <span class="pull-right">
           {% if user.is_authenticated %}
-            <a href="{% url 'ballot-update' project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug slug=ballot.slug %}"
-               class="btn btn-default tooltip-toggle"
-               data-title="Update this Ballot">
-              <span class="glyphicon glyphicon-pencil"></span>
-            </a>
+              <a href="{% url 'ballot-update' project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug slug=ballot.slug %}"
+                 class="btn btn-default tooltip-toggle"
+                 data-title="Update this Ballot">
+                  <span class="glyphicon glyphicon-pencil"></span>
+              </a>
           {% endif %}
-          {% if user.is_staff %}
-            <a href="{% url 'ballot-delete' project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug slug=ballot.slug %}"
-               class="btn btn-default tooltip-toggle"
-                data-title="Delete this Ballot">
-              <span class="glyphicon glyphicon-minus"></span>
-            </a>
-          {% endif %}
+            {% if user.is_staff %}
+                <a href="{% url 'ballot-delete' project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug slug=ballot.slug %}"
+                   class="btn btn-default tooltip-toggle"
+                   data-title="Delete this Ballot">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+            {% endif %}
         </span>
-      </h2>
-      <hr/>
+            </h2>
+            <hr/>
+        </div>
     </div>
-  </div>
-  <div class="row">
-    {% include 'ballot/includes/ballot-vote-details.html' %}
-  </div>
-  <hr/>
-  <div class="row">
-    <div class="col-md-7">
-      <h4>{{ ballot.proposer.username }} proposes:</h4>
-      <p>{{ ballot.summary }}</p>
-    </div>
-    <div id="vote-container" class="col-md-5"></div>
-  </div>
-  <hr/>
-  {% if ballot.description %}
     <div class="row">
-      <div class="col-md-12">
-          <h5>Further Details:</h5>
-          <p>{{ ballot.description|base_markdown }}</p>
-      </div>
+        {% include 'ballot/includes/ballot-vote-details.html' %}
     </div>
-  {% endif %}
-  <h5 id="comments">Comments</h5>
-  {% disqus_show_comments %}
+    <hr/>
+    <div class="row">
+        <div class="col-md-7">
+            <h4>{{ ballot.proposer.username }} proposes:</h4>
+            <p>{{ ballot.summary }}</p>
+        </div>
+        <div id="vote-container" class="col-md-5"></div>
+    </div>
+    <hr/>
+    {% if ballot.description %}
+        <div class="row">
+            <div class="col-md-12">
+                <h5>Further Details:</h5>
+                <p>{{ ballot.description|base_markdown }}</p>
+            </div>
+        </div>
+    {% endif %}
+    <h5 id="comments">Comments</h5>
+    {% disqus_show_comments %}
 {% endblock %}
 {% block inline-js %}
-  <script>
-    $(function(){
-      var loadUrl = '{% url "vote-create" project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug ballot_slug=ballot.slug %}';
-      var voteContainer = $('#vote-container');
-      voteContainer.load(loadUrl, function(){
-        var voteForm = $('#vote-form');
-        var submitBtn = $('#submit-id-submit');
-        voteForm.submit(function(e){
-          e.preventDefault();
-          submitBtn.html('Submitting....').addClass('disabled');
-          $.post(loadUrl, voteForm.serialize(), function(data){
-            voteContainer.fadeOut('slow', function(){
-              if (data.successful) {
-                voteContainer.html('<p class="lead text-center">Thanks! We ' +
-                    'have received your vote.');
-                voteContainer.fadeIn('slow');
-                setTimeout(function () {
-                  window.location.reload();
-                }, 3000);
-              } else {
-                voteContainer.html('<p class="lead text-center">Sorry! ' +
-                    data.errors.__all__ + '</p>');
-                voteContainer.fadeIn('slow');
-                setTimeout(function () {
-                  window.location.reload();
-                }, 2000);
-              }
+    <script>
+        $(function(){
+            var loadUrl = '{% url "vote-create" project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug ballot_slug=ballot.slug %}';
+            var voteContainer = $('#vote-container');
+            voteContainer.load(loadUrl, function(){
+                var voteForm = $('#vote-form');
+                var submitBtn = $('#submit-id-submit');
+                voteForm.submit(function(e){
+                    e.preventDefault();
+                    submitBtn.html('Submitting....').addClass('disabled');
+                    $.post(loadUrl, voteForm.serialize(), function(data){
+                        voteContainer.fadeOut('slow', function(){
+                            if (data.successful) {
+                                voteContainer.html('<p class="lead text-center">Thanks! We ' +
+                                        'have received your vote.');
+                                voteContainer.fadeIn('slow');
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 3000);
+                            } else {
+                                voteContainer.html('<p class="lead text-center">Sorry! ' +
+                                        data.errors.__all__ + '</p>');
+                                voteContainer.fadeIn('slow');
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 2000);
+                            }
+                        });
+                    });
+                });
             });
-          });
         });
-      });
-    });
-  </script>
+    </script>
 {% endblock %}
