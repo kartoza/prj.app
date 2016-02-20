@@ -31,8 +31,8 @@ class CategoryForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('name', css_class="form-control"),
-                Field('sort_number', css_class="form-control"),
+                Field('name', css_class='form-control'),
+                Field('sort_number', css_class='form-control'),
                 css_id='project-form')
         )
         self.helper.layout = layout
@@ -67,9 +67,9 @@ class VersionForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('name', css_class="form-control"),
-                Field('description', css_class="form-control"),
-                Field('image_file', css_class="form-control"),
+                Field('name', css_class='form-control'),
+                Field('description', css_class='form-control'),
+                Field('image_file', css_class='form-control'),
 
                 css_id='project-form')
         )
@@ -111,16 +111,16 @@ class EntryForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('category', css_class="form-control"),
-                Field('title', css_class="form-control"),
-                Field('description', css_class="form-control"),
-                Field('image_file', css_class="form-control"),
-                Field('image_credits', css_class="form-control"),
-                Field('video', css_class="form-control"),
-                Field('funded_by', css_class="form-control"),
-                Field('funder_url', css_class="form-control"),
-                Field('developed_by', css_class="form-control"),
-                Field('developer_url', css_class="form-control"),
+                Field('category', css_class='form-control'),
+                Field('title', css_class='form-control'),
+                Field('description', css_class='form-control'),
+                Field('image_file', css_class='form-control'),
+                Field('image_credits', css_class='form-control'),
+                Field('video', css_class='form-control'),
+                Field('funded_by', css_class='form-control'),
+                Field('funder_url', css_class='form-control'),
+                Field('developed_by', css_class='form-control'),
+                Field('developer_url', css_class='form-control'),
                 css_id='entry-form')
         )
         self.helper.layout = layout
@@ -149,6 +149,8 @@ class SponsorForm(forms.ModelForm):
         model = Sponsor
         fields = (
             'name',
+            'address',
+            'country',
             'sponsor_url',
             'contact_person',
             'sponsor_email',
@@ -164,12 +166,14 @@ class SponsorForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('name', css_class="form-control"),
-                Field('sponsor_url', css_class="form-control"),
-                Field('contact_person', css_class="form-control"),
-                Field('sponsor_email', css_class="form-control"),
-                Field('agreement', css_class="form-control"),
-                Field('logo', css_class="form-control"),
+                Field('name', css_class='form-control'),
+                Field('address', css_class='form-control'),
+                Field('country', css_class='form-control'),
+                Field('sponsor_url', css_class='form-control'),
+                Field('contact_person', css_class='form-control'),
+                Field('sponsor_email', css_class='form-control'),
+                Field('agreement', css_class='form-control'),
+                Field('logo', css_class='form-control'),
                 css_id='project-form')
         )
         self.helper.layout = layout
@@ -206,10 +210,10 @@ class SponsorshipLevelForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('name', css_class="form-control"),
-                Field('value', css_class="form-control"),
-                Field('currency', css_class="form-control"),
-                Field('logo', css_class="form-control"),
+                Field('name', css_class='form-control'),
+                Field('value', css_class='form-control'),
+                Field('currency', css_class='form-control'),
+                Field('logo', css_class='form-control'),
                 css_id='project-form')
         )
         self.helper.layout = layout
@@ -245,10 +249,10 @@ class SponsorshipPeriodForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('sponsor', css_class="form-control"),
-                Field('sponsorshiplevel', css_class="form-control"),
-                Field('start_date', css_class="form-control"),
-                Field('end_date', css_class="form-control"),
+                Field('sponsor', css_class='form-control'),
+                Field('sponsorshiplevel', css_class='form-control'),
+                Field('start_date', css_class='form-control'),
+                Field('end_date', css_class='form-control'),
                 css_id='project-form')
         )
         self.helper.layout = layout

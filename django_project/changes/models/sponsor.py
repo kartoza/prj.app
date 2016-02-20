@@ -9,6 +9,7 @@ from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
+from django_countries.fields import CountryField
 
 __author__ = 'rischan'
 
@@ -58,6 +59,20 @@ class Sponsor(models.Model):
         null=True,
         blank=True)
 
+    address = models.TextField(
+        help_text=(
+            'Enter the complete street address for this sponsor. '
+            'Use line breaks to separate address elements and use '
+            'the country field to specify the country.'
+        ),
+        null=True,
+        blank=True)
+
+    country = CountryField(
+        help_text='Select the country for this sponsor',
+        null=True,
+        blank=True)
+
     sponsor_email = models.CharField(
         help_text='Input an email of sponsor.',
         max_length=255,
@@ -65,7 +80,7 @@ class Sponsor(models.Model):
         blank=True)
 
     agreement = models.FileField(
-        help_text=('Attach sponsor agreement'),
+        help_text='Attach sponsor agreement',
         upload_to=os.path.join(MEDIA_ROOT, 'docs'),
         blank=True)
 
