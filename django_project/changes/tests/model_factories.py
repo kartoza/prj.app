@@ -66,6 +66,8 @@ class SponsorF(factory.django.DjangoModelFactory):
         model = Sponsor
 
     name = factory.Sequence(lambda n: u'Test Sponsor Name %s' % n)
+    address = factory.Sequence(lambda n: u'Address\nline2\n%s' % n)
+    country = 'za'
     sponsor_url = factory.Sequence(lambda n: u'Test URL %s' % n)
     contact_person = factory.Sequence(lambda n: u'Test Contact Person %s' % n)
     sponsor_email = factory.Sequence(lambda n: u'Test Sponsor Email %s' % n)

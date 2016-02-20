@@ -18,6 +18,7 @@ INSTALLED_APPS += (
     'rosetta',
     'embed_video',
     'django_hashedfilenamestorage',
+    'django_countries',  # for sponsor addresses
     # 'user_map',
 )
 
