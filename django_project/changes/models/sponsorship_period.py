@@ -67,7 +67,7 @@ class SponsorshipPeriod(models.Model):
         help_text='Input the sponsor name',
     )
     # noinspection PyUnresolvedReferences
-    sponsorshiplevel = models.ForeignKey(
+    sponsorship_level = models.ForeignKey(
         'SponsorshipLevel',
         help_text='This level take from Sponsorship Level, '
         'you can add it by using Sponsorship Level menu',

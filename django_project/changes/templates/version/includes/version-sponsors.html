@@ -2,39 +2,26 @@
 
 
 {% if version.sponsors %}
-<h2 class="text-muted" id="sponsors-heading">
-    Sponsors for {{ version.project.name }} version {{ version.name }}
-</h2>
-{% if not rst_download %}
-    <hr />
-{% endif %}
-<div class="row">
-    {% for sponsor in version.sponsors %}
-        <div class="row" style="margin-top:10px;">
-            <div class="col-lg-1">
-                {% if sponsor.sponsor.logo %}
-                    <a href="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}">
-                        <img class="img-responsive img-rounded pull-right"
-                             src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
-                    </a>
-                {% endif %}
-            </div>
-            <div class="col-lg-9">
-                <h3>{{ sponsor.sponsor }}</h3>
-
-                <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
-
-                <h5>{{ sponsor.sponsorshiplevel }} or more</h5>
-            </div>
-            <div class="col-lg-2">
-                <div class="btn-group pull-right">
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
-                        <span class="glyphicon glyphicon-eye-open"></span>
-                    </a>
+    <h2 class="text-muted" id="sponsors-heading">
+        Sponsors for {{ version.project.name }} version {{ version.name }}
+    </h2>
+    {% if not rst_download %}
+        <hr/>
+    {% endif %}
+    <div class="row">
+        {% for sponsor in version.sponsors %}
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <div class="caption">
+                        <p><a href="{{ MEDIA_URL }}{{ sponsor.sponsor.sponsor_url }}">{{ sponsor.sponsor }}</a></p>
+                        <p>{{ sponsor.start_date }} - {{ sponsor.end_date }}</p>
+                        <p>{{ sponsor.sponsorship_level }} or more</p>
+                    </div>
+                    {% if sponsor.sponsor.logo %}
+                        <img src="{% thumbnail sponsor.sponsor.logo 150x50 %}" />
+                    {% endif %}
                 </div>
             </div>
-        </div>
-    {% endfor %}
-</div>
+        {% endfor %}
+    </div>
 {% endif %}
