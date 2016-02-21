@@ -21,7 +21,7 @@
         <div class="col-lg-8">
             {% if sponsor.sponsor.sponsor_url or sponsor.sponsor.contact_person or sponsor.sponsor.sponsor_email or sponsor.sponsor.sponsor_duration %}
                 <a href="{{ sponsor.sponsor.sponsor_url }}">{{ sponsor.sponsor.sponsor_url}}</a><br/>
-                Sponsorship Level : {{ sponsor.sponsorshiplevel }}<br/>
+                Sponsorship Level : {{ sponsor.sponsorship_level }}<br/>
                 Start Date : {{ sponsor.start_date }}<br/>
                 End Date : {{ sponsor.end_date }}<br/>
 
@@ -36,9 +36,9 @@
             {% endif %}
 
 
-            {% if sponsor.sponsorshiplevel.logo %}
+            {% if sponsor.sponsorship_level.logo %}
                 <img class="img-responsive img-rounded"
-                     src="{{ MEDIA_URL }}{{ sponsor.sponsorshiplevel.logo }}" width="100" />
+                     src="{{ MEDIA_URL }}{{ sponsor.sponsorship_level.logo }}" width="100" />
             {%  endif %}
         </div>
         <div class="col-lg-4">

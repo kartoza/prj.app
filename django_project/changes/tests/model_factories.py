@@ -107,4 +107,5 @@ class SponsorshipPeriodF(factory.django.DjangoModelFactory):
     author = factory.SubFactory(UserF)
     project = factory.SubFactory('base.tests.model_factories.ProjectF')
     sponsor = factory.SubFactory('changes.tests.model_factories.SponsorF')
-    sponsorshiplevel = factory.SubFactory('changes.tests.model_factories.SponsorshipLevelF')
+    sponsorship_level = factory.SubFactory(
+            'changes.tests.model_factories.SponsorshipLevelF')

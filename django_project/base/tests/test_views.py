@@ -24,149 +24,149 @@ class TestViews(TestCase):
         logging.disable(logging.CRITICAL)
         self.test_project = ProjectF.create()
         self.unapproved_project = ProjectF.create(approved=False)
-        self.my_user = UserF.create(**{
+        self.user = UserF.create(**{
             'username': 'timlinux',
             'password': 'password',
             'is_staff': True
         })
 
     def test_ProjectListView(self):
-        my_client = Client()
-        my_response = my_client.get(reverse('home'))
-        self.assertEqual(my_response.status_code, 200)
+        client = Client()
+        response = client.get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
         expected_templates = [
             'project/list.html', u'base/project_list.html'
         ]
-        self.assertEqual(my_response.template_name, expected_templates)
-        self.assertEqual(my_response.context_data['object_list'][0],
+        self.assertEqual(response.template_name, expected_templates)
+        self.assertEqual(response.context_data['object_list'][0],
                          self.test_project)
 
     def test_ProjectCreateView_with_login(self):
-        my_client = Client()
-        my_client.login(username='timlinux', password='password')
-        my_response = my_client.get(reverse('project-create'))
-        self.assertEqual(my_response.status_code, 200)
+        client = Client()
+        client.login(username='timlinux', password='password')
+        response = client.get(reverse('project-create'))
+        self.assertEqual(response.status_code, 200)
         expected_templates = [
             'project/create.html'
         ]
-        self.assertEqual(my_response.template_name, expected_templates)
+        self.assertEqual(response.template_name, expected_templates)
 
     def test_ProjectCreateView_no_login(self):
-        my_client = Client()
-        my_response = my_client.get(reverse('project-create'))
-        self.assertEqual(my_response.status_code, 302)
+        client = Client()
+        response = client.get(reverse('project-create'))
+        self.assertEqual(response.status_code, 302)
 
     def test_ProjectCreate_with_login(self):
-        my_client = Client()
-        my_client.login(username='timlinux', password='password')
+        client = Client()
+        client.login(username='timlinux', password='password')
         post_data = {
             'name': u'New Test Project',
-            'owner': self.my_user.id
+            'owner': self.user.id
         }
-        my_response = my_client.post(reverse('project-create'), post_data)
-        self.assertRedirects(my_response, reverse('pending-project-list'))
+        response = client.post(reverse('project-create'), post_data)
+        self.assertRedirects(response, reverse('pending-project-list'))
 
     def test_ProjectCreate_no_login(self):
-        my_client = Client()
+        client = Client()
         post_data = {
             'name': u'New Test Project'
         }
-        my_response = my_client.post(reverse('project-create'), post_data)
-        self.assertEqual(my_response.status_code, 302)
+        response = client.post(reverse('project-create'), post_data)
+        self.assertEqual(response.status_code, 302)
 
     def test_ProjectUpdateView_with_login(self):
-        my_client = Client()
-        my_client.login(username='timlinux', password='password')
-        my_response = my_client.get(reverse('project-update', kwargs={
+        client = Client()
+        client.login(username='timlinux', password='password')
+        response = client.get(reverse('project-update', kwargs={
             'slug': self.test_project.slug
         }))
-        self.assertEqual(my_response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         expected_templates = [
             'project/update.html'
         ]
-        self.assertEqual(my_response.template_name, expected_templates)
+        self.assertEqual(response.template_name, expected_templates)
 
     def test_ProjectUpdateView_no_login(self):
-        my_client = Client()
-        my_response = my_client.get(reverse('project-update', kwargs={
+        client = Client()
+        response = client.get(reverse('project-update', kwargs={
             'slug': self.test_project.slug
         }))
-        self.assertEqual(my_response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_ProjectUpdate_with_login(self):
-        my_client = Client()
-        my_client.login(username='timlinux', password='password')
+        client = Client()
+        client.login(username='timlinux', password='password')
         post_data = {
             'name': u'New Test Project Updated',
-            'owner': self.my_user.id
+            'owner': self.user.id
         }
-        my_response = my_client.post(reverse('project-update', kwargs={
+        response = client.post(reverse('project-update', kwargs={
             'slug': self.test_project.slug
         }), post_data)
-        self.assertRedirects(my_response, reverse('project-detail', kwargs={
+        self.assertRedirects(response, reverse('project-detail', kwargs={
             'slug': self.test_project.slug
         }))
 
     def test_ProjectUpdate_no_login(self):
-        my_client = Client()
+        client = Client()
         post_data = {
             'name': u'New Test Project Updated',
-            'owner': self.my_user.id
+            'owner': self.user.id
         }
-        my_response = my_client.post(reverse('project-update', kwargs={
+        response = client.post(reverse('project-update', kwargs={
             'slug': self.test_project.slug
         }), post_data)
-        self.assertEqual(my_response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_ProjectDetailView(self):
-        my_client = Client()
-        my_response = my_client.get(reverse('project-detail', kwargs={
+        client = Client()
+        response = client.get(reverse('project-detail', kwargs={
             'slug': self.test_project.slug
         }))
-        self.assertEqual(my_response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         expected_templates = [
             'project/detail.html'
         ]
-        self.assertEqual(my_response.template_name, expected_templates)
+        self.assertEqual(response.template_name, expected_templates)
 
     def test_ProjectDeleteView_with_login(self):
-        my_client = Client()
-        my_client.login(username='timlinux', password='password')
-        my_response = my_client.get(reverse('project-delete', kwargs={
+        client = Client()
+        client.login(username='timlinux', password='password')
+        response = client.get(reverse('project-delete', kwargs={
             'slug': self.test_project.slug
         }))
-        self.assertEqual(my_response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         expected_templates = [
             'project/delete.html'
         ]
-        self.assertEqual(my_response.template_name, expected_templates)
+        self.assertEqual(response.template_name, expected_templates)
 
     def test_ProjectDeleteView_no_login(self):
-        my_client = Client()
-        my_response = my_client.get(reverse('project-delete', kwargs={
+        client = Client()
+        response = client.get(reverse('project-delete', kwargs={
             'slug': self.test_project.slug
         }))
-        self.assertEqual(my_response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_ProjectDelete_with_login(self):
-        my_client = Client()
+        client = Client()
         project_to_delete = ProjectF.create()
         post_data = {
             'pk': project_to_delete.pk
         }
-        my_client.login(username='timlinux', password='password')
-        my_response = my_client.post(reverse('project-delete', kwargs={
+        client.login(username='timlinux', password='password')
+        response = client.post(reverse('project-delete', kwargs={
             'slug': project_to_delete.slug
         }), post_data)
-        self.assertRedirects(my_response, reverse('project-list'))
+        self.assertRedirects(response, reverse('project-list'))
         # TODO: The following line to test that the object is deleted does not
         # currently pass as expected.
         # self.assertTrue(project_to_delete.pk is None)
 
     def test_ProjectDelete_no_login(self):
-        my_client = Client()
+        client = Client()
         project_to_delete = ProjectF.create()
-        my_response = my_client.post(reverse('project-delete', kwargs={
+        response = client.post(reverse('project-delete', kwargs={
             'slug': project_to_delete.slug
         }))
-        self.assertEqual(my_response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
