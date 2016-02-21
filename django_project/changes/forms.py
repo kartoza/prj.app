@@ -236,7 +236,7 @@ class SponsorshipPeriodForm(forms.ModelForm):
         model = SponsorshipPeriod
         fields = (
             'sponsor',
-            'sponsorshiplevel',
+            'sponsorship_level',
             'start_date',
             'end_date'
         )
@@ -250,7 +250,7 @@ class SponsorshipPeriodForm(forms.ModelForm):
             Fieldset(
                 form_title,
                 Field('sponsor', css_class='form-control'),
-                Field('sponsorshiplevel', css_class='form-control'),
+                Field('sponsorship_level', css_class='form-control'),
                 Field('start_date', css_class='form-control'),
                 Field('end_date', css_class='form-control'),
                 css_id='project-form')
