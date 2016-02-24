@@ -1,0 +1,5 @@
+Changelog for {{ version.project }} {{ version.name }}
+-------------------------------------------------------
+{% for row in version.categories %}{% if row.entries %}{% for entry in row.entries %}
+{% if entry.approved %}* {{ row.category.name }} : {{ entry.title }}{% endif %}
+{% endfor %}{% endif %}{% endfor %}{# row loop #}

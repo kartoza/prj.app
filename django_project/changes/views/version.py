@@ -600,3 +600,69 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
                 document)
 
         return temp_path
+
+
+class VersionDownloadGnu(VersionMixin, DetailView):
+    """A tabular list style view for a Version."""
+    context_object_name = 'version'
+    template_name = 'version/detail-titles.txt'
+
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        :returns: A queryset which is filtered to only show approved Versions.
+        :rtype: QuerySet
+        """
+        if self.request.user.is_staff:
+            versions_qs = Version.objects.all()
+        else:
+            versions_qs = Version.approved_objects.all()
+        return versions_qs
+
+    def get_object(self, queryset=None):
+        """Get the object for this view.
+
+        Because Version slugs are unique within a Project, we need to make
+        sure that we fetch the correct Version from the correct Project
+
+        :param queryset
+        :type queryset: QuerySet
+
+        :returns: Queryset which is filtered to only show a project
+        :rtype QuerySet
+        :raises: Http404
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+        slug = self.kwargs.get('slug', None)
+        project_slug = self.kwargs.get('project_slug', None)
+        if slug and project_slug:
+            try:
+                project = Project.objects.get(slug=project_slug)
+            except Project.DoesNotExist:
+                raise Http404(
+                    'Requested project does not exist.')
+            try:
+                obj = queryset.filter(project=project).get(slug=slug)
+                return obj
+            except Version.DoesNotExist:
+                raise Http404(
+                    'Sorry! The project you are requesting a version for '
+                    'could not be found or you do not have permission to '
+                    'view the version. Also the version may not be '
+                    'approved yet. Try logging in as a staff member if '
+                    'you wish to view it.')
+        else:
+            raise Http404('Sorry! We could not find your version!')
+
+    def get(self, request, *args, **kwargs):
+        """We overload this so we can return a text document instead of html.
+
+        :param request: An HttpRequest object.
+        """
+        self.object = self.get_object()
+        context = self.get_context_data()
+
+        return self.render_to_response(
+            context,
+            content_type="text/plain; charset=utf-8")
