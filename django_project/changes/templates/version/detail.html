@@ -21,6 +21,11 @@
                    href='{% url 'version-download' project_slug=version.project.slug slug=version.slug %}'>
                     <span class="glyphicon glyphicon-download"></span>
                 </a>
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                   data-title="Download as GNU Changelog"
+                   href='{% url 'version-download-gnu' project_slug=version.project.slug slug=version.slug %}'>
+                    <span class="glyphicon glyphicon-list-alt"></span>
+                </a>
                 {% if user.is_authenticated %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        data-title="Delete Version"
