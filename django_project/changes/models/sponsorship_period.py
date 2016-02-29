@@ -11,6 +11,7 @@ from core.settings.contrib import STOP_WORDS
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
+from easy_thumbnails.files import get_thumbnailer
 
 __author__ = 'rischan'
 
@@ -116,3 +117,22 @@ class SponsorshipPeriod(models.Model):
             return False
         else:
             return True
+
+    def logo_url(self):
+        """Get the logo url sampled according to the size of sponsorship.
+
+        The idea here is that large sponsors get large logos and small
+        sponsors get small ones. You can specify the width and height in the
+        logo_height and logo_width properties.
+
+        This method is intended mainly for use from within your html templates.
+
+        :returns: A url to the resampled logo
+        :rtype: str
+        """
+        options = {'size': (
+            self.sponsorship_level.logo_width,
+            self.sponsorship_level.logo_height), 'crop': False}
+        thumb_url = get_thumbnailer(
+                self.sponsor.logo).get_thumbnail(options).url
+        return thumb_url

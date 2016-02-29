@@ -367,6 +367,8 @@ class TestSponsorshipLevelCRUD(TestCase):
             'currency': u'IDR',
             'approved': False,
             'private': True,
+            'logo_width': 100,
+            'logo_height': 100
         }
         model.__dict__.update(new_model_data)
         model.save()

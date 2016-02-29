@@ -197,5 +197,7 @@ class Version(models.Model):
             return None
         sponsors = SponsorshipPeriod.approved_objects.filter(
                 end_date__gte=self.release_date).filter(
-                start_date__lte=self.release_date)
+                start_date__lte=self.release_date).order_by(
+            'start_date').order_by(
+            '-sponsorship_level__value')
         return sponsors

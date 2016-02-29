@@ -8,20 +8,31 @@
     {% if not rst_download %}
         <hr/>
     {% endif %}
-    <div class="row">
-        {% for sponsor in version.sponsors %}
-            <div class="col-sm-6 col-md-4">
-                <div class="thumbnail">
-                    <div class="caption">
-                        <p><a href="{{ MEDIA_URL }}{{ sponsor.sponsor.sponsor_url }}">{{ sponsor.sponsor }}</a></p>
-                        <p>{{ sponsor.start_date }} - {{ sponsor.end_date }}</p>
-                        <p>{{ sponsor.sponsorship_level }} or more</p>
-                    </div>
-                    {% if sponsor.sponsor.logo %}
-                        <img src="{% thumbnail sponsor.sponsor.logo 150x50 %}" />
-                    {% endif %}
-                </div>
+    <div class="row"> {# fake starting row #}
+    {% for sponsor in version.sponsors %}
+        {% ifchanged sponsor.sponsorship_level %}
+            </div> {# row #}
+            <div class="row">
+            <h3 class="text-muted"><img src="{% thumbnail sponsor.sponsorship_level.logo 50x50 %}"/> {{ sponsor.sponsorship_level }}</h3>
+            {% if not rst_download %}
+            <hr/>
+            {% endif %}
             </div>
-        {% endfor %}
-    </div>
+           <div class="row">
+        {% endifchanged %}
+        <div class="col-xs-12 col-sm-6 item col-md-4">
+            <div class="thumbnail">
+                <div class="caption">
+                    <p><a href="{{ sponsor.sponsor.sponsor_url }}">{{ sponsor.sponsor }}</a></p>
+                    <p>{{ sponsor.start_date }} - {{ sponsor.end_date }}</p>
+                    <p>{{ sponsor.sponsorship_level }} or more</p>
+                </div>
+                {% if sponsor.sponsor.logo %}
+                    <img src="{{ sponsor.logo_url }}" />
+                    {# <img src="{% thumbnail sponsor.sponsor.logo 150x50 %}" /> #}
+                {% endif %}
+            </div>
+        </div>
+
+    {% endfor %}
 {% endif %}
