@@ -9,7 +9,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
-
 __author__ = 'rischan'
 
 
@@ -65,6 +64,24 @@ class SponsorshipLevel(models.Model):
             '"Choose File" button above.'),
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),
         blank=False)
+
+    logo_width = models.IntegerField(
+        help_text=(
+            'Enter the width of the icon that should be used on the changelog'
+        ),
+        blank=False,
+        null=False,
+        default=100
+    )
+
+    logo_height = models.IntegerField(
+        help_text=(
+            'Enter the height of the icon that should be used on the changelog'
+        ),
+        blank=False,
+        null=False,
+        default=100
+    )
 
     approved = models.BooleanField(
         help_text=_(
