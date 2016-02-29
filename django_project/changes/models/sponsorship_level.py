@@ -123,5 +123,3 @@ class SponsorshipLevel(models.Model):
             'slug': self.slug,
             'project_slug': self.project.slug
         })
-
-
