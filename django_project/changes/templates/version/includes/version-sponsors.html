@@ -13,12 +13,13 @@
             <div class="col-sm-6 col-md-4">
                 <div class="thumbnail">
                     <div class="caption">
-                        <p><a href="{{ MEDIA_URL }}{{ sponsor.sponsor.sponsor_url }}">{{ sponsor.sponsor }}</a></p>
+                        <p><a href="{{ sponsor.sponsor.sponsor_url }}">{{ sponsor.sponsor }}</a></p>
                         <p>{{ sponsor.start_date }} - {{ sponsor.end_date }}</p>
                         <p>{{ sponsor.sponsorship_level }} or more</p>
                     </div>
                     {% if sponsor.sponsor.logo %}
-                        <img src="{% thumbnail sponsor.sponsor.logo 150x50 %}" />
+                        <img src="{{ sponsor.logo_url }}" />
+                        {# <img src="{% thumbnail sponsor.sponsor.logo 150x50 %}" /> #}
                     {% endif %}
                 </div>
             </div>
