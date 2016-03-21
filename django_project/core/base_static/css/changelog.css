@@ -16,3 +16,8 @@ body {
     border-style: none;
     box-shadow: none;
     text-align: center;}
+
+.gitter-open-chat-button, .gitter-chat-embed {
+    z-index: 1050;
+}
+

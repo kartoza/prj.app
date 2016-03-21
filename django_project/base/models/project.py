@@ -80,6 +80,13 @@ class Project(models.Model):
         default=False
     )
 
+    gitter_room = models.CharField(
+        help_text=_('Gitter room name.'),
+        max_length=255,
+        null=True,
+        blank=True
+    )
+
     owner = models.ForeignKey(User)
     slug = models.SlugField(unique=True)
     objects = models.Manager()
