@@ -2,6 +2,8 @@
 """Project model used by all apps."""
 import os
 import logging
+import string
+import re
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 from django.conf.global_settings import MEDIA_ROOT
@@ -11,7 +13,7 @@ from changes.models.version import Version
 from core.settings.contrib import STOP_WORDS
 from django.contrib.auth.models import User
 from django.conf import settings
-
+from django.core.exceptions import ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +46,22 @@ class PublicProjectManager(models.Manager):
         return super(
             PublicProjectManager, self).get_queryset().filter(
                 private=False).filter(approved=True)
+
+
+def validate_gitter_room_name(value):
+    """Ensure user enter proper gitter room name
+
+    :param value: string input
+    :raise ValidationError
+    """
+    invalid_chars = set(string.punctuation.replace('/', ''))
+    pattern = re.compile('^(\w+\/\w+)$')
+    if any(char in invalid_chars for char in value) \
+            or not pattern.match(value):
+        raise ValidationError(
+            _('%(value)s is not proper gitter room name'),
+            params={'value': value},
+        )
 
 
 class Project(models.Model):
@@ -80,19 +98,20 @@ class Project(models.Model):
         default=False
     )
 
-    gitter_room = models.CharField(
-        help_text=_('Gitter room name.'),
-        max_length=255,
-        null=True,
-        blank=True
-    )
-
     owner = models.ForeignKey(User)
     slug = models.SlugField(unique=True)
     objects = models.Manager()
     approved_objects = ApprovedProjectManager()
     unapproved_objects = UnapprovedProjectManager()
     public_objects = PublicProjectManager()
+
+    gitter_room = models.CharField(
+        help_text=_('Gitter room name, e.g. gitterhq/sandbox'),
+        max_length=255,
+        null=True,
+        blank=True,
+        validators=[validate_gitter_room_name]
+    )
 
     # noinspection PyClassicStyleClass
     class Meta:
@@ -111,6 +130,7 @@ class Project(models.Model):
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = unicode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
+
         super(Project, self).save(*args, **kwargs)
 
     def __unicode__(self):
