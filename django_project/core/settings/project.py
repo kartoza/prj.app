@@ -20,6 +20,9 @@ INSTALLED_APPS += (
     'disqus',
 )
 
+# Set disqus api key and shortname
+from .secret import DISQUS_WEBSITE_SHORTNAME
+
 # Due to profile page does not available, this will redirect to home page after login
 LOGIN_REDIRECT_URL = '/'
 
