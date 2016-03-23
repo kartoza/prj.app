@@ -461,8 +461,8 @@ def get_private():
     get(remote_path=remote_path, local_path=local_path)
 
 @task
-def set_up_disqus(shortname):
-    """Set up configuration for disqus.
+def set_up_disqus_shortname(shortname):
+    """Set up shortname for disqus.
 
     You can get shortname from http://disqus.com/admin/create/ and you must
     have disqus account to do it.
@@ -481,6 +481,33 @@ def set_up_disqus(shortname):
         added_line = "DISQUS_WEBSITE_SHORTNAME = " + repr(shortname) + "\n"
         for line in lines:
             if 'DISQUS_WEBSITE_SHORTNAME' in line:
+                line = added_line
+                added = True
+            f.write(line)
+        if not added:
+            f.write(added_line)
+
+@task
+def set_up_disqus_apikey(apikey):
+    """Set up api key for disqus.
+
+    You can get api key from http://disqus.com/admin/create/ and you must
+    have disqus account to do it.
+    """
+
+    # Absolute filesystem path to the Django project directory:
+    django_root = os.path.dirname(os.path.abspath(__file__))
+    secret_file = os.path.join(
+        django_root, 'django_project', 'core', 'settings', 'secret.py')
+    with open(secret_file) as f:
+        lines = f.readlines()
+
+    # Update existing secret_file with new apikey
+    with open(secret_file, 'w') as f:
+        added = False
+        added_line = "DISQUS_API_KEY = " + repr(apikey) + "\n"
+        for line in lines:
+            if 'DISQUS_API_KEY' in line:
                 line = added_line
                 added = True
             f.write(line)
