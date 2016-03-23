@@ -52,7 +52,7 @@ def validate_gitter_room_name(value):
     """Ensure user enter proper gitter room name
 
     :param value: string input
-    :raise ValidationError
+    :raises: ValidationError
     """
     invalid_chars = set(string.punctuation.replace('/', ''))
     pattern = re.compile('^(\w+\/\w+)$')
