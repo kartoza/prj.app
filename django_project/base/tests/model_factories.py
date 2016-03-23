@@ -16,3 +16,4 @@ class ProjectF(factory.django.DjangoModelFactory):
     owner = factory.SubFactory(UserF)
     approved = True
     private = False
+    gitter_room = u'test/test'
