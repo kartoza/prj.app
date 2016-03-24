@@ -158,6 +158,32 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
         return self.queryset
 
 
+class SponsorWorldMapView(SponsorMixin, ListView):
+    """World map view for Sponsors."""
+    context_object_name = 'sponsors'
+    template_name = 'sponsor/world-map.html'
+
+    def get_queryset(self, queryset=None):
+        """Get the queryset for this view.
+
+        :param queryset: A query set
+        :type queryset: QuerySet
+
+        :returns: Sponsor Queryset which is filtered by project
+        :rtype: QuerySet
+        :raises: Http404
+        """
+        if self.queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            if project_slug:
+                project = Project.objects.get(slug=project_slug)
+                queryset = SponsorshipPeriod.objects.filter(project=project)
+                return queryset
+            else:
+                raise Http404('Sorry! We could not find your Sponsor!')
+        return self.queryset
+
+
 class SponsorDetailView(SponsorMixin, DetailView):
     """Detail view for Sponsor."""
     context_object_name = 'sponsor'

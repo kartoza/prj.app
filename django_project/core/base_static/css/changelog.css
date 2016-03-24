@@ -21,3 +21,63 @@ body {
     z-index: 1050;
 }
 
+.map-wrapper {
+    clear: both;
+}
+
+.legend {
+    line-height: 18px;
+    color: #555;
+}
+.legend i {
+    width: 18px;
+    height: 16px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+
+.info.top {
+    min-width: 300px;
+}
+
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+
+.info-sponsor-row {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    font-size: 10pt;
+}
+
+.info-image{
+    width: 40px;
+    min-height: 40px;
+    float: left;
+    margin-right: 10px;
+}
+
+.info-image img {
+    max-width: 40px;
+    max-height: 35px;
+}
+
+.info-sponsor-row .sub-info {
+    font-size: 8pt;
+}
+
+.info hr {
+    margin-bottom: 5px !important;
+    margin-top: 5px !important;
+}
