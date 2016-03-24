@@ -8,10 +8,10 @@
         var geojson;
         var info;
 
-        $(document).ready(function(){
+        $(document).ready(function () {
             $('#map').css('height', 700);
-            map = L.map('map').setView([40,0], 2);
-             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            map = L.map('map').setView([40, 0], 2);
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
             }).addTo(map);
 
@@ -35,18 +35,19 @@
             info.update = function (props) {
                 var info_title = '<h4>Sponsor Info</h4>';
                 var info_content = '';
-                if(props) {
+                if (props) {
                     info_content += '<hr/>';
 
-                    for(var i = 0; i < props.SPONSORS.length; i++) {
-                        info_content += '<div class="info-sponsor-row">'+
-                                        '<div class="info-image">' +
-                                            '<img src={{ MEDIA_URL }}'+props.SPONSORS[i].logo+'/></div>'+
-                                        '<span>'+ props.SPONSORS[i].name + '</span>'+
-                                        '<br><span class="sub-info">'+ props.SPONSORS[i].start_date + ' - ' +
-                                           props.SPONSORS[i].end_date + '</span>'+
-                                        '</div>';
+                    for (var sponsor_id in props.all_sponsor) {
+                        info_content += '<div class="info-sponsor-row">' +
+                                '<div class="info-image">' +
+                                '<img src={{ MEDIA_URL }}' + props.all_sponsor[sponsor_id].logo + '/></div>' +
+                                '<span>' + props.all_sponsor[sponsor_id].name + '</span>' +
+                                '<br><span class="sub-info">' + props.all_sponsor[sponsor_id].start_date + ' - ' +
+                                props.all_sponsor[sponsor_id].end_date + '</span>' +
+                                '</div>';
                     }
+
                 } else {
                     info_content += 'Hover over a country';
                 }
@@ -62,16 +63,15 @@
             legend.onAdd = function (map) {
 
                 var div = L.DomUtil.create('div', 'info legend'),
-                    grades = [0, 1, 2, 3, 4, 5],
-                    label = [];
+                        grades = [0, 1, 2, 3, 4, 5];
 
                 div.innerHTML += '<b><div class="legend-title"> Total Sponsors </div></b><hr/>';
 
                 // loop through our density intervals and generate a label with a colored square for each interval
                 for (var i = 0; i < grades.length; i++) {
                     div.innerHTML +=
-                        '<i style="background:' + get_color(grades[i] + 1) + '"></i> <span class="l-text">' +
-                        grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '</span>';
+                            '<i style="background:' + get_color(grades[i] + 1) + '"></i> <span class="l-text">' +
+                            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '</span>';
                 }
                 return div;
             };
@@ -81,48 +81,66 @@
 
         function add_layers_to_map() {
             $.getJSON('{{ STATIC_URL }}/static/json/geo.json', function (json) {
-                var layers  = [];
+                var layers = [];
                 {% for sponsor in sponsors %}
 
-                    var value = $.grep(json['features'], function(e){
+                    // Get geo json object with the same country code from sponsor
+                    var geo_obj = $.grep(json['features'], function (e) {
                         return e.properties.ISO2 == '{{ sponsor.sponsor.country }}';
                     });
 
-                    if(value.length > 0) {
+                    if(geo_obj.length > 0) {
 
-                        for(var i=0; i < layers.length; i++) {
-                            if(layers[i].properties.ISO2 == value[0].properties.ISO2) {
-                                layers[i].properties.SPONSORS_TOTAL++;
-                                layers[i].properties.SPONSORS.push(
-                                    {
-                                        'name' : '{{ sponsor.sponsor.name }}',
-                                        'logo' : '{{ sponsor.sponsor.logo }}',
-                                        'value': '{{ sponsor.value }}',
-                                        'start_date' : '{{ sponsor.start_date }}',
-                                        'end_date'   : '{{ sponsor.end_date }}'
-                                    }
-                                );
-                                break;
+                        // Check if geo_obj is already on the layers
+                        var geo_layer = $.grep(layers, function(e){
+                            return e.properties.ISO2 == geo_obj[0].properties.ISO2;
+                        });
+
+                        // No existance of geo_obj in the layers
+                        if(geo_layer.length == 0) {
+                            geo_obj[0].sponsor = {};
+                            geo_obj[0].sponsor.sponsor_total = 1;
+                            geo_obj[0].sponsor.all_sponsor = {};
+                            geo_obj[0].sponsor.all_sponsor['{{ sponsor.sponsor.id }}'] =
+                            {
+                                'name': '{{ sponsor.sponsor.name }}',
+                                'logo': '{{ sponsor.sponsor.logo }}',
+                                'value': '{{ sponsor.sponsorship_level.value }}',
+                                'start_date': '{{ sponsor.start_date }}',
+                                'end_date': '{{ sponsor.end_date }}'
+                            };
+
+                            // Add geo obj with the sponsor data to layers
+                            layers.push(geo_obj[0]);
+                        } else {
+                            // Check if there's already same sponsor on the current country
+                            if (!('{{ sponsor.sponsor.id }}' in geo_layer[0].sponsor.all_sponsor)) {
+                                geo_layer[0].sponsor.sponsor_total++;
+                                geo_layer[0].sponsor.all_sponsor['{{ sponsor.sponsor.id }}'] =
+                                {
+                                    'name': '{{ sponsor.sponsor.name }}',
+                                    'logo': '{{ sponsor.sponsor.logo }}',
+                                    'value': '{{ sponsor.sponsorship_level.value }}',
+                                    'start_date': '{{ sponsor.start_date }}',
+                                    'end_date': '{{ sponsor.end_date }}'
+                                }
+                            } else {
+                                // Sponsor already exist, update the dates to the latest one
+                                var previous_end_date = geo_layer[0].sponsor
+                                                        .all_sponsor['{{ sponsor.sponsor.id }}'].end_date;
+                                var current_end_date = '{{ sponsor.end_date }}';
+
+                                if((new Date(current_end_date)).getTime()>(new Date(previous_end_date)).getTime()){
+                                    geo_layer[0].sponsor.all_sponsor['{{ sponsor.sponsor.id }}'].end_date =
+                                            current_end_date;
+                                    geo_layer[0].sponsor.all_sponsor['{{ sponsor.sponsor.id }}'].start_date =
+                                            '{{ sponsor.start_date }}';
+                                }
                             }
                         }
-
-                        if(i == layers.length) {
-                            value[0].properties.SPONSORS_TOTAL = 1;
-                            value[0].properties.SPONSORS = [];
-                            value[0].properties.SPONSORS.push(
-                                {
-                                    'name' : '{{ sponsor.sponsor.name }}',
-                                    'logo' : '{{ sponsor.sponsor.logo }}',
-                                    'value': '{{ sponsor.value }}',
-                                    'start_date' : '{{ sponsor.start_date }}',
-                                    'end_date'   : '{{ sponsor.end_date }}'
-                                }
-                            );
-                            layers.push(value[0]);
-                        }
                     }
-                {% endfor %}
 
+                {% endfor %}
                 geojson = L.geoJson(layers, {
                     style: style,
                     onEachFeature: on_each_feature
@@ -131,16 +149,16 @@
         }
 
         function get_color(d) {
-            return d > 5  ? '#E31A1C' :
-                   d > 4  ? '#FC4E2A' :
-                   d > 3  ? '#FD8D3C' :
-                   d > 2  ? '#FEB24C' :
-                   d > 1  ? '#FED976' :
-                             '#FFEDA0';
+            return d > 5 ? '#E31A1C' :
+                    d > 4 ? '#FC4E2A' :
+                    d > 3 ? '#FD8D3C' :
+                    d > 2 ? '#FEB24C' :
+                    d > 1 ? '#FED976' :
+                            '#FFEDA0';
         }
         function style(feature) {
             return {
-                fillColor: get_color(feature.properties.SPONSORS_TOTAL),
+                fillColor: get_color(feature.sponsor.sponsor_total),
                 weight: 2,
                 opacity: 1,
                 color: 'white',
@@ -163,7 +181,7 @@
                 layer.bringToFront();
             }
 
-            info.update(layer.feature.properties);
+            info.update(layer.feature.sponsor);
         }
 
         function reset_highlight(e) {
