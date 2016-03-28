@@ -177,7 +177,11 @@ class SponsorWorldMapView(SponsorMixin, ListView):
         context = super(SponsorWorldMapView, self).get_context_data(**kwargs)
         if project_slug:
             project = Project.objects.get(slug=project_slug)
-            context['levels'] = serializers.serialize("json", SponsorshipLevel.objects.filter(project=project))
+            levels = SponsorshipLevel.objects.filter(project=project)
+            context['levels'] = serializers.serialize(
+                "json",
+                levels
+            )
         return context
 
     def get_queryset(self, queryset=None):
