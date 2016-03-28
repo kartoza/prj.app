@@ -7,6 +7,7 @@
         var map;
         var geojson;
         var info;
+        var levels;
 
         $(document).ready(function () {
             $('#map').css('height', 700);
@@ -15,12 +16,31 @@
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
             }).addTo(map);
 
+            // sponsorship levels json
+            levels = JSON.parse('{{ levels | safe }}');
+
+            init_div_levels();
+
             add_layers_to_map();
 
             add_legends_to_map();
 
             add_info_to_map();
         });
+
+        function init_div_levels() {
+            var info_content = '';
+            for(var i=0; i < levels.length; i++) {
+                info_content += '<div class="info-sponsor-row">' +
+                    '<div class="lvl-image">' +
+                     '<img src={{ MEDIA_URL }}' + levels[i].fields.logo + ' width="15"/></div>' +
+                     '<span>' + levels[i].fields.name + '</span> <br>' +
+                     '</div>' +
+                     '<div id="level' + levels[i].pk + '" class="info-sponsors"></div>'+
+                     '</div><hr/>';
+            }
+            $('.levels').html(info_content);
+        }
 
         function add_info_to_map() {
             info = L.control();
@@ -35,19 +55,22 @@
             info.update = function (props) {
                 var info_title = '<h4>Sponsor Info</h4>';
                 var info_content = '';
+
                 if (props) {
                     info_content += '<hr/>';
-
+                    clear_levels_content();
                     for (var sponsor_id in props.all_sponsor) {
-                        info_content += '<div class="info-sponsor-row">' +
+                        $('#level'+props.all_sponsor[sponsor_id].level_id+'.info-sponsors').append(
+                            '<div class="info-sponsor-row">' +
                                 '<div class="info-image">' +
                                 '<img src={{ MEDIA_URL }}' + props.all_sponsor[sponsor_id].logo + '/></div>' +
                                 '<span>' + props.all_sponsor[sponsor_id].name + '</span>' +
-                                '<br><span class="sub-info">' + props.all_sponsor[sponsor_id].start_date + ' - ' +
+                                '<br><span class="sub-info">' +
+                                props.all_sponsor[sponsor_id].start_date + ' - ' +
                                 props.all_sponsor[sponsor_id].end_date + '</span>' +
-                                '</div>';
+                            '</div>');
                     }
-
+                    info_content += $('.levels').html();
                 } else {
                     info_content += 'Hover over a country';
                 }
@@ -55,6 +78,12 @@
             };
 
             info.addTo(map);
+        }
+
+        function clear_levels_content() {
+            for(var i=0; i < levels.length; i++) {
+                $('#level'+levels[i].pk+'.info-sponsors').empty();
+            }
         }
 
         function add_legends_to_map() {
@@ -107,7 +136,8 @@
                                 'logo': '{{ sponsor.sponsor.logo }}',
                                 'value': '{{ sponsor.sponsorship_level.value }}',
                                 'start_date': '{{ sponsor.start_date }}',
-                                'end_date': '{{ sponsor.end_date }}'
+                                'end_date': '{{ sponsor.end_date }}',
+                                'level_id' : '{{ sponsor.sponsorship_level.id }}'
                             };
 
                             // Add geo obj with the sponsor data to layers
@@ -122,7 +152,8 @@
                                     'logo': '{{ sponsor.sponsor.logo }}',
                                     'value': '{{ sponsor.sponsorship_level.value }}',
                                     'start_date': '{{ sponsor.start_date }}',
-                                    'end_date': '{{ sponsor.end_date }}'
+                                    'end_date': '{{ sponsor.end_date }}',
+                                    'level_id' : '{{ sponsor.sponsorship_level.id }}'
                                 }
                             } else {
                                 // Sponsor already exist, update the dates to the latest one
@@ -221,4 +252,5 @@
             </div>
         </div>
     </div>
+    <div class="levels"></div>
 {% endblock %}

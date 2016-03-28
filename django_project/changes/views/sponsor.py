@@ -21,6 +21,7 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
+from django.core import serializers
 
 from ..models import Sponsor, SponsorshipPeriod  # noqa
 from ..models import SponsorshipLevel  # noqa
@@ -162,6 +163,22 @@ class SponsorWorldMapView(SponsorMixin, ListView):
     """World map view for Sponsors."""
     context_object_name = 'sponsors'
     template_name = 'sponsor/world-map.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        project_slug = self.kwargs.get('project_slug', None)
+        context = super(SponsorWorldMapView, self).get_context_data(**kwargs)
+        if project_slug:
+            project = Project.objects.get(slug=project_slug)
+            context['levels'] = serializers.serialize("json", SponsorshipLevel.objects.filter(project=project))
+        return context
 
     def get_queryset(self, queryset=None):
         """Get the queryset for this view.
