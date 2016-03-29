@@ -17,7 +17,6 @@ INSTALLED_APPS += (
     'changes',
     'github_issue',
     'vota',
-    'disqus',
 )
 
 # Due to profile page does not available, this will redirect to home page after login
