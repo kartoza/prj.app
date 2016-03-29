@@ -17,12 +17,7 @@ INSTALLED_APPS += (
     'changes',
     'github_issue',
     'vota',
-    'disqus',
 )
-
-# Set disqus and shortname
-# noinspection PyUnresolvedReferences
-from .secret import DISQUS_WEBSITE_SHORTNAME  # noqa
 
 # Due to profile page does not available, this will redirect to home page after login
 LOGIN_REDIRECT_URL = '/'
