@@ -19,6 +19,13 @@
     </div>
     <div class="row">
         <div class="col-lg-8">
+            <p>
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                       data-title="Download invoice"
+                       href='{% url 'sponsor-invoice' project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                   <span class="glyphicon glyphicon-download"></span> Invoice
+                </a>
+            </p>
             {% if sponsor.sponsor.sponsor_url or sponsor.sponsor.contact_person or sponsor.sponsor.sponsor_email or sponsor.sponsor.sponsor_duration %}
                 <a href="{{ sponsor.sponsor.sponsor_url }}">{{ sponsor.sponsor.sponsor_url}}</a><br/>
                 Sponsorship Level : {{ sponsor.sponsorship_level }}<br/>

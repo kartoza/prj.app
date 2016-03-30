@@ -1,0 +1,117 @@
+{% extends "easy_pdf/base.html" %}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+{% block extra_style %}
+    <style type="text/css">
+        body {
+            font-family: "Arial", "Helvetica", "sans-serif";
+            color: #333333;
+        }
+
+        img {
+            width: 125px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            -pdf-outline: false;
+        }
+
+        p {
+            padding-bottom: -10px;
+            font-size: 9pt;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <div id="content">
+        <table class="table-no-border" style="width: 100%; border-collapse:collapse;">
+            <tbody>
+                <tr style="padding-bottom: 25px;">
+                    <td colspan="1" style="vertical-align:top">
+                        {% if project.image_file %}
+                            <img src="{{ MEDIA_URL }}{{ project.image_file }}" />
+                        {% endif %}
+                    </td>
+                    <td colspan="2" style="vertical-align:top">
+                        <p><b>{{ project.name }}</b></p>
+                        <p><b>{{ project.description }}</b></p>
+                        <p></p>
+                        <p>{{ project.owner.first_name }} {{ project.owner.last_name }}</p>
+                    </td>
+                    <td colspan="1" align="right" style="vertical-align: top">
+                        <p><a href="#">http://{{ project.slug }}.org</a></p>
+                        <p><a href="#">http://{{ project.slug }}.org</a></p>
+                        <p><a href="#">{{ project.owner.email }}</a></p>
+                        <p>Tel 1: +41 41 728 56 29</p>
+                        <p>Tel 1: +41 41 273 66 68</p>
+                    </td>
+                </tr>
+                <tr style="padding-bottom: 25px;">
+                    <td colspan="4" style="vertical-align: top" align="right">
+                        <p>{{ date }}</p>
+                    </td>
+                </tr>
+                <tr style="padding-bottom: 50px;">
+                    <td colspan="4" style="vertical-align: top">
+                        <p><b>{{ sponsor.sponsor.name }}</b></p>
+                        <p>{{ sponsor.sponsor.contact_person }}</p>
+                        {% if sponsor.sponsor.address %}
+                            <p>{{ sponsor.sponsor.address }}</p>
+                        {% endif %}
+                        <p>{{ sponsor.sponsor.country.name }}</p>
+                    </td>
+                </tr>
+                <tr style="padding-bottom: 25px;">
+                    <td colspan="4" style="vertical-align: top">
+                        <p><b>Invoice Nr: {{ invoice_no }}</b></p>
+                        <p><b>{{ project.name }} {{ sponsor.sponsorship_level.name }}
+                            sponsoring {{ sponsor.start_date }} to {{ sponsor.end_date }}</b></p>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid #FFFFCC;">
+                    <td colspan="3" style="background-color: #FFFFCC" >
+                        <p><b>Total : </b></p>
+                    </td>
+                    <td colspan="1" align="right" style="background-color: #FFFFCC">
+                        <p><b>{{ sponsor.sponsorship_level.value }} {{ sponsor.sponsorship_level.currency }}</b></p>
+                    </td>
+                </tr>
+                <tr style="padding-top: 15px">
+                    <td colspan="4">
+                        <p>
+                            Please send the money to the following bank account of the {{ project.name }}
+                            Association using the above mentioned invoice nr in the payment message.
+                        </p>
+                        <p>{{ project.name }}<br/>
+                        Böschacherstrasse 10a<br/>
+                        CH-8624 Grüt (Gossau ZH)</p>
+                        <p>Migros Bank Solothurn <br/>
+                        IBAN: CH87 0840 1000 0570 8858 6 <br/>
+                        SWIFT: MIGRCHZZ80A</p>
+                        <p>
+                            Through your commitment you are making an important contribution to the ongoing development
+                            and prosperity of the {{ project.name }} project. Thank you for your support!
+                        </p>
+                    </td>
+                </tr>
+                <tr style="padding-top: 35px">
+                    <td colspan="4">
+                        <p> Best Regards</p>
+                        <br/>
+                        <p>
+                            {{ project.owner.first_name }} {{ project.owner.last_name }} <br/>
+                            {{ project.name }}
+                        </p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}
+
