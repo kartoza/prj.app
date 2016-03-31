@@ -163,6 +163,21 @@ class SponsorWorldMapView(SponsorMixin, ListView):
     context_object_name = 'sponsors'
     template_name = 'sponsor/world-map.html'
 
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(SponsorWorldMapView, self).get_context_data(**kwargs)
+        project_slug = self.kwargs.get('project_slug', None)
+        if project_slug:
+            context['the_project'] = Project.objects.get(slug=project_slug)
+        return context
+
     def get_queryset(self, queryset=None):
         """Get the queryset for this view.
 
