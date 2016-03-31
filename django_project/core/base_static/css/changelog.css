@@ -61,6 +61,25 @@ body {
     font-size: 10pt;
 }
 
+.levels {
+    display: none;
+}
+
+.levels.info-sponsor-row {
+    height: 20px;
+}
+
+.lvl-image {
+    width: 20px;
+    min-height: 15px;
+    float: left;
+}
+
+.levels.info-image img {
+    width: 15px !important;
+    height: 15px !important;
+}
+
 .info-image{
     width: 40px;
     min-height: 40px;

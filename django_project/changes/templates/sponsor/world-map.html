@@ -7,20 +7,88 @@
         var map;
         var geojson;
         var info;
+        var levels;
+        var options;
+        var options_array;
+        var selected;
+        var legend;
 
         $(document).ready(function () {
+
+            options_array = [
+                {
+                    'display' : 'Sponsor Count',
+                    'value' : 'sponsor_total',
+                    'grades' : [0, 1, 2, 3, 4, 5],
+                    'attr' : ''
+                },
+                {
+                    'display' : 'Income Per Country',
+                    'value' : 'income',
+                    'grades' : [0, 300, 500, 1000, 3000, 5000],
+                    'attr': 'currency'
+                }
+            ];
+
+            selected = 0;
+
             $('#map').css('height', 700);
             map = L.map('map').setView([40, 0], 2);
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
             }).addTo(map);
 
+            // sponsorship levels json
+            levels = JSON.parse('{{ levels | safe }}');
+
+            init_div_levels();
+
             add_layers_to_map();
 
             add_legends_to_map();
 
             add_info_to_map();
+
+            add_options();
         });
+
+        function add_options() {
+            options = L.control({position: 'bottomright'});
+            options.onAdd = function () {
+                this._div = L.DomUtil.create('div', 'info options');
+                var option = '';
+                for(var i=0; i<options_array.length; i++) {
+                    option += '<option value="'+options_array[i].value+'">' +
+                                    options_array[i].display + '</option>';
+                }
+                var option_div = $('<select id="map-options"></select>').append(option);
+                option_div.change(function () {
+                    selected = $(this).find('option:selected')[0].index;
+                    geojson.setStyle(style);
+                    // Update legends
+                    map.removeControl(legend);
+                    add_legends_to_map();
+                });
+                $(this._div).html(option_div);
+                return this._div;
+            };
+
+            options.addTo(map);
+        }
+
+        function init_div_levels() {
+            var info_content = '';
+            for(var i=0; i < levels.length; i++) {
+                info_content += '<div class="info-sponsor-row">' +
+                    '<div class="lvl-image">' +
+                     '<img src={{ MEDIA_URL }}' + levels[i].fields.logo + ' width="15"/></div>' +
+                     '<span>' + levels[i].fields.name + '</span> <br>' +
+                     '</div>' +
+                     '<div id="level' + levels[i].pk + '" class="info-sponsors"></div>'+
+                     '</div><hr/>';
+            }
+            $('.levels').html(info_content);
+        }
 
         function add_info_to_map() {
             info = L.control();
@@ -35,19 +103,29 @@
             info.update = function (props) {
                 var info_title = '<h4>Sponsor Info</h4>';
                 var info_content = '';
-                if (props) {
-                    info_content += '<hr/>';
 
+                if (props) {
+                    info_content += '<div style="font-weight:bold">'+
+                                        options_array[selected].display + ' : ' +
+                                        props[options_array[selected].value] + ' ' +
+                                        (options_array[selected].attr ? props[options_array[selected].attr] : '') +
+                                        '</div>';
+                    info_content += '<hr/>';
+                    clear_levels_content();
                     for (var sponsor_id in props.all_sponsor) {
-                        info_content += '<div class="info-sponsor-row">' +
+                        $('#level'+props.all_sponsor[sponsor_id].level_id+'.info-sponsors').append(
+                            '<div class="info-sponsor-row">' +
                                 '<div class="info-image">' +
                                 '<img src={{ MEDIA_URL }}' + props.all_sponsor[sponsor_id].logo + '/></div>' +
                                 '<span>' + props.all_sponsor[sponsor_id].name + '</span>' +
-                                '<br><span class="sub-info">' + props.all_sponsor[sponsor_id].start_date + ' - ' +
+                                '<br><span class="sub-info">' +
+                                props.all_sponsor[sponsor_id].value + ' '+
+                                props.currency + ', ' +
+                                props.all_sponsor[sponsor_id].start_date + ' - ' +
                                 props.all_sponsor[sponsor_id].end_date + '</span>' +
-                                '</div>';
+                            '</div>');
                     }
-
+                    info_content += $('.levels').html();
                 } else {
                     info_content += 'Hover over a country';
                 }
@@ -57,15 +135,20 @@
             info.addTo(map);
         }
 
+        function clear_levels_content() {
+            for(var i=0; i < levels.length; i++) {
+                $('#level'+levels[i].pk+'.info-sponsors').empty();
+            }
+        }
+
         function add_legends_to_map() {
-            var legend = L.control({position: 'bottomleft'});
+            legend = L.control({position: 'bottomleft'});
 
             legend.onAdd = function (map) {
+                var grades = options_array[selected].grades;
+                var div = L.DomUtil.create('div', 'info legend');
 
-                var div = L.DomUtil.create('div', 'info legend'),
-                        grades = [0, 1, 2, 3, 4, 5];
-
-                div.innerHTML += '<b><div class="legend-title"> Total Sponsors </div></b><hr/>';
+                div.innerHTML += '<b><div class="legend-title">' + options_array[selected].display + '</div></b><hr/>';
 
                 // loop through our density intervals and generate a label with a colored square for each interval
                 for (var i = 0; i < grades.length; i++) {
@@ -75,7 +158,7 @@
                 }
                 return div;
             };
-
+ 
             legend.addTo(map);
         }
 
@@ -100,14 +183,17 @@
                         if(geo_layer.length == 0) {
                             geo_obj[0].sponsor = {};
                             geo_obj[0].sponsor.sponsor_total = 1;
+                            geo_obj[0].sponsor.income = parseInt('{{ sponsor.sponsorship_level.value }}');
+                            geo_obj[0].sponsor.currency = '{{ sponsor.sponsorship_level.currency }}';
                             geo_obj[0].sponsor.all_sponsor = {};
                             geo_obj[0].sponsor.all_sponsor['{{ sponsor.sponsor.id }}'] =
                             {
                                 'name': '{{ sponsor.sponsor.name }}',
                                 'logo': '{{ sponsor.sponsor.logo }}',
-                                'value': '{{ sponsor.sponsorship_level.value }}',
+                                'value': parseInt('{{ sponsor.sponsorship_level.value }}'),
                                 'start_date': '{{ sponsor.start_date }}',
-                                'end_date': '{{ sponsor.end_date }}'
+                                'end_date': '{{ sponsor.end_date }}',
+                                'level_id' : '{{ sponsor.sponsorship_level.id }}'
                             };
 
                             // Add geo obj with the sponsor data to layers
@@ -116,13 +202,15 @@
                             // Check if there's already same sponsor on the current country
                             if (!('{{ sponsor.sponsor.id }}' in geo_layer[0].sponsor.all_sponsor)) {
                                 geo_layer[0].sponsor.sponsor_total++;
+                                geo_layer[0].sponsor.income += parseInt('{{ sponsor.sponsorship_level.value }}');
                                 geo_layer[0].sponsor.all_sponsor['{{ sponsor.sponsor.id }}'] =
                                 {
                                     'name': '{{ sponsor.sponsor.name }}',
                                     'logo': '{{ sponsor.sponsor.logo }}',
-                                    'value': '{{ sponsor.sponsorship_level.value }}',
+                                    'value': parseInt('{{ sponsor.sponsorship_level.value }}'),
                                     'start_date': '{{ sponsor.start_date }}',
-                                    'end_date': '{{ sponsor.end_date }}'
+                                    'end_date': '{{ sponsor.end_date }}',
+                                    'level_id' : '{{ sponsor.sponsorship_level.id }}'
                                 }
                             } else {
                                 // Sponsor already exist, update the dates to the latest one
@@ -136,11 +224,17 @@
                                     geo_layer[0].sponsor.all_sponsor['{{ sponsor.sponsor.id }}'].start_date =
                                             '{{ sponsor.start_date }}';
                                 }
+
+                                // Add total income
+                                geo_layer[0].sponsor.income += parseInt('{{ sponsor.sponsorship_level.value }}');
+                                geo_layer[0].sponsor.all_sponsor['{{ sponsor.sponsor.id }}'].value +=
+                                        parseInt('{{ sponsor.sponsorship_level.value }}')
                             }
                         }
                     }
 
                 {% endfor %}
+                console.log(layers);
                 geojson = L.geoJson(layers, {
                     style: style,
                     onEachFeature: on_each_feature
@@ -149,16 +243,18 @@
         }
 
         function get_color(d) {
-            return d > 5 ? '#E31A1C' :
-                    d > 4 ? '#FC4E2A' :
-                    d > 3 ? '#FD8D3C' :
-                    d > 2 ? '#FEB24C' :
-                    d > 1 ? '#FED976' :
+            var grades = options_array[selected].grades;
+            return d > grades[5] ? '#E31A1C' :
+                    d > grades[4] ? '#FC4E2A' :
+                    d > grades[3] ? '#FD8D3C' :
+                    d > grades[2] ? '#FEB24C' :
+                    d > grades[1] ? '#FED976' :
                             '#FFEDA0';
         }
+
         function style(feature) {
             return {
-                fillColor: get_color(feature.sponsor.sponsor_total),
+                fillColor: get_color(feature.sponsor[options_array[selected].value]),
                 weight: 2,
                 opacity: 1,
                 color: 'white',
@@ -221,4 +317,5 @@
             </div>
         </div>
     </div>
+    <div class="levels"></div>
 {% endblock %}
