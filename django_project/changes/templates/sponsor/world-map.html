@@ -1,0 +1,224 @@
+{% extends "project_base.html" %}
+{% block js_head %}
+    <link rel="stylesheet" type="text/css"
+          href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.js"></script>
+    <script>
+        var map;
+        var geojson;
+        var info;
+
+        $(document).ready(function () {
+            $('#map').css('height', 700);
+            map = L.map('map').setView([40, 0], 2);
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+            }).addTo(map);
+
+            add_layers_to_map();
+
+            add_legends_to_map();
+
+            add_info_to_map();
+        });
+
+        function add_info_to_map() {
+            info = L.control();
+            info.onAdd = function (map) {
+                this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+                $(this._div).addClass('top');
+                this.update();
+                return this._div;
+            };
+
+            // method that we will use to update the control based on feature properties passed
+            info.update = function (props) {
+                var info_title = '<h4>Sponsor Info</h4>';
+                var info_content = '';
+                if (props) {
+                    info_content += '<hr/>';
+
+                    for (var sponsor_id in props.all_sponsor) {
+                        info_content += '<div class="info-sponsor-row">' +
+                                '<div class="info-image">' +
+                                '<img src={{ MEDIA_URL }}' + props.all_sponsor[sponsor_id].logo + '/></div>' +
+                                '<span>' + props.all_sponsor[sponsor_id].name + '</span>' +
+                                '<br><span class="sub-info">' + props.all_sponsor[sponsor_id].start_date + ' - ' +
+                                props.all_sponsor[sponsor_id].end_date + '</span>' +
+                                '</div>';
+                    }
+
+                } else {
+                    info_content += 'Hover over a country';
+                }
+                this._div.innerHTML = info_title + info_content;
+            };
+
+            info.addTo(map);
+        }
+
+        function add_legends_to_map() {
+            var legend = L.control({position: 'bottomleft'});
+
+            legend.onAdd = function (map) {
+
+                var div = L.DomUtil.create('div', 'info legend'),
+                        grades = [0, 1, 2, 3, 4, 5];
+
+                div.innerHTML += '<b><div class="legend-title"> Total Sponsors </div></b><hr/>';
+
+                // loop through our density intervals and generate a label with a colored square for each interval
+                for (var i = 0; i < grades.length; i++) {
+                    div.innerHTML +=
+                            '<i style="background:' + get_color(grades[i] + 1) + '"></i> <span class="l-text">' +
+                            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '</span>';
+                }
+                return div;
+            };
+
+            legend.addTo(map);
+        }
+
+        function add_layers_to_map() {
+            $.getJSON('{{ STATIC_URL }}/static/json/geo.json', function (json) {
+                var layers = [];
+                {% for sponsor in sponsors %}
+
+                    // Get geo json object with the same country code from sponsor
+                    var geo_obj = $.grep(json['features'], function (e) {
+                        return e.properties.ISO2 == '{{ sponsor.sponsor.country }}';
+                    });
+
+                    if(geo_obj.length > 0) {
+
+                        // Check if geo_obj is already on the layers
+                        var geo_layer = $.grep(layers, function(e){
+                            return e.properties.ISO2 == geo_obj[0].properties.ISO2;
+                        });
+
+                        // No existance of geo_obj in the layers
+                        if(geo_layer.length == 0) {
+                            geo_obj[0].sponsor = {};
+                            geo_obj[0].sponsor.sponsor_total = 1;
+                            geo_obj[0].sponsor.all_sponsor = {};
+                            geo_obj[0].sponsor.all_sponsor['{{ sponsor.sponsor.id }}'] =
+                            {
+                                'name': '{{ sponsor.sponsor.name }}',
+                                'logo': '{{ sponsor.sponsor.logo }}',
+                                'value': '{{ sponsor.sponsorship_level.value }}',
+                                'start_date': '{{ sponsor.start_date }}',
+                                'end_date': '{{ sponsor.end_date }}'
+                            };
+
+                            // Add geo obj with the sponsor data to layers
+                            layers.push(geo_obj[0]);
+                        } else {
+                            // Check if there's already same sponsor on the current country
+                            if (!('{{ sponsor.sponsor.id }}' in geo_layer[0].sponsor.all_sponsor)) {
+                                geo_layer[0].sponsor.sponsor_total++;
+                                geo_layer[0].sponsor.all_sponsor['{{ sponsor.sponsor.id }}'] =
+                                {
+                                    'name': '{{ sponsor.sponsor.name }}',
+                                    'logo': '{{ sponsor.sponsor.logo }}',
+                                    'value': '{{ sponsor.sponsorship_level.value }}',
+                                    'start_date': '{{ sponsor.start_date }}',
+                                    'end_date': '{{ sponsor.end_date }}'
+                                }
+                            } else {
+                                // Sponsor already exist, update the dates to the latest one
+                                var previous_end_date = geo_layer[0].sponsor
+                                                        .all_sponsor['{{ sponsor.sponsor.id }}'].end_date;
+                                var current_end_date = '{{ sponsor.end_date }}';
+
+                                if((new Date(current_end_date)).getTime()>(new Date(previous_end_date)).getTime()){
+                                    geo_layer[0].sponsor.all_sponsor['{{ sponsor.sponsor.id }}'].end_date =
+                                            current_end_date;
+                                    geo_layer[0].sponsor.all_sponsor['{{ sponsor.sponsor.id }}'].start_date =
+                                            '{{ sponsor.start_date }}';
+                                }
+                            }
+                        }
+                    }
+
+                {% endfor %}
+                geojson = L.geoJson(layers, {
+                    style: style,
+                    onEachFeature: on_each_feature
+                }).addTo(map);
+            });
+        }
+
+        function get_color(d) {
+            return d > 5 ? '#E31A1C' :
+                    d > 4 ? '#FC4E2A' :
+                    d > 3 ? '#FD8D3C' :
+                    d > 2 ? '#FEB24C' :
+                    d > 1 ? '#FED976' :
+                            '#FFEDA0';
+        }
+        function style(feature) {
+            return {
+                fillColor: get_color(feature.sponsor.sponsor_total),
+                weight: 2,
+                opacity: 1,
+                color: 'white',
+                dashArray: '3',
+                fillOpacity: 0.7
+            };
+        }
+
+        function highlight_feature(e) {
+            var layer = e.target;
+
+            layer.setStyle({
+                weight: 2,
+                color: '#666',
+                dashArray: '',
+                fillOpacity: 0.7
+            });
+
+            if (!L.Browser.ie && !L.Browser.opera) {
+                layer.bringToFront();
+            }
+
+            info.update(layer.feature.sponsor);
+        }
+
+        function reset_highlight(e) {
+            geojson.resetStyle(e.target);
+            info.update();
+        }
+
+        function zoom_to_feature(e) {
+            map.fitBounds(e.target.getBounds());
+        }
+
+        function on_each_feature(feature, layer) {
+            layer.on({
+                mouseover: highlight_feature,
+                mouseout: reset_highlight,
+                click: zoom_to_feature
+            });
+        }
+
+    </script>
+{% endblock %}
+{% block title %} World Map {% endblock %}
+
+{% block page_title %}
+    <h1>World Map of Sponsors</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <div class="map-wrapper">
+        <div class="container">
+            <h1>World Map of Sponsors</h1>
+        </div>
+        <div class="container">
+            <div class="container-fluid">
+                <div class="row" id="map"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

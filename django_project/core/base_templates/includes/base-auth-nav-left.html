@@ -36,6 +36,7 @@
                 <li><a href="{% url 'version-list' the_project.slug %}">Versions</a></li>
                 <li><a href="{% url 'sponsorshiplevel-list' the_project.slug %}">Sponsorship Level</a></li>
                 <li><a href="{% url 'sponsor-list' the_project.slug %}">Sponsors</a></li>
+                <li><a href="{% url 'sponsor-world-map' the_project.slug %}">Sponsors Map</a></li>
                 <li><a href="{% url 'sponsorshipperiod-list' the_project.slug %}">Sponsorship Period</a></li>
                 <li><a href="{% url 'committee-list' the_project.slug %}">Committees</a></li>
             </ul>
@@ -51,6 +52,7 @@
                 <li><a href='{% url "version-create" the_project.slug %}'>Version</a></li>
                 <li><a href="{% url 'sponsorshiplevel-create' the_project.slug %}">Sponsorship Level</a></li>
                 <li><a href="{% url 'sponsor-create' the_project.slug %}">Sponsors</a></li>
+                <li><a href="{% url 'sponsor-world-map' the_project.slug %}">Sponsors Map</a></li>
                 <li><a href="{% url 'sponsorshipperiod-create' the_project.slug %}">Sponsorship Period</a></li>
                 <li><a href='{% url "committee-create" the_project.slug %}'>Committee</a></li>
             </ul>

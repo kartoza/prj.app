@@ -16,6 +16,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    {% block js_head %}{% endblock js_head %}
+    {% if the_project.gitter_room %}
+        <script type="text/javascript">
+            var project_gitter_room = '{{ the_project.gitter_room }}';
+            ((window.gitter = {}).chat = {}).options = {
+                room: project_gitter_room
+            }
+        </script>
+        <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+    {% endif %}
 
     {% compressed_css 'project' %}
 
@@ -142,6 +152,7 @@
             var getHref = obj.attr("href").split("#")[1];
             $(window).scrollTop($("[name*='" + getHref + "']").offset().top - offsetSize);
         });
+
     });
 
 </script>

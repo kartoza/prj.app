@@ -20,8 +20,12 @@ INSTALLED_APPS += (
     'django_hashedfilenamestorage',
     'django_countries',  # for sponsor addresses
     # 'user_map',
+    'disqus',
 )
 
+# Set disqus and shortname
+# noinspection PyUnresolvedReferences
+from .secret import DISQUS_WEBSITE_SHORTNAME  # noqa
 
 MIGRATION_MODULES = {'accounts': 'core.migration'}
 

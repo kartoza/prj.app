@@ -1,6 +1,8 @@
 # coding=utf-8
 from django.test import TestCase
 from base.tests.model_factories import ProjectF
+from django.core.exceptions import ValidationError
+from base.models.project import Project
 
 
 class TestProjectCRUD(TestCase):
@@ -48,7 +50,8 @@ class TestProjectCRUD(TestCase):
             'description': u'New description',
             'approved': False,
             'private': True,
-            'slug': u'new-project-slug'
+            'slug': u'new-project-slug',
+            'gitter_room': u'test/new',
         }
         model.__dict__.update(new_model_data)
         model.save()
@@ -67,3 +70,25 @@ class TestProjectCRUD(TestCase):
 
         # check if deleted
         self.assertTrue(model.pk is None)
+
+    def test_gitter_validation(self):
+        """
+        Test validation for gitter room field
+        """
+        model = ProjectF.create()
+
+        new_model_data = {
+            'name': u'New Project Name',
+            'description': u'New description',
+            'approved': False,
+            'private': True,
+            'slug': u'new-project-slug',
+            'gitter_room': u'invalid',
+        }
+
+        model.__dict__.update(new_model_data)
+        with self.assertRaises(ValidationError):
+            if model.full_clean():
+                model.save()
+
+        self.assertEqual(Project.objects.filter(gitter_room='invalid').count(), 0)
