@@ -19,6 +19,7 @@ from django.views.generic import (
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+from django.core import serializers
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
@@ -172,10 +173,16 @@ class SponsorWorldMapView(SponsorMixin, ListView):
         :returns: Context data which will be passed to the template.
         :rtype: dict
         """
-        context = super(SponsorWorldMapView, self).get_context_data(**kwargs)
         project_slug = self.kwargs.get('project_slug', None)
+        context = super(SponsorWorldMapView, self).get_context_data(**kwargs)
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
+            project = Project.objects.get(slug=project_slug)
+            levels = SponsorshipLevel.objects.filter(project=project)
+            context['levels'] = serializers.serialize(
+                "json",
+                levels
+            )
         return context
 
     def get_queryset(self, queryset=None):
