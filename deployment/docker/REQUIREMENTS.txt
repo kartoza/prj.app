@@ -30,3 +30,7 @@ django-rosetta==0.7.0
 django-embed-video==1.0.0
 django-grappelli
 pytz
+
+django-easy-pdf
+xhtml2pdf>=0.0.6
+reportlab>=2.7,<3

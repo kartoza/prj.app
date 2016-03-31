@@ -19,8 +19,10 @@ from django.views.generic import (
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+import time
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
+from easy_pdf.views import PDFTemplateView
 
 from ..models import Sponsor, SponsorshipPeriod  # noqa
 from ..models import SponsorshipLevel  # noqa
@@ -182,6 +184,59 @@ class SponsorWorldMapView(SponsorMixin, ListView):
             else:
                 raise Http404('Sorry! We could not find your Sponsor!')
         return self.queryset
+
+
+class InvoicePDFView(PDFTemplateView, SponsorMixin):
+    context_object_name = 'sponsors'
+    template_name = 'sponsor/invoice.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(InvoicePDFView, self).get_context_data(
+            pagesize="A4",
+            **kwargs
+        )
+        project_slug = self.kwargs.get('project_slug', None)
+        sponsor_slug = self.kwargs.get('slug', None)
+        sponsors = SponsorshipPeriod.approved_objects.all()
+
+        context['project_slug'] = project_slug
+        if project_slug and sponsor_slug:
+            project = Project.objects.get(slug=project_slug)
+            context['sponsor'] = sponsors.get(
+                project=project,
+                slug=sponsor_slug)
+            context['date'] = time.strftime("%d/%m/%Y")
+            context['project'] = project
+            context['invoice_no'] = '12345'
+            context['title'] = '{}-invoice-{}-{}'.format(
+                project_slug,
+                sponsor_slug,
+                context['invoice_no'])
+        return context
+
+    def get(self, request, *args, **kwargs):
+        """
+        overload this so that it can returns a pdf instead of html
+
+        :param request: An HttpRequest object.
+        """
+        context = self.get_context_data(**kwargs)
+        response = self.get_pdf_response(
+            context,
+            content_type="application/pdf"
+        )
+        response['Content-Disposition'] = (
+            'attachment; filename="{}.pdf"'.format(context['title'])
+        )
+        return response
 
 
 class SponsorDetailView(SponsorMixin, DetailView):
