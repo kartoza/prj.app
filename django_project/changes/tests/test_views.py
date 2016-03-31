@@ -790,7 +790,7 @@ class TestSponsorViews(TestCase):
         }))
         self.assertEqual(response.status_code, 200)
 
-    def test_SponsorListView(self):
+    def test_SponsorWorldMapView(self):
 
         response = self.client.get(reverse('sponsor-world-map', kwargs={
             'project_slug': self.project.slug
