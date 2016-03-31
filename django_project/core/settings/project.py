@@ -17,10 +17,10 @@ INSTALLED_APPS += (
     'changes',
     'github_issue',
     'vota',
-    'disqus',
 )
 
-# Due to profile page does not available, this will redirect to home page after login
+# Due to profile page does not available,
+# this will redirect to home page after login
 LOGIN_REDIRECT_URL = '/'
 
 # How many versions to list in each project box

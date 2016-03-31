@@ -19,6 +19,7 @@ from django.views.generic import (
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+from django.core import serializers
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
@@ -135,6 +136,53 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
             project = Project.objects.get(slug=project_slug)
             context['the_project'] = Project.objects.get(slug=project_slug)
             context['levels'] = SponsorshipLevel.objects.filter(project=project)
+        return context
+
+    def get_queryset(self, queryset=None):
+        """Get the queryset for this view.
+
+        :param queryset: A query set
+        :type queryset: QuerySet
+
+        :returns: Sponsor Queryset which is filtered by project
+        :rtype: QuerySet
+        :raises: Http404
+        """
+        if self.queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            if project_slug:
+                project = Project.objects.get(slug=project_slug)
+                queryset = SponsorshipPeriod.objects.filter(project=project)
+                return queryset
+            else:
+                raise Http404('Sorry! We could not find your Sponsor!')
+        return self.queryset
+
+
+class SponsorWorldMapView(SponsorMixin, ListView):
+    """World map view for Sponsors."""
+    context_object_name = 'sponsors'
+    template_name = 'sponsor/world-map.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        project_slug = self.kwargs.get('project_slug', None)
+        context = super(SponsorWorldMapView, self).get_context_data(**kwargs)
+        if project_slug:
+            context['the_project'] = Project.objects.get(slug=project_slug)
+            project = Project.objects.get(slug=project_slug)
+            levels = SponsorshipLevel.objects.filter(project=project)
+            context['levels'] = serializers.serialize(
+                "json",
+                levels
+            )
         return context
 
     def get_queryset(self, queryset=None):

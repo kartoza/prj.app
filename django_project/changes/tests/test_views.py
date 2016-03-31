@@ -790,6 +790,18 @@ class TestSponsorViews(TestCase):
         }))
         self.assertEqual(response.status_code, 200)
 
+    def test_SponsorWorldMapView(self):
+
+        response = self.client.get(reverse('sponsor-world-map', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
+            'sponsor/world-map.html',
+            u'changes/sponsorshipperiod_list.html'
+        ]
+        self.assertEqual(expected_templates, response.template_name)
+
     def test_SponsorCreateView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
