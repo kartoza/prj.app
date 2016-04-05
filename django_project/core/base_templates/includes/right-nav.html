@@ -32,9 +32,10 @@
             {% if user.is_staff %}
                 <li><a href="{% url 'admin:index' %}">Admin Site</a></li>
             {% endif %}
-            <li><a href='{% url "user-logout" %}'>Log Out</a></li>
+            <li><a href='{% url "account_logout" %}'>Log Out</a></li>
         {% else %}
-            <li><a href='{% url "user-login" %}'>Log In</a></li>
+            <li><a href='{% url "account_login" %}'>Log In</a></li>
+            <li><a href='{% url "account_signup" %}'>Sign Up</a></li>
         {% endif %}
     </ul>
 </li>
