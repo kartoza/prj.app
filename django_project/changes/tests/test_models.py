@@ -211,39 +211,11 @@ class TestVersionSponsors(TestCase):
         """
         pass
 
-    def test_sponsors(self):
+    def test_Version_Sponsors(self):
         """
         Tests version sponsors
         """
         project = ProjectF.create()
-        data = {
-            'name': u'New Project Name',
-            'description': u'New description',
-            'approved': True,
-            'private': False,
-            'slug': u'new-project-slug'
-        }
-        project.__dict__.update(data)
-        project.save()
-
-        version_model = VersionF.create()
-        data = {
-            '10002001': u'10002001',
-            'description': u'New description',
-            'approved': True,
-            'release_date': u'2016-01-10',
-            'project': project
-        }
-        version_model.__dict__.update(data)
-        version_model.save()
-
-        sponsor = SponsorF.create()
-        data = {
-            'name': u'Foo Sponsor',
-            'project': project
-        }
-        sponsor.__dict__.update(data)
-        sponsor.save()
 
         sponsorship_period = SponsorshipPeriodF.create()
         data = {
@@ -251,12 +223,23 @@ class TestVersionSponsors(TestCase):
             'end_date': u'2016-02-01',
             'approved': True,
             'private': False,
-            'project': project,
-            'sponsor': sponsor
+            'project_id': project.pk,
         }
         sponsorship_period.__dict__.update(data)
         sponsorship_period.save()
 
+        version_model = VersionF.create()
+        data = {
+            '10002001': u'10002001',
+            'description': u'New description',
+            'approved': True,
+            'release_date': u'2016-01-10',
+            'project_id': project.pk,
+        }
+        version_model.__dict__.update(data)
+        version_model.save()
+
+        version_model.refresh_from_db()
         sponsors = version_model.sponsors()
         self.assertEqual(sponsors.count(), 1)
 
