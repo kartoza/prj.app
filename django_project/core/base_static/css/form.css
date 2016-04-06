@@ -183,3 +183,21 @@
     float: left;
     margin: -2px 14px -6px -4px;
 }
+
+.buttonHolder {
+    margin-top: 10px;
+}
+
+.email-action {
+    height: 50px;
+    background-color: #4d90fe;
+    text-shadow: 0 1px rgba(0,0,0,0.1);
+    border: 0;
+    color: white;
+}
+
+.email-action:hover {
+    border: 0;
+    text-shadow: 0 1px rgba(0,0,0,0.3);
+    background-color: #357ae8;
+}

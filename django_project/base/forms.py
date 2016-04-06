@@ -59,7 +59,7 @@ class SignupForm(forms.Form):
             {
                 "placeholder": _('First Name')
             })
-        )
+    )
 
     last_name = forms.CharField(
         max_length=150,
@@ -69,7 +69,7 @@ class SignupForm(forms.Form):
             {
                 "placeholder": _('Last Name')
             })
-        )
+    )
 
     def signup(self, request, user):
         user.first_name = self.cleaned_data['first_name']
