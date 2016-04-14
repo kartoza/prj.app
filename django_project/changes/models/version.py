@@ -188,8 +188,9 @@ class Version(models.Model):
     def sponsors(self):
         """Return a list of sponsors current at time of this version release.
 
-        :returns: A list of SponsorPeriod objects whose release date coincides
-            with the version release date. Only approved sponsors are returned.
+        :returns: A list of SponsorPeriod objects for current project
+            whose release date coincides with the version release date.
+            Only approved sponsors are returned.
             Returns None if the release date (which is optional) is not set.
         :rtype: Queryset, None
         """
@@ -197,7 +198,8 @@ class Version(models.Model):
             return None
         sponsors = SponsorshipPeriod.approved_objects.filter(
                 end_date__gte=self.release_date).filter(
-                start_date__lte=self.release_date).order_by(
+                start_date__lte=self.release_date).filter(
+                project=self.project).order_by(
             'start_date').order_by(
             '-sponsorship_level__value')
         return sponsors

@@ -77,20 +77,36 @@ STATICFILES_FINDERS = (
 # noinspection PyUnresolvedReferences
 from .secret import SECRET_KEY  # noqa
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-    # 'django.template.loaders.eggs.Loader',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            # project level templates
+            absolute_path('core', 'base_templates'),
+            absolute_path('vota', 'templates'),
+            absolute_path('changes', 'templates'),
+        ],
+        'APP_DIRS': False,
+        'OPTIONS': {
+            # List of callables that know how to import templates from various sources.
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            ],
+            'context_processors': [
+                # Already defined Django-related contexts
+                'django.contrib.auth.context_processors.auth',
+                'django.core.context_processors.request',
+                'django.core.context_processors.media',
+                'core.context_processors.add_intercom_app_id',
+                'django.template.context_processors.i18n',
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.request',
-    'django.core.context_processors.media',
-    'core.context_processors.add_intercom_app_id',
-    'django.template.context_processors.i18n'
-)
+                # `allauth` needs this from django
+                'django.template.context_processors.request',
+            ],
+        },
+    },
+]
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -106,14 +122,6 @@ ROOT_URLCONF = 'core.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'core.wsgi.application'
-
-TEMPLATE_DIRS = (
-    # project level templates
-    absolute_path('core', 'base_templates'),
-    absolute_path('vota', 'templates'),
-    absolute_path('changes', 'templates'),
-
-)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
