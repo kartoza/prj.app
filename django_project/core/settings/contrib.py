@@ -68,18 +68,22 @@ PIPELINE_TEMPLATE_FUNC = '_.template'
 # enable cached storage - requires uglify.js (node.js)
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
-# Contributed / third party js libs for pipeline compression
-# For hand rolled js for this app, use project.py
-PIPELINE_JS = {}
-
-# Contributed / third party css for pipeline compression
-# For hand rolled css for this app, use project.py
-PIPELINE_CSS = {}
+# Contributed / third party js and css libs for pipeline compression
+# For hand rolled js and css for this app, use project.py
+PIPELINE = {
+    'JAVASCRIPT': {},
+    'STYLESHEETS': {},
+}
 
 # These get enabled in prod.py
 PIPELINE_ENABLED = False
 PIPELINE_CSS_COMPRESSOR = None
 PIPELINE_JS_COMPRESSOR = None
+
+# Add PipelineFinder to STATICFILES_FINDERS
+STATICFILES_FINDERS += (
+    'pipeline.finders.PipelineFinder',
+)
 
 # Django-allauth related settings
 
