@@ -1,4 +1,4 @@
-{% load compressed %}
+{% load pipeline %}
 {% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
@@ -27,7 +27,7 @@
         <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
     {% endif %}
 
-    {% compressed_css 'project' %}
+    {% stylesheet 'project' %}
 
 </head>
 
@@ -111,8 +111,8 @@
         </p>
     </nav>
 </div>
-{% compressed_js 'contrib' %}
-{% compressed_js 'project' %}
+{% javascript 'contrib' %}
+{% javascript 'project' %}
 {% block inline-js %}{% endblock %}
 <script>
     $(function(){
