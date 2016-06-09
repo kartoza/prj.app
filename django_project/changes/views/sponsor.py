@@ -115,7 +115,6 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
     """List view for Sponsor."""
     context_object_name = 'sponsors'
     template_name = 'sponsor/list.html'
-    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
