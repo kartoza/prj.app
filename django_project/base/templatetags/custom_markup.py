@@ -16,3 +16,9 @@ def base_markdown(value):
                                        extensions,
                                        safe_mode=True,
                                        enable_attributes=False))
+
+
+@register.filter(name='is_gif', is_safe=True)
+@stringfilter
+def is_gif(value):
+    return value[-4:] == '.gif'
