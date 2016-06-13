@@ -1,5 +1,4 @@
 import markdown
-import re
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.encoding import force_unicode
@@ -22,5 +21,4 @@ def base_markdown(value):
 @register.filter(name='is_gif', is_safe=True)
 @stringfilter
 def is_gif(value):
-    return bool(re.search('.gif', value))
-
+    return value[-4:] == '.gif'
