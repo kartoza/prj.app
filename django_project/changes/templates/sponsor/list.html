@@ -35,9 +35,13 @@
         {% if unapproved %}
             <h3>All sponsors are approved.</h3>
         {% else %}
-            <h3>No sponsors are defined, but you can <a
-                    class="btn btn-default btn-mini"
-                    href='{% url "sponsor-create" project_slug %}'>create one</a>.</h3>
+            {% if user.is_staff %}
+                <h3>No sponsors are defined, but you can <a
+                        class="btn btn-default btn-mini"
+                        href='{% url "sponsor-create" project_slug %}'>create one</a>.</h3>
+            {% else %}
+                <h3>No sponsors are defined</h3>
+            {% endif %}
         {% endif %}
     {% endifequal %}
 

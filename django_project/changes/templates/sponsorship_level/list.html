@@ -15,7 +15,7 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
             Sponsorship Levels
-           {% if user.is_authenticated %}
+           {% if user.is_staff %}
                 <div class="pull-right btn-group">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "sponsorshiplevel-create" project_slug %}'
@@ -66,15 +66,15 @@
                            href='{% url "sponsorshiplevel-approve" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "sponsorshiplevel-delete" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </a>
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "sponsorshiplevel-update" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
                     {% endif %}
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "sponsorshiplevel-delete" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
-                        <span class="glyphicon glyphicon-minus"></span>
-                    </a>
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "sponsorshiplevel-update" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
-                        <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
                     <a class="btn btn-default btn-mini"
                        href='{% url "sponsorshiplevel-detail" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
                         <span class="glyphicon glyphicon-eye-open"></span>
