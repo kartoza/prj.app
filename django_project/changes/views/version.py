@@ -61,6 +61,10 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         context['num_versions'] = self.get_queryset().count()
         context['unapproved'] = False
         context['rst_download'] = False
+        project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
+        if project_slug:
+            context['the_project'] = Project.objects.get(slug=project_slug)
         return context
 
     def get_queryset(self):
