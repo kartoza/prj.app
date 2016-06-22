@@ -24,11 +24,13 @@
 {% else %}
     <ul class="nav navbar-nav">
         {% if the_project.image_file %}
-            <li><img class="img-rounded"
-                     src="{% thumbnail the_project.image_file 50x50 crop %}"/></li>
+            <li><a href="{% url 'project-detail' the_project.slug %}" style="padding: 0 0;">
+                <img class="img-rounded"
+                     src="{% thumbnail the_project.image_file 50x50 crop %}"/>
+            </a></li>
         {% endif %}
         <li>
-            <a class="nav navbar-nav" >
+            <a href="{% url 'project-detail' the_project.slug %}" class="nav navbar-nav" >
                 {{ the_project.name }}
             </a>
 
