@@ -11,6 +11,7 @@ import re
 import zipfile
 import StringIO
 import pypandoc
+from bs4 import BeautifulSoup
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -670,3 +671,85 @@ class VersionDownloadGnu(VersionMixin, DetailView):
         return self.render_to_response(
             context,
             content_type="text/plain; charset=utf-8")
+
+class VersionSponsorDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
+    """View to allow staff users to download Version page in html format"""
+    template_name = 'version/includes/version-sponsors.html'
+
+    def render_to_response(self, context, **response_kwargs):
+        """Returns a html document for a project Version page.
+
+        :param context:
+        :type context: dict
+
+        :param response_kwargs: Keyword Arguments
+        :param response_kwargs: dict
+
+        :returns: a html document for a project Version page.
+        :rtype: HttpResponse
+        """
+        version_obj = context.get('version')
+        # set the context flag for 'html_download'
+        context['html_download'] = True
+        # render the template
+        document = self.response_class(
+            request=self.request,
+            template=self.get_template_names(),
+            context=context,
+            **response_kwargs
+        )
+        # convert the html to html
+        converted_doc = pypandoc.convert(
+            document.rendered_content.encode(
+                'utf8', 'ignore'), 'html', format='html')
+        converted_doc = converted_doc.replace('/media/images/', 'images/')
+
+        # prepare the ZIP file
+        zip_file = self._prepare_zip_archive(converted_doc, version_obj)
+
+        # Grab the ZIP file from memory, make response with correct MIME-type
+        response = HttpResponse(
+            zip_file.getvalue(), content_type="application/x-zip-compressed")
+        # ..and correct content-disposition
+        response['Content-Disposition'] = (
+            'attachment; filename="{}-Sponsor-{}.zip"'.format(
+                version_obj.project.name, version_obj.name)
+        )
+
+        return response
+
+    # noinspection PyMethodMayBeStatic
+    def _prepare_zip_archive(self, document, version_obj):
+        """Prepare a ZIP file with the document and referenced images.
+        :param document:
+        :param version_obj: Instance of a version object.
+
+        :returns temporary path for the created zip file
+        :rtype: string
+        """
+        # create in memory file-like object
+        temp_path = StringIO.StringIO()
+
+        # grab all of the images from document
+        images = []
+        page = BeautifulSoup(document,'html.parser')
+        pages = page.findAll('img')
+        for image in pages:
+            img = image['src']
+            images.append(img)
+
+        # create the ZIP file
+        with zipfile.ZipFile(temp_path, 'w') as zip_file:
+            # write all of the image files (read from disk)
+            for image in images:
+                zip_file.write(
+                    '../media/{0}'.format(image),
+                    '{0}'.format(image)
+                )
+            # write the actual html document
+            zip_file.writestr(
+                '{}-Sponsor-{}.html'.format(
+                    version_obj.project.name, version_obj.name),
+                document)
+
+        return temp_path

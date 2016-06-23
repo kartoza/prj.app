@@ -32,6 +32,7 @@ from views import (
     ApproveVersionView,
     VersionDownload,
     VersionDownloadGnu,
+    VersionSponsorDownload,
     # Entry
     EntryDetailView,
     EntryDeleteView,
@@ -144,6 +145,9 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/gnu/$',
         view=VersionDownloadGnu.as_view(),
         name='version-download-gnu'),
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/downloadsponsor/$',
+        view=VersionSponsorDownload.as_view(),
+        name='version-sponsor-download'),
 
     # Changelog entry management
     url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/'
