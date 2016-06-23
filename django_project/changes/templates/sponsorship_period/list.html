@@ -70,15 +70,15 @@
                            href='{% url "sponsorshipperiod-approve" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "sponsorshipperiod-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </a>
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "sponsorshipperiod-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
                     {% endif %}
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "sponsorshipperiod-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
-                        <span class="glyphicon glyphicon-minus"></span>
-                    </a>
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "sponsorshipperiod-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
-                        <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
                     <a class="btn btn-default btn-mini"
                        href='{% url "sponsorshipperiod-detail" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
                         <span class="glyphicon glyphicon-eye-open"></span>

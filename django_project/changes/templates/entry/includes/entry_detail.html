@@ -35,13 +35,17 @@
         {{ entry.description|base_markdown }}
     </div>
     <div class="col-lg-4">
-        {% if entry.image_file %}
-            <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+        <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+            {% if entry.image_file|is_gif %}
+                <img class="img-responsive img-rounded pull-right"
+                     src="{{ MEDIA_URL }}{{ entry.image_file }}"
+                     alt=""/>{# see core/settings/contrib.py for large-entry #}
+            {% else %}
                 <img class="img-responsive img-rounded pull-right"
                      src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
                      alt=""/>{# see core/settings/contrib.py for large-entry #}
-            </a>
-        {% endif %}
+            {% endif %}
+        </a>
     </div>
 </div>
 

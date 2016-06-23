@@ -43,7 +43,9 @@
         {% if unapproved %}
             <h3>All versions are approved.</h3>
         {% else %}
-            <h3>No versions are defined, but you can create one.</h3>
+            <h3>No versions are defined, but you can <a
+                    class="btn btn-default btn-mini"
+                    href='{% url "version-create" project_slug %}'>create one</a>.</h3>
         {% endif %}
     {%  endifequal %}
     {% for version in versions %}

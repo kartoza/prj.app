@@ -16,6 +16,7 @@
     <div class="col-lg-10">
       <h3>{{ sponsorshiplevel.name }}</h3>
     </div>
+    {% if user.is_staff %}
     <div class="col-lg-2">
       <div class="btn-group">
         <a class="btn btn-default btn-sm tooltip-toggle"
@@ -30,6 +31,7 @@
         </a>
       </div>
     </div>
+    {% endif %}
   </div>
   <div class="row">
     <div class="col-lg-8">

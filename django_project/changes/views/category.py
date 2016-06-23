@@ -4,6 +4,7 @@
 """
 # noinspection PyUnresolvedReferences
 import logging
+import json
 from base.models import Project
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
@@ -174,7 +175,62 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
                         'approved yet. Try logging in as a staff member if '
                         'you wish to view it.')
                 queryset = Category.approved_objects.filter(
-                    project=project)
+                    project=project).order_by('sort_number')
+                return queryset
+            else:
+                raise Http404(
+                        'Sorry! We could not find the project for '
+                        'your category!')
+        else:
+            return queryset
+
+
+class CategoryOrderView(CategoryMixin, ListView):
+    """List view to order category"""
+    context_object_name = 'categories'
+    template_name = 'category/order.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(CategoryOrderView, self).get_context_data(**kwargs)
+        context['num_categories'] = context['categories'].count()
+        project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
+        if project_slug:
+            context['the_project'] = Project.objects.get(slug=project_slug)
+        return context
+
+    def get_queryset(self, queryset=None):
+        """Get the queryset for this view.
+
+        :returns: A queryset which is filtered to only show approved
+            Categories.
+
+        :param queryset: Optional queryset.
+        :rtype: QuerySet
+        :raises: Http404
+        """
+        if queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            if project_slug:
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                except Project.DoesNotExist:
+                    raise Http404(
+                        'Sorry! The project you are requesting a category for '
+                        'could not be found or you do not have permission to '
+                        'view the category. Also the version may not be '
+                        'approved yet. Try logging in as a staff member if '
+                        'you wish to view it.')
+                queryset = Category.approved_objects.filter(
+                    project=project).order_by('sort_number')
                 return queryset
             else:
                 raise Http404(
@@ -304,6 +360,47 @@ class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
             raise Http404
         qs = Category.objects.filter(project=self.project)
         return qs
+
+
+class CategoryOrderSubmitView(LoginRequiredMixin, CategoryMixin, UpdateView):
+    """Update order view for Category"""
+    context_object_name = 'category'
+
+    def post(self, request, *args, **kwargs):
+        """Post the project_slug from the URL and define the Project
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        :raises: Http404
+        """
+        project_slug = kwargs.get('project_slug')
+        project = Project.objects.get(slug=project_slug)
+        categories = Category.objects.filter(project=project)
+        categories_json = request.body
+
+        try:
+            categories_request = json.loads(categories_json)
+        except ValueError:
+            raise Http404(
+                'Error json values'
+            )
+
+        for cat in categories_request:
+            category = categories.get(id=cat['id'])
+            if category:
+                category.sort_number = cat['sort_number']
+                category.save()
+
+        return HttpResponse('')
 
 
 # noinspection PyAttributeOutsideInit

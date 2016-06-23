@@ -34,6 +34,14 @@
 
         </li>
     </ul>
+     <ul class="nav navbar-nav">
+        <li>
+            <a href="{% url 'committee-list' the_project.slug %}">
+                Teams
+            </a>
+    </li>
+    </ul>
+    {% if user.is_staff %}
     <ul class="nav navbar-nav">
         <li>
             <a href="{% url "version-create" the_project.slug %}" class="dropdown-toggle" data-toggle="dropdown">
@@ -41,10 +49,11 @@
             </a>
             </a>
             <ul class="dropdown-menu">
-                <li><a href="{% url 'category-list' the_project.slug %}">Manage Categories</a></li>
-                <li><a href="{% url 'version-list' the_project.slug %}">Manage Versions</a></li>
+                <li><a href="{% url 'category-list' the_project.slug %}">Categories</a></li>
+                <li><a href="{% url 'version-list' the_project.slug %}">Versions</a></li>
             </ul>
     </li>
+    {% endif %}
     </ul>
     <ul class="nav navbar-nav">
         <li>
@@ -52,17 +61,13 @@
                 Sponsors <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-                <li><a href="{% url 'sponsor-list' the_project.slug %}">Manage Sponsors</a></li>
-                <li><a href="{% url 'sponsorshiplevel-list' the_project.slug %}">Manage Levels</a></li>
-                <li><a href="{% url 'sponsorshipperiod-list' the_project.slug %}">Manage Periods</a></li>
+                <li><a href="{% url 'sponsor-list' the_project.slug %}">Sponsors</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'sponsorshiplevel-list' the_project.slug %}">Sponsor Levels</a></li>
+                    <li><a href="{% url 'sponsorshipperiod-list' the_project.slug %}">Sponsor Periods</a></li>
+                {% endif %}
+                <li><a href="{% url 'sponsor-world-map' the_project.slug %}">Sponsors Map</a></li>
             </ul>
-    </li>
-    </ul>
-    <ul class="nav navbar-nav">
-        <li>
-            <a href="{% url 'committee-list' the_project.slug %}">
-                Committees
-            </a>
     </li>
     </ul>
 
