@@ -4,6 +4,7 @@
 """
 # noinspection PyUnresolvedReferences
 import logging
+import json
 from base.models import Project
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
@@ -174,7 +175,7 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
                         'approved yet. Try logging in as a staff member if '
                         'you wish to view it.')
                 queryset = Category.approved_objects.filter(
-                    project=project)
+                    project=project).order_by('sort_number')
                 return queryset
             else:
                 raise Http404(
@@ -200,7 +201,6 @@ class CategoryOrderView(CategoryMixin, ListView):
         """
         context = super(CategoryOrderView, self).get_context_data(**kwargs)
         context['num_categories'] = context['categories'].count()
-        context['unapproved'] = False
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
@@ -230,7 +230,7 @@ class CategoryOrderView(CategoryMixin, ListView):
                         'approved yet. Try logging in as a staff member if '
                         'you wish to view it.')
                 queryset = Category.approved_objects.filter(
-                    project=project)
+                    project=project).order_by('sort_number')
                 return queryset
             else:
                 raise Http404(
@@ -360,6 +360,47 @@ class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
             raise Http404
         qs = Category.objects.filter(project=self.project)
         return qs
+
+
+class CategoryOrderSubmitView(LoginRequiredMixin, CategoryMixin, UpdateView):
+    """Update order view for Category"""
+    context_object_name = 'category'
+
+    def post(self, request, *args, **kwargs):
+        """Post the project_slug from the URL and define the Project
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        :raises: Http404
+        """
+        project_slug = kwargs.get('project_slug')
+        project = Project.objects.get(slug=project_slug)
+        categories = Category.objects.filter(project=project)
+        categories_json = request.body
+
+        try:
+            categories_request = json.loads(categories_json)
+        except ValueError:
+            raise Http404(
+                'Error json values'
+            )
+
+        for cat in categories_request:
+            category = categories.get(id=cat['id'])
+            if category:
+                category.sort_number = cat['sort_number']
+                category.save()
+
+        return HttpResponse('')
 
 
 # noinspection PyAttributeOutsideInit

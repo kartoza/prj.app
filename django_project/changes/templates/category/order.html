@@ -53,17 +53,26 @@
             var categories = $.map($(this).find('li'), function(el, i){
                 var cat = String(el.id).split('-');
                 return {
-                    'sortNumber' : i,
+                    'sort_number' : i,
                     'id': cat[0],
                     'name': cat[1]
                 }
             });
             sortableDisable();
-            setTimeout(function () {
-                if(sortable_state=='disabled') {
+
+            $.ajax({
+                url: "{% url "category-submit-order" project_slug %}",
+                type: "POST",
+                data: JSON.stringify(categories),
+                success: function (response) {
+                    sortableEnable();
+                },
+                error: function (response) {
+                    console.log(response);
                     sortableEnable();
                 }
-            }, 1000);
+
+            });
         }
 
         function sortableEnable() {

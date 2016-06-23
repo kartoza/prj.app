@@ -50,15 +50,7 @@
     {% for category in categories %}
         <script>console.debug("{{ category }}");</script>
         <div class="row" style="margin-top:10px;">
-            <div class="col-lg-1">
-                {% if category.image_file %}
-                    <a href="{{ MEDIA_URL }}{{ category.image_file }}">
-                        <img class="img-responsive img-rounded pull-right"
-                             src="{% thumbnail category.image_file 50x50 crop %}" />
-                    </a>
-                {%  endif %}
-            </div>
-            <div class="col-lg-9">
+            <div class="col-lg-10">
                 <h5>{{ category.project.name }}</h5>
                 <h3>{{ category.name }}</h3>
             </div>
