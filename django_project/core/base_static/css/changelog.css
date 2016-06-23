@@ -100,3 +100,21 @@ body {
     margin-bottom: 5px !important;
     margin-top: 5px !important;
 }
+
+ul .order {
+    list-style-type: none;
+    cursor: pointer;
+    border: 1px solid lightgray;
+    margin-left: -40px !important;
+    margin-right: 0px !important;
+}
+
+.order:hover {
+    background-color: lightgray;
+}
+
+ul.ui-sortable-disabled .order{
+    background-color: white;
+    color: darkgrey;
+    cursor: default;
+}

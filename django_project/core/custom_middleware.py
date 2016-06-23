@@ -3,7 +3,8 @@
 """
 core.custom_middleware
 """
-from base.models import Project
+from base.models import Project, Version
+from changes.models import Category, SponsorshipLevel, SponsorshipPeriod
 
 
 class NavContextMiddleware(object):
@@ -34,6 +35,15 @@ class NavContextMiddleware(object):
 
         if context.get('project', None):
             context['the_project'] = context.get('project')
+            context['has_pending_versions'] = Version.unapproved_objects.filter(
+                project=context.get('project')).exists()
+            context['has_pending_categories'] = Category.unapproved_objects.filter(
+                project=context.get('project')).exists()
+            context['has_pending_sponsor_lvl'] = SponsorshipLevel.unapproved_objects.filter(
+                project=context.get('project')).exists()
+            context['has_pending_sponsor_period'] = SponsorshipPeriod.unapproved_objects.filter(
+                project=context.get('project')).exists()
+
         else:
             if request.user.is_staff:
                 context['the_projects'] = Project.objects.all()

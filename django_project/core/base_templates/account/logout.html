@@ -1,0 +1,27 @@
+{% extends "project_base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block title %}Log Out{% endblock %}
+
+{% block container %}
+    <div class="content">
+        {% block content %}
+
+            {% csrf_token %}
+            <div class="container">
+
+                <div class="custom-form-container">
+                    <p>{% trans 'Are you sure you want to log out?' %}</p>
+                    <form class="logout" method="POST" action="{% url 'account_logout' %}">{% csrf_token %}
+                        {% if redirect_field_value %}
+                            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                        {% endif %}
+                        <button class="login custom-form-submit" type="submit">{% trans "Log Out" %}</button>
+                    </form>
+                </div>
+            </div> <!-- /container -->
+            </div>
+        {% endblock %}
+{% endblock %}

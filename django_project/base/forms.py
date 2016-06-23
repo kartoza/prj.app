@@ -1,6 +1,7 @@
 # coding=utf-8
 import logging
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout,
@@ -47,3 +48,30 @@ class ProjectForm(forms.ModelForm):
         instance.owner = self.user
         instance.save()
         return instance
+
+
+class SignupForm(forms.Form):
+    first_name = forms.CharField(
+        max_length=150,
+        label='First Name (Optional)',
+        required=False,
+        widget=forms.TextInput(
+            {
+                "placeholder": _('First Name')
+            })
+    )
+
+    last_name = forms.CharField(
+        max_length=150,
+        label='Last Name (Optional)',
+        required=False,
+        widget=forms.TextInput(
+            {
+                "placeholder": _('Last Name')
+            })
+    )
+
+    def signup(self, request, user):
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.save()

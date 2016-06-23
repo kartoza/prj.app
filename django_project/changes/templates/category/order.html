@@ -1,0 +1,96 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+
+{% block title %}Categories - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Categories (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+             <span class="glyphicon glyphicon-sort-by-order"></span> Order Categories
+        </h1>
+    </div>
+    {% ifequal num_categories 0 %}
+        <h3>No categories are defined, but you can</h3>
+    {% endifequal %}
+    <ul id="sortable" >
+    {% for category in categories %}
+        <script>console.debug("{{ category }}");</script>
+        <li class="row order" style="margin-top:6px;" id="{{ category.id }}-{{ category.name }}" >
+            <div class="col-lg-1" style="padding-top: 10px;">
+                {% if category.image_file %}
+                    <a href="{{ MEDIA_URL }}{{ category.image_file }}">
+                        <img class="img-responsive img-rounded pull-right"
+                             src="{% thumbnail category.image_file 50x50 crop %}" />
+                    </a>
+                {%  endif %}
+            </div>
+            <div class="col-lg-12">
+                <p>
+                    <span class="glyphicon glyphicon-menu-hamburger" style="margin-right: 20px"></span>
+                    {{ category.name }}
+                </p>
+            </div>
+        </li>
+    {%  endfor %}
+    </ul>
+    <hr />
+
+    <script>
+        var sortable_state = 'enabled';
+
+        $("#sortable").sortable({
+            stop: onStopSortable
+        });
+
+        function onStopSortable(e, ui) {
+            var categories = $.map($(this).find('li'), function(el, i){
+                var cat = String(el.id).split('-');
+                return {
+                    'sort_number' : i,
+                    'id': cat[0],
+                    'name': cat[1]
+                }
+            });
+            sortableDisable();
+
+            $.ajax({
+                url: "{% url "category-submit-order" project_slug %}",
+                type: "POST",
+                data: JSON.stringify(categories),
+                success: function (response) {
+                    sortableEnable();
+                },
+                error: function (response) {
+                    console.log(response);
+                    sortableEnable();
+                }
+
+            });
+        }
+
+        function sortableEnable() {
+            sortable_state = 'enabled';
+            $("#sortable").sortable({
+                stop: onStopSortable
+            });
+            $("#sortable").sortable("option", "disabled", false );
+            // ^^^ this is required otherwise re-enabling sortable will not work!
+            $("#sortable").disableSelection();
+            return false;
+        }
+        function sortableDisable() {
+            sortable_state = 'disabled';
+            $( "#sortable" ).sortable("disable");
+            return false;
+        }
+    </script>
+
+{% endblock %}
+

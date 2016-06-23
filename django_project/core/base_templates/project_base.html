@@ -15,6 +15,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     {% block js_head %}{% endblock js_head %}
     {% if the_project.gitter_room %}
@@ -63,13 +64,12 @@
                         <h4 class="modal-title">Report an issue</h4>
                     </div>
                     <div class="modal-body">
-                        <form id="issue-form" class="form-horizontal">
+                        <form id="issue-form" class="form-horizontal" style="padding: 20px 20px;">
                             <div class="form-group">
                                 <label for="issue-title">Title</label>
                                 <input class="form-control"
                                        type="text"
-                                       id="issue-title"
-                                       placeholder="Title">
+                                       id="issue-title">
                                 <label for="issue-description">Description</label>
 
                           <textarea class="form-control"
@@ -100,7 +100,7 @@
     </div>
     <nav class="navbar navbar-default navbar-fixed-bottom center"
          role="navigation">
-        <p class="text-center">
+        <p class="text-center" style="padding-top: 8px">
             This application was created by <a href="http://kartoza.com">
             Kartoza (Pty) Ltd.
             <img src="{% static "img/kartoza.png" %}" alt="Linfiniti"/>

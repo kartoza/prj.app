@@ -8,7 +8,7 @@ MYBACKUPDIR=${MYBASEDIR}/${YEAR}/${MONTH}
 mkdir -p ${MYBACKUPDIR}
 
 cd ${MYBACKUPDIR}
-docker exec -ti projecta-db /bin/bash -c "PGPASSWORD=docker pg_dump -Fc -f /backups/latest.dmp -h localhost -U docker gis"
+docker exec -ti projecta-db /bin/bash -c "PGPASSWORD=docker pg_dump -Fc -f /tmp/latest.dmp -h localhost -U docker gis"
 docker cp projecta-db:/tmp/latest.dmp PG_projecta-${MYDATE}.dmp
 
 cd -
