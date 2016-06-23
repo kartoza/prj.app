@@ -29,6 +29,11 @@
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
                     {% endif %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                        href='{% url "category-order" project_slug %}'
+                        data-title="Order Categories">
+                        <span class="glyphicon glyphicon-sort-by-order"></span>
+                    </a>
                 </div>
             {% endif %}
         </h1>
