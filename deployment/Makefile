@@ -237,9 +237,10 @@ mailerrorlogs:
 mediasync:
 	@echo
 	@echo "------------------------------------------------------------------"
-	@echo "Syncing media files from live server"
+	@echo "Syncing media files and secret.py from live server"
 	@echo "------------------------------------------------------------------"
 	@rsync -av --progress inasafe-docker:/home/data/changelog.inasafe.org/deployment/media/ media
+	@rsync -av --progress inasafe-docker:/home/data/changelog.inasafe.org/django_project/core/settings/secret.py ../django_project/core/settings/
 
 dbsync:
 	@echo

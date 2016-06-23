@@ -55,7 +55,9 @@
       {% if project.versions %}
         {% for version in project.latest_versions %}
           <p>
+            <a href="{% url "version-detail" project_slug=version.project.slug slug=version.slug %}">
             <strong><span class="text-muted">Version:</span> {{ version.name }}</strong>
+            </a>
             <span class="btn-group pull-right">
               <a href="{% url "version-detail" project_slug=version.project.slug slug=version.slug %}"
                   class="btn btn-default btn-xs tooltip-toggle"
