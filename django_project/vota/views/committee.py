@@ -178,9 +178,8 @@ class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
         return kwargs
 
     def get_success_url(self):
-        return reverse('committee-detail', kwargs={
-            'project_slug': self.object.project.slug,
-            'slug': self.object.slug
+        return reverse('committee-list', kwargs={
+            'project_slug': self.object.project.slug
         })
 
     def form_valid(self, form):

@@ -38,9 +38,28 @@
     </ul>
      <ul class="nav navbar-nav">
         <li>
-            <a href="{% url 'committee-list' the_project.slug %}">
-                Teams
-            </a>
+            {% if the_committee and the_project %}
+
+                <a href="{% url 'committee-list' the_project.slug %}" class="dropdown-toggle" data-toggle="dropdown">
+                    Teams  <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="{% url 'ballot-list' the_project.slug the_committee.slug %}">
+                            Committee Ballots
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'ballot-create' the_project.slug the_committee.slug %}">
+                            Start Ballot
+                        </a>
+                    </li>
+                </ul>
+            {% else %}
+                <a href="{% url 'committee-list' the_project.slug %}">
+                    Teams
+                </a>
+            {% endif %}
     </li>
     </ul>
     {% if user.is_staff %}
@@ -74,20 +93,7 @@
     </ul>
 
 {% endif %}
-{% if the_committee and the_project %}
-    <ul class="nav navbar-nav">
-        <li>
-            <a href="{% url 'ballot-list' the_project.slug the_committee.slug %}">
-                Committee Ballots
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'ballot-create' the_project.slug the_committee.slug %}">
-                Start Ballot
-            </a>
-        </li>
-    </ul>
-{% endif %}
+
 {% if the_version and the_project %}
     <ul class="nav navbar-nav">
         <li>
