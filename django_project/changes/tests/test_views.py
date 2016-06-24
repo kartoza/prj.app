@@ -195,6 +195,11 @@ class TestEntryViews(TestCase):
             version=self.version,
             title='testentry',
             approved=True)
+        self.pending_entry = EntryF.create(
+            category=self.category,
+            version=self.version,
+            title='testentry2',
+            approved=False)
         self.user = UserF.create(**{
             'username': 'timlinux',
             'password': 'password',
@@ -225,7 +230,7 @@ class TestEntryViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
         self.assertEqual(response.context_data['object_list'][0],
-                         self.entry)
+                         self.pending_entry)
 
     def test_EntryCreateView_with_login(self):
 
@@ -387,6 +392,22 @@ class TestEntryViews(TestCase):
             'pk': entry_to_delete.id
         }))
         self.assertEqual(response.status_code, 302)
+
+    def test_AllEntryPendingView(self):
+        """Test the all pending entry view."""
+        # Verify our pending entry exists
+        self.assertFalse(self.pending_entry.approved)
+        self.client.login(username='timlinux', password='password')
+        url = reverse('all-pending-entry-list', kwargs={
+            'project_slug': self.project.slug,
+        })
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
+            'entry/all-pending-list.html', u'changes/entry_list.html'
+        ]
+        self.assertEqual(response.template_name, expected_templates)
+
 
 
 class TestVersionViews(TestCase):
