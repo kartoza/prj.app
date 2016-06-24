@@ -13,7 +13,18 @@
 {% block content %}
     <div class="page-header">
         <h1 class="text-muted">
-             <span class="glyphicon glyphicon-sort-by-order"></span> Order Categories
+            <span class="glyphicon glyphicon-sort-by-order"></span> Order Categories
+            <span id="order-saved" hidden class="alert alert-success" style="font-size: 9pt; padding: 3px;font-style: italic;">
+                order saved</span>
+            <span id="order-not-saved" hidden class="alert alert-danger" style="font-size: 9pt; padding: 3px;font-style: italic;">
+                order not saved</span>
+            <div class="pull-right btn-group" style="margin-top: 5px;">
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                   href='{% url "category-list" project_slug %}'
+                   data-title="Category List">
+                    <span class="glyphicon glyphicon-th-list"></span>
+                </a>
+            </div>
         </h1>
     </div>
     {% ifequal num_categories 0 %}
@@ -66,12 +77,38 @@
                 data: JSON.stringify(categories),
                 success: function (response) {
                     sortableEnable();
+                    if($('#order-saved').is(":visible"))
+                    {
+                        $('#order-saved').hide();
+                        showOrderSaved();
+                    } else {
+                        showOrderSaved();
+                    }
                 },
                 error: function (response) {
                     console.log(response);
                     sortableEnable();
+                    if($('#order-not-saved').is(":visible"))
+                    {
+                        $('#order-not-saved').hide();
+                        showOrderNotSaved();
+                    } else {
+                        showOrderNotSaved();
+                    }
                 }
 
+            });
+        }
+
+        function showOrderSaved() {
+            $('#order-saved').fadeIn( "fast", function() {
+                $('#order-saved').fadeOut(2000);
+            });
+        }
+
+        function showOrderNotSaved() {
+            $('#order-not-saved').fadeIn( "fast", function() {
+                $('#order-not-saved').fadeOut(2000);
             });
         }
 
