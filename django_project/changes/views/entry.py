@@ -391,6 +391,61 @@ class PendingEntryListView(EntryMixin, PaginationMixin, ListView,
         return self.queryset
 
 
+class AllPendingEntryList(EntryMixin, PaginationMixin, ListView,
+                           StaffuserRequiredMixin):
+    """List view for pending Entry."""
+    context_object_name = 'unapproved_entries'
+    template_name = 'entry/all-pending-list.html'
+    paginate_by = 1000
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(AllPendingEntryList, self).get_context_data(**kwargs)
+        context['num_entries'] = self.get_queryset().count()
+        context['unapproved'] = True
+        context['entries'] = Entry.objects.filter(version__in=self.version)
+        return context
+
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+         :returns: A queryset which is filtered to only show unapproved
+            Entry.
+         :rtype: QuerySet
+         :raises: Http404
+         """
+        if self.queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            if project_slug:
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                except:
+                    raise Http404('Project not found')
+                try:
+                    self.version = Version.objects.filter(project=project)
+                except:
+                    raise Http404('Version not found')
+                queryset = Entry.unapproved_objects.filter(
+                    version__in=self.version)
+                if self.request.user.is_staff:
+                    return queryset
+                else:
+                    try:
+                        return queryset.filter(author=self.request.user)
+                    except:
+                        raise Http404('Sorry! We could not find your entry!')
+            else:
+                raise Http404('Sorry! We could not find your entry!')
+        return self.queryset
+
+
 class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
     """View for approving Entry."""
     permanent = False

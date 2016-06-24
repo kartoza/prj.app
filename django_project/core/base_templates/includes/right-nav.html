@@ -6,7 +6,7 @@
         </a>
     </li>
 {% endif %}
-{% if user.is_authenticated and has_pending_versions or has_pending_categories or has_pending_sponsor_lvl or has_pending_sponsor_period %}
+{% if user.is_authenticated and has_pending_versions or has_pending_categories or has_pending_sponsor_lvl or has_pending_sponsor_period or has_pending_entries %}
 <li>
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
         <b class="caret"></b> Pending Approval
@@ -27,8 +27,12 @@
             {% if has_pending_sponsor_period %}
                 <li><a href='{% url "pending-sponsorshipperiod-list" the_project.slug %}'>Sponsorship Period</a></li>
             {% endif %}
-            {% if the_version %}
-                <li><a href='{% url "pending-entry-list" the_project.slug the_version.slug %}'>Entries</a></li>
+            {% if has_pending_entries %}
+                {% if the_version %}
+                    <li><a href='{% url "pending-entry-list" the_project.slug the_version.slug %}'>Entries</a></li>
+                {% else %}
+                    <li><a href='{% url "all-pending-entry-list" the_project.slug %}'>Entries</a></li>
+                {% endif %}
             {% endif %}
         {% endif %}
     </ul>
