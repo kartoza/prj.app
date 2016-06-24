@@ -1,6 +1,10 @@
 # coding=utf-8
 # flake8: noqa
 
+import json
+from django.utils.datastructures import MultiValueDict
+from django.utils.http import urlencode
+
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import Client
@@ -164,6 +168,77 @@ class TestCategoryViews(TestCase):
             'project_slug': self.category.project.slug
         }))
         self.assertEqual(response.status_code, 302)
+
+    def test_CategoryOrederView_wiht_login_as_no_staff(self):
+        self.user = UserF.create(**{
+            'username': 'dimas',
+            'password': 'password',
+            'is_staff': False
+        })
+        self.client.login(
+            username='dimas',
+            password='password')
+        response = self.client.get(reverse('category-order', kwargs={
+            'project_slug': self.category.project.slug
+        }))
+        self.assertEqual(response.status_code, 302)
+
+    def test_CategoryOrderView_with_login_as_staff(self):
+        self.client.login(
+            username='timlinux',
+            password='password')
+        response = self.client.get(reverse('category-order', kwargs={
+            'project_slug': self.category.project.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
+            'category/order.html', u'changes/entry_list.html'
+        ]
+        self.assertTrue(response.template_name, expected_templates)
+
+    def test_CategoryOrderView_no_login(self):
+
+        response = self.client.get(reverse('category-order', kwargs={
+            'project_slug': self.category.project.slug
+        }))
+        self.assertEqual(response.status_code, 302)
+
+    def test_CategoryOrder_with_login(self):
+        category_to_order = CategoryF.create(
+            project=self.project,
+            id=2,
+            sort_number=1)
+        self.client.login(username='timlinux', password='password')
+        post_data = [{
+            'name': u'New Test Category',
+            'id': '2',
+            'sort_number': '0'
+        }]
+
+        response = self.client.post(reverse('category-submit-order', kwargs={
+            'project_slug': self.project.slug
+        }), json.dumps(post_data), content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_CategoryOrder_with_no_login(self):
+        category_to_order = CategoryF.create(
+            project=self.project,
+            id=2,
+            sort_number=1)
+        post_data = [{
+            'name': u'New Test Category',
+            'id': '2',
+            'sort_number': '0'
+        }]
+
+        response = self.client.post(reverse('category-submit-order', kwargs={
+            'project_slug': self.project.slug
+        }), json.dumps(post_data), content_type='application/json')
+
+        self.assertEqual(response.status_code, 302)
+
+
 
 
 class TestEntryViews(TestCase):
