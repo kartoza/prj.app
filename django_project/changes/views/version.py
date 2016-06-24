@@ -672,6 +672,7 @@ class VersionDownloadGnu(VersionMixin, DetailView):
             context,
             content_type="text/plain; charset=utf-8")
 
+
 class VersionSponsorDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
     """View to allow staff users to download Version page in html format"""
     template_name = 'version/includes/version-sponsors.html'
@@ -732,7 +733,7 @@ class VersionSponsorDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
 
         # grab all of the images from document
         images = []
-        page = BeautifulSoup(document,'html.parser')
+        page = BeautifulSoup(document, 'html.parser')
         pages = page.findAll('img')
         for image in pages:
             img = image['src']
