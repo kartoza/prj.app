@@ -21,7 +21,7 @@
                 <a class="btn btn-default btn-mini tooltip-toggle"
                    data-title="Add Entry"
                    href='{% url "entry-create" project_slug=project_slug version_slug=version_slug %}'>
-                    <span class="glyphicon glyphicon-asterisk"></span>
+                    {% show_button_icon "add" %}
                 </a>
                 {% if not unapproved %}
                     <a class="btn btn-default btn-mini tooltip-toggle"

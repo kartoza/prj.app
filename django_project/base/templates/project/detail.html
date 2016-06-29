@@ -38,7 +38,7 @@
               <a class="btn btn-default btn-mini tooltip-toggle"
                   href='{% url "version-create" versions.0.project.slug %}'
                   data-title="Create New Version">
-                <span class="glyphicon glyphicon-asterisk"></span>
+                {% show_button_icon "add" %}
               </a>
             {% endif %}
           </div>

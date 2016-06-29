@@ -1,7 +1,7 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
 {% load staticfiles %}
-
+{% load custom_markup %}
 {% block title %}Versions - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
@@ -21,7 +21,7 @@
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "version-create" versions.0.project.slug %}'
                        data-title="Create New Version">
-                        <span class="glyphicon glyphicon-asterisk"></span>
+                        {% show_button_icon "add" %}
                     </a>
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "pending-version-list" versions.0.project.slug %}'

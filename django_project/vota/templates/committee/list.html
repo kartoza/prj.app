@@ -1,7 +1,7 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
 {% load staticfiles %}
-
+{% load custom_markup %}
 {% block title %}Teams - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
@@ -20,7 +20,7 @@
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "committee-create" committees.0.project.slug %}'
                        data-title="Create New Version">
-                        <span class="glyphicon glyphicon-asterisk"></span>
+                        {% show_button_icon "add" %}
                     </a>
                 {% endif %}
             </div>

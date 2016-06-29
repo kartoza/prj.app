@@ -1,6 +1,6 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
-
+{% load custom_markup %}
 {% block title %}Sponsorship Levels - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
@@ -20,7 +20,7 @@
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "sponsorshiplevel-create" project_slug %}'
                        data-title="Create New Sponsorship Level">
-                        <span class="glyphicon glyphicon-asterisk"></span></a>
+                        {% show_button_icon "add" %}
 
                         {% if not unapproved %}
                             <a class="btn btn-default btn-mini tooltip-toggle"
@@ -68,11 +68,11 @@
                         </a>
                         <a class="btn btn-default btn-mini"
                            href='{% url "sponsorshiplevel-delete" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
-                            <span class="glyphicon glyphicon-minus"></span>
+                            {% show_button_icon "delete" %}
                         </a>
                         <a class="btn btn-default btn-mini"
                            href='{% url "sponsorshiplevel-update" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
-                            <span class="glyphicon glyphicon-pencil"></span>
+                            {% show_button_icon "update" %}
                         </a>
                     {% endif %}
                     <a class="btn btn-default btn-mini"
