@@ -14,7 +14,7 @@
     <div class="page-header">
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
-            Sponsorship Period
+            Sponsorship Periods
             {% if user.is_authenticated %}
                 <div class="pull-right btn-group">
                     <a class="btn btn-default btn-mini tooltip-toggle"
@@ -44,26 +44,22 @@
 
     {% for sponsorshipperiod in sponsorshipperiods %}
         <div class="row" style="margin-top:10px;">
-            <div class="col-lg-1">
-                {% if sponsorshipperiod.sponsor.logo %}
-                    <a href="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsor.logo }}">
-                        <img class="img-responsive img-rounded pull-right"
-                             src="{% thumbnail sponsorshipperiod.sponsor.logo 50x50 crop %}"/>
-                    </a>
-                {% endif %}
-            {% if sponsorshipperiod.sponsorshiplevel.logo %}
-                <img class="img-responsive img-rounded"
-                     src="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsorshiplevel.logo }}" width="30" />
-              {%  endif %}
-            </div>
-            <div class="col-lg-9">
 
-                <h3>{{ sponsorshipperiod.start_date }} - {{ sponsorshipperiod.end_date }}</h3>
-                <h5>{{ sponsorshipperiod.sponsor }}</h5>
+            <div class="col-lg-4">
+                <h5>{{ sponsorshipperiod.sponsor }}, {{ sponsorshipperiod.sponsorshiplevel }} {{ sponsorshipperiod.start_date }} - {{ sponsorshipperiod.end_date }}
+                </h5>
 
-                <h5>{{ sponsorshipperiod.sponsorshiplevel }} : {{ sponsorshipperiod.project.name }}</h5>
             </div>
             <div class="col-lg-2">
+            {% if sponsorshipperiod.sponsor.logo %}
+                        <a href="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsor.logo }}">
+                            <img class="img-responsive"
+                                 src="{% thumbnail sponsorshipperiod.sponsor.logo 20x20 crop %}"/>
+                        </a>
+                    {% endif %}
+            </div>
+
+            <div class="col-lg-5">
                 <div class="btn-group pull-right">
                     {% if not sponsorshipperiod.approved and user.is_staff %}
                         <a class="btn btn-default btn-mini"
