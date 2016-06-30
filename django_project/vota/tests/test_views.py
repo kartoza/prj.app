@@ -385,9 +385,8 @@ class TestCommitteeViews(TestCase):
         response = client.post(reverse('committee-create', kwargs={
             'project_slug': self.project.slug
         }), post_data)
-        self.assertRedirects(response, reverse('committee-detail', kwargs={
-            'project_slug': self.project.slug,
-            'slug': 'new-test-committee'
+        self.assertRedirects(response, reverse('committee-list', kwargs={
+            'project_slug': self.project.slug
         }))
 
     def test_CommitteeCreate_no_login(self):
