@@ -120,7 +120,7 @@ class SponsorshipPeriodListView(
     """List view for Sponsorship Period."""
     context_object_name = 'sponsorshipperiods'
     template_name = 'sponsorship_period/list.html'
-    paginate_by = 10
+    paginate_by = 1000
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
