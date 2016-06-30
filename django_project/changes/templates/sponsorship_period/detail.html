@@ -19,12 +19,12 @@
     <div class="col-lg-2">
       <div class="btn-group">
         <a class="btn btn-default btn-sm tooltip-toggle"
-           href='{% url "sponsorshiplevel-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
+           href='{% url "sponsorshipperiod-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
            data-title="Delete {{ sponsorshipperiod.project.name }}">
           <span class="glyphicon glyphicon-minus"></span>
         </a>
         <a class="btn btn-default btn-sm tooltip-toggle"
-           href='{% url "sponsorshiplevel-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
+           href='{% url "sponsorshipperiod-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
            data-title="Edit {{ sponsorshipperiod.project.name }}">
           <span class="glyphicon glyphicon-pencil"></span>
         </a>
@@ -33,7 +33,7 @@
   </div>
   <div class="row">
     <div class="col-lg-8">
-          Sponsorship Level : {{ sponsorshipperiod.sponsorshiplevel }}<br/>
+          Sponsorship Level : {{ sponsorshipperiod.sponsorship_level }}<br/>
           Start Date : {{ sponsorshipperiod.start_date }}<br/>
           End Date : {{ sponsorshipperiod.end_date }}<br/>
         {% if sponsorshipperiod.sponsorshiplevel.logo %}
