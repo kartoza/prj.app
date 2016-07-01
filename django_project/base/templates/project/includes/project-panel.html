@@ -48,7 +48,7 @@
         <a href="{% url 'version-create' project_slug=project.slug %}"
            class="btn btn-default pull-right btn-sm tooltip-toggle"
            data-title="Create New Version">
-          <span class="glyphicon glyphicon-asterisk"></span>
+          {% show_button_icon "add" %}
         </a>
       </h4>
       <hr/>

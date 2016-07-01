@@ -1,5 +1,5 @@
 {% extends "project_base.html" %}
-
+{% load custom_markup %}
 {% load i18n %}
 
 {% block title %}Projects{% endblock %}
@@ -25,7 +25,7 @@
             <a class="btn btn-default tooltip-toggle"
                 href='{% url "project-create" %}'
                 data-title="Start New Project">
-                <span class="glyphicon glyphicon-asterisk"></span>
+                {% show_button_icon "add" %}
             </a>
             <a class="btn btn-default tooltip-toggle"
                href='{% url "pending-project-list" %}'
