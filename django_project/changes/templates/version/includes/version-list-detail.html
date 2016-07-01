@@ -1,15 +1,16 @@
 {% load thumbnail %}
-<div class="row" style="margin-top:10px;">
-    {% if version.image_file %}
-        <div class="col-lg-2">
+<div class="row version-list" style="margin-top:5px;" onclick="window.location='{% url 'version-detail' project_slug=version.project.slug slug=version.slug %}';">
+
+    <div class="col-lg-1">
+        {% if version.image_file %}
             <a class="pull-left"
                href="{{ MEDIA_URL }}{{ version.image_file }}">
                 <img class="img-responsive img-rounded"
                      src="{% thumbnail version.image_file 50x50 crop %}" />
             </a>
-        </div>
-    {% endif %}
-    <div class="{% if version.image_file %}col-lg-7{% else %}col-lg-9{% endif %}">
+        {% endif %}
+    </div>
+    <div class="col-lg-8">
         <h3>
             <a href="{% url 'version-detail' project_slug=version.project.slug slug=version.slug %}">
                 {{ version.name }}
