@@ -118,3 +118,15 @@ ul.ui-sortable-disabled .order{
     color: darkgrey;
     cursor: default;
 }
+
+.version-list {
+    padding-top: 6px;
+    border-bottom: 1px solid #F6F6F6;
+}
+
+.row.version-list:hover {
+    background-color: #F9F9F9;
+    cursor: pointer;
+}
+
+
