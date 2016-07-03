@@ -19,15 +19,16 @@
                 <div class="pull-right btn-group">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "sponsorshipperiod-create" project_slug %}'
-                       data-title="Create New sponsorship period"> </a>
-                        {% show_button_icon "add" %}
-                        {% if not unapproved %}
-                            <a class="btn btn-default btn-mini tooltip-toggle"
-                               href='{% url "pending-sponsorshipperiod-list" project_slug %}'
-                               data-title="View Pending sponsorship period">
-                                <span class="glyphicon glyphicon-time"></span>
-                            </a>
-                        {% endif %}
+                       data-title="Create New sponsorship period">
+                        <span class="glyphicon glyphicon-asterisk"></span></a>
+                    {% if not unapproved %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "pending-sponsorshipperiod-list" project_slug %}'
+                           data-title="View Pending sponsorship period">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </a>
+                    {% endif %}
+
                 </div>
             {% endif %}
         </h1>
@@ -42,48 +43,57 @@
         {% endif %}
     {% endifequal %}
 
-    {% for sponsorshipperiod in sponsorshipperiods %}
-        <div class="row" style="margin-top:10px;">
 
-            <div class="col-lg-4">
-                <h5>{{ sponsorshipperiod.sponsor }}, {{ sponsorshipperiod.sponsorshiplevel }} {{ sponsorshipperiod.start_date }}
-                    - {{ sponsorshipperiod.end_date }}
-                </h5>
 
-            </div>
-            <div class="col-lg-2">
-                {% if sponsorshipperiod.sponsor.logo %}
-                    <a href="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsor.logo }}">
-                        <img class="img-responsive"
-                             src="{% thumbnail sponsorshipperiod.sponsor.logo 20x20 crop %}"/>
-                    </a>
-                {% endif %}
-            </div>
-
-            <div class="col-lg-6">
-                <div class="btn-group pull-right">
-                    {% if not sponsorshipperiod.approved and user.is_staff %}
-                        <a class="btn btn-default btn-mini"
-                           href='{% url "sponsorshipperiod-approve" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
-                            <span class="glyphicon glyphicon-thumbs-up"></span>
-                        </a>
-                        <a class="btn btn-default btn-mini"
-                           href='{% url "sponsorshipperiod-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
-                            {% show_button_icon "delete" %}
-                        </a>
-                        <a class="btn btn-default btn-mini"
-                           href='{% url "sponsorshipperiod-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
-                            {% show_button_icon "update" %}
+    <div class="container">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Logo</th>
+                <th>Organisation</th>
+                <th>Sponsorship Period</th>
+                <th>View</th>
+            </tr>
+            </thead>
+            {% for sponsorshipperiod in sponsorshipperiods %}
+                <tbody>
+                <tr>
+                    <td>
+                        {% if sponsorshipperiod.sponsor.logo %}
+                        <a href="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsor.logo }}">
+                            <img class="img-responsive"
+                                 src="{% thumbnail sponsorshipperiod.sponsor.logo 20x20 crop %}"/>
                         </a>
                     {% endif %}
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "sponsorshipperiod-detail" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
-                        <span class="glyphicon glyphicon-eye-open"></span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
+                    </td>
+                    <td>{{ sponsorshipperiod.sponsor }}</td>
+                    <td>{{ sponsorshipperiod.start_date }} - {{ sponsorshipperiod.end_date }}</td>
+                    <td>
+
+                        {% if not sponsorshipperiod.approved and user.is_staff %}
+                            <a class="btn btn-default btn-mini"
+                               href='{% url "sponsorshipperiod-approve" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                                <span class="glyphicon glyphicon-thumbs-up"></span>
+                            </a>
+                            <a class="btn btn-default btn-mini"
+                               href='{% url "sponsorshipperiod-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                                {% show_button_icon "delete" %}
+                            </a>
+                            <a class="btn btn-default btn-mini"
+                               href='{% url "sponsorshipperiod-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                                {% show_button_icon "update" %}
+                            </a>
+                        {% endif %}
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "sponsorshipperiod-detail" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
     <hr/>
     {% include "_pagination.html" %}
 {% endblock %}
