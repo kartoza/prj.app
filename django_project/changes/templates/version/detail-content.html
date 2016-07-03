@@ -24,7 +24,13 @@
                 <div class="col-lg-12">
                     <h3 class="muted align-right">
                         <small>Changelog for version:</small>
-                        {{ version.name }}</h3>
+                        {{ version.name }}
+                        </br>
+                        {% if version.release_date %}
+                        <small>Release date:</small> {{ version.release_date }}
+                        {% endif %}
+                    </h3>
+
                 </div>
             {% else %}
                 <div class="col-lg-12">
