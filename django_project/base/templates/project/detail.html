@@ -7,45 +7,56 @@
 {% endblock %}
 
 {% block content %}
-  <div class="row">
-    <div class="col-md-2 col-sm-6">
-      <img class="img-rounded"
-                 src="{% thumbnail project.image_file 150x150 crop %}"/>
-    </div>
-    <div class="col-md-10 col-sm-6">
-      <h2>{{ project.name }}</h2>
-      {% if project.description %}
-        <p>{{ project.description|base_markdown }}</p>
-      {% endif %}
-    </div>
-  </div>
-  {% if committees %}
     <div class="row">
-      <h3>Committees</h3>
-      <hr/>
-    </div>
-    {% for committee in committees %}
-      {% include 'committee/includes/committee-panel.html' %}
-    {% endfor %}
-  {% endif %}
-  {% if versions %}
-          <div class="page-header">
-        <h1 class="text-muted">
-            {% if unapproved %}Unapproved {% endif %}
-            Versions
-          <div class="pull-right btn-group">
-            {% if user.is_authenticated and versions %}
-              <a class="btn btn-default btn-mini tooltip-toggle"
-                  href='{% url "version-create" versions.0.project.slug %}'
-                  data-title="Create New Version">
-                <span class="glyphicon glyphicon-asterisk"></span>
-              </a>
+        <div class="col-md-2 col-sm-6">
+            <img class="img-rounded"
+                 src="{% thumbnail project.image_file 150x150 crop %}"/>
+        </div>
+        <div class="col-md-10 col-sm-6">
+            <h2>{{ project.name }}</h2>
+            {% if project.description %}
+                <p>{{ project.description|base_markdown }}</p>
             {% endif %}
-          </div>
-        </h1>
+        </div>
     </div>
-    {% for version in versions %}
-      {% include 'version/includes/version-list-detail.html' %}
-    {% endfor %}
-  {% endif %}
+    {% if committees %}
+        <div class="row">
+            <h3 class="text-muted">
+                <a href="{% url "committee-list" committees.0.project.slug %}">Teams</a>
+                <div class="pull-right btn-group">
+                    {% if user.is_staff and committees %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "committee-create" committees.0.project.slug %}'
+                           data-title="Create New Teams">
+                            <span class="glyphicon glyphicon-asterisk"></span>
+                        </a>
+                    {% endif %}
+                </div>
+            </h3>
+            <hr/>
+        </div>
+        {% for committee in committees %}
+            {% include 'committee/includes/committee-panel.html' %}
+        {% endfor %}
+    {% endif %}
+    {% if versions %}
+        <div class="page-header">
+            <h1 class="text-muted">
+                {% if unapproved %}Unapproved {% endif %}
+                <a href="{% url "version-list" versions.0.project.slug %}"> Versions </a>
+                <div class="pull-right btn-group">
+                    {% if user.is_authenticated and versions %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "version-create" versions.0.project.slug %}'
+                           data-title="Create New Version">
+                            {% show_button_icon "add" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </h1>
+        </div>
+        {% for version in versions %}
+            {% include 'version/includes/version-list-detail.html' %}
+        {% endfor %}
+    {% endif %}
 {% endblock %}

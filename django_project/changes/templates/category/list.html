@@ -1,5 +1,6 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
+{% load custom_markup %}
 
 {% block title %}Categories - {{ block.super }}{% endblock %}
 
@@ -20,7 +21,7 @@
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "category-create" project_slug %}'
                        data-title="Create New Category">
-                        <span class="glyphicon glyphicon-asterisk"></span>
+                        {% show_button_icon "add" %}
                     </a>
                     {% if not unapproved %}
                         <a class="btn btn-default btn-mini tooltip-toggle"

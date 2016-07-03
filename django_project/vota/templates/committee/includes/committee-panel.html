@@ -23,7 +23,7 @@
                     <a href="{% url 'ballot-create' project_slug=committee.project.slug committee_slug=committee.slug %}"
                        class="btn btn-default btn-xs tooltip-toggle"
                        data-title="Create New Ballot">
-                        <span class="glyphicon glyphicon-asterisk"></span>
+                        {% show_button_icon "add" %}
                     </a>
                 </div>
             </h4>

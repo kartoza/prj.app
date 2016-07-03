@@ -22,3 +22,17 @@ def base_markdown(value):
 @stringfilter
 def is_gif(value):
     return value[-4:] == '.gif'
+
+
+@register.inclusion_tag('button_span.html', takes_context=True)
+def show_button_icon(context, value):
+
+    context_icon = {
+        'add': 'glyphicon glyphicon-asterisk',
+        'update': 'glyphicon glyphicon-pencil',
+        'delete': 'glyphicon glyphicon-minus'
+    }
+
+    return {
+        'button_icon': context_icon[value]
+    }

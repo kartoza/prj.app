@@ -1,6 +1,6 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
-
+{% load custom_markup %}
 {% block title %}Ballots - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
@@ -19,7 +19,7 @@
                 <small class="pull-right">
                     <a class="btn btn-default btn-mini"
                        href='{% url "ballot-create" project_slug=committee.project.slug committee_slug=committee.slug %}'>
-                        <span class="glyphicon glyphicon-asterisk"></span>
+                       {% show_button_icon "add" %}
                     </a>
                 </small>
             {% endif %}

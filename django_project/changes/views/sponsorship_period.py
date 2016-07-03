@@ -229,7 +229,9 @@ class SponsorshipPeriodDeleteView(
         :rtype: HttpResponse
         """
         self.project_slug = self.kwargs.get('project_slug', None)
+        self.sponsor_period_slug = self.kwargs.get('slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
+        self.sponsorperiod = SponsorshipPeriod.objects.get(slug=self.sponsor_period_slug)
         return super(
                 SponsorshipPeriodDeleteView,
                 self).get(request, *args, **kwargs)
@@ -370,10 +372,13 @@ class SponsorshipPeriodUpdateView(
         kwargs = super(
                 SponsorshipPeriodUpdateView,
                 self).get_form_kwargs()
+        sponsor_period_slug = self.kwargs.get('slug', None)
+        self.sponsorperiod = SponsorshipPeriod.objects.get(slug=sponsor_period_slug)
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         kwargs.update({
             'user': self.request.user,
+            'instance': self.sponsorperiod,
             'project': self.project
         })
         return kwargs

@@ -354,21 +354,6 @@ class SponsorshipLevelUpdateView(
     context_object_name = 'sponsorshiplevel'
     template_name = 'sponsorship_level/update.html'
 
-    def get_form_kwargs(self):
-        """Get keyword arguments from form.
-
-        :returns keyword argument from the form
-        :rtype: dict
-        """
-        kwargs = super(SponsorshipLevelUpdateView, self).get_form_kwargs()
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.project = Project.objects.get(slug=self.project_slug)
-        kwargs.update({
-            'user': self.request.user,
-            'project': self.project
-        })
-        return kwargs
-
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
 
@@ -384,6 +369,27 @@ class SponsorshipLevelUpdateView(
         context['sponsorshiplevels'] = self.get_queryset() \
             .filter(project=self.project)
         return context
+
+    def get_form_kwargs(self):
+        """Get keyword arguments from form.
+
+        :returns keyword argument from the form
+        :rtype: dict
+        """
+        kwargs = super(SponsorshipLevelUpdateView, self).get_form_kwargs()
+        sponsor_level_slug = self.kwargs.get('slug', None)
+        self.sponsorlevel = SponsorshipLevel.objects.get(slug=sponsor_level_slug)
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+
+        kwargs.update({
+            'user': self.request.user,
+            'instance': self.sponsorlevel,
+            'project': self.project
+        })
+        return kwargs
+
+
 
     def get_queryset(self):
         """Get the queryset for this view.

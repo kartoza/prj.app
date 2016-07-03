@@ -13,40 +13,64 @@
 {% block content %}
 
     <div class="row">
-        <div class="col-lg-10">
+        <div class=".col-md-4">
             <h3>{{ sponsor.sponsor.name }}</h3>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-8">
-            {% if sponsor.sponsor.sponsor_url or sponsor.sponsor.contact_person or sponsor.sponsor.sponsor_email or sponsor.sponsor.sponsor_duration %}
-                <a href="{{ sponsor.sponsor.sponsor_url }}">{{ sponsor.sponsor.sponsor_url}}</a><br/>
-                Sponsorship Level : {{ sponsor.sponsorship_level }}<br/>
-                Start Date : {{ sponsor.start_date }}<br/>
-                End Date : {{ sponsor.end_date }}<br/>
 
-                Contact Person : {{ sponsor.sponsor.contact_person }} <br/>
-                Email : {{ sponsor.sponsor.sponsor_email }}<br/>
-                Sponsor agreement:
+    <div class="row ">
+        <div class="col-sm-2 text-left">
+            {% if sponsor.sponsor.sponsor_url or sponsor.sponsor.contact_person or sponsor.sponsor.sponsor_email or sponsor.sponsor.sponsor_duration %}
+                <span class="text-muted">Website: </span><br/>
+                <span class="text-muted">Sponsorship Level: </span> <br/>
+                <span class="text-muted">Start Date : </span><br/>
+                <span class="text-muted">End Date : </span> <br/>
+
+                {% if sponsor.sponsor.contact_person %}
+                     <span class="text-muted">Contact Person : </span>  <br/>
+                {% endif %}
+                {% if sponsor.sponsor.sponsor_email %}
+                     <span class="text-muted">Email : </span><br/>
+                {% endif %}
                 {% if sponsor.sponsor.agreement %}
-                    <a href="{{ MEDIA_URL }}{{ sponsor.agreement }}" /> Document agreement</a>
-                {%  endif %}
+                    <span class="text-muted">Sponsor agreement:</span>
+                {% endif %}
             {% else %}
                 <p>No description</p>
             {% endif %}
 
-
-            {% if sponsor.sponsorship_level.logo %}
-                <img class="img-responsive img-rounded"
-                     src="{{ MEDIA_URL }}{{ sponsor.sponsorship_level.logo }}" width="100" />
-            {%  endif %}
         </div>
-        <div class="col-lg-4">
+
+        <div class="col-sm-5 text-left">
+            {% if sponsor.sponsor.sponsor_url or sponsor.sponsor.contact_person or sponsor.sponsor.sponsor_email or sponsor.sponsor.sponsor_duration %}
+
+                <b><a href="{{ sponsor.sponsor.sponsor_url }}">{{ sponsor.sponsor.sponsor_url }}</a></b><br/>
+                <b>{{ sponsor.sponsorship_level }}</b><br/>
+                <b>{{ sponsor.start_date }}</b><br/>
+                <b>{{ sponsor.end_date }}</b><br/>
+                <b>{{ sponsor.sponsor.contact_person }} </b><br/>
+                <b>{{ sponsor.sponsor.sponsor_email }}</b><br/>
+                {% if sponsor.sponsor.agreement %}
+                    <b><a href="{{ MEDIA_URL }}{{ sponsor.agreement }}"/> Document agreement</a></b>
+                {% endif %}
+            {% else %}
+                <p>No description</p>
+            {% endif %}
+
+        </div>
+
+        <div class="col-sm-5">
+            {% if sponsor.sponsorship_level.logo %}
+                <img class="img-responsive img-rounded pull-right"
+                     src="{{ MEDIA_URL }}{{ sponsor.sponsorship_level.logo }}" width="100"/>
+            {% endif %}
             {% if sponsor.sponsor.logo %}
                 <img class="img-responsive img-rounded pull-right"
                      src="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}" />
-            {%  endif %}
+            {% endif %}
+
         </div>
     </div>
+
 
 {% endblock %}

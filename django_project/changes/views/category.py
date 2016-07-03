@@ -185,7 +185,7 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
             return queryset
 
 
-class CategoryOrderView(CategoryMixin, ListView):
+class CategoryOrderView(CategoryMixin, StaffuserRequiredMixin, ListView):
     """List view to order category"""
     context_object_name = 'categories'
     template_name = 'category/order.html'

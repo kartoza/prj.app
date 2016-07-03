@@ -54,7 +54,7 @@ class CreateCommitteeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         self.project = kwargs.pop('project')
-        form_title = 'New Committee for %s' % self.project.name
+        form_title = 'New Team for %s' % self.project.name
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
@@ -79,10 +79,11 @@ class CreateCommitteeForm(forms.ModelForm):
             .order_by('username')
 
     def save(self, commit=True):
-        instance = super(CreateCommitteeForm, self).save(commit=False)
-        instance.chair = self.user
+        form = super(CreateCommitteeForm, self)
+        instance = form.save(commit=False)
         instance.project = self.project
         instance.save()
+        form.save()
         return instance
 
 
