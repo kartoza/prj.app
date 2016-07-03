@@ -47,104 +47,85 @@
 
     {% if sponsors %}<h2 class="text-muted">List of Current Sponsors</h2> {% endif %}
 
-    {% for level in levels %}
-        {% if sponsors %}
-            <hr>
-            <div>
 
-                {% if level.logo %}
-                    <img class="img-responsive img-rounded pull-left" style="margin-right: 5px"
-                         src="{{ MEDIA_URL }}{{ level.logo }}" width="30"/>
-                {% endif %}
-                <h3>{{ level.name }}</h3>
-            </div>
-            <br/>{% endif %}
+    {% for sponsor in sponsors %}
+        {% if sponsor.current_sponsor %}
+            {% ifchanged sponsor.sponsorship_level %}
+               <h3 class="text-muted"><img
+                            src="{% thumbnail sponsor.sponsorship_level.logo 50x50 %}"/> {{ sponsor.sponsorship_level }}
+                    </h3>
+            {% endifchanged %}
+             <div class="row" style="margin-top:10px;">
+                    <div class="col-lg-1">
+                        {% if sponsor.sponsor.logo %}
+                            <a href="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}">
+                                <img class="img-responsive img-rounded pull-right"
+                                     src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
+                            </a>
+                        {% endif %}
 
+                    </div>
+                    <div class="col-lg-9">
+                        <h3>{{ sponsor.sponsor }}</h3>
 
-        {% for sponsor in sponsors %}
-            {% if sponsor.current_sponsor %}
-                {% if sponsor.sponsorship_level.name == level.name %}
-                    <div class="row" style="margin-top:10px;">
-                        <div class="col-lg-1">
-                            {% if sponsor.sponsor.logo %}
-                                <a href="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}">
-                                    <img class="img-responsive img-rounded pull-right"
-                                         src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
-                                </a>
-                            {% endif %}
+                        <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
 
-                        </div>
-                        <div class="col-lg-9">
-                            <h3>{{ sponsor.sponsor }}</h3>
-
-                            <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
-
-                            <h5>{{ sponsor.sponsorship_level }} : {{ sponsor.project.name }}</h5>
-                        </div>
-                        <div class="col-lg-2">
-                            <div class="btn-group pull-right">
-                                <a class="btn btn-default btn-mini"
-                                   href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
-                                    <span class="glyphicon glyphicon-eye-open"></span>
-                                </a>
-                            </div>
+                        <h5>{{ sponsor.sponsorship_level }} : {{ sponsor.project.name }}</h5>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="btn-group pull-right">
+                            <a class="btn btn-default btn-mini"
+                               href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </a>
                         </div>
                     </div>
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-
+                </div>
+        {% endif %}
     {% endfor %}
+
+
 
 
     {% if sponsors %}
         <hr/><h2 class="text-muted">List of Past Sponsors</h2> {% endif %}
 
-    {% for level in levels %}
-        {% if sponsors %}
-            <hr>
-            <div>
 
-                {% if level.logo %}
-                    <img class="img-responsive img-rounded pull-left" style="margin-right: 5px"
-                         src="{{ MEDIA_URL }}{{ level.logo }}" width="30"/>
-                {% endif %}
-                <h3>{{ level.name }}</h3>
-            </div><br/>{% endif %}
+    {% for sponsor in sponsors %}
+        {% if not sponsor.current_sponsor %}
+            {% ifchanged sponsor.sponsorship_level %}
+                <h3 class="text-muted"><img
+                            src="{% thumbnail sponsor.sponsorship_level.logo 50x50 %}"/> {{ sponsor.sponsorship_level }}
+                    </h3>
+            {% endifchanged %}
+            <div class="row" style="margin-top:10px;">
+                    <div class="col-lg-1">
+                        {% if sponsor.sponsor.logo %}
+                            <a href="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}">
+                                <img class="img-responsive img-rounded pull-right"
+                                     src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-lg-9">
+                        <h3>{{ sponsor.sponsor }}</h3>
 
-        {% for sponsor in sponsors %}
-            {% if not sponsor.current_sponsor %}
-                {% if sponsor.sponsorship_level.name == level.name %}
-                    <div class="row" style="margin-top:10px;">
-                        <div class="col-lg-1">
-                            {% if sponsor.sponsor.logo %}
-                                <a href="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}">
-                                    <img class="img-responsive img-rounded pull-right"
-                                         src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
-                                </a>
-                            {% endif %}
-                        </div>
-                        <div class="col-lg-9">
-                            <h3>{{ sponsor.sponsor }}</h3>
+                        <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
 
-                            <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
-
-                            <h5>{{ sponsor.sponsorship_level }} : {{ sponsor.project.name }}</h5>
-                        </div>
-                        <div class="col-lg-2">
-                            <div class="btn-group pull-right">
-                                <a class="btn btn-default btn-mini"
-                                   href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
-                                    <span class="glyphicon glyphicon-eye-open"></span>
-                                </a>
-                            </div>
+                        <h5>{{ sponsor.sponsorship_level }} : {{ sponsor.project.name }}</h5>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="btn-group pull-right">
+                            <a class="btn btn-default btn-mini"
+                               href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </a>
                         </div>
                     </div>
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-
+                </div>
+        {% endif %}
     {% endfor %}
+
     <hr>
     {% include "_pagination.html" %}
 {% endblock %}
