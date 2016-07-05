@@ -153,9 +153,10 @@ class Version(models.Model):
 
         .. note:: only approved entries returned.
         """
-        qs = Entry.objects.filter(version=self,
-                                  category=category,
-                                  approved=True)
+        qs = Entry.objects.filter(
+                version=self,
+                category=category,
+                approved=True)
         return qs
 
     def categories(self):
@@ -203,3 +204,19 @@ class Version(models.Model):
             'start_date').order_by(
             '-sponsorship_level__value')
         return sponsors
+
+    def formatted_release_date(self):
+        """"Return a long formatted released date e.g. 24 June 2016.
+
+        :returns: A string containing the long formatted date, or an empty
+            string if the date is not set.
+        :rtype: str
+        """
+        long_date = None
+        if self.release_date:
+            # %-d Day of the month as a decimal number. (Platform specific)
+            # %B  Month as locale’s full name.
+            # %Y  Year e.g. 2016
+            long_date = self.release_date.strftime('%-d %B, %Y')
+        return long_date
+
