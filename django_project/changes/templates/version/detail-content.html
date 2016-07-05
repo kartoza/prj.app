@@ -25,13 +25,17 @@
                     <h3 class="muted align-right">
                         <small>Changelog for version:</small>
                         {{ version.name }}
-                        </br>
-                        {% if version.release_date %}
-                        <small>Release date:</small> {{ version.release_date }}
-                        {% endif %}
                     </h3>
-
                 </div>
+                {% if version.release_date %}
+                <div class="col-lg-12">
+                    <h3 class="muted align-right">
+                        <small>Release date:
+                        {{ version.release_date.strftime('%Y-%m-%d') }}</small>
+                    </h3>
+                </div>
+                {% endif %}
+
             {% else %}
                 <div class="col-lg-12">
                     <h1>
