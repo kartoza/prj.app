@@ -94,28 +94,3 @@
     </ul>
 
 {% endif %}
-{% if the_version and the_project %}
-    <ul class="nav navbar-nav">
-        <li>
-            {% if not as_thumbs %}
-                <a href="{% url 'version-thumbs' the_project.slug the_version.slug %}">
-                    Version Thumbnails
-                </a>
-            {% else %}
-                <a href="{% url 'version-detail' the_project.slug the_version.slug %}">
-                    Version as List
-                </a>
-            {% endif %}
-        </li>
-        <li>
-            <a href="{% url 'entry-list' the_project.slug the_version.slug %}">
-                Version Entries
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'entry-create' the_project.slug the_version.slug %}">
-                Add Entry
-            </a>
-        </li>
-    </ul>
-{% endif %}
