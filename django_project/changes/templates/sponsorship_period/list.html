@@ -47,6 +47,7 @@
 
     <div class="container">
         <table class="table">
+        {% if sponsorshipperiods %}
             <thead>
             <tr>
                 <th>Logo</th>
@@ -55,6 +56,7 @@
                 <th>View</th>
             </tr>
             </thead>
+        {% endif %}
             {% for sponsorshipperiod in sponsorshipperiods %}
                 <tbody>
                 <tr>
