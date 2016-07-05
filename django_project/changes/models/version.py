@@ -219,4 +219,3 @@ class Version(models.Model):
             # %Y  Year e.g. 2016
             long_date = self.release_date.strftime('%-d %B, %Y')
         return long_date
-

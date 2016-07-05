@@ -391,8 +391,11 @@ class PendingEntryListView(EntryMixin, PaginationMixin, ListView,
         return self.queryset
 
 
-class AllPendingEntryList(EntryMixin, PaginationMixin, ListView,
-                           StaffuserRequiredMixin):
+class AllPendingEntryList(
+        EntryMixin,
+        PaginationMixin,
+        ListView,
+        StaffuserRequiredMixin):
     """List view for pending Entry."""
     context_object_name = 'unapproved_entries'
     template_name = 'entry/all-pending-list.html'
