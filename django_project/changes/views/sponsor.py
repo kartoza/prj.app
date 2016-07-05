@@ -115,6 +115,7 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
     """List view for Sponsor."""
     context_object_name = 'sponsors'
     template_name = 'sponsor/list.html'
+    paginate_by = 1000
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -151,7 +152,8 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
             project_slug = self.kwargs.get('project_slug', None)
             if project_slug:
                 project = Project.objects.get(slug=project_slug)
-                queryset = SponsorshipPeriod.objects.filter(project=project)
+                queryset = SponsorshipPeriod.objects.filter(
+                    project=project).order_by('-sponsorship_level__value')
                 return queryset
             else:
                 raise Http404('Sorry! We could not find your Sponsor!')
