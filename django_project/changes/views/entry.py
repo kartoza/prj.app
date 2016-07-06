@@ -456,7 +456,10 @@ class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
     pattern_name = 'pending-entry-list'
 
     def get_redirect_url(self, pk):
-        """Save Version as approved and redirect
+        """Save Entry as approved and redirect.
+
+        If there are no more pending entries, we redirect to the version
+        detail view. Otherwise we place you in the pending entries queue.
 
         :param pk: The primary key of the Entry
         :type pk: str
@@ -468,10 +471,23 @@ class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
         entry = get_object_or_404(entry_qs, id=pk)
         entry.approved = True
         entry.save()
-        # Using Entry.version.project.slug instead of project_slug to ensure
-        # that we redirect to the correct URL instead of relying on inputs from
-        # URL.
-        return reverse(self.pattern_name, kwargs={
-            'project_slug': entry.version.project.slug,
-            'version_slug': entry.version.slug
-        })
+        entry_qs = entry_qs.filter(version_id=entry.version)
+        if entry_qs.count() == 0:
+            # Redirect to the version detail page if there are no other entries
+            # Using Entry.version.project.slug instead of project_slug
+            # to ensure that we redirect to the correct URL instead of
+            # relying on inputs from URL.
+            pattern_name = 'version-detail'
+            return reverse(pattern_name, kwargs={
+                'project_slug': entry.version.project.slug,
+                'slug': entry.version.slug
+            })
+        else:
+            # Redirect to the pending entry list for this version
+            # Using Entry.version.project.slug instead of project_slug
+            # to ensure that we redirect to the correct URL instead of
+            # relying on inputs from URL.
+            return reverse(self.pattern_name, kwargs={
+                'project_slug': entry.version.project.slug,
+                'version_slug': entry.version.slug
+            })

@@ -71,6 +71,12 @@ STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 # Contributed / third party js libs for pipeline compression
 # For hand rolled js for this app, use project.py
 PIPELINE_JS = {}
+PIPELINE_JS['contrib'] = {
+    'source_filenames': (
+        'js/gifffer.js',
+    ),
+    'output_filename': 'js/contrib.js',
+}
 
 # Contributed / third party css for pipeline compression
 # For hand rolled css for this app, use project.py
