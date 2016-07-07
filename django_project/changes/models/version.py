@@ -202,7 +202,7 @@ class Version(models.Model):
                 start_date__lte=self.release_date).filter(
                 project=self.project).order_by(
             'start_date').order_by(
-            '-sponsorship_level__value')
+            '-sponsorship_level__value', 'sponsor__name')
         return sponsors
 
     def formatted_release_date(self):
