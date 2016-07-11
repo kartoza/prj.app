@@ -66,6 +66,7 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         context['project_slug'] = project_slug
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = context['the_project']
         return context
 
     def get_queryset(self):
