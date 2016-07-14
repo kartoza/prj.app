@@ -159,7 +159,42 @@
 
     });
 
+    $(".pop-image").on("click", function() {
+        $('#imagepreview').attr('src', $(this).children().attr('id'));
+        $('#image-url').attr('href', $(this).children().attr('id'));
+        $('#imagemodal').modal('show');
+        return false;
+    });
+
+    $(".pop-gif").on("click", function() {
+        console.log($(this).siblings());
+        $('#imagepreview').attr('src', $(this).siblings().attr('id'));
+        $('#image-url').attr('href', $(this).siblings().attr('id'));
+        $('#imagemodal').modal('show');
+        return false;
+    });
+
 </script>
+
+
+<!-- Creates the bootstrap modal where the image will appear -->
+<div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" >
+        <div class="modal-content" >
+            <div class="modal-body" >
+                <a href="#" id="image-url" target="_blank">
+                    <img src="" id="imagepreview">
+                </a>
+            </div>
+            Click the image to open original size image in new tab
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 {% if intercom_app_id and request.user %}
     <script id="IntercomSettingsScriptTag">
         window.intercomSettings = {
