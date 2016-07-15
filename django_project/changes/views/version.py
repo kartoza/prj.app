@@ -600,8 +600,7 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
                 )
             # write the actual RST document
             zip_file.writestr(
-                '{}-{}.rst'.format(
-                    version_obj.project.name, version_obj.name),
+                'index.rst',
                 document)
 
         return temp_path
