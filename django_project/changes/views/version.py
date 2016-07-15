@@ -554,7 +554,7 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
         # convert the html to rst
         converted_doc = pypandoc.convert(
             document.rendered_content.encode(
-                'utf8', 'ignore'), 'rst', format='html')
+                'utf8', 'ignore'), 'rst', format='html', extra_args=['--no-wrap'])
         converted_doc = converted_doc.replace('/media/images/', 'images/')
 
         # prepare the ZIP file
@@ -600,8 +600,7 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
                 )
             # write the actual RST document
             zip_file.writestr(
-                '{}-{}.rst'.format(
-                    version_obj.project.name, version_obj.name),
+                'index.rst',
                 document)
 
         return temp_path

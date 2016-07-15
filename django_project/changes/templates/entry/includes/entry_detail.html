@@ -7,7 +7,7 @@
         <h3><span class="text-muted">Feature:</span> {{ entry.title }}</h3>
     </div>
     <div class="col-lg-2">
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and not rst_download %}
             <div class="btn-group pull-right">
                 {% if not entry.approved and user.is_staff %}
                     <a class="btn btn-success btn-mini tooltip-toggle"
@@ -35,19 +35,21 @@
         {{ entry.description|base_markdown }}
     </div>
     <div class="col-lg-4 text-center">
-            {% if entry.image_file|is_gif %}
-                <img class="img-responsive img-rounded pull-right"
-                     data-gifffer="{{ MEDIA_URL }}{{ entry.image_file }}"
-                     gifffer-alt=""/>{# see core/settings/contrib.py for large-entry #}
-                <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
-                Click here for full size animation.
-                </a>
-            {% else %}
-                <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
-                <img class="img-responsive img-rounded pull-right"
-                     src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
-                     alt=""/>{# see core/settings/contrib.py for large-entry #}
-                </a>
+            {% if entry.image_file %}
+                {% if entry.image_file|is_gif %}
+                    <img class="img-responsive img-rounded pull-right"
+                         data-gifffer="{{ MEDIA_URL }}{{ entry.image_file }}"
+                         gifffer-alt=""/>{# see core/settings/contrib.py for large-entry #}
+                    <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+                    Click here for full size animation.
+                    </a>
+                {% else %}
+                    <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+                    <img class="img-responsive img-rounded pull-right"
+                         src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
+                         alt=""/>{# see core/settings/contrib.py for large-entry #}
+                    </a>
+                {% endif %}
             {% endif %}
     </div>
 </div>
