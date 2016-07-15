@@ -554,7 +554,7 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
         # convert the html to rst
         converted_doc = pypandoc.convert(
             document.rendered_content.encode(
-                'utf8', 'ignore'), 'rst', format='html')
+                'utf8', 'ignore'), 'rst', format='html', extra_args=['--no-wrap'])
         converted_doc = converted_doc.replace('/media/images/', 'images/')
 
         # prepare the ZIP file
