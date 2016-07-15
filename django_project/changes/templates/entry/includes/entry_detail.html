@@ -37,12 +37,20 @@
     <div class="col-lg-4 text-center">
             {% if entry.image_file %}
                 {% if entry.image_file|is_gif %}
-                    <img class="img-responsive img-rounded pull-right"
-                         data-gifffer="{{ MEDIA_URL }}{{ entry.image_file }}"
-                         gifffer-alt=""/>{# see core/settings/contrib.py for large-entry #}
-                    <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
-                    Click here for full size animation.
-                    </a>
+                    {% if not rst_download %}
+                        <img class="img-responsive img-rounded pull-right"
+                             data-gifffer="{{ MEDIA_URL }}{{ entry.image_file }}"
+                             gifffer-alt=""/>{# see core/settings/contrib.py for large-entry #}
+                        <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+                        Click here for full size animation.
+                        </a>
+                    {% else %}
+                        <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+                        <img class="img-responsive img-rounded pull-right"
+                             src="{{ MEDIA_URL }}{{ entry.image_file }}"
+                             alt=""/>{# see core/settings/contrib.py for large-entry #}
+                        </a>
+                    {% endif %}
                 {% else %}
                     <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
                     <img class="img-responsive img-rounded pull-right"
