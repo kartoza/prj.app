@@ -4,9 +4,15 @@
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">
-        <a href="{% url 'project-detail' project.slug %}">
-          {{ project.name }}
-        </a>
+        {% if project.approved %}
+            <a href="{% url 'project-detail' project.slug %}">
+              {{ project.name }}
+            </a>
+        {% else %}
+            <a>
+              {{ project.name }}
+            </a>
+        {% endif %}
         {% if user.is_authenticated %}
           <div class="btn-group pull-right" style="margin-top: -3px;">
         {% if not project.approved and user.is_staff %}
