@@ -62,6 +62,10 @@ class ClosedBallotManager(models.Manager):
                 closes__gt=timezone.now())
 
 
+def closes_default_time():
+    return timezone.now() + datetime.timedelta(days=7)
+
+
 class Ballot(models.Model):
     """A category model e.g. gui, backend, web site etc."""
     name = models.CharField(
@@ -112,7 +116,7 @@ class Ballot(models.Model):
 
     closes = models.DateTimeField(
         help_text=_('Date the ballot closes'),
-        default=timezone.now() + datetime.timedelta(days=7)
+        default=closes_default_time
     )
 
     private = models.BooleanField(
