@@ -20,7 +20,6 @@ from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
-from pure_pagination.mixins import PaginationMixin
 from ..models import Category, Version
 from ..forms import CategoryForm
 
