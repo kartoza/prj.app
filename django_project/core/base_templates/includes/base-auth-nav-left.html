@@ -8,9 +8,15 @@
             <ul class="dropdown-menu">
                 {% for project in the_projects %}
                     <li>
-                        <a href="{% url 'project-detail' project.slug %}">
-                            {{ project.name }}
-                        </a>
+                        {% if project.approved %}
+                            <a href="{% url 'project-detail' project.slug %}">
+                                {{ project.name }}
+                            </a>
+                        {% else %}
+                            <a href="{% url 'pending-project-list' %}">
+                                {{ project.name }} <b>(pending)</b>
+                            </a>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
@@ -27,22 +33,22 @@
             <li><a href="{% url "project-detail" the_project.slug %}" style="padding: 0;">
                 <img class="img-rounded"
                      src="{% thumbnail the_project.image_file 50x50 crop %}"/>
-                </a>
+            </a>
             </li>
         {% endif %}
         <li>
-            <a href="{% url "project-detail" the_project.slug %}" class="nav navbar-nav" >
+            <a href="{% url "project-detail" the_project.slug %}" class="nav navbar-nav">
                 {{ the_project.name }}
             </a>
 
         </li>
     </ul>
-     <ul class="nav navbar-nav">
+    <ul class="nav navbar-nav">
         <li>
             {% if the_committee and the_project %}
 
                 <a href="{% url 'committee-list' the_project.slug %}" class="dropdown-toggle" data-toggle="dropdown">
-                    Teams  <b class="caret"></b>
+                    Teams <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
                     <li>
@@ -61,10 +67,10 @@
                     Teams
                 </a>
             {% endif %}
-    </li>
+        </li>
     </ul>
     {% if user.is_staff %}
-    <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav">
         <li>
             <a href="{% url "version-create" the_project.slug %}" class="dropdown-toggle" data-toggle="dropdown">
                 Changelog <b class="caret"></b>
@@ -74,9 +80,9 @@
                 <li><a href="{% url 'category-list' the_project.slug %}">Categories</a></li>
                 <li><a href="{% url 'version-list' the_project.slug %}">Versions</a></li>
             </ul>
-    </li>
+        </li>
     {% endif %}
-    </ul>
+</ul>
     <ul class="nav navbar-nav">
         <li>
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -90,7 +96,7 @@
                 {% endif %}
                 <li><a href="{% url 'sponsor-world-map' the_project.slug %}">Sponsors Map</a></li>
             </ul>
-    </li>
+        </li>
     </ul>
 
 {% endif %}
