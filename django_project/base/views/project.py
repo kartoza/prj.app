@@ -181,7 +181,10 @@ class ProjectUpdateView(LoginRequiredMixin, ProjectMixin, UpdateView):
             return qs.filter(owner=self.request.user)
 
     def get_success_url(self):
-        return reverse('project-detail', kwargs={'slug': self.object.slug})
+        if self.object.approved:
+            return reverse('project-detail', kwargs={'slug': self.object.slug})
+        else:
+            return reverse('pending-project-list')
 
     def form_valid(self, form):
         """Check that there is no referential integrity error when saving."""
