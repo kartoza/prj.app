@@ -51,7 +51,7 @@ class CategoryForm(forms.ModelForm):
         cleaned_data = self.cleaned_data
 
         try:
-            Category.objects.filter(name=cleaned_data['name'], project=self.project)
+            Category.objects.get(name=cleaned_data['name'], project=self.project)
         except Category.DoesNotExist:
             pass
         else:
