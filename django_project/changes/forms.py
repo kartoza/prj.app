@@ -1,5 +1,6 @@
 # coding=utf-8
 from django import forms
+from django.core.validators import ValidationError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout,
@@ -45,6 +46,20 @@ class CategoryForm(forms.ModelForm):
         instance.project = self.project
         instance.save()
         return instance
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+
+        try:
+            Category.objects.filter(name=cleaned_data['name'], project=self.project)
+        except Category.DoesNotExist:
+            pass
+        else:
+            raise ValidationError(
+                'Category with this name already exists for this project'
+            )
+
+        return cleaned_data
 
 
 class VersionForm(forms.ModelForm):
