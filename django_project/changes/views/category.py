@@ -128,11 +128,10 @@ class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
         return qs
 
 
-class CategoryListView(CategoryMixin, PaginationMixin, ListView):
+class CategoryListView(CategoryMixin, ListView):
     """List view for Category."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
-    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -537,11 +536,10 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
 
 
 class PendingCategoryListView(
-        StaffuserRequiredMixin, CategoryMixin, PaginationMixin, ListView):
+        StaffuserRequiredMixin, CategoryMixin, ListView):
     """List view for pending Category."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
-    paginate_by = 10
 
     def __init__(self):
         """

@@ -29,6 +29,12 @@
                            data-title="View Pending Categories">
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
+                    {% else %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "category-list" project_slug %}'
+                           data-title="View Categories">
+                            <span class="glyphicon glyphicon-th-list"></span>
+                        </a>
                     {% endif %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
                         href='{% url "category-order" project_slug %}'
@@ -80,5 +86,4 @@
         </div>
     {%  endfor %}
     <hr />
-    {% include "_pagination.html" %}
 {% endblock %}
