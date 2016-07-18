@@ -144,9 +144,8 @@ class EntryForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Submit'))
         self.fields['title'].label = 'Feature Title'
         # Filter the category list when editing so it shows only relevant ones
-        if not self.instance.id:
-            self.fields['category'].queryset = Category.objects.filter(
-                project=self.project).order_by('name')
+        self.fields['category'].queryset = Category.objects.filter(
+            project=self.project).order_by('name')
 
     def save(self, commit=True):
         instance = super(EntryForm, self).save(commit=False)
