@@ -446,10 +446,10 @@ class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
 
 
 class PendingVersionListView(
-    StaffuserRequiredMixin,
-    VersionMixin,
-    PaginationMixin,
-    ListView):
+        StaffuserRequiredMixin,
+        VersionMixin,
+        PaginationMixin,
+        ListView):
     """List view for pending Version. Staff see all """
     context_object_name = 'versions'
     template_name = 'version/list.html'

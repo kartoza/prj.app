@@ -7,7 +7,6 @@ import logging
 from .entry import Entry
 from .sponsorship_period import SponsorshipPeriod
 from core.settings.contrib import STOP_WORDS
-from django.core.exceptions import ValidationError
 from django.conf.global_settings import MEDIA_ROOT
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
@@ -98,11 +97,6 @@ class Version(models.Model):
         )
         app_label = 'changes'
         # ordering = ['-datetime_created']
-
-    def clean(self):
-        if not self.project.approved:
-            raise ValidationError(
-                "can't create version because project is not approved yet")
 
     def save(self, *args, **kwargs):
         if not self.pk:
