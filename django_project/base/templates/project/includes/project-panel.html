@@ -39,17 +39,10 @@
     <div class="panel-body">
       {% if project.image_file %}
         <div class="text-center">
-        {% if project.approved %}
           <a href="{% url 'project-detail' project.slug %}">
             <img class="img-rounded"
                  src="{% thumbnail project.image_file 150x150 crop %}"/>
           </a>
-        {% else %}
-          <a>
-            <img class="img-rounded"
-                 src="{% thumbnail project.image_file 150x150 crop %}"/>
-          </a>
-        {% endif %}
         </div>
       {% endif %}
       {% if project.description %}
