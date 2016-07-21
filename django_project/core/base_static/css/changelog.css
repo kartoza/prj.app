@@ -129,4 +129,24 @@ ul.ui-sortable-disabled .order{
     cursor: pointer;
 }
 
+@media (min-width: 1200px) {
+    #imagemodal .modal-dialog {
+        width:1000px ;
+        text-align: center;
+    }
 
+    #imagepreview {
+        max-width: 900px;
+    }
+}
+
+@media (max-width: 1200px) {
+    #imagemodal .modal-dialog {
+        width:600px;
+        text-align: center;
+    }
+
+    #imagepreview {
+        max-width: 500px;
+    }
+}
