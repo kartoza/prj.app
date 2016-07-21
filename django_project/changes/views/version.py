@@ -104,6 +104,30 @@ class VersionDetailView(VersionMixin, DetailView):
     context_object_name = 'version'
     template_name = 'version/detail.html'
 
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(VersionDetailView, self).get_context_data(**kwargs)
+        versions = self.get_object()
+        sponsors = {}
+
+        # group sponsors by sponsorship level
+        if versions.sponsors():
+            for sponsor in versions.sponsors():
+                if sponsor.sponsorship_level not in sponsors:
+                    sponsors[sponsor.sponsorship_level] = []
+
+                sponsors[sponsor.sponsorship_level].append(sponsor.sponsor)
+
+        context['sponsors'] = sponsors
+        return context
+
     def get_queryset(self):
         """Get the queryset for this view.
 
@@ -528,6 +552,30 @@ class ApproveVersionView(StaffuserRequiredMixin, VersionMixin, RedirectView):
 class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
     """View to allow staff users to download Version page in RST format"""
     template_name = 'version/detail-content.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(VersionDownload, self).get_context_data(**kwargs)
+        versions = self.get_object()
+        sponsors = {}
+
+        # group sponsors by sponsorship level
+        if versions.sponsors():
+            for sponsor in versions.sponsors():
+                if sponsor.sponsorship_level not in sponsors:
+                    sponsors[sponsor.sponsorship_level] = []
+
+                sponsors[sponsor.sponsorship_level].append(sponsor.sponsor)
+
+        context['sponsors'] = sponsors
+        return context
 
     def render_to_response(self, context, **response_kwargs):
         """Returns a RST document for a project Version page.

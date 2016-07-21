@@ -72,10 +72,17 @@
 
 <div class="row">
     <div class="col-lg-8">
-        <h5 class="text-muted">
-            {{ entry.funder_info_html|base_markdown }}
-            {{ entry.developer_info_html|base_markdown }}
-        </h5>
+        {% if not rst_download %}
+            <h5 class="text-muted">
+                {{ entry.funder_info_html|base_markdown }}
+                {{ entry.developer_info_html|base_markdown }}
+            </h5>
+        {% else %}
+            <p>
+                {{ entry.funder_info_html|base_markdown }}
+                {{ entry.developer_info_html|base_markdown }}
+            </p>
+        {% endif %}
     </div>
 </div>
 
