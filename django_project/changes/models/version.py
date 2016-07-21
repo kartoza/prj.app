@@ -4,13 +4,13 @@ from django.core.urlresolvers import reverse
 from common.utilities import version_slugify
 import os
 import logging
-from core.settings.contrib import STOP_WORDS
-from django.conf.global_settings import MEDIA_ROOT
-from django.db import models
 from .entry import Entry
 from .sponsorship_period import SponsorshipPeriod
+from core.settings.contrib import STOP_WORDS
+from django.conf.global_settings import MEDIA_ROOT
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+from django.db import models
 
 logger = logging.getLogger(__name__)
 

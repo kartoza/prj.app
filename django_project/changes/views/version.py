@@ -165,6 +165,13 @@ class VersionDetailView(VersionMixin, DetailView):
                     'Requested project does not exist.')
             try:
                 obj = queryset.filter(project=project).get(slug=slug)
+                if not obj.approved:
+                    raise Http404(
+                        'Sorry! The project you are requesting a version for '
+                        'could not be found or you do not have permission to '
+                        'view the version. Also the version may not be '
+                        'approved yet. Try logging in as a staff member if '
+                        'you wish to view it.')
                 return obj
             except Version.DoesNotExist:
                 raise Http404(
@@ -539,7 +546,8 @@ class ApproveVersionView(StaffuserRequiredMixin, VersionMixin, RedirectView):
         :returns: A url.
         :rtype: str
         """
-        project = Project.objects.get(slug=project_slug)
+        project = Project.objects.filter(slug=project_slug)
+        project = get_object_or_404(project, approved=True)
         version_qs = Version.unapproved_objects.filter(project=project)
         version = get_object_or_404(version_qs, slug=slug)
         version.approved = True
