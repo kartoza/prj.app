@@ -66,6 +66,7 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         context['project_slug'] = project_slug
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = context['the_project']
         return context
 
     def get_queryset(self):
@@ -126,6 +127,11 @@ class VersionDetailView(VersionMixin, DetailView):
                 sponsors[sponsor.sponsorship_level].append(sponsor.sponsor)
 
         context['sponsors'] = sponsors
+        project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
+        if project_slug:
+            context['project'] = Project.objects.get(slug=project_slug)
+            
         return context
 
     def get_queryset(self):
