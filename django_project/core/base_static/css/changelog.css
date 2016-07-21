@@ -150,3 +150,9 @@ ul.ui-sortable-disabled .order{
         max-width: 500px;
     }
 }
+
+.sponsor-detail-title {
+    font-size: 12pt;
+    font-weight: bold;
+    line-height: 170%;
+}

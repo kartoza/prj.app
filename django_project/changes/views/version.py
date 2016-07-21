@@ -131,7 +131,6 @@ class VersionDetailView(VersionMixin, DetailView):
         context['project_slug'] = project_slug
         if project_slug:
             context['project'] = Project.objects.get(slug=project_slug)
-            
         return context
 
     def get_queryset(self):
