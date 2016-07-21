@@ -14,6 +14,8 @@ from core.settings.contrib import STOP_WORDS
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from permission.models.project_collaborator import ProjectCollaborator
+from permission.models.project_administrator import ProjectAdministrator
 
 logger = logging.getLogger(__name__)
 
@@ -158,6 +160,16 @@ class Project(models.Model):
         :returns: List of versions.
         :rtype: list"""
         return self.versions()[:settings.PROJECT_VERSION_LIST_SIZE]
+
+    def administrators(self):
+        """Get all administrator for this project."""
+        qs = ProjectAdministrator.objects.filter(project=self).order_by('user__username')
+        return qs
+
+    def collaborators(self):
+        """Get all collaborators for this project."""
+        qs = ProjectCollaborator.objects.filter(project=self).order_by('user__username')
+        return qs
 
     @staticmethod
     def pagination_threshold(self):

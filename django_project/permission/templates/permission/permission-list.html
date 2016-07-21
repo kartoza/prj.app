@@ -1,0 +1,34 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+{% load i18n %}
+
+{% block title %}User Management{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block auth-nav-left %}
+{% endblock %}
+
+{% block anon-nav-left %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <p class="lead text-center text-muted">
+            {% trans "High level software project management. Made easy." %}
+        </p>
+        <h2 class="text-muted">
+            User Manager
+        </h2>
+    </div>
+    {% ifequal num_projects 0 %}
+        <h3>
+            No projects are defined, but you can
+            <a href="{% url "project-create" %}">create one here</a>.
+        </h3>
+    {% endifequal %}
+    {% for project in projects %}
+        {% include 'permission/permission-panel.html' %}
+    {% endfor %}
+{% endblock %}

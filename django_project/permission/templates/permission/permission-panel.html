@@ -1,0 +1,24 @@
+{% load custom_markup %}
+{% load thumbnail %}
+<div class="panel-to-wrap col-md-4">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                {% if project.approved %}
+                    <a href="{% url 'project-detail' project.slug %}">
+                        {{ project.name }}
+                    </a>
+                {% else %}
+                    <a href="{% url 'pending-project-list' %}">
+                        {{ project.name }} <b>(pending)</b>
+                    </a>
+                {% endif %}
+            </h3>
+        </div>
+        <div class="panel-body">
+            {% include 'permission/administrator/includes/project-administrator-panel.html' %}
+            <hr/>
+            {% include 'permission/collaborator/includes/project-collaborator-panel.html' %}
+        </div>
+    </div>
+</div>
