@@ -8,7 +8,7 @@ from views import GithubIssue
 urlpatterns = patterns(
     '',
     # basic app views
-    url(regex='^$',
+    url(regex='^github-issue$',
         view=GithubIssue.as_view(),
         name='github-issue'),
 )
