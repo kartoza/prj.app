@@ -30,9 +30,8 @@
             {% if has_pending_entries %}
                 {% if the_version %}
                     <li><a href='{% url "pending-entry-list" the_project.slug the_version.slug %}'>Entries</a></li>
-                {% else %}
-                    <li><a href='{% url "all-pending-entry-list" the_project.slug %}'>Entries</a></li>
                 {% endif %}
+                    <li><a href='{% url "all-pending-entry-list" the_project.slug %}'>All Pending Entries</a></li>
             {% endif %}
         {% endif %}
     </ul>
