@@ -58,13 +58,7 @@ class TestCategoryViews(TestCase):
         response = self.client.get(reverse('category-list', kwargs={
             'project_slug': self.project.slug
         }))
-        self.assertEqual(response.status_code, 200)
-        expected_templates = [
-            'category/list.html', u'changes/category_list.html'
-        ]
-        self.assertEqual(response.template_name, expected_templates)
-        self.assertEqual(response.context_data['object_list'][0],
-                         self.category)
+        self.assertEqual(response.status_code, 302)
 
     def test_CategoryCreateView_with_login(self):
 
