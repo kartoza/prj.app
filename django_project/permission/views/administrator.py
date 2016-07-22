@@ -14,6 +14,7 @@ from django.views.generic import (
 )
 from permission.forms import ProjectAdministratorForm
 from permission.models.project_administrator import ProjectAdministrator
+from permission.views.user_manager import ProjectOwnerRequiredMixin
 
 __author__ = 'Irwan Fathurrahman <irwan@kartoza.com>'
 __date__ = '20/07/16'
@@ -21,7 +22,7 @@ __license__ = "GPL"
 __copyright__ = 'kartoza.com'
 
 
-class ProjectAdministratorCreateView(LoginRequiredMixin, CreateView):
+class ProjectAdministratorCreateView(LoginRequiredMixin, ProjectOwnerRequiredMixin, CreateView):
     context_object_name = 'project_administrator'
     template_name = 'permission/administrator/create.html'
     form_class = ProjectAdministratorForm
@@ -57,6 +58,14 @@ class ProjectAdministratorDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         if not self.request.user.is_authenticated():
+            raise Http404
+
+        pk = self.kwargs.get('pk', None)
+        try:
+            project_administrator = ProjectAdministrator.objects.get(pk=pk)
+            if project_administrator.project.owner != self.request.user:
+                raise Http404("You don't have access to this page")
+        except ProjectAdministrator.DoesNotExist:
             raise Http404
 
         return ProjectAdministrator.objects.all()

@@ -25,10 +25,12 @@ from django.views.generic import (
 from django.http import HttpResponse
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from ..models import Version
 from ..forms import VersionForm
+
+from permission.views.user_manager import ProjectAdministratorRequiredMixin
 
 __author__ = 'Tim Sutton <tim@kartoza.com>'
 __revision__ = '$Format:%H$'
@@ -77,15 +79,14 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
 
         :raises: Http404
         """
-        if self.request.user.is_staff:
-            versions_qs = Version.objects.all()
-        else:
-            versions_qs = Version.approved_objects.all()
-
         project_slug = self.kwargs.get('project_slug', None)
         if project_slug:
             try:
                 project = Project.objects.get(slug=project_slug)
+                if project.is_administrator(self.request.user):
+                    versions_qs = Version.objects.all()
+                else:
+                    versions_qs = Version.approved_objects.all()
             except Project.DoesNotExist:
                 raise Http404(
                     'The requested project does not exist.'
@@ -246,7 +247,7 @@ class VersionThumbnailView(VersionMixin, DetailView):
 
 
 # noinspection PyAttributeOutsideInit
-class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
+class VersionDeleteView(ProjectAdministratorRequiredMixin, VersionMixin, DeleteView):
     """Delete view for Entry."""
     context_object_name = 'version'
     template_name = 'version/delete.html'
@@ -320,14 +321,11 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
         if not self.request.user.is_authenticated():
             raise Http404
         qs = Version.objects.filter(project=self.project)
-        if self.request.user.is_staff:
-            return qs
-        else:
-            return qs.filter(author=self.request.user)
+        return qs
 
 
 # noinspection PyAttributeOutsideInit
-class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
+class VersionCreateView(ProjectAdministratorRequiredMixin, VersionMixin, CreateView):
     """Create view for Version."""
     context_object_name = 'version'
     template_name = 'version/create.html'
@@ -384,7 +382,7 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
 
 
 # noinspection PyAttributeOutsideInit
-class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
+class VersionUpdateView(ProjectAdministratorRequiredMixin, VersionMixin, UpdateView):
     """Update view for Version."""
     context_object_name = 'version'
     template_name = 'version/update.html'
@@ -410,10 +408,7 @@ class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
         :returns: A queryset which is filtered to only show approved Versions.
         :rtype: QuerySet
         """
-        if self.request.user.is_staff:
-            versions_qs = Version.objects.all()
-        else:
-            versions_qs = Version.approved_objects.all()
+        versions_qs = Version.objects.all()
         return versions_qs
 
     def get_success_url(self):
@@ -439,7 +434,7 @@ class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
 
 
 class PendingVersionListView(
-        StaffuserRequiredMixin,
+        ProjectAdministratorRequiredMixin,
         VersionMixin,
         PaginationMixin,
         ListView):
@@ -488,16 +483,16 @@ class PendingVersionListView(
                 self.project = Project.objects.get(slug=self.project_slug)
                 queryset = Version.unapproved_objects.filter(
                     project=self.project)
-                if self.request.user.is_staff:
-                    return queryset
-                else:
-                    return queryset.filter(author=self.request.user)
+                return queryset
             else:
                 raise Http404('Sorry! We could not find your version!')
         return self.queryset
 
 
-class ApproveVersionView(StaffuserRequiredMixin, VersionMixin, RedirectView):
+class ApproveVersionView(
+        ProjectAdministratorRequiredMixin,
+        VersionMixin,
+        RedirectView):
     """View for approving Version."""
     permanent = False
     query_string = True

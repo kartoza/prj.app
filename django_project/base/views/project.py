@@ -111,8 +111,12 @@ class ProjectDetailView(ProjectMixin, DetailView):
         context['projects'] = self.get_queryset()
         context['committees'] = Committee.objects.filter(project=self.object)
         page_size = settings.PROJECT_VERSION_LIST_SIZE
-        context['versions'] = Version.objects.filter(
-            project=self.object).order_by('-padded_version')[:page_size]
+        if self.object.is_administrator(self.request.user):
+            context['versions'] = Version.objects.filter(
+                project=self.object).order_by('-padded_version')[:page_size]
+        else:
+            context['versions'] = Version.objects.filter(
+                project=self.object).filter(approved=True).order_by('-padded_version')[:page_size]
         return context
 
     def get_queryset(self):

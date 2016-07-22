@@ -4,8 +4,6 @@
 """
 
 from base.models import Project
-from braces.views import LoginRequiredMixin
-from django.http import Http404
 from django.views.generic import (
     ListView)
 from pure_pagination.mixins import PaginationMixin
@@ -14,6 +12,55 @@ __author__ = 'Irwan Fathurrahman <irwan@kartoza.com>'
 __date__ = '20/07/16'
 __license__ = "GPL"
 __copyright__ = 'kartoza.com'
+from braces.views._access import AccessMixin
+from braces.views import LoginRequiredMixin
+from django.db.models import Q
+from django.http import Http404
+from permission.models.project_administrator import ProjectAdministrator
+
+
+class ProjectAdministratorRequiredMixin(AccessMixin):
+    """
+    Mixin allows you to require a user with `is_staff` set to True.
+    """
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.request.user.is_authenticated():
+            return self.handle_no_permission(request)
+
+        project_slug = self.kwargs.get('project_slug', None)
+        if project_slug:
+            try:
+                project = Project.objects.get(slug=project_slug)
+                if not project.is_administrator(self.request.user):
+                    raise Http404("You don't have access to this page")
+            except Project.DoesNotExist:
+                raise Http404
+
+        return super(ProjectAdministratorRequiredMixin, self).dispatch(
+            request, *args, **kwargs)
+
+
+class ProjectOwnerRequiredMixin(AccessMixin):
+    """
+    Mixin allows you to require a user with `is_staff` set to True.
+    """
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.request.user.is_authenticated():
+            return self.handle_no_permission(request)
+
+        project_slug = self.kwargs.get('project_slug', None)
+        if project_slug:
+            try:
+                project = Project.objects.get(slug=project_slug)
+                if project.owner != self.request.user:
+                    raise Http404("You don't have access to this page")
+            except Project.DoesNotExist:
+                raise Http404
+
+        return super(ProjectOwnerRequiredMixin, self).dispatch(
+            request, *args, **kwargs)
 
 
 class UserManagerListView(PaginationMixin, LoginRequiredMixin, ListView):
@@ -43,13 +90,12 @@ class UserManagerListView(PaginationMixin, LoginRequiredMixin, ListView):
 
         :raises: Http404
         """
-        if not self.request.user.is_authenticated():
-            raise Http404
         username = self.kwargs['username']
         if username != self.request.user.username:
             raise Http404
         if self.request.user.is_staff:
             project_qs = Project.objects.all()
         else:
-            project_qs = Project.objects.filter(owner=self.request.user)
+            projects_in_admin = ProjectAdministrator.objects.filter(user=self.request.user).values('project')
+            project_qs = Project.objects.filter(Q(owner=self.request.user) | Q(pk__in=projects_in_admin))
         return project_qs

@@ -66,31 +66,73 @@
       </h4>
       <hr/>
       {% if project.versions %}
-        {% for version in project.latest_versions %}
-          <p>
-            <a href="{% url "version-detail" project_slug=version.project.slug slug=version.slug %}">
-            <strong><span class="text-muted">Version:</span> {{ version.name }}</strong>
-            </a>
-            <span class="btn-group pull-right">
-              <a href="{% url "version-detail" project_slug=version.project.slug slug=version.slug %}"
-                  class="btn btn-default btn-xs tooltip-toggle"
-                  data-placement="top" data-title="Changelog List">
-                <span class="glyphicon glyphicon-list"></span>
-              </a>
-              <a href="{% url "version-thumbs" project_slug=version.project.slug slug=version.slug %}"
-                 class="btn btn-default btn-xs tooltip-toggle"
-                 data-placement="top" data-title="Changelog Thumbs">
-                <span class="glyphicon glyphicon-th"></span>
-              </a>
-            </span>
-          </p>
-        {% endfor %}
+        {# AUTHENTICATED USER #}
+        {% if user.is_authenticated and project|is_project_administrator:user %}
+            {% for version in project.latest_versions %}
+              <p>
+                  {% if version.approved %}
+                    <a href="{% url "version-detail" project_slug=version.project.slug slug=version.slug %}">
+                    <strong><span class="text-muted">Version:</span> {{ version.name }}</strong>
+                    </a>
+                  {% else %}
+                    <a href="{% url "pending-version-list" version.project.slug%}">
+                    <strong><span class="text-muted">Version:</span> {{ version.name }}</strong> <b  class="text-muted">(pending)</b>
+                    </a>
+                  {% endif %}
+                <span class="btn-group pull-right">
+                  <a href="{% url "version-detail" project_slug=version.project.slug slug=version.slug %}"
+                      class="btn btn-default btn-xs tooltip-toggle"
+                      data-placement="top" data-title="Changelog List">
+                    <span class="glyphicon glyphicon-list"></span>
+                  </a>
+                  <a href="{% url "version-thumbs" project_slug=version.project.slug slug=version.slug %}"
+                     class="btn btn-default btn-xs tooltip-toggle"
+                     data-placement="top" data-title="Changelog Thumbs">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </a>
+                </span>
+              </p>
+             {% endfor %}
           {% if project.more_than_threshold %}
               <strong><span class="text-muted">Latest {{ project.threshold }} of {{ project.versions.count }} versionss</span></strong>
           {% endif %}
           {% if not project.more_than_threshold %}
-              <strong><span class="text-muted">Latest {{ project.versions.count }} of {{ project.versions.count }} versions</span></strong>
+              <strong><span class="text-muted">Latest {{ project.latest_versions.count }} of {{ project.versions.count }} versions</span></strong>
           {% endif %}
+        {# NON AUTHENTICATED USER #}
+        {% else %}
+            {% for version in project.latest_versions_public %}
+              <p>
+                  {% if version.approved %}
+                    <a href="{% url "version-detail" project_slug=version.project.slug slug=version.slug %}">
+                    <strong><span class="text-muted">Version:</span> {{ version.name }}</strong>
+                    </a>
+                  {% else %}
+                    <a href="{% url "pending-version-list" version.project.slug%}">
+                    <strong><span class="text-muted">Version:</span> {{ version.name }}</strong> <b  class="text-muted">(pending)</b>
+                    </a>
+                  {% endif %}
+                <span class="btn-group pull-right">
+                  <a href="{% url "version-detail" project_slug=version.project.slug slug=version.slug %}"
+                      class="btn btn-default btn-xs tooltip-toggle"
+                      data-placement="top" data-title="Changelog List">
+                    <span class="glyphicon glyphicon-list"></span>
+                  </a>
+                  <a href="{% url "version-thumbs" project_slug=version.project.slug slug=version.slug %}"
+                     class="btn btn-default btn-xs tooltip-toggle"
+                     data-placement="top" data-title="Changelog Thumbs">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </a>
+                </span>
+              </p>
+             {% endfor %}
+          {% if project.more_than_threshold %}
+              <strong><span class="text-muted">Latest {{ project.threshold }} of {{ project.versions_public.count }} versionss</span></strong>
+          {% endif %}
+          {% if not project.more_than_threshold %}
+              <strong><span class="text-muted">Latest {{ project.latest_versions_public.count }} of {{ project.versions_public.count }} versions</span></strong>
+          {% endif %}
+        {% endif %}
       {% endif %}
     </div>
   </div>

@@ -26,7 +26,6 @@ def is_gif(value):
 
 @register.inclusion_tag('button_span.html', takes_context=True)
 def show_button_icon(context, value):
-
     context_icon = {
         'add': 'glyphicon glyphicon-asterisk',
         'update': 'glyphicon glyphicon-pencil',
@@ -36,3 +35,30 @@ def show_button_icon(context, value):
     return {
         'button_icon': context_icon[value]
     }
+
+
+@register.filter
+def columns(thelist, n):
+    """
+    Break a list into ``n`` columns, filling up each column to the maximum equal
+    length possible. For example::
+    """
+    try:
+        n = int(n)
+        thelist = list(thelist)
+    except (ValueError, TypeError):
+        return [thelist]
+    list_len = len(thelist)
+    split = list_len // n
+    if list_len % n != 0:
+        split += 1
+    return [thelist[i::split] for i in range(split)]
+
+
+# for permission templatetags
+@register.filter
+def is_project_administrator(project, user):
+    """
+    checking is user administrator for project
+    """
+    return project.is_administrator(user)

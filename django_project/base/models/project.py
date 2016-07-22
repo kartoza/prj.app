@@ -27,7 +27,7 @@ class ApprovedProjectManager(models.Manager):
         """Query set generator"""
         return super(
             ApprovedProjectManager, self).get_queryset().filter(
-                approved=True)
+            approved=True)
 
 
 class UnapprovedProjectManager(models.Manager):
@@ -37,7 +37,7 @@ class UnapprovedProjectManager(models.Manager):
         """Query set generator"""
         return super(
             UnapprovedProjectManager, self).get_queryset().filter(
-                approved=False)
+            approved=False)
 
 
 class PublicProjectManager(models.Manager):
@@ -47,7 +47,7 @@ class PublicProjectManager(models.Manager):
         """Query set generator"""
         return super(
             PublicProjectManager, self).get_queryset().filter(
-                private=False).filter(approved=True)
+            private=False).filter(approved=True)
 
 
 def validate_gitter_room_name(value):
@@ -161,6 +161,20 @@ class Project(models.Model):
         :rtype: list"""
         return self.versions()[:settings.PROJECT_VERSION_LIST_SIZE]
 
+    def versions_public(self):
+        """Get all the approved versions for this project."""
+        qs = Version.objects.filter(project=self).filter(approved=True).order_by('-padded_version')
+        return qs
+
+    def latest_versions_public(self):
+        """Get the latest approved version.
+
+        How many versions returned is determined by the pagination threshold.
+
+        :returns: List of approved versions.
+        :rtype: list"""
+        return self.versions_public()[:settings.PROJECT_VERSION_LIST_SIZE]
+
     def administrators(self):
         """Get all administrator for this project."""
         qs = ProjectAdministrator.objects.filter(project=self).order_by('user__username')
@@ -170,6 +184,26 @@ class Project(models.Model):
         """Get all collaborators for this project."""
         qs = ProjectCollaborator.objects.filter(project=self).order_by('user__username')
         return qs
+
+    def is_administrator(self, user):
+        """checking user is administrator"""
+        if user.is_staff or user == self.owner:
+            return True
+        try:
+            ProjectAdministrator.objects.get(project=self, user=user)
+            return True
+        except ProjectAdministrator.DoesNotExist:
+            return False
+
+    def is_collaborator(self, user):
+        """checking user is collaborator"""
+        if user.is_staff or user == self.owner:
+            return True
+        try:
+            ProjectCollaborator.objects.get(project=self, user=user)
+            return True
+        except ProjectCollaborator.DoesNotExist:
+            return False
 
     @staticmethod
     def pagination_threshold(self):

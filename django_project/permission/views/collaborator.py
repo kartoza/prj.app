@@ -14,6 +14,7 @@ from django.views.generic import (
 )
 from permission.forms import ProjectCollaboratorForm
 from permission.models.project_collaborator import ProjectCollaborator
+from permission.views.user_manager import ProjectOwnerRequiredMixin
 
 __author__ = 'Irwan Fathurrahman <irwan@kartoza.com>'
 __date__ = '20/07/16'
@@ -21,7 +22,7 @@ __license__ = "GPL"
 __copyright__ = 'kartoza.com'
 
 
-class ProjectCollaboratorCreateView(LoginRequiredMixin, CreateView):
+class ProjectCollaboratorCreateView(LoginRequiredMixin, ProjectOwnerRequiredMixin, CreateView):
     context_object_name = 'project_collaborator'
     template_name = 'permission/collaborator/create.html'
     form_class = ProjectCollaboratorForm
@@ -48,7 +49,7 @@ class ProjectCollaboratorCreateView(LoginRequiredMixin, CreateView):
                 'ERROR: Project by this name already exists!')
 
 
-class ProjectCollaboratorDeleteView(LoginRequiredMixin, DeleteView):
+class ProjectCollaboratorDeleteView(LoginRequiredMixin, ProjectOwnerRequiredMixin, DeleteView):
     context_object_name = 'collaborator'
     template_name = 'permission/collaborator/delete.html'
 
@@ -57,6 +58,15 @@ class ProjectCollaboratorDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         if not self.request.user.is_authenticated():
+            raise Http404
+
+        # checking permission
+        pk = self.kwargs.get('pk', None)
+        try:
+            project_administrator = ProjectCollaborator.objects.get(pk=pk)
+            if project_administrator.project.owner != self.request.user:
+                raise Http404("You don't have access to this page")
+        except ProjectCollaborator.DoesNotExist:
             raise Http404
 
         return ProjectCollaborator.objects.all()
