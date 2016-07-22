@@ -36,15 +36,22 @@
                             <span class="glyphicon glyphicon-th-list"></span>
                         </a>
                     {% endif %}
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                        href='{% url "category-order" project_slug %}'
-                        data-title="Order Categories">
-                        <span class="glyphicon glyphicon-sort-by-order"></span>
-                    </a>
+                    {% if user.is_staff %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                            href='{% url "category-order" project_slug %}'
+                            data-title="Order Categories">
+                            <span class="glyphicon glyphicon-sort-by-order"></span>
+                        </a>
+                    {% endif %}
                 </div>
+                    <span id="order-saved" hidden class="alert alert-success" style="font-size: 9pt; padding: 3px;font-style: italic;">
+                        order saved</span>
+                    <span id="order-not-saved" hidden class="alert alert-danger" style="font-size: 9pt; padding: 3px;font-style: italic;">
+                        order not saved</span>
             {% endif %}
         </h1>
     </div>
+
     {% ifequal num_categories 0 %}
         {% if unapproved %}
             <h3>All categories are approved.</h3>
@@ -54,12 +61,17 @@
                     href='{% url "category-create" project_slug %}'>create one</a>.</h3>
         {% endif %}
     {% endifequal %}
+
+    {% if user.is_authenticated and user.is_staff %}
+        <ul id="sortable" data-url="{% url "category-submit-order" project_slug %}">
+    {% else %}
+        <ul>
+    {% endif %}
+
     {% for category in categories %}
-        <script>console.debug("{{ category }}");</script>
-        <div class="row" style="margin-top:10px;">
+        <li class="row order" style="margin-top:10px;" id="{{ category.id }}-{{ category.name }}">
             <div class="col-lg-10">
-                <h5>{{ category.project.name }}</h5>
-                <h3>{{ category.name }}</h3>
+                <h4>{{ category.name }}</h4>
             </div>
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
@@ -83,7 +95,14 @@
                     </a>
                 </div>
             </div>
-        </div>
+        </li>
     {%  endfor %}
+
+    </ul>
     <hr />
+
+    <script>
+
+    </script>
+
 {% endblock %}
