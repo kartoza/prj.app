@@ -68,6 +68,7 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         context['project_slug'] = project_slug
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = context['the_project']
         return context
 
     def get_queryset(self):
@@ -104,6 +105,34 @@ class VersionDetailView(VersionMixin, DetailView):
     """A tabular list style view for a Version."""
     context_object_name = 'version'
     template_name = 'version/detail.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(VersionDetailView, self).get_context_data(**kwargs)
+        versions = self.get_object()
+        sponsors = {}
+
+        # group sponsors by sponsorship level
+        if versions.sponsors():
+            for sponsor in versions.sponsors():
+                if sponsor.sponsorship_level not in sponsors:
+                    sponsors[sponsor.sponsorship_level] = []
+
+                sponsors[sponsor.sponsorship_level].append(sponsor.sponsor)
+
+        context['sponsors'] = sponsors
+        project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
+        if project_slug:
+            context['project'] = Project.objects.get(slug=project_slug)
+        return context
 
     def get_queryset(self):
         """Get the queryset for this view.
@@ -142,6 +171,13 @@ class VersionDetailView(VersionMixin, DetailView):
                     'Requested project does not exist.')
             try:
                 obj = queryset.filter(project=project).get(slug=slug)
+                if not obj.approved:
+                    raise Http404(
+                        'Sorry! The project you are requesting a version for '
+                        'could not be found or you do not have permission to '
+                        'view the version. Also the version may not be '
+                        'approved yet. Try logging in as a staff member if '
+                        'you wish to view it.')
                 return obj
             except Version.DoesNotExist:
                 raise Http404(
@@ -510,7 +546,8 @@ class ApproveVersionView(
         :returns: A url.
         :rtype: str
         """
-        project = Project.objects.get(slug=project_slug)
+        project = Project.objects.filter(slug=project_slug)
+        project = get_object_or_404(project, approved=True)
         version_qs = Version.unapproved_objects.filter(project=project)
         version = get_object_or_404(version_qs, slug=slug)
         version.approved = True
@@ -523,6 +560,30 @@ class ApproveVersionView(
 class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
     """View to allow staff users to download Version page in RST format"""
     template_name = 'version/detail-content.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(VersionDownload, self).get_context_data(**kwargs)
+        versions = self.get_object()
+        sponsors = {}
+
+        # group sponsors by sponsorship level
+        if versions.sponsors():
+            for sponsor in versions.sponsors():
+                if sponsor.sponsorship_level not in sponsors:
+                    sponsors[sponsor.sponsorship_level] = []
+
+                sponsors[sponsor.sponsorship_level].append(sponsor.sponsor)
+
+        context['sponsors'] = sponsors
+        return context
 
     def render_to_response(self, context, **response_kwargs):
         """Returns a RST document for a project Version page.

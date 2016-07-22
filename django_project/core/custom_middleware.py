@@ -66,8 +66,6 @@ class NavContextMiddleware(object):
         if context.get('version', None):
             context['the_version'] = context.get('version')
             context['the_project'] = context.get('version').project
-            context['has_pending_entries'] = Entry.unapproved_objects.filter(
-                version=context.get('version')).exists()
 
         if context.get('committee', None):
             context['the_committee'] = context.get('committee')

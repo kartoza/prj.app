@@ -104,13 +104,13 @@ body {
 ul .order {
     list-style-type: none;
     cursor: pointer;
-    border: 1px solid lightgray;
+    padding: 10px;
     margin-left: -40px !important;
     margin-right: 0px !important;
 }
 
 .order:hover {
-    background-color: lightgray;
+    background-color: #EEEEEE;
 }
 
 ul.ui-sortable-disabled .order{
@@ -129,4 +129,30 @@ ul.ui-sortable-disabled .order{
     cursor: pointer;
 }
 
+@media (min-width: 1200px) {
+    #imagemodal .modal-dialog {
+        width:1000px ;
+        text-align: center;
+    }
 
+    #imagepreview {
+        max-width: 900px;
+    }
+}
+
+@media (max-width: 1200px) {
+    #imagemodal .modal-dialog {
+        width:600px;
+        text-align: center;
+    }
+
+    #imagepreview {
+        max-width: 500px;
+    }
+}
+
+.sponsor-detail-title {
+    font-size: 12pt;
+    font-weight: bold;
+    line-height: 170%;
+}

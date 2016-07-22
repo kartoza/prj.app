@@ -29,7 +29,8 @@ def show_button_icon(context, value):
     context_icon = {
         'add': 'glyphicon glyphicon-asterisk',
         'update': 'glyphicon glyphicon-pencil',
-        'delete': 'glyphicon glyphicon-minus'
+        'delete': 'glyphicon glyphicon-minus',
+        'back': 'glyphicon glyphicon-arrow-left'
     }
 
     return {

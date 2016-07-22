@@ -58,11 +58,13 @@
       {% endif %}
       <h4 class="text-muted">
         Latest Versions
-        <a href="{% url 'version-create' project_slug=project.slug %}"
-           class="btn btn-default pull-right btn-sm tooltip-toggle"
-           data-title="Create New Version">
-          {% show_button_icon "add" %}
-        </a>
+        {% if project.approved %}
+            <a href="{% url 'version-create' project_slug=project.slug %}"
+               class="btn btn-default pull-right btn-sm tooltip-toggle"
+               data-title="Create New Version">
+              {% show_button_icon "add" %}
+            </a>
+        {% endif %}
       </h4>
       <hr/>
       {% if project.versions %}

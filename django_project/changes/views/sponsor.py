@@ -212,6 +212,22 @@ class SponsorDetailView(SponsorMixin, DetailView):
     context_object_name = 'sponsor'
     template_name = 'sponsor/detail.html'
 
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(SponsorDetailView, self).get_context_data(**kwargs)
+        project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
+        if project_slug:
+            context['the_project'] = Project.objects.get(slug=project_slug)
+        return context
+
     def get_queryset(self):
         """Get the queryset for this view.
 

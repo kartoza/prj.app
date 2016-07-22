@@ -25,14 +25,16 @@
                    data-title="Download sponsor list as html"
                    href='{% url 'version-sponsor-download' project_slug=version.project.slug slug=version.slug %}'>
                     <span class="glyphicon glyphicon-download"></span>
+                    <span style="font-size: 7pt;">H T M L</span>
                 </a>
                 <a class="btn btn-default btn-mini tooltip-toggle"
                    data-title="Download as RST"
                    href='{% url 'version-download' project_slug=version.project.slug slug=version.slug %}'>
                     <span class="glyphicon glyphicon-download"></span>
+                    <span style="font-size: 7pt;">R S T</span>
                 </a>
                 <a class="btn btn-default btn-mini tooltip-toggle"
-                   data-title="Download as GNU Changelog"
+                   data-title="Download as GNU Changelog" data-toggle="tooltip"
                    href='{% url 'version-download-gnu' project_slug=version.project.slug slug=version.slug %}'>
                     <span class="glyphicon glyphicon-list-alt"></span>
                 </a>

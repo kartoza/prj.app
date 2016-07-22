@@ -15,6 +15,11 @@
 
 {% block content %}
     <div class="page-header">
+        <a class="btn btn-default btn-mini tooltip-toggle"
+           data-title="Back to version detail"
+           href='{% url "version-detail" project_slug=entries.0.version.project.slug slug=entries.0.version.slug %}'>
+            {% show_button_icon "back" %}
+        </a>
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}Entries
             <small class="pull-right">

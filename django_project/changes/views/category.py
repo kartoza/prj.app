@@ -20,7 +20,6 @@ from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
-from pure_pagination.mixins import PaginationMixin
 from ..models import Category, Version
 from ..forms import CategoryForm
 
@@ -128,11 +127,10 @@ class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
         return qs
 
 
-class CategoryListView(CategoryMixin, PaginationMixin, ListView):
+class CategoryListView(CategoryMixin, StaffuserRequiredMixin, ListView):
     """List view for Category."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
-    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -537,11 +535,10 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
 
 
 class PendingCategoryListView(
-        StaffuserRequiredMixin, CategoryMixin, PaginationMixin, ListView):
+        StaffuserRequiredMixin, CategoryMixin, ListView):
     """List view for pending Category."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
-    paginate_by = 10
 
     def __init__(self):
         """

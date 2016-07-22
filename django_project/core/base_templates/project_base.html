@@ -111,6 +111,24 @@
         </p>
     </nav>
 </div>
+
+<!-- Creates the bootstrap modal where the thumbnaiul image will appear -->
+<div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" >
+        <div class="modal-content" >
+            <div class="modal-body" >
+                <a href="#" id="image-url" target="_blank">
+                    <img src="" id="imagepreview">
+                </a>
+            </div>
+            Click the image to open original size image in new tab
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% compressed_js 'contrib' %}
 {% compressed_js 'project' %}
 {% block inline-js %}{% endblock %}
@@ -160,6 +178,7 @@
     });
 
 </script>
+
 {% if intercom_app_id and request.user %}
     <script id="IntercomSettingsScriptTag">
         window.intercomSettings = {
