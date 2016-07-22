@@ -69,6 +69,7 @@ class PermissionTestViews(TestCase):
         client = Client()
         client.login(username='timlinux', password='password')
         project_slug = self.test_project_administrator.project.slug
+        print project_slug
         response = client.get(reverse('administrator-create', args=(project_slug,)))
         self.assertEqual(response.status_code, 200)
         expected_templates = [
@@ -116,7 +117,7 @@ class PermissionTestViews(TestCase):
         }
         project_slug = project.slug
         response = client.post(reverse('administrator-create', args=(project_slug,)), post_data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
     def test_AdministratorCreate_no_login(self):
         client = Client()
@@ -246,7 +247,7 @@ class PermissionTestViews(TestCase):
         }
         project_slug = project.slug
         response = client.post(reverse('collaborator-create', args=(project_slug,)), post_data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
     def test_CollaboratorDeleteView_no_login(self):
         client = Client()

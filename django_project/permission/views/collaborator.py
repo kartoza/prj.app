@@ -63,8 +63,9 @@ class ProjectCollaboratorDeleteView(LoginRequiredMixin, ProjectOwnerRequiredMixi
         # checking permission
         pk = self.kwargs.get('pk', None)
         try:
-            project_administrator = ProjectCollaborator.objects.get(pk=pk)
-            if project_administrator.project.owner != self.request.user:
+            project_collaborator = ProjectCollaborator.objects.get(pk=pk)
+            project = project_collaborator.project
+            if not self.request.user.is_staff and project.owner != self.request.user:
                 raise Http404("You don't have access to this page")
         except ProjectCollaborator.DoesNotExist:
             raise Http404

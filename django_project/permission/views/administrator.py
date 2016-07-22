@@ -60,10 +60,12 @@ class ProjectAdministratorDeleteView(LoginRequiredMixin, DeleteView):
         if not self.request.user.is_authenticated():
             raise Http404
 
+        # checking permission
         pk = self.kwargs.get('pk', None)
         try:
             project_administrator = ProjectAdministrator.objects.get(pk=pk)
-            if project_administrator.project.owner != self.request.user:
+            project = project_administrator.project
+            if not self.request.user.is_staff and project.owner != self.request.user:
                 raise Http404("You don't have access to this page")
         except ProjectAdministrator.DoesNotExist:
             raise Http404

@@ -187,6 +187,8 @@ class Project(models.Model):
 
     def is_administrator(self, user):
         """checking user is administrator"""
+        if not user.is_authenticated():
+            return False
         if user.is_staff or user == self.owner:
             return True
         try:
@@ -197,6 +199,8 @@ class Project(models.Model):
 
     def is_collaborator(self, user):
         """checking user is collaborator"""
+        if not user.is_authenticated():
+            return False
         if user.is_staff or user == self.owner:
             return True
         try:

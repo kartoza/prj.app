@@ -54,7 +54,7 @@ class ProjectOwnerRequiredMixin(AccessMixin):
         if project_slug:
             try:
                 project = Project.objects.get(slug=project_slug)
-                if project.owner != self.request.user:
+                if not self.request.user.is_staff and project.owner != self.request.user:
                     raise Http404("You don't have access to this page")
             except Project.DoesNotExist:
                 raise Http404
@@ -96,6 +96,8 @@ class UserManagerListView(PaginationMixin, LoginRequiredMixin, ListView):
         if self.request.user.is_staff:
             project_qs = Project.objects.all()
         else:
-            projects_in_admin = ProjectAdministrator.objects.filter(user=self.request.user).values('project')
-            project_qs = Project.objects.filter(Q(owner=self.request.user) | Q(pk__in=projects_in_admin))
+            projects_in_admin = ProjectAdministrator.objects.filter(
+                user=self.request.user).values('project')
+            project_qs = Project.objects.filter(
+                Q(owner=self.request.user) | Q(pk__in=projects_in_admin))
         return project_qs
