@@ -13,6 +13,8 @@ from views import (
     PendingProjectListView,
     ApproveProjectView,
     ProjectBallotListView,
+    GithubProjectView,
+    GithubListView,
     custom_404
 )
 
@@ -48,6 +50,12 @@ urlpatterns = patterns(
     url(regex='^project/(?P<slug>[\w-]+)/update/$',
         view=ProjectUpdateView.as_view(),
         name='project-update'),
+    url(regex='^project/populate-github/$',
+        view=GithubProjectView.as_view(),
+        name='populate-github-page'),
+    url(regex='^project/get-github-repo/',
+        view=GithubListView.as_view(),
+        name='get-github-repo'),
 )
 
 # Prevent cloudflare from showing an ad laden 404 with no context

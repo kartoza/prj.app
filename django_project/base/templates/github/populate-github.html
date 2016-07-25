@@ -1,0 +1,113 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+{% load i18n %}
+{% load staticfiles %}
+{% block title %}Projects{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block auth-nav-left %}
+{% endblock %}
+
+{% block anon-nav-left %}
+{% endblock %}
+
+{% block content %}
+
+    <h1> Github Repo </h1>
+    <hr/>
+    <button type="button" id="get-repo" class="btn btn-default">Get Repositories</button>
+
+    <div id="loading-view" style="text-align: center; margin-top: 100px;">
+        <img src="{% static 'gif/loading.gif' %}" />
+    </div>
+
+    <div id="github-list-container"></div>
+
+    <div class="row version-list" style="margin-top:15px; display: none;">
+        <div class="col-lg-9" >
+            <h3 style="margin-top: 0;">
+                <a href="#" >
+                    dimasciput/dimas
+                </a>
+            </h3>
+            <p style="font-style: italic; margin-top: -5px; margin-bottom: 5px;">
+                descriptiona asd adals kdjal dakld
+            </p>
+            <small>
+                Created at 2013-07-08T06:16:26Z
+            </small>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="btn-group pull-right" style="padding-top: 2.5%;">
+                <a class="btn btn-default btn-mini"
+                   href='#'>
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            $('#loading-view').hide();
+        });
+
+        $('#get-repo').click(function(){
+
+            $('#loading-view').show();
+
+            $.ajax({
+                url: "{% url 'get-github-repo' %}",
+                type: "GET",
+                success: function (response) {
+                    console.log(response);
+                    $('#loading-view').hide();
+                    for(var i=0; i < response.length; i++) {
+                        console.log(response[i]);
+                        $('#github-list-container').append(list_github_project(response[i]));
+                    }
+
+                },
+                error: function (response) {
+                    console.log(response);
+                    $('#loading-view').hide();
+                }
+            });
+
+        });
+
+        function list_github_project(github_data) {
+            return  '<div class="row version-list" style="margin-top:15px;">'+
+                        '<div class="col-lg-9" >'+
+                            '<h3 style="margin-top: 0;">'+
+                                '<a href="'+ github_data['html_url'] +'" target="_blank">'+
+                                    github_data['full_name']+
+                                '</a>'+
+                            '</h3>'+
+                            '<p style="font-style: italic; margin-top: -5px; margin-bottom: 5px;">'+
+                                github_data['description']+
+                            '</p>'+
+                            '<small>'+
+                                'Created at :'+ new Date(github_data['created_at'])+
+                            '</small>'+
+                        '</div>'+
+                        '<div class="col-lg-3">'+
+                            '<div class="btn-group pull-right" style="padding-top: 2.5%;">'+
+                                '<a class="btn btn-default btn-mini"'+
+                                    'href="#">'+
+                                    '<span class="glyphicon glyphicon-plus"></span>'+
+                                '</a>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>';
+        }
+
+    </script>
+
+
+{% endblock %}
