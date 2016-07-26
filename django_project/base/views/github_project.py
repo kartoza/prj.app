@@ -9,7 +9,6 @@ from django.http import Http404
 from django.views.generic import (
     ListView,
     UpdateView,
-    RedirectView,
     TemplateView,
 )
 from braces.views import LoginRequiredMixin
@@ -75,10 +74,8 @@ class GithubProjectView(LoginRequiredMixin, TemplateView):
             GithubProjectView, self).get_context_data(**kwargs)
 
         context['has_github_account'] = SocialToken.objects.filter(
-                account__user=self.request.user.id,
-                account__provider='github'
-            ).exists()
-
+            account__user=self.request.user.id,
+            account__provider='github').exists()
         return context
 
 
@@ -200,7 +197,7 @@ class GithubSubmitView(LoginRequiredMixin, ProjectMixin, UpdateView):
 
                 if token:
                     response = requests.get(
-                        'https://api.github.com/repos/'+github_data['full_name'],
+                        'https://api.github.com/repos/' + github_data['full_name'],
                         params={
                             'access_token': token
                         }
