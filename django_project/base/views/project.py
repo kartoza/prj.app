@@ -236,5 +236,3 @@ class ApproveProjectView(StaffuserRequiredMixin, ProjectMixin, RedirectView):
         project.approved = True
         project.save()
         return reverse(self.pattern_name)
-
-
