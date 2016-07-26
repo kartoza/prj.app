@@ -73,6 +73,12 @@ class GithubProjectView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(
             GithubProjectView, self).get_context_data(**kwargs)
+
+        context['has_github_account'] = SocialToken.objects.filter(
+                account__user=self.request.user.id,
+                account__provider='github'
+            ).exists()
+
         return context
 
 

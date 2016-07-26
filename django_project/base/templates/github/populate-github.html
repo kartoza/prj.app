@@ -21,10 +21,16 @@
 
     <div class="page-header">
         <h1> Github Repo </h1>
+        {% if has_github_account %}
         <button type="button" id="get-repo" class="btn btn-default pull-right"
-                style="margin-top: -45px;">Get Repositories</button>
+                style="margin-top: -45px;">Refresh Repositories</button>
+        {% endif %}
     </div>
 
+    {% if not has_github_account %}
+        <h4> You don't have Github account connected, please add your account
+            <a href="{% url 'socialaccount_connections' %}">here</a>.</h4>
+    {% endif %}
 
     <div id="loading-view" style="text-align: center; margin-top: 100px;
         letter-spacing: 1px; color: #8B8989" hidden>
@@ -40,7 +46,7 @@
         <div class="modal-dialog" >
             <div class="modal-content" >
                 <div class="modal-body" >
-                    Are you sure you want to add this github project?
+                    Are you sure you want to add this to your projects?
                     <div id="modal-github-container">
                     </div>
 
@@ -175,6 +181,14 @@
             if(need_refresh) {
                 get_repositories();
             }
+        });
+
+        // Window onload event //
+
+        $(document).ready(function(){
+            {% if has_github_account %}
+                get_repositories();
+            {% endif %}
         });
 
         // HTML element creation //

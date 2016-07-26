@@ -1,6 +1,7 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
 {% load i18n %}
+{% load staticfiles %}
 
 {% block title %}Projects{% endblock %}
 
@@ -33,9 +34,9 @@
               <span class="glyphicon glyphicon-time"></span>
             </a>
             <a class="btn btn-default tooltip-toggle"
-               href='{% url "populate-github-page" %}'
-               data-title="Populate Github Project">
-                <span class="glyphicon glyphicon-cloud"></span>
+               href='{% url "github-repo-view" %}'
+               data-title="View Github Repositories">
+                <img src="{% static 'img/github.png' %}" width="16" />
             </a>
           </div>
         {% endif %}
