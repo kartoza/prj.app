@@ -13,6 +13,10 @@
 {% block anon-nav-left %}
 {% endblock %}
 
+{% block css_head %}
+    <link rel="stylesheet" href="{% static 'css/github.css' %}">
+{% endblock %}
+
 {% block content %}
 
     <h1> Github Repo </h1>
@@ -23,91 +27,104 @@
         <img src="{% static 'gif/loading.gif' %}" />
     </div>
 
-    <div id="github-list-container"></div>
+    <div id="github-list-container">
+    </div>
 
-    <div class="row version-list" style="margin-top:15px; display: none;">
-        <div class="col-lg-9" >
-            <h3 style="margin-top: 0;">
-                <a href="#" >
-                    dimasciput/dimas
-                </a>
-            </h3>
-            <p style="font-style: italic; margin-top: -5px; margin-bottom: 5px;">
-                descriptiona asd adals kdjal dakld
-            </p>
-            <small>
-                Created at 2013-07-08T06:16:26Z
-            </small>
-        </div>
-
-        <div class="col-lg-3">
-            <div class="btn-group pull-right" style="padding-top: 2.5%;">
-                <a class="btn btn-default btn-mini"
-                   href='#'>
-                    <span class="glyphicon glyphicon-minus"></span>
-                </a>
+    <!-- Modal -->
+    <div class="modal fade" id="confirmation-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" >
+            <div class="modal-content" >
+                <div class="modal-body" >
+                    Are you sure you want to add this github project?
+                    <div id="modal-github-container">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="submit">Yes</button>
+                </div>
             </div>
         </div>
     </div>
 
-
     <script type="text/javascript">
 
+        var github_repo = {};
+
+        var loading_view = $('#loading-view');
+        var github_list_container = $('#github-list-container');
+        var github_modal_container = $('#modal-github-container');
+        var confirmation_modal = $('#confirmation-modal');
+
         $(document).ready(function(){
-            $('#loading-view').hide();
+            loading_view.hide();
+
+            // on add project click
+            $(github_list_container).on('click', '.add-project', function(){
+                console.log(github_repo);
+                var project_id = $(this).data("id");
+                github_modal_container.empty();
+                github_modal_container.append(create_project_html(github_repo[project_id], true));
+                confirmation_modal.modal('show');
+                return false;
+            });
         });
 
-        $('#get-repo').click(function(){
-
-            $('#loading-view').show();
-
+        $('#get-repo').click(function() {
+            loading_view.show();
             $.ajax({
                 url: "{% url 'get-github-repo' %}",
                 type: "GET",
                 success: function (response) {
+                    loading_view.hide();
+
+                    github_repo = {};
+                    github_list_container.empty();
+
                     console.log(response);
-                    $('#loading-view').hide();
                     for(var i=0; i < response.length; i++) {
                         console.log(response[i]);
-                        $('#github-list-container').append(list_github_project(response[i]));
+                        github_repo[response[i]['id']] = response[i];
+                        github_list_container.append(create_project_html(response[i], false));
                     }
 
                 },
                 error: function (response) {
                     console.log(response);
-                    $('#loading-view').hide();
+                    loading_view.hide();
                 }
             });
-
         });
 
-        function list_github_project(github_data) {
-            return  '<div class="row version-list" style="margin-top:15px;">'+
-                        '<div class="col-lg-9" >'+
-                            '<h3 style="margin-top: 0;">'+
-                                '<a href="'+ github_data['html_url'] +'" target="_blank">'+
-                                    github_data['full_name']+
-                                '</a>'+
-                            '</h3>'+
-                            '<p style="font-style: italic; margin-top: -5px; margin-bottom: 5px;">'+
-                                github_data['description']+
-                            '</p>'+
-                            '<small>'+
-                                'Created at :'+ new Date(github_data['created_at'])+
-                            '</small>'+
-                        '</div>'+
-                        '<div class="col-lg-3">'+
-                            '<div class="btn-group pull-right" style="padding-top: 2.5%;">'+
-                                '<a class="btn btn-default btn-mini"'+
-                                    'href="#">'+
-                                    '<span class="glyphicon glyphicon-plus"></span>'+
-                                '</a>'+
-                            '</div>'+
-                        '</div>'+
-                    '</div>';
+        function create_project_html(github_data, is_modal) {
+            var element = '<div class="row version-list" style="margin-top:15px;">'+
+                            '<div class="col-lg-9" >'+
+                                '<h3 style="margin-top: 0;">'+
+                                    '<a href="'+ github_data['html_url'] +'" target="_blank">'+
+                                        github_data['full_name']+
+                                    '</a>'+
+                                '</h3>'+
+                                '<p style="font-style: italic; margin-top: -5px; margin-bottom: 5px;">'+
+                                    github_data['description']+
+                                '</p>'+
+                                '<small>'+
+                                    'Created at : '+ new Date(github_data['created_at'])+
+                                '</small>'+
+                            '</div>';
+
+            if(!is_modal) {
+                element +=  '<div class="col-lg-3">'+
+                                '<div class="btn-group pull-right" style="padding-top: 2.5%;">'+
+                                    '<div class="btn btn-default btn-mini add-project"'+
+                                        'data-id='+ github_data['id'] +'>'+
+                                        '<span class="glyphicon glyphicon-plus"></span>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>';
+            }
+            element += '</div>';
+            return element;
         }
-
     </script>
-
 
 {% endblock %}

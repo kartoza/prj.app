@@ -18,6 +18,7 @@
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     {% block js_head %}{% endblock js_head %}
+    {% block css_head %}{% endblock css_head %}
     {% if the_project.gitter_room %}
         <script type="text/javascript">
             var project_gitter_room = '{{ the_project.gitter_room }}';
