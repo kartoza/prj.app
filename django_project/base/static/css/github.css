@@ -47,3 +47,8 @@
 #confirmation-modal .modal-content {
     padding: 0;
 }
+
+.github-list {
+    padding-top: 6px;
+    border-bottom: 1px solid #F6F6F6;
+}

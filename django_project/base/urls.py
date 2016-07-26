@@ -15,6 +15,7 @@ from views import (
     ProjectBallotListView,
     GithubProjectView,
     GithubListView,
+    GithubSubmitView,
     custom_404
 )
 
@@ -56,6 +57,9 @@ urlpatterns = patterns(
     url(regex='^project/get-github-repo/',
         view=GithubListView.as_view(),
         name='get-github-repo'),
+    url(regex='^project/submit-github-repo/',
+        view=GithubSubmitView.as_view(),
+        name='submit-github-repo'),
 )
 
 # Prevent cloudflare from showing an ad laden 404 with no context
