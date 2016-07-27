@@ -1,5 +1,5 @@
 //noinspection JSUnusedGlobalSymbols
-function submitIssue() {
+window.submitIssue = function () {
   $("#issue-submit-button").attr("disabled", "disabled");
   $.post("/github-issue", {
     'title': $("#issue-title").val(), 'desc': $("#issue-description").val() })
