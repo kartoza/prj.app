@@ -17,6 +17,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+
+    <!-- Chosen library -->
+    <link rel="stylesheet" href="{% static 'chosen/chosen.min.css' %}">
+    <script src="{% static 'chosen/chosen.jquery.min.js' %}"></script>
+    <script src="{% static 'chosen/chosen.proto.min.js' %}"></script>
+
     {% block js_head %}{% endblock js_head %}
     {% if the_project.gitter_room %}
         <script type="text/javascript">

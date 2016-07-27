@@ -182,7 +182,7 @@ class SponsorForm(forms.ModelForm):
                 form_title,
                 Field('name', css_class='form-control'),
                 Field('address', css_class='form-control'),
-                Field('country', css_class='form-control'),
+                Field('country', css_class='form-control chosen-select'),
                 Field('sponsor_url', css_class='form-control'),
                 Field('contact_person', css_class='form-control'),
                 Field('sponsor_email', css_class='form-control'),
@@ -263,8 +263,8 @@ class SponsorshipPeriodForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('sponsor', css_class='form-control'),
-                Field('sponsorship_level', css_class='form-control'),
+                Field('sponsor', css_class='form-control chosen-select'),
+                Field('sponsorship_level', css_class='form-control chosen-select'),
                 Field('start_date', css_class='form-control'),
                 Field('end_date', css_class='form-control'),
                 css_id='project-form')

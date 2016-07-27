@@ -61,15 +61,17 @@ class CreateCommitteeForm(forms.ModelForm):
                 form_title,
                 Field('name', css_class="form-control"),
                 Field('description', css_class="form-control"),
-                Field('chair', css_class="form-control"),
+                Field('chair', css_class="form-control chosen-select"),
                 Field('sort_number', css_class="form-control"),
                 Field('quorum_setting', css_class="form-control"),
-                Field('users', css_class="form-control"),
+                Field('users',
+                      css_class="form-control chosen-select bottom-dropdown ",
+                      data_placeholder="Choose users"
+                      ),
             )
         )
         self.helper.layout = layout
         self.helper.html5_required = False
-        self.helper.form_class = 'form-horizontal'
         self.helper.form_id = 'committee-form'
         super(CreateCommitteeForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
@@ -118,7 +120,6 @@ class BallotCreateForm(forms.ModelForm):
         )
         self.helper.layout = layout
         self.helper.html5_required = False
-        self.helper.form_class = 'form-horizontal'
         self.helper.form_id = 'committee-form'
         super(BallotCreateForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
