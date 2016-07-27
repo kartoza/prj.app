@@ -43,6 +43,19 @@ class VersionMixin(object):
     form_class = VersionForm
 
 
+class CustomStaffuserRequiredMixin(StaffuserRequiredMixin):
+    """Fix redirect loop when user is already authenticated but non staff"""
+
+    def no_permissions_fail(self, request=None):
+        """
+        Called when the user has no permissions and no exception was raised.
+        """
+        if not request.user.is_authenticated():
+            return super(CustomStaffuserRequiredMixin, self).no_permissions_fail(request)
+
+        raise Http404('Sorry! You have to be staff to open this page.')
+
+
 class VersionListView(VersionMixin, PaginationMixin, ListView):
     """List view for Version."""
     context_object_name = 'versions'
@@ -562,7 +575,7 @@ class ApproveVersionView(StaffuserRequiredMixin, VersionMixin, RedirectView):
         })
 
 
-class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
+class VersionDownload(VersionMixin, CustomStaffuserRequiredMixin, DetailView):
     """View to allow staff users to download Version page in RST format"""
     template_name = 'version/detail-content.html'
 
@@ -733,7 +746,7 @@ class VersionDownloadGnu(VersionMixin, DetailView):
             content_type="text/plain; charset=utf-8")
 
 
-class VersionSponsorDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
+class VersionSponsorDownload(VersionMixin, CustomStaffuserRequiredMixin, DetailView):
     """View to allow staff users to download Version page in html format"""
     template_name = 'version/includes/version-sponsors.html'
 

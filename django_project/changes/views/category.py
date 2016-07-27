@@ -127,7 +127,7 @@ class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
         return qs
 
 
-class CategoryListView(CategoryMixin, ListView):
+class CategoryListView(CategoryMixin, StaffuserRequiredMixin, ListView):
     """List view for Category."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
