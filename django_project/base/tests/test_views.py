@@ -170,3 +170,20 @@ class TestViews(TestCase):
             'slug': project_to_delete.slug
         }))
         self.assertEqual(response.status_code, 302)
+
+    def test_GithubRepoView_no_login(self):
+        client = Client()
+        response = client.get(reverse('project-delete', kwargs={
+            'slug': self.test_project.slug
+        }))
+        self.assertEqual(response.status_code, 302)
+
+    def test_GithubRepoView_with_login(self):
+        client = Client()
+        client.login(username='timlinux', password='password')
+        response = client.get(reverse('github-repo-view'))
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
+            'github/populate-github.html'
+        ]
+        self.assertEqual(response.template_name, expected_templates)
