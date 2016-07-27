@@ -24,6 +24,7 @@
     <script src="{% static 'chosen/chosen.jquery.min.js' %}"></script>
 
     {% block js_head %}{% endblock js_head %}
+    {% block css_head %}{% endblock css_head %}
     {% if the_project.gitter_room %}
         <script type="text/javascript">
             var project_gitter_room = '{{ the_project.gitter_room }}';

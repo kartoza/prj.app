@@ -1,6 +1,7 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
 {% load i18n %}
+{% load staticfiles %}
 
 {% block title %}Projects{% endblock %}
 
@@ -31,6 +32,11 @@
                href='{% url "pending-project-list" %}'
                 data-title="View Pending Projects">
               <span class="glyphicon glyphicon-time"></span>
+            </a>
+            <a class="btn btn-default tooltip-toggle"
+               href='{% url "github-repo-view" %}'
+               data-title="View Github Repositories">
+                <img src="{% static 'img/github.png' %}" width="16" />
             </a>
           </div>
         {% endif %}
