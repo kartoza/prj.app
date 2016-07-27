@@ -58,6 +58,7 @@ PIPELINE_JS['project'] = {
         'js/github-issue.js',
         'js/entry.js',
         'js/category.js',
+        'js/form.js',
     ),
     'output_filename': 'js/project.js',
 }
