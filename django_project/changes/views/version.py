@@ -627,8 +627,8 @@ class VersionDownload(VersionMixin, CustomStaffuserRequiredMixin, DetailView):
         )
         # convert the html to rst
         converted_doc = pypandoc.convert(
-            document.rendered_content.encode(
-                'utf8', 'ignore'), 'rst', format='html', extra_args=['--no-wrap'])
+            document.rendered_content.encode('utf8', 'ignore'),
+            'rst', format='html', extra_args=['--no-wrap'])
         converted_doc = converted_doc.replace('/media/images/', 'images/')
 
         # prepare the ZIP file
@@ -648,6 +648,7 @@ class VersionDownload(VersionMixin, CustomStaffuserRequiredMixin, DetailView):
     # noinspection PyMethodMayBeStatic
     def _prepare_zip_archive(self, document, version_obj):
         """Prepare a ZIP file with the document and referenced images.
+
         :param document:
         :param version_obj: Instance of a version object.
 

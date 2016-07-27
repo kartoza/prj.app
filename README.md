@@ -73,6 +73,34 @@ If you wish to make use of [intercom.io](https://www.intercom.io), include a
 `private.py` file in `core.settings` with your `INTERCOM_APP_ID` as a string.
 The necessary code snippet is already included in `project_base.html`.
 
+**google authentication**
+
+In social auth to use the google authentication you need to go to:
+
+https://console.developers.google.com/apis/credentials
+
+Create and oath2 credential with these options:
+
+Authorized redirect URIs
+
+http://changelog.qgis.org<your domain>/en/complete/google-oauth2/
+
+Use the projecta admin panel to set up the google account with your id and
+secret
+
+**github authentication**
+
+Create a developer key here:
+
+https://github.com/settings/applications/new
+
+Set the callback and site homepage url to the top of your site e.g.
+
+http://localhost:61202
+
+At http://localhost:61202/en/site-admin/socialaccount/socialapp/add/
+
+Set teh key and secret from the github key page.
 
 ## Participation
 
