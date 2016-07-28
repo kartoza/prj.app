@@ -3,6 +3,7 @@
 {% load embed_video_tags %}
 
 <div class="row">
+    <a class="anchor-entry" id="{{ entry.slug }}"></a>
     <div class="col-lg-9">
         <h3><span class="text-muted">Feature:</span> {{ entry.title }}</h3>
     </div>
@@ -25,6 +26,11 @@
                    data-title="Update Entry"
                    href='{% url "entry-update" pk=entry.id %}'>
                     <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                    data-title="Get Permalink"
+                    onclick="copyToClipboard('{{ request.get_host }}{{ request.path }}#{{ entry.slug }}')">
+                    <span class="glyphicon glyphicon-link"></span>
                 </a>
             </div>
         {% endif %}
