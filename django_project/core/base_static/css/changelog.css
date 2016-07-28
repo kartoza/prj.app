@@ -182,9 +182,17 @@ footer {
   }
 }
 
+#sidebar {
+    margin-bottom: 60px !important;
+}
+
 #list-title {
     background-color: #E9E9E9;
     font-weight: bold;
+}
+
+.row-offcanvas {
+    margin-bottom: 100px;
 }
 
 a.anchor {
