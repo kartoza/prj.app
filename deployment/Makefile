@@ -94,14 +94,16 @@ collectstatic:
 	#@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py collectstatic --noinput
 	#We need to run collect static in the same context as the running
 	# uwsgi container it seems so I use docker exec here
-	@docker exec -t -i $(PROJECT_ID)-uwsgi python manage.py collectstatic --noinput
+	# no -it flag so we can run over remote shell
+	@docker exec $(PROJECT_ID)-uwsgi python manage.py collectstatic --noinput
 
 reload:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Reload django project in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker exec -t -i $(PROJECT_ID)-uwsgi uwsgi --reload  /tmp/django.pid
+	# no -it flag so we can run over remote shell
+	@docker exec $(PROJECT_ID)-uwsgi uwsgi --reload  /tmp/django.pid
 
 kill:
 	@echo
@@ -204,9 +206,9 @@ dbbackup:
 	@echo "the new backup."
 	@echo "------------------------------------------------------------------"
 	@# - prefix causes command to continue even if it fails
-	@# Explicitly don't use -t so we can call this make target over a remote ssh session
-	@docker exec -i $(PROJECT_ID)-db-backups /backups.sh
-	@docker exec -i $(PROJECT_ID)-db-backups cat /var/log/cron.log | tail -2 | head -1 | awk '{print $4}'
+	@# Explicitly don't use -it so we can call this make target over a remote ssh session
+	@docker exec $(PROJECT_ID)-db-backups /backups.sh
+	@docker exec $(PROJECT_ID)-db-backups cat /var/log/cron.log | tail -2 | head -1 | awk '{print $4}'
 	-@if [ -f "backups/latest.dmp" ]; then rm backups/latest.dmp; fi
 	# backups is intentionally missing from front of first clause below otherwise symlink comes
 	# out with wrong path...
