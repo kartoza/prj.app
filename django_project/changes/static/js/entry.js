@@ -20,3 +20,7 @@ $('.sidebar-offcanvas').stick_in_parent({
     offset_top: 60,
     inner_scrolling: true
 });
+
+function copyToClipboard(text) {
+    window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+}
