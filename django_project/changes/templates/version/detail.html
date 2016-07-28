@@ -55,10 +55,10 @@
             </div>
             <div class="pull-right">
                 {% if user.is_authenticated %}
-                   <a href="{% url 'entry-create' project_slug=version.project.slug version_slug=version.slug %}"
+                    <a href="{% url 'entry-create' project_slug=version.project.slug version_slug=version.slug %}"
                        class="btn btn-default tooltip-toggle"
                        data-title="Add New Entry">
-                       {% show_button_icon "add" %}
+                        {% show_button_icon "add" %}
                     </a>
                 {% endif %}
                 <a class="btn btn-default btn-mini tooltip-toggle"
