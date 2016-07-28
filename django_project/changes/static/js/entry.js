@@ -15,3 +15,8 @@ $(".pop-gif").on("click", function() {
     $('#imagemodal').modal('show');
     return false;
 });
+
+$('.sidebar-offcanvas').stick_in_parent({
+    offset_top: 60,
+    inner_scrolling: true
+});
