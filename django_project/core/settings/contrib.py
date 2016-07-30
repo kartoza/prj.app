@@ -105,6 +105,12 @@ INSTALLED_APPS += (
     'allauth.socialaccount.providers.github',
 )
 
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'SCOPE': ['user:email', 'public_repo', 'read:org']
+    }
+}
+
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True

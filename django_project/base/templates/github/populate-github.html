@@ -21,10 +21,6 @@
 
     <div class="page-header">
         <h1> Github Repo </h1>
-        {% if has_github_account %}
-        <button type="button" id="get-repo" class="btn btn-default pull-right"
-                style="margin-top: -45px;">Refresh Repositories</button>
-        {% endif %}
     </div>
 
     {% if not has_github_account %}
@@ -32,13 +28,28 @@
             <a href="{% url 'socialaccount_connections' %}">here</a>.</h4>
     {% endif %}
 
-    <div id="loading-view" style="text-align: center; margin-top: 100px;
-        letter-spacing: 1px; color: #8B8989" hidden>
-        <img src="{% static 'gif/loading.gif' %}" />
-        <p style="margin-top: 10px;"> Getting Repositories... </p>
-    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <div id="loading-orgs-view" style="text-align: center; margin-top: 100px;
+                letter-spacing: 1px; color: #8B8989" hidden>
+                <img src="{% static 'gif/loading.gif' %}" width="50px"/>
+                <p style="margin-top: 10px;"> Getting Organizations... </p>
+            </div>
+            <div class="list-group" id="org-list-container">
+            </div>
+        </div>
+        <div class="col-lg-9">
 
-    <div id="github-list-container">
+            <div id="loading-view" style="text-align: center; margin-top: 100px;
+                letter-spacing: 1px; color: #8B8989" hidden>
+                <img src="{% static 'gif/loading.gif' %}" width="50px"/>
+                <p style="margin-top: 10px;"> Getting Repositories... </p>
+            </div>
+
+            <div class="list-group" id="github-list-container">
+            </div>
+
+        </div>
     </div>
 
     <!-- Modal -->
@@ -64,175 +75,22 @@
         </div>
     </div>
 
+    <script src="{% static 'js/github-repo.js' %}"></script>
     <script type="text/javascript">
-
-        var need_refresh = false;
-        var github_repo = {};
-
-        var loading_view = $('#loading-view');
-        var loading_bar_view = $('#loading-bar');
-        var github_list_container = $('#github-list-container');
-
-        // Modal Div //
-
-        var github_modal_container = $('#modal-github-container');
-        var confirmation_modal = $('#confirmation-modal');
-
-        // Button //
-
-        var modal_submit_button = $('#modal-submit');
-        var get_repo_button = $('#get-repo');
-        var modal_close_button = $('#modal-close');
-
-        // Messages //
-
-        var project_added_m = $('#project-saved');
-        var project_not_added_m = $('#project-not-saved');
-
-        // Button Events //
-
-        github_list_container.on('click', '.add-project', function(){
-            var g_id = $(this).data('id');
-
-            github_modal_container.empty();
-            github_modal_container.append(create_project_html(github_repo[g_id], true));
-            confirmation_modal.modal({backdrop: 'static', keyboard: false});
-
-            return false;
-        });
-
-        modal_submit_button.click(function(){
-
-            modal_submit_button.prop('disabled', true);
-            modal_close_button.prop('disabled', true);
-            loading_bar_view.show();
-
-            var g_id = $(this)
-                        .parent()
-                        .siblings('.modal-body')
-                        .children('#modal-github-container')
-                        .children('.github-list')
-                        .data('id');
-
-            console.log(g_id);
-            $.ajax({
-                url: "{% url 'submit-github-repo' %}",
-                type: 'POST',
-                data: JSON.stringify({
-                    'full_name': g_id
-                }),
-                success: function (response) {
-                    console.log(response);
-                    project_added_m.show();
-                    need_refresh = true;
-                },
-                error: function (response) {
-                    console.log(response);
-                    project_not_added_m.show();
-                },
-                complete: function () {
-                    loading_bar_view.hide();
-                    modal_close_button.prop('disabled', false);
-                }
-            });
-
-            return false;
-        });
-
-        get_repo_button.click(function() {
-            get_repositories();
-        });
-
-        function get_repositories() {
-            get_repo_button.prop('disabled', true);
-            github_list_container.empty();
-            loading_view.show();
-
-            $.ajax({
-                url: "{% url 'get-github-repo' %}",
-                type: "GET",
-                success: function (response) {
-                    github_repo = {};
-
-                    console.log(response);
-                    for(var i=0; i < response.length; i++) {
-                        console.log(response[i]);
-                        github_repo[response[i]['full_name']] = response[i];
-                        github_list_container.append(create_project_html(response[i], false));
-                    }
-                },
-                error: function (response) {
-                    console.log(response);
-                },
-                complete: function() {
-                    loading_view.hide();
-                    get_repo_button.prop('disabled', false);
-                }
-            });
-        }
-
-        // Modal events //
-
-        confirmation_modal.on('hidden.bs.modal', function () {
-            project_added_m.hide();
-            project_not_added_m.hide();
-
-            // if there is a project just added, refresh list
-            if(need_refresh) {
-                get_repositories();
-            }
-        });
 
         // Window onload event //
 
         $(document).ready(function(){
             {% if has_github_account %}
-                get_repositories();
+                GithubRepo.init({
+                    org_url: "{% url 'get-github-orgs' %}",
+                    repo_url: "{% url 'get-github-repo' %}",
+                    repo_from_org_url: "{% url 'get-github-repo-org' org='org_name' %}",
+                    repo_submit_url: "{% url 'submit-github-repo' %}"
+                });
             {% endif %}
         });
 
-        // HTML element creation //
-
-        function create_project_html(github_data, is_modal) {
-            var element = '<div class="row github-list" style="margin-top:15px;" data-id='+ github_data['full_name'] +'>'+
-                            '<div class="col-lg-9" >'+
-                                '<h4 style="margin-top: 0; font-weight:bold;">'+
-                                    '<a href="'+ github_data['html_url'] +'" target="_blank">'+
-                                        github_data['full_name']+
-                                    '</a>'+
-                                '</h4>'+
-                                '<p style="font-size:10pt; margin-top: -5px; margin-bottom: 5px;">'+
-                                    ((github_data['description'] != '') ? github_data['description'] : '-') +
-                                '</p>'+
-                                '<small>'+
-                                    'Created at : '+ new Date(github_data['created_at'])+
-                                '</small>'+
-                            '</div>';
-
-            if(!is_modal) {
-                if(github_data['added']) {
-                    element +=  '<div class="col-lg-3">'+
-                                '<div class="btn-group pull-right" style="padding-top: 2.5%;">'+
-                                    '<div disabled class="btn btn-success btn-mini"'+
-                                        'data-id='+ github_data['full_name'] +'>'+
-                                        '<span class="glyphicon glyphicon-ok"></span>'+
-                                    '</div>'+
-                                '</div>'+
-                            '</div>';
-                } else {
-                    element +=  '<div class="col-lg-3">'+
-                                '<div class="btn-group pull-right" style="padding-top: 2.5%;">'+
-                                    '<div class="btn btn-default btn-mini add-project"'+
-                                        'data-id='+ github_data['full_name'] +'>'+
-                                        '<span class="glyphicon glyphicon-plus"></span>'+
-                                    '</div>'+
-                                '</div>'+
-                            '</div>';
-                }
-            }
-            element += '</div>';
-            return element;
-        }
     </script>
 
 {% endblock %}
