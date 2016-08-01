@@ -19,6 +19,7 @@ var GithubRepo = (function(){
         github_list_container.on('click', '.add-project', addRepoClick);
         org_list_container.on('click', '.org-list', orgClick);
         $('#modal-submit').click(submitRepoClick);
+        $('#confirmation-modal').on('hidden.bs.modal', modalOnClose);
     };
 
     // Event functions
@@ -34,6 +35,12 @@ var GithubRepo = (function(){
                 $('#repo-'+org_repo_active).show();
             }
         }
+    };
+    
+    var modalOnClose = function (event) {
+        $('#project-not-saved').hide();
+        $('#project-saved').hide();
+        $('#modal-submit').prop('disabled', false);
     };
 
     var addRepoClick = function (event) {
@@ -95,7 +102,6 @@ var GithubRepo = (function(){
             success: function(response) {
                 org_list_container.empty();
                 for(var i=0; i < response.length;i++) {
-                    console.log(response.length);
                     // create div
                     var $container_div;
                     if(response[i]['is_user']) {
