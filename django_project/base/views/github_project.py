@@ -6,6 +6,7 @@ import json
 import logging
 import requests
 from django.http import Http404
+from django.utils.text import slugify
 from django.views.generic import (
     ListView,
     UpdateView,
@@ -195,7 +196,7 @@ class GithubListView(ProjectMixin, ListView):
         :return: modified list github projects with additional parameter
         """
         for g_project in github_projects:
-            if Project.objects.filter(slug=g_project['name']).exists():
+            if Project.objects.filter(slug=slugify(g_project['name'])).exists():
                 g_project['added'] = True
             else:
                 g_project['added'] = False
@@ -287,6 +288,10 @@ class GithubSubmitView(LoginRequiredMixin, ProjectMixin, UpdateView):
                     retrieved_data = response.json()
 
                 if retrieved_data:
+
+                    if Project.objects.filter(slug=slugify(retrieved_data['name'])).exists():
+                        return HttpResponse('Project already exists')
+
                     new_project = Project(
                         name=retrieved_data['name'],
                     )
