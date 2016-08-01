@@ -15,6 +15,7 @@ from views import (
     ProjectBallotListView,
     GithubProjectView,
     GithubListView,
+    GithubOrgsView,
     GithubSubmitView,
     custom_404
 )
@@ -54,10 +55,16 @@ urlpatterns = patterns(
     url(regex='^project/github-repo/$',
         view=GithubProjectView.as_view(),
         name='github-repo-view'),
-    url(regex='^project/get-github-repo/',
+    url(regex='^project/get-github-repo/$',
         view=GithubListView.as_view(),
         name='get-github-repo'),
-    url(regex='^project/submit-github-repo/',
+    url(regex='^project/get-github-repo-org/(?P<org>[\w-]+)/$',
+        view=GithubListView.as_view(),
+        name='get-github-repo-org'),
+    url(regex='^project/get-github-orgs/$',
+        view=GithubOrgsView.as_view(),
+        name='get-github-orgs'),
+    url(regex='^project/submit-github-repo/$',
         view=GithubSubmitView.as_view(),
         name='submit-github-repo'),
 )

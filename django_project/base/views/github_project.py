@@ -6,6 +6,7 @@ import json
 import logging
 import requests
 from django.http import Http404
+from django.utils.text import slugify
 from django.views.generic import (
     ListView,
     UpdateView,
@@ -79,6 +80,80 @@ class GithubProjectView(LoginRequiredMixin, TemplateView):
         return context
 
 
+class GithubOrgsView(ProjectMixin, ListView):
+    """
+    List organization for the user
+    """
+    context_object_name = 'project'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Ensure this view is only used via ajax.
+
+        :param request: Http request - passed to base class.
+        :type request: HttpRequest, WSGIRequest
+
+        :param args: Positional args - passed to base class.
+        :type args: tuple
+
+        :param kwargs: Keyword args - passed to base class.
+        :type kwargs: dict
+        """
+        if not request.is_ajax():
+            raise Http404("This is an ajax view, friend.")
+        return super(GithubOrgsView, self).dispatch(
+            request, *args, **kwargs)
+
+    def render_to_response(self, context, **response_kwargs):
+        """Render this Project as markdown.
+
+        :param context: Context data to use with template.
+        :type context: dict
+
+        :param response_kwargs: A dict of arguments to pass to the renderer.
+        :type response_kwargs: dict
+
+        :returns: A rendered template with mime type application/text.
+        :rtype: HttpResponse
+        """
+        github_data = self.get_github_orgs()
+        return JsonResponse(github_data, safe=False)
+
+    def get_github_orgs(self):
+        """Get github orgs from github api
+        :return: github repo dictionary
+        """
+        retrieved_data = []
+
+        # get user token
+        if self.request.user:
+
+            try:
+                token = SocialToken.objects.get(
+                    account__user=self.request.user.id,
+                    account__provider='github'
+                )
+
+                if token:
+                    response = requests.get(
+                        'https://api.github.com/user/orgs',
+                        params={
+                            'access_token': token,
+                        }
+                    )
+                    retrieved_data = response.json()
+                    retrieved_data.insert(0, {
+                        'login': self.request.user.username,
+                        'avatar_url': 'https://github.com/%s.png?size=40' %
+                                      self.request.user.username,
+                        'is_user': True,
+                    })
+
+            except SocialToken.DoesNotExist:
+                print 'Token not exist'
+
+        return retrieved_data
+
+
 class GithubListView(ProjectMixin, ListView):
     context_object_name = 'project'
 
@@ -121,7 +196,7 @@ class GithubListView(ProjectMixin, ListView):
         :return: modified list github projects with additional parameter
         """
         for g_project in github_projects:
-            if Project.objects.filter(slug=g_project['name']).exists():
+            if Project.objects.filter(slug=slugify(g_project['name'])).exists():
                 g_project['added'] = True
             else:
                 g_project['added'] = False
@@ -142,11 +217,19 @@ class GithubListView(ProjectMixin, ListView):
                     account__provider='github'
                 )
 
+                org = self.kwargs.get('org', None)
+
+                if org:
+                    request_url = 'https://api.github.com/orgs/%s/repos' % org
+                else:
+                    request_url = 'https://api.github.com/user/repos'
+
                 if token:
                     response = requests.get(
-                        'https://api.github.com/user/repos',
+                        request_url,
                         params={
-                            'access_token': token
+                            'access_token': token,
+                            'affiliation': 'owner'
                         }
                     )
                     retrieved_data = self.check_project_existence(
@@ -205,6 +288,10 @@ class GithubSubmitView(LoginRequiredMixin, ProjectMixin, UpdateView):
                     retrieved_data = response.json()
 
                 if retrieved_data:
+
+                    if Project.objects.filter(slug=slugify(retrieved_data['name'])).exists():
+                        return HttpResponse('Project already exists')
+
                     new_project = Project(
                         name=retrieved_data['name'],
                     )
