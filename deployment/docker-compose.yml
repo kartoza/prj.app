@@ -6,19 +6,6 @@
 #
 # See accompanying Make commands for easy collectstatic etc.
 
-# Our main nginx service - this is for testing only - normally
-# You would use a standalone nginx instance running on the host!
-nginx:
-  # Note you cannot scale if you use conteiner_name
-  container_name: projecta-nginx
-  image: nginx
-  hostname: nginx
-  volumes:
-    - ./nginx-conf:/etc/nginx/conf.d
-  ports:
-    - "0.0.0.0:80:80"
-  restart: on-failure:5
-
 smtp:
   # Note you cannot scale if you use conteiner_name
   container_name: projecta-smtp
@@ -104,7 +91,8 @@ web:
   links:
     - uwsgi:uwsgi
   ports:
-    - "61200:8080"
+    - "80:8080"
+    - "4430:443"
   restart: on-failure:5
 
 # This is the entry point for a development server.
