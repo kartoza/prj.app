@@ -241,16 +241,16 @@ mediasync:
 	@echo "------------------------------------------------------------------"
 	@echo "Syncing media files and secret.py from live server"
 	@echo "------------------------------------------------------------------"
-	@rsync -av --progress changelog.qgis.org:/home/data/changelog.inasafe.org/deployment/media/ media
-	@rsync -av --progress changelog.qgis.org:/home/data/changelog.inasafe.org/django_project/core/settings/secret.py ../django_project/core/settings/
+	@rsync -av --progress changelog.qgis.org:/home/projecta/deployment/media/ media
+	@rsync -av --progress changelog.qgis.org:/home/projecta/django_project/core/settings/secret.py ../django_project/core/settings/
 
 dbsync:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Syncing database files from live server"
 	@echo "------------------------------------------------------------------"
-	-@ssh changelog.qgis.org "cd /home/data/changelog.inasafe.org/deployment; make dbbackup"
-	@rsync -av --progress changelog.qgis.org:/home/data/changelog.inasafe.org/deployment/backups/ backups
+	-@ssh changelog.qgis.org "cd /home/projecta/deployment; make dbbackup"
+	@rsync -av --progress changelog.qgis.org:/home/projecta/deployment/backups/ backups
 
 create-machine:
 	@echo
