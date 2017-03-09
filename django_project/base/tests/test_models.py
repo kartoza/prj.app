@@ -3,6 +3,7 @@ from django.test import TestCase
 from base.tests.model_factories import ProjectF
 from django.core.exceptions import ValidationError
 from base.models.project import Project
+from unidecode import unidecode
 
 
 class TestProjectCRUD(TestCase):
@@ -92,3 +93,14 @@ class TestProjectCRUD(TestCase):
                 model.save()
 
         self.assertEqual(Project.objects.filter(gitter_room='invalid').count(), 0)
+
+    def test_unidecode(self):
+        """
+        Tests unidecode() to represent special characters into ASCII
+        """
+        model = ProjectF.create(
+            name = u'straße',
+        )
+
+        # check if properly decoded into ASCII
+        self.assertTrue(model.slug == "strasse")
