@@ -4,7 +4,6 @@ import os
 import logging
 import string
 import re
-import unidecode
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 from django.conf.global_settings import MEDIA_ROOT
@@ -130,6 +129,7 @@ class Project(models.Model):
         if not self.pk:
             words = self.name.split()
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
+            #unidecode() takes Unicode data (e.g. special characters) and represents it in ASCII characters
             new_list = unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
 

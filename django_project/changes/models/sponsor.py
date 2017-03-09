@@ -2,7 +2,6 @@
 import os
 import pytz
 import logging
-import unidecode
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
@@ -123,6 +122,7 @@ class Sponsor(models.Model):
         if not self.pk:
             words = self.name.split()
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
+            # unidecode() takes Unicode data (e.g. special characters) and represents it in ASCII characters
             new_list = unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
         super(Sponsor, self).save(*args, **kwargs)
