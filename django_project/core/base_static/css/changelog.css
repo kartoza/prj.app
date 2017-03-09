@@ -129,6 +129,10 @@ ul.ui-sortable-disabled .order{
     cursor: pointer;
 }
 
+#container img{
+    max-width: 100%;
+}
+
 @media (min-width: 1200px) {
     #imagemodal .modal-dialog {
         width:1000px ;
