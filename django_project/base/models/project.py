@@ -14,6 +14,7 @@ from core.settings.contrib import STOP_WORDS
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from unidecode import unidecode
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +129,8 @@ class Project(models.Model):
         if not self.pk:
             words = self.name.split()
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
-            new_list = unicode(' '.join(filtered_words))
+            # unidecode() represents special characters (unicode data) in ASCII
+            new_list = unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
 
         super(Project, self).save(*args, **kwargs)
