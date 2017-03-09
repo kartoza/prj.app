@@ -10,6 +10,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django_countries.fields import CountryField
+from unidecode import unidecode
+
 
 __author__ = 'rischan'
 
@@ -120,7 +122,8 @@ class Sponsor(models.Model):
         if not self.pk:
             words = self.name.split()
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
-            new_list = ' '.join(filtered_words)
+            # unidecode() represents special characters (unicode data) in ASCII
+            new_list = unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
         super(Sponsor, self).save(*args, **kwargs)
 

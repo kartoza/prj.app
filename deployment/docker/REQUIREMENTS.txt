@@ -26,8 +26,10 @@ django-disqus==0.5
 awesome-slugify==1.4
 #translation management tool
 django-rosetta==0.7.0
-#youtube embed
+# youtube embed
 django-embed-video==1.0.0
 django-grappelli==2.7.3
 pytz
 django-allauth==0.25.2
+# support special characters
+Unidecode==0.4.20
