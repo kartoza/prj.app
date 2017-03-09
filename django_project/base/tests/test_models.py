@@ -3,7 +3,6 @@ from django.test import TestCase
 from base.tests.model_factories import ProjectF
 from django.core.exceptions import ValidationError
 from base.models.project import Project
-from unidecode import unidecode
 
 
 class TestProjectCRUD(TestCase):
