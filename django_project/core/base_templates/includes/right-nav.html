@@ -46,6 +46,7 @@
             {% if user.is_staff %}
                 <li><a href="{% url 'admin:index' %}">Admin Site</a></li>
             {% endif %}
+            <li><a href='{% url "user-manager" user%}'>User Manager</a></li>
             <li><a href='{% url "socialaccount_connections" %}'>Account Connections</a></li>
             <li><a href='{% url "account_email" %}'>Account Emails</a></li>
             <li><a href='{% url "account_logout" %}'>Log Out</a></li>

@@ -4,7 +4,9 @@
 core.custom_middleware
 """
 from base.models import Project, Version
+from django.db.models import Q
 from changes.models import Category, SponsorshipLevel, SponsorshipPeriod, Entry
+from permission.models.project_administrator import ProjectAdministrator
 
 
 class NavContextMiddleware(object):
@@ -52,9 +54,14 @@ class NavContextMiddleware(object):
             if request.user.is_staff:
                 context['the_projects'] = Project.objects.all()
             else:
-                context['the_projects'] = Project.approved_objects.filter(
-                    private=False
-                )
+                if request.user.is_authenticated():
+                    projects_in_admin = ProjectAdministrator.objects.filter(user=request.user).values('project')
+                    context['the_projects'] = Project.objects.filter(
+                        Q(owner=request.user) | Q(pk__in=projects_in_admin) | Q(approved=True, private=False))
+                else:
+                    context['the_projects'] = Project.approved_objects.filter(
+                        private=False
+                    )
 
         if context.get('version', None):
             context['the_version'] = context.get('version')

@@ -1,0 +1,42 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Project Deleted - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Unsigned Project Collaborator</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+        <div class="alert row">
+            <div class="col-lg-10">
+                <p class="lead">Please confirm you wish to delete Project Administration below!</p>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group">
+                    <a class="btn btb-default btn-sm tooltip-toggle"
+                       href="#"
+                       onClick="$('#delete-confirmation').submit()"
+                       data-title="delete">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "user-manager" user.username %}'
+                       data-title="Cancel">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3><span class="text-muted">User:</span> {{ collaborator.user.username }} for <span
+                        class="text-muted">Project:</span> {{ collaborator.project.name }}</h3>
+            </div>
+        </div>
+    </form>
+{% endblock %}

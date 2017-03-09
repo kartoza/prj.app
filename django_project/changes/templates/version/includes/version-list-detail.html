@@ -1,3 +1,4 @@
+{% load custom_markup %}
 {% load thumbnail %}
 <div class="row version-list" style="margin-top:5px;" onclick="window.location='{% url 'version-detail' project_slug=version.project.slug slug=version.slug %}';">
 
@@ -12,9 +13,15 @@
     </div>
     <div class="col-lg-8">
         <h3>
-            <a href="{% url 'version-detail' project_slug=version.project.slug slug=version.slug %}">
-                {{ version.name }}
-            </a>
+            {% if version.approved %}
+                <a href="{% url 'version-detail' project_slug=version.project.slug slug=version.slug %}">
+                    {{ version.name }}
+                </a>
+            {% else %}
+                <a href="{% url 'pending-version-list' project_slug=version.project.slug %}">
+                    {{ version.name }} <b>(pending)</b>
+                </a>
+            {% endif %}
             {% if version.release_date %}
              <small>released {{ version.release_date }}</small>
             {% endif %}
@@ -23,7 +30,7 @@
 
     <div class="col-lg-3">
         <div class="btn-group pull-right">
-            {%  if not version.approved and user.is_staff %}
+            {%  if not version.approved and user.is_authenticated and the_project|is_project_administrator:user %}
                 <a class="btn btn-default btn-mini"
                    href='{% url "version-approve" project_slug=version.project.slug slug=version.slug %}'>
                     <span class="glyphicon glyphicon-thumbs-up"></span>

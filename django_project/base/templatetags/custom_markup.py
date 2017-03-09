@@ -26,7 +26,6 @@ def is_gif(value):
 
 @register.inclusion_tag('button_span.html', takes_context=True)
 def show_button_icon(context, value):
-
     context_icon = {
         'add': 'glyphicon glyphicon-asterisk',
         'update': 'glyphicon glyphicon-pencil',
@@ -55,3 +54,12 @@ def columns(thelist, n):
     if list_len % n != 0:
         split += 1
     return [thelist[i::split] for i in range(split)]
+
+
+# for permission templatetags
+@register.filter
+def is_project_administrator(project, user):
+    """
+    checking is user administrator for project
+    """
+    return project.is_administrator(user)
