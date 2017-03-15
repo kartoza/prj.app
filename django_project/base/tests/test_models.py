@@ -92,3 +92,14 @@ class TestProjectCRUD(TestCase):
                 model.save()
 
         self.assertEqual(Project.objects.filter(gitter_room='invalid').count(), 0)
+
+    def test_unidecode(self):
+        """
+        Tests unidecode() to represent special characters into ASCII
+        """
+        model = ProjectF.create(
+            name = u'straße',
+        )
+
+        # check if properly decoded into ASCII
+        self.assertTrue(model.slug == "strasse")
