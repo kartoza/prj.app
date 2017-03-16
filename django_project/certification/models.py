@@ -70,7 +70,7 @@ class Attendee(SlugModel, models.Model):
 
     slug = models.SlugField(unique=True)
     objects = models.Manager()
-    certificate = models.ForeignKey(Certificate, models.CASCADE)
+    certificate = models.ForeignKey(Certificate)
 
     # noinspection PyClassicStyleClass.
     class Meta:
@@ -108,7 +108,7 @@ class Course(SlugModel, models.Model):
     slug = models.SlugField(unique=True)
     objects = models.Manager()
     course_attendee = models.ManyToManyField(Attendee)
-    certificate = models.ForeignKey(Certificate, models.CASCADE)
+    certificate = models.ManyToManyField(Certificate)
 
     def __unicode__(self):
         return u'%s' % self.name
