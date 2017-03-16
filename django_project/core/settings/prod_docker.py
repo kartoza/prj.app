@@ -7,7 +7,9 @@ print os.environ
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*',
+
+                 '0.0.0.0:61202']
 
 ADMINS = (
     ('Tim Sutton', 'tim@kartoza.com'),

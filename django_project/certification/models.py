@@ -111,7 +111,7 @@ class Course(SlugModel, models.Model):
     certificate = models.ForeignKey(Certificate, models.CASCADE)
 
     def __unicode__(self):
-        return u'%s' %self.name
+        return u'%s' % self.name
 
     def get_absolute_url(self):
         """Return URL to course detail page.
@@ -313,4 +313,3 @@ class CertifyingOrganisation(SlugModel, models.Model):
         """
         return reverse(
             'certifying-organisation-detail', kwargs={'slug': self.slug})
-    
