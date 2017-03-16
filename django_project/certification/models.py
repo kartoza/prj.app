@@ -19,11 +19,10 @@ from unidecode import unidecode
 
 
 logger = logging.getLogger(__name__)
-app_label = 'certification'
 
 
 class SlugModel(object):
-    
+
     slug = models.SlugField(unique=True)
 
     def save(self, *args, **kwargs):
@@ -36,8 +35,96 @@ class SlugModel(object):
 
         super(SlugModel, self).save(*args, **kwargs)
 
+        class Meta:
+            abstract = True
+
+
+class Certificate(models.Model):
+    """Certificate model."""
+
+    def get_absolute_url(self):
+        """Return URL to certificate detail page.
+        :return: URL
+        :rtype: str
+        """
+        return reverse('certificate-detail', kwargs={'slug': self.slug})
+
+
+class Attendee(SlugModel, models.Model):
+    """Course Attendee model."""
+
+    firstname = models.CharField(
+        help_text="First name course attendee.",
+        max_length=200,
+        null=False,
+        blank=False
+    )
+
+    surname = models.CharField(
+        help_text="Surname course attendee.",
+        max_length=200,
+        null=False,
+        blank=False
+    )
+
+    email = models.CharField(
+        help_text="Email address.",
+        max_length=200,
+        null=False,
+        blank=False
+    )
+
+    slug = models.SlugField(unique=True)
+    objects = models.Manager()
+    certificate = models.ForeignKey(Certificate, models.CASCADE)
+
+    # noinspection PyClassicStyleClass.
     class Meta:
-        abstract = True
+        """ Meta class for Course attendee."""
+
+        ordering = ['firstname']
+
+    def save(self, *args, **kwargs):
+        super(Attendee, self).save(self, *args, **kwargs)
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    def get_absolute_url(self):
+        """Return URL to attendee detail page.
+        :return: URL
+        :rtype: str
+        """
+        return reverse('attendee-detail', kwargs={'slug': self.slug})
+
+
+class Course(SlugModel, models.Model):
+    """Course model."""
+
+    name = models.CharField(
+        help_text="Course name.",
+        max_length=200,
+        null=False,
+        blank=False,
+    )
+
+    def save(self, *args, **kwargs):
+        super(Course, self).save(self, *args, **kwargs)
+
+    slug = models.SlugField(unique=True)
+    objects = models.Manager()
+    course_attendee = models.ManyToManyField(Attendee)
+    certificate = models.ForeignKey(Certificate, models.CASCADE)
+
+    def __unicode__(self):
+        return u'%s' %self.name
+
+    def get_absolute_url(self):
+        """Return URL to course detail page.
+        :return: URL
+        :rtype: str
+        """
+        return reverse('course-detail', kwargs={'slug': self.slug})
 
 
 class CourseType(SlugModel, models.Model):
@@ -130,94 +217,6 @@ class TrainingCenter(SlugModel, models.Model):
         return reverse('training-center-detail', kwargs={'slug': self.slug})
 
 
-class Attendee(SlugModel, models.Model):
-    """Course Attendee model."""
-
-    firstname = models.CharField(
-        help_text="First name course attendee.",
-        max_length=200,
-        null=False,
-        blank=False
-    )
-
-    surname = models.CharField(
-        help_text="Surname course attendee.",
-        max_length=200,
-        null=False,
-        blank=False
-    )
-
-    email = models.CharField(
-        help_text="Email address.",
-        max_length=200,
-        null=False,
-        blank=False
-    )
-
-    slug = models.SlugField(unique=True)
-    objects = models.Manager()
-    certificate = models.ForeignKey(Certificate, models.CASCADE)
-
-    # noinspection PyClassicStyleClass.
-    class Meta:
-        """ Meta class for Course attendee."""
-
-        ordering = ['firstname']
-
-    def save(self, *args, **kwargs):
-        super(Attendee, self).save(self, *args, **kwargs)
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-    def get_absolute_url(self):
-        """Return URL to attendee detail page.
-        :return: URL
-        :rtype: str
-        """
-        return reverse('attendee-detail', kwargs={'slug': self.slug})
-
-
-class Certificate(models.Model):
-    """Certificate model."""
-
-    def get_absolute_url(self):
-        """Return URL to certificate detail page.
-        :return: URL
-        :rtype: str
-        """
-        return reverse('certificate-detail', kwargs={'slug': self.slug})
-
-
-class Course(SlugModel, models.Model):
-    """Course model."""
-
-    name = models.CharField(
-        help_text="Course name.",
-        max_length=200,
-        null=False,
-        blank=False,
-    )
-
-    def save(self, *args, **kwargs):
-        super(Course, self).save(self, *args, **kwargs)
-
-    slug = models.SlugField(unique=True)
-    objects = models.Manager()
-    course_attendee = models.ManyToManyField(Attendee)
-    certificate = models.ForeignKey(Certificate, models.CASCADE)
-
-    def __unicode__(self):
-        return u'%s' %self.name
-
-    def get_absolute_url(self):
-        """Return URL to course detail page.
-        :return: URL
-        :rtype: str
-        """
-        return reverse('course-detail', kwargs={'slug': self.slug})
-
-
 class CourseConvener(SlugModel, models.Model):
     """Course Convener model."""
 
@@ -264,7 +263,7 @@ class UnapprovedCertifyingOrganisationManager(models.Manager):
 class CertifyingOrganisation(SlugModel, models.Model):
     """ Certifying organisation model."""
 
-    organisation_name = models.CharField(
+    name = models.CharField(
         help_text="Name of Organisation or Institution.",
         max_length=200,
         null=False,
@@ -296,7 +295,7 @@ class CertifyingOrganisation(SlugModel, models.Model):
     course = models.ManyToManyField(Course)
     training_center = models.ManyToManyField(TrainingCenter)
     course_convener = models.ManyToManyField(CourseConvener)
-    project = models.ForeignKey('base.Project')
+    # project = models.ForeignKey('base.Project')
     objects = models.Manager()
     approved_objects = ApprovedCertifyingOrganisationManager()
     unapproved_objects = UnapprovedCertifyingOrganisationManager()
@@ -305,7 +304,7 @@ class CertifyingOrganisation(SlugModel, models.Model):
     class Meta:
         """ Meta class for Course attendee."""
 
-        ordering = ['organisation_name']
+        ordering = ['name']
 
     def save(self, *args, **kwargs):
         super(CertifyingOrganisation, self).save(self, *args, **kwargs)
