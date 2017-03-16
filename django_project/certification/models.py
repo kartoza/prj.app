@@ -36,6 +36,29 @@ class SlugModel(object):
 class Certificate(models.Model):
     """Certificate model."""
 
+    certificate_id = models.CharField(
+        help_text="Id certificate.",
+        max_length = 200,
+        null = False,
+        blank = False,
+        unique=True,
+        primary_key=True
+    )
+
+    slug = models.SlugField(unique=True)
+    objects = models.Manager()
+
+    class Meta:
+        """ Meta class for Certificate."""
+
+        ordering = ['certificate_id']
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    def save(self, *args, **kwargs):
+        super(Certificate, self).save(self, *args, **kwargs)
+
     def get_absolute_url(self):
         """Return URL to certificate detail page.
         :return: URL
@@ -70,7 +93,7 @@ class Attendee(SlugModel, models.Model):
 
     slug = models.SlugField(unique=True)
     objects = models.Manager()
-    certificate = models.ForeignKey(Certificate)
+    certificate = models.ForeignKey(Certificate, on_delete=models.CASCADE)
 
     # noinspection PyClassicStyleClass.
     class Meta:
@@ -289,7 +312,7 @@ class CertifyingOrganisation(SlugModel, models.Model):
     course = models.ManyToManyField(Course)
     training_center = models.ManyToManyField(TrainingCenter)
     course_convener = models.ManyToManyField(CourseConvener)
-    # project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
     objects = models.Manager()
     approved_objects = ApprovedCertifyingOrganisationManager()
     unapproved_objects = UnapprovedCertifyingOrganisationManager()
