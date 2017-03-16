@@ -3,18 +3,12 @@
 Model definitions for certification apps
 """
 
-import os
 import logging
-import string
-import re
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.text import slugify
-from django.conf.global_settings import MEDIA_ROOT
 from django.utils.translation import ugettext_lazy as _
 from core.settings.contrib import STOP_WORDS
-from django.conf import settings
-from django.core.exceptions import ValidationError
 from unidecode import unidecode
 
 
@@ -319,4 +313,4 @@ class CertifyingOrganisation(SlugModel, models.Model):
         """
         return reverse(
             'certifying-organisation-detail', kwargs={'slug': self.slug})
-
+    
