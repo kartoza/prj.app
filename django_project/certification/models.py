@@ -4,6 +4,8 @@ Model definitions for certification apps
 """
 
 import logging
+import random
+import string
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.text import slugify
@@ -36,13 +38,11 @@ class SlugModel(object):
 class Certificate(models.Model):
     """Certificate model."""
 
-    certificate_id = models.CharField(
+    id_id = models.CharField(
         help_text="Id certificate.",
         max_length = 200,
-        null = False,
         blank = False,
-        unique=True,
-        primary_key=True
+        null= False,
     )
 
     slug = models.SlugField(unique=True)
@@ -51,13 +51,24 @@ class Certificate(models.Model):
     class Meta:
         """ Meta class for Certificate."""
 
-        ordering = ['certificate_id']
+        ordering = ['id_id']
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return u'%s' % self.id_id
 
     def save(self, *args, **kwargs):
-        super(Certificate, self).save(self, *args, **kwargs)
+
+        if not self.pk:
+            id_id = self.slug_generator()
+            words = id_id.split()
+            filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
+            new_list = ' '.join(filtered_words)
+            self.slug = slugify(new_list)[:50]
+        super(Certificate, self).save(*args, **kwargs)
+
+    @staticmethod
+    def slug_generator(size=6, chars=string.ascii_lowercase):
+        return ''.join(random.choice(chars) for _ in range(size))
 
     def get_absolute_url(self):
         """Return URL to certificate detail page.
@@ -67,7 +78,7 @@ class Certificate(models.Model):
         return reverse('certificate-detail', kwargs={'slug': self.slug})
 
 
-class Attendee(SlugModel, models.Model):
+class Attendee(models.Model):
     """Course Attendee model."""
 
     firstname = models.CharField(
@@ -102,10 +113,17 @@ class Attendee(SlugModel, models.Model):
         ordering = ['firstname']
 
     def save(self, *args, **kwargs):
-        super(Attendee, self).save(self, *args, **kwargs)
+        if not self.pk:
+            words = self.firstname.split()
+            filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
+            # unidecode() represents special characters (unicode data) in ASCII
+            new_list = unidecode(' '.join(filtered_words))
+            self.slug = slugify(new_list)[:50]
+
+        super(Attendee, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return u'%s' % self.firstname
 
     def get_absolute_url(self):
         """Return URL to attendee detail page.
@@ -126,7 +144,7 @@ class Course(SlugModel, models.Model):
     )
 
     def save(self, *args, **kwargs):
-        super(Course, self).save(self, *args, **kwargs)
+        super(Course, self).save(*args, **kwargs)
 
     slug = models.SlugField(unique=True)
     objects = models.Manager()
@@ -165,7 +183,7 @@ class CourseType(SlugModel, models.Model):
         ordering = ['name']
 
     def save(self, *args, **kwargs):
-        super(CourseType, self).save(self, *args, **kwargs)
+        super(CourseType, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -196,7 +214,7 @@ class TrainingCenter(SlugModel, models.Model):
         blank=False
     )
 
-    Address = models.CharField(
+    Address = models.TextField(
         help_text=_('Address of the organisation/institution.'),
         max_length=250,
         null=False,
@@ -221,7 +239,7 @@ class TrainingCenter(SlugModel, models.Model):
         ordering = ['name']
 
     def save(self, *args, **kwargs):
-        super(TrainingCenter, self).save(self, *args, **kwargs)
+        super(TrainingCenter, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -240,9 +258,6 @@ class CourseConvener(SlugModel, models.Model):
     slug = models.SlugField(unique=True)
     objects = models.Manager()
     course = models.ManyToManyField(Course)
-
-    def save(self, *args, **kwargs):
-        super(CourseConvener, self).save(self, *args, **kwargs)
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -324,7 +339,7 @@ class CertifyingOrganisation(SlugModel, models.Model):
         ordering = ['name']
 
     def save(self, *args, **kwargs):
-        super(CertifyingOrganisation, self).save(self, *args, **kwargs)
+        super(CertifyingOrganisation, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return u'%s' % self.name

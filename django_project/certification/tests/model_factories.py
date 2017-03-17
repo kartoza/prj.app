@@ -12,7 +12,7 @@ from certification.models import (
     TrainingCenter)
 
 
-class CertifyingOrganisationF(factory.Factory):
+class CertifyingOrganisationF(factory.django.DjangoModelFactory):
     """
     Certifying organisation model factory.
     """
@@ -26,7 +26,7 @@ class CertifyingOrganisationF(factory.Factory):
     project = factory.SubFactory('base.tests.model_factories.ProjectF')
 
 
-class CourseTypeF(factory.Factory):
+class CourseTypeF(factory.django.DjangoModelFactory):
     """
     Course type model factory.
     """
@@ -49,17 +49,17 @@ class CourseTypeF(factory.Factory):
                 self.course.add(courses)
 
 
-class CertificateF(factory.Factory):
+class CertificateF(factory.django.DjangoModelFactory):
     """
     Certificate model factory.
     """
     class Meta:
         model = Certificate
 
-    id = factory.sequence(lambda n: u'Test ID %s' % n)
+    id_id = u'123AAA'
 
 
-class AttendeeF(factory.Factory):
+class AttendeeF(factory.django.DjangoModelFactory):
     """
     Certificate model factory.
     """
@@ -80,11 +80,11 @@ class AttendeeF(factory.Factory):
 
         if extracted:
             # A list of groups were passed in, use them
-            for _certificate in extracted:
-                self.certificate.add(_certificate)
+            for certificate in extracted:
+                self.certificate.add(certificate)
 
 
-class CourseF(factory.Factory):
+class CourseF(factory.django.DjangoModelFactory):
     """
     Course model factory.
     """
@@ -120,7 +120,7 @@ class CourseF(factory.Factory):
                 self.certificate.add(_certificate)
 
 
-class TrainingCenterF(factory.Factory):
+class TrainingCenterF(factory.django.DjangoModelFactory):
     """
     Training center model factory.
     """
@@ -129,7 +129,7 @@ class TrainingCenterF(factory.Factory):
 
     name = factory.sequence(lambda n: u'Test training center name %s' % n)
     email = factory.sequence(lambda n: u'Test email %s' % n)
-    address = factory.sequence(lambda n: u'Test address %s' % n)
+    Address = u'Test address'
     phone = factory.sequence(lambda n: u'Test phone %s' % n)
     # course = factory.SubFactory(CourseF)
 
@@ -146,7 +146,7 @@ class TrainingCenterF(factory.Factory):
                 self.course.add(_course)
 
 
-class CourseConvenerF(factory.Factory):
+class CourseConvenerF(factory.django.DjangoModelFactory):
     """
     Course convener model factory.
     """

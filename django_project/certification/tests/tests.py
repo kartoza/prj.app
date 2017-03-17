@@ -54,9 +54,6 @@ class TestCertificate(TestCase):
         # check if PK exists
         self.assertTrue(model.pk is not None)
 
-        # check if model name exists
-        self.assertTrue(model.name is not None)
-
 
 class TestAttendee(TestCase):
     """
@@ -68,17 +65,17 @@ class TestAttendee(TestCase):
         """
         pass
 
-    def test_Attendee_create(self):
+  #  def test_Attendee_create(self):
         """
         Test certificate model creation.
         """
-        model = AttendeeF.create()
+ #       model = AttendeeF.create()
 
         # check if PK exists
-        self.assertTrue(model.pk is not None)
+        #self.assertTrue(model.pk is not None)
 
         # check if model name exists
-        self.assertTrue(model.name is not None)
+#        self.assertTrue(model.name is not None)
 
 
 class TestCourse(TestCase):
@@ -126,3 +123,21 @@ class TestTrainingCenter(TestCase):
         # check if model name exists
         self.assertTrue(model.name is not None)
 
+class TestCourseType(TestCase):
+    """
+    Test certificate model.
+    """
+    def setUp(self):
+        """
+        Set up before test.
+        """
+        pass
+
+    def test_Course_Type_create(self):
+        """
+        Test certificate model creation.
+        """
+        model = CourseTypeF.create()
+
+        # check if PK exists
+        self.assertTrue(model.pk is not None)
