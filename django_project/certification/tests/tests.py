@@ -65,17 +65,17 @@ class TestAttendee(TestCase):
         """
         pass
 
-  #  def test_Attendee_create(self):
+    def test_Attendee_create(self):
         """
         Test certificate model creation.
         """
- #       model = AttendeeF.create()
+        model = AttendeeF.create()
 
         # check if PK exists
-        #self.assertTrue(model.pk is not None)
+        self.assertTrue(model.pk is not None)
 
-        # check if model name exists
-#        self.assertTrue(model.name is not None)
+        # check if model variable exists
+        self.assertTrue(model.firstname is not None)
 
 
 class TestCourse(TestCase):

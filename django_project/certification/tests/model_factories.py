@@ -34,7 +34,6 @@ class CourseTypeF(factory.django.DjangoModelFactory):
         model = CourseType
 
     name = factory.sequence(lambda n: u'Test course type name %s' % n)
-    # course = factory.SubFactory(CourseF)
 
     @factory.post_generation
     # simple many to many relationship
@@ -44,7 +43,7 @@ class CourseTypeF(factory.django.DjangoModelFactory):
             return
 
         if extracted:
-            # A list of groups were passed in, use them
+            # A list of groups were passed in, use them.
             for courses in extracted:
                 self.course.add(courses)
 
@@ -69,19 +68,20 @@ class AttendeeF(factory.django.DjangoModelFactory):
     firstname = factory.sequence(lambda n: u'Test attendee firstname %s' % n)
     surname = factory.sequence(lambda n: u'Test surname %s' % n)
     email = factory.sequence(lambda n: u'Test email %s' % n)
-    # certificate = factory.SubFactory(CertificateF)
+    # one to one relationship
+    certificate = factory.SubFactory(CertificateF)
 
-    @factory.post_generation
-    # simple many to many relationship
-    def certificate(self, create, extracted, **kwargs):
-        if not create:
-            # Simple build, do nothing.
-            return
-
-        if extracted:
-            # A list of groups were passed in, use them
-            for certificate in extracted:
-                self.certificate.add(certificate)
+    # @factory.post_generation
+    # # simple many to many relationship
+    # def certificate(self, create, extracted, **kwargs):
+    #     if not create:
+    #         # Simple build, do nothing.
+    #         return
+    #
+    #     if extracted:
+    #         # A list of groups were passed in, use them
+    #         for certificate in extracted:
+    #             self.certificate.add(certificate)
 
 
 class CourseF(factory.django.DjangoModelFactory):
@@ -92,8 +92,6 @@ class CourseF(factory.django.DjangoModelFactory):
         model = Course
 
     name = factory.sequence(lambda n: u'Test course name %s' % n)
-    # course_attendee = factory.SubFactory(AttendeeF)
-    # certificate = factory.SubFactory(CertificateF)
 
     @factory.post_generation
     # simple many to many relationship
@@ -103,7 +101,7 @@ class CourseF(factory.django.DjangoModelFactory):
             return
 
         if extracted:
-            # A list of groups were passed in, use them
+            # A list of groups were passed in, use them.
             for attendees in extracted:
                 self.course_attendee.add(attendees)
 
@@ -115,7 +113,7 @@ class CourseF(factory.django.DjangoModelFactory):
             return
 
         if extracted:
-            # A list of groups were passed in, use them
+            # A list of groups were passed in, use them.
             for _certificate in extracted:
                 self.certificate.add(_certificate)
 
