@@ -93,7 +93,7 @@ class Attendee(SlugModel, models.Model):
 
     slug = models.SlugField(unique=True)
     objects = models.Manager()
-    certificate = models.ForeignKey(Certificate, on_delete=models.CASCADE)
+    certificate = models.ForeignKey(Certificate)
 
     # noinspection PyClassicStyleClass.
     class Meta:
