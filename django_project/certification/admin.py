@@ -1,15 +1,18 @@
 # coding=UTF-8
 """Model admin class definitions."""
 
+# import reversion
 from django.contrib import admin
-from models import (
-    Certificate, Course, CertifyingOrganisation,
-    TrainingCenter, CourseConvener, CourseType,
-    Attendee)
-import reversion
+from certification.models.certificate import Certificate
+from certification.models.course import Course
+from certification.models.certifying_organisation import CertifyingOrganisation
+from certification.models.training_center import TrainingCenter
+from certification.models.course_convener import CourseConvener
+from certification.models.course_type import CourseType
+from certification.models.attendee import Attendee
 
 
-class CertificateAdmin(reversion.VersionAdmin):
+class CertificateAdmin(admin.ModelAdmin):
     """Certificate admin model."""
     def queryset(self, request):
         """Ensure we use the correct manager.
@@ -23,7 +26,7 @@ class CertificateAdmin(reversion.VersionAdmin):
         return qs
 
 
-class AttendeeAdmin(reversion.VersionAdmin):
+class AttendeeAdmin(admin.ModelAdmin):
     """Attendee admin model."""
 
     def queryset(self, request):
@@ -38,7 +41,7 @@ class AttendeeAdmin(reversion.VersionAdmin):
         return qs
 
 
-class CourseAdmin(reversion.VersionAdmin):
+class CourseAdmin(admin.ModelAdmin):
     """Course admin model."""
 
     def queryset(self, request):
@@ -53,7 +56,7 @@ class CourseAdmin(reversion.VersionAdmin):
         return qs
 
 
-class CourseTypeAdmin(reversion.VersionAdmin):
+class CourseTypeAdmin(admin.ModelAdmin):
     """Course type admin model."""
 
     def queryset(self, request):
@@ -68,7 +71,7 @@ class CourseTypeAdmin(reversion.VersionAdmin):
         return qs
 
 
-class TrainingCenterAdmin(reversion.VersionAdmin):
+class TrainingCenterAdmin(admin.ModelAdmin):
     """Training center admin model."""
 
     def queryset(self, request):
@@ -83,7 +86,7 @@ class TrainingCenterAdmin(reversion.VersionAdmin):
         return qs
 
 
-class CourseConvenerAdmin(reversion.VersionAdmin):
+class CourseConvenerAdmin(admin.ModelAdmin):
     """Course convener admin model."""
 
     def queryset(self, request):
@@ -98,7 +101,7 @@ class CourseConvenerAdmin(reversion.VersionAdmin):
         return qs
 
 
-class CertifyingOrganisationAdmin(reversion.VersionAdmin):
+class CertifyingOrganisationAdmin(admin.ModelAdmin):
     """Certifying organisation admin model."""
 
     def queryset(self, request):

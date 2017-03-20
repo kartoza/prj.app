@@ -2,6 +2,7 @@
 """Factories for building model instances for testing"""
 
 import factory
+
 from certification.models import (
     Certificate,
     Attendee,
@@ -19,7 +20,8 @@ class CertifyingOrganisationF(factory.django.DjangoModelFactory):
     class Meta:
         model = CertifyingOrganisation
 
-    name = factory.sequence(lambda n: u'Test certifying organisation name %s' % n)
+    name = factory.sequence(lambda n: u'Test certifying '
+                                      u'organisation name %s' % n)
     organisation_email = factory.sequence(lambda n: u'Test address %s' % n)
     organisation_phone = factory.sequence(lambda n: u'Test phone %s' % n)
     approved = True
@@ -129,7 +131,6 @@ class TrainingCenterF(factory.django.DjangoModelFactory):
     email = factory.sequence(lambda n: u'Test email %s' % n)
     Address = u'Test address'
     phone = factory.sequence(lambda n: u'Test phone %s' % n)
-    # course = factory.SubFactory(CourseF)
 
     @factory.post_generation
     # simple many to many relationship
