@@ -72,7 +72,6 @@ class CertifyingOrganisation(models.Model):
     course = models.ManyToManyField(Course)
     training_center = models.ManyToManyField(TrainingCenter)
     course_convener = models.ManyToManyField(CourseConvener)
-    project = models.ForeignKey('base.Project')
     objects = models.Manager()
     approved_objects = ApprovedCertifyingOrganisationManager()
     unapproved_objects = UnapprovedCertifyingOrganisationManager()
