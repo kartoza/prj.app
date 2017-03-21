@@ -25,7 +25,6 @@ class CertifyingOrganisationF(factory.django.DjangoModelFactory):
     organisation_email = factory.sequence(lambda n: u'Test address %s' % n)
     organisation_phone = factory.sequence(lambda n: u'Test phone %s' % n)
     approved = True
-    project = factory.SubFactory('base.tests.model_factories.ProjectF')
 
 
 class CourseTypeF(factory.django.DjangoModelFactory):
