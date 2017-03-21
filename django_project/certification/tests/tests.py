@@ -344,4 +344,3 @@ class TestCourseConvener(TestCase):
 
         # check if deleted
         self.assertTrue(model.pk is None)
-

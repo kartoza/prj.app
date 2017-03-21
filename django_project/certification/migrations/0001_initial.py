@@ -7,7 +7,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0002_project_gitter_room'),
     ]
 
     operations = [
@@ -63,9 +62,14 @@ class Migration(migrations.Migration):
             name='CourseConvener',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(help_text=b'Course convener name', max_length=250)),
+                ('email', models.CharField(help_text=b'Course convener email', max_length=150, null=True, blank=True)),
                 ('slug', models.SlugField()),
                 ('course', models.ManyToManyField(to='certification.Course')),
             ],
+            options={
+                'ordering': ['name'],
+            },
         ),
         migrations.CreateModel(
             name='CourseType',
@@ -108,11 +112,6 @@ class Migration(migrations.Migration):
             model_name='certifyingorganisation',
             name='course_type',
             field=models.ManyToManyField(to='certification.CourseType'),
-        ),
-        migrations.AddField(
-            model_name='certifyingorganisation',
-            name='project',
-            field=models.ForeignKey(to='base.Project'),
         ),
         migrations.AddField(
             model_name='certifyingorganisation',
