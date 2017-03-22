@@ -27,11 +27,11 @@ class Migration(migrations.Migration):
             name='Certificate',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('id_id', models.CharField(help_text=b'Id certificate.', max_length=200)),
+                ('certificateID', models.CharField(help_text=b'Id certificate.', max_length=200)),
                 ('slug', models.SlugField()),
             ],
             options={
-                'ordering': ['id_id'],
+                'ordering': ['certificateID'],
             },
         ),
         migrations.CreateModel(
@@ -40,6 +40,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(help_text=b'Name of Organisation or Institution.', max_length=200)),
                 ('organisation_email', models.CharField(help_text=b'Email address Organisation or Institution.', max_length=200)),
+                ('address', models.CharField(help_text=b'Contact of Organisation or Institution.', max_length=200)),
                 ('organisation_phone', models.CharField(help_text=b'Contact of Organisation or Institution.', max_length=200)),
                 ('approved', models.BooleanField(default=False, help_text=b'Approval from project admin')),
                 ('slug', models.SlugField()),
@@ -89,7 +90,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(help_text='Organisation/Institution name.', unique=True, max_length=150)),
                 ('email', models.CharField(help_text='Valid email address for communication purpose.', max_length=150)),
-                ('Address', models.TextField(help_text='Address of the organisation/institution.', max_length=250)),
+                ('address', models.TextField(help_text='Address of the organisation/institution.', max_length=250)),
                 ('phone', models.CharField(help_text='Phone number/Landline.', max_length=150)),
                 ('slug', models.SlugField()),
                 ('course', models.ManyToManyField(to='certification.Course')),

@@ -22,8 +22,9 @@ class CertifyingOrganisationF(factory.django.DjangoModelFactory):
 
     name = factory.sequence(lambda n: u'Test certifying '
                                       u'organisation name %s' % n)
-    organisation_email = factory.sequence(lambda n: u'Test address %s' % n)
+    organisation_email = factory.sequence(lambda n: u'Test email %s' % n)
     organisation_phone = factory.sequence(lambda n: u'Test phone %s' % n)
+    address = factory.sequence(lambda n: u'Test address %s' % n)
     approved = True
 
 
@@ -56,7 +57,7 @@ class CertificateF(factory.django.DjangoModelFactory):
     class Meta:
         model = Certificate
 
-    id_id = u'123AAA'
+    certificateID = u'123AAA'
 
 
 class AttendeeF(factory.django.DjangoModelFactory):
@@ -128,7 +129,7 @@ class TrainingCenterF(factory.django.DjangoModelFactory):
 
     name = factory.sequence(lambda n: u'Test training center name %s' % n)
     email = factory.sequence(lambda n: u'Test email %s' % n)
-    Address = u'Test address'
+    address = u'Test address'
     phone = factory.sequence(lambda n: u'Test phone %s' % n)
 
     @factory.post_generation

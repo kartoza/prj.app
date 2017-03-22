@@ -55,6 +55,13 @@ class CertifyingOrganisation(models.Model):
         blank=False
     )
 
+    address = models.CharField(
+        help_text="Contact of Organisation or Institution.",
+        max_length=200,
+        null=False,
+        blank=False
+    )
+
     organisation_phone = models.CharField(
         help_text="Contact of Organisation or Institution.",
         max_length=200,

@@ -14,7 +14,7 @@ from core.settings.contrib import STOP_WORDS
 class Certificate(models.Model):
     """Certificate model."""
 
-    id_id = models.CharField(
+    certificateID = models.CharField(
         help_text="Id certificate.",
         max_length=200,
         blank=False,
@@ -27,7 +27,7 @@ class Certificate(models.Model):
     class Meta:
         """ Meta class for Certificate."""
 
-        ordering = ['id_id']
+        ordering = ['certificateID']
 
     def __unicode__(self):
         return u'%s' % self.id_id
@@ -35,8 +35,8 @@ class Certificate(models.Model):
     def save(self, *args, **kwargs):
 
         if not self.pk:
-            id_id = self.slug_generator()
-            words = id_id.split()
+            certificateID = self.slug_generator()
+            words = certificateID.split()
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = slugify(new_list)[:50]

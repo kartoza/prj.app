@@ -238,7 +238,7 @@ class TestTrainingCenter(TestCase):
         # check if model name exists
         self.assertTrue(model.name is not None)
         self.assertTrue(model.phone is not None)
-        self.assertTrue(model.Address is not None)
+        self.assertTrue(model.address is not None)
         self.assertTrue(model.email is not None)
 
     def test_Training_Center_delete(self):

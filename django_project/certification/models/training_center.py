@@ -30,7 +30,7 @@ class TrainingCenter(models.Model):
         blank=False
     )
 
-    Address = models.TextField(
+    address = models.TextField(
         help_text=_('Address of the organisation/institution.'),
         max_length=250,
         null=False,
