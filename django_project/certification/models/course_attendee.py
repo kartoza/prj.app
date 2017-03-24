@@ -29,8 +29,11 @@ class CourseAttendee(models.Model):
     course = models.ForeignKey(Course)
     slug = models.SlugField()
     objects = models.Manager()
-    project = models.ForeignKey('base.Project')
+    # project = models.ForeignKey('base.Project')
     author = models.ForeignKey(User)
+
+    class Meta:
+        ordering = ['name']
 
     def save(self, *args, **kwargs):
 
@@ -48,11 +51,14 @@ class CourseAttendee(models.Model):
         return ''.join(random.choice(chars) for _ in range(size))
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return self.name
 
     def get_absolute_url(self):
         """Return URL to course detail page.
         :return: URL
         :rtype: str
         """
-        return reverse('course-attendee-detail', kwargs={'slug': self.slug})
+        return reverse('course-attendee-detail', kwargs={
+            'slug': self.slug,
+            'project_slug': self.project.slug
+        })

@@ -48,13 +48,12 @@ class TrainingCenter(models.Model):
     slug = models.SlugField()
     objects = models.Manager()
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
-    project = models.ForeignKey('base.Project')
+    # project = models.ForeignKey('base.Project')
     author = models.ForeignKey(User)
 
     # noinspection PyClassicStyleClass.
     class Meta:
         """Meta class for training centre."""
-
         ordering = ['name']
 
     def save(self, *args, **kwargs):
@@ -69,11 +68,14 @@ class TrainingCenter(models.Model):
         super(TrainingCenter, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return self.name
 
     def get_absolute_url(self):
         """Return URL to training center detail page.
         :return: URL
         :rtype: str
         """
-        return reverse('training-center-detail', kwargs={'slug': self.slug})
+        return reverse('training-center-detail', kwargs={
+            'slug': self.slug,
+            'project_slug': self.project.slug
+        })

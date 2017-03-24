@@ -9,6 +9,9 @@ from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
 from unidecode import unidecode
 from django.contrib.auth.models import User
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ApprovedCertifyingOrganisationManager(models.Manager):
@@ -72,11 +75,11 @@ class CertifyingOrganisation(models.Model):
     )
 
     slug = models.SlugField()
+    # project = models.ForeignKey('base.Project')
+    author = models.ForeignKey(User)
     objects = models.Manager()
     approved_objects = ApprovedCertifyingOrganisationManager()
     unapproved_objects = UnapprovedCertifyingOrganisationManager()
-    project = models.ForeignKey('base.Project')
-    author = models.ForeignKey(User)
 
     # noinspection PyClassicStyleClass.
     class Meta:
@@ -96,14 +99,14 @@ class CertifyingOrganisation(models.Model):
         super(CertifyingOrganisation, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return self.name
 
     def get_absolute_url(self):
         """Return URL to certifying organisation detail page.
         :return: URL
         :rtype: str
         """
-        return reverse(
-            'certifying-organisation-detail', kwargs={
+        return reverse('certifying-organisation-detail', kwargs={
                 'slug': self.slug,
-                'project_slug': self.project.slug})
+                'project_slug': self.project.slug
+        })

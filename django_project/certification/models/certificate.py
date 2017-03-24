@@ -27,7 +27,7 @@ class Certificate(models.Model):
     slug = models.SlugField()
     objects = models.Manager()
     author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project')
+    # project = models.ForeignKey('base.Project')
     course_attendee = models.ForeignKey(CourseAttendee)
     course = models.ForeignKey(Course)
 
@@ -37,7 +37,7 @@ class Certificate(models.Model):
         ordering = ['certificateID']
 
     def __unicode__(self):
-        return u'%s' % self.id_id
+        return self.certificateID
 
     def save(self, *args, **kwargs):
 
@@ -60,4 +60,7 @@ class Certificate(models.Model):
         :return: URL
         :rtype: str
         """
-        return reverse('certificate-detail', kwargs={'slug': self.slug})
+        return reverse('certificate-detail', kwargs={
+            'slug': self.slug,
+            'project_slug': self.project.slug
+        })

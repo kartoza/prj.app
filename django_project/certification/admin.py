@@ -1,7 +1,6 @@
 # coding=UTF-8
 """Model admin class definitions."""
 
-# import reversion
 from django.contrib import admin
 from certification.models.certificate import Certificate
 from certification.models.course import Course

@@ -26,12 +26,11 @@ class CourseType(models.Model):
     objects = models.Manager()
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project')
+    # project = models.ForeignKey('base.Project')
 
     # noinspection PyClassicStyleClass.
     class Meta:
         """Meta class for Course types."""
-
         ordering = ['name']
 
     def save(self, *args, **kwargs):
@@ -45,11 +44,14 @@ class CourseType(models.Model):
         super(CourseType, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return self.name
 
     def get_absolute_url(self):
         """Return URL to course type detail page.
         :return: URL
         :rtype: str
         """
-        return reverse('course-type-detail', kwargs={'slug': self.slug})
+        return reverse('course-type-detail', kwargs={
+            'slug': self.slug,
+            'project_slug': self.project.slug
+        })

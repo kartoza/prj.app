@@ -37,8 +37,8 @@ class Attendee(models.Model):
 
     slug = models.SlugField()
     objects = models.Manager()
-    author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project')
+    author = models.ForeignKey(User, null=True)
+    # project = models.ForeignKey('base.Project')
 
     # noinspection PyClassicStyleClass.
     class Meta:
@@ -49,20 +49,18 @@ class Attendee(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             words = self.firstname.split()
-            filtered_words = [word for word in words if
-                              word.lower() not in STOP_WORDS]
+            filtered_words = [word for word in
+                              words if word.lower() not in STOP_WORDS]
             # unidecode() represents special characters (unicode data) in ASCII
             new_list = unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
-
         super(Attendee, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'%s' % self.firstname
+        return self.firstname
 
     def get_absolute_url(self):
-        """Return URL to attendee detail page.
-        :return: URL
-        :rtype: str
-        """
-        return reverse('attendee-detail', kwargs={'slug': self.slug})
+        return reverse('attendee-detail', kwargs={
+            'slug': self.slug,
+            'project_slug': self.project.slug
+        })

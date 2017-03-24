@@ -10,11 +10,7 @@ from django.db import models
 
 from unidecode import unidecode
 from django.contrib.auth.models import User
-import logging
 from certifying_organisation import CertifyingOrganisation
-
-
-logger = logging.getLogger(__name__)
 
 
 class CourseConvener(models.Model):
@@ -37,14 +33,14 @@ class CourseConvener(models.Model):
     slug = models.SlugField()
     objects = models.Manager()
     author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project')
+    # project = models.ForeignKey('base.Project')
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
 
     class Meta:
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return self.name
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -62,4 +58,7 @@ class CourseConvener(models.Model):
         :return: URL
         :rtype: str
         """
-        return reverse('course-convener-detail', kwargs={'slug': self.slug})
+        return reverse('course-convener-detail', kwargs={
+            'slug': self.slug,
+            'project_slug': self.project.slug
+        })

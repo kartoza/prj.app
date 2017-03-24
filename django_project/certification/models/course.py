@@ -13,6 +13,9 @@ from certifying_organisation import CertifyingOrganisation
 from course_type import CourseType
 from training_center import TrainingCenter
 from django.contrib.auth.models import User
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Course(models.Model):
@@ -32,7 +35,7 @@ class Course(models.Model):
     training_center = models.ForeignKey(TrainingCenter)
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project')
+    # project = models.ForeignKey('base.Project')
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -45,12 +48,18 @@ class Course(models.Model):
 
         super(Course, self).save(*args, **kwargs)
 
+    class Meta:
+        ordering = ['name']
+
     def __unicode__(self):
-        return u'%s' % self.name
+        return self.name
 
     def get_absolute_url(self):
         """Return URL to course detail page.
         :return: URL
         :rtype: str
         """
-        return reverse('course-detail', kwargs={'slug': self.slug})
+        return reverse('course-detail', kwargs={
+            'slug': self.slug,
+            'project_slug': self.project.slug
+        })
