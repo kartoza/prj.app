@@ -10,6 +10,7 @@ from certification.models.training_center import TrainingCenter
 from certification.models.course_convener import CourseConvener
 from certification.models.course_type import CourseType
 from certification.models.attendee import Attendee
+from certification.models.course_attendee import CourseAttendee
 
 
 class CertificateAdmin(admin.ModelAdmin):
@@ -19,11 +20,11 @@ class CertificateAdmin(admin.ModelAdmin):
 
         :param request: HttpRequest object
         """
-        qs = self.model.objects
+        query_set = self.model.objects
         ordering = self.get_ordering(request)
         if ordering:
-            qs = qs.order_by(*ordering)
-        return qs
+            query_set = query_set.order_by(*ordering)
+        return query_set
 
 
 class AttendeeAdmin(admin.ModelAdmin):
@@ -34,11 +35,25 @@ class AttendeeAdmin(admin.ModelAdmin):
 
         :param request: HttpRequest object
         """
-        qs = self.model.objects
+        query_set = self.model.objects
         ordering = self.get_ordering(request)
         if ordering:
-            qs = qs.order_by(*ordering)
-        return qs
+            query_set = query_set.order_by(*ordering)
+        return query_set
+
+
+class CourseAttendeeAdmin(admin.ModelAdmin):
+    """Certificate admin model."""
+    def queryset(self, request):
+        """Ensure we use the correct manager.
+
+        :param request: HttpRequest object
+        """
+        query_set = self.model.objects
+        ordering = self.get_ordering(request)
+        if ordering:
+            query_set = query_set.order_by(*ordering)
+        return query_set
 
 
 class CourseAdmin(admin.ModelAdmin):
@@ -49,11 +64,11 @@ class CourseAdmin(admin.ModelAdmin):
 
         :param request: HttpRequest object
         """
-        qs = self.model.objects
+        query_set = self.model.objects
         ordering = self.get_ordering(request)
         if ordering:
-            qs = qs.order_by(*ordering)
-        return qs
+            query_set = query_set.order_by(*ordering)
+        return query_set
 
 
 class CourseTypeAdmin(admin.ModelAdmin):
@@ -64,11 +79,11 @@ class CourseTypeAdmin(admin.ModelAdmin):
 
         :param request: HttpRequest object
         """
-        qs = self.model.objects
+        query_set = self.model.objects
         ordering = self.get_ordering(request)
         if ordering:
-            qs = qs.order_by(*ordering)
-        return qs
+            query_set = query_set.order_by(*ordering)
+        return query_set
 
 
 class TrainingCenterAdmin(admin.ModelAdmin):
@@ -79,11 +94,11 @@ class TrainingCenterAdmin(admin.ModelAdmin):
 
         :param request: HttpRequest object
         """
-        qs = self.model.objects
+        query_set = self.model.objects
         ordering = self.get_ordering(request)
         if ordering:
-            qs = qs.order_by(*ordering)
-        return qs
+            query_set = query_set.order_by(*ordering)
+        return query_set
 
 
 class CourseConvenerAdmin(admin.ModelAdmin):
@@ -94,11 +109,11 @@ class CourseConvenerAdmin(admin.ModelAdmin):
 
         :param request: HttpRequest object
         """
-        qs = self.model.objects
+        query_set = self.model.objects
         ordering = self.get_ordering(request)
         if ordering:
-            qs = qs.order_by(*ordering)
-        return qs
+            query_set = query_set.order_by(*ordering)
+        return query_set
 
 
 class CertifyingOrganisationAdmin(admin.ModelAdmin):
@@ -109,11 +124,11 @@ class CertifyingOrganisationAdmin(admin.ModelAdmin):
 
         :param request: HttpRequest object
         """
-        qs = self.model.objects
+        query_set = self.model.objects
         ordering = self.get_ordering(request)
         if ordering:
-            qs = qs.order_by(*ordering)
-        return qs
+            query_set = query_set.order_by(*ordering)
+        return query_set
 
 admin.site.register(Certificate, CertificateAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
@@ -122,3 +137,4 @@ admin.site.register(CourseType, CourseTypeAdmin)
 admin.site.register(TrainingCenter, TrainingCenterAdmin)
 admin.site.register(CourseConvener, CourseConvenerAdmin)
 admin.site.register(CertifyingOrganisation, CertifyingOrganisationAdmin)
+admin.site.register(CourseAttendee, CourseAttendeeAdmin)

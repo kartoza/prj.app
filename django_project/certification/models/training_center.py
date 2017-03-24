@@ -9,7 +9,8 @@ from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 from core.settings.contrib import STOP_WORDS
 from unidecode import unidecode
-from course import Course
+from certifying_organisation import CertifyingOrganisation
+from django.contrib.auth.models import User
 
 
 class TrainingCenter(models.Model):
@@ -46,7 +47,9 @@ class TrainingCenter(models.Model):
 
     slug = models.SlugField()
     objects = models.Manager()
-    course = models.ManyToManyField(Course)
+    certifying_organisation = models.ForeignKey(CertifyingOrganisation)
+    project = models.ForeignKey('base.Project')
+    author = models.ForeignKey(User)
 
     # noinspection PyClassicStyleClass.
     class Meta:
@@ -57,7 +60,8 @@ class TrainingCenter(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             words = self.name.split()
-            filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
+            filtered_words = [word for word in words if
+                              word.lower() not in STOP_WORDS]
             # unidecode() represents special characters (unicode data) in ASCII
             new_list = unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]

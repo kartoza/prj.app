@@ -1,63 +1,58 @@
 # coding=utf-8
 """
-Certificate model definitions for certification apps
+Course attendee model definitions for certification apps
 """
 
-import random
 import string
+import random
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
-from django.contrib.auth.models import User
-from course_attendee import CourseAttendee
 from course import Course
+from training_center import TrainingCenter
+from attendee import Attendee
+from django.contrib.auth.models import User
 
 
-class Certificate(models.Model):
-    """Certificate model."""
+class CourseAttendee(models.Model):
 
-    certificateID = models.CharField(
-        help_text="Id certificate.",
+    name = models.CharField(
+        help_text="Course attendee.",
         max_length=200,
-        blank=False,
         null=False,
+        blank=False
     )
 
+    attendee = models.ManyToManyField(Attendee)
+    training_center = models.ForeignKey(TrainingCenter)
+    course = models.ForeignKey(Course)
     slug = models.SlugField()
     objects = models.Manager()
-    author = models.ForeignKey(User)
     project = models.ForeignKey('base.Project')
-    course_attendee = models.ForeignKey(CourseAttendee)
-    course = models.ForeignKey(Course)
-
-    class Meta:
-        """ Meta class for Certificate."""
-
-        ordering = ['certificateID']
-
-    def __unicode__(self):
-        return u'%s' % self.id_id
+    author = models.ForeignKey(User)
 
     def save(self, *args, **kwargs):
 
         if not self.pk:
-            certificateID = self.slug_generator()
-            words = certificateID.split()
+            name = self.slug_generator()
+            words = name.split()
             filtered_words = [word for word in words if
                               word.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = slugify(new_list)[:50]
-
-        super(Certificate, self).save(*args, **kwargs)
+        super(CourseAttendee, self).save(*args, **kwargs)
 
     @staticmethod
     def slug_generator(size=6, chars=string.ascii_lowercase):
         return ''.join(random.choice(chars) for _ in range(size))
 
+    def __unicode__(self):
+        return u'%s' % self.name
+
     def get_absolute_url(self):
-        """Return URL to certificate detail page.
+        """Return URL to course detail page.
         :return: URL
         :rtype: str
         """
-        return reverse('certificate-detail', kwargs={'slug': self.slug})
+        return reverse('course-attendee-detail', kwargs={'slug': self.slug})

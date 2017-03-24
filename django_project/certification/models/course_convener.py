@@ -7,9 +7,11 @@ from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
 from django.db import models
-from course import Course
+
 from unidecode import unidecode
+from django.contrib.auth.models import User
 import logging
+from certifying_organisation import CertifyingOrganisation
 
 
 logger = logging.getLogger(__name__)
@@ -34,7 +36,9 @@ class CourseConvener(models.Model):
 
     slug = models.SlugField()
     objects = models.Manager()
-    course = models.ManyToManyField(Course)
+    author = models.ForeignKey(User)
+    project = models.ForeignKey('base.Project')
+    certifying_organisation = models.ForeignKey(CertifyingOrganisation)
 
     class Meta:
         ordering = ['name']
@@ -45,7 +49,8 @@ class CourseConvener(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             words = self.name.split()
-            filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
+            filtered_words = [word for word in words if
+                              word.lower() not in STOP_WORDS]
             # unidecode() represents special characters (unicode data) in ASCII
             new_list = unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]

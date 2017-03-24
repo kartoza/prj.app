@@ -9,7 +9,8 @@ from certification.tests.model_factories import (
     CourseTypeF,
     CourseConvenerF,
     CertifyingOrganisationF,
-    TrainingCenterF)
+    TrainingCenterF,
+    CourseAttendeeF)
 
 
 class TestCertifyingOrganisation(TestCase):
@@ -63,6 +64,7 @@ class TestCertifyingOrganisation(TestCase):
             'name': u'new organisation name',
             'organisation_email': u'new organisation email',
             'organisation_phone': u'new organisation phone',
+            'address': u'new address',
             'approved': False,
         }
         model.__dict__.update(new_model_data)
@@ -108,7 +110,7 @@ class TestCertificate(TestCase):
         """
         model = CertificateF.create()
         new_model_data = {
-            'id_id': 'new ID certificate name',
+            'certificateID': 'new ID certificate name',
         }
         model.__dict__.update(new_model_data)
         model.save()
@@ -340,6 +342,36 @@ class TestCourseConvener(TestCase):
         Test course convener model delete.
         """
         model = CourseConvenerF.create()
+        model.delete()
+
+        # check if deleted
+        self.assertTrue(model.pk is None)
+
+
+class TestCourseAttendee(TestCase):
+    """
+    Test course convener model.
+    """
+    def setUp(self):
+        """
+        Set up before test.
+        """
+        pass
+
+    def test_Course_Attendee_create(self):
+        """
+        Test course convener model creation.
+        """
+        model = CourseAttendeeF.create()
+
+        # check if PK exists
+        self.assertTrue(model.pk is not None)
+
+    def test_Course_Attendee_delete(self):
+        """
+        Test course convener model delete.
+        """
+        model = CourseAttendeeF.create()
         model.delete()
 
         # check if deleted

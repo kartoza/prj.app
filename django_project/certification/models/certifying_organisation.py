@@ -8,10 +8,7 @@ from django.db import models
 from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
 from unidecode import unidecode
-from course_type import CourseType
-from course import Course
-from training_center import TrainingCenter
-from course_convener import CourseConvener
+from django.contrib.auth.models import User
 
 
 class ApprovedCertifyingOrganisationManager(models.Manager):
@@ -75,13 +72,11 @@ class CertifyingOrganisation(models.Model):
     )
 
     slug = models.SlugField()
-    course_type = models.ManyToManyField(CourseType)
-    course = models.ManyToManyField(Course)
-    training_center = models.ManyToManyField(TrainingCenter)
-    course_convener = models.ManyToManyField(CourseConvener)
     objects = models.Manager()
     approved_objects = ApprovedCertifyingOrganisationManager()
     unapproved_objects = UnapprovedCertifyingOrganisationManager()
+    project = models.ForeignKey('base.Project')
+    author = models.ForeignKey(User)
 
     # noinspection PyClassicStyleClass.
     class Meta:
@@ -92,7 +87,8 @@ class CertifyingOrganisation(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             words = self.name.split()
-            filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
+            filtered_words = [word for word in words if
+                              word.lower() not in STOP_WORDS]
             # unidecode() represents special characters (unicode data) in ASCII
             new_list = unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
