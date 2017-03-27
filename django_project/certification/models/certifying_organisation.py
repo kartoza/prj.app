@@ -14,6 +14,22 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+class SlugifyingMixin(object):
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            words = self.name.split()
+            filtered_words = [word for word in words if
+                              word.lower() not in STOP_WORDS]
+            # unidecode() represents special characters (unicode data) in ASCII
+            new_list = unidecode(' '.join(filtered_words))
+            self.slug = slugify(new_list)[:50]
+        super(SlugifyingMixin, self).save(*args, **kwargs)
+
+
 class ApprovedCertifyingOrganisationManager(models.Manager):
     """Custom training centre manager, shows only approved training center."""
 
@@ -38,7 +54,7 @@ class UnapprovedCertifyingOrganisationManager(models.Manager):
         ).filter(approved=False)
 
 
-class CertifyingOrganisation(models.Model):
+class CertifyingOrganisation(SlugifyingMixin, models.Model):
     """ Certifying organisation model."""
 
     name = models.CharField(
@@ -83,19 +99,9 @@ class CertifyingOrganisation(models.Model):
 
     # noinspection PyClassicStyleClass.
     class Meta:
-        """ Meta class for Course attendee."""
-        app_label = 'certification'
         ordering = ['name']
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            words = self.name.split()
-            filtered_words = [word for word in words if
-                              word.lower() not in STOP_WORDS]
-            # unidecode() represents special characters (unicode data) in ASCII
-            new_list = unidecode(' '.join(filtered_words))
-            self.slug = slugify(new_list)[:50]
-
         super(CertifyingOrganisation, self).save(*args, **kwargs)
 
     def __unicode__(self):

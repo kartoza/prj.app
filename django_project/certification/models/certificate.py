@@ -25,22 +25,16 @@ class Certificate(models.Model):
     )
 
     slug = models.SlugField()
-    objects = models.Manager()
     author = models.ForeignKey(User)
     # project = models.ForeignKey('base.Project')
     course_attendee = models.ForeignKey(CourseAttendee)
     course = models.ForeignKey(Course)
+    objects = models.Manager()
 
     class Meta:
-        """ Meta class for Certificate."""
-
         ordering = ['certificateID']
 
-    def __unicode__(self):
-        return self.certificateID
-
     def save(self, *args, **kwargs):
-
         if not self.pk:
             certificateID = self.slug_generator()
             words = certificateID.split()
@@ -54,6 +48,9 @@ class Certificate(models.Model):
     @staticmethod
     def slug_generator(size=6, chars=string.ascii_lowercase):
         return ''.join(random.choice(chars) for _ in range(size))
+
+    def __unicode__(self):
+        return self.certificateID
 
     def get_absolute_url(self):
         """Return URL to certificate detail page.

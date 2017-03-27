@@ -36,14 +36,12 @@ class Attendee(models.Model):
     )
 
     slug = models.SlugField()
-    objects = models.Manager()
     author = models.ForeignKey(User, null=True)
     # project = models.ForeignKey('base.Project')
+    objects = models.Manager()
 
     # noinspection PyClassicStyleClass.
     class Meta:
-        """ Meta class for Course attendee."""
-
         ordering = ['firstname']
 
     def save(self, *args, **kwargs):

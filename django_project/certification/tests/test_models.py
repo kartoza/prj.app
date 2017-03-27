@@ -27,6 +27,7 @@ class TestCertifyingOrganisation(TestCase):
         """
         Test certifying organisation model creation.
         """
+
         model = CertifyingOrganisationF.create()
 
         # check if PK exists

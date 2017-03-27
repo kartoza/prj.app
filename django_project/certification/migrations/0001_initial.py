@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 from django.conf import settings
+import certification.models.certifying_organisation
 
 
 class Migration(migrations.Migration):
@@ -53,6 +54,7 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['name'],
             },
+            bases=(certification.models.certifying_organisation.SlugifyingMixin, models.Model),
         ),
         migrations.CreateModel(
             name='Course',
@@ -66,6 +68,7 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['name'],
             },
+            bases=(certification.models.certifying_organisation.SlugifyingMixin, models.Model),
         ),
         migrations.CreateModel(
             name='CourseAttendee',
@@ -94,6 +97,7 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['name'],
             },
+            bases=(certification.models.certifying_organisation.SlugifyingMixin, models.Model),
         ),
         migrations.CreateModel(
             name='CourseType',
@@ -107,6 +111,7 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['name'],
             },
+            bases=(certification.models.certifying_organisation.SlugifyingMixin, models.Model),
         ),
         migrations.CreateModel(
             name='TrainingCenter',
@@ -123,6 +128,7 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['name'],
             },
+            bases=(certification.models.certifying_organisation.SlugifyingMixin, models.Model),
         ),
         migrations.AddField(
             model_name='courseattendee',

@@ -4,16 +4,12 @@ Course convener model definitions for certification apps
 """
 
 from django.core.urlresolvers import reverse
-from django.utils.text import slugify
-from core.settings.contrib import STOP_WORDS
 from django.db import models
-
-from unidecode import unidecode
 from django.contrib.auth.models import User
-from certifying_organisation import CertifyingOrganisation
+from certifying_organisation import CertifyingOrganisation, SlugifyingMixin
 
 
-class CourseConvener(models.Model):
+class CourseConvener(SlugifyingMixin, models.Model):
     """Course Convener model."""
 
     name = models.CharField(
@@ -31,10 +27,10 @@ class CourseConvener(models.Model):
     )
 
     slug = models.SlugField()
-    objects = models.Manager()
     author = models.ForeignKey(User)
     # project = models.ForeignKey('base.Project')
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
+    objects = models.Manager()
 
     class Meta:
         ordering = ['name']
@@ -43,14 +39,6 @@ class CourseConvener(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            words = self.name.split()
-            filtered_words = [word for word in words if
-                              word.lower() not in STOP_WORDS]
-            # unidecode() represents special characters (unicode data) in ASCII
-            new_list = unidecode(' '.join(filtered_words))
-            self.slug = slugify(new_list)[:50]
-
         super(CourseConvener, self).save(*args, **kwargs)
 
     def get_absolute_url(self):

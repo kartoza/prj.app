@@ -5,15 +5,12 @@ Training center model definitions for certification apps
 
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
-from core.settings.contrib import STOP_WORDS
-from unidecode import unidecode
-from certifying_organisation import CertifyingOrganisation
+from certifying_organisation import CertifyingOrganisation, SlugifyingMixin
 from django.contrib.auth.models import User
 
 
-class TrainingCenter(models.Model):
+class TrainingCenter(SlugifyingMixin, models.Model):
     """Training Centre / Organisation registration."""
 
     name = models.CharField(
@@ -46,25 +43,16 @@ class TrainingCenter(models.Model):
     )
 
     slug = models.SlugField()
-    objects = models.Manager()
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     # project = models.ForeignKey('base.Project')
     author = models.ForeignKey(User)
+    objects = models.Manager()
 
     # noinspection PyClassicStyleClass.
     class Meta:
-        """Meta class for training centre."""
         ordering = ['name']
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            words = self.name.split()
-            filtered_words = [word for word in words if
-                              word.lower() not in STOP_WORDS]
-            # unidecode() represents special characters (unicode data) in ASCII
-            new_list = unidecode(' '.join(filtered_words))
-            self.slug = slugify(new_list)[:50]
-
         super(TrainingCenter, self).save(*args, **kwargs)
 
     def __unicode__(self):

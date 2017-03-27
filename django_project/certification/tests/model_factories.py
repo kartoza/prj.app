@@ -27,7 +27,7 @@ class CertifyingOrganisationF(factory.django.DjangoModelFactory):
     organisation_email = factory.sequence(lambda n: u'Test email %s' % n)
     organisation_phone = factory.sequence(lambda n: u'Test phone %s' % n)
     address = factory.sequence(lambda n: u'Test address %s' % n)
-    #project = factory.SubFactory('base.tests.model_factories.ProjectF')
+    # project = factory.SubFactory('base.tests.model_factories.ProjectF')
     author = factory.SubFactory(UserF)
     approved = True
 
@@ -40,7 +40,7 @@ class CourseConvenerF(factory.django.DjangoModelFactory):
     class Meta:
         model = CourseConvener
 
-    #project = factory.SubFactory('base.tests.model_factories.ProjectF')
+    # project = factory.SubFactory('base.tests.model_factories.ProjectF')
     author = factory.SubFactory(UserF)
     certifying_organisation = factory.SubFactory(CertifyingOrganisationF)
 
@@ -56,8 +56,7 @@ class TrainingCenterF(factory.django.DjangoModelFactory):
     email = factory.sequence(lambda n: u'Test email %s' % n)
     address = u'Test address'
     phone = factory.sequence(lambda n: u'Test phone %s' % n)
-
-    #project = factory.SubFactory('base.tests.model_factories.ProjectF')
+    # project = factory.SubFactory('base.tests.model_factories.ProjectF')
     author = factory.SubFactory(UserF)
     certifying_organisation = factory.SubFactory(CertifyingOrganisationF)
 
@@ -70,9 +69,8 @@ class CourseTypeF(factory.django.DjangoModelFactory):
         model = CourseType
 
     name = factory.sequence(lambda n: u'Test course type name %s' % n)
-
     certifying_organisation = factory.SubFactory(CertifyingOrganisationF)
-    #project = factory.SubFactory('base.tests.model_factories.ProjectF')
+    # project = factory.SubFactory('base.tests.model_factories.ProjectF')
     author = factory.SubFactory(UserF)
 
 
@@ -84,8 +82,7 @@ class CourseF(factory.django.DjangoModelFactory):
         model = Course
 
     name = factory.sequence(lambda n: u'Test course name %s' % n)
-
-    #project = factory.SubFactory('base.tests.model_factories.ProjectF')
+    # project = factory.SubFactory('base.tests.model_factories.ProjectF')
     author = factory.SubFactory(UserF)
     course_convener = factory.SubFactory(CourseConvenerF)
     certifying_organisation = factory.SubFactory(CertifyingOrganisationF)
@@ -103,7 +100,7 @@ class CourseAttendeeF(factory.django.DjangoModelFactory):
 
     training_center = factory.SubFactory(TrainingCenterF)
     course = factory.SubFactory(CourseF)
-    #project = factory.SubFactory('base.tests.model_factories.ProjectF')
+    # project = factory.SubFactory('base.tests.model_factories.ProjectF')
     author = factory.SubFactory(UserF)
 
     @factory.post_generation
@@ -127,7 +124,7 @@ class CertificateF(factory.django.DjangoModelFactory):
         model = Certificate
 
     certificateID = u'123AAA'
-    #project = factory.SubFactory('base.tests.model_factories.ProjectF')
+    # project = factory.SubFactory('base.tests.model_factories.ProjectF')
     author = factory.SubFactory(UserF)
     course_attendee = factory.SubFactory(CourseAttendeeF)
     course = factory.SubFactory(CourseF)
@@ -143,5 +140,5 @@ class AttendeeF(factory.django.DjangoModelFactory):
     firstname = factory.sequence(lambda n: u'Test attendee firstname %s' % n)
     surname = factory.sequence(lambda n: u'Test surname %s' % n)
     email = factory.sequence(lambda n: u'Test email %s' % n)
-    #project = factory.SubFactory('base.tests.model_factories.ProjectF')
+    # project = factory.SubFactory('base.tests.model_factories.ProjectF')
     author = factory.SubFactory(UserF)

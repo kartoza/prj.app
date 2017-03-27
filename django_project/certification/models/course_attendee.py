@@ -24,19 +24,18 @@ class CourseAttendee(models.Model):
         blank=False
     )
 
+    slug = models.SlugField()
     attendee = models.ManyToManyField(Attendee)
     training_center = models.ForeignKey(TrainingCenter)
     course = models.ForeignKey(Course)
-    slug = models.SlugField()
-    objects = models.Manager()
     # project = models.ForeignKey('base.Project')
     author = models.ForeignKey(User)
+    objects = models.Manager()
 
     class Meta:
         ordering = ['name']
 
     def save(self, *args, **kwargs):
-
         if not self.pk:
             name = self.slug_generator()
             words = name.split()
