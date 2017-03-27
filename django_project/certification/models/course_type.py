@@ -19,10 +19,31 @@ class CourseType(SlugifyingMixin, models.Model):
         blank=False
     )
 
+    descriptions = models.TextField(
+        help_text=('Course type descriptions.'),
+        max_length=250,
+        null=True,
+        blank=True,
+    )
+
+    instruction_hours = models.CharField(
+        help_text="Number of instruction hours e.g. 40 hours",
+        max_length=200,
+        null=True,
+        blank=True
+    )
+
+    coursetype_link = models.CharField(
+        help_text="Link to course types",
+        max_length=200,
+        null=True,
+        blank=True
+    )
+
     slug = models.SlugField(unique=True)
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     author = models.ForeignKey(User)
-    # project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project')
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass.

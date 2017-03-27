@@ -10,6 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('base', '0002_project_gitter_room'),
     ]
 
     operations = [
@@ -21,7 +22,8 @@ class Migration(migrations.Migration):
                 ('surname', models.CharField(help_text=b'Surname course attendee.', max_length=200)),
                 ('email', models.CharField(help_text=b'Email address.', max_length=200)),
                 ('slug', models.SlugField()),
-                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True)),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('project', models.ForeignKey(to='base.Project')),
             ],
             options={
                 'ordering': ['firstname'],
@@ -33,6 +35,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('certificateID', models.CharField(help_text=b'Id certificate.', max_length=200)),
                 ('slug', models.SlugField()),
+                ('attendee', models.ForeignKey(to='certification.Attendee')),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
@@ -50,6 +53,7 @@ class Migration(migrations.Migration):
                 ('approved', models.BooleanField(default=False, help_text=b'Approval from project admin')),
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('project', models.ForeignKey(to='base.Project')),
             ],
             options={
                 'ordering': ['name'],
@@ -79,6 +83,7 @@ class Migration(migrations.Migration):
                 ('attendee', models.ManyToManyField(to='certification.Attendee')),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('course', models.ForeignKey(to='certification.Course')),
+                ('project', models.ForeignKey(to='base.Project')),
             ],
             options={
                 'ordering': ['name'],
@@ -93,6 +98,7 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
+                ('project', models.ForeignKey(to='base.Project')),
             ],
             options={
                 'ordering': ['name'],
@@ -104,9 +110,13 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(help_text=b'Course type.', max_length=200)),
+                ('descriptions', models.TextField(help_text=b'Course type descriptions.', max_length=250, null=True, blank=True)),
+                ('instruction_hours', models.CharField(help_text=b'Number of instruction hours e.g. 40 hours', max_length=200, null=True, blank=True)),
+                ('coursetype_link', models.CharField(help_text=b'Link to course types', max_length=200, null=True, blank=True)),
                 ('slug', models.SlugField(unique=True)),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
+                ('project', models.ForeignKey(to='base.Project')),
             ],
             options={
                 'ordering': ['name'],
@@ -124,6 +134,7 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
+                ('project', models.ForeignKey(to='base.Project')),
             ],
             options={
                 'ordering': ['name'],
@@ -147,6 +158,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='course',
+            name='project',
+            field=models.ForeignKey(to='base.Project'),
+        ),
+        migrations.AddField(
+            model_name='course',
             name='training_center',
             field=models.ForeignKey(to='certification.TrainingCenter'),
         ),
@@ -159,5 +175,10 @@ class Migration(migrations.Migration):
             model_name='certificate',
             name='course_attendee',
             field=models.ForeignKey(to='certification.CourseAttendee'),
+        ),
+        migrations.AddField(
+            model_name='certificate',
+            name='project',
+            field=models.ForeignKey(to='base.Project'),
         ),
     ]

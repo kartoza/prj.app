@@ -30,7 +30,7 @@ class SlugifyingMixin(object):
         super(SlugifyingMixin, self).save(*args, **kwargs)
 
 
-class ApprovedCertifyingOrganisationManager(models.Manager):
+class ApprovedCertifyingOrganisationManager(SlugifyingMixin, models.Manager):
     """Custom training centre manager, shows only approved training center."""
 
     def get_queryset(self):
@@ -91,14 +91,16 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
     )
 
     slug = models.SlugField()
-    # project = models.ForeignKey('base.Project')
     author = models.ForeignKey(User)
+    project = models.ForeignKey('base.Project')
     objects = models.Manager()
     approved_objects = ApprovedCertifyingOrganisationManager()
     unapproved_objects = UnapprovedCertifyingOrganisationManager()
 
     # noinspection PyClassicStyleClass.
     class Meta:
+        """ Meta class for Course attendee."""
+        app_label = 'certification'
         ordering = ['name']
 
     def save(self, *args, **kwargs):

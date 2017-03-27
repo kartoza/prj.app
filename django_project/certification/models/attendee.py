@@ -36,8 +36,8 @@ class Attendee(models.Model):
     )
 
     slug = models.SlugField()
-    author = models.ForeignKey(User, null=True)
-    # project = models.ForeignKey('base.Project')
+    author = models.ForeignKey(User)
+    project = models.ForeignKey('base.Project')
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass.

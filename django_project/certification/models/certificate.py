@@ -12,6 +12,7 @@ from core.settings.contrib import STOP_WORDS
 from django.contrib.auth.models import User
 from course_attendee import CourseAttendee
 from course import Course
+from attendee import Attendee
 
 
 class Certificate(models.Model):
@@ -26,9 +27,10 @@ class Certificate(models.Model):
 
     slug = models.SlugField()
     author = models.ForeignKey(User)
-    # project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project')
     course_attendee = models.ForeignKey(CourseAttendee)
     course = models.ForeignKey(Course)
+    attendee = models.ForeignKey(Attendee)
     objects = models.Manager()
 
     class Meta:
