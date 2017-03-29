@@ -1,0 +1,81 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+{% load custom_markup %}
+
+{% block title %}Training Center - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Training Center (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+            Training Center
+            {% if user.is_authenticated %}
+                <div class="pull-right btn-group">
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "trainingcenter-create" project_slug %}'
+                       data-title="Create New Training Center">
+                        {% show_button_icon "add" %}
+                    </a>
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "trainingcenter-list" project_slug %}'
+                           data-title="View Training Center">
+                            <span class="glyphicon glyphicon-th-list"></span>
+                        </a>
+
+                </div>
+            {% endif %}
+        </h1>
+    </div>
+
+    {% ifequal num_trainingcenters 0 %}
+
+            <h3>No training center are defined, but you can <a
+                    class="btn btn-default btn-mini"
+                    href='{% url "trainingcenter-create" project_slug %}'>register one</a>.</h3>
+
+    {% endifequal %}
+
+    {% for trainingcenter in trainingcenters %}
+        <li class="row order" style="margin-top:10px;" id="{{ trainingcenter.id }}-{{ trainingcenter.name }}">
+            <div class="col-lg-10">
+                <h4>{{ trainingcenter.name }}</h4>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    {%  if not trainingcenter.approved and user.is_staff %}
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "trainingcenter-approve" project_slug=trainingcenter.project.slug slug=trainingcenter.slug %}'>
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        </a>
+                    {% endif %}
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "trainingcenter-delete" project_slug=trainingcenter.project.slug slug=trainingcenter.slug %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "trainingcenter-update" project_slug=trainingcenter.project.slug slug=trainingcenter.slug %}'>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "trainingcenter-detail" project_slug=trainingcenter.project.slug slug=trainingcenter.slug %}'>
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                </div>
+            </div>
+        </li>
+    {%  endfor %}
+
+    </ul>
+    <hr />
+
+    <script>
+
+    </script>
+
+{% endblock %}

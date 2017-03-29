@@ -1,0 +1,44 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Training Center - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Training Center (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-10">
+            <h3>{{ trainingcenter.name }}</h3>
+        </div>
+        <div class="col-lg-2">
+            <div class="btn-group">
+                <a class="btn btn-default btn-sm tooltip-toggle"
+                   href='{% url "trainingcenter-delete" project_slug=trainingcenter.project.slug slug=trainingcenter.slug %}'
+                   data-title="Delete {{ trainingcenter.title }}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-sm tooltip-toggle"
+                   href='{% url "trainingcenter-update" project_slug=trainingcenter.project.slug slug=trainingcenter.slug %}'
+                   data-title="Edit {{ trainingcenter.title }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8">
+            {% if trainingcenter.description %}
+                {{ trainingcenter.description|base_markdown }}
+            {% else %}
+                <p>No description</p>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

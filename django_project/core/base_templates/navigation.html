@@ -284,3 +284,39 @@
         </li>
     </ul>
 {% endif %}
+{% if certifyingorganisations or certifyingorganisations|length_is:0 %}
+    <ul class="nav navbar-nav">
+        <li role="presentation">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Entry certifying organisations <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% for certifyingorganisation in certifyingorganisations %}
+                    {% if certifyingorganisation != the_certifyingorganisation %}
+                        <li role="presentation">
+                            <a href="{{ certifyingorganisation.get_absolute_url }}">{{ certifyingorganisation.name }}</a>
+                        </li>
+                    {% endif %}
+                    {% if forloop.last and forloop|length > 1 and certifyingorganisation != the_certifyingorganisation %}
+                        <li role="presentation" class="divider"></li>
+                    {% endif %}
+                {% endfor %}
+                {% if not certifyingorganisations|length_is:0 %}
+                    <li>
+                        <a href="{% url 'certifyingorganisation-list' the_certifyingorganisation.slug %}">All certifying organisations</a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="{% url 'certifyingorganisation-create' the_project.slug %}">Create certifying organisation</a>
+                </li>
+                {% if unapproved_certifyingorganisations %}
+                    <li>
+                        <a href="{% url 'pending-certifyingorganisation-list' the_project.slug %}">
+                            Certifying organisations Pending Approval
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </li>
+    </ul>
+{% endif %}

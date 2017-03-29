@@ -98,5 +98,15 @@
             </ul>
         </li>
     </ul>
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Certification <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="{% url 'certifyingorganisation-list' the_project.slug %}">Certifying Organisation</a></li>
 
+            </ul>
+        </li>
+    </ul>
 {% endif %}
