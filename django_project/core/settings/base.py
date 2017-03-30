@@ -85,6 +85,7 @@ TEMPLATES = [
             absolute_path('core', 'base_templates'),
             absolute_path('vota', 'templates'),
             absolute_path('changes', 'templates'),
+            absolute_path('certification', 'templates')
         ],
         'APP_DIRS': False,
         'OPTIONS': {

@@ -1,0 +1,24 @@
+{% extends "project_base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block extra_head %}
+    {{ Other }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
+    {{  floppyforms }}
+
+{% endblock %}
+
+{% block page_title %}
+    <h1>Add Training Center</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <section id="forms">
+        <div class='container'>
+            {% crispy form %}
+        </div>
+    </section>
+
+{% endblock %}

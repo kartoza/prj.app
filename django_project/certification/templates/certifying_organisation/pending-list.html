@@ -1,0 +1,80 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+{% load custom_markup %}
+{% block title %}Certifying Organisations - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Certifying Organisations (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+            {% if unapproved %}Unapproved {% endif %}
+            Certifying Organisations
+            {% if user.is_authenticated %}
+                <div class="pull-right btn-group">
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "certifyingorganisation-create" project_slug %}'
+                       data-title="Create New Certifying Organisation">
+                        {% show_button_icon "add" %}</a>
+
+                    {% if not unapproved %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "pending-certifyingorganisation-list" project_slug %}'
+                           data-title="View Pending Certifying Organisations">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </h1>
+    </div>
+    {% ifequal num_certifyingorganisations 0 %}
+        {% if unapproved %}
+            <h3>All certifying organisations are approved.</h3>
+        {% else %}
+            <h3>No certifying organisations are defined, but you can <a
+                    class="btn btn-default btn-mini"
+                    href='{% url "sponsor-create" project_slug %}'>create one</a>.</h3>
+        {% endif %}
+    {% endifequal %}
+
+    {% for certifyingorganisation in certifyingorganisations %}
+        <script>console.debug("{{ certifyingorganisation }}");</script>
+        <div class="row" style="margin-top:10px;">
+            <div class="col-lg-9">
+                <h5>{{ certifyingorganisation.project.name }}</h5>
+
+                <h3>{{ certifyingorganisation.name }}</h3>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    {% if not certifyingorganisation.approved and user.is_staff %}
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'>
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        </a>
+                    {% endif %}
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini"
+                       href='{% url "certifyingorganisation-detail" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'>
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <hr/>
+    {% include "_pagination.html" %}
+{% endblock %}
