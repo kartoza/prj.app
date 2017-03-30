@@ -48,12 +48,11 @@
             </div>
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
-                    {%  if not trainingcenter.approved and user.is_staff %}
                         <a class="btn btn-default btn-mini"
-                           href='{% url "trainingcenter-approve" project_slug=trainingcenter.project.slug slug=trainingcenter.slug %}'>
+                           href='{% url "trainingcenter-list" project_slug=trainingcenter.project.slug slug=trainingcenter.slug %}'>
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
-                    {% endif %}
+
                     <a class="btn btn-default btn-mini"
                        href='{% url "trainingcenter-delete" project_slug=trainingcenter.project.slug slug=trainingcenter.slug %}'>
                         <span class="glyphicon glyphicon-minus"></span>

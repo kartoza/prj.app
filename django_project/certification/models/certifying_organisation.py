@@ -30,25 +30,15 @@ class SlugifyingMixin(object):
         super(SlugifyingMixin, self).save(*args, **kwargs)
 
 
-class ApprovedCertifyingOrganisationManager(SlugifyingMixin, models.Manager):
-    """Custom training centre manager, shows only approved training center."""
-
+class ApprovedCertifyingOrganisationManager(models.Manager):
     def get_queryset(self):
-        """ Query set generator. """
-
         return super(
             ApprovedCertifyingOrganisationManager, self).get_queryset().filter(
                 approved=True)
 
 
 class UnapprovedCertifyingOrganisationManager(models.Manager):
-    """
-    Custom training centre manager, shows only unapproved training centre.
-    """
-
     def get_queryset(self):
-        """ Query set generator. """
-
         return super(
             UnapprovedCertifyingOrganisationManager, self).get_queryset(
         ).filter(approved=False)

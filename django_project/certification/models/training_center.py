@@ -50,6 +50,11 @@ class TrainingCenter(SlugifyingMixin, models.Model):
 
     # noinspection PyClassicStyleClass.
     class Meta:
+        unique_together = (
+            ('name', 'certifying_organisation', 'project'),
+            ('certifying_organisation', 'slug'),
+        )
+        app_label = 'certification'
         ordering = ['name']
 
     def save(self, *args, **kwargs):
@@ -65,5 +70,6 @@ class TrainingCenter(SlugifyingMixin, models.Model):
         """
         return reverse('training-center-detail', kwargs={
             'slug': self.slug,
+            'certifyingorganisation_slug': self.certifying_organisation.slug,
             'project_slug': self.project.slug
         })

@@ -176,6 +176,7 @@ class CertifyingOrganisationDetailView(CertifyingOrganisationMixin,
         """
         context = super(CertifyingOrganisationDetailView,
                         self).get_context_data(**kwargs)
+
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:

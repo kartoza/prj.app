@@ -68,7 +68,8 @@ class TrainingCenterForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         self.project = kwargs.pop('project')
-        form_title = 'New Sponsor for %s' % self.project.name
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = 'New Training Center for %s' % self.project.name
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
@@ -88,6 +89,7 @@ class TrainingCenterForm(forms.ModelForm):
         instance = super(TrainingCenterForm, self).save(commit=False)
         instance.author = self.user
         instance.project = self.project
+        instance.certifying_organisation = self.certifying_organisation
         instance.approved = False
         instance.save()
         return instance

@@ -124,7 +124,6 @@ class TrainingCenterListView(
                 TrainingCenterListView, self).get_context_data(**kwargs)
         context['num_trainingcenters'] = \
             context['trainingcenters'].count()
-        context['unapproved'] = False
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
@@ -277,6 +276,22 @@ class TrainingCenterCreateView(
     context_object_name = 'trainingcenter'
     template_name = 'training_center/create.html'
 
+    def get_success_url(self):
+        """Define the redirect URL
+
+        After successful creation of the object, the User will be redirected
+        to the unapproved Certifying Organisation list page
+        for the object's parent Project
+
+       :returns: URL
+       :rtype: HttpResponse
+       """
+        return reverse('trainingcenter-list', kwargs={
+            'project_slug': self.object.project.slug,
+            'certifyingorganisation_slug':
+                self.object.certifying_organisation.slug
+        })
+
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
 
@@ -317,7 +332,8 @@ class TrainingCenterCreateView(
         self.project = Project.objects.get(slug=self.project_slug)
         kwargs.update({
             'user': self.request.user,
-            'project': self.project
+            'project': self.project,
+            'certifying_organisation': self.certifying_organisation
         })
         return kwargs
 
