@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('email', models.CharField(help_text=b'Email address.', max_length=200)),
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('project', models.ForeignKey(to='base.Project')),
+                ('project', models.ForeignKey(to='base.Project', to_field=b'name')),
             ],
             options={
                 'ordering': ['firstname'],
@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
                 ('approved', models.BooleanField(default=False, help_text=b'Approval from project admin')),
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('project', models.ForeignKey(to='base.Project')),
+                ('project', models.ForeignKey(to='base.Project', to_field=b'name')),
             ],
             options={
                 'ordering': ['name'],
@@ -83,7 +83,7 @@ class Migration(migrations.Migration):
                 ('attendee', models.ManyToManyField(to='certification.Attendee')),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('course', models.ForeignKey(to='certification.Course')),
-                ('project', models.ForeignKey(to='base.Project')),
+                ('project', models.ForeignKey(to='base.Project', to_field=b'name')),
             ],
             options={
                 'ordering': ['name'],
@@ -98,7 +98,7 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
-                ('project', models.ForeignKey(to='base.Project')),
+                ('project', models.ForeignKey(to='base.Project', to_field=b'name')),
             ],
             options={
                 'ordering': ['name'],
@@ -116,7 +116,7 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField(unique=True)),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
-                ('project', models.ForeignKey(to='base.Project')),
+                ('project', models.ForeignKey(to='base.Project', to_field=b'name')),
             ],
             options={
                 'ordering': ['name'],
@@ -134,7 +134,7 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
-                ('project', models.ForeignKey(to='base.Project')),
+                ('project', models.ForeignKey(to='base.Project', to_field=b'name')),
             ],
             options={
                 'ordering': ['name'],
@@ -159,7 +159,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='course',
             name='project',
-            field=models.ForeignKey(to='base.Project'),
+            field=models.ForeignKey(to='base.Project', to_field=b'name'),
         ),
         migrations.AddField(
             model_name='course',
@@ -179,6 +179,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='certificate',
             name='project',
-            field=models.ForeignKey(to='base.Project'),
+            field=models.ForeignKey(to='base.Project', to_field=b'name'),
         ),
     ]

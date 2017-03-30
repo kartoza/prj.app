@@ -28,7 +28,7 @@ class CourseAttendee(models.Model):
     attendee = models.ManyToManyField(Attendee)
     training_center = models.ForeignKey(TrainingCenter)
     course = models.ForeignKey(Course)
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', to_field='name')
     author = models.ForeignKey(User)
     objects = models.Manager()
 

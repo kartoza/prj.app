@@ -43,7 +43,7 @@ class CourseType(SlugifyingMixin, models.Model):
     slug = models.SlugField(unique=True)
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', to_field='name')
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass.

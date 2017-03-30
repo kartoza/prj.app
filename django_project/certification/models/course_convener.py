@@ -28,7 +28,7 @@ class CourseConvener(SlugifyingMixin, models.Model):
 
     slug = models.SlugField()
     author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', to_field='name')
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     objects = models.Manager()
 

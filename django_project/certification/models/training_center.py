@@ -44,7 +44,7 @@ class TrainingCenter(SlugifyingMixin, models.Model):
 
     slug = models.SlugField()
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', to_field='name')
     author = models.ForeignKey(User)
     objects = models.Manager()
 

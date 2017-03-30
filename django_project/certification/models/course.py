@@ -31,7 +31,7 @@ class Course(SlugifyingMixin, models.Model):
     training_center = models.ForeignKey(TrainingCenter)
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', to_field='name')
     objects = models.Manager()
 
     class Meta:
