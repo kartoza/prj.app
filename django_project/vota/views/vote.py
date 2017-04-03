@@ -5,16 +5,14 @@ from django.http import HttpResponse
 import json
 import logging
 
-logger = logging.getLogger(__name__)
-
-from django.views.generic import (
-    CreateView,
-)
+from django.views.generic import CreateView
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin
 from vota.models import Vote, Ballot
 from vota.forms import VoteForm
+
+logger = logging.getLogger(__name__)
 
 
 # noinspection PyAttributeOutsideInit

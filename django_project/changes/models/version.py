@@ -142,7 +142,8 @@ class Version(models.Model):
 
     def entries(self):
         """Get the entries for this version."""
-        qs = Entry.objects.filter(version=self).order_by('category__sort_number')
+        qs = Entry.objects.filter(
+            version=self).order_by('category__sort_number')
         return qs
 
     def _entries_for_category(self, category):

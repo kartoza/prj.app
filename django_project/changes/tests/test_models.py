@@ -192,7 +192,7 @@ class TestVersionCRUD(TestCase):
     def test_formatted_release_date(self):
         """Tests we can get, set and present the release date nicely."""
         model = VersionF.create(
-            description =u'New description',
+            description=u'New description',
             release_date=datetime(2016, 06, 06),
             approved=True)
         self.assertEquals(model.formatted_release_date(), '6 June, 2016')

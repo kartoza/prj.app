@@ -4,9 +4,9 @@ import datetime
 
 from django.conf import settings
 from django import VERSION as DJANGO_VERSION
+from django.contrib.auth.models import User
 if DJANGO_VERSION[:2] >= (1, 4):
     from django.utils import timezone
-from django.contrib.auth.models import User
 
 
 # noinspection PyProtectedMember

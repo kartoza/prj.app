@@ -17,6 +17,7 @@ import reversion
 
 
 class ProjectAdmin(reversion.VersionAdmin):
+
     """Admin for the project model."""
 
     def queryset(self, request):
@@ -29,5 +30,6 @@ class ProjectAdmin(reversion.VersionAdmin):
         if ordering:
             qs = qs.order_by(*ordering)
         return qs
+
 
 admin.site.register(Project, ProjectAdmin)

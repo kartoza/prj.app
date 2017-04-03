@@ -190,20 +190,22 @@ class GithubListView(ProjectMixin, ListView):
         return JsonResponse(github_data, safe=False)
 
     def check_project_existence(self, github_projects):
-        """
-        Check whether project already in db
+        """Check whether project already in db.
+
         :param github_projects: list github projects
         :return: modified list github projects with additional parameter
         """
         for g_project in github_projects:
-            if Project.objects.filter(slug=slugify(g_project['name'])).exists():
+            if Project.objects.filter(
+                    slug=slugify(g_project['name'])).exists():
                 g_project['added'] = True
             else:
                 g_project['added'] = False
         return github_projects
 
     def get_github_repo(self):
-        """Get github repos from github api
+        """Get github repos from github api.
+
         :return: github repo dictionary
         """
         retrieved_data = []
@@ -242,11 +244,13 @@ class GithubListView(ProjectMixin, ListView):
 
 
 class GithubSubmitView(LoginRequiredMixin, ProjectMixin, UpdateView):
+
     """Add github project"""
+
     context_object_name = 'project'
 
     def post(self, request, *args, **kwargs):
-        """Post the project_slug from the URL and define the Project
+        """Post the project_slug from the URL and define the Project.
 
         :param request: HTTP request object
         :type request: HttpRequest
@@ -259,6 +263,7 @@ class GithubSubmitView(LoginRequiredMixin, ProjectMixin, UpdateView):
 
         :returns: Unaltered request object
         :rtype: HttpResponse
+
         :raises: Http404
         """
         github_data_json = request.body
@@ -280,7 +285,8 @@ class GithubSubmitView(LoginRequiredMixin, ProjectMixin, UpdateView):
 
                 if token:
                     response = requests.get(
-                        'https://api.github.com/repos/' + github_data['full_name'],
+                        'https://api.github.com/repos/' +
+                        github_data['full_name'],
                         params={
                             'access_token': token
                         }
@@ -289,7 +295,8 @@ class GithubSubmitView(LoginRequiredMixin, ProjectMixin, UpdateView):
 
                 if retrieved_data:
 
-                    if Project.objects.filter(slug=slugify(retrieved_data['name'])).exists():
+                    if Project.objects.filter(
+                            slug=slugify(retrieved_data['name'])).exists():
                         return HttpResponse('Project already exists')
 
                     new_project = Project(

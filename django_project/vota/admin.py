@@ -19,6 +19,7 @@ import reversion
 
 
 class CommitteeAdmin(reversion.VersionAdmin):
+
     """Committee admin model."""
 
     def queryset(self, request):
@@ -61,6 +62,7 @@ class BallotAdmin(reversion.VersionAdmin):
         if ordering:
             qs = qs.order_by(*ordering)
         return qs
+
 
 admin.site.register(Committee, CommitteeAdmin)
 admin.site.register(Vote, VoteAdmin)

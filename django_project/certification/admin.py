@@ -131,6 +131,7 @@ class CertifyingOrganisationAdmin(admin.ModelAdmin):
             query_set = query_set.order_by(*ordering)
         return query_set
 
+
 admin.site.register(Certificate, CertificateAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
 admin.site.register(Course, CourseAdmin)

@@ -21,6 +21,7 @@ import logging
 
 
 class TestCategoryViews(TestCase):
+
     """Tests that Category views work."""
 
     def setUp(self):
@@ -30,7 +31,6 @@ class TestCategoryViews(TestCase):
         the locale of the host running the tests and we
         will get unpredictable results / 404s
         """
-
         self.client = Client()
         self.client.post(
                 '/set_language/', data={'language': 'en'})
@@ -233,9 +233,8 @@ class TestCategoryViews(TestCase):
         self.assertEqual(response.status_code, 302)
 
 
-
-
 class TestEntryViews(TestCase):
+
     """Tests that Entry views work."""
 
     def setUp(self):
@@ -478,8 +477,8 @@ class TestEntryViews(TestCase):
         self.assertEqual(response.template_name, expected_templates)
 
 
-
 class TestVersionViews(TestCase):
+
     """Tests that Version views work."""
 
     def setUp(self):
@@ -736,7 +735,8 @@ class TestSponsorshipLevelViews(TestCase):
         }))
         self.assertEqual(response.status_code, 200)
         expected_templates = [
-            'sponsorship_level/list.html', u'changes/sponsorshiplevel_list.html'
+            'sponsorship_level/list.html',
+            u'changes/sponsorshiplevel_list.html'
         ]
         self.assertEqual(response.template_name, expected_templates)
         self.assertEqual(response.context_data['object_list'][0],
@@ -826,9 +826,9 @@ class TestSponsorshipLevelViews(TestCase):
             'slug': sponsorship_level_to_delete.slug,
             'project_slug': sponsorship_level_to_delete.project.slug
         }), {})
-        self.assertRedirects(response, reverse('sponsorshiplevel-list', kwargs={
-            'project_slug': self.project.slug
-        }))
+        self.assertRedirects(
+            response, reverse('sponsorshiplevel-list', kwargs={
+                'project_slug': self.project.slug}))
 
     def test_SponsorshipLevelDelete_no_login(self):
 
@@ -1062,9 +1062,10 @@ class TestSponsorshipPeriodViews(TestCase):
             'sponsorshiplevel': self.sponsorship_level.id,
             'author': self.user.id
         }
-        response = self.client.post(reverse('sponsorshipperiod-create', kwargs={
-            'project_slug': self.project.slug
-        }), post_data)
+        response = self.client.post(
+            reverse(
+                'sponsorshipperiod-create', kwargs={
+                    'project_slug': self.project.slug}), post_data)
         self.assertEqual(response.status_code, 200)
 
     def test_SponsorshipPeriodCreate_no_login(self):
@@ -1073,19 +1074,20 @@ class TestSponsorshipPeriodViews(TestCase):
             'sponsor': self.sponsor.id,
             'sponsorship_level': self.sponsorship_level.id
         }
-        response = self.client.post(reverse('sponsorshipperiod-create', kwargs={
-            'project_slug': self.project.slug
-        }), post_data)
+        response = self.client.post(
+            reverse('sponsorshipperiod-create', kwargs={
+                'project_slug': self.project.slug
+            }), post_data)
         self.assertEqual(response.status_code, 302)
 
     def test_SponsorshipPeriodUpdateView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
-        response = self.client.get(reverse('sponsorshipperiod-update', kwargs={
-            'slug': self.sponsorship_period.slug,
-            'project_slug': self.project.slug
-
-        }))
+        response = self.client.get(
+            reverse('sponsorshipperiod-update', kwargs={
+                'slug': self.sponsorship_period.slug,
+                'project_slug': self.project.slug
+            }))
         self.assertEqual(response.status_code, 200)
         expected_templates = [
             'sponsorship_period/update.html'
@@ -1108,10 +1110,11 @@ class TestSponsorshipPeriodViews(TestCase):
             'sponsorshiplevel': self.sponsorship_level.id,
             'author': self.user.id
         }
-        response = self.client.post(reverse('sponsorshipperiod-update', kwargs={
-            'project_slug': self.project.slug,
-            'slug': self.sponsorship_period.slug
-        }), post_data)
+        response = self.client.post(
+            reverse('sponsorshipperiod-update', kwargs={
+                'project_slug': self.project.slug,
+                'slug': self.sponsorship_period.slug
+            }), post_data)
         self.assertEqual(response.status_code, 200)
 
     def test_SponsorshipPeriodUpdate_no_login(self):
@@ -1120,10 +1123,11 @@ class TestSponsorshipPeriodViews(TestCase):
             'sponsor': self.sponsor.id,
             'sponsorshiplevel': self.sponsorship_level.id
         }
-        response = self.client.post(reverse('sponsorshipperiod-update', kwargs={
-            'slug': self.sponsorship_period.slug,
-            'project_slug': self.project.slug
-        }), post_data)
+        response = self.client.post(
+            reverse('sponsorshipperiod-update', kwargs={
+                'slug': self.sponsorship_period.slug,
+                'project_slug': self.project.slug
+            }), post_data)
         self.assertEqual(response.status_code, 302)
 
     def test_SponsorshipPeriodDeleteView_no_login(self):
@@ -1136,8 +1140,9 @@ class TestSponsorshipPeriodViews(TestCase):
 
     def test_SponsorshipPeriodDelete_no_login(self):
 
-        response = self.client.post(reverse('sponsorshipperiod-delete', kwargs={
-            'project_slug': self.project.slug,
-            'slug': self.sponsorship_period.slug
-        }))
+        response = self.client.post(
+            reverse('sponsorshipperiod-delete', kwargs={
+                'project_slug': self.project.slug,
+                'slug': self.sponsorship_period.slug
+            }))
         self.assertEqual(response.status_code, 302)

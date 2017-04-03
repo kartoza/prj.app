@@ -109,6 +109,7 @@ class SponsorRenewedAdmin(reversion.VersionAdmin):
             qs = qs.order_by(*ordering)
         return qs
 
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Version, VersionAdmin)
 admin.site.register(Entry, EntryAdmin)

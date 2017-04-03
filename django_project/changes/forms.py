@@ -51,7 +51,8 @@ class CategoryForm(forms.ModelForm):
         cleaned_data = self.cleaned_data
 
         try:
-            Category.objects.get(name=cleaned_data['name'], project=self.project)
+            Category.objects.get(
+                name=cleaned_data['name'], project=self.project)
         except Category.DoesNotExist:
             pass
         else:
@@ -264,7 +265,9 @@ class SponsorshipPeriodForm(forms.ModelForm):
             Fieldset(
                 form_title,
                 Field('sponsor', css_class='form-control chosen-select'),
-                Field('sponsorship_level', css_class='form-control chosen-select'),
+                Field(
+                    'sponsorship_level',
+                    css_class='form-control chosen-select'),
                 Field('start_date', css_class='form-control'),
                 Field('end_date', css_class='form-control'),
                 css_id='project-form')

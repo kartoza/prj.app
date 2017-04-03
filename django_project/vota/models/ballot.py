@@ -13,13 +13,14 @@ from django.utils.text import slugify
 import logging
 from core.settings.contrib import STOP_WORDS
 
-logger = logging.getLogger(__name__)
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from vota.models.vote import Vote
 import datetime
 from django.contrib.auth.models import User
+
+logger = logging.getLogger(__name__)
 
 
 class ApprovedCategoryManager(models.Manager):
