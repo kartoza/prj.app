@@ -30,6 +30,7 @@ def handler500(request):
         'request': request,
     })))
 
+
 urlpatterns = []
 # These patterns work if there is a locale code injected in front of them
 # e.g. /en/reports/

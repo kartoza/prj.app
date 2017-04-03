@@ -38,12 +38,14 @@ __copyright__ = ''
 
 
 class VersionMixin(object):
+
     """Mixing for all views to inherit which sets some standard properties."""
     model = Version  # implies -> queryset = Version.objects.all()
     form_class = VersionForm
 
 
 class CustomStaffuserRequiredMixin(StaffuserRequiredMixin):
+
     """Fix redirect loop when user is already authenticated but non staff"""
 
     def no_permissions_fail(self, request=None):
@@ -51,7 +53,9 @@ class CustomStaffuserRequiredMixin(StaffuserRequiredMixin):
         Called when the user has no permissions and no exception was raised.
         """
         if not request.user.is_authenticated():
-            return super(CustomStaffuserRequiredMixin, self).no_permissions_fail(request)
+            return super(
+                CustomStaffuserRequiredMixin, self).no_permissions_fail(
+                request)
 
         raise Http404('Sorry! You have to be staff to open this page.')
 
@@ -747,8 +751,11 @@ class VersionDownloadGnu(VersionMixin, DetailView):
             content_type="text/plain; charset=utf-8")
 
 
-class VersionSponsorDownload(VersionMixin, CustomStaffuserRequiredMixin, DetailView):
+class VersionSponsorDownload(
+    VersionMixin, CustomStaffuserRequiredMixin, DetailView):
+
     """View to allow staff users to download Version page in html format"""
+
     template_name = 'version/includes/version-sponsors.html'
 
     def render_to_response(self, context, **response_kwargs):

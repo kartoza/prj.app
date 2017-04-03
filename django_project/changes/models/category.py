@@ -1,12 +1,14 @@
+import logging
+
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
-import logging
 from core.settings.contrib import STOP_WORDS
 
-logger = logging.getLogger(__name__)
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from changes.models.entry import Entry
+
+logger = logging.getLogger(__name__)
 
 
 class ApprovedCategoryManager(models.Manager):

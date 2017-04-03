@@ -4,8 +4,6 @@ __date__ = '12/28/15'
 import logging
 from base.models import Project
 
-logger = logging.getLogger(__name__)
-
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -22,6 +20,8 @@ from pure_pagination.mixins import PaginationMixin
 
 from ..models import SponsorshipPeriod  # noqa
 from ..forms import SponsorshipPeriodForm
+
+logger = logging.getLogger(__name__)
 
 
 class JSONResponseMixin(object):
@@ -231,7 +231,8 @@ class SponsorshipPeriodDeleteView(
         self.project_slug = self.kwargs.get('project_slug', None)
         self.sponsor_period_slug = self.kwargs.get('slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
-        self.sponsorperiod = SponsorshipPeriod.objects.get(slug=self.sponsor_period_slug)
+        self.sponsorperiod = SponsorshipPeriod.objects.get(
+            slug=self.sponsor_period_slug)
         return super(
                 SponsorshipPeriodDeleteView,
                 self).get(request, *args, **kwargs)
@@ -373,7 +374,8 @@ class SponsorshipPeriodUpdateView(
                 SponsorshipPeriodUpdateView,
                 self).get_form_kwargs()
         sponsor_period_slug = self.kwargs.get('slug', None)
-        self.sponsorperiod = SponsorshipPeriod.objects.get(slug=sponsor_period_slug)
+        self.sponsorperiod = SponsorshipPeriod.objects.get(
+            slug=sponsor_period_slug)
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         kwargs.update({

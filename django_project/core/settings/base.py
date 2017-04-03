@@ -90,7 +90,8 @@ TEMPLATES = [
         ],
         'APP_DIRS': False,
         'OPTIONS': {
-            # List of callables that know how to import templates from various sources.
+            # List of callables that know how to import templates from various
+            # sources.
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
                 'django.template.loaders.app_directories.Loader',

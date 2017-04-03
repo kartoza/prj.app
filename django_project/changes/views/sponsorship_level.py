@@ -4,8 +4,6 @@ __date__ = '12/28/15'
 import logging
 from base.models import Project
 
-logger = logging.getLogger(__name__)
-
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -22,6 +20,8 @@ from pure_pagination.mixins import PaginationMixin
 
 from ..models import SponsorshipLevel  # noqa
 from ..forms import SponsorshipLevelForm
+
+logger = logging.getLogger(__name__)
 
 
 class JSONResponseMixin(object):
@@ -58,20 +58,26 @@ class JSONResponseMixin(object):
         for sponsorshiplevel in context['sponsorshiplevels']:
             if not first_flag:
                 result += ',\n'
-            result += '    "%s" : "%s"' % (sponsorshiplevel.id, sponsorshiplevel.name)
+            result += '    "%s" : "%s"' % (
+                sponsorshiplevel.id, sponsorshiplevel.name)
             first_flag = False
         result += '\n}'
         return result
 
 
 class SponsorshipLevelMixin(object):
+
     """Mixin class to provide standard settings for SponsorshipLevel."""
+
     model = SponsorshipLevel
     form_class = SponsorshipLevelForm
 
 
-class JSONSponsorshipLevelListView(SponsorshipLevelMixin, JSONResponseMixin, ListView):
-    """List view for sponsorship level as json object - needed by javascript."""
+class JSONSponsorshipLevelListView(
+    SponsorshipLevelMixin, JSONResponseMixin, ListView):
+
+    """List view for sponsorship level as json object, needed by javascript."""
+
     context_object_name = 'sponsorshiplevels'
 
     def dispatch(self, request, *args, **kwargs):
@@ -378,7 +384,8 @@ class SponsorshipLevelUpdateView(
         """
         kwargs = super(SponsorshipLevelUpdateView, self).get_form_kwargs()
         sponsor_level_slug = self.kwargs.get('slug', None)
-        self.sponsorlevel = SponsorshipLevel.objects.get(slug=sponsor_level_slug)
+        self.sponsorlevel = SponsorshipLevel.objects.get(
+            slug=sponsor_level_slug)
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
 
@@ -388,8 +395,6 @@ class SponsorshipLevelUpdateView(
             'project': self.project
         })
         return kwargs
-
-
 
     def get_queryset(self):
         """Get the queryset for this view.

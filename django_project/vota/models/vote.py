@@ -6,9 +6,10 @@ Committee can vote on to either Pass or Deny.
 """
 import logging
 
-logger = logging.getLogger(__name__)
 from django.db import models
 from django.contrib.auth.models import User
+
+logger = logging.getLogger(__name__)
 
 
 VOTE_CHOICES = (

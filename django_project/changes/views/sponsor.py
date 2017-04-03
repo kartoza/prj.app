@@ -4,7 +4,6 @@ __author__ = 'rischan'
 import logging
 from base.models import Project
 
-logger = logging.getLogger(__name__)
 
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
@@ -27,6 +26,8 @@ from ..models import Sponsor, SponsorshipPeriod  # noqa
 from ..models import SponsorshipLevel  # noqa
 from ..forms import SponsorForm
 from changes.views.sponsorship_period import SponsorshipPeriodListView  # noqa
+
+logger = logging.getLogger(__name__)
 
 
 class JSONResponseMixin(object):
@@ -135,7 +136,8 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
         if project_slug:
             project = Project.objects.get(slug=project_slug)
             context['the_project'] = Project.objects.get(slug=project_slug)
-            context['levels'] = SponsorshipLevel.objects.filter(project=project)
+            context['levels'] = SponsorshipLevel.objects.filter(
+                project=project)
         return context
 
     def get_queryset(self, queryset=None):

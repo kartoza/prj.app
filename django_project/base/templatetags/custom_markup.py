@@ -42,8 +42,8 @@ def show_button_icon(context, value):
 @register.filter
 def columns(thelist, n):
     """
-    Break a list into ``n`` columns, filling up each column to the maximum equal
-    length possible. For example::
+    Break a list into ``n`` columns, filling up each column to the maximum
+    equal length possible. For example::
     """
     try:
         n = int(n)
