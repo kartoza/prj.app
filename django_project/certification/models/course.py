@@ -10,6 +10,8 @@ from certifying_organisation import CertifyingOrganisation, SlugifyingMixin
 from course_type import CourseType
 from training_center import TrainingCenter
 from django.contrib.auth.models import User
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 import logging
 
 logger = logging.getLogger(__name__)
@@ -25,13 +27,23 @@ class Course(SlugifyingMixin, models.Model):
         blank=False,
     )
 
+    start_date = models.DateField(
+        _("Start date"),
+        help_text='Course start date',
+        default=timezone.now)
+
+    end_date = models.DateField(
+        _("End date"),
+        help_text='Course end date',
+        default=timezone.now)
+
     slug = models.SlugField()
     course_convener = models.ForeignKey(CourseConvener)
     course_type = models.ForeignKey(CourseType)
     training_center = models.ForeignKey(TrainingCenter)
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project', to_field='name')
+    # project = models.ForeignKey('base.Project')
     objects = models.Manager()
 
     class Meta:
@@ -50,5 +62,5 @@ class Course(SlugifyingMixin, models.Model):
         """
         return reverse('course-detail', kwargs={
             'slug': self.slug,
-            'project_slug': self.project.slug
+            'certifyingorganisation_slug': self.certifying_organisation.slug
         })

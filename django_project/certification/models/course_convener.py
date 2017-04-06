@@ -3,43 +3,45 @@
 Course convener model definitions for certification apps
 """
 
+import string
+import random
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
-from certifying_organisation import CertifyingOrganisation, SlugifyingMixin
+from certifying_organisation import CertifyingOrganisation
+from django.utils.text import slugify
+from core.settings.contrib import STOP_WORDS
 
 
-class CourseConvener(SlugifyingMixin, models.Model):
+class CourseConvener(models.Model):
     """Course Convener model."""
 
-    name = models.CharField(
-        help_text="Course convener name",
-        max_length=250,
-        null=False,
-        blank=False,
-    )
-
-    email = models.CharField(
-        help_text="Course convener email",
-        max_length=150,
-        null=True,
-        blank=True,
-    )
-
     slug = models.SlugField()
-    author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project', to_field='name')
+    name = models.ForeignKey(User)
+    # project = models.ForeignKey('base.Project')
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     objects = models.Manager()
 
     class Meta:
         ordering = ['name']
 
-    def __unicode__(self):
-        return self.name
-
     def save(self, *args, **kwargs):
+        if not self.pk:
+            convener_name = self.name.username
+            words = convener_name.split()
+            filtered_words = [word for word in words if
+                              word.lower() not in STOP_WORDS]
+            new_list = ' '.join(filtered_words)
+            self.slug = slugify(new_list)[:50]
+
         super(CourseConvener, self).save(*args, **kwargs)
+
+    @staticmethod
+    def slug_generator(size=6, chars=string.ascii_lowercase):
+        return ''.join(random.choice(chars) for _ in range(size))
+
+    def __unicode__(self):
+        return self.name.username
 
     def get_absolute_url(self):
         """Return URL to course convener detail page.
@@ -48,5 +50,4 @@ class CourseConvener(SlugifyingMixin, models.Model):
         """
         return reverse('course-convener-detail', kwargs={
             'slug': self.slug,
-            'project_slug': self.project.slug
         })

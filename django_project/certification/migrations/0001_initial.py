@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+import django_countries.fields
+import django.utils.timezone
 from django.conf import settings
 import certification.models.certifying_organisation
 
@@ -23,7 +25,6 @@ class Migration(migrations.Migration):
                 ('email', models.CharField(help_text=b'Email address.', max_length=200)),
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('project', models.ForeignKey(to='base.Project', to_field=b'name')),
             ],
             options={
                 'ordering': ['firstname'],
@@ -49,11 +50,12 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(help_text=b'Name of Organisation or Institution.', max_length=200)),
                 ('organisation_email', models.CharField(help_text=b'Email address Organisation or Institution.', max_length=200)),
                 ('address', models.CharField(help_text=b'Contact of Organisation or Institution.', max_length=200)),
+                ('country', django_countries.fields.CountryField(blank=True, max_length=2, null=True, help_text=b'Select the country for this sponsor')),
                 ('organisation_phone', models.CharField(help_text=b'Contact of Organisation or Institution.', max_length=200)),
                 ('approved', models.BooleanField(default=False, help_text=b'Approval from project admin')),
                 ('slug', models.SlugField()),
-                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('project', models.ForeignKey(to='base.Project', to_field=b'name')),
+                ('organisation_manager', models.ManyToManyField(to=settings.AUTH_USER_MODEL)),
+                ('project', models.ForeignKey(to='base.Project')),
             ],
             options={
                 'ordering': ['name'],
@@ -65,6 +67,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(help_text=b'Course name.', max_length=200)),
+                ('start_date', models.DateField(default=django.utils.timezone.now, help_text=b'Course start date', verbose_name='Start date')),
+                ('end_date', models.DateField(default=django.utils.timezone.now, help_text=b'Course end date', verbose_name='End date')),
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
@@ -83,7 +87,6 @@ class Migration(migrations.Migration):
                 ('attendee', models.ManyToManyField(to='certification.Attendee')),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('course', models.ForeignKey(to='certification.Course')),
-                ('project', models.ForeignKey(to='base.Project', to_field=b'name')),
             ],
             options={
                 'ordering': ['name'],
@@ -93,17 +96,13 @@ class Migration(migrations.Migration):
             name='CourseConvener',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(help_text=b'Course convener name', max_length=250)),
-                ('email', models.CharField(help_text=b'Course convener email', max_length=150, null=True, blank=True)),
                 ('slug', models.SlugField()),
-                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
-                ('project', models.ForeignKey(to='base.Project', to_field=b'name')),
+                ('name', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'ordering': ['name'],
             },
-            bases=(certification.models.certifying_organisation.SlugifyingMixin, models.Model),
         ),
         migrations.CreateModel(
             name='CourseType',
@@ -116,7 +115,6 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField(unique=True)),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
-                ('project', models.ForeignKey(to='base.Project', to_field=b'name')),
             ],
             options={
                 'ordering': ['name'],
@@ -134,17 +132,11 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
-                ('project', models.ForeignKey(to='base.Project', to_field=b'name')),
             ],
             options={
                 'ordering': ['name'],
             },
             bases=(certification.models.certifying_organisation.SlugifyingMixin, models.Model),
-        ),
-        migrations.AddField(
-            model_name='courseattendee',
-            name='training_center',
-            field=models.ForeignKey(to='certification.TrainingCenter'),
         ),
         migrations.AddField(
             model_name='course',
@@ -155,11 +147,6 @@ class Migration(migrations.Migration):
             model_name='course',
             name='course_type',
             field=models.ForeignKey(to='certification.CourseType'),
-        ),
-        migrations.AddField(
-            model_name='course',
-            name='project',
-            field=models.ForeignKey(to='base.Project', to_field=b'name'),
         ),
         migrations.AddField(
             model_name='course',
@@ -175,10 +162,5 @@ class Migration(migrations.Migration):
             model_name='certificate',
             name='course_attendee',
             field=models.ForeignKey(to='certification.CourseAttendee'),
-        ),
-        migrations.AddField(
-            model_name='certificate',
-            name='project',
-            field=models.ForeignKey(to='base.Project', to_field=b'name'),
         ),
     ]

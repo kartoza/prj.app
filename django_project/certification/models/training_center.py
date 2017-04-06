@@ -44,7 +44,7 @@ class TrainingCenter(SlugifyingMixin, models.Model):
 
     slug = models.SlugField()
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
-    project = models.ForeignKey('base.Project', to_field='name')
+    # project = models.ForeignKey('base.Project')
     author = models.ForeignKey(User)
     objects = models.Manager()
 
@@ -65,5 +65,4 @@ class TrainingCenter(SlugifyingMixin, models.Model):
         """
         return reverse('training-center-detail', kwargs={
             'slug': self.slug,
-            'project_slug': self.project.slug
         })

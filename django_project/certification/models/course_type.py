@@ -43,7 +43,7 @@ class CourseType(SlugifyingMixin, models.Model):
     slug = models.SlugField(unique=True)
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project', to_field='name')
+    # project = models.ForeignKey('base.Project')
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass.
@@ -63,5 +63,4 @@ class CourseType(SlugifyingMixin, models.Model):
         """
         return reverse('course-type-detail', kwargs={
             'slug': self.slug,
-            'project_slug': self.project.slug
         })

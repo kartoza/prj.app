@@ -27,7 +27,7 @@ class Certificate(models.Model):
 
     slug = models.SlugField()
     author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project', to_field='name')
+    # project = models.ForeignKey('base.Project')
     course_attendee = models.ForeignKey(CourseAttendee)
     course = models.ForeignKey(Course)
     attendee = models.ForeignKey(Attendee)
@@ -61,5 +61,4 @@ class Certificate(models.Model):
         """
         return reverse('certificate-detail', kwargs={
             'slug': self.slug,
-            'project_slug': self.project.slug
         })

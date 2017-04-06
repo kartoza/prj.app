@@ -37,7 +37,7 @@ class Attendee(models.Model):
 
     slug = models.SlugField()
     author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project', to_field='name')
+    # project = models.ForeignKey('base.Project')
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass.
@@ -60,5 +60,4 @@ class Attendee(models.Model):
     def get_absolute_url(self):
         return reverse('attendee-detail', kwargs={
             'slug': self.slug,
-            'project_slug': self.project.slug
         })

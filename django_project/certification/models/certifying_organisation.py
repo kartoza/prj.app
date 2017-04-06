@@ -9,6 +9,7 @@ from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
 from unidecode import unidecode
 from django.contrib.auth.models import User
+from django_countries.fields import CountryField
 import logging
 
 logger = logging.getLogger(__name__)
@@ -78,6 +79,11 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
         blank=False
     )
 
+    country = CountryField(
+        help_text='Select the country for this sponsor',
+        null=True,
+        blank=True)
+
     organisation_phone = models.CharField(
         help_text="Contact of Organisation or Institution.",
         max_length=200,
@@ -91,8 +97,8 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
     )
 
     slug = models.SlugField()
-    author = models.ForeignKey(User)
-    project = models.ForeignKey('base.Project', to_field='name')
+    organisation_manager = models.ManyToManyField(User)
+    project = models.ForeignKey('base.Project')
     objects = models.Manager()
     approved_objects = ApprovedCertifyingOrganisationManager()
     unapproved_objects = UnapprovedCertifyingOrganisationManager()

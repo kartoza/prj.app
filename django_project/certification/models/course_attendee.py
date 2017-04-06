@@ -10,7 +10,6 @@ from django.db import models
 from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
 from course import Course
-from training_center import TrainingCenter
 from attendee import Attendee
 from django.contrib.auth.models import User
 
@@ -26,9 +25,8 @@ class CourseAttendee(models.Model):
 
     slug = models.SlugField()
     attendee = models.ManyToManyField(Attendee)
-    training_center = models.ForeignKey(TrainingCenter)
     course = models.ForeignKey(Course)
-    project = models.ForeignKey('base.Project', to_field='name')
+    # project = models.ForeignKey('base.Project')
     author = models.ForeignKey(User)
     objects = models.Manager()
 
@@ -59,5 +57,4 @@ class CourseAttendee(models.Model):
         """
         return reverse('course-attendee-detail', kwargs={
             'slug': self.slug,
-            'project_slug': self.project.slug
         })
