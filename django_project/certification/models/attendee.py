@@ -37,7 +37,6 @@ class Attendee(models.Model):
 
     slug = models.SlugField()
     author = models.ForeignKey(User)
-    # project = models.ForeignKey('base.Project')
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass.
@@ -55,7 +54,7 @@ class Attendee(models.Model):
         super(Attendee, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return self.firstname
+        return '%s %s' % (self.firstname, self.surname)
 
     def get_absolute_url(self):
         return reverse('attendee-detail', kwargs={

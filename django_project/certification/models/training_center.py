@@ -4,10 +4,10 @@ Training center model definitions for certification apps
 """
 
 from django.core.urlresolvers import reverse
-from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from certifying_organisation import CertifyingOrganisation, SlugifyingMixin
 from django.contrib.auth.models import User
+from django.contrib.gis.db import models
 
 
 class TrainingCenter(SlugifyingMixin, models.Model):
@@ -42,9 +42,11 @@ class TrainingCenter(SlugifyingMixin, models.Model):
         blank=False
     )
 
+    location = models.PointField(blank=True, null=True,
+                                 default='POINT(28.034088 -26.195246)')
+
     slug = models.SlugField()
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
-    # project = models.ForeignKey('base.Project')
     author = models.ForeignKey(User)
     objects = models.Manager()
 

@@ -3,8 +3,6 @@
 Course convener model definitions for certification apps
 """
 
-import string
-import random
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
@@ -18,7 +16,6 @@ class CourseConvener(models.Model):
 
     slug = models.SlugField()
     name = models.ForeignKey(User)
-    # project = models.ForeignKey('base.Project')
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     objects = models.Manager()
 
@@ -35,10 +32,6 @@ class CourseConvener(models.Model):
             self.slug = slugify(new_list)[:50]
 
         super(CourseConvener, self).save(*args, **kwargs)
-
-    @staticmethod
-    def slug_generator(size=6, chars=string.ascii_lowercase):
-        return ''.join(random.choice(chars) for _ in range(size))
 
     def __unicode__(self):
         return self.name.username

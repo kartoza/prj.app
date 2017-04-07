@@ -96,6 +96,11 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
         default=False
     )
 
+    enabled = models.BooleanField(
+        help_text="Project enabled",
+        default=True
+    )
+
     slug = models.SlugField()
     organisation_manager = models.ManyToManyField(User)
     project = models.ForeignKey('base.Project')

@@ -85,6 +85,7 @@ TEMPLATES = [
             absolute_path('core', 'base_templates'),
             absolute_path('vota', 'templates'),
             absolute_path('changes', 'templates'),
+            absolute_path('certification', 'templates'),
         ],
         'APP_DIRS': False,
         'OPTIONS': {
@@ -132,6 +133,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.syndication',
+    'django.contrib.gis',
 )
 
 # A sample logging configuration. The only tangible logging

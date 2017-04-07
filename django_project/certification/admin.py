@@ -1,7 +1,7 @@
 # coding=UTF-8
 """Model admin class definitions."""
 
-from django.contrib import admin
+from django.contrib.gis import admin
 from certification.models.certificate import Certificate
 from certification.models.course import Course
 from certification.models.certifying_organisation import CertifyingOrganisation
@@ -85,7 +85,7 @@ class CourseTypeAdmin(admin.ModelAdmin):
         return query_set
 
 
-class TrainingCenterAdmin(admin.ModelAdmin):
+class TrainingCenterAdmin(admin.GeoModelAdmin):
     """Training center admin model."""
 
     def queryset(self, request):

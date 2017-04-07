@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django_countries.fields
+import django.contrib.gis.db.models.fields
 import django.utils.timezone
 from django.conf import settings
 import certification.models.certifying_organisation
@@ -33,9 +34,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Certificate',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('certificateID', models.CharField(help_text=b'Id certificate.', max_length=200)),
-                ('slug', models.SlugField()),
+                ('int_id', models.AutoField(serialize=False, primary_key=True)),
+                ('certificateID', models.CharField(default=b'', max_length=100, blank=True)),
                 ('attendee', models.ForeignKey(to='certification.Attendee')),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
@@ -53,6 +53,7 @@ class Migration(migrations.Migration):
                 ('country', django_countries.fields.CountryField(blank=True, max_length=2, null=True, help_text=b'Select the country for this sponsor')),
                 ('organisation_phone', models.CharField(help_text=b'Contact of Organisation or Institution.', max_length=200)),
                 ('approved', models.BooleanField(default=False, help_text=b'Approval from project admin')),
+                ('enabled', models.BooleanField(default=True, help_text=b'Project enabled')),
                 ('slug', models.SlugField()),
                 ('organisation_manager', models.ManyToManyField(to=settings.AUTH_USER_MODEL)),
                 ('project', models.ForeignKey(to='base.Project')),
@@ -66,31 +67,24 @@ class Migration(migrations.Migration):
             name='Course',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(help_text=b'Course name.', max_length=200)),
+                ('name', models.CharField(help_text=b'Course name.', max_length=200, null=True, blank=True)),
                 ('start_date', models.DateField(default=django.utils.timezone.now, help_text=b'Course start date', verbose_name='Start date')),
                 ('end_date', models.DateField(default=django.utils.timezone.now, help_text=b'Course end date', verbose_name='End date')),
-                ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
             ],
             options={
                 'ordering': ['name'],
             },
-            bases=(certification.models.certifying_organisation.SlugifyingMixin, models.Model),
         ),
         migrations.CreateModel(
             name='CourseAttendee',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(help_text=b'Course attendee.', max_length=200)),
-                ('slug', models.SlugField()),
                 ('attendee', models.ManyToManyField(to='certification.Attendee')),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('course', models.ForeignKey(to='certification.Course')),
             ],
-            options={
-                'ordering': ['name'],
-            },
         ),
         migrations.CreateModel(
             name='CourseConvener',
@@ -129,6 +123,7 @@ class Migration(migrations.Migration):
                 ('email', models.CharField(help_text='Valid email address for communication purpose.', max_length=150)),
                 ('address', models.TextField(help_text='Address of the organisation/institution.', max_length=250)),
                 ('phone', models.CharField(help_text='Phone number/Landline.', max_length=150)),
+                ('location', django.contrib.gis.db.models.fields.PointField(default=b'POINT(28.034088 -26.195246)', srid=4326, null=True, blank=True)),
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
@@ -157,10 +152,5 @@ class Migration(migrations.Migration):
             model_name='certificate',
             name='course',
             field=models.ForeignKey(to='certification.Course'),
-        ),
-        migrations.AddField(
-            model_name='certificate',
-            name='course_attendee',
-            field=models.ForeignKey(to='certification.CourseAttendee'),
         ),
     ]
