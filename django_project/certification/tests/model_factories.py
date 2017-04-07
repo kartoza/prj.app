@@ -135,7 +135,6 @@ class CertificateF(factory.django.DjangoModelFactory):
         model = Certificate
 
     certificateID = u'123AAA'
-    course_attendee = factory.SubFactory(CourseAttendeeF)
     course = factory.SubFactory(CourseF)
     attendee = factory.SubFactory(AttendeeF)
     author = factory.SubFactory(UserF)

@@ -105,21 +105,6 @@ class TestCertificate(TestCase):
         # check if deleted
         self.assertTrue(model.pk is None)
 
-    def test_Certificate_update(self):
-        """
-        Test attendee model update
-        """
-        model = CertificateF.create()
-        new_model_data = {
-            'certificateID': 'new ID certificate name',
-        }
-        model.__dict__.update(new_model_data)
-        model.save()
-
-        # check if updated
-        for key, val in new_model_data.items():
-            self.assertEqual(model.__dict__.get(key), val)
-
 
 class TestAttendee(TestCase):
     """
@@ -203,21 +188,6 @@ class TestCourse(TestCase):
         # check if deleted
         self.assertTrue(model.pk is None)
 
-    def test_Course_update(self):
-        """
-        Test attendee model update
-        """
-        model = CourseF.create()
-        new_model_data = {
-            'name': 'new course name',
-        }
-        model.__dict__.update(new_model_data)
-        model.save()
-
-        # check if updated
-        for key, val in new_model_data.items():
-            self.assertEqual(model.__dict__.get(key), val)
-
 
 class TestTrainingCenter(TestCase):
     """
@@ -276,7 +246,7 @@ class TestTrainingCenter(TestCase):
 
 class TestCourseType(TestCase):
     """
-    Test certificate model.
+    Test course type model.
     """
     def setUp(self):
         """
