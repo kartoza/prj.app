@@ -107,8 +107,6 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
     objects = models.Manager()
     approved_objects = ApprovedCertifyingOrganisationManager()
     unapproved_objects = UnapprovedCertifyingOrganisationManager()
-    enabled_objects = objects.filter(enabled=True)
-    disabled_objects = objects.filter(enabled=False)
 
     # noinspection PyClassicStyleClass.
     class Meta:

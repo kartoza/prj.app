@@ -90,7 +90,7 @@ class Migration(migrations.Migration):
             name='CourseConvener',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('slug', models.SlugField()),
+                ('slug', models.CharField(default=b'', max_length=100, blank=True)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
                 ('name', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
