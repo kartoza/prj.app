@@ -14,7 +14,12 @@ from core.settings.contrib import STOP_WORDS
 class CourseConvener(models.Model):
     """Course Convener model."""
 
-    slug = models.SlugField()
+    slug = models.CharField(
+        max_length=100,
+        blank=True,
+        default=''
+    )
+
     name = models.ForeignKey(User)
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     objects = models.Manager()
@@ -23,14 +28,7 @@ class CourseConvener(models.Model):
         ordering = ['name']
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            convener_name = self.name.username
-            words = convener_name.split()
-            filtered_words = [word for word in words if
-                              word.lower() not in STOP_WORDS]
-            new_list = ' '.join(filtered_words)
-            self.slug = slugify(new_list)[:50]
-
+        self.slug = self.name.username
         super(CourseConvener, self).save(*args, **kwargs)
 
     def __unicode__(self):
