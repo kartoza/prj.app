@@ -31,7 +31,7 @@ class SlugifyingMixin(object):
         super(SlugifyingMixin, self).save(*args, **kwargs)
 
 
-class ApprovedCertifyingOrganisationManager(SlugifyingMixin, models.Manager):
+class ApprovedCertifyingOrganisationManager(models.Manager):
     """Custom training centre manager, shows only approved training center."""
 
     def get_queryset(self):
@@ -107,6 +107,8 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
     objects = models.Manager()
     approved_objects = ApprovedCertifyingOrganisationManager()
     unapproved_objects = UnapprovedCertifyingOrganisationManager()
+    enabled_objects = objects.filter(enabled=True)
+    disabled_objects = objects.filter(enabled=False)
 
     # noinspection PyClassicStyleClass.
     class Meta:
