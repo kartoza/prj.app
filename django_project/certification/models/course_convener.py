@@ -7,8 +7,6 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from certifying_organisation import CertifyingOrganisation
-from django.utils.text import slugify
-from core.settings.contrib import STOP_WORDS
 
 
 class CourseConvener(models.Model):
