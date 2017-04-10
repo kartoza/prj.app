@@ -41,9 +41,10 @@ class Certificate(models.Model):
         return self.certificateID
 
     def save(self, *args, **kwargs):
-        project_name = self.course.certifying_organisation.project.name
-        int_id = increment_id()
-        self.certificateID = project_name + '-' + str(int_id)
+        if self.int_id is None:
+            project_name = self.course.certifying_organisation.project.name
+            self.int_id = increment_id()
+            self.certificateID = project_name + '-' + str(self.int_id)
         super(Certificate, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
