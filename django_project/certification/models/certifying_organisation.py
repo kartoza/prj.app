@@ -58,6 +58,8 @@ class UnapprovedCertifyingOrganisationManager(models.Manager):
 class CertifyingOrganisation(SlugifyingMixin, models.Model):
     """ Certifying organisation model."""
 
+    certifying_organisation_id = models.AutoField(primary_key=True)
+
     name = models.CharField(
         help_text="Name of Organisation or Institution.",
         max_length=200,
@@ -80,7 +82,7 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
     )
 
     country = CountryField(
-        help_text='Select the country for this sponsor',
+        help_text='Select the country for this Institution',
         null=True,
         blank=True)
 

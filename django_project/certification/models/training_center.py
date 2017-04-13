@@ -67,4 +67,6 @@ class TrainingCenter(SlugifyingMixin, models.Model):
         """
         return reverse('training-center-detail', kwargs={
             'slug': self.slug,
+            'organisation_slug': self.certifying_organisation.slug,
+            'project_slug': self.certifying_organisation.project.slug
         })

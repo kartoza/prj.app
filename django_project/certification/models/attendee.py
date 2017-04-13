@@ -12,7 +12,9 @@ from django.contrib.auth.models import User
 
 
 class Attendee(models.Model):
-    """Course Attendee model."""
+    """The person who register as attendee is defined here
+    s/he does not attend any course unless s/he is defined
+    in the Course Attendee model."""
 
     firstname = models.CharField(
         help_text="First name course attendee.",

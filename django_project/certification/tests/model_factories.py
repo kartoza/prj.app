@@ -40,7 +40,7 @@ class CourseConvenerF(factory.django.DjangoModelFactory):
     class Meta:
         model = CourseConvener
 
-    name = factory.SubFactory(UserF)
+    user = factory.SubFactory(UserF)
     certifying_organisation = factory.SubFactory(CertifyingOrganisationF)
 
 
@@ -67,8 +67,7 @@ class CourseTypeF(factory.django.DjangoModelFactory):
         model = CourseType
 
     name = factory.sequence(lambda n: u'Test course type name %s' % n)
-    descriptions = factory.sequence(lambda n: u'Course type '
-                                              u'descriptions %s' % n)
+    description = factory.sequence(lambda n: u'Course type description %s' % n)
     instruction_hours = factory.sequence(lambda n: u'Instruction hours %s' % n)
     coursetype_link = factory.sequence(lambda n: u'Course type link %s' % n)
     certifying_organisation = factory.SubFactory(CertifyingOrganisationF)
@@ -90,30 +89,6 @@ class CourseF(factory.django.DjangoModelFactory):
     author = factory.SubFactory(UserF)
 
 
-class CourseAttendeeF(factory.django.DjangoModelFactory):
-    """
-    Course attendee model factory.
-    """
-
-    class Meta:
-        model = CourseAttendee
-
-    course = factory.SubFactory(CourseF)
-    author = factory.SubFactory(UserF)
-
-    @factory.post_generation
-    # simple many to many relationship
-    def attendee(self, create, extracted, **kwargs):
-        if not create:
-            # Simple build, do nothing.
-            return
-
-        if extracted:
-            # A list of groups were passed in, use them
-            for _attendee in extracted:
-                self.attendee.add(_attendee)
-
-
 class AttendeeF(factory.django.DjangoModelFactory):
     """
     Certificate model factory.
@@ -125,6 +100,19 @@ class AttendeeF(factory.django.DjangoModelFactory):
     surname = factory.sequence(lambda n: u'Test surname %s' % n)
     email = factory.sequence(lambda n: u'Test email %s' % n)
     author = factory.SubFactory(UserF)
+
+
+class CourseAttendeeF(factory.django.DjangoModelFactory):
+    """
+    Course attendee model factory.
+    """
+
+    class Meta:
+        model = CourseAttendee
+
+    course = factory.SubFactory(CourseF)
+    author = factory.SubFactory(UserF)
+    attendee = factory.SubFactory(AttendeeF)
 
 
 class CertificateF(factory.django.DjangoModelFactory):

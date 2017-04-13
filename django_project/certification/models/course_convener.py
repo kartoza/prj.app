@@ -18,19 +18,19 @@ class CourseConvener(models.Model):
         default=''
     )
 
-    name = models.ForeignKey(User)
+    user = models.ForeignKey(User)
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     objects = models.Manager()
 
     class Meta:
-        ordering = ['name']
+        ordering = ['user']
 
     def save(self, *args, **kwargs):
-        self.slug = self.name.username
+        self.slug = self.user.username
         super(CourseConvener, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return self.name.username
+        return self.user.username
 
     def get_absolute_url(self):
         """Return URL to course convener detail page.

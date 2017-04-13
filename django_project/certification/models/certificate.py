@@ -11,6 +11,8 @@ from attendee import Attendee
 
 
 def increment_id():
+    """Increment the certificate ID."""
+
     last_certificate = Certificate.objects.all().order_by('int_id').last()
     if not last_certificate:
         return '1'

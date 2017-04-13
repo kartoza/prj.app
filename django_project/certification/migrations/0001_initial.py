@@ -46,11 +46,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CertifyingOrganisation',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('certifying_organisation_id', models.AutoField(serialize=False, primary_key=True)),
                 ('name', models.CharField(help_text=b'Name of Organisation or Institution.', max_length=200)),
                 ('organisation_email', models.CharField(help_text=b'Email address Organisation or Institution.', max_length=200)),
                 ('address', models.CharField(help_text=b'Contact of Organisation or Institution.', max_length=200)),
-                ('country', django_countries.fields.CountryField(blank=True, max_length=2, null=True, help_text=b'Select the country for this sponsor')),
+                ('country', django_countries.fields.CountryField(blank=True, max_length=2, null=True, help_text=b'Select the country for this Institution')),
                 ('organisation_phone', models.CharField(help_text=b'Contact of Organisation or Institution.', max_length=200)),
                 ('approved', models.BooleanField(default=False, help_text=b'Approval from project admin')),
                 ('enabled', models.BooleanField(default=True, help_text=b'Project enabled')),
@@ -81,7 +81,7 @@ class Migration(migrations.Migration):
             name='CourseAttendee',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('attendee', models.ManyToManyField(to='certification.Attendee')),
+                ('attendee', models.ForeignKey(to='certification.Attendee')),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('course', models.ForeignKey(to='certification.Course')),
             ],
@@ -92,10 +92,10 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('slug', models.CharField(default=b'', max_length=100, blank=True)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
-                ('name', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'ordering': ['name'],
+                'ordering': ['user'],
             },
         ),
         migrations.CreateModel(
@@ -103,7 +103,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(help_text=b'Course type.', max_length=200)),
-                ('descriptions', models.TextField(help_text=b'Course type descriptions.', max_length=250, null=True, blank=True)),
+                ('description', models.TextField(help_text=b'Course type description.', max_length=250, null=True, blank=True)),
                 ('instruction_hours', models.CharField(help_text=b'Number of instruction hours e.g. 40 hours', max_length=200, null=True, blank=True)),
                 ('coursetype_link', models.CharField(help_text=b'Link to course types', max_length=200, null=True, blank=True)),
                 ('slug', models.SlugField(unique=True)),
@@ -152,5 +152,9 @@ class Migration(migrations.Migration):
             model_name='certificate',
             name='course',
             field=models.ForeignKey(to='certification.Course'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='courseattendee',
+            unique_together=set([('attendee', 'course')]),
         ),
     ]

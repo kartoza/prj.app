@@ -19,8 +19,8 @@ class CourseType(SlugifyingMixin, models.Model):
         blank=False
     )
 
-    descriptions = models.TextField(
-        help_text=('Course type descriptions.'),
+    description = models.TextField(
+        help_text=('Course type description.'),
         max_length=250,
         null=True,
         blank=True,
