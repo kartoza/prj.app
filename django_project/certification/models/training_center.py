@@ -46,7 +46,7 @@ class TrainingCenter(SlugifyingMixin, models.Model):
         blank=True,
         null=True,
         srid=4326
-        )
+    )
 
     slug = models.SlugField()
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
