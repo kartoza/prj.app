@@ -21,8 +21,8 @@ class Migration(migrations.Migration):
             name='Attendee',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('firstname', models.CharField(help_text=b'First name course attendee.', max_length=200)),
-                ('surname', models.CharField(help_text=b'Surname course attendee.', max_length=200)),
+                ('firstname', models.CharField(help_text=b'First name of the course attendee.', max_length=200)),
+                ('surname', models.CharField(help_text=b'Surname of the course attendee.', max_length=200)),
                 ('email', models.CharField(help_text=b'Email address.', max_length=200)),
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CertifyingOrganisation',
             fields=[
-                ('certifying_organisation_id', models.AutoField(serialize=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(help_text=b'Name of Organisation or Institution.', max_length=200)),
                 ('organisation_email', models.CharField(help_text=b'Email address Organisation or Institution.', max_length=200)),
                 ('address', models.CharField(help_text=b'Contact of Organisation or Institution.', max_length=200)),
@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
                 ('approved', models.BooleanField(default=False, help_text=b'Approval from project admin')),
                 ('enabled', models.BooleanField(default=True, help_text=b'Project enabled')),
                 ('slug', models.SlugField()),
-                ('organisation_manager', models.ManyToManyField(to=settings.AUTH_USER_MODEL)),
+                ('organisation_owners', models.ManyToManyField(to=settings.AUTH_USER_MODEL)),
                 ('project', models.ForeignKey(to='base.Project')),
             ],
             options={
@@ -120,10 +120,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(help_text='Organisation/Institution name.', unique=True, max_length=150)),
-                ('email', models.CharField(help_text='Valid email address for communication purpose.', max_length=150)),
+                ('email', models.CharField(help_text='Valid email address for communication purposes.', max_length=150)),
                 ('address', models.TextField(help_text='Address of the organisation/institution.', max_length=250)),
                 ('phone', models.CharField(help_text='Phone number/Landline.', max_length=150)),
-                ('location', django.contrib.gis.db.models.fields.PointField(default=b'POINT(28.034088 -26.195246)', srid=4326, null=True, blank=True)),
+                ('location', django.contrib.gis.db.models.fields.GeometryField(srid=4326, null=True, blank=True)),
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),

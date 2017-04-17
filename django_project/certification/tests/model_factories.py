@@ -17,14 +17,13 @@ from base.tests.model_factories import ProjectF
 
 
 class CertifyingOrganisationF(factory.django.DjangoModelFactory):
-    """
-    Certifying organisation model factory.
-    """
+    """Certifying organisation model factory."""
+
     class Meta:
         model = CertifyingOrganisation
 
-    name = factory.sequence(lambda n: u'Test certifying '
-                                      u'organisation name %s' % n)
+    name = factory.sequence(
+        lambda n: u'Test certifying organisation name %s' % n)
     organisation_email = factory.sequence(lambda n: u'Test email %s' % n)
     organisation_phone = factory.sequence(lambda n: u'Test phone %s' % n)
     address = factory.sequence(lambda n: u'Test address %s' % n)
@@ -33,9 +32,7 @@ class CertifyingOrganisationF(factory.django.DjangoModelFactory):
 
 
 class CourseConvenerF(factory.django.DjangoModelFactory):
-    """
-    Course convener model factory.
-    """
+    """Course convener model factory."""
 
     class Meta:
         model = CourseConvener
@@ -45,9 +42,8 @@ class CourseConvenerF(factory.django.DjangoModelFactory):
 
 
 class TrainingCenterF(factory.django.DjangoModelFactory):
-    """
-    Training center model factory.
-    """
+    """Training center model factory."""
+
     class Meta:
         model = TrainingCenter
 
@@ -60,9 +56,8 @@ class TrainingCenterF(factory.django.DjangoModelFactory):
 
 
 class CourseTypeF(factory.django.DjangoModelFactory):
-    """
-    Course type model factory.
-    """
+    """Course type model factory."""
+
     class Meta:
         model = CourseType
 
@@ -75,9 +70,8 @@ class CourseTypeF(factory.django.DjangoModelFactory):
 
 
 class CourseF(factory.django.DjangoModelFactory):
-    """
-    Course model factory.
-    """
+    """Course model factory."""
+
     class Meta:
         model = Course
 
@@ -90,9 +84,8 @@ class CourseF(factory.django.DjangoModelFactory):
 
 
 class AttendeeF(factory.django.DjangoModelFactory):
-    """
-    Certificate model factory.
-    """
+    """Certificate model factory."""
+
     class Meta:
         model = Attendee
 
@@ -103,9 +96,7 @@ class AttendeeF(factory.django.DjangoModelFactory):
 
 
 class CourseAttendeeF(factory.django.DjangoModelFactory):
-    """
-    Course attendee model factory.
-    """
+    """Course attendee model factory."""
 
     class Meta:
         model = CourseAttendee
@@ -116,13 +107,12 @@ class CourseAttendeeF(factory.django.DjangoModelFactory):
 
 
 class CertificateF(factory.django.DjangoModelFactory):
-    """
-    Certificate model factory.
-    """
+    """Certificate model factory."""
+
     class Meta:
         model = Certificate
 
-    certificateID = u'123AAA'
+    certificateID = u'ProjectTest-1'
     course = factory.SubFactory(CourseF)
     attendee = factory.SubFactory(AttendeeF)
     author = factory.SubFactory(UserF)

@@ -1,6 +1,6 @@
 # coding=utf-8
-"""
-Certifying organisation model definitions for certification apps
+"""Certifying organisation model definitions for certification apps.
+
 """
 
 from django.core.urlresolvers import reverse
@@ -32,10 +32,13 @@ class SlugifyingMixin(object):
 
 
 class ApprovedCertifyingOrganisationManager(models.Manager):
-    """Custom training centre manager, shows only approved training center."""
+    """Custom training centre manager.
+
+    Shows only approved certifying organisation.
+    """
 
     def get_queryset(self):
-        """ Query set generator. """
+        """Query set generator. """
 
         return super(
             ApprovedCertifyingOrganisationManager, self).get_queryset().filter(
@@ -43,12 +46,13 @@ class ApprovedCertifyingOrganisationManager(models.Manager):
 
 
 class UnapprovedCertifyingOrganisationManager(models.Manager):
-    """
-    Custom training centre manager, shows only unapproved training centre.
+    """Custom training centre manager.
+
+    Shows only unapproved certifying organisation.
     """
 
     def get_queryset(self):
-        """ Query set generator. """
+        """Query set generator. """
 
         return super(
             UnapprovedCertifyingOrganisationManager, self).get_queryset(
@@ -56,26 +60,24 @@ class UnapprovedCertifyingOrganisationManager(models.Manager):
 
 
 class CertifyingOrganisation(SlugifyingMixin, models.Model):
-    """ Certifying organisation model."""
-
-    certifying_organisation_id = models.AutoField(primary_key=True)
+    """Certifying organisation model."""
 
     name = models.CharField(
-        help_text="Name of Organisation or Institution.",
+        help_text='Name of Organisation or Institution.',
         max_length=200,
         null=False,
         blank=False
     )
 
     organisation_email = models.CharField(
-        help_text="Email address Organisation or Institution.",
+        help_text='Email address Organisation or Institution.',
         max_length=200,
         null=False,
         blank=False
     )
 
     address = models.CharField(
-        help_text="Contact of Organisation or Institution.",
+        help_text='Contact of Organisation or Institution.',
         max_length=200,
         null=False,
         blank=False
@@ -87,24 +89,24 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
         blank=True)
 
     organisation_phone = models.CharField(
-        help_text="Contact of Organisation or Institution.",
+        help_text='Contact of Organisation or Institution.',
         max_length=200,
         null=False,
         blank=False
     )
 
     approved = models.BooleanField(
-        help_text="Approval from project admin",
+        help_text='Approval from project admin',
         default=False
     )
 
     enabled = models.BooleanField(
-        help_text="Project enabled",
+        help_text='Project enabled',
         default=True
     )
 
     slug = models.SlugField()
-    organisation_manager = models.ManyToManyField(User)
+    organisation_owners = models.ManyToManyField(User)
     project = models.ForeignKey('base.Project')
     objects = models.Manager()
     approved_objects = ApprovedCertifyingOrganisationManager()
@@ -112,7 +114,8 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
 
     # noinspection PyClassicStyleClass.
     class Meta:
-        """ Meta class for Course attendee."""
+        """Meta class for Course attendee."""
+
         app_label = 'certification'
         ordering = ['name']
 
@@ -124,6 +127,7 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
 
     def get_absolute_url(self):
         """Return URL to certifying organisation detail page.
+
         :return: URL
         :rtype: str
         """

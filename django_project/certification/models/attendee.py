@@ -1,6 +1,6 @@
 # coding=utf-8
-"""
-Attendee model definitions for certification apps
+"""Attendee model definitions for certification apps.
+
 """
 
 from django.core.urlresolvers import reverse
@@ -12,26 +12,28 @@ from django.contrib.auth.models import User
 
 
 class Attendee(models.Model):
-    """The person who register as attendee is defined here
-    s/he does not attend any course unless s/he is defined
-    in the Course Attendee model."""
+    """The person who register as attendee is defined here.
+
+    She does not attend any course unless she is defined
+    in the Course Attendee model.
+    """
 
     firstname = models.CharField(
-        help_text="First name course attendee.",
+        help_text='First name of the course attendee.',
         max_length=200,
         null=False,
         blank=False
     )
 
     surname = models.CharField(
-        help_text="Surname course attendee.",
+        help_text='Surname of the course attendee.',
         max_length=200,
         null=False,
         blank=False
     )
 
     email = models.CharField(
-        help_text="Email address.",
+        help_text='Email address.',
         max_length=200,
         null=False,
         blank=False
@@ -59,6 +61,11 @@ class Attendee(models.Model):
         return '%s %s' % (self.firstname, self.surname)
 
     def get_absolute_url(self):
+        """Return URL to attendee detail page.
+
+        :return: URL
+        :rtype: str
+        """
         return reverse('attendee-detail', kwargs={
             'slug': self.slug,
         })

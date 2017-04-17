@@ -14,42 +14,36 @@ from certification.tests.model_factories import (
 
 
 class TestCertifyingOrganisation(TestCase):
-    """
-    Test certifying organisation model.
-    """
+    """Test certifying organisation model."""
+
     def setUp(self):
-        """
-        Set up before each test.
-        """
+        """Set up before each test."""
+
         pass
 
     def test_Certifying_Organisation_create(self):
-        """
-        Test certifying organisation model creation.
-        """
+        """Test certifying organisation model creation."""
 
         model = CertifyingOrganisationF.create()
 
-        # check if PK exists
+        # check if PK exists.
         self.assertTrue(model.pk is not None)
 
-        # check if model name exists
+        # check if model name exists.
         self.assertTrue(model.name is not None)
 
     def test_Certifying_Organisation_delete(self):
-        """
-        Test course type model creation.
-        """
+        """Test course type model creation."""
+
         model = CertifyingOrganisationF.create()
         model.delete()
 
-        # check if deleted
+        # check if deleted.
         self.assertTrue(model.pk is None)
 
     def test_Certifying_Organisation_read(self):
-        """
-        Test certifying organisation model read.
-        """
+        """Test certifying organisation model read."""
+
         model = CertifyingOrganisationF.create(
             name=u'Certifying Organisation update'
         )
@@ -57,9 +51,8 @@ class TestCertifyingOrganisation(TestCase):
         self.assertTrue(model.name == 'Certifying Organisation update')
 
     def test_Certifying_Organisation_update(self):
-        """
-        Test certifying organisation update.
-        """
+        """Test certifying organisation update."""
+
         model = CertifyingOrganisationF.create()
         new_model_data = {
             'name': u'new organisation name',
@@ -71,77 +64,68 @@ class TestCertifyingOrganisation(TestCase):
         model.__dict__.update(new_model_data)
         model.save()
 
-        # check if updated
+        # check if updated.
         for key, val in new_model_data.items():
             self.assertEqual(model.__dict__.get(key), val)
 
 
 class TestCertificate(TestCase):
-    """
-    Test certificate model.
-    """
+    """Test certificate model."""
+
     def setUp(self):
-        """
-        Set up before test.
-        """
+        """Set up before test."""
+
         pass
 
     def test_Certificate_create(self):
-        """
-        Test certificate model creation.
-        """
+        """Test certificate model creation."""
+
         model = CertificateF.create()
 
-        # check if PK exists
+        # check if PK exists.
         self.assertTrue(model.pk is not None)
 
     def test_Certificate_delete(self):
-        """
-        Test certificate model deletion.
-        """
+        """Test certificate model deletion."""
+
         model = CertificateF.create()
         model.delete()
 
-        # check if deleted
+        # check if deleted.
         self.assertTrue(model.pk is None)
 
 
 class TestAttendee(TestCase):
-    """
-    Test attendee model.
-    """
+    """Test attendee model."""
+
     def setUp(self):
-        """
-        Set up before test.
-        """
+        """Set up before test."""
+
         pass
 
     def test_Attendee_create(self):
-        """
-        Test attendee model creation.
-        """
+        """Test attendee model creation."""
+
         model = AttendeeF.create()
 
-        # check if PK exists
+        # check if PK exists.
         self.assertTrue(model.pk is not None)
 
-        # check if model variable exists
+        # check if model variable exists.
         self.assertTrue(model.firstname is not None)
 
     def test_Attendee_delete(self):
-        """
-        Test attendee model deletion.
-        """
+        """Test attendee model deletion."""
+
         model = AttendeeF.create()
         model.delete()
 
-        # check if deleted
+        # check if deleted.
         self.assertTrue(model.pk is None)
 
     def test_Attendee_update(self):
-        """
-        Test attendee model update
-        """
+        """Test attendee model update."""
+
         model = AttendeeF.create()
         new_model_data = {
             'firstname': 'new attendee firstname',
@@ -151,83 +135,74 @@ class TestAttendee(TestCase):
         model.__dict__.update(new_model_data)
         model.save()
 
-        # check if updated
+        # check if updated.
         for key, val in new_model_data.items():
             self.assertEqual(model.__dict__.get(key), val)
 
 
 class TestCourse(TestCase):
-    """
-    Test course model.
-    """
+    """Test course model."""
+
     def setUp(self):
-        """
-        Set up before test.
-        """
+        """Set up before test."""
+
         pass
 
     def test_Course_create(self):
-        """
-        Test course model creation.
-        """
+        """Test course model creation."""
+
         model = CourseF.create()
 
-        # check if PK exists
+        # check if PK exists.
         self.assertTrue(model.pk is not None)
 
-        # check if model name exists
+        # check if model name exists.
         self.assertTrue(model.name is not None)
 
     def test_Course_delete(self):
-        """
-        Test course model deletion.
-        """
+        """Test course model deletion."""
+
         model = CourseF.create()
         model.delete()
 
-        # check if deleted
+        # check if deleted.
         self.assertTrue(model.pk is None)
 
 
 class TestTrainingCenter(TestCase):
-    """
-    Test training center model.
-    """
+    """Test training center model."""
+
     def setUp(self):
-        """
-        Set up before test.
-        """
+        """Set up before test."""
+
         pass
 
     def test_Training_Center_create(self):
-        """
-        Test training center model creation.
-        """
+        """Test training center model creation."""
+
         model = TrainingCenterF.create()
 
-        # check if PK exists
+        # check if PK exists.
         self.assertTrue(model.pk is not None)
 
-        # check if model name exists
+        # check if model name exists.
         self.assertTrue(model.name is not None)
         self.assertTrue(model.phone is not None)
         self.assertTrue(model.address is not None)
         self.assertTrue(model.email is not None)
 
     def test_Training_Center_delete(self):
-        """
-        Test training center model deletion.
-        """
+        """Test training center model deletion."""
+
         model = TrainingCenterF.create()
         model.delete()
 
-        # check if deleted
+        # check if deleted.
         self.assertTrue(model.pk is None)
 
     def test_Training_Center_update(self):
-        """
-        Test attendee model update
-        """
+        """Test attendee model update."""
+
         model = TrainingCenterF.create()
         new_model_data = {
             'name': 'new Training Center name',
@@ -238,45 +213,40 @@ class TestTrainingCenter(TestCase):
         model.__dict__.update(new_model_data)
         model.save()
 
-        # check if updated
+        # check if updated.
         for key, val in new_model_data.items():
             self.assertEqual(model.__dict__.get(key), val)
         self.assertTrue(model.Address == 'new Training Center address')
 
 
 class TestCourseType(TestCase):
-    """
-    Test course type model.
-    """
+    """Test course type model."""
+
     def setUp(self):
-        """
-        Set up before test.
-        """
+        """Set up before test."""
+
         pass
 
     def test_Course_Type_create(self):
-        """
-        Test course type model creation.
-        """
+        """Test course type model creation."""
+
         model = CourseTypeF.create()
 
-        # check if PK exists
+        # check if PK exists.
         self.assertTrue(model.pk is not None)
 
     def test_Course_Type_delete(self):
-        """
-        Test course type model deletion.
-        """
+        """Test course type model deletion."""
+
         model = CourseTypeF.create()
         model.delete()
 
-        # check if deleted
+        # check if deleted.
         self.assertTrue(model.pk is None)
 
     def test_Course_Type_update(self):
-        """
-        Test attendee model update
-        """
+        """Test attendee model update."""
+
         model = CourseTypeF.create()
         new_model_data = {
             'name': 'new Course Type name',
@@ -284,66 +254,58 @@ class TestCourseType(TestCase):
         model.__dict__.update(new_model_data)
         model.save()
 
-        # check if updated
+        # check if updated.
         for key, val in new_model_data.items():
             self.assertEqual(model.__dict__.get(key), val)
 
 
 class TestCourseConvener(TestCase):
-    """
-    Test course convener model.
-    """
+    """Test course convener model."""
+
     def setUp(self):
-        """
-        Set up before test.
-        """
+        """Set up before test."""
+
         pass
 
     def test_Course_Convener_create(self):
-        """
-        Test course convener model creation.
-        """
+        """Test course convener model creation."""
+
         model = CourseConvenerF.create()
 
-        # check if PK exists
+        # check if PK exists.
         self.assertTrue(model.pk is not None)
 
     def test_Course_Convener_delete(self):
-        """
-        Test course convener model delete.
-        """
+        """Test course convener model delete."""
+
         model = CourseConvenerF.create()
         model.delete()
 
-        # check if deleted
+        # check if deleted.
         self.assertTrue(model.pk is None)
 
 
 class TestCourseAttendee(TestCase):
-    """
-    Test course convener model.
-    """
+    """Test course convener model."""
+
     def setUp(self):
-        """
-        Set up before test.
-        """
+        """Set up before test."""
+
         pass
 
     def test_Course_Attendee_create(self):
-        """
-        Test course convener model creation.
-        """
+        """Test course convener model creation."""
+
         model = CourseAttendeeF.create()
 
-        # check if PK exists
+        # check if PK exists.
         self.assertTrue(model.pk is not None)
 
     def test_Course_Attendee_delete(self):
-        """
-        Test course convener model delete.
-        """
+        """Test course convener model delete."""
+
         model = CourseAttendeeF.create()
         model.delete()
 
-        # check if deleted
+        # check if deleted.
         self.assertTrue(model.pk is None)

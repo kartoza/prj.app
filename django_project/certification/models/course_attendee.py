@@ -1,6 +1,6 @@
 # coding=utf-8
-"""
-Course attendee model definitions for certification apps
+"""Course attendee model definitions for certification apps.
+
 """
 
 from django.db import models

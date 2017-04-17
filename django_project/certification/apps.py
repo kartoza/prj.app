@@ -1,5 +1,5 @@
 """
-Self generated file when creating certification app.
+Auto generated file when creating certification app.
 """
 
 
@@ -9,4 +9,5 @@ from django.apps import AppConfig
 
 
 class CertificationConfig(AppConfig):
+    """Auto-generated application configurations."""
     name = 'certification'

@@ -1,6 +1,6 @@
 # coding=utf-8
-"""
-Training center model definitions for certification apps
+"""Training center model definitions for certification apps.
+
 """
 
 from django.core.urlresolvers import reverse
@@ -22,7 +22,7 @@ class TrainingCenter(SlugifyingMixin, models.Model):
     )
 
     email = models.CharField(
-        help_text=_('Valid email address for communication purpose.'),
+        help_text=_('Valid email address for communication purposes.'),
         max_length=150,
         null=False,
         blank=False
@@ -42,8 +42,11 @@ class TrainingCenter(SlugifyingMixin, models.Model):
         blank=False
     )
 
-    location = models.PointField(blank=True, null=True,
-                                 default='POINT(28.034088 -26.195246)')
+    location = models.GeometryField(
+        blank=True,
+        null=True,
+        srid=4326
+        )
 
     slug = models.SlugField()
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
@@ -62,6 +65,7 @@ class TrainingCenter(SlugifyingMixin, models.Model):
 
     def get_absolute_url(self):
         """Return URL to training center detail page.
+
         :return: URL
         :rtype: str
         """

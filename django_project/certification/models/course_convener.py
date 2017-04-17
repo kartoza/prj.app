@@ -1,6 +1,6 @@
 # coding=utf-8
-"""
-Course convener model definitions for certification apps
+"""Course convener model definitions for certification apps.
+
 """
 
 from django.core.urlresolvers import reverse
@@ -34,6 +34,7 @@ class CourseConvener(models.Model):
 
     def get_absolute_url(self):
         """Return URL to course convener detail page.
+
         :return: URL
         :rtype: str
         """

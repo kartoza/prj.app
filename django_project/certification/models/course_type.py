@@ -1,6 +1,6 @@
 # coding=utf-8
-"""
-Course type model definitions for certification apps
+"""Course type model definitions for certification apps.
+
 """
 
 from django.core.urlresolvers import reverse
@@ -13,28 +13,28 @@ class CourseType(SlugifyingMixin, models.Model):
     """Course Type model."""
 
     name = models.CharField(
-        help_text="Course type.",
+        help_text='Course type.',
         max_length=200,
         null=False,
         blank=False
     )
 
     description = models.TextField(
-        help_text=('Course type description.'),
+        help_text='Course type description.',
         max_length=250,
         null=True,
         blank=True,
     )
 
     instruction_hours = models.CharField(
-        help_text="Number of instruction hours e.g. 40 hours",
+        help_text='Number of instruction hours e.g. 40 hours',
         max_length=200,
         null=True,
         blank=True
     )
 
     coursetype_link = models.CharField(
-        help_text="Link to course types",
+        help_text='Link to course types',
         max_length=200,
         null=True,
         blank=True
@@ -57,6 +57,7 @@ class CourseType(SlugifyingMixin, models.Model):
 
     def get_absolute_url(self):
         """Return URL to course type detail page.
+
         :return: URL
         :rtype: str
         """

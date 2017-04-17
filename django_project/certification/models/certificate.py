@@ -1,6 +1,6 @@
 # coding=utf-8
-"""
-Certificate model definitions for certification apps
+"""Certificate model definitions for certification apps.
+
 """
 
 from django.core.urlresolvers import reverse
@@ -46,11 +46,12 @@ class Certificate(models.Model):
         if self.int_id is None:
             project_name = self.course.certifying_organisation.project.name
             self.int_id = increment_id()
-            self.certificateID = project_name + '-' + str(self.int_id)
+            self.certificateID = '%s-%s' % (project_name, str(self.int_id))
         super(Certificate, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
         """Return URL to certificate detail page.
+
         :return: URL
         :rtype: str
         """
