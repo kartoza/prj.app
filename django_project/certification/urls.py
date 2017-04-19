@@ -11,12 +11,6 @@ from views import (
     CertifyingOrganisationUpdateView,
     PendingCertifyingOrganisationListView,
     ApproveCertifyingOrganisationView,
-
-    # Training Center
-    TrainingCenterCreateView,
-    TrainingCenterDeleteView,
-    TrainingCenterDetailView,
-    TrainingCenterUpdateView,
 )
 
 
@@ -50,25 +44,4 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/update/$',
         view=CertifyingOrganisationUpdateView.as_view(),
         name='certifyingorganisation-update'),
-
-    # Training Center management
-    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/trainingcenter/'
-              '(?P<slug>[\w-]+)/$',
-        view=TrainingCenterDetailView.as_view(),
-        name='trainingcenter-detail'),
-    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/trainingcenter/'
-              '(?P<slug>[\w-]+)/delete/$',
-        view=TrainingCenterDeleteView.as_view(),
-        name='trainingcenter-delete'),
-    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/create-trainingcenter/$',
-        view=TrainingCenterCreateView.as_view(),
-        name='trainingcenter-create'),
-    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/trainingcenter/'
-              '(?P<slug>[\w-]+)/update/$',
-        view=TrainingCenterUpdateView.as_view(),
-        name='trainingcenter-update'),
 )
