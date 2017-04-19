@@ -160,7 +160,7 @@ class CertifyingOrganisationListView(
             if project_slug:
                 project = Project.objects.get(slug=project_slug)
                 queryset = CertifyingOrganisation.objects.filter(
-                    project=project, approved=True)
+                    project=project, approved=True, enabled=True)
                 return queryset
             else:
                 raise Http404('Sorry! We could not find '
@@ -189,9 +189,8 @@ class CertifyingOrganisationDetailView(
                         self).get_context_data(**kwargs)
 
         certifying_organisation = context['certifyingorganisation']
-        context['trainingcenters'] = \
-            TrainingCenter.objects.filter(
-                certifying_organisation=certifying_organisation)
+        context['trainingcenters'] = TrainingCenter.objects.filter(
+            certifying_organisation=certifying_organisation)
         context['num_trainingcenter'] = context['trainingcenters'].count()
         context['coursetypes'] = CourseType.objects.filter(
             certifying_organisation=certifying_organisation)

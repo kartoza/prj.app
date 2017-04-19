@@ -32,7 +32,7 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/$',
         view=ApproveCertifyingOrganisationView.as_view(),
         name='certifyingorganisation-approve'),
-    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisations/list/$',
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/list/$',
         view=CertifyingOrganisationListView.as_view(),
         name='certifyingorganisation-list'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'

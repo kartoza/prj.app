@@ -77,25 +77,17 @@
         Country : {{ certifyingorganisation.country.name }}<br/>
         Email : {{ certifyingorganisation.organisation_email }}<br/>
         Phone : {{ certifyingorganisation.organisation_phone }}<br/>
-        Organisation owners : {% for organisation_owners in certifyingorganisation.organisation_owners.all %}{{ organisation_owners }}{{ ", " }}{% endfor %}
+        Organisation owners : {% for organisation_owners in certifyingorganisation.organisation_owners.all %}{{ organisation_owners }}{{ ", " }}{% endfor %}<br/>
+        Location :
     </div>
     </div>
 
-    <div class="map-wrapper">
-        <div class="container">
-            <h5>Location :</h5>
-        </div>
-        <div class="container">
-            <div class="container-fluid">
-                <div class="row" id="map"></div>
-            </div>
-        </div>
+    <div class="map-wrapper" style="horiz-align: center; margin-left: 80px; margin-top: 10px">
+        <div class="row" id="map"></div>
     </div>
 
-    <div class="row">
-            <div class="col-lg-10">
-            <h2>Training Centers</h2>
-            </div>
+    <div class="row" style="margin-top: 15px;">
+        <h2>Training Centers</h2>
     </div>
 
     {% ifequal num_trainingcenter 0 %}
@@ -105,17 +97,13 @@
     {% endifequal %}
 
     {% for trainingcenter in trainingcenters %}
-        <li class="row order" style="margin-top:10px;" id="{{ trainingcenter.id }}-{{ trainingcenter.name }}">
-            <div class="col-lg-10">
+        <li style="margin-left: 20px; margin-top: 10px;" id="{{ trainingcenter.id }}-{{ trainingcenter.name }}">
                 {{ trainingcenter.name }}
-            </div>
         </li>
     {%  endfor %}
 
-    <div class="row">
-        <div class="col-lg-10">
-            <h2>Course Types</h2>
-        </div>
+    <div class="row" style="margin-top: 15px">
+        <h2>Course Types</h2>
     </div>
 
     {% ifequal num_coursetype 0 %}
@@ -125,17 +113,13 @@
     {% endifequal %}
 
     {% for coursetype in coursetypes %}
-        <li class="row order" style="margin-top:10px;" id="{{ coursetype.id }}-{{ coursetype.name }}">
-            <div class="col-lg-10">
+        <li style="margin-left: 20px; margin-top: 10px;" id="{{ coursetype.id }}-{{ coursetype.name }}">
                 {{ coursetype.name }}
-            </div>
         </li>
     {%  endfor %}
 
-    <div class="row">
-        <div class="col-lg-10">
-            <h2>Course Conveners</h2>
-        </div>
+    <div class="row" style="margin-top: 15px;">
+        <h2>Course Conveners</h2>
     </div>
 
     {% ifequal num_courseconvener 0 %}
@@ -145,17 +129,13 @@
     {% endifequal %}
 
     {% for courseconvener in courseconveners %}
-        <li class="row order" style="margin-top:10px;" id="{{ courseconvener.id }}-{{ courseconvener.user }}">
-            <div class="col-lg-10">
+        <li style="margin-left: 20px; margin-top: 10px;" id="{{ courseconvener.id }}-{{ courseconvener.user }}">
                 {{ courseconvener.user }}
-            </div>
         </li>
     {%  endfor %}
 
-    <div class="row">
-        <div class="col-lg-10">
-            <h2>Courses</h2>
-        </div>
+    <div class="row" style="margin-top: 15px">
+        <h2>Courses</h2>
     </div>
 
     {% ifequal num_course 0 %}
@@ -164,12 +144,39 @@
                     href='#'>create one</a>.</h5>
     {% endifequal %}
 
+    <style>
+    th{
+        background-color: lightgrey;
+    }
+    table, th, td {
+        border: 2px solid darkslategrey;
+    }
+    th, td{
+        padding: 10px;
+    }
+    </style>
+
+    <table style="width: 80%">
+    <tr>
+        <th style="width: 40%">Course Name</th>
+        <th>Training Center</th>
+        <th>Course Convener</th>
+    </tr>
+
     {% for course in courses %}
-        <li class="row order" style="margin-top:10px;" id="{{ course.id }}-{{ course.name }}">
-            <div class="col-lg-10">
+        <tr>
+        <td style="list-style-type: none; margin-left: 20px; margin-top: 10px;" id="{{ course.id }}-{{ course.name }}">
                 {{ course.name }}
-            </div>
-        </li>
+        </td>
+        <td style="list-style-type: none; margin-left: 20px; margin-top: 10px;" id="{{ course.id }}-{{ course.training_center.name }}">
+                {{ course.training_center.name }}
+        </td>
+        <td style="list-style-type: none; margin-left: 20px; margin-top: 10px;" id="{{ course.id }}-{{ course.course_convener.user }}">
+                {{ course.course_convener.user }}
+        </td>
+        </tr>
     {%  endfor %}
+
+    </table>
 {% endblock %}
 
