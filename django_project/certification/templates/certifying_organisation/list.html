@@ -61,6 +61,8 @@
                 </a>
             </div>
 
+        {# Only staff can add/edit organisations #}
+        {% if user.is_staff %}
             <div class="col-lg-4">
                 <div class="btn-group pull-right tooltip-toggle">
                     {%  if not certifyingorganisation.approved and user.is_staff %}
@@ -82,7 +84,7 @@
                     </a>
                 </div>
             </div>
-
+        {% endif %}
         </li>
     {%  endfor %}
 

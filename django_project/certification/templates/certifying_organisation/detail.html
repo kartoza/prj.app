@@ -51,6 +51,8 @@
             <h1>{{ certifyingorganisation.name }}</h1>
         </div>
 
+        {# Only organisation owners or staff can edit #}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <div class="col-lg-2">
             <div class="btn-group">
                 <a class="btn btn-default btn-sm tooltip-toggle"
@@ -70,6 +72,7 @@
                  </a>
             </div>
         </div>
+        {% endif %}
 
     </div>
     <div class="row">
@@ -89,7 +92,22 @@
     </div>
 
     <div class="row" style="margin-top: 15px;">
+    <div class="col-lg-10">
         <h2>Training Centers</h2>
+    </div>
+
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <div class="col-lg-2">
+            <div class="btn-group">
+            <a class="btn btn-default btn-sm tooltip-toggle"
+               href='#'
+               data-title="Create New Training Center">
+                {% show_button_icon "add" %}
+            </a>
+            </div>
+        </div>
+        {% endif %}
+
     </div>
 
     {% ifequal num_trainingcenter 0 %}
@@ -112,6 +130,7 @@
         </li>
         </div>
 
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <div class="col-lg-2">
             <div class="btn-group">
                 <a class="btn btn-default btn-xs tooltip-toggle"
@@ -126,11 +145,28 @@
                 </a>
             </div>
         </div>
+        {% endif %}
+
     {%  endfor %}
     </div>
 
     <div class="row" style="margin-top: 15px">
+        <div class="col-lg-10">
         <h2>Course Types</h2>
+        </div>
+
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <div class="col-lg-2">
+            <div class="btn-group">
+            <a class="btn btn-default btn-sm tooltip-toggle"
+               href='#'
+               data-title="Create New Course Type">
+                {% show_button_icon "add" %}
+            </a>
+            </div>
+        </div>
+        {% endif %}
+
     </div>
 
     {% ifequal num_coursetype 0 %}
@@ -147,6 +183,7 @@
             </li>
         </div>
 
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <div class="col-lg-2">
             <div class="btn-group">
                 <a class="btn btn-default btn-xs tooltip-toggle"
@@ -161,11 +198,27 @@
                 </a>
             </div>
         </div>
+        {% endif %}
+
     {%  endfor %}
     </div>
 
     <div class="row" style="margin-top: 15px;">
+    <div class="col-lg-10">
         <h2>Course Conveners</h2>
+    </div>
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <div class="col-lg-2">
+            <div class="btn-group">
+            <a class="btn btn-default btn-sm tooltip-toggle"
+               href='#'
+               data-title="Create New Course Convener">
+                {% show_button_icon "add" %}
+            </a>
+            </div>
+        </div>
+        {% endif %}
+
     </div>
 
     {% ifequal num_courseconvener 0 %}
@@ -182,6 +235,7 @@
         </li>
         </div>
 
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <div class="col-lg-2">
             <div class="btn-group">
                 <a class="btn btn-default btn-xs tooltip-toggle"
@@ -196,18 +250,34 @@
                 </a>
             </div>
         </div>
+        {% endif %}
+
     {%  endfor %}
     </div>
 
     <div class="row" style="margin-top: 15px">
+        <div class="col-lg-10">
         <h2>Courses</h2>
+        </div>
+
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <div class="col-lg-2">
+            <div class="btn-group">
+            <a class="btn btn-default btn-sm tooltip-toggle"
+               href='#'
+               data-title="Create New Course">
+                {% show_button_icon "add" %}
+            </a>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     {% ifequal num_course 0 %}
         <h5>No courses are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='#'>create one</a>.</h5>
-    {% endifequal %}
+    {% else %}
 
     <style>
     th{
@@ -226,7 +296,11 @@
         <th style="width: 40%">Course Name</th>
         <th>Training Center</th>
         <th>Course Convener</th>
+
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <th>Actions</th>
+        {% endif %}
+
     </tr>
 
     {% for course in courses %}
@@ -240,6 +314,8 @@
         <td id="{{ course.id }}-{{ course.course_convener.user }}">
                 {{ course.course_convener.user }}
         </td>
+
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <td>
              <div class="btn-group">
                 <a class="btn btn-default btn-xs tooltip-toggle"
@@ -254,9 +330,11 @@
                 </a>
             </div>
         </td>
+        {% endif %}
         </tr>
     {%  endfor %}
 
     </table>
+    {% endifequal %}
 {% endblock %}
 
