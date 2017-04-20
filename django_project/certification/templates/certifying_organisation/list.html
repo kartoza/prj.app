@@ -53,31 +53,36 @@
     {% endifequal %}
 
     {% for certifyingorganisation in certifyingorganisations %}
-        <li class="row" style="list-style-type: none; margin-top:10px; margin-left: 10px;" id="{{ certifyingorganisation.id }}-{{ certifyingorganisation.name }}">
+        <li class="row order" style="list-style-type: none; margin-top:10px; margin-left: 10px;" id="{{ certifyingorganisation.id }}-{{ certifyingorganisation.name }}">
             <div class="col-lg-8">
                 <a class="pull-left" style="font-size: larger"
                    href="{% url 'certifyingorganisation-detail' project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}">
                 {{ certifyingorganisation.name }}
                 </a>
             </div>
+
             <div class="col-lg-4">
-                <div class="btn-group pull-right">
+                <div class="btn-group pull-right tooltip-toggle">
                     {%  if not certifyingorganisation.approved and user.is_staff %}
                         <a class="btn btn-default btn-mini"
-                           href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'>
+                           href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                            data-title="Approve {{ certifyingorganisation.name }}">
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
                     {% endif %}
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                        data-title="Delete {{ certifyingorganisation.name }}">
                         <span class="glyphicon glyphicon-minus"></span>
                     </a>
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                        data-title="Update {{ certifyingorganisation.name }}">
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
                 </div>
             </div>
+
         </li>
     {%  endfor %}
 

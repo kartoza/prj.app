@@ -50,16 +50,17 @@
         <div class="col-lg-10">
             <h1>{{ certifyingorganisation.name }}</h1>
         </div>
+
         <div class="col-lg-2">
             <div class="btn-group">
                 <a class="btn btn-default btn-sm tooltip-toggle"
                    href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                   data-title="Delete {{ certifyingorganisation.title }}">
+                   data-title="Delete {{ certifyingorganisation.name }}">
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
                 <a class="btn btn-default btn-sm tooltip-toggle"
                    href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                   data-title="Edit {{ certifyingorganisation.title }}">
+                   data-title="Edit {{ certifyingorganisation.name }}">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
                  <a class="btn btn-default btn-sm tooltip-toggle"
@@ -69,6 +70,7 @@
                  </a>
             </div>
         </div>
+
     </div>
     <div class="row">
     <div class="col-lg-8">
@@ -96,11 +98,36 @@
                     href='#'>register one</a>.</h5>
     {% endifequal %}
 
+    <style>
+    li:hover{
+        background-color: #F9F9F9;
+    }
+    </style>
+
+    <div class="row">
     {% for trainingcenter in trainingcenters %}
+        <div class="col-lg-10">
         <li style="margin-left: 20px; margin-top: 10px;" id="{{ trainingcenter.id }}-{{ trainingcenter.name }}">
                 {{ trainingcenter.name }}
         </li>
+        </div>
+
+        <div class="col-lg-2">
+            <div class="btn-group">
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Delete {{ trainingcenter.name }}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Edit {{ trainingcenter.name }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </div>
+        </div>
     {%  endfor %}
+    </div>
 
     <div class="row" style="margin-top: 15px">
         <h2>Course Types</h2>
@@ -112,11 +139,30 @@
                     href='#'>create one</a>.</h5>
     {% endifequal %}
 
+    <div class="row">
     {% for coursetype in coursetypes %}
-        <li style="margin-left: 20px; margin-top: 10px;" id="{{ coursetype.id }}-{{ coursetype.name }}">
+        <div class="col-lg-10">
+            <li style="margin-left: 20px; margin-top: 10px;" id="{{ coursetype.id }}-{{ coursetype.name }}">
                 {{ coursetype.name }}
-        </li>
+            </li>
+        </div>
+
+        <div class="col-lg-2">
+            <div class="btn-group">
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Delete {{ coursetype.name }}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Edit {{ coursetype.name }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </div>
+        </div>
     {%  endfor %}
+    </div>
 
     <div class="row" style="margin-top: 15px;">
         <h2>Course Conveners</h2>
@@ -128,11 +174,30 @@
                     href='#'>register one</a>.</h5>
     {% endifequal %}
 
+    <div class="row">
     {% for courseconvener in courseconveners %}
+        <div class="col-lg-10">
         <li style="margin-left: 20px; margin-top: 10px;" id="{{ courseconvener.id }}-{{ courseconvener.user }}">
                 {{ courseconvener.user }}
         </li>
+        </div>
+
+        <div class="col-lg-2">
+            <div class="btn-group">
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Delete {{ courseconvener.user }}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Edit {{ courseconvener.user }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </div>
+        </div>
     {%  endfor %}
+    </div>
 
     <div class="row" style="margin-top: 15px">
         <h2>Courses</h2>
@@ -161,6 +226,7 @@
         <th style="width: 40%">Course Name</th>
         <th>Training Center</th>
         <th>Course Convener</th>
+        <th>Actions</th>
     </tr>
 
     {% for course in courses %}
@@ -173,6 +239,20 @@
         </td>
         <td id="{{ course.id }}-{{ course.course_convener.user }}">
                 {{ course.course_convener.user }}
+        </td>
+        <td>
+             <div class="btn-group">
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Delete">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Edit">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </div>
         </td>
         </tr>
     {%  endfor %}
