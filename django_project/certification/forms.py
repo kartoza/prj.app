@@ -11,8 +11,6 @@ from crispy_forms.layout import (
 from models import (
     CertifyingOrganisation,
 )
-from django.contrib.gis.forms.widgets import BaseGeometryWidget
-from django.contrib.gis import gdal
 
 
 class CertifyingOrganisationForm(forms.ModelForm):
