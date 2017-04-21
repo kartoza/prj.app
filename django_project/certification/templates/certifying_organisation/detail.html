@@ -260,6 +260,7 @@
         <h2>Courses</h2>
         </div>
 
+        {# Organisation owners, staffs and course convener can edit/add course #}
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <div class="col-lg-2">
             <div class="btn-group">
@@ -270,6 +271,20 @@
             </a>
             </div>
         </div>
+        {% else %}
+            {% for courseconvener in courseconveners %}
+                {% if user == courseconvener.user %}
+                    <div class="col-lg-2">
+                        <div class="btn-group">
+                            <a class="btn btn-default btn-sm tooltip-toggle"
+                                href='#'
+                                data-title="Create New Course Convener">
+                                {% show_button_icon "add" %}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
         {% endif %}
     </div>
 
@@ -299,6 +314,12 @@
 
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <th>Actions</th>
+        {% else %}
+            {% for courseconvener in courseconveners %}
+                {% if user == courseconvener.user %}
+                    <th>Actions</th>
+                {% endif %}
+            {% endfor %}
         {% endif %}
 
     </tr>
@@ -330,6 +351,25 @@
                 </a>
             </div>
         </td>
+        {% else %}
+            {% for courseconvener in courseconveners %}
+                {% if user == courseconvener.user %}
+                    <td>
+                        <div class="btn-group">
+                            <a class="btn btn-default btn-xs tooltip-toggle"
+                                href='#'
+                                data-title="Delete">
+                                <span class="glyphicon glyphicon-minus"></span>
+                            </a>
+                            <a class="btn btn-default btn-xs tooltip-toggle"
+                                href='#'
+                                data-title="Edit">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                        </div>
+                    </td>
+                {% endif %}
+            {% endfor %}
         {% endif %}
         </tr>
     {%  endfor %}
