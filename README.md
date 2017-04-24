@@ -44,10 +44,10 @@ Story queue on Waffle:
 [![Throughput Graph](https://graphs.waffle.io/kartoza/projecta/throughput.svg)](https://waffle.io/kartoza/projecta/metrics)
 
 * Current test status master: [![Build Status](https://travis-ci.org/inasafe/inasafe.svg?branch=master)](https://travis-ci.org/inasafe/inasafe) and
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kartoza/projecta/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kartoza/projecta/?branch=master)
+[![Code Health](https://landscape.io/github/kartoza/projecta/master/landscape.svg?style=flat)](https://landscape.io/github/kartoza/projecta/master)
 
 * Current test status develop: [![Build Status](https://travis-ci.org/inasafe/inasafe.svg?branch=develop)](https://travis-ci.org/inasafe/inasafe) and
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kartoza/projecta/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/kartoza/projecta/?branch=develop)
+[![Code Health](https://landscape.io/github/kartoza/projecta/develop/landscape.svg?style=flat)](https://landscape.io/github/kartoza/projecta/develop)
 
 
 
