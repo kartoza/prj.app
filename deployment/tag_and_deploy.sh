@@ -10,4 +10,4 @@ make dbbackup
 make mediasync
 git tag $VERSION
 git push --tags upstream 
-ssh inasafe-docker "cd /home/data/changelog.inasafe.org/deployment && git fetch --tags && git checkout $VERSION && make collectstatic && make reload"
+ssh changelog.qgis.org "cd /home/projecta/deployment && git fetch --tags && git checkout $VERSION && make collectstatic && make reload"
