@@ -1,6 +1,9 @@
 # coding=utf-8
 from __future__ import unicode_literals
 from django import forms
+from django.contrib.admin import widgets
+from django.contrib.admin import options
+from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout,
@@ -15,6 +18,13 @@ from models import (
 
 class CertifyingOrganisationForm(forms.ModelForm):
 
+    organisation_owners = forms.ModelMultipleChoiceField(
+        widget=widgets.FilteredSelectMultiple("user", is_stacked=False),
+        queryset=User.objects.order_by('username'),
+        )
+
+    options.BaseModelAdmin.filter_horizontal = ('organisation_owners',)
+
     # noinspection PyClassicStyleClass
     class Meta:
         model = CertifyingOrganisation
@@ -26,6 +36,10 @@ class CertifyingOrganisationForm(forms.ModelForm):
             'organisation_phone',
             'organisation_owners'
         )
+
+    class Media:
+        css = {'all': ('/media/css/widgets.css',), }
+        js = ('/admin/jsi18n/',)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
@@ -40,9 +54,6 @@ class CertifyingOrganisationForm(forms.ModelForm):
                 Field('address', css_class='form-control'),
                 Field('country', css_class='form-control chosen-select'),
                 Field('organisation_phone', css_class='form-control'),
-                Field('organisation_owners',
-                      widget=forms.CheckboxSelectMultiple,
-                      choices=self.user),
                 css_id='project-form')
         )
         self.helper.layout = layout

@@ -4,7 +4,9 @@
 
 {% block extra_head %}
     {{ Other }}
+    <script type="text/javascript" src="/admin/jsi18n/"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
+    {{ form.media }}
     {{  floppyforms }}
 
 {% endblock %}
