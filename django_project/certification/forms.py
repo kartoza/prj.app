@@ -21,7 +21,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
     organisation_owners = forms.ModelMultipleChoiceField(
         widget=widgets.FilteredSelectMultiple("user", is_stacked=False),
         queryset=User.objects.order_by('username'),
-        )
+    )
 
     options.BaseModelAdmin.filter_horizontal = ('organisation_owners',)
 
