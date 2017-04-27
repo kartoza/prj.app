@@ -18,7 +18,8 @@ from models import (
 class CustomSelectMultipleWidget(widgets.FilteredSelectMultiple):
 
     class Media:
-        css = {'all': ['/static/css/custom-widget.css', '/static/grappelli/jquery/ui/jquery-ui.min.css',
+        css = {'all': ['/static/css/custom-widget.css',
+                       '/static/grappelli/jquery/ui/jquery-ui.min.css',
                        '/static/grappelli/stylesheets/screen.css']}
 
 
