@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 from django import forms
 from django.contrib.admin import widgets
-from django.contrib.admin import options
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
@@ -16,14 +15,27 @@ from models import (
 )
 
 
+class CustomSelectMultipleWidget(widgets.FilteredSelectMultiple):
+
+    class Media:
+        css = {'all': ['admin/css/widgets.css', '/static/grappelli/jquery/ui/jquery-ui.min.css',
+                       '/static/grappelli/stylesheets/screen.css']}
+        js = (
+            '/custom_admin/jsi18n',
+            '/static/grappelli/jquery/jquery-2.1.4.min.js',
+            '/static/grappelli/jquery/ui/jquery-ui.min.js',
+            '/static/grappelli/js/grappelli.js',
+            '/static/admin/js/SelectBox.js',
+            '/static/admin/js/SelectFilter2.js',
+        )
+
+
 class CertifyingOrganisationForm(forms.ModelForm):
 
     organisation_owners = forms.ModelMultipleChoiceField(
-        widget=widgets.FilteredSelectMultiple("user", is_stacked=False),
         queryset=User.objects.order_by('username'),
+        widget=CustomSelectMultipleWidget("user", is_stacked=False),
     )
-
-    options.BaseModelAdmin.filter_horizontal = ('organisation_owners',)
 
     # noinspection PyClassicStyleClass
     class Meta:
@@ -36,10 +48,6 @@ class CertifyingOrganisationForm(forms.ModelForm):
             'organisation_phone',
             'organisation_owners'
         )
-
-    class Media:
-        css = {'all': ('/media/css/widgets.css',), }
-        js = ('/admin/jsi18n/',)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
@@ -54,7 +62,8 @@ class CertifyingOrganisationForm(forms.ModelForm):
                 Field('address', css_class='form-control'),
                 Field('country', css_class='form-control chosen-select'),
                 Field('organisation_phone', css_class='form-control'),
-                css_id='project-form')
+                Field('organisation_owners', css_class='form-control'),
+                css_id='form')
         )
         self.helper.layout = layout
         self.helper.html5_required = False
