@@ -1,7 +1,19 @@
 {% extends "project_base.html" %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
-{{ form.media }}
+
+{% block js_head %}
+    <script type="text/javascript" src="/en/site-admin/jsi18n/"></script>
+    <script type="text/javascript" src="/static/grappelli/jquery/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="/static/grappelli/jquery/ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/static/grappelli/js/grappelli.js"></script>
+    <script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+    <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
+{% endblock %}
+
+{% block css_head %}
+    {{ form.media }}
+{% endblock css_head %}
 
 {% block page_title %}
     <h1>Add Certifying Organisation</h1>
