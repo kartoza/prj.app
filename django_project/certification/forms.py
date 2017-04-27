@@ -18,7 +18,7 @@ from models import (
 class CustomSelectMultipleWidget(widgets.FilteredSelectMultiple):
 
     class Media:
-        css = {'all': ['admin/css/widgets.css', '/static/grappelli/jquery/ui/jquery-ui.min.css',
+        css = {'all': ['/static/css/custom-widget.css', '/static/grappelli/jquery/ui/jquery-ui.min.css',
                        '/static/grappelli/stylesheets/screen.css']}
 
 
@@ -55,7 +55,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
                 Field('country', css_class='form-control chosen-select'),
                 Field('organisation_phone', css_class='form-control'),
                 Field('organisation_owners', css_class='form-control'),
-                css_id='form')
+                css_id='project-form')
         )
         self.helper.layout = layout
         self.helper.html5_required = False
