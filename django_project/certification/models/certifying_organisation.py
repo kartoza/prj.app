@@ -67,7 +67,7 @@ def validate_email_address(value):
         validate_email(value)
         return True
     except ValidationError(
-            _('%(value)s is not proper gitter room name'),
+            _('%(value)s is not a valid email address'),
             params={'value': value},):
         return False
 
