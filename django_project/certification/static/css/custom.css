@@ -1,0 +1,26 @@
+.chosen-container * {
+	width: 750px;
+}
+
+.chosen-container .chosen-drop {
+    width: 750px;
+}
+
+textarea.form-control {
+	height: 100px !important;;
+	width: 750px;
+}
+
+.textInput.form-control {
+	width: 750px;
+}
+
+.btn-primary {
+	color:#fff;
+	background-color:#337ab7;
+	border-color:#2e6da4;
+	margin-top: 25px !important;;
+	width: 100px !important;
+	height: 35px !important;
+	font-size: 12pt !important;;
+}
