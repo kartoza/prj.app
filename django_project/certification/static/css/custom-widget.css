@@ -16,6 +16,7 @@
     text-align: center;
     margin-bottom: 5px;
     color: black;
+    height: 310px !important;
 }
 
 .selector-available h2, .selector-chosen h2 {
@@ -26,6 +27,7 @@
 
 .selector-available .filtered, .selector-chosen .filtered {
     background: white;
+    height: 208px !important;
 }
 
 .selector .selector-available h2 {
