@@ -79,7 +79,8 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
         help_text='Name of Organisation or Institution.',
         max_length=200,
         null=False,
-        blank=False
+        blank=False,
+        unique=True
     )
 
     organisation_email = models.CharField(
