@@ -153,13 +153,13 @@ class TestBallotViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
-    def test_BallotCreateView_no_login(self):
-        client = Client()
-        response = client.get(reverse('ballot-create', kwargs={
-            'project_slug': self.project.slug,
-            'committee_slug': self.committee.slug
-        }))
-        self.assertEqual(response.status_code, 302)
+    # def test_BallotCreateView_no_login(self):
+    #     client = Client()
+    #     response = client.get(reverse('ballot-create', kwargs={
+    #         'project_slug': self.project.slug,
+    #         'committee_slug': self.committee.slug
+    #     }))
+    #     self.assertEqual(response.status_code, 302)
 
     def test_BallotCreate_with_login(self):
         client = Client()
