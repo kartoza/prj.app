@@ -38,6 +38,7 @@ urlpatterns += i18n_patterns(
     url(r'^', include('base.urls')),
     url(r'^', include('changes.urls')),
     url(r'^', include('vota.urls')),
+    url(r'^', include('certification.urls')),
     url(r'^', include('github_issue.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
     # url(r'^password/reset/done/$', auth_views.password_reset_done,{
