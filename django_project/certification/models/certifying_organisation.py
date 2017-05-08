@@ -79,7 +79,8 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
         help_text='Name of Organisation or Institution.',
         max_length=200,
         null=False,
-        blank=False
+        blank=False,
+        unique=True
     )
 
     organisation_email = models.CharField(
@@ -90,9 +91,9 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
         validators=[validate_email_address],
     )
 
-    address = models.CharField(
-        help_text='Contact of Organisation or Institution.',
-        max_length=200,
+    address = models.TextField(
+        help_text='Address of Organisation or Institution.',
+        max_length=1000,
         null=False,
         blank=False
     )
@@ -103,7 +104,7 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
         blank=True)
 
     organisation_phone = models.CharField(
-        help_text='Contact of Organisation or Institution.',
+        help_text='Phone number: (country code)(number) e.g. +6221551553',
         max_length=200,
         null=False,
         blank=False
