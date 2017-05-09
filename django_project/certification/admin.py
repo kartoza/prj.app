@@ -118,6 +118,8 @@ class CourseConvenerAdmin(admin.ModelAdmin):
 class CertifyingOrganisationAdmin(admin.ModelAdmin):
     """Certifying organisation admin model."""
 
+    filter_horizontal = ('organisation_owners',)
+
     def queryset(self, request):
         """Ensure we use the correct manager.
 

@@ -4,8 +4,11 @@
 """
 
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db import models
 from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
 from core.settings.contrib import STOP_WORDS
 from unidecode import unidecode
 from django.contrib.auth.models import User
@@ -59,6 +62,16 @@ class UnapprovedCertifyingOrganisationManager(models.Manager):
         ).filter(approved=False)
 
 
+def validate_email_address(value):
+    try:
+        validate_email(value)
+        return True
+    except ValidationError(
+            _('%(value)s is not a valid email address'),
+            params={'value': value},):
+        return False
+
+
 class CertifyingOrganisation(SlugifyingMixin, models.Model):
     """Certifying organisation model."""
 
@@ -66,19 +79,21 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
         help_text='Name of Organisation or Institution.',
         max_length=200,
         null=False,
-        blank=False
+        blank=False,
+        unique=True
     )
 
     organisation_email = models.CharField(
         help_text='Email address Organisation or Institution.',
         max_length=200,
         null=False,
-        blank=False
+        blank=False,
+        validators=[validate_email_address],
     )
 
-    address = models.CharField(
-        help_text='Contact of Organisation or Institution.',
-        max_length=200,
+    address = models.TextField(
+        help_text='Address of Organisation or Institution.',
+        max_length=1000,
         null=False,
         blank=False
     )
@@ -89,7 +104,7 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
         blank=True)
 
     organisation_phone = models.CharField(
-        help_text='Contact of Organisation or Institution.',
+        help_text='Phone number: (country code)(number) e.g. +6221551553',
         max_length=200,
         null=False,
         blank=False

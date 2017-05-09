@@ -1,0 +1,38 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block js_head %}
+    <script type="text/javascript" src="/en/site-admin/jsi18n/"></script>
+    <script type="text/javascript" src="/static/grappelli/jquery/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="/static/grappelli/jquery/ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/static/grappelli/js/grappelli.js"></script>
+    <script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+    <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
+{% endblock %}
+
+{% block css_head %}
+    {{ form.media }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css" rel="stylesheet" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}"
+{% endblock css_head %}
+
+{% block page_title %}
+    <h1>Add Certifying Organisation</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <section id="forms">
+        <div class='container'>
+            {% csrf_token %}
+            {% crispy form %}
+            {% for form in inlines %}
+                {% crispy form %}
+            {% endfor %}
+        </div>
+    </section>
+
+{% endblock %}

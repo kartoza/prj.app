@@ -1,0 +1,380 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Certifying Organisation - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Certifying Organisation (all)</h1>
+{% endblock page_title %}
+
+{% block js_head %}
+    <link rel="stylesheet" type="text/css"
+          href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.js"></script>
+    <script>
+        var map;
+        var marker;
+
+        $(document).ready(function () {
+
+            // Add map
+            $('#map').css({'height': 400, 'width': 900});
+            map = L.map('map').setView([40, 0], 2);
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+            }).addTo(map);
+
+            $.getJSON('{{ STATIC_URL }}/static/json/geo.json', function (json) {
+
+                // Get geo json object with the same country code from certifying organisation
+                var geo_obj = $.grep(json['features'], function (e) {
+                        return e.properties.ISO2 == '{{ certifyingorganisation.country }}';
+                    });
+
+                // Put marker of the country on the map
+                var lat = geo_obj[0].properties.LAT;
+                var long = geo_obj[0].properties.LON;
+                marker = L.marker( [ lat,long ] ).addTo( map );
+            })
+
+        })
+
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-10">
+            <h1>{{ certifyingorganisation.name }}</h1>
+        </div>
+
+        {# Only organisation owners or staff can edit #}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <div class="col-lg-2">
+            <div class="btn-group">
+                <a class="btn btn-default btn-sm tooltip-toggle"
+                   href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                   data-title="Delete {{ certifyingorganisation.name }}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-sm tooltip-toggle"
+                   href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                   data-title="Edit {{ certifyingorganisation.name }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                 <a class="btn btn-default btn-sm tooltip-toggle"
+                    href='{% url "certifyingorganisation-list" certifyingorganisation.project.slug %}'
+                    data-title="Back">
+                     <span class="glyphicon glyphicon-arrow-left"></span>
+                 </a>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+    <div class="row">
+    <div class="col-lg-8">
+        Organisation Name : {{ certifyingorganisation.name }}<br/>
+        Address : {{ certifyingorganisation.address }}<br/>
+        Country : {{ certifyingorganisation.country.name }}<br/>
+        Email : {{ certifyingorganisation.organisation_email }}<br/>
+        Phone : {{ certifyingorganisation.organisation_phone }}<br/>
+        Organisation owners : {% for organisation_owners in certifyingorganisation.organisation_owners.all %}{{ organisation_owners }}{{ ", " }}{% endfor %}<br/>
+        Location :
+    </div>
+    </div>
+
+    <div class="map-wrapper" style="horiz-align: center; margin-left: 80px; margin-top: 10px">
+        <div class="row" id="map"></div>
+    </div>
+
+    <div class="row" style="margin-top: 15px;">
+    <div class="col-lg-10">
+        <h2>Training Centers</h2>
+    </div>
+
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <div class="col-lg-2">
+            <div class="btn-group">
+            <a class="btn btn-default btn-sm tooltip-toggle"
+               href='#'
+               data-title="Create New Training Center">
+                {% show_button_icon "add" %}
+            </a>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    {% ifequal num_trainingcenter 0 %}
+        <h5>No training center are defined, but you can <a
+                    class="btn btn-default btn-mini"
+                    href='#'>register one</a>.</h5>
+    {% endifequal %}
+
+    <style>
+    li:hover{
+        background-color: #F9F9F9;
+    }
+    </style>
+
+    <div class="row">
+    {% for trainingcenter in trainingcenters %}
+        <div class="col-lg-10">
+        <li style="margin-left: 20px; margin-top: 10px;" id="{{ trainingcenter.id }}-{{ trainingcenter.name }}">
+                {{ trainingcenter.name }}
+        </li>
+        </div>
+
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <div class="col-lg-2">
+            <div class="btn-group">
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Delete {{ trainingcenter.name }}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Edit {{ trainingcenter.name }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+    {%  endfor %}
+    </div>
+
+    <div class="row" style="margin-top: 15px">
+        <div class="col-lg-10">
+        <h2>Course Types</h2>
+        </div>
+
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <div class="col-lg-2">
+            <div class="btn-group">
+            <a class="btn btn-default btn-sm tooltip-toggle"
+               href='#'
+               data-title="Create New Course Type">
+                {% show_button_icon "add" %}
+            </a>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    {% ifequal num_coursetype 0 %}
+        <h5>No course types are defined, but you can <a
+                    class="btn btn-default btn-mini"
+                    href='#'>create one</a>.</h5>
+    {% endifequal %}
+
+    <div class="row">
+    {% for coursetype in coursetypes %}
+        <div class="col-lg-10">
+            <li style="margin-left: 20px; margin-top: 10px;" id="{{ coursetype.id }}-{{ coursetype.name }}">
+                {{ coursetype.name }}
+            </li>
+        </div>
+
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <div class="col-lg-2">
+            <div class="btn-group">
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Delete {{ coursetype.name }}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Edit {{ coursetype.name }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+    {%  endfor %}
+    </div>
+
+    <div class="row" style="margin-top: 15px;">
+    <div class="col-lg-10">
+        <h2>Course Conveners</h2>
+    </div>
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <div class="col-lg-2">
+            <div class="btn-group">
+            <a class="btn btn-default btn-sm tooltip-toggle"
+               href='#'
+               data-title="Create New Course Convener">
+                {% show_button_icon "add" %}
+            </a>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    {% ifequal num_courseconvener 0 %}
+        <h5>No course convener are defined, but you can <a
+                    class="btn btn-default btn-mini"
+                    href='#'>register one</a>.</h5>
+    {% endifequal %}
+
+    <div class="row">
+    {% for courseconvener in courseconveners %}
+        <div class="col-lg-10">
+        <li style="margin-left: 20px; margin-top: 10px;" id="{{ courseconvener.id }}-{{ courseconvener.user }}">
+                {{ courseconvener.user }}
+        </li>
+        </div>
+
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <div class="col-lg-2">
+            <div class="btn-group">
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Delete {{ courseconvener.user }}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Edit {{ courseconvener.user }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+    {%  endfor %}
+    </div>
+
+    <div class="row" style="margin-top: 15px">
+        <div class="col-lg-10">
+        <h2>Courses</h2>
+        </div>
+
+        {# Organisation owners, staffs and course convener can edit/add course #}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <div class="col-lg-2">
+            <div class="btn-group">
+            <a class="btn btn-default btn-sm tooltip-toggle"
+               href='#'
+               data-title="Create New Course">
+                {% show_button_icon "add" %}
+            </a>
+            </div>
+        </div>
+        {% else %}
+            {% for courseconvener in courseconveners %}
+                {% if user == courseconvener.user %}
+                    <div class="col-lg-2">
+                        <div class="btn-group">
+                            <a class="btn btn-default btn-sm tooltip-toggle"
+                                href='#'
+                                data-title="Create New Course Convener">
+                                {% show_button_icon "add" %}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    {% ifequal num_course 0 %}
+        <h5>No courses are defined, but you can <a
+                    class="btn btn-default btn-mini"
+                    href='#'>create one</a>.</h5>
+    {% else %}
+
+    <style>
+    th{
+        background-color: lightgrey;
+    }
+    table, th, td {
+        border: 2px solid darkslategrey;
+    }
+    th, td{
+        padding: 10px;
+    }
+    </style>
+
+    <table style="width: 80%">
+    <tr>
+        <th style="width: 40%">Course Name</th>
+        <th>Training Center</th>
+        <th>Course Convener</th>
+
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <th>Actions</th>
+        {% else %}
+            {% for courseconvener in courseconveners %}
+                {% if user == courseconvener.user %}
+                    <th>Actions</th>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+    </tr>
+
+    {% for course in courses %}
+        <tr style="list-style-type: none; margin-left: 20px; margin-top: 10px;">
+        <td id="{{ course.id }}-{{ course.name }}">
+                {{ course.name }}
+        </td>
+        <td id="{{ course.id }}-{{ course.training_center.name }}">
+                {{ course.training_center.name }}
+        </td>
+        <td id="{{ course.id }}-{{ course.course_convener.user }}">
+                {{ course.course_convener.user }}
+        </td>
+
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        <td>
+             <div class="btn-group">
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Delete">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='#'
+                   data-title="Edit">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </div>
+        </td>
+        {% else %}
+            {% for courseconvener in courseconveners %}
+                {% if user == courseconvener.user %}
+                    <td>
+                        <div class="btn-group">
+                            <a class="btn btn-default btn-xs tooltip-toggle"
+                                href='#'
+                                data-title="Delete">
+                                <span class="glyphicon glyphicon-minus"></span>
+                            </a>
+                            <a class="btn btn-default btn-xs tooltip-toggle"
+                                href='#'
+                                data-title="Edit">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                        </div>
+                    </td>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        </tr>
+    {%  endfor %}
+
+    </table>
+    {% endifequal %}
+{% endblock %}
+
