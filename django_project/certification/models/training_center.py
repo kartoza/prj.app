@@ -7,7 +7,10 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
-from certifying_organisation import CertifyingOrganisation, SlugifyingMixin, validate_email_address
+from certifying_organisation import (
+    CertifyingOrganisation,
+    SlugifyingMixin,
+    validate_email_address)
 
 
 class TrainingCenter(SlugifyingMixin, models.Model):

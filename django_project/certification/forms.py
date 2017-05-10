@@ -124,7 +124,8 @@ class TrainingCenterForm(geoforms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         self.certifying_organisation = kwargs.pop('certifying_organisation')
-        form_title = 'New Training Center for %s' % self.certifying_organisation.name
+        form_title = 'New Training Center for %s' % \
+                     self.certifying_organisation.name
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
@@ -146,4 +147,3 @@ class TrainingCenterForm(geoforms.ModelForm):
         instance.author = self.user
         instance.save()
         return instance
-

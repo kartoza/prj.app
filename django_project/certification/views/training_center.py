@@ -1,17 +1,10 @@
 # coding=utf-8
-import logging
-from base.models import Project
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    UpdateView)
-from django.http import HttpResponseRedirect, Http404
+from django.views.generic import CreateView
+from django.http import HttpResponseRedirect
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin
 from ..models import (
     CertifyingOrganisation,
     TrainingCenter)
@@ -89,7 +82,8 @@ class TrainingCenterCreateView(
         kwargs = super(TrainingCenterCreateView,
                        self).get_form_kwargs()
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
-        self.certifying_organisation = CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        self.certifying_organisation = \
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
         kwargs.update({
             'user': self.request.user,
             'certifying_organisation': self.certifying_organisation
