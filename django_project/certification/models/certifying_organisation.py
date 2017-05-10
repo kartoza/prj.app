@@ -76,7 +76,7 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
     """Certifying organisation model."""
 
     name = models.CharField(
-        help_text='Name of Organisation or Institution.',
+        help_text=_('name of organisation or institution'),
         max_length=200,
         null=False,
         blank=False,
@@ -84,7 +84,7 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
     )
 
     organisation_email = models.CharField(
-        help_text='Email address Organisation or Institution.',
+        help_text=_('Email address organisation or institution.'),
         max_length=200,
         null=False,
         blank=False,
@@ -92,31 +92,31 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
     )
 
     address = models.TextField(
-        help_text='Address of Organisation or Institution.',
+        help_text=_('Address of Organisation or Institution.'),
         max_length=1000,
         null=False,
         blank=False
     )
 
     country = CountryField(
-        help_text='Select the country for this Institution',
+        help_text=_('Select the country for this Institution'),
         null=True,
         blank=True)
 
     organisation_phone = models.CharField(
-        help_text='Phone number: (country code)(number) e.g. +6221551553',
+        help_text=_('Phone number: (country code)(number) e.g. +6221551553'),
         max_length=200,
         null=False,
         blank=False
     )
 
     approved = models.BooleanField(
-        help_text='Approval from project admin',
+        help_text=_('Approval from project admin'),
         default=False
     )
 
     enabled = models.BooleanField(
-        help_text='Project enabled',
+        help_text=_('Project enabled'),
         default=True
     )
 

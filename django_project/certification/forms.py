@@ -3,6 +3,9 @@ from __future__ import unicode_literals
 from django import forms
 from django.contrib.admin import widgets
 from django.contrib.auth.models import User
+from django.contrib.gis import forms as geoforms
+from django.contrib.gis import gdal
+from django.contrib.gis.forms.widgets import BaseGeometryWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout,
@@ -12,6 +15,7 @@ from crispy_forms.layout import (
 )
 from models import (
     CertifyingOrganisation,
+    TrainingCenter,
 )
 
 
@@ -70,3 +74,75 @@ class CertifyingOrganisationForm(forms.ModelForm):
         instance.save()
         self.save_m2m()
         return instance
+
+
+class CustomOSMWidget(BaseGeometryWidget):
+    """An OpenLayers/OpenStreetMap-based widget."""
+
+    template_name = 'gis/openlayers-osm.html'
+
+    default_lon = 0
+    default_lat = 0
+
+    class Media:
+        css = {'all': ['/static/css/custom-widget.css',
+                       '/static/grappelli/jquery/ui/jquery-ui.min.css',
+                       '/static/grappelli/stylesheets/screen.css']}
+
+    def __init__(self, attrs=None):
+        super(CustomOSMWidget, self).__init__()
+        for key in ('default_lon', 'default_lat'):
+            self.attrs[key] = getattr(self, key)
+        if attrs:
+            self.attrs.update(attrs)
+
+    @property
+    def map_srid(self):
+        # Use the official spherical mercator projection SRID when GDAL is
+        # available; otherwise, fallback to 900913.
+        if gdal.HAS_GDAL:
+            return 3857
+        else:
+            return 900913
+
+
+class TrainingCenterForm(geoforms.ModelForm):
+
+    location = geoforms.GeometryField(widget=CustomOSMWidget(
+        attrs={'map_width': 600, 'map_height': 400}))
+
+    class Meta:
+        model = TrainingCenter
+        fields = (
+            'name',
+            'email',
+            'address',
+            'phone',
+            'location',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = 'New Training Center for %s' % self.certifying_organisation.name
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('name', css_class='form-control'),
+                Field('email', css_class='form-control'),
+                Field('address', css_class='form-control'),
+                Field('phone', css_class='form-control'),
+                Field('location', css_class='form-control'),
+            ))
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(TrainingCenterForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(TrainingCenterForm, self).save(commit=False)
+        instance.certifying_organisation = self.certifying_organisation
+        instance.save()
+        return instance
+

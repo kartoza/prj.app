@@ -11,6 +11,8 @@ from views import (
     CertifyingOrganisationUpdateView,
     PendingCertifyingOrganisationListView,
     ApproveCertifyingOrganisationView,
+
+    TrainingCenterCreateView,
 )
 
 
@@ -44,4 +46,11 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/update/$',
         view=CertifyingOrganisationUpdateView.as_view(),
         name='certifyingorganisation-update'),
+
+# Training Center management
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/create-trainingcenter/$',
+        view=TrainingCenterCreateView.as_view(),
+        name='trainingcenter-create'),
+
 )

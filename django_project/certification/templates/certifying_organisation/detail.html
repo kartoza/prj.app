@@ -113,7 +113,7 @@
     {% ifequal num_trainingcenter 0 %}
         <h5>No training center are defined, but you can <a
                     class="btn btn-default btn-mini"
-                    href='#'>register one</a>.</h5>
+                    href='{% url "trainingcenter-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'>register one</a>.</h5>
     {% endifequal %}
 
     <style>

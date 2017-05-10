@@ -5,16 +5,16 @@
 
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
-from certifying_organisation import CertifyingOrganisation, SlugifyingMixin
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
+from certifying_organisation import CertifyingOrganisation, SlugifyingMixin, validate_email_address
 
 
 class TrainingCenter(SlugifyingMixin, models.Model):
     """Training Centre / Organisation registration."""
 
     name = models.CharField(
-        help_text=_('Organisation/Institution name.'),
+        help_text=_('Training Center name.'),
         max_length=150,
         null=False,
         blank=False,
@@ -25,18 +25,19 @@ class TrainingCenter(SlugifyingMixin, models.Model):
         help_text=_('Valid email address for communication purposes.'),
         max_length=150,
         null=False,
-        blank=False
+        blank=False,
+        validators=[validate_email_address]
     )
 
     address = models.TextField(
-        help_text=_('Address of the organisation/institution.'),
+        help_text=_('Address of the training center.'),
         max_length=250,
         null=False,
         blank=False,
     )
 
     phone = models.CharField(
-        help_text=_('Phone number/Landline.'),
+        help_text=_('Phone number: (country code)(number) e.g. +6221551553'),
         max_length=150,
         null=False,
         blank=False
