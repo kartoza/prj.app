@@ -1,21 +1,12 @@
 # coding=utf-8
 from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
 from django.views.generic import (
     CreateView)
-from django.http import HttpResponseRedirect, Http404
-from django.db import IntegrityError
-from django.core.exceptions import ValidationError
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
-from pure_pagination.mixins import PaginationMixin
-from base.models import Project
+from braces.views import LoginRequiredMixin
 from ..models import (
     CertifyingOrganisation,
-    TrainingCenter,
     CourseType,
-    CourseConvener,
-    Course)
+    )
 from ..forms import CourseTypeForm
 
 
@@ -76,7 +67,8 @@ class CourseTypeCreateView(
         kwargs = super(CourseTypeCreateView,
                        self).get_form_kwargs()
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
-        self.certifying_organisation = CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        self.certifying_organisation = \
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
         kwargs.update({
             'user': self.request.user,
             'certifying_organisation': self.certifying_organisation,
