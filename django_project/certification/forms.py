@@ -12,6 +12,7 @@ from crispy_forms.layout import (
 )
 from models import (
     CertifyingOrganisation,
+    CourseType
 )
 
 
@@ -69,4 +70,43 @@ class CertifyingOrganisationForm(forms.ModelForm):
         instance.approved = False
         instance.save()
         self.save_m2m()
+        return instance
+
+
+class CourseTypeForm(forms.ModelForm):
+
+    # noinspection PyClassicStyleClass
+    class Meta:
+        model = CourseType
+        fields = (
+            'name',
+            'description',
+            'instruction_hours',
+            'coursetype_link',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = 'New Course for %s' % self.certifying_organisation.name
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('name', css_class='form-control'),
+                Field('description', css_class='form-control'),
+                Field('instruction_hours', css_class='form-control'),
+                Field('coursetype_link', css_class='form-control'),
+                css_id='project-form')
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(CourseTypeForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(CourseTypeForm, self).save(commit=False)
+        instance.certifying_organisation = self.certifying_organisation
+        instance.author = self.user
+        instance.save()
         return instance

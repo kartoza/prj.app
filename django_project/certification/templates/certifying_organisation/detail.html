@@ -159,7 +159,7 @@
         <div class="col-lg-2">
             <div class="btn-group">
             <a class="btn btn-default btn-sm tooltip-toggle"
-               href='#'
+               href='{% url 'coursetype-create' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
                data-title="Create New Course Type">
                 {% show_button_icon "add" %}
             </a>
@@ -172,7 +172,7 @@
     {% ifequal num_coursetype 0 %}
         <h5>No course types are defined, but you can <a
                     class="btn btn-default btn-mini"
-                    href='#'>create one</a>.</h5>
+                    href='{% url 'coursetype-create' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'>create one</a>.</h5>
     {% endifequal %}
 
     <div class="row">
