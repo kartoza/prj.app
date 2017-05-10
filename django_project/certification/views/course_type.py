@@ -5,8 +5,7 @@ from django.views.generic import (
 from braces.views import LoginRequiredMixin
 from ..models import (
     CertifyingOrganisation,
-    CourseType,
-    )
+    CourseType)
 from ..forms import CourseTypeForm
 
 
