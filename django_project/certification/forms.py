@@ -103,13 +103,13 @@ class CustomOSMWidget(BaseGeometryWidget):
         if gdal.HAS_GDAL:
             return 3857
         else:
-            return 900913
+            return 4326
 
 
 class TrainingCenterForm(geoforms.ModelForm):
 
     location = geoforms.GeometryField(widget=CustomOSMWidget(
-        attrs={'map_width': 600, 'map_height': 400}))
+        attrs={'map_width': 600, 'map_height': 400}), )
 
     class Meta:
         model = TrainingCenter
@@ -143,6 +143,7 @@ class TrainingCenterForm(geoforms.ModelForm):
     def save(self, commit=True):
         instance = super(TrainingCenterForm, self).save(commit=False)
         instance.certifying_organisation = self.certifying_organisation
+        instance.author = self.user
         instance.save()
         return instance
 

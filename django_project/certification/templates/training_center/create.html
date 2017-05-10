@@ -2,12 +2,24 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
-{% block extra_head %}
-    {{ form.media }}
-    {{ Other }}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
-    {{  floppyforms }}
+{% block js_head %}
+     <script>
+        var grappelli = {};
+    </script>
+    <script>
+        $(document).ready(function () {
+            var map_height = $('.olMap').height();
+            var parent_form = $('.olMap').closest('.form-group');
+            $(parent_form).height(map_height + $(parent_form).height() + 25);
+            $('.selectmultiple').height(500);
 
+        });
+    </script>
+
+    <script type="text/javascript" src="/en/site-admin/jsi18n/"></script>
+    <script type="text/javascript" src="/static/js/libs/OpenLayers-2.13.1/OpenLayers.js"></script>
+    <script type="text/javascript" src="/static/js/libs/OpenLayers-2.13.1/OpenStreetMapSSL.js"></script>
+    <script type="text/javascript" src="/static/gis/js/OLMapWidget.js"></script>
 {% endblock %}
 
 {% block css_head %}
@@ -15,13 +27,6 @@
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-{% endblock %}
-
-{% block js_head %}
-    <script type="text/javascript" src="/en/site-admin/jsi18n/"></script>
-    <script type="text/javascript" src="/static/js/libs/OpenLayers-2.13.1/OpenLayers.js"></script>
-    <script type="text/javascript" src="/static/js/libs/OpenLayers-2.13.1/OpenStreetMapSSL.js"></script>
-    <script type="text/javascript" src="/static/gis/js/OLMapWidget.js"></script>
 {% endblock %}
 
 {% block page_title %}
