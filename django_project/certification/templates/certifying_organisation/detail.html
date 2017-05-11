@@ -239,7 +239,7 @@
         <div class="col-lg-2">
             <div class="btn-group">
                 <a class="btn btn-default btn-xs tooltip-toggle"
-                   href='#'
+                   href='{% url "courseconvener-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=courseconvener.slug %}'
                    data-title="Delete {{ courseconvener.user }}">
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
