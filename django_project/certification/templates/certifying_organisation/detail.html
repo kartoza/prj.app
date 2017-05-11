@@ -211,7 +211,7 @@
         <div class="col-lg-2">
             <div class="btn-group">
             <a class="btn btn-default btn-sm tooltip-toggle"
-               href='#'
+               href='{% url "courseconvener-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
                data-title="Create New Course Convener">
                 {% show_button_icon "add" %}
             </a>
@@ -224,7 +224,7 @@
     {% ifequal num_courseconvener 0 %}
         <h5>No course convener are defined, but you can <a
                     class="btn btn-default btn-mini"
-                    href='#'>register one</a>.</h5>
+                    href='{% url "courseconvener-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'>register one</a>.</h5>
     {% endifequal %}
 
     <div class="row">

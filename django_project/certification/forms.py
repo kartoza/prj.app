@@ -12,6 +12,7 @@ from crispy_forms.layout import (
 )
 from models import (
     CertifyingOrganisation,
+    CourseConvener
 )
 
 
@@ -69,4 +70,49 @@ class CertifyingOrganisationForm(forms.ModelForm):
         instance.approved = False
         instance.save()
         self.save_m2m()
+        return instance
+
+
+class SortedSelect(forms.Select):
+
+    def render_options(self, selected_choices):
+        self.choices = sorted(self.choices)
+        self.choices.sort(key=lambda x: x[1])
+        return super(SortedSelect, self).render_options(selected_choices)
+
+
+class CourseConvenerForm(forms.ModelForm):
+
+    user = forms.ModelChoiceField(
+        queryset=User.objects.order_by('username'),
+        widget=forms.Select)
+
+    # noinspection PyClassicStyleClass
+    class Meta:
+        model = CourseConvener
+        fields = (
+            'user',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = 'New Course Convener for %s' % \
+                     self.certifying_organisation.name
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('search', css_class='form-control'),
+                Field('user', css_class='form-control'),)
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(CourseConvenerForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(CourseConvenerForm, self).save(commit=False)
+        instance.certifying_organisation = self.certifying_organisation
+        instance.save()
         return instance
