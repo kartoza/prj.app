@@ -14,6 +14,7 @@ from views import (
 
     CourseConvenerCreateView,
     CourseConvenerDeleteView,
+    CourseConvenerUpdateView,
 )
 
 
@@ -57,5 +58,9 @@ urlpatterns = patterns(
               '(?P<organisation_slug>[\w-]+)/(?P<slug>[\w-]+)/delete/$',
         view=CourseConvenerDeleteView.as_view(),
         name='courseconvener-delete'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/(?P<slug>[\w-]+)/update/$',
+        view=CourseConvenerUpdateView.as_view(),
+        name='courseconvener-update'),
 
 )

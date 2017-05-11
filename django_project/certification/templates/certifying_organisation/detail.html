@@ -244,7 +244,7 @@
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
                 <a class="btn btn-default btn-xs tooltip-toggle"
-                   href='#'
+                   href='{% url "courseconvener-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=courseconvener.slug %}'
                    data-title="Edit {{ courseconvener.user }}">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
