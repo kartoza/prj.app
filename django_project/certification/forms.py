@@ -89,6 +89,18 @@ class CustomOSMWidget(BaseGeometryWidget):
                        '/static/grappelli/jquery/ui/jquery-ui.min.css',
                        '/static/grappelli/stylesheets/screen.css']}
 
+        js = (
+            '/en/site-admin/jsi18n/',
+            '/static/grappelli/jquery/jquery-2.1.4.min.js',
+            '/static/grappelli/jquery/ui/jquery-ui.min.js',
+            '/static/grappelli/js/grappelli.js',
+            '/static/admin/js/SelectBox.js',
+            '/static/admin/js/SelectFilter2.js',
+            '/static/js/libs/OpenLayers-2.13.1/OpenLayers.js',
+            '/static/js/libs/OpenLayers-2.13.1/OpenStreetMapSSL.js',
+            '/static/gis/js/OLMapWidget.js'
+        )
+
     def __init__(self, attrs=None):
         super(CustomOSMWidget, self).__init__()
         for key in ('default_lon', 'default_lat'):
@@ -108,7 +120,7 @@ class CustomOSMWidget(BaseGeometryWidget):
 
 class TrainingCenterForm(geoforms.ModelForm):
 
-    location = geoforms.GeometryField(widget=CustomOSMWidget(
+    location = geoforms.PointField(widget=CustomOSMWidget(
         attrs={'map_width': 600, 'map_height': 400}), )
 
     class Meta:

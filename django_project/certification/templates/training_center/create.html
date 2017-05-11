@@ -3,23 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block js_head %}
-     <script>
-        var grappelli = {};
-    </script>
-    <script>
-        $(document).ready(function () {
-            var map_height = $('.olMap').height();
-            var parent_form = $('.olMap').closest('.form-group');
-            $(parent_form).height(map_height + $(parent_form).height() + 25);
-            $('.selectmultiple').height(500);
 
-        });
-    </script>
-
-    <script type="text/javascript" src="/en/site-admin/jsi18n/"></script>
-    <script type="text/javascript" src="/static/js/libs/OpenLayers-2.13.1/OpenLayers.js"></script>
-    <script type="text/javascript" src="/static/js/libs/OpenLayers-2.13.1/OpenStreetMapSSL.js"></script>
-    <script type="text/javascript" src="/static/gis/js/OLMapWidget.js"></script>
 {% endblock %}
 
 {% block css_head %}
@@ -38,6 +22,9 @@
     <section id="forms">
         <div class='container'>
             {% crispy form %}
+            {% for form in inlines %}
+                {% crispy form %}
+            {% endfor %}
         </div>
     </section>
 
