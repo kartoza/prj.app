@@ -179,7 +179,8 @@
     {% for coursetype in coursetypes %}
         <div class="col-lg-10">
             <li style="margin-left: 20px; margin-top: 10px;" id="{{ coursetype.id }}-{{ coursetype.name }}">
-                {{ coursetype.name }}
+                <a href="{% url 'coursetype-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=coursetype.slug %}">
+                    {{ coursetype.name }}</a>
             </li>
         </div>
 
