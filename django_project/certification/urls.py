@@ -13,6 +13,7 @@ from views import (
     ApproveCertifyingOrganisationView,
 
     CourseTypeCreateView,
+    CourseTypeUpdateView,
 )
 
 
@@ -52,4 +53,8 @@ urlpatterns = patterns(
               '(?P<organisation_slug>[\w-]+)/create-coursetype/$',
         view=CourseTypeCreateView.as_view(),
         name='coursetype-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/(?P<slug>[\w-]+)/update/$',
+        view=CourseTypeUpdateView.as_view(),
+        name='coursetype-update'),
 )

@@ -192,7 +192,7 @@
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
                 <a class="btn btn-default btn-xs tooltip-toggle"
-                   href='#'
+                   href='{% url "coursetype-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=coursetype.slug %}'
                    data-title="Edit {{ coursetype.name }}">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
