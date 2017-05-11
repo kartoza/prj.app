@@ -99,7 +99,7 @@ class CourseConvenerDeleteView(
         LoginRequiredMixin,
         CourseConvenerMixin,
         DeleteView):
-    """Delete view for Certifying Organisation."""
+    """Delete view for Course Convener."""
 
     context_object_name = 'convener'
     template_name = 'course_convener/delete.html'
