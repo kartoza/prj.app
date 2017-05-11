@@ -16,7 +16,7 @@ from ..forms import CourseTypeForm
 
 
 class CourseTypeMixin(object):
-    """Mixin class to provide standard settings for Certifying Organisation."""
+    """Mixin class to provide standard settings for Course Type."""
 
     model = CourseType
     form_class = CourseTypeForm
@@ -34,8 +34,7 @@ class CourseTypeCreateView(
         """Define the redirect URL
 
         After successful creation of the object, the User will be redirected
-        to the unapproved Certifying Organisation list page
-        for the object's parent Project
+        to the unapproved Certifying Organisation detail page
 
        :returns: URL
        :rtype: HttpResponse
@@ -168,7 +167,7 @@ class CourseTypeDeleteView(
 class CourseTypeUpdateView(LoginRequiredMixin,
                            CourseTypeMixin,
                            UpdateView):
-    """Update view for Certifying Organisation."""
+    """Update view for Course Type."""
 
     context_object_name = 'coursetype'
     template_name = 'course_type/update.html'
@@ -248,7 +247,7 @@ class CourseTypeUpdateView(LoginRequiredMixin,
 
 class CourseTypeDetailView(
         CourseTypeMixin, DetailView):
-    """Detail view for Certifying Organisation."""
+    """Detail view for Course Type."""
 
     context_object_name = 'coursetype'
     template_name = 'course_type/detail.html'
