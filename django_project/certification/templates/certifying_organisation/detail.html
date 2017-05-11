@@ -126,7 +126,8 @@
     {% for trainingcenter in trainingcenters %}
         <div class="col-lg-10">
         <li style="margin-left: 20px; margin-top: 10px;" id="{{ trainingcenter.id }}-{{ trainingcenter.name }}">
-                {{ trainingcenter.name }}
+                <a href="{% url 'trainingcenter-detail' certifyingorganisation.project.slug certifyingorganisation.slug trainingcenter.slug %}">
+                    {{ trainingcenter.name }}</a>
         </li>
         </div>
 
