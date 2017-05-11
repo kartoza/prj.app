@@ -12,7 +12,7 @@ from ..forms import CourseConvenerForm
 
 
 class CourseConvenerMixin(object):
-    """Mixin class to provide standard settings for Certifying Organisation."""
+    """Mixin class to provide standard settings for Course Convener."""
 
     model = CourseConvener
     form_class = CourseConvenerForm
@@ -21,7 +21,7 @@ class CourseConvenerMixin(object):
 class CourseConvenerCreateView(
         LoginRequiredMixin,
         CourseConvenerMixin, CreateView):
-    """Create view for Certifying Organisation."""
+    """Create view for Course Convener."""
 
     context_object_name = 'convener'
     template_name = 'course_convener/create.html'
@@ -30,8 +30,7 @@ class CourseConvenerCreateView(
         """Define the redirect URL
 
         After successful creation of the object, the User will be redirected
-        to the unapproved Certifying Organisation list page
-        for the object's parent Project
+        to the Certifying Organisation detail page
 
        :returns: URL
        :rtype: HttpResponse
@@ -59,7 +58,7 @@ class CourseConvenerCreateView(
         return context
 
     def form_valid(self, form):
-        """Save new created Certifying Organisation
+        """Save new created Course Convener
 
         :param form
         :type form
