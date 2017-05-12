@@ -1,0 +1,31 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block js_head %}
+
+{% endblock %}
+
+{% block css_head %}
+    {{ form.media }}
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+{% endblock %}
+
+{% block page_title %}
+    <h1>Update Training Center</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <section id="forms">
+        <div class='container'>
+            {% crispy form %}
+            {% for form in inlines %}
+                {% crispy form %}
+            {% endfor %}
+        </div>
+    </section>
+
+{% endblock %}
