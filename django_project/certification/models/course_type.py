@@ -34,6 +34,7 @@ class CourseType(SlugifyingMixin, models.Model):
     )
 
     coursetype_link = models.CharField(
+        verbose_name='Link',
         help_text='Link to course types',
         max_length=200,
         null=True,

@@ -88,7 +88,8 @@ class CourseTypeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         self.certifying_organisation = kwargs.pop('certifying_organisation')
-        form_title = 'New Course for %s' % self.certifying_organisation.name
+        form_title = \
+            'New Course Type for %s' % self.certifying_organisation.name
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(

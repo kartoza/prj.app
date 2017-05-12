@@ -31,10 +31,10 @@ class CourseTypeCreateView(
     template_name = 'course_type/create.html'
 
     def get_success_url(self):
-        """Define the redirect URL
+        """Define the redirect URL.
 
         After successful creation of the object, the User will be redirected
-        to the unapproved Certifying Organisation detail page
+        to the Certifying Organisation detail page.
 
        :returns: URL
        :rtype: HttpResponse
@@ -55,8 +55,8 @@ class CourseTypeCreateView(
         :rtype: dict
         """
 
-        context = super(CourseTypeCreateView,
-                        self).get_context_data(**kwargs)
+        context = super(
+            CourseTypeCreateView, self).get_context_data(**kwargs)
         context['coursetypes'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
         return context
@@ -68,8 +68,7 @@ class CourseTypeCreateView(
         :rtype: dict
         """
 
-        kwargs = super(CourseTypeCreateView,
-                       self).get_form_kwargs()
+        kwargs = super(CourseTypeCreateView, self).get_form_kwargs()
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
@@ -91,7 +90,7 @@ class CourseTypeDeleteView(
 
     def get(self, request, *args, **kwargs):
         """
-        Get the organisation_slug from the URL and define the Organisation
+        Get the organisation_slug from the URL and define the Organisation.
 
         :param request: HTTP request object
         :type request: HttpRequest
@@ -109,11 +108,11 @@ class CourseTypeDeleteView(
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
-        return super(CourseTypeDeleteView,
-                     self).get(request, *args, **kwargs)
+        return super(
+            CourseTypeDeleteView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        """Post the project_slug from the URL and define the Project
+        """Post the project_slug from the URL and define the Project.
 
         :param request: HTTP request object
         :type request: HttpRequest
@@ -131,14 +130,13 @@ class CourseTypeDeleteView(
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
-        return super(CourseTypeDeleteView,
-                     self).post(request, *args, **kwargs)
+        return super(CourseTypeDeleteView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
-        """Define the redirect URL
+        """Define the redirect URL.
 
         After successful deletion  of the object, the User will be redirected
-        to the Certifying Organisation detail page
+        to the Certifying Organisation detail page.
 
         :returns: URL
         :rtype: HttpResponse
@@ -164,9 +162,10 @@ class CourseTypeDeleteView(
         return qs
 
 
-class CourseTypeUpdateView(LoginRequiredMixin,
-                           CourseTypeMixin,
-                           UpdateView):
+class CourseTypeUpdateView(
+        LoginRequiredMixin,
+        CourseTypeMixin,
+        UpdateView):
     """Update view for Course Type."""
 
     context_object_name = 'coursetype'
@@ -179,8 +178,8 @@ class CourseTypeUpdateView(LoginRequiredMixin,
         :rtype: dict
         """
 
-        kwargs = super(CourseTypeUpdateView,
-                       self).get_form_kwargs()
+        kwargs = super(
+            CourseTypeUpdateView, self).get_form_kwargs()
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
@@ -200,8 +199,8 @@ class CourseTypeUpdateView(LoginRequiredMixin,
         :rtype: dict
         """
 
-        context = super(CourseTypeUpdateView,
-                        self).get_context_data(**kwargs)
+        context = super(
+            CourseTypeUpdateView, self).get_context_data(**kwargs)
         context['coursetypes'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
         return context
@@ -220,7 +219,7 @@ class CourseTypeUpdateView(LoginRequiredMixin,
             return qs.filter(creator=self.request.user)
 
     def get_success_url(self):
-        """Define the redirect URL
+        """Define the redirect URL.
 
         After successful update of the object, the User will be redirected to
         the Certifying Organisation detail page
@@ -238,11 +237,11 @@ class CourseTypeUpdateView(LoginRequiredMixin,
         """Check that there is no referential integrity error when saving."""
 
         try:
-            return super(CourseTypeUpdateView,
-                         self).form_valid(form)
+            return super(
+                CourseTypeUpdateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
-                'ERROR: Course Type is already exists!')
+                'ERROR: Course Type already exists!')
 
 
 class CourseTypeDetailView(
@@ -265,8 +264,8 @@ class CourseTypeDetailView(
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
-        context = super(CourseTypeDetailView,
-                        self).get_context_data(**kwargs)
+        context = super(
+            CourseTypeDetailView, self).get_context_data(**kwargs)
         context['coursetypes'] = CourseType.objects.filter(
             certifying_organisation=self.certifying_organisation)
         return context
@@ -289,7 +288,7 @@ class CourseTypeDetailView(
         :type queryset: QuerySet
 
         :returns: Queryset which is filtered to only show a course type
-            within the organisation
+            within the organisation.
         :rtype: QuerySet
         :raises: Http404
         """
@@ -305,5 +304,4 @@ class CourseTypeDetailView(
                     certifying_organisation=certifying_organisation, slug=slug)
                 return obj
             else:
-                raise Http404('Sorry! We could not find '
-                              'your course types!')
+                raise Http404('Sorry! We could not find your course type!')
