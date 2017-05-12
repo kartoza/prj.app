@@ -153,4 +153,4 @@ class TrainingCenterDetailView(
                 return obj
             else:
                 raise Http404('Sorry! We could not find '
-                              'your course types!')
+                              'your training centers!')
