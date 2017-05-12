@@ -1,6 +1,9 @@
 # coding=utf-8
 from django.core.urlresolvers import reverse
-from django.views.generic import CreateView, DetailView
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    DeleteView)
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
@@ -153,3 +156,92 @@ class TrainingCenterDetailView(
             else:
                 raise Http404('Sorry! We could not find '
                               'your training centers!')
+
+
+class TrainingCenterDeleteView(
+        LoginRequiredMixin,
+        TrainingCenterMixin,
+        DeleteView):
+    """Delete view for Training Center."""
+
+    context_object_name = 'trainingcenter'
+    template_name = 'training_center/delete.html'
+
+    def get(self, request, *args, **kwargs):
+        """Get the project_slug from the URL and define the Project
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        """
+
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+        self.certifying_organisation = \
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        return super(TrainingCenterDeleteView,
+                     self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """Post the project_slug from the URL and define the Project
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        """
+
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+        self.certifying_organisation = \
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        return super(TrainingCenterDeleteView,
+                     self).post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        """Define the redirect URL
+
+        After successful deletion  of the object, the User will be redirected
+        to the Certifying Organisation list page
+        for the object's parent Project
+
+        :returns: URL
+        :rtype: HttpResponse
+        """
+
+        return reverse('certifyingorganisation-detail', kwargs={
+            'project_slug': self.object.certifying_organisation.project.slug,
+            'slug': self.object.certifying_organisation.slug,
+        })
+
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        We need to filter the CertifyingOrganisation objects by
+        Project before passing to get_object() to ensure that we
+        return the correct Certifying Organisation object.
+        The requesting User must be authenticated
+
+        :returns: Certifying Organisation queryset filtered by Project
+        :rtype: QuerySet
+        :raises: Http404
+        """
+
+        if not self.request.user.is_authenticated():
+            raise Http404
+        qs = TrainingCenter.objects.filter(
+            certifying_organisation=self.certifying_organisation)
+        return qs

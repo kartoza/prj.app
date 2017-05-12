@@ -14,6 +14,7 @@ from views import (
 
     TrainingCenterCreateView,
     TrainingCenterDetailView,
+    TrainingCenterDeleteView,
 )
 
 
@@ -57,4 +58,8 @@ urlpatterns = patterns(
               '(?P<organisation_slug>[\w-]+)/(?P<slug>[\w-]+)/$',
         view=TrainingCenterDetailView.as_view(),
         name='trainingcenter-detail'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/(?P<slug>[\w-]+)/delete/$',
+        view=TrainingCenterDeleteView.as_view(),
+        name='trainingcenter-delete'),
 )

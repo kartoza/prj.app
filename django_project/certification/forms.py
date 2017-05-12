@@ -111,7 +111,7 @@ class CustomOSMWidget(BaseGeometryWidget):
     @property
     def map_srid(self):
         # Use the official spherical mercator projection SRID when GDAL is
-        # available; otherwise, fallback to 900913.
+        # available.
         if gdal.HAS_GDAL:
             return 3857
         else:
