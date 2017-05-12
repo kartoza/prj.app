@@ -23,6 +23,10 @@
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
             }).addTo(map);
 
+            var lat = {{ trainingcenter.location.y }};
+            var long = {{ trainingcenter.location.x }};
+            marker = L.marker( [ lat,long ] ).addTo( map );
+
         })
 
     </script>
