@@ -1,5 +1,4 @@
 # coding=utf-8
-import json
 from django.core.urlresolvers import reverse
 from django.views.generic import CreateView, DetailView
 from django.http import HttpResponseRedirect, Http404
