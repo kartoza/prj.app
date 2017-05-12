@@ -1,0 +1,21 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    <h1>Add Course Type</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <section id="forms">
+        <div class='container'>
+            {% csrf_token %}
+            {% crispy form %}
+            {% for form in inlines %}
+                {% crispy form %}
+            {% endfor %}
+        </div>
+    </section>
+
+{% endblock %}

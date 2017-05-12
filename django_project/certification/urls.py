@@ -11,6 +11,11 @@ from views import (
     CertifyingOrganisationUpdateView,
     PendingCertifyingOrganisationListView,
     ApproveCertifyingOrganisationView,
+
+    CourseTypeCreateView,
+    CourseTypeDeleteView,
+    CourseTypeUpdateView,
+    CourseTypeDetailView,
 )
 
 
@@ -44,4 +49,22 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/update/$',
         view=CertifyingOrganisationUpdateView.as_view(),
         name='certifyingorganisation-update'),
+
+    # Course Type
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/create-coursetype/$',
+        view=CourseTypeCreateView.as_view(),
+        name='coursetype-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/(?P<slug>[\w-]+)/update/$',
+        view=CourseTypeUpdateView.as_view(),
+        name='coursetype-update'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/(?P<slug>[\w-]+)/delete/$',
+        view=CourseTypeDeleteView.as_view(),
+        name='coursetype-delete'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/(?P<slug>[\w-]+)/$',
+        view=CourseTypeDetailView.as_view(),
+        name='coursetype-detail'),
 )
