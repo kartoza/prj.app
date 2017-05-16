@@ -1,9 +1,9 @@
 # coding=utf-8
-"""urls for certification application"""
+"""Urls for certification application."""
 
 from django.conf.urls import patterns, url
 from views import (
-    # Certifying Organisation
+    # Certifying Organisation.
     CertifyingOrganisationCreateView,
     CertifyingOrganisationDeleteView,
     CertifyingOrganisationDetailView,
@@ -12,14 +12,19 @@ from views import (
     PendingCertifyingOrganisationListView,
     ApproveCertifyingOrganisationView,
 
+    # Course Type.
     CourseTypeCreateView,
     CourseTypeDeleteView,
     CourseTypeUpdateView,
     CourseTypeDetailView,
 
+    # Course Convener.
     CourseConvenerCreateView,
     CourseConvenerDeleteView,
     CourseConvenerUpdateView,
+
+    # Course.
+    CourseCreateView,
 )
 
 
@@ -54,7 +59,7 @@ urlpatterns = patterns(
         view=CertifyingOrganisationUpdateView.as_view(),
         name='certifyingorganisation-update'),
 
-    # Course Type
+    # Course Type.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/create-coursetype/$',
         view=CourseTypeCreateView.as_view(),
@@ -74,7 +79,7 @@ urlpatterns = patterns(
         view=CourseTypeDetailView.as_view(),
         name='coursetype-detail'),
 
-    # course convener
+    # Course convener.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/create-courseconvener/',
         view=CourseConvenerCreateView.as_view(),
@@ -90,4 +95,9 @@ urlpatterns = patterns(
         view=CourseConvenerUpdateView.as_view(),
         name='courseconvener-update'),
 
+    # Course.
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/create-course/',
+        view=CourseCreateView.as_view(),
+        name='course-create'),
 )
