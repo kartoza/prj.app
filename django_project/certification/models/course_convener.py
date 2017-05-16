@@ -6,6 +6,9 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
+from core.settings.contrib import STOP_WORDS
+from unidecode import unidecode
 from certifying_organisation import CertifyingOrganisation
 
 
@@ -26,7 +29,13 @@ class CourseConvener(models.Model):
         ordering = ['user']
 
     def save(self, *args, **kwargs):
-        self.slug = self.user.username
+        words = self.certifying_organisation.name.split()
+        filtered_words = [word for word in words if
+                          word.lower() not in STOP_WORDS]
+        # unidecode() represents special characters (unicode data) in ASCII
+        new_list = '%s-%s' % \
+                   (self.user.username, unidecode(' '.join(filtered_words)))
+        self.slug = slugify(new_list)[:50]
         super(CourseConvener, self).save(*args, **kwargs)
 
     def __unicode__(self):

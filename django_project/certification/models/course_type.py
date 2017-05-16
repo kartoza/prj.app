@@ -35,7 +35,8 @@ class CourseType(SlugifyingMixin, models.Model):
     )
 
     coursetype_link = models.CharField(
-        help_text=_('Link to course types'),
+        verbose_name='Link',
+        help_text='Link to course types e.g. http://kartoza.com/',
         max_length=200,
         null=True,
         blank=True

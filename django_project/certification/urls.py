@@ -16,6 +16,16 @@ from views import (
     TrainingCenterDetailView,
     TrainingCenterDeleteView,
     TrainingCenterUpdateView,
+
+    CourseTypeCreateView,
+    CourseTypeDeleteView,
+    CourseTypeUpdateView,
+    CourseTypeDetailView,
+
+    CourseConvenerCreateView,
+    CourseConvenerDeleteView,
+    CourseConvenerUpdateView,
+
 )
 
 
@@ -50,4 +60,57 @@ urlpatterns = patterns(
         view=CertifyingOrganisationUpdateView.as_view(),
         name='certifyingorganisation-update'),
 
+    # Course Type
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/create-coursetype/$',
+        view=CourseTypeCreateView.as_view(),
+        name='coursetype-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/coursetype/'
+              '(?P<slug>[\w-]+)/update/$',
+        view=CourseTypeUpdateView.as_view(),
+        name='coursetype-update'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/coursetype/'
+              '(?P<slug>[\w-]+)/delete/$',
+        view=CourseTypeDeleteView.as_view(),
+        name='coursetype-delete'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/coursetype/(?P<slug>[\w-]+)/$',
+        view=CourseTypeDetailView.as_view(),
+        name='coursetype-detail'),
+
+    # course convener
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/create-courseconvener/',
+        view=CourseConvenerCreateView.as_view(),
+        name='courseconvener-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/convener/'
+              '(?P<slug>[\w-]+)/delete/$',
+        view=CourseConvenerDeleteView.as_view(),
+        name='courseconvener-delete'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/convener/'
+              '(?P<slug>[\w-]+)/update/$',
+        view=CourseConvenerUpdateView.as_view(),
+        name='courseconvener-update'),
+
+    # Training Center management
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/create-trainingcenter/$',
+        view=TrainingCenterCreateView.as_view(),
+        name='trainingcenter-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/trainingcenter/(?P<slug>[\w-]+)/$',
+        view=TrainingCenterDetailView.as_view(),
+        name='trainingcenter-detail'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/trainingcenter/(?P<slug>[\w-]+)/delete/$',
+        view=TrainingCenterDeleteView.as_view(),
+        name='trainingcenter-delete'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/trainingcenter/(?P<slug>[\w-]+)/update/$',
+        view=TrainingCenterUpdateView.as_view(),
+        name='trainingcenter-update'),
 )
