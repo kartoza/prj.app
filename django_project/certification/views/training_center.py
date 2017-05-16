@@ -17,25 +17,27 @@ from ..forms import TrainingCenterForm
 
 class TrainingCenterMixin(object):
     """Mixin class to provide standard settings for Training Center."""
+
     model = TrainingCenter
     form_class = TrainingCenterForm
 
 
-# noinspection PyAttributeOutsideInit
+# noinspection PyAttributeOutsideInit.
 class TrainingCenterCreateView(
         LoginRequiredMixin,
-        TrainingCenterMixin, CreateView):
+        TrainingCenterMixin,
+        CreateView):
     """Create view for Training Center."""
 
     context_object_name = 'trainingcenter'
     template_name = 'training_center/create.html'
 
     def get_success_url(self):
-        """Define the redirect URL
+        """Define the redirect URL.
 
         After successful creation of the object, the User will be redirected
         to the Certifying Organisation detail page
-        for the object's parent Certifying Organisation
+        for the object's parent Certifying Organisation.
 
        :returns: URL
        :rtype: HttpResponse
@@ -54,14 +56,14 @@ class TrainingCenterCreateView(
         :returns: Context data which will be passed to the template.
         :rtype: dict
         """
-        context = super(TrainingCenterCreateView,
-                        self).get_context_data(**kwargs)
+        context = super(
+            TrainingCenterCreateView, self).get_context_data(**kwargs)
         context['trainingcenters'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
         return context
 
     def form_valid(self, form):
-        """Save new created Training Center
+        """Save new created Training Center.
 
         :param form
         :type form
@@ -75,7 +77,7 @@ class TrainingCenterCreateView(
             return HttpResponseRedirect(self.get_success_url())
         except IntegrityError:
             return ValidationError(
-                'ERROR: Training Center by this name already exists!')
+                'ERROR: Training Center by this name is already exists!')
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
@@ -83,8 +85,7 @@ class TrainingCenterCreateView(
         :returns keyword argument from the form
         :rtype: dict
         """
-        kwargs = super(TrainingCenterCreateView,
-                       self).get_form_kwargs()
+        kwargs = super(TrainingCenterCreateView, self).get_form_kwargs()
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
@@ -96,7 +97,8 @@ class TrainingCenterCreateView(
 
 
 class TrainingCenterDetailView(
-        TrainingCenterMixin, DetailView):
+        TrainingCenterMixin,
+        DetailView):
     """Detail view for Training Center."""
 
     context_object_name = 'trainingcenter'
@@ -139,7 +141,7 @@ class TrainingCenterDetailView(
         :type queryset: QuerySet
 
         :returns: Queryset which is filtered to only show a training center
-            within the organisation
+            within the organisation.
         :rtype: QuerySet
         :raises: Http404
         """
@@ -209,15 +211,15 @@ class TrainingCenterDeleteView(
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
-        return super(TrainingCenterDeleteView,
-                     self).post(request, *args, **kwargs)
+        return super(
+            TrainingCenterDeleteView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
-        """Define the redirect URL
+        """Define the redirect URL.
 
         After successful deletion  of the object, the User will be redirected
         to the Certifying Organisation list page
-        for the object's parent Project
+        for the object's parent Project.
 
         :returns: URL
         :rtype: HttpResponse
@@ -234,9 +236,9 @@ class TrainingCenterDeleteView(
         We need to filter the CertifyingOrganisation objects by
         Project before passing to get_object() to ensure that we
         return the correct Certifying Organisation object.
-        The requesting User must be authenticated
+        The requesting User must be authenticated.
 
-        :returns: Certifying Organisation queryset filtered by Project
+        :returns: Certifying Organisation queryset filtered by Project.
         :rtype: QuerySet
         :raises: Http404
         """
@@ -250,22 +252,23 @@ class TrainingCenterDeleteView(
 
 class TrainingCenterUpdateView(
         LoginRequiredMixin,
-        TrainingCenterMixin, UpdateView):
+        TrainingCenterMixin,
+        UpdateView):
     """Create view for Training Center."""
 
     context_object_name = 'trainingcenter'
     template_name = 'training_center/update.html'
 
     def get_success_url(self):
-        """Define the redirect URL
+        """Define the redirect URL.
 
         After successful creation of the object, the User will be redirected
-        to the Certifying Organisation detail page
-        for the object's parent Certifying Organisation
+        to the Certifying Organisation detail page.
 
        :returns: URL
        :rtype: HttpResponse
        """
+
         return reverse('certifyingorganisation-detail', kwargs={
             'project_slug': self.object.certifying_organisation.project.slug,
             'slug': self.object.certifying_organisation.slug,
@@ -280,14 +283,15 @@ class TrainingCenterUpdateView(
         :returns: Context data which will be passed to the template.
         :rtype: dict
         """
-        context = super(TrainingCenterUpdateView,
-                        self).get_context_data(**kwargs)
+
+        context = super(
+            TrainingCenterUpdateView, self).get_context_data(**kwargs)
         context['trainingcenters'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
         return context
 
     def form_valid(self, form):
-        """Save new created Training Center
+        """Save new created Training Center.
 
         :param form
         :type form
@@ -296,6 +300,7 @@ class TrainingCenterUpdateView(
         :rtype: HttpResponseRedirect
 
         We check that there is no referential integrity error when saving."""
+
         try:
             super(TrainingCenterUpdateView, self).form_valid(form)
             return HttpResponseRedirect(self.get_success_url())
@@ -309,8 +314,7 @@ class TrainingCenterUpdateView(
         :returns keyword argument from the form
         :rtype: dict
         """
-        kwargs = super(TrainingCenterUpdateView,
-                       self).get_form_kwargs()
+        kwargs = super(TrainingCenterUpdateView, self).get_form_kwargs()
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
