@@ -16,6 +16,10 @@ from views import (
     CourseTypeDeleteView,
     CourseTypeUpdateView,
     CourseTypeDetailView,
+
+    CourseConvenerCreateView,
+    CourseConvenerDeleteView,
+    CourseConvenerUpdateView,
 )
 
 
@@ -56,15 +60,34 @@ urlpatterns = patterns(
         view=CourseTypeCreateView.as_view(),
         name='coursetype-create'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/(?P<slug>[\w-]+)/update/$',
+              '(?P<organisation_slug>[\w-]+)/coursetype/'
+              '(?P<slug>[\w-]+)/update/$',
         view=CourseTypeUpdateView.as_view(),
         name='coursetype-update'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/(?P<slug>[\w-]+)/delete/$',
+              '(?P<organisation_slug>[\w-]+)/coursetype/'
+              '(?P<slug>[\w-]+)/delete/$',
         view=CourseTypeDeleteView.as_view(),
         name='coursetype-delete'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/(?P<slug>[\w-]+)/$',
+              '(?P<organisation_slug>[\w-]+)/coursetype/(?P<slug>[\w-]+)/$',
         view=CourseTypeDetailView.as_view(),
         name='coursetype-detail'),
+
+    # course convener
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/create-courseconvener/',
+        view=CourseConvenerCreateView.as_view(),
+        name='courseconvener-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/convener/'
+              '(?P<slug>[\w-]+)/delete/$',
+        view=CourseConvenerDeleteView.as_view(),
+        name='courseconvener-delete'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/convener/'
+              '(?P<slug>[\w-]+)/update/$',
+        view=CourseConvenerUpdateView.as_view(),
+        name='courseconvener-update'),
+
 )

@@ -1,0 +1,46 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Course Convener Deleted - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Course Convener Deleted</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+        <div class="alert row">
+            <div class="col-lg-10">
+                <p class="lead">Are you sure you want to delete the course convener below?</p>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group">
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href="#"
+                       onClick="$('#delete-confirmation').submit()"
+                       data-title="Delete {{ convener.user }}">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "certifyingorganisation-detail" project_slug=convener.certifying_organisation.project.slug slug=convener.certifying_organisation.slug%}'
+                       data-title="Cancel">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Course Convener: {{ convener.user }}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8">
+                Organisation Name : {{ convener.certifying_organisation.name }}<br/>
+            </div>
+        </div>
+    </form>
+{% endblock %}

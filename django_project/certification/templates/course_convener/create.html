@@ -1,0 +1,23 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    <h1>Add Course Convener</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <style>
+        .controls {
+            width: 500px;
+        }
+    </style>
+    <section id="forms">
+        <div class='container'>
+            {% csrf_token %}
+            {% crispy form %}
+        </div>
+    </section>
+
+{% endblock %}
