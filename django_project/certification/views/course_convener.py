@@ -74,7 +74,7 @@ class CourseConvenerCreateView(
             return HttpResponseRedirect(self.get_success_url())
         except IntegrityError:
             return ValidationError(
-                'ERROR: Certifying organisation by this name already exists!')
+                'ERROR: Course Convener is already exists!')
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
@@ -124,11 +124,11 @@ class CourseConvenerDeleteView(
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
-        return super(CourseConvenerDeleteView,
-                     self).get(request, *args, **kwargs)
+        return super(
+            CourseConvenerDeleteView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        """Post the organisation_slug from the URL
+        """Post the organisation_slug from the URL.
 
         :param request: HTTP request object
         :type request: HttpRequest
@@ -146,8 +146,8 @@ class CourseConvenerDeleteView(
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
-        return super(CourseConvenerDeleteView,
-                     self).post(request, *args, **kwargs)
+        return super(
+            CourseConvenerDeleteView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
         """Define the redirect URL.
