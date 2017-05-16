@@ -28,10 +28,10 @@ class CourseConvenerCreateView(
     template_name = 'course_convener/create.html'
 
     def get_success_url(self):
-        """Define the redirect URL
+        """Define the redirect URL.
 
         After successful creation of the object, the User will be redirected
-        to the Certifying Organisation detail page
+        to the Certifying Organisation detail page.
 
        :returns: URL
        :rtype: HttpResponse
@@ -52,14 +52,14 @@ class CourseConvenerCreateView(
         :rtype: dict
         """
 
-        context = super(CourseConvenerCreateView,
-                        self).get_context_data(**kwargs)
+        context = super(
+            CourseConvenerCreateView, self).get_context_data(**kwargs)
         context['conveners'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
         return context
 
     def form_valid(self, form):
-        """Save new created Course Convener
+        """Save new created Course Convener.
 
         :param form
         :type form
@@ -106,7 +106,7 @@ class CourseConvenerDeleteView(
 
     def get(self, request, *args, **kwargs):
         """Get the organisation_slug from the URL
-        and define the Organisation
+        and define the Organisation.
 
         :param request: HTTP request object
         :type request: HttpRequest
@@ -150,10 +150,10 @@ class CourseConvenerDeleteView(
                      self).post(request, *args, **kwargs)
 
     def get_success_url(self):
-        """Define the redirect URL
+        """Define the redirect URL.
 
         After successful deletion  of the object, the User will be redirected
-        to the Certifying Organisation detail page
+        to the Certifying Organisation detail page.
 
         :returns: URL
         :rtype: HttpResponse
@@ -179,9 +179,10 @@ class CourseConvenerDeleteView(
         return qs
 
 
-class CourseConvenerUpdateView(LoginRequiredMixin,
-                               CourseConvenerMixin,
-                               UpdateView):
+class CourseConvenerUpdateView(
+        LoginRequiredMixin,
+        CourseConvenerMixin,
+        UpdateView):
     """Update view for Course Convener."""
 
     context_object_name = 'convener'
@@ -194,8 +195,7 @@ class CourseConvenerUpdateView(LoginRequiredMixin,
         :rtype: dict
         """
 
-        kwargs = super(CourseConvenerUpdateView,
-                       self).get_form_kwargs()
+        kwargs = super(CourseConvenerUpdateView, self).get_form_kwargs()
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
@@ -215,8 +215,8 @@ class CourseConvenerUpdateView(LoginRequiredMixin,
         :rtype: dict
         """
 
-        context = super(CourseConvenerUpdateView,
-                        self).get_context_data(**kwargs)
+        context = super(
+            CourseConvenerUpdateView, self).get_context_data(**kwargs)
         context['conveners'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
         return context
@@ -235,10 +235,10 @@ class CourseConvenerUpdateView(LoginRequiredMixin,
             return qs.filter(creator=self.request.user)
 
     def get_success_url(self):
-        """Define the redirect URL
+        """Define the redirect URL.
 
         After successful update of the object, the User will be redirected to
-        the Certifying Organisation detail page
+        the Certifying Organisation detail page.
 
         :returns: URL
         :rtype: HttpResponse
@@ -253,8 +253,7 @@ class CourseConvenerUpdateView(LoginRequiredMixin,
         """Check that there is no referential integrity error when saving."""
 
         try:
-            return super(CourseConvenerUpdateView,
-                         self).form_valid(form)
+            return super(CourseConvenerUpdateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
                 'ERROR: Course Convener is already exists!')
