@@ -1,6 +1,10 @@
 # coding=utf-8
 from django.core.urlresolvers import reverse
-from django.views.generic import CreateView, UpdateView
+from django.http import Http404
+from django.views.generic import (
+    CreateView,
+    UpdateView,
+    DeleteView,)
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin
@@ -17,10 +21,7 @@ class CourseMixin(object):
     form_class = CourseForm
 
 
-class CourseCreateView(
-        LoginRequiredMixin,
-        CourseMixin,
-        CreateView):
+class CourseCreateView(LoginRequiredMixin, CourseMixin, CreateView):
     """Create view for Course."""
 
     context_object_name = 'course'
@@ -149,3 +150,84 @@ class CourseUpdateView(LoginRequiredMixin, CourseMixin, UpdateView):
         except IntegrityError:
             return ValidationError(
                 'ERROR: Course Convener is already exists!')
+
+
+class CourseDeleteView(LoginRequiredMixin, CourseMixin, DeleteView):
+    """Delete view for Course."""
+
+    context_object_name = 'course'
+    template_name = 'course/delete.html'
+
+    def get(self, request, *args, **kwargs):
+        """Get the organisation_slug from the URL
+        and define the Organisation.
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        """
+
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+        self.certifying_organisation = \
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        return super(
+            CourseDeleteView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """Post the organisation_slug from the URL.
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        """
+
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+        self.certifying_organisation = \
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        return super(
+            CourseDeleteView, self).post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        """Define the redirect URL.
+
+        After successful deletion  of the object, the User will be redirected
+        to the Certifying Organisation detail page.
+
+        :returns: URL
+        :rtype: HttpResponse
+        """
+
+        return reverse('certifyingorganisation-detail', kwargs={
+            'project_slug': self.object.certifying_organisation.project.slug,
+            'slug': self.object.certifying_organisation.slug
+        })
+
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        :returns: Course queryset filtered by Organisation
+        :rtype: QuerySet
+        :raises: Http404
+        """
+
+        if not self.request.user.is_authenticated():
+            raise Http404
+        qs = Course.objects.filter(
+            certifying_organisation=self.certifying_organisation)
+        return qs
