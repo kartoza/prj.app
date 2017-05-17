@@ -5,10 +5,11 @@
 
 from django.core.urlresolvers import reverse
 from django.db import models
-from core.settings.contrib import STOP_WORDS
-from unidecode import unidecode
+from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 from django.contrib.auth.models import User
+from core.settings.contrib import STOP_WORDS
+from unidecode import unidecode
 
 
 class Attendee(models.Model):
@@ -19,21 +20,21 @@ class Attendee(models.Model):
     """
 
     firstname = models.CharField(
-        help_text='First name of the course attendee.',
+        help_text=_('First name of the course attendee.'),
         max_length=200,
         null=False,
         blank=False
     )
 
     surname = models.CharField(
-        help_text='Surname of the course attendee.',
+        help_text=_('Surname of the course attendee.'),
         max_length=200,
         null=False,
         blank=False
     )
 
     email = models.CharField(
-        help_text='Email address.',
+        help_text=_('Email address.'),
         max_length=200,
         null=False,
         blank=False

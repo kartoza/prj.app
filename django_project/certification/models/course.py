@@ -21,21 +21,21 @@ class Course(models.Model):
     """Course model."""
 
     name = models.CharField(
-        help_text='Course name.',
+        help_text=_('Course name.'),
         max_length=200,
         null=True,
         blank=True,
     )
 
     start_date = models.DateField(
-        _("Start date"),
-        help_text='Course start date',
+        _('Start date'),
+        help_text=_('Course start date'),
         default=timezone.now
     )
 
     end_date = models.DateField(
-        _("End date"),
-        help_text='Course end date',
+        _('End date'),
+        help_text=_('Course end date'),
         default=timezone.now
     )
 

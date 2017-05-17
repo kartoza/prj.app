@@ -47,7 +47,7 @@ class JSONResponseMixin(object):
 
     @staticmethod
     def convert_context_to_json(context):
-        """Convert the context dictionary into a JSON object
+        """Convert the context dictionary into a JSON object.
 
         :param context: Context data to use with template
         :type context: dict
@@ -133,8 +133,8 @@ class CertifyingOrganisationListView(
         :rtype: dict
         """
 
-        context = super(CertifyingOrganisationListView,
-                        self).get_context_data(**kwargs)
+        context = super(
+            CertifyingOrganisationListView, self).get_context_data(**kwargs)
         context['num_certifyingorganisations'] = \
             context['certifyingorganisations'].count()
         context['unapproved'] = False
@@ -150,7 +150,7 @@ class CertifyingOrganisationListView(
         :param queryset: A query set
         :type queryset: QuerySet
 
-        :returns: CertifyingOrganisation Queryset which is filtered by project
+        :returns: CertifyingOrganisation Queryset which is filtered by project.
         :rtype: QuerySet
         :raises: Http404
         """
@@ -169,7 +169,8 @@ class CertifyingOrganisationListView(
 
 
 class CertifyingOrganisationDetailView(
-        CertifyingOrganisationMixin, DetailView):
+        CertifyingOrganisationMixin,
+        DetailView):
     """Detail view for Certifying Organisation."""
 
     context_object_name = 'certifyingorganisation'
@@ -185,8 +186,8 @@ class CertifyingOrganisationDetailView(
         :rtype: dict
         """
 
-        context = super(CertifyingOrganisationDetailView,
-                        self).get_context_data(**kwargs)
+        context = super(
+            CertifyingOrganisationDetailView, self).get_context_data(**kwargs)
 
         certifying_organisation = context['certifyingorganisation']
         context['trainingcenters'] = TrainingCenter.objects.filter(
@@ -257,7 +258,7 @@ class CertifyingOrganisationDeleteView(
     template_name = 'certifying_organisation/delete.html'
 
     def get(self, request, *args, **kwargs):
-        """Get the project_slug from the URL and define the Project
+        """Get the project_slug from the URL and define the Project.
 
         :param request: HTTP request object
         :type request: HttpRequest
@@ -274,11 +275,11 @@ class CertifyingOrganisationDeleteView(
 
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
-        return super(CertifyingOrganisationDeleteView,
-                     self).get(request, *args, **kwargs)
+        return super(
+            CertifyingOrganisationDeleteView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        """Post the project_slug from the URL and define the Project
+        """Post the project_slug from the URL and define the Project.
 
         :param request: HTTP request object
         :type request: HttpRequest
@@ -295,15 +296,15 @@ class CertifyingOrganisationDeleteView(
 
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
-        return super(CertifyingOrganisationDeleteView,
-                     self).post(request, *args, **kwargs)
+        return super(
+            CertifyingOrganisationDeleteView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
-        """Define the redirect URL
+        """Define the redirect URL.
 
         After successful deletion  of the object, the User will be redirected
         to the Certifying Organisation list page
-        for the object's parent Project
+        for the object's parent Project.
 
         :returns: URL
         :rtype: HttpResponse
@@ -319,7 +320,7 @@ class CertifyingOrganisationDeleteView(
         We need to filter the CertifyingOrganisation objects by
         Project before passing to get_object() to ensure that we
         return the correct Certifying Organisation object.
-        The requesting User must be authenticated
+        The requesting User must be authenticated.
 
         :returns: Certifying Organisation queryset filtered by Project
         :rtype: QuerySet
@@ -335,18 +336,19 @@ class CertifyingOrganisationDeleteView(
 # noinspection PyAttributeOutsideInit
 class CertifyingOrganisationCreateView(
         LoginRequiredMixin,
-        CertifyingOrganisationMixin, CreateView):
+        CertifyingOrganisationMixin,
+        CreateView):
     """Create view for Certifying Organisation."""
 
     context_object_name = 'certifyingorganisation'
     template_name = 'certifying_organisation/create.html'
 
     def get_success_url(self):
-        """Define the redirect URL
+        """Define the redirect URL.
 
         After successful creation of the object, the User will be redirected
         to the unapproved Certifying Organisation list page
-        for the object's parent Project
+        for the object's parent Project.
 
        :returns: URL
        :rtype: HttpResponse
@@ -366,10 +368,10 @@ class CertifyingOrganisationCreateView(
         :rtype: dict
         """
 
-        context = super(CertifyingOrganisationCreateView,
-                        self).get_context_data(**kwargs)
-        context['certifyingorganisations'] = self.get_queryset() \
-            .filter(project=self.project)
+        context = super(
+            CertifyingOrganisationCreateView, self).get_context_data(**kwargs)
+        context['certifyingorganisations'] = \
+            self.get_queryset().filter(project=self.project)
         return context
 
     def form_valid(self, form):
@@ -397,8 +399,8 @@ class CertifyingOrganisationCreateView(
         :rtype: dict
         """
 
-        kwargs = super(CertifyingOrganisationCreateView,
-                       self).get_form_kwargs()
+        kwargs = super(
+            CertifyingOrganisationCreateView, self).get_form_kwargs()
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         kwargs.update({
@@ -409,9 +411,10 @@ class CertifyingOrganisationCreateView(
 
 
 # noinspection PyAttributeOutsideInit
-class CertifyingOrganisationUpdateView(LoginRequiredMixin,
-                                       CertifyingOrganisationMixin,
-                                       UpdateView):
+class CertifyingOrganisationUpdateView(
+        LoginRequiredMixin,
+        CertifyingOrganisationMixin,
+        UpdateView):
     """Update view for Certifying Organisation."""
 
     context_object_name = 'certifyingorganisation'
@@ -424,8 +427,8 @@ class CertifyingOrganisationUpdateView(LoginRequiredMixin,
         :rtype: dict
         """
 
-        kwargs = super(CertifyingOrganisationUpdateView,
-                       self).get_form_kwargs()
+        kwargs = super(
+            CertifyingOrganisationUpdateView, self).get_form_kwargs()
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         kwargs.update({
@@ -444,8 +447,8 @@ class CertifyingOrganisationUpdateView(LoginRequiredMixin,
         :rtype: dict
         """
 
-        context = super(CertifyingOrganisationUpdateView,
-                        self).get_context_data(**kwargs)
+        context = super(
+            CertifyingOrganisationUpdateView, self).get_context_data(**kwargs)
         context['certifyingorganisations'] = self.get_queryset() \
             .filter(project=self.project)
         return context
@@ -465,10 +468,10 @@ class CertifyingOrganisationUpdateView(LoginRequiredMixin,
             return qs.filter(creator=self.request.user)
 
     def get_success_url(self):
-        """Define the redirect URL
+        """Define the redirect URL.
 
         After successful update of the object, the User will be redirected to
-        the Certifying Organisation list page for the object's parent Project
+        the Certifying Organisation list page for the object's parent Project.
 
         :returns: URL
         :rtype: HttpResponse
@@ -482,17 +485,19 @@ class CertifyingOrganisationUpdateView(LoginRequiredMixin,
         """Check that there is no referential integrity error when saving."""
 
         try:
-            return super(CertifyingOrganisationUpdateView,
-                         self).form_valid(form)
+            return super(
+                CertifyingOrganisationUpdateView, self).form_valid(form)
         except IntegrityError:
             return ValidationError(
                 'ERROR: Certifying Organisation by '
-                'this name already exists!')
+                'this name is already exists!')
 
 
-class PendingCertifyingOrganisationListView(StaffuserRequiredMixin,
-                                            CertifyingOrganisationMixin,
-                                            PaginationMixin, ListView):
+class PendingCertifyingOrganisationListView(
+        StaffuserRequiredMixin,
+        CertifyingOrganisationMixin,
+        PaginationMixin,
+        ListView):
     """List view for pending certifying organisation."""
 
     context_object_name = 'certifyingorganisations'
@@ -547,13 +552,15 @@ class PendingCertifyingOrganisationListView(StaffuserRequiredMixin,
                     project=self.project)
                 return queryset
             else:
-                raise Http404('Sorry! We could not find '
-                              'your Certifying Organisation!')
+                raise Http404(
+                    'Sorry! We could not find your Certifying Organisation!')
         return self.queryset
 
 
-class ApproveCertifyingOrganisationView(CertifyingOrganisationMixin,
-                                        StaffuserRequiredMixin, RedirectView):
+class ApproveCertifyingOrganisationView(
+        CertifyingOrganisationMixin,
+        StaffuserRequiredMixin,
+        RedirectView):
     """Redirect view for approving Certifying Organisation."""
 
     permanent = False
@@ -561,13 +568,13 @@ class ApproveCertifyingOrganisationView(CertifyingOrganisationMixin,
     pattern_name = 'certifyingorganisation-list'
 
     def get_redirect_url(self, project_slug, slug):
-        """Save Certifying Organisation as approved and redirect
+        """Save Certifying Organisation as approved and redirect.
 
         :param project_slug: The slug of the parent
-                            Certifying Organisation's parent Project
+                            Certifying Organisation's parent Project.
         :type project_slug: str
 
-        :param slug: The slug of the Certifying Organisation
+        :param slug: The slug of the Certifying Organisation.
         :type slug: str
 
         :returns: URL
