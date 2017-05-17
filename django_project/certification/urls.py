@@ -95,9 +95,4 @@ urlpatterns = patterns(
         view=CourseConvenerUpdateView.as_view(),
         name='courseconvener-update'),
 
-    # Course.
-    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/create-course/',
-        view=CourseCreateView.as_view(),
-        name='course-create'),
 )

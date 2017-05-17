@@ -14,8 +14,8 @@ from models import (
     CertifyingOrganisation,
     CourseConvener,
     CourseType,
-    Course,
     TrainingCenter,
+    Course,
 )
 
 
@@ -148,60 +148,5 @@ class CourseConvenerForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(CourseConvenerForm, self).save(commit=False)
         instance.certifying_organisation = self.certifying_organisation
-        instance.save()
-        return instance
-
-
-class CourseForm(forms.ModelForm):
-
-    start_date = forms.DateField(
-        widget=forms.TextInput(attrs={'class': 'datepicker'}))
-    end_date = forms.DateField(
-        widget=forms.TextInput(attrs={'class': 'datepicker'}))
-
-    # noinspection PyClassicStyleClass.
-    class Meta:
-        model = Course
-        fields = (
-            'course_type',
-            'course_convener',
-            'training_center',
-            'start_date',
-            'end_date',
-        )
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
-        self.certifying_organisation = kwargs.pop('certifying_organisation')
-        form_title = 'New Course for %s' % self.certifying_organisation.name
-        self.helper = FormHelper()
-        layout = Layout(
-            Fieldset(
-                form_title,
-                Field('course_type', css_class='form-control'),
-                Field('course_convener', css_class='form-control'),
-                Field('training_center', css_class='form-control'),
-                Field('start_date'),
-                Field('end_date'),
-            )
-        )
-        self.helper.layout = layout
-        self.helper.html5_required = False
-        super(CourseForm, self).__init__(*args, **kwargs)
-        self.fields['course_convener'].queryset = \
-            CourseConvener.objects.filter(
-                certifying_organisation=self.certifying_organisation)
-        self.fields['course_type'].queryset = \
-            CourseType.objects.filter(
-                certifying_organisation=self.certifying_organisation)
-        self.fields['training_center'].queryset = \
-            TrainingCenter.objects.filter(
-                certifying_organisation=self.certifying_organisation)
-        self.helper.add_input(Submit('submit', 'Submit'))
-
-    def save(self, commit=True):
-        instance = super(CourseForm, self).save(commit=False)
-        instance.certifying_organisation = self.certifying_organisation
-        instance.author = self.user
         instance.save()
         return instance
