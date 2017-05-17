@@ -276,7 +276,8 @@ class CertifyingOrganisationDeleteView(
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         return super(
-            CertifyingOrganisationDeleteView, self).get(request, *args, **kwargs)
+            CertifyingOrganisationDeleteView, self)\
+            .get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         """Post the project_slug from the URL and define the Project.
@@ -297,7 +298,8 @@ class CertifyingOrganisationDeleteView(
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         return super(
-            CertifyingOrganisationDeleteView, self).post(request, *args, **kwargs)
+            CertifyingOrganisationDeleteView, self)\
+            .post(request, *args, **kwargs)
 
     def get_success_url(self):
         """Define the redirect URL.

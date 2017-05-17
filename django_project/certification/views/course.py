@@ -6,9 +6,8 @@ from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin
 from ..models import (
     CertifyingOrganisation,
-    Course,
-    CourseAttendee)
-from ..forms import CourseForm, CourseAttendeeForm
+    Course,)
+from ..forms import CourseForm
 
 
 class CourseMixin(object):
