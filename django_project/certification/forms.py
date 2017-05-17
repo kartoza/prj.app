@@ -293,3 +293,33 @@ class CourseForm(forms.ModelForm):
         instance.author = self.user
         instance.save()
         return instance
+
+
+class CourseAttendeeForm(forms.ModelForm):
+
+    class Meta:
+        fields = ('attendee',)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = 'Course Attendee'
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('attendee', css_class='form-control'),
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(CourseAttendeeForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(CourseAttendeeForm, self).save(commit=False)
+        instance.certifying_organisation = self.certifying_organisation
+        instance.course = self.course
+        instance.author = self.user
+        instance.save()
+        return instance

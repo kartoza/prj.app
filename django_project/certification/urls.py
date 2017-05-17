@@ -25,6 +25,7 @@ from views import (
 
     # Course.
     CourseCreateView,
+    CourseUpdateView,
 
     # Training Center.
     TrainingCenterCreateView,
@@ -127,4 +128,9 @@ urlpatterns = patterns(
               '(?P<organisation_slug>[\w-]+)/create-course/',
         view=CourseCreateView.as_view(),
         name='course-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/course/'
+              '(?P<slug>[\w-]+)/update/$',
+        view=CourseUpdateView.as_view(),
+        name='course-update'),
 )

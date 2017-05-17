@@ -347,7 +347,7 @@
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
                 <a class="btn btn-default btn-xs tooltip-toggle"
-                   href='#'
+                   href='{% url "course-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                    data-title="Edit">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
@@ -364,7 +364,7 @@
                                 <span class="glyphicon glyphicon-minus"></span>
                             </a>
                             <a class="btn btn-default btn-xs tooltip-toggle"
-                                href='#'
+                                href='{% url "course-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                                 data-title="Edit">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </a>
