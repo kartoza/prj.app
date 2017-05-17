@@ -24,3 +24,7 @@ textarea.form-control {
 	height: 35px !important;
 	font-size: 12pt !important;;
 }
+
+.controls {
+	width: 750px;
+}

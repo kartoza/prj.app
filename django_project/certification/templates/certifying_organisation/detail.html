@@ -267,7 +267,7 @@
         <div class="col-lg-2">
             <div class="btn-group">
             <a class="btn btn-default btn-sm tooltip-toggle"
-               href='#'
+               href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'
                data-title="Create New Course">
                 {% show_button_icon "add" %}
             </a>
@@ -279,7 +279,7 @@
                     <div class="col-lg-2">
                         <div class="btn-group">
                             <a class="btn btn-default btn-sm tooltip-toggle"
-                                href='#'
+                                href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'
                                 data-title="Create New Course Convener">
                                 {% show_button_icon "add" %}
                             </a>
@@ -293,7 +293,7 @@
     {% ifequal num_course 0 %}
         <h5>No courses are defined, but you can <a
                     class="btn btn-default btn-mini"
-                    href='#'>create one</a>.</h5>
+                    href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'>create one</a>.</h5>
     {% else %}
 
     <style>
@@ -342,12 +342,12 @@
         <td>
              <div class="btn-group">
                 <a class="btn btn-default btn-xs tooltip-toggle"
-                   href='#'
+                   href='{% url "course-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                    data-title="Delete">
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
                 <a class="btn btn-default btn-xs tooltip-toggle"
-                   href='#'
+                   href='{% url "course-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                    data-title="Edit">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
@@ -359,12 +359,12 @@
                     <td>
                         <div class="btn-group">
                             <a class="btn btn-default btn-xs tooltip-toggle"
-                                href='#'
+                                href='{% url "course-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                                 data-title="Delete">
                                 <span class="glyphicon glyphicon-minus"></span>
                             </a>
                             <a class="btn btn-default btn-xs tooltip-toggle"
-                                href='#'
+                                href='{% url "course-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                                 data-title="Edit">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </a>

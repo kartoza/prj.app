@@ -1,0 +1,51 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Course Deleted - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Course Deleted</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+        <div class="alert row">
+            <div class="col-lg-10">
+                <p class="lead">Are you sure you want to delete the course below?</p>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group">
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href="#"
+                       onClick="$('#delete-confirmation').submit()"
+                       data-title="Delete {{ course.name }}">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "certifyingorganisation-detail" project_slug=course.certifying_organisation.project.slug slug=course.certifying_organisation.slug%}'
+                       data-title="Cancel">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Course: {{ course.name }}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8">
+                Organisation Name : {{ course.certifying_organisation.name }}<br/>
+                Course Type : {{ course.course_type.name }}<br/>
+                Course Convener : {{ course.course_convener.user }}<br/>
+                Training Center : {{ course.training_center.name }}<br/>
+                Start Date : {{ course.start_date }}<br/>
+                End Date : {{ course.end_date }}<br/>
+            </div>
+        </div>
+    </form>
+{% endblock %}

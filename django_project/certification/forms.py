@@ -15,9 +15,10 @@ from crispy_forms.layout import (
 )
 from models import (
     CertifyingOrganisation,
-    TrainingCenter,
     CourseConvener,
     CourseType,
+    TrainingCenter,
+    Course,
 )
 
 
@@ -36,7 +37,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
         widget=CustomSelectMultipleWidget("user", is_stacked=False),
     )
 
-    # noinspection PyClassicStyleClass
+    # noinspection PyClassicStyleClass.
     class Meta:
         model = CertifyingOrganisation
         fields = (
@@ -80,7 +81,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
 
 class CourseTypeForm(forms.ModelForm):
 
-    # noinspection PyClassicStyleClass
+    # noinspection PyClassicStyleClass.
     class Meta:
         model = CourseType
         fields = (
@@ -124,7 +125,7 @@ class CourseConvenerForm(forms.ModelForm):
         queryset=User.objects.order_by('username'),
         widget=forms.Select)
 
-    # noinspection PyClassicStyleClass
+    # noinspection PyClassicStyleClass.
     class Meta:
         model = CourseConvener
         fields = (
@@ -140,7 +141,6 @@ class CourseConvenerForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('search', css_class='form-control'),
                 Field('user', css_class='form-control'),)
         )
         self.helper.layout = layout
@@ -235,6 +235,91 @@ class TrainingCenterForm(geoforms.ModelForm):
     def save(self, commit=True):
         instance = super(TrainingCenterForm, self).save(commit=False)
         instance.certifying_organisation = self.certifying_organisation
+        instance.author = self.user
+        instance.save()
+        return instance
+
+
+class CourseForm(forms.ModelForm):
+
+    start_date = forms.DateField(
+        widget=forms.TextInput(attrs={'class': 'datepicker'}))
+    end_date = forms.DateField(
+        widget=forms.TextInput(attrs={'class': 'datepicker'}))
+
+    # noinspection PyClassicStyleClass.
+    class Meta:
+        model = Course
+        fields = (
+            'course_type',
+            'course_convener',
+            'training_center',
+            'start_date',
+            'end_date',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = 'New Course for %s' % self.certifying_organisation.name
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('course_type', css_class='form-control'),
+                Field('course_convener', css_class='form-control'),
+                Field('training_center', css_class='form-control'),
+                Field('start_date'),
+                Field('end_date'),
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(CourseForm, self).__init__(*args, **kwargs)
+        self.fields['course_convener'].queryset = \
+            CourseConvener.objects.filter(
+                certifying_organisation=self.certifying_organisation)
+        self.fields['course_type'].queryset = \
+            CourseType.objects.filter(
+                certifying_organisation=self.certifying_organisation)
+        self.fields['training_center'].queryset = \
+            TrainingCenter.objects.filter(
+                certifying_organisation=self.certifying_organisation)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(CourseForm, self).save(commit=False)
+        instance.certifying_organisation = self.certifying_organisation
+        instance.author = self.user
+        instance.save()
+        return instance
+
+
+class CourseAttendeeForm(forms.ModelForm):
+
+    class Meta:
+        fields = ('attendee',)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = 'Course Attendee'
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('attendee', css_class='form-control'),
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(CourseAttendeeForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(CourseAttendeeForm, self).save(commit=False)
+        instance.certifying_organisation = self.certifying_organisation
+        instance.course = self.course
         instance.author = self.user
         instance.save()
         return instance

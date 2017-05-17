@@ -23,6 +23,11 @@ from views import (
     CourseConvenerDeleteView,
     CourseConvenerUpdateView,
 
+    # Course.
+    CourseCreateView,
+    CourseUpdateView,
+    CourseDeleteView,
+
     # Training Center.
     TrainingCenterCreateView,
     TrainingCenterDetailView,
@@ -62,7 +67,7 @@ urlpatterns = patterns(
         view=CertifyingOrganisationUpdateView.as_view(),
         name='certifyingorganisation-update'),
 
-    # Course Type
+    # Course Type.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/create-coursetype/$',
         view=CourseTypeCreateView.as_view(),
@@ -82,7 +87,7 @@ urlpatterns = patterns(
         view=CourseTypeDetailView.as_view(),
         name='coursetype-detail'),
 
-    # course convener
+    # Course convener.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/create-courseconvener/',
         view=CourseConvenerCreateView.as_view(),
@@ -118,4 +123,20 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/update/$',
         view=TrainingCenterUpdateView.as_view(),
         name='trainingcenter-update'),
+
+    # Course.
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/create-course/',
+        view=CourseCreateView.as_view(),
+        name='course-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/course/'
+              '(?P<slug>[\w-]+)/update/$',
+        view=CourseUpdateView.as_view(),
+        name='course-update'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/course/'
+              '(?P<slug>[\w-]+)/delete/$',
+        view=CourseDeleteView.as_view(),
+        name='course-delete'),
 )

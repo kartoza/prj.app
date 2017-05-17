@@ -5,14 +5,17 @@
 
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.contrib.auth.models import User
+from django.utils import timezone
+from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
+import logging
+from unidecode import unidecode
+from core.settings.contrib import STOP_WORDS
 from course_convener import CourseConvener
 from certifying_organisation import CertifyingOrganisation
 from course_type import CourseType
 from training_center import TrainingCenter
-from django.contrib.auth.models import User
-from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +42,12 @@ class Course(models.Model):
         default=timezone.now
     )
 
+    slug = models.CharField(
+        max_length=400,
+        blank=True,
+        default=''
+    )
+
     course_convener = models.ForeignKey(CourseConvener)
     course_type = models.ForeignKey(CourseType)
     training_center = models.ForeignKey(TrainingCenter)
@@ -55,6 +64,12 @@ class Course(models.Model):
         self.name = \
             project_name + '_' + course_type_name + '_' + \
             str(self.start_date) + '-' + str(self.end_date)
+        words = self.name.split()
+        filtered_words = [word for word in words if
+                          word.lower() not in STOP_WORDS]
+        # unidecode() represents special characters (unicode data) in ASCII
+        new_list = unidecode(' '.join(filtered_words))
+        self.slug = slugify(new_list)[:50]
         super(Course, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -67,6 +82,6 @@ class Course(models.Model):
         :rtype: str
         """
         return reverse('course-detail', kwargs={
-            'slug': self.name,
+            'slug': self.slug,
             'certifyingorganisation_slug': self.certifying_organisation.slug
         })
