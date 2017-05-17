@@ -5,29 +5,30 @@
 
 from django.core.urlresolvers import reverse
 from django.db import models
-from certifying_organisation import CertifyingOrganisation, SlugifyingMixin
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
+from certifying_organisation import CertifyingOrganisation, SlugifyingMixin
 
 
 class CourseType(SlugifyingMixin, models.Model):
     """Course Type model."""
 
     name = models.CharField(
-        help_text='Course type.',
+        help_text=_('Course type.'),
         max_length=200,
         null=False,
         blank=False
     )
 
     description = models.TextField(
-        help_text='Course type description.',
+        help_text=_('Course type description.'),
         max_length=250,
         null=True,
         blank=True,
     )
 
     instruction_hours = models.CharField(
-        help_text='Number of instruction hours e.g. 40 hours',
+        help_text=_('Number of instruction hours e.g. 40 hours'),
         max_length=200,
         null=True,
         blank=True

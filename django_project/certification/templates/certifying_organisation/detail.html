@@ -100,7 +100,7 @@
         <div class="col-lg-2">
             <div class="btn-group">
             <a class="btn btn-default btn-sm tooltip-toggle"
-               href='#'
+               href='{% url "trainingcenter-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
                data-title="Create New Training Center">
                 {% show_button_icon "add" %}
             </a>
@@ -113,7 +113,7 @@
     {% ifequal num_trainingcenter 0 %}
         <h5>No training center are defined, but you can <a
                     class="btn btn-default btn-mini"
-                    href='#'>register one</a>.</h5>
+                    href='{% url "trainingcenter-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'>register one</a>.</h5>
     {% endifequal %}
 
     <style>
@@ -126,7 +126,8 @@
     {% for trainingcenter in trainingcenters %}
         <div class="col-lg-10">
         <li style="margin-left: 20px; margin-top: 10px;" id="{{ trainingcenter.id }}-{{ trainingcenter.name }}">
-                {{ trainingcenter.name }}
+                <a href="{% url 'trainingcenter-detail' certifyingorganisation.project.slug certifyingorganisation.slug trainingcenter.slug %}">
+                    {{ trainingcenter.name }}</a>
         </li>
         </div>
 
@@ -134,12 +135,12 @@
         <div class="col-lg-2">
             <div class="btn-group">
                 <a class="btn btn-default btn-xs tooltip-toggle"
-                   href='#'
+                   href='{% url "trainingcenter-delete" project_slug=trainingcenter.certifying_organisation.project.slug organisation_slug=trainingcenter.certifying_organisation.slug slug=trainingcenter.slug %}'
                    data-title="Delete {{ trainingcenter.name }}">
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
                 <a class="btn btn-default btn-xs tooltip-toggle"
-                   href='#'
+                   href='{% url "trainingcenter-update" project_slug=trainingcenter.certifying_organisation.project.slug organisation_slug=trainingcenter.certifying_organisation.slug slug=trainingcenter.slug %}'
                    data-title="Edit {{ trainingcenter.name }}">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
