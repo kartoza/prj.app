@@ -28,3 +28,6 @@ textarea.form-control {
 .controls {
 	width: 750px;
 }
+#container img {
+    max-width: none !important;
+}
