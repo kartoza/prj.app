@@ -353,7 +353,7 @@ class AttendeeForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(AttendeeForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', 'Add'))
 
     def save(self, commit=True):
         instance = super(AttendeeForm, self).save(commit=False)
