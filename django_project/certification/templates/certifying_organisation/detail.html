@@ -94,12 +94,12 @@
     <style>
         .menu-wrapper th {
             width:900px;
-            padding-top: 20px;
+            padding-top: 15px;
         }
         li:hover {
             background-color: #F9F9F9;
         }
-        .menu-wrapper .list td, .menu-wrapper .list tr {
+        .list {
             width: 800px;
             padding: 0px;
             margin: 0px;
@@ -108,7 +108,7 @@
             text-align: right;
         }
         .button1 {
-            padding-top: 20px;
+            padding-top: 15px;
         }
         .course th{
             background-color: lightgrey;
@@ -151,7 +151,7 @@
     {% for trainingcenter in trainingcenters %}
         <tr>
         <td class="list"><div class="col-lg-10">
-        <li style="margin-left: 20px; margin-top: 10px;" id="{{ trainingcenter.id }}-{{ trainingcenter.name }}">
+        <li style="margin-left: 20px; " id="{{ trainingcenter.id }}-{{ trainingcenter.name }}">
                 <a href="{% url 'trainingcenter-detail' certifyingorganisation.project.slug certifyingorganisation.slug trainingcenter.slug %}">
                     {{ trainingcenter.name }}</a>
         </li>
@@ -211,7 +211,7 @@
     {% for coursetype in coursetypes %}
         <tr><td class="list">
         <div class="col-lg-10">
-            <li style="margin-left: 20px; margin-top: 10px;" id="{{ coursetype.id }}-{{ coursetype.name }}">
+            <li style="margin-left: 20px;" id="{{ coursetype.id }}-{{ coursetype.name }}">
                 <a href="{% url 'coursetype-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=coursetype.slug %}">
                     {{ coursetype.name }}</a>
             </li>
@@ -270,7 +270,7 @@
         <tr>
         <td class="list">
         <div class="col-lg-10">
-        <li style="margin-left: 20px; margin-top: 10px;" id="{{ courseconvener.id }}-{{ courseconvener.user }}">
+        <li style="margin-left: 20px;" id="{{ courseconvener.id }}-{{ courseconvener.user }}">
                 {{ courseconvener.user }}
         </li>
         </div>
