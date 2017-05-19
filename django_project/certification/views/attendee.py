@@ -1,14 +1,9 @@
 # coding=utf-8
 from django.core.urlresolvers import reverse
-from django.http import Http404
 from django.views.generic import (
     CreateView)
-from django.db import IntegrityError
-from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin
-from ..models import (
-    CertifyingOrganisation,
-    Attendee)
+from ..models import Attendee
 from ..forms import AttendeeForm
 
 

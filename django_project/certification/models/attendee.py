@@ -17,13 +17,13 @@ def increment_slug(_firstname, _surname):
     """Increment the slug if there is already another registered attendee
     with the same firstname and surname but with different email address."""
 
-    registered_attendee = Attendee.objects.all();
+    registered_attendee = Attendee.objects.all()
     for attendee in registered_attendee:
-        if _firstname == attendee.firstname and _surname==attendee.surname:
+        if _firstname == attendee.firstname and _surname == attendee.surname:
             _name = Attendee.objects.filter(
                 firstname=_firstname, surname=_surname)
             count = _name.count()+1
-            new_name = '%s %s %s' % (_firstname, _surname , count)
+            new_name = '%s %s %s' % (_firstname, _surname, count)
             break
         else:
             new_name = '%s %s' % (_firstname, _surname)
