@@ -19,6 +19,8 @@ from models import (
     CourseType,
     TrainingCenter,
     Course,
+    CourseAttendee,
+    Attendee,
 )
 
 
@@ -298,6 +300,7 @@ class CourseForm(forms.ModelForm):
 class CourseAttendeeForm(forms.ModelForm):
 
     class Meta:
+        model = CourseAttendee
         fields = ('attendee',)
 
     def __init__(self, *args, **kwargs):
@@ -320,6 +323,40 @@ class CourseAttendeeForm(forms.ModelForm):
         instance = super(CourseAttendeeForm, self).save(commit=False)
         instance.certifying_organisation = self.certifying_organisation
         instance.course = self.course
+        instance.author = self.user
+        instance.save()
+        return instance
+
+
+class AttendeeForm(forms.ModelForm):
+
+    class Meta:
+        model = Attendee
+        fields = (
+            'firstname',
+            'surname',
+            'email',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        form_title = 'Add Attendee'
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('firstname', css_class='form-control'),
+                Field('surname', css_class='form-control'),
+                Field('email', css_class='form-control'),
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(AttendeeForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(AttendeeForm, self).save(commit=False)
         instance.author = self.user
         instance.save()
         return instance

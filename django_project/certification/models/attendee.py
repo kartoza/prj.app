@@ -10,6 +10,25 @@ from django.utils.text import slugify
 from django.contrib.auth.models import User
 from core.settings.contrib import STOP_WORDS
 from unidecode import unidecode
+from certifying_organisation import validate_email_address
+
+
+def increment_slug(_firstname, _surname):
+    """Increment the slug if there is already another registered attendee
+    with the same firstname and surname but with different email address."""
+
+    registered_attendee = Attendee.objects.all();
+    for attendee in registered_attendee:
+        if _firstname == attendee.firstname and _surname==attendee.surname:
+            _name = Attendee.objects.filter(
+                firstname=_firstname, surname=_surname)
+            count = _name.count()+1
+            new_name = '%s %s %s' % (_firstname, _surname , count)
+            break
+        else:
+            new_name = '%s %s' % (_firstname, _surname)
+
+    return new_name
 
 
 class Attendee(models.Model):
@@ -20,14 +39,14 @@ class Attendee(models.Model):
     """
 
     firstname = models.CharField(
-        help_text=_('First name of the course attendee.'),
+        help_text=_('First name of the attendee.'),
         max_length=200,
         null=False,
         blank=False
     )
 
     surname = models.CharField(
-        help_text=_('Surname of the course attendee.'),
+        help_text=_('Surname of the attendee.'),
         max_length=200,
         null=False,
         blank=False
@@ -37,7 +56,8 @@ class Attendee(models.Model):
         help_text=_('Email address.'),
         max_length=200,
         null=False,
-        blank=False
+        blank=False,
+        validators=[validate_email_address]
     )
 
     slug = models.SlugField()
@@ -47,10 +67,14 @@ class Attendee(models.Model):
     # noinspection PyClassicStyleClass.
     class Meta:
         ordering = ['firstname']
+        unique_together = [
+            'firstname', 'surname', 'email'
+        ]
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            words = self.firstname.split()
+            name = increment_slug(self.firstname, self.surname)
+            words = name.split()
             filtered_words = [word for word in
                               words if word.lower() not in STOP_WORDS]
             # unidecode() represents special characters (unicode data) in ASCII
