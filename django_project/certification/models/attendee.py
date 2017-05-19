@@ -14,15 +14,21 @@ from certifying_organisation import validate_email_address
 
 
 def increment_slug(_firstname, _surname):
-    """Increment the slug if there is already another registered attendee
-    with the same firstname and surname but with different email address."""
+    """Function to increment slug.
+
+    If there is already attendee that is registered in the system
+    who has the same firstname and surname with the new attendee
+    that will be registered, the slug will be incremented
+    e.g. anita-hapsari, anita-hapsari-2, anita-hapsari-3, etc.
+
+    """
 
     registered_attendee = Attendee.objects.all()
     for attendee in registered_attendee:
         if _firstname == attendee.firstname and _surname == attendee.surname:
             _name = Attendee.objects.filter(
                 firstname=_firstname, surname=_surname)
-            count = _name.count()+1
+            count = _name.count() + 1
             new_name = '%s %s %s' % (_firstname, _surname, count)
             break
         else:
