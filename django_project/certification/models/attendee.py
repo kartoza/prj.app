@@ -24,6 +24,7 @@ def increment_slug(_firstname, _surname):
     """
 
     registered_attendee = Attendee.objects.all()
+    new_name = '%s %s' % (_firstname, _surname)
     for attendee in registered_attendee:
         if _firstname == attendee.firstname and _surname == attendee.surname:
             _name = Attendee.objects.filter(
@@ -31,8 +32,6 @@ def increment_slug(_firstname, _surname):
             count = _name.count() + 1
             new_name = '%s %s %s' % (_firstname, _surname, count)
             break
-        else:
-            new_name = '%s %s' % (_firstname, _surname)
 
     return new_name
 

@@ -84,7 +84,7 @@ class CourseF(factory.django.DjangoModelFactory):
 
 
 class AttendeeF(factory.django.DjangoModelFactory):
-    """Certificate model factory."""
+    """Attendee model factory."""
 
     class Meta:
         model = Attendee
