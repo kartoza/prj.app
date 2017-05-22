@@ -305,8 +305,8 @@ class CourseAttendeeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
-        self.certifying_organisation = kwargs.pop('certifying_organisation')
-        form_title = 'Course Attendee'
+        self.course = kwargs.pop('course')
+        form_title = 'Add Course Attendee'
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
@@ -317,11 +317,10 @@ class CourseAttendeeForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(CourseAttendeeForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', 'Add'))
 
     def save(self, commit=True):
         instance = super(CourseAttendeeForm, self).save(commit=False)
-        instance.certifying_organisation = self.certifying_organisation
         instance.course = self.course
         instance.author = self.user
         instance.save()

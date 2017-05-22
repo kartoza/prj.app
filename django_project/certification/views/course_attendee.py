@@ -3,24 +3,27 @@ from django.core.urlresolvers import reverse
 from django.views.generic import (
     CreateView)
 from braces.views import LoginRequiredMixin
-from ..models import Attendee
-from ..forms import AttendeeForm
+from ..models import (
+    CourseAttendee,
+    CertifyingOrganisation,
+    Course)
+from ..forms import CourseAttendeeForm
 
 
-class AttendeeMixin(object):
+class CourseAttendeeMixin(object):
     """Mixin class to provide standard settings for Attendee."""
 
-    model = Attendee
-    form_class = AttendeeForm
+    model = CourseAttendee
+    form_class = CourseAttendeeForm
 
 
-class AttendeeCreateView(
+class CourseAttendeeCreateView(
         LoginRequiredMixin,
-        AttendeeMixin, CreateView):
+        CourseAttendeeMixin, CreateView):
     """Create view for Attendee."""
 
-    context_object_name = 'attendee'
-    template_name = 'attendee/create.html'
+    context_object_name = 'courseattendee'
+    template_name = 'course_attendee/create.html'
 
     def get_success_url(self):
         """Define the redirect URL.
@@ -32,10 +35,10 @@ class AttendeeCreateView(
        :rtype: HttpResponse
        """
 
-        return reverse('courseattendee-create', kwargs={
+        return reverse('course-detail', kwargs={
             'project_slug': self.project_slug,
             'organisation_slug': self.organisation_slug,
-            'slug': self.course_slug,
+            'slug': self.slug
         })
 
     def get_context_data(self, **kwargs):
@@ -49,7 +52,10 @@ class AttendeeCreateView(
         """
 
         context = super(
-            AttendeeCreateView, self).get_context_data(**kwargs)
+            CourseAttendeeCreateView, self).get_context_data(**kwargs)
+        context['certifyingorganisation']=\
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        context['course']=Course.objects.get(slug=self.slug)
         return context
 
     def get_form_kwargs(self):
@@ -59,11 +65,13 @@ class AttendeeCreateView(
         :rtype: dict
         """
 
-        kwargs = super(AttendeeCreateView, self).get_form_kwargs()
+        kwargs = super(CourseAttendeeCreateView, self).get_form_kwargs()
         self.project_slug = self.kwargs.get('project_slug', None)
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
-        self.course_slug = self.kwargs.get('slug', None)
+        self.slug = self.kwargs.get('slug', None)
+        self.course = Course.objects.get(slug=self.slug)
         kwargs.update({
             'user': self.request.user,
+            'course': self.course,
         })
         return kwargs
