@@ -20,7 +20,7 @@ class CourseAttendeeMixin(object):
 class CourseAttendeeCreateView(
         LoginRequiredMixin,
         CourseAttendeeMixin, CreateView):
-    """Create view for Attendee."""
+    """Create view for Course Attendee."""
 
     context_object_name = 'courseattendee'
     template_name = 'course_attendee/create.html'
@@ -29,7 +29,7 @@ class CourseAttendeeCreateView(
         """Define the redirect URL.
 
         After successful creation of the object, the User will be redirected
-        to the Certifying Organisation detail page.
+        to the Course detail page.
 
        :returns: URL
        :rtype: HttpResponse
@@ -53,9 +53,9 @@ class CourseAttendeeCreateView(
 
         context = super(
             CourseAttendeeCreateView, self).get_context_data(**kwargs)
-        context['certifyingorganisation']=\
+        context['certifyingorganisation'] = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
-        context['course']=Course.objects.get(slug=self.slug)
+        context['course'] = Course.objects.get(slug=self.slug)
         return context
 
     def get_form_kwargs(self):

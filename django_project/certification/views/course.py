@@ -259,7 +259,8 @@ class CourseDetailView(
         self.course = Course.objects.get(slug=self.slug)
         context = super(
             CourseDetailView, self).get_context_data(**kwargs)
-        context['attendees'] = CourseAttendee.objects.filter(course=self.course)
+        context['attendees'] = \
+            CourseAttendee.objects.filter(course=self.course)
         return context
 
     def get_queryset(self):
