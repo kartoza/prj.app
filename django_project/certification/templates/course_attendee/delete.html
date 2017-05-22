@@ -1,0 +1,42 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Course Attendee Deleted - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Course Attendee Deleted</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+        <div class="alert row">
+            <div class="col-lg-10">
+                <p class="lead">Are you sure you want to delete the course attendee below?</p>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group">
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href="#"
+                       onClick="$('#delete-confirmation').submit()"
+                       data-title="Delete {{ courseattendee.attendee.firstname }} {{ courseattendee.attendee.surname }}">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "course-detail" project_slug=courseattendee.course.certifying_organisation.project.slug organisation_slug=courseattendee.course.certifying_organisation.slug slug=courseattendee.course.slug%}'
+                       data-title="Cancel">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Course Attendee: {{ courseattendee.attendee }}</h3>
+                <h4 style="font-weight: normal">Course: {{ courseattendee.course }}</h4>
+            </div>
+        </div>
+    </form>
+{% endblock %}

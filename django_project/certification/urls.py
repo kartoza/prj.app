@@ -40,6 +40,7 @@ from views import (
 
     # Course Attendee.
     CourseAttendeeCreateView,
+    CourseAttendeeDeleteView,
 )
 
 
@@ -165,4 +166,10 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/create-courseattendee/$',
         view=CourseAttendeeCreateView.as_view(),
         name='courseattendee-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/course/'
+              '(?P<course_slug>[\w-]+)/courseattendee/'
+              '(?P<pk>[\w-]+)/delete/$',
+        view=CourseAttendeeDeleteView.as_view(),
+        name='courseattendee-delete'),
 )

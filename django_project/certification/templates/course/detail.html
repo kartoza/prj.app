@@ -53,6 +53,9 @@
         table {
             margin-top: 20px;
         }
+        th {
+        background-color: gainsboro;
+        }
         table, th, td, tr {
             border: 1px solid;
             padding: 10px;
@@ -71,9 +74,17 @@
         </tr>
 
         {% for attendee in attendees %}
-            <tr><td>{{ attendee.attendee.firstname }} {{ attendee.attendee.surname }}</td>
+            <tr><td>{{ attendee.attendee }}</td>
                 <td></td>
-                <td></td>
+                <td  style="text-align: center">
+                    <div class="btn-group">
+                    <a class="btn btn-default btn-xs tooltip-toggle"
+                        href='{% url "courseattendee-delete" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.pk %}'
+                        data-title="Delete">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    </div>
+                </td>
             </tr>
         {% endfor %}
     </table>
