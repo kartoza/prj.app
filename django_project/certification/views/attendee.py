@@ -26,7 +26,7 @@ class AttendeeCreateView(
         """Define the redirect URL.
 
         After successful creation of the object, the User will be redirected
-        to the Certifying Organisation detail page.
+        to the create course attendee page.
 
        :returns: URL
        :rtype: HttpResponse
