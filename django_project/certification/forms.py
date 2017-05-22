@@ -301,7 +301,7 @@ class CourseAttendeeForm(forms.ModelForm):
 
     class Meta:
         model = CourseAttendee
-        fields = ('attendee',)
+        fields = ('attendee', 'course')
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
@@ -317,11 +317,12 @@ class CourseAttendeeForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(CourseAttendeeForm, self).__init__(*args, **kwargs)
+        self.fields['course'].initial = self.course
+        self.fields['course'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Add'))
 
     def save(self, commit=True):
         instance = super(CourseAttendeeForm, self).save(commit=False)
-        instance.course = self.course
         instance.author = self.user
         instance.save()
         return instance
