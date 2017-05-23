@@ -263,7 +263,8 @@ class CourseDetailView(
         context['attendees'] = \
             CourseAttendee.objects.filter(course=self.course)
         context['certificates'] = \
-            Certificate.objects.filter(course=self.course)
+            Certificate.objects.filter(
+                course=self.course).values_list('attendee', flat=True)
         return context
 
     def get_queryset(self):

@@ -15,7 +15,7 @@ class CertificateMixin(object):
 
 class CertificateCreateView(
         LoginRequiredMixin, CertificateMixin, CreateView):
-    """Create view for Course Attendee."""
+    """Create view for Certificate."""
 
     context_object_name = 'certificate'
     template_name = 'certificate/create.html'

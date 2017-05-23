@@ -17,12 +17,12 @@
         <div class="btn-group">
                 <a class="btn btn-default btn-sm tooltip-toggle"
                    href='{% url "course-delete" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
-                   data-title="Delete">
+                   data-title="Delete Course">
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
                 <a class="btn btn-default btn-sm tooltip-toggle"
                    href='{% url "course-update" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
-                   data-title="Edit">
+                   data-title="Edit Course">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
                 <a class="btn btn-default btn-sm tooltip-toggle"
@@ -76,22 +76,30 @@
         {% for attendee in attendees %}
             <tr><td>{{ attendee.attendee }}</td>
                 <td style="text-align: center">
-                {% for certificate in certificates %}
-                    {% if attendee.attendee == certificate.attendee %}
+                    {% if attendee.attendee.pk in certificates %}
                         <span class="glyphicon glyphicon-ok tooltip-toggle" data-title="Certificate Issued"></span>
+                    {% else %}
+                        <span class="glyphicon glyphicon-remove tooltip-toggle" data-title="No Certificate Issued"></span>
                     {% endif %}
-                {% endfor %}
                 </td>
                 <td  style="text-align: center">
                     <div class="btn-group">
+                        {% if attendee.attendee.pk in certificates %}
+                            <a class="btn btn-default btn-xs tooltip-toggle"
+                                href='#'
+                                data-title="Print Certificate">
+                                <span class="glyphicon glyphicon-print"></span>
+                            </a>
+                        {% else %}
                             <a class="btn btn-default btn-xs tooltip-toggle"
                                 href='{% url "certificate-create" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
                                 data-title="Issue Certificate">
                                 <span class="glyphicon glyphicon-check"></span>
                             </a>
+                        {% endif %}
                     <a class="btn btn-default btn-xs tooltip-toggle"
                         href='{% url "courseattendee-delete" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.pk %}'
-                        data-title="Delete">
+                        data-title="Delete Course Attendee">
                         <span class="glyphicon glyphicon-minus"></span>
                     </a>
                     </div>
