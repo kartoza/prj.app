@@ -75,9 +75,20 @@
 
         {% for attendee in attendees %}
             <tr><td>{{ attendee.attendee }}</td>
-                <td></td>
+                <td style="text-align: center">
+                {% for certificate in certificates %}
+                    {% if attendee.attendee == certificate.attendee %}
+                        <span class="glyphicon glyphicon-ok tooltip-toggle" data-title="Certificate Issued"></span>
+                    {% endif %}
+                {% endfor %}
+                </td>
                 <td  style="text-align: center">
                     <div class="btn-group">
+                            <a class="btn btn-default btn-xs tooltip-toggle"
+                                href='{% url "certificate-create" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
+                                data-title="Issue Certificate">
+                                <span class="glyphicon glyphicon-check"></span>
+                            </a>
                     <a class="btn btn-default btn-xs tooltip-toggle"
                         href='{% url "courseattendee-delete" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.pk %}'
                         data-title="Delete">

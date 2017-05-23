@@ -21,6 +21,7 @@ from models import (
     Course,
     CourseAttendee,
     Attendee,
+    Certificate,
 )
 
 
@@ -358,5 +359,36 @@ class AttendeeForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(AttendeeForm, self).save(commit=False)
         instance.author = self.user
+        instance.save()
+        return instance
+
+
+class CertificateForm(forms.ModelForm):
+
+    class Meta:
+        model = Certificate
+        fields = (
+            'course',
+            'attendee',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.course = kwargs.pop('course')
+        self.attendee = kwargs.pop('attendee')
+        self.helper = FormHelper()
+        self.helper.html5_required = False
+        super(CertificateForm, self).__init__(*args, **kwargs)
+        self.fields['course'].initial = self.course
+        self.fields['course'].widget = forms.HiddenInput()
+        self.fields['attendee'].initial = self.attendee
+        self.fields['attendee'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Add'))
+
+    def save(self, commit=True):
+        instance = super(CertificateForm, self).save(commit=False)
+        instance.author = self.user
+        instance.course = self.course
+        instance.attendee = self.attendee
         instance.save()
         return instance

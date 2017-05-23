@@ -12,7 +12,8 @@ from braces.views import LoginRequiredMixin
 from ..models import (
     CertifyingOrganisation,
     Course,
-    CourseAttendee)
+    CourseAttendee,
+    Certificate)
 from ..forms import CourseForm
 
 
@@ -261,6 +262,8 @@ class CourseDetailView(
             CourseDetailView, self).get_context_data(**kwargs)
         context['attendees'] = \
             CourseAttendee.objects.filter(course=self.course)
+        context['certificates'] = \
+            Certificate.objects.filter(course=self.course)
         return context
 
     def get_queryset(self):
