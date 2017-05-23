@@ -21,7 +21,7 @@
         $(document).ready(function () {
 
             // Add map
-            $('#map').css({'height': 400, 'width': 900});
+            $('#map').css({'height': 400, 'width': 800});
             map = L.map('map').setView([40, 0], 2);
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -91,13 +91,43 @@
         <div class="row" id="map"></div>
     </div>
 
-    <div class="row" style="margin-top: 15px;">
-    <div class="col-lg-10">
-        <h2>Training Centers</h2>
-    </div>
+    <style>
+        .menu-wrapper th {
+            width:900px;
+            padding-top: 15px;
+        }
+        li:hover {
+            background-color: #F9F9F9;
+        }
+        .list {
+            width: 800px;
+            padding: 0px;
+            margin: 0px;
+        }
+        .button, .button1 {
+            text-align: right;
+        }
+        .button1 {
+            padding-top: 15px;
+        }
+        .course th{
+            background-color: lightgrey;
+        }
+        .course table, .course th, .course td {
+            border: 2px solid darkslategrey;
+        }
+        .course th, .course td{
+            padding: 10px;
+        }
+    </style>
 
+    <table class="menu-wrapper">
+    <tr>
+    <th>
+        <h2>Training Centers</h2>
+    </th>
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <div class="col-lg-2">
+        <td class="button1"><div>
             <div class="btn-group">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url "trainingcenter-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
@@ -105,34 +135,31 @@
                 {% show_button_icon "add" %}
             </a>
             </div>
-        </div>
+        </div></td>
         {% endif %}
-
-    </div>
-
+    </tr>
+    <tr><td>
     {% ifequal num_trainingcenter 0 %}
         <h5>No training center are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='{% url "trainingcenter-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'>register one</a>.</h5>
     {% endifequal %}
+    </td></tr>
 
-    <style>
-    li:hover{
-        background-color: #F9F9F9;
-    }
-    </style>
 
     <div class="row">
     {% for trainingcenter in trainingcenters %}
-        <div class="col-lg-10">
-        <li style="margin-left: 20px; margin-top: 10px;" id="{{ trainingcenter.id }}-{{ trainingcenter.name }}">
+        <tr>
+        <td class="list"><div class="col-lg-10">
+        <li style="margin-left: 20px; " id="{{ trainingcenter.id }}-{{ trainingcenter.name }}">
                 <a href="{% url 'trainingcenter-detail' certifyingorganisation.project.slug certifyingorganisation.slug trainingcenter.slug %}">
                     {{ trainingcenter.name }}</a>
         </li>
-        </div>
+        </div></td>
 
+        <td class="button">
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <div class="col-lg-2">
+        <div>
             <div class="btn-group">
                 <a class="btn btn-default btn-xs tooltip-toggle"
                    href='{% url "trainingcenter-delete" project_slug=trainingcenter.certifying_organisation.project.slug organisation_slug=trainingcenter.certifying_organisation.slug slug=trainingcenter.slug %}'
@@ -147,17 +174,19 @@
             </div>
         </div>
         {% endif %}
-
+        </td>
+        </tr>
     {%  endfor %}
     </div>
 
-    <div class="row" style="margin-top: 15px">
-        <div class="col-lg-10">
+    <tr>
+        <th>
         <h2>Course Types</h2>
-        </div>
+        </th>
 
+        <td>
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <div class="col-lg-2">
+        <div class="button1">
             <div class="btn-group">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url 'coursetype-create' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
@@ -167,26 +196,30 @@
             </div>
         </div>
         {% endif %}
-
-    </div>
+        </td>
+    </tr>
 
     {% ifequal num_coursetype 0 %}
+        <tr>
         <h5>No course types are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='{% url 'coursetype-create' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'>create one</a>.</h5>
+        </tr>
     {% endifequal %}
 
     <div class="row">
     {% for coursetype in coursetypes %}
+        <tr><td class="list">
         <div class="col-lg-10">
-            <li style="margin-left: 20px; margin-top: 10px;" id="{{ coursetype.id }}-{{ coursetype.name }}">
+            <li style="margin-left: 20px;" id="{{ coursetype.id }}-{{ coursetype.name }}">
                 <a href="{% url 'coursetype-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=coursetype.slug %}">
                     {{ coursetype.name }}</a>
             </li>
-        </div>
+        </div></td>
 
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <div class="col-lg-2">
+        <td>
+        <div>
             <div class="btn-group">
                 <a class="btn btn-default btn-xs tooltip-toggle"
                    href='{% url "coursetype-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=coursetype.slug %}'
@@ -200,17 +233,19 @@
                 </a>
             </div>
         </div>
+        </td>
         {% endif %}
-
+        </tr>
     {%  endfor %}
     </div>
 
-    <div class="row" style="margin-top: 15px;">
-    <div class="col-lg-10">
+    <tr>
+    <th>
         <h2>Course Conveners</h2>
-    </div>
+    </th>
+    <td>
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <div class="col-lg-2">
+        <div class="button1">
             <div class="btn-group">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url "courseconvener-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
@@ -220,25 +255,29 @@
             </div>
         </div>
         {% endif %}
-
-    </div>
-
+    </td>
+    </tr>
+    <tr><td>
     {% ifequal num_courseconvener 0 %}
         <h5>No course convener are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='{% url "courseconvener-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'>register one</a>.</h5>
     {% endifequal %}
+    </td></tr>
 
     <div class="row">
     {% for courseconvener in courseconveners %}
+        <tr>
+        <td class="list">
         <div class="col-lg-10">
-        <li style="margin-left: 20px; margin-top: 10px;" id="{{ courseconvener.id }}-{{ courseconvener.user }}">
+        <li style="margin-left: 20px;" id="{{ courseconvener.id }}-{{ courseconvener.user }}">
                 {{ courseconvener.user }}
         </li>
         </div>
+        </td>
 
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <div class="col-lg-2">
+        <td>
             <div class="btn-group">
                 <a class="btn btn-default btn-xs tooltip-toggle"
                    href='{% url "courseconvener-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=courseconvener.slug %}'
@@ -251,67 +290,53 @@
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
             </div>
-        </div>
+        </td>
         {% endif %}
-
+        </tr>
     {%  endfor %}
     </div>
 
-    <div class="row" style="margin-top: 15px">
-        <div class="col-lg-10">
+    <tr>
+        <th>
         <h2>Courses</h2>
-        </div>
+        </th>
 
+        <td>
         {# Organisation owners, staffs and course convener can edit/add course #}
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <div class="col-lg-2">
-            <div class="btn-group">
+            <div class="button1">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'
                data-title="Create New Course">
                 {% show_button_icon "add" %}
             </a>
             </div>
-        </div>
         {% else %}
             {% for courseconvener in courseconveners %}
                 {% if user == courseconvener.user %}
-                    <div class="col-lg-2">
-                        <div class="btn-group">
+                        <div class="button">
                             <a class="btn btn-default btn-sm tooltip-toggle"
                                 href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'
                                 data-title="Create New Course Convener">
                                 {% show_button_icon "add" %}
                             </a>
                         </div>
-                    </div>
                 {% endif %}
             {% endfor %}
         {% endif %}
-    </div>
+        </td>
+    </tr>
 
     {% ifequal num_course 0 %}
         <h5>No courses are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'>create one</a>.</h5>
     {% else %}
-
-    <style>
-    th{
-        background-color: lightgrey;
-    }
-    table, th, td {
-        border: 2px solid darkslategrey;
-    }
-    th, td{
-        padding: 10px;
-    }
-    </style>
-
-    <table style="width: 80%">
+    </table>
+    <table class="course" style="width: 83%">
     <tr>
-        <th style="width: 40%">Course Name</th>
-        <th>Training Center</th>
+        <th style="width: 47%">Course Name</th>
+        <th style="width: 25%">Training Center</th>
         <th>Course Convener</th>
 
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
