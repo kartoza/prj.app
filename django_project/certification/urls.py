@@ -33,6 +33,12 @@ from views import (
     TrainingCenterDetailView,
     TrainingCenterDeleteView,
     TrainingCenterUpdateView,
+
+    # Certificate.
+    CertificateDetailView,
+
+    # Validate Certificate.
+    ValidateCertificate,
 )
 
 
@@ -139,4 +145,14 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/delete/$',
         view=CourseDeleteView.as_view(),
         name='course-delete'),
+
+    # Certificate.
+    url(regex='^(?P<project_slug>[\w-]+)/certificate/'
+              '(?P<id>[\w-]+)/$',
+        view=CertificateDetailView.as_view(),
+        name='certificate-details'),
+
+    # Search.
+    url(regex='^(?P<project_slug>[\w-]+)/certificate/$',
+        view=ValidateCertificate.as_view(), name='validate-certificate'),
 )
