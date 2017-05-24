@@ -45,8 +45,8 @@ class CertificateDetailView(DetailView):
         :param queryset: A query set
         :type queryset: QuerySet
 
-        :returns: Queryset which is filtered to only show a course type
-            within the organisation.
+        :returns: Queryset which is filtered to only show a certificate
+            depends on the input certificate ID.
         :rtype: QuerySet
         :raises: Http404
         """
