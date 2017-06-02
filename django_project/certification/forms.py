@@ -19,6 +19,9 @@ from models import (
     CourseType,
     TrainingCenter,
     Course,
+    CourseAttendee,
+    Attendee,
+    Certificate,
 )
 
 
@@ -298,12 +301,13 @@ class CourseForm(forms.ModelForm):
 class CourseAttendeeForm(forms.ModelForm):
 
     class Meta:
-        fields = ('attendee',)
+        model = CourseAttendee
+        fields = ('attendee', 'course')
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
-        self.certifying_organisation = kwargs.pop('certifying_organisation')
-        form_title = 'Course Attendee'
+        self.course = kwargs.pop('course')
+        form_title = 'Add Course Attendee'
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
@@ -314,12 +318,77 @@ class CourseAttendeeForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(CourseAttendeeForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.fields['course'].initial = self.course
+        self.fields['course'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Add'))
 
     def save(self, commit=True):
         instance = super(CourseAttendeeForm, self).save(commit=False)
-        instance.certifying_organisation = self.certifying_organisation
-        instance.course = self.course
         instance.author = self.user
+        instance.save()
+        return instance
+
+
+class AttendeeForm(forms.ModelForm):
+
+    class Meta:
+        model = Attendee
+        fields = (
+            'firstname',
+            'surname',
+            'email',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        form_title = 'Add Attendee'
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('firstname', css_class='form-control'),
+                Field('surname', css_class='form-control'),
+                Field('email', css_class='form-control'),
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(AttendeeForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Add'))
+
+    def save(self, commit=True):
+        instance = super(AttendeeForm, self).save(commit=False)
+        instance.author = self.user
+        instance.save()
+        return instance
+
+
+class CertificateForm(forms.ModelForm):
+
+    class Meta:
+        model = Certificate
+        fields = (
+            'course',
+            'attendee',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.course = kwargs.pop('course')
+        self.attendee = kwargs.pop('attendee')
+        self.helper = FormHelper()
+        self.helper.html5_required = False
+        super(CertificateForm, self).__init__(*args, **kwargs)
+        self.fields['course'].initial = self.course
+        self.fields['course'].widget = forms.HiddenInput()
+        self.fields['attendee'].initial = self.attendee
+        self.fields['attendee'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Add'))
+
+    def save(self, commit=True):
+        instance = super(CertificateForm, self).save(commit=False)
+        instance.author = self.user
+        instance.course = self.course
+        instance.attendee = self.attendee
         instance.save()
         return instance

@@ -69,7 +69,7 @@ class Course(models.Model):
                           word.lower() not in STOP_WORDS]
         # unidecode() represents special characters (unicode data) in ASCII
         new_list = unidecode(' '.join(filtered_words))
-        self.slug = slugify(new_list)[:50]
+        self.slug = slugify(new_list)[:100]
         super(Course, self).save(*args, **kwargs)
 
     def __unicode__(self):

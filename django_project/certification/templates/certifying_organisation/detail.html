@@ -354,7 +354,7 @@
     {% for course in courses %}
         <tr style="list-style-type: none; margin-left: 20px; margin-top: 10px;">
         <td id="{{ course.id }}-{{ course.name }}">
-                {{ course.name }}
+                <a href="{% url 'course-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}">{{ course.name }}</a>
         </td>
         <td id="{{ course.id }}-{{ course.training_center.name }}">
                 {{ course.training_center.name }}
@@ -384,7 +384,7 @@
                     <td>
                         <div class="btn-group">
                             <a class="btn btn-default btn-xs tooltip-toggle"
-                                href='{% url "course-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
+                                href='{% url "course-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                                 data-title="Delete">
                                 <span class="glyphicon glyphicon-minus"></span>
                             </a>

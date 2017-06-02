@@ -1,0 +1,112 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    <h1>Course Details</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-10">
+        <h1>{{ course.name }}</h1><br/>
+        </div>
+
+        <div class="col-lg-2" style="margin-top: 20px">
+        <div class="btn-group">
+                <a class="btn btn-default btn-sm tooltip-toggle"
+                   href='{% url "course-delete" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
+                   data-title="Delete Course">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-sm tooltip-toggle"
+                   href='{% url "course-update" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
+                   data-title="Edit Course">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                <a class="btn btn-default btn-sm tooltip-toggle"
+                    href='{% url "certifyingorganisation-detail" course.certifying_organisation.project.slug course.certifying_organisation.slug %}'
+                    data-title="Back">
+                     <span class="glyphicon glyphicon-arrow-left"></span>
+                 </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+    <p>
+        Course Name : {{ course.name }}<br/>
+        Course Type : {{ course.course_type }}<br/>
+        Course Convener : {{ course.course_convener }}<br/>
+        Training Center : {{ course.training_center }}<br/>
+        Organisation : {{ course.certifying_organisation }}<br/>
+        Start Date : {{ course.start_date }}<br/>
+        End Date : {{ course.end_date }}<br/>
+    </p>
+    </div>
+
+
+    <div class="container">
+
+    <style>
+        table {
+            margin-top: 20px;
+        }
+        th {
+        background-color: gainsboro;
+        }
+        table, th, td, tr {
+            border: 1px solid;
+            padding: 10px;
+        }
+    </style>
+
+    <h3>Course Attendee</h3>
+    <a class="btn btn-default btn-mini"
+           href='{% url 'courseattendee-create' project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'>
+            Add Course Attendees</a>
+    <table>
+        <tr>
+            <th style="width: 50%">Name</th>
+            <th>Certificate Issued?</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for attendee in attendees %}
+            <tr><td>{{ attendee.attendee }}</td>
+                <td style="text-align: center">
+                    {% if attendee.attendee.pk in certificates %}
+                        <span class="glyphicon glyphicon-ok tooltip-toggle" data-title="Certificate Issued"></span>
+                    {% else %}
+                        <span class="glyphicon glyphicon-remove tooltip-toggle" data-title="No Certificate Issued"></span>
+                    {% endif %}
+                </td>
+                <td  style="text-align: center">
+                    <div class="btn-group">
+                        {% if attendee.attendee.pk in certificates %}
+                            <a class="btn btn-default btn-xs tooltip-toggle"
+                                href='#'
+                                data-title="Print Certificate">
+                                <span class="glyphicon glyphicon-print"></span>
+                            </a>
+                        {% else %}
+                            <a class="btn btn-default btn-xs tooltip-toggle"
+                                href='{% url "certificate-create" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
+                                data-title="Issue Certificate">
+                                <span class="glyphicon glyphicon-check"></span>
+                            </a>
+                        {% endif %}
+                    <a class="btn btn-default btn-xs tooltip-toggle"
+                        href='{% url "courseattendee-delete" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.pk %}'
+                        data-title="Delete Course Attendee">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    </div>
+
+{% endblock %}
