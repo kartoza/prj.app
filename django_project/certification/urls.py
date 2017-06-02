@@ -35,15 +35,6 @@ from views import (
     TrainingCenterDeleteView,
     TrainingCenterUpdateView,
 
-    # Attendee.
-    AttendeeCreateView,
-
-    # Course Attendee.
-    CourseAttendeeCreateView,
-    CourseAttendeeDeleteView,
-
-    # Certificate.
-    CertificateCreateView,
 )
 
 
@@ -150,37 +141,5 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/delete/$',
         view=CourseDeleteView.as_view(),
         name='course-delete'),
-    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/course/'
-              '(?P<slug>[\w-]+)/$',
-        view=CourseDetailView.as_view(),
-        name='course-detail'),
 
-    # Attendee.
-    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/course/'
-              '(?P<slug>[\w-]+)/create-attendee/$',
-        view=AttendeeCreateView.as_view(),
-        name='attendee-create'),
-
-    # Course Attendee.
-    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/course/'
-              '(?P<slug>[\w-]+)/create-courseattendee/$',
-        view=CourseAttendeeCreateView.as_view(),
-        name='courseattendee-create'),
-    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/course/'
-              '(?P<course_slug>[\w-]+)/courseattendee/'
-              '(?P<pk>[\w-]+)/delete/$',
-        view=CourseAttendeeDeleteView.as_view(),
-        name='courseattendee-delete'),
-
-    # Certificate.
-    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/course/'
-              '(?P<course_slug>[\w-]+)/courseattendee/'
-              '(?P<pk>[\w-]+)/create-certificate/$',
-        view=CertificateCreateView.as_view(),
-        name='certificate-create'),
 )
