@@ -1,0 +1,25 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Course Type - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Certificate Details</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <div class="row" style="text-align: center">
+        <h1>Certificate Details</h1>
+        <h3>ID: {{ certificate.certificateID }}</h3>
+    </div>
+
+    <div class="row" style="text-align: center; font-size: 14pt; color: grey">
+        Attendee : {{ certificate.attendee }}<br/>
+        Course : {{ certificate.course.name }}<br/>
+    </div>
+
+{% endblock %}

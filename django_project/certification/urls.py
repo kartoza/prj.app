@@ -35,6 +35,19 @@ from views import (
     TrainingCenterDeleteView,
     TrainingCenterUpdateView,
 
+    # Attendee.
+    AttendeeCreateView,
+
+    # Course Attendee.
+    CourseAttendeeCreateView,
+    CourseAttendeeDeleteView,
+
+    # Certificate.
+    CertificateCreateView,
+    CertificateDetailView,
+
+    # Validate Certificate.
+    ValidateCertificate,
 )
 
 
@@ -125,6 +138,39 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/update/$',
         view=TrainingCenterUpdateView.as_view(),
         name='trainingcenter-update'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/course/'
+              '(?P<slug>[\w-]+)/$',
+        view=CourseDetailView.as_view(),
+        name='course-detail'),
+
+    # Attendee.
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/course/'
+              '(?P<slug>[\w-]+)/create-attendee/$',
+        view=AttendeeCreateView.as_view(),
+        name='attendee-create'),
+
+    # Course Attendee.
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/course/'
+              '(?P<slug>[\w-]+)/create-courseattendee/$',
+        view=CourseAttendeeCreateView.as_view(),
+        name='courseattendee-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/course/'
+              '(?P<course_slug>[\w-]+)/courseattendee/'
+              '(?P<pk>[\w-]+)/delete/$',
+        view=CourseAttendeeDeleteView.as_view(),
+        name='courseattendee-delete'),
+
+    # Certificate.
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/course/'
+              '(?P<course_slug>[\w-]+)/courseattendee/'
+              '(?P<pk>[\w-]+)/create-certificate/$',
+        view=CertificateCreateView.as_view(),
+        name='certificate-create'),
 
     # Course.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
@@ -142,4 +188,13 @@ urlpatterns = patterns(
         view=CourseDeleteView.as_view(),
         name='course-delete'),
 
+    # Certificate.
+    url(regex='^(?P<project_slug>[\w-]+)/certificate/'
+              '(?P<id>[\w-]+)/$',
+        view=CertificateDetailView.as_view(),
+        name='certificate-details'),
+
+    # Search.
+    url(regex='^(?P<project_slug>[\w-]+)/certificate/$',
+        view=ValidateCertificate.as_view(), name='validate-certificate'),
 )
