@@ -86,7 +86,7 @@
                     <div class="btn-group">
                         {% if attendee.attendee.pk in certificates %}
                             <a class="btn btn-default btn-xs tooltip-toggle"
-                                href='#'
+                                href='{% url "print-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
                                 data-title="Print Certificate">
                                 <span class="glyphicon glyphicon-print"></span>
                             </a>

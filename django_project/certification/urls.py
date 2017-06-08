@@ -45,6 +45,7 @@ from views import (
     # Certificate.
     CertificateCreateView,
     CertificateDetailView,
+    certificate_pdf_view,
 
     # Validate Certificate.
     ValidateCertificate,
@@ -193,6 +194,10 @@ urlpatterns = patterns(
               '(?P<id>[\w-]+)/$',
         view=CertificateDetailView.as_view(),
         name='certificate-details'),
+    url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+        '(?P<organisation_slug>[\w-]+)/course/'
+        '(?P<course_slug>[\w-]+)/print/(?P<pk>[\w-]+)/$',
+        certificate_pdf_view, name='print-certificate'),
 
     # Search.
     url(regex='^(?P<project_slug>[\w-]+)/certificate/$',

@@ -1,10 +1,13 @@
 # coding=utf-8
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.views.generic import CreateView, DetailView
 from django.core.urlresolvers import reverse
 from braces.views import LoginRequiredMixin
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4, landscape
 from ..models import Certificate, Course, Attendee
 from ..forms import CertificateForm
+from base.models.project import Project
 
 
 class CertificateMixin(object):
@@ -131,3 +134,56 @@ class CertificateDetailView(DetailView):
                 return obj
             else:
                 raise Http404('Sorry! Certificate by this ID is not exist.')
+
+
+def certificate_pdf_view(request, **kwargs):
+
+    project_slug = kwargs.pop('project_slug')
+    course_slug = kwargs.pop('course_slug')
+    pk = kwargs.pop('pk')
+    project = Project.objects.get(slug=project_slug)
+    course = Course.objects.get(slug=course_slug)
+    attendee = Attendee.objects.get(pk=pk)
+    certificate = Certificate.objects.get(course=course, attendee=attendee)
+
+    # Create the HttpResponse object with the appropriate PDF headers.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="certificate.pdf"'
+
+    # Create the PDF object, using the response object as its "file."
+    p = canvas.Canvas(response, pagesize=landscape(A4))
+    width, height = A4
+    center = height*0.5
+
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+
+    p.setFillColorRGB(0.29296875, 0.453125, 0.609375)
+    p.setFont('Times-Roman', 18)
+    p.drawString(70, 520, project.name)
+    p.drawString(550, 520, 'Certificate ID: %s' % certificate.certificateID)
+    p.setFillColorRGB(0.1, 0.1, 0.1)
+    p.setFont('Times-Bold', 26)
+    p.drawCentredString(center, 450, 'Certificate of Completion')
+    p.drawCentredString(
+        center, 370, '%s %s' % (attendee.firstname, attendee.surname))
+    p.setFont('Times-Roman', 16)
+    p.setFillColorRGB(0.2, 0.5, 0.6)
+    p.drawCentredString(center, 330, 'Has attended and completed the course:')
+    p.setFillColorRGB(0.1, 0.1, 0.1)
+    p.setFont('Times-Bold', 20)
+    p.drawCentredString(center, 290, course.course_type.name)
+    p.setFillColorRGB(0.2, 0.5, 0.6)
+    p.setFont('Times-Roman', 16)
+    p.drawString(
+        290, 250, 'Course Date: %s - %s'
+                  % (course.start_date, course.end_date))
+    p.drawString(290, 220, 'Convener: %s' % course.course_convener.user)
+    p.setFillColorRGB(0.1, 0.1, 0.1)
+    p.drawCentredString(
+        center, 170, 'Presented by %s at %s' % (
+            course.certifying_organisation, course.training_center))
+    # Close the PDF object cleanly.
+    p.showPage()
+    p.save()
+    return response
