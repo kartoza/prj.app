@@ -153,7 +153,7 @@ def certificate_pdf_view(request, **kwargs):
     # Create the PDF object, using the response object as its "file."
     p = canvas.Canvas(response, pagesize=landscape(A4))
     width, height = A4
-    center = height*0.5
+    center = height * 0.5
 
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.
