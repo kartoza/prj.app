@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.http import Http404, HttpResponseNotFound
+from django.http import Http404
 from django.views.generic import CreateView, DetailView
 from django.core.urlresolvers import reverse
 from braces.views import LoginRequiredMixin
