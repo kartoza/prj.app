@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.http import Http404
+from django.http import Http404, HttpResponseNotFound
 from django.views.generic import CreateView, DetailView
 from django.core.urlresolvers import reverse
 from braces.views import LoginRequiredMixin
@@ -125,7 +125,8 @@ class CertificateDetailView(DetailView):
         if queryset is None:
             queryset = self.get_queryset()
             certificateID = self.kwargs.get('id', None)
-            if certificateID:
+            certificate = Certificate.objects.all().values_list('certificateID', flat=True)
+            if certificateID in certificate:
                 obj = queryset.get(
                     certificateID=certificateID)
                 return obj
