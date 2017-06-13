@@ -33,3 +33,4 @@ pytz
 django-allauth==0.25.2
 # support special characters
 Unidecode==0.4.20
+reportlab==3.4.0
