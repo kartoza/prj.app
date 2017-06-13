@@ -127,8 +127,7 @@ class CertificateDetailView(DetailView):
             queryset = self.get_queryset()
             certificateID = self.kwargs.get('id', None)
             if certificateID:
-                obj = get_object_or_404(queryset,
-                    certificateID=certificateID)
+                obj = get_object_or_404(queryset, certificateID=certificateID)
                 return obj
             else:
                 raise Http404('Sorry! Certificate by this ID is not exist.')
