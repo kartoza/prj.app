@@ -2,6 +2,7 @@
 from django.http import Http404
 from django.views.generic import CreateView, DetailView
 from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404
 from braces.views import LoginRequiredMixin
 from ..models import Certificate, Course, Attendee
 from ..forms import CertificateForm
@@ -125,9 +126,8 @@ class CertificateDetailView(DetailView):
         if queryset is None:
             queryset = self.get_queryset()
             certificateID = self.kwargs.get('id', None)
-            certificate = Certificate.objects.all().values_list('certificateID', flat=True)
-            if certificateID in certificate:
-                obj = queryset.get(
+            if certificateID:
+                obj = get_object_or_404(queryset,
                     certificateID=certificateID)
                 return obj
             else:
