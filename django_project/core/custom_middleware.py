@@ -5,6 +5,7 @@ core.custom_middleware
 """
 from base.models import Project, Version
 from changes.models import Category, SponsorshipLevel, SponsorshipPeriod, Entry
+from certification.models import CertifyingOrganisation
 
 
 class NavContextMiddleware(object):
@@ -47,6 +48,9 @@ class NavContextMiddleware(object):
                     project=context.get('project')).exists())
             context['has_pending_sponsor_period'] = (
                 SponsorshipPeriod.unapproved_objects.filter(
+                    project=context.get('project')).exists())
+            context['has_pending_organisations'] = (
+                CertifyingOrganisation.unapproved_objects.filter(
                     project=context.get('project')).exists())
             if versions:
                 context['has_pending_entries'] = (
