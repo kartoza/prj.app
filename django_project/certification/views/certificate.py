@@ -2,7 +2,6 @@
 from django.http import Http404
 from django.views.generic import CreateView, DetailView
 from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404
 from braces.views import LoginRequiredMixin
 from ..models import Certificate, Course, Attendee
 from ..forms import CertificateForm
@@ -94,10 +93,15 @@ class CertificateDetailView(DetailView):
         """
 
         self.certificateID = self.kwargs.get('id', None)
+        self.project_slug = self.kwargs.get('project_slug', None)
         context = super(
             CertificateDetailView, self).get_context_data(**kwargs)
-        context['certificate'] = \
-            Certificate.objects.get(certificateID=self.certificateID)
+        issued_id = \
+            Certificate.objects.all().values_list('certificateID', flat=True)
+        if self.certificateID in issued_id:
+            context['certificate'] = \
+                Certificate.objects.get(certificateID=self.certificateID)
+        context['project_slug'] = self.project_slug
         return context
 
     def get_queryset(self):
@@ -127,7 +131,10 @@ class CertificateDetailView(DetailView):
             queryset = self.get_queryset()
             certificateID = self.kwargs.get('id', None)
             if certificateID:
-                obj = get_object_or_404(queryset, certificateID=certificateID)
-                return obj
+                try:
+                    obj = queryset.get(certificateID=certificateID)
+                    return obj
+                except Certificate.DoesNotExist:
+                    return None
             else:
                 raise Http404('Sorry! Certificate by this ID is not exist.')
