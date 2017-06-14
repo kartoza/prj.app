@@ -178,7 +178,9 @@ def certificate_pdf_view(request, **kwargs):
     p.drawString(
         290, 250, 'Course Date: %s - %s'
                   % (course.start_date, course.end_date))
-    p.drawString(290, 220, 'Convener: %s %s' % (course.course_convener.user.first_name, course.course_convener.user.last_name))
+    p.drawString(290, 220, 'Convener: %s %s' % (
+        course.course_convener.user.first_name,
+        course.course_convener.user.last_name))
     p.setFillColorRGB(0.1, 0.1, 0.1)
     p.drawCentredString(
         center, 170, 'Presented by %s at %s' % (
