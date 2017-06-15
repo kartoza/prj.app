@@ -307,6 +307,7 @@ class CourseAttendeeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         self.course = kwargs.pop('course')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
         form_title = 'Add Course Attendee'
         self.helper = FormHelper()
         layout = Layout(
@@ -318,6 +319,9 @@ class CourseAttendeeForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(CourseAttendeeForm, self).__init__(*args, **kwargs)
+        self.fields['attendee'].queryset = \
+            Attendee.objects.filter(
+                certifying_organisation=self.certifying_organisation)
         self.fields['course'].initial = self.course
         self.fields['course'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Add'))
@@ -337,10 +341,12 @@ class AttendeeForm(forms.ModelForm):
             'firstname',
             'surname',
             'email',
+            'certifying_organisation',
         )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
         form_title = 'Add Attendee'
         self.helper = FormHelper()
         layout = Layout(
@@ -354,11 +360,15 @@ class AttendeeForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(AttendeeForm, self).__init__(*args, **kwargs)
+        self.fields['certifying_organisation'].initial = \
+            self.certifying_organisation
+        self.fields['certifying_organisation'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Add'))
 
     def save(self, commit=True):
         instance = super(AttendeeForm, self).save(commit=False)
         instance.author = self.user
+        instance.certifying_organisation = self.certifying_organisation
         instance.save()
         return instance
 

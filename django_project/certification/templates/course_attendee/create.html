@@ -1,6 +1,7 @@
 {% extends "project_base.html" %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
+{% load custom_markup %}
 
 {% block page_title %}
     <h1>Add Course Attendee</h1>
@@ -12,7 +13,7 @@
         <a class="btn btn-default btn-xs tooltip-toggle"
                    href='{% url "attendee-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                    data-title="Add another attendee to the list">
-                    <span class="glyphicon glyphicon-plus"></span>
+                    {% show_button_icon "add" %}
                 </a>
     </div>
 
