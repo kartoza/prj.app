@@ -16,15 +16,15 @@
 
         $(document).ready(function () {
 
-            // Add map
-            $('#map').css({'height': 400, 'width': 900});
-            map = L.map('map').setView([40, 0], 2);
-            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-            }).addTo(map);
-
             var lat = {{ trainingcenter.location.y }};
             var long = {{ trainingcenter.location.x }};
+
+            // Add map
+            $('#map').css({'height': 400, 'width': 900});
+            map = L.map('map').setView([lat, long], 13);
+            L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution:  'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
+            }).addTo(map);
             marker = L.marker( [ lat,long ] ).addTo( map );
 
         })
