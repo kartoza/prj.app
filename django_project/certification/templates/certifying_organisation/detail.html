@@ -1,4 +1,5 @@
 {% extends "project_base.html" %}
+{% load staticfiles %}
 {% load custom_markup %}
 
 {% block title %}Certifying Organisation - {{ block.super }}{% endblock %}
@@ -14,6 +15,7 @@
     <link rel="stylesheet" type="text/css"
           href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.css"/>
     <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/organisation_detail.css' %}">
     <script>
         var map;
         var marker;
@@ -48,12 +50,12 @@
 {% block content %}
     <div class="row">
         <div class="col-lg-10">
-            <h1>{{ certifyingorganisation.name }}</h1>
+            <h1>{{ certifyingorganisation.name }}</h1><br/>
         </div>
 
         {# Only organisation owners or staff can edit #}
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <div class="col-lg-2">
+        <div class="pull-right">
             <div class="btn-group">
                 <a class="btn btn-default btn-sm tooltip-toggle"
                    href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
@@ -73,58 +75,26 @@
             </div>
         </div>
         {% endif %}
-
     </div>
-    <div class="row">
-    <div class="col-lg-8">
-        Organisation Name : {{ certifyingorganisation.name }}<br/>
-        Address : {{ certifyingorganisation.address }}<br/>
-        Country : {{ certifyingorganisation.country.name }}<br/>
-        Email : {{ certifyingorganisation.organisation_email }}<br/>
-        Phone : {{ certifyingorganisation.organisation_phone }}<br/>
-        Organisation owners : {% for organisation_owners in certifyingorganisation.organisation_owners.all %}{{ organisation_owners }}{{ ", " }}{% endfor %}<br/>
-        Location :
-    </div>
+    <div class="details">
+        <span class="grey-italic">Organisation Name : </span><span>{{ certifyingorganisation.name }}</span><br/>
+        <span class="grey-italic">Address : </span><span>{{ certifyingorganisation.address }}</span><br/>
+        <span class="grey-italic">Country : </span><span>{{ certifyingorganisation.country.name }}</span><br/>
+        <span class="grey-italic">Email : </span><span>{{ certifyingorganisation.organisation_email }}</span><br/>
+        <span class="grey-italic">Phone : </span><span>{{ certifyingorganisation.organisation_phone }}</span><br/>
+        <span class="grey-italic">Organisation owners : </span><span>{% for organisation_owners in certifyingorganisation.organisation_owners.all %}{{ organisation_owners }}{{ ", " }}{% endfor %}</span><br/>
     </div>
 
-    <div class="map-wrapper" style="horiz-align: center; margin-left: 80px; margin-top: 10px">
-        <div class="row" id="map"></div>
+    <div class="map-wrapper">
+        <div id="map"></div>
     </div>
 
-    <style>
-        .menu-wrapper th {
-            width:900px;
-            padding-top: 15px;
-        }
-        li:hover {
-            background-color: #F9F9F9;
-        }
-        .list {
-            width: 800px;
-            padding: 0px;
-            margin: 0px;
-        }
-        .button, .button1 {
-            text-align: right;
-        }
-        .button1 {
-            padding-top: 15px;
-        }
-        .course th{
-            background-color: lightgrey;
-        }
-        .course table, .course th, .course td {
-            border: 2px solid darkslategrey;
-        }
-        .course th, .course td{
-            padding: 10px;
-        }
-    </style>
+    <div class="menu-wrapper">
+    <table style="width: 100%;">
 
-    <table class="menu-wrapper">
-    <tr>
-    <th>
-        <h2>Training Centers</h2>
+    <tr style="margin-top: 0">
+    <th style="margin-top: 0">
+        <h2 style="margin-top: 0 !important;">Training Centers</h2>
     </th>
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <td class="button1"><div>
@@ -146,8 +116,6 @@
     {% endifequal %}
     </td></tr>
 
-
-    <div class="row">
     {% for trainingcenter in trainingcenters %}
         <tr>
         <td class="list"><div class="col-lg-10">
@@ -177,17 +145,20 @@
         </td>
         </tr>
     {%  endfor %}
+    </table>
     </div>
 
+    <div class="menu-wrapper">
+    <table style="width: 100%;">
     <tr>
-        <th>
-        <h2>Course Types</h2>
+        <th >
+        <h2 style="margin-top: 0">Course Types</h2>
         </th>
 
         <td>
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <div class="button1">
-            <div class="btn-group">
+            <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url 'coursetype-create' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
                data-title="Create New Course Type">
@@ -199,15 +170,14 @@
         </td>
     </tr>
 
+    <tr><td>
     {% ifequal num_coursetype 0 %}
-        <tr>
         <h5>No course types are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='{% url 'coursetype-create' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'>create one</a>.</h5>
-        </tr>
     {% endifequal %}
+    </td></tr>
 
-    <div class="row">
     {% for coursetype in coursetypes %}
         <tr><td class="list">
         <div class="col-lg-10">
@@ -219,8 +189,7 @@
 
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <td>
-        <div>
-            <div class="btn-group">
+            <div class="btn-group pull-right">
                 <a class="btn btn-default btn-xs tooltip-toggle"
                    href='{% url "coursetype-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=coursetype.slug %}'
                    data-title="Delete {{ coursetype.name }}">
@@ -232,21 +201,23 @@
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
             </div>
-        </div>
         </td>
         {% endif %}
         </tr>
     {%  endfor %}
+    </table>
     </div>
 
+    <div class="menu-wrapper">
+    <table>
     <tr>
     <th>
-        <h2>Course Conveners</h2>
+        <h2 style="margin-top: 0">Course Conveners</h2>
     </th>
     <td>
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <div class="button1">
-            <div class="btn-group">
+            <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url "courseconvener-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
                data-title="Create New Course Convener">
@@ -265,7 +236,6 @@
     {% endifequal %}
     </td></tr>
 
-    <div class="row">
     {% for courseconvener in courseconveners %}
         <tr>
         <td class="list">
@@ -278,7 +248,7 @@
 
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <td>
-            <div class="btn-group">
+            <div class="btn-group pull-right">
                 <a class="btn btn-default btn-xs tooltip-toggle"
                    href='{% url "courseconvener-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=courseconvener.slug %}'
                    data-title="Delete {{ courseconvener.user }}">
@@ -294,11 +264,14 @@
         {% endif %}
         </tr>
     {%  endfor %}
+    </table>
     </div>
 
+    <div class="menu-wrapper">
+    <table>
     <tr>
         <th>
-        <h2>Courses</h2>
+        <h2 style="margin-top: 0">Courses</h2>
         </th>
 
         <td>
@@ -326,35 +299,27 @@
         {% endif %}
         </td>
     </tr>
-
+    <tr><td>
     {% ifequal num_course 0 %}
         <h5>No courses are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'>create one</a>.</h5>
     {% else %}
+    </td></tr>
     </table>
-    <table class="course" style="width: 83%">
+    <table class="course" style="width: 100%; margin-top: 15px">
     <tr>
         <th style="width: 47%">Course Name</th>
         <th style="width: 25%">Training Center</th>
         <th>Course Convener</th>
-
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <th>Actions</th>
-        {% else %}
-            {% for courseconvener in courseconveners %}
-                {% if user == courseconvener.user %}
-                    <th>Actions</th>
-                {% endif %}
-            {% endfor %}
-        {% endif %}
+        <th style="text-align: right">Actions</th>
 
     </tr>
 
     {% for course in courses %}
         <tr style="list-style-type: none; margin-left: 20px; margin-top: 10px;">
         <td id="{{ course.id }}-{{ course.name }}">
-                <a href="{% url 'course-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}">{{ course.name }}</a>
+                {{ course.name }}
         </td>
         <td id="{{ course.id }}-{{ course.training_center.name }}">
                 {{ course.training_center.name }}
@@ -365,7 +330,7 @@
 
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <td>
-             <div class="btn-group">
+             <div class="btn-group pull-right">
                 <a class="btn btn-default btn-xs tooltip-toggle"
                    href='{% url "course-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                    data-title="Delete">
@@ -376,13 +341,18 @@
                    data-title="Edit">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
+                 <a class="btn btn-default btn-xs tooltip-toggle"
+                    href='{% url 'course-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
+                    data-title="View">
+                    <span class="glyphicon glyphicon-eye-open"></span>
+                </a>
             </div>
         </td>
-        {% else %}
+        {% elif courseconvener in courseconveners %}
             {% for courseconvener in courseconveners %}
                 {% if user == courseconvener.user %}
                     <td>
-                        <div class="btn-group">
+                        <div class="btn-group pull-right">
                             <a class="btn btn-default btn-xs tooltip-toggle"
                                 href='{% url "course-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                                 data-title="Delete">
@@ -393,10 +363,25 @@
                                 data-title="Edit">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </a>
+                            <a class="btn btn-default btn-xs tooltip-toggle"
+                                href='{% url 'course-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
+                                data-title="View">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </a>
                         </div>
                     </td>
                 {% endif %}
             {% endfor %}
+        {% else %}
+            <td>
+                <div class="btn-group pull-right">
+                    <a class="btn btn-default btn-xs tooltip-toggle"
+                        href='{% url 'course-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
+                        data-title="View">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                </div>
+            </td>
         {% endif %}
         </tr>
     {%  endfor %}
@@ -404,4 +389,4 @@
     </table>
     {% endifequal %}
 {% endblock %}
-
+</div>

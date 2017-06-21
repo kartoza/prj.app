@@ -1,9 +1,14 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
+{% load staticfiles %}
 
 {% block title %}Course Type - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
+{% endblock %}
+
+{% block js_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/organisation_detail.css' %}">
 {% endblock %}
 
 {% block page_title %}
@@ -20,7 +25,7 @@
 
         {# Only organisation owners or staff can edit #}
         <div class="col-lg-2">
-            <div class="btn-group">
+            <div class="btn-group pull-right">
                 {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
                 <a class="btn btn-default btn-sm tooltip-toggle"
                    href='{% url "coursetype-delete" project_slug=coursetype.certifying_organisation.project.slug organisation_slug=coursetype.certifying_organisation.slug slug=coursetype.slug %}'
@@ -43,14 +48,11 @@
         </div>
     </div>
 
-    </div>
-    <div class="row">
-    <div class="col-lg-8">
-        Name : {{ coursetype.name }}<br/>
-        Description : {{ coursetype.description }}<br/>
-        Instruction Hours : {{ coursetype.instruction_hours }}<br/>
-        Link : {{ coursetype.coursetype_link }}<br/>
-    </div>
+    <div class="details" style="margin-top: 20px">
+        <span class="grey-italic">Name : </span><span>{{ coursetype.name }}<br/></span>
+        <span class="grey-italic">Description : </span><span>{{ coursetype.description }}<br/></span>
+        <span class="grey-italic">Instruction Hours : </span><span>{{ coursetype.instruction_hours }}<br/></span>
+        <span class="grey-italic">Link : </span><span>{{ coursetype.coursetype_link }}<br/></span>
     </div>
 
 {% endblock %}
