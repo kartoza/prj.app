@@ -1,13 +1,17 @@
 # coding=utf-8
+import urllib2
 from django.http import Http404, HttpResponse
 from django.views.generic import CreateView, DetailView
 from django.core.urlresolvers import reverse
 from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
+from reportlab.platypus import Image
+from core.settings.base import MEDIA_ROOT
 from ..models import Certificate, Course, Attendee
 from ..forms import CertificateForm
 from base.models.project import Project
+from PIL import Image as Im
 
 
 class CertificateMixin(object):
@@ -151,39 +155,44 @@ def certificate_pdf_view(request, **kwargs):
     response['Content-Disposition'] = 'filename="certificate.pdf"'
 
     # Create the PDF object, using the response object as its "file."
-    p = canvas.Canvas(response, pagesize=landscape(A4))
+    page = canvas.Canvas(response, pagesize=landscape(A4))
     width, height = A4
     center = height * 0.5
 
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.
 
-    p.setFillColorRGB(0.29296875, 0.453125, 0.609375)
-    p.setFont('Times-Roman', 18)
-    p.drawString(70, 520, project.name)
-    p.drawString(550, 520, 'Certificate ID: %s' % certificate.certificateID)
-    p.setFillColorRGB(0.1, 0.1, 0.1)
-    p.setFont('Times-Bold', 26)
-    p.drawCentredString(center, 450, 'Certificate of Completion')
-    p.drawCentredString(
+    file_image = project.image_file.file
+    page.setFillColorRGB(0.1, 0.1, 0.1)
+    page.setFont('Times-Roman', 18)
+    page.drawString(70, 520, project.name)
+    #page.drawString(70, 550, str(file_image))
+    #image = Im.open(str(file_image))
+    #page.drawInlineImage(Image(image), 20, 520, 50, 50)
+    page.drawString(550, 520, 'Certificate ID: %s' % certificate.certificateID)
+    page.setFont('Times-Bold', 26)
+    page.drawCentredString(center, 450, 'Certificate of Completion')
+    page.drawCentredString(
         center, 370, '%s %s' % (attendee.firstname, attendee.surname))
-    p.setFont('Times-Roman', 16)
-    p.setFillColorRGB(0.2, 0.5, 0.6)
-    p.drawCentredString(center, 330, 'Has attended and completed the course:')
-    p.setFillColorRGB(0.1, 0.1, 0.1)
-    p.setFont('Times-Bold', 20)
-    p.drawCentredString(center, 290, course.course_type.name)
-    p.setFillColorRGB(0.2, 0.5, 0.6)
-    p.setFont('Times-Roman', 16)
-    p.drawString(
+    page.setFont('Times-Roman', 16)
+    page.drawCentredString(
+        center, 330, 'Has attended and completed the course:')
+    page.setFont('Times-Bold', 20)
+    page.drawCentredString(center, 290, course.course_type.name)
+    page.setFont('Times-Roman', 16)
+    page.drawString(
         290, 250, 'Course Date: %s - %s'
                   % (course.start_date, course.end_date))
-    p.drawString(290, 220, 'Convener: %s' % course.course_convener.user)
-    p.setFillColorRGB(0.1, 0.1, 0.1)
-    p.drawCentredString(
+    page.drawString(290, 220, 'Convener: %s' % course.course_convener.user)
+    page.setFillColorRGB(0.1, 0.1, 0.1)
+    page.drawCentredString(
         center, 170, 'Presented by %s at %s' % (
             course.certifying_organisation, course.training_center))
+    page.setFont('Times-Roman', 8)
+    page.drawString(
+        70,30, 'You can verify this certificate by visiting this page.')
+
     # Close the PDF object cleanly.
-    p.showPage()
-    p.save()
+    page.showPage()
+    page.save()
     return response
