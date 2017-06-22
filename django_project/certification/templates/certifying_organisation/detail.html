@@ -97,8 +97,8 @@
         <h2 style="margin-top: -15px;">Training Centers</h2>
     </th>
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <td class="button1" style="margin-top: -25px;"><div>
-            <div class="btn-group">
+        <td class="button1"><div>
+            <div class="btn-group" style="margin-top: -30px;">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url "trainingcenter-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
                data-title="Create New Training Center">
