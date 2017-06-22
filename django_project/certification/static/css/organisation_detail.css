@@ -67,3 +67,14 @@ li:hover {
 table {
     width: 100%;
 }
+.panel-heading {
+    border: 1px solid lightgrey;
+    background-color: #f5f5f5;
+    margin: 0 auto;
+    text-align: center
+}
+.panel-body {
+    border: 1px solid lightgrey;
+    text-align: center;
+    margin-top: 0;
+}

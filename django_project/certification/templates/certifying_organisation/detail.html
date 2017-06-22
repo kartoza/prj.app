@@ -76,13 +76,26 @@
         </div>
         {% endif %}
     </div>
-    <div class="details">
+    <div class="details col-lg-5" style="margin-bottom: 20px">
         <span class="grey-italic">Organisation Name : </span><span>{{ certifyingorganisation.name }}</span><br/>
         <span class="grey-italic">Address : </span><span>{{ certifyingorganisation.address }}</span><br/>
         <span class="grey-italic">Country : </span><span>{{ certifyingorganisation.country.name }}</span><br/>
         <span class="grey-italic">Email : </span><span>{{ certifyingorganisation.organisation_email }}</span><br/>
         <span class="grey-italic">Phone : </span><span>{{ certifyingorganisation.organisation_phone }}</span><br/>
         <span class="grey-italic">Organisation owners : </span><span>{% for organisation_owners in certifyingorganisation.organisation_owners.all %}{{ organisation_owners }}{{ ", " }}{% endfor %}</span><br/>
+    </div>
+
+    <div>
+    <div class="col-lg-2 pull-right">
+        <h4 class="panel-heading">Attendees</h4>
+        <h3 class="panel-body">{{ num_attendees }}</h3>
+    </div>
+
+    <div class="col-lg-2 pull-right">
+        <h4 class="panel-heading">
+            Training Center</h4>
+        <h3 class="panel-body">{{ num_trainingcenter }}</h3>
+    </div>
     </div>
 
     <div class="map-wrapper">
