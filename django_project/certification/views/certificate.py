@@ -1,17 +1,14 @@
 # coding=utf-8
-import urllib2
 from django.http import Http404, HttpResponse
 from django.views.generic import CreateView, DetailView
 from django.core.urlresolvers import reverse
 from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
-from reportlab.platypus import Image
-from core.settings.base import MEDIA_ROOT
+from reportlab.lib.utils import ImageReader
 from ..models import Certificate, Course, Attendee
 from ..forms import CertificateForm
 from base.models.project import Project
-from PIL import Image as Im
 
 
 class CertificateMixin(object):
@@ -159,38 +156,119 @@ def certificate_pdf_view(request, **kwargs):
     width, height = A4
     center = height * 0.5
 
+    if project.image_file:
+        project_logo = ImageReader(project.image_file)
+    else:
+        project_logo = None
+
+    if course.certifying_organisation.logo:
+        organisation_logo = ImageReader(course.certifying_organisation.logo)
+    else:
+        organisation_logo = None
+
+    if project.signature:
+        project_owner_signature = ImageReader(project.signature)
+    else:
+        project_owner_signature = None
+
+    if course.course_convener.signature:
+        convener_signature = ImageReader(course.course_convener.signature)
+    else:
+        convener_signature = None
+
+    if course.template_certificate:
+        background = ImageReader(course.template_certificate)
+    else:
+        background = None
+
+    # Certificate margin.
+    margin_right = height - 50
+    margin_left = 50
+    margin_bottom = 50
+    max_left = margin_right - 50
+
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.
-
-    file_image = project.image_file.file
+    if background is not None:
+        page.drawImage(
+            background, 0, 0, height=width, width=height,
+            preserveAspectRatio=True)
     page.setFillColorRGB(0.1, 0.1, 0.1)
     page.setFont('Times-Roman', 18)
-    page.drawString(70, 520, project.name)
-    #page.drawString(70, 550, str(file_image))
-    #image = Im.open(str(file_image))
-    #page.drawInlineImage(Image(image), 20, 520, 50, 50)
-    page.drawString(550, 520, 'Certificate ID: %s' % certificate.certificateID)
+    page.drawString(110, 520, project.name)
+
+    if project_logo is not None:
+        page.drawImage(
+            project_logo, 50, 500, width=50, height=50,
+            preserveAspectRatio=True)
+
+    if organisation_logo is not None:
+        page.drawImage(
+            organisation_logo, max_left, 500, height=50, width=50,
+            preserveAspectRatio=True, anchor='c')
+
     page.setFont('Times-Bold', 26)
-    page.drawCentredString(center, 450, 'Certificate of Completion')
+    page.drawCentredString(center, 480, 'Certificate of Completion')
     page.drawCentredString(
-        center, 370, '%s %s' % (attendee.firstname, attendee.surname))
+        center, 420, '%s %s' % (attendee.firstname, attendee.surname))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
-        center, 330, 'Has attended and completed the course:')
+        center, 380, 'Has attended and completed the course:')
     page.setFont('Times-Bold', 20)
-    page.drawCentredString(center, 290, course.course_type.name)
+    page.drawCentredString(center, 340, course.course_type.name)
     page.setFont('Times-Roman', 16)
     page.drawString(
-        290, 250, 'Course Date: %s - %s'
+        290, 290, 'Course Date: %s - %s'
                   % (course.start_date, course.end_date))
-    page.drawString(290, 220, 'Convener: %s' % course.course_convener.user)
+    page.drawString(
+        290, 270, 'Convener: %s %s' % (
+            course.course_convener.user.first_name,
+            course.course_convener.user.last_name))
     page.setFillColorRGB(0.1, 0.1, 0.1)
     page.drawCentredString(
-        center, 170, 'Presented by %s at %s' % (
+        center, 220, 'Presented by %s at %s' % (
             course.certifying_organisation, course.training_center))
+
+    if project_owner_signature is not None:
+        page.drawImage(
+            project_owner_signature,
+            (margin_left+100), (margin_bottom+70), width=100, height=70,
+            preserveAspectRatio=True, anchor='s')
+
+    if convener_signature is not None:
+        page.drawImage(
+            convener_signature, (margin_right-200), (margin_bottom+70),
+            width=100, height=70, preserveAspectRatio=True, anchor='s')
+
+    page.setFont('Times-Italic', 12)
+    page.drawCentredString(
+        (margin_left+150), (margin_bottom+60),
+        '%s %s' % (project.owner.first_name, project.owner.last_name))
+    page.drawCentredString(
+        (margin_right-150), (margin_bottom + 60),
+        '%s %s' % (
+            course.course_convener.user.first_name,
+            course.course_convener.user.last_name))
+    page.line(
+        (margin_left+70), (margin_bottom+55),
+        (margin_left+230), (margin_bottom+55))
+    page.line(
+        (margin_right - 70), (margin_bottom + 55),
+        (margin_right - 230), (margin_bottom + 55))
+    page.setFont('Times-Roman', 13)
+    page.drawCentredString(
+        (margin_left+150), (margin_bottom+40), 'Project Owner')
+    page.drawCentredString(
+        (margin_right-150), (margin_bottom + 40), 'Convener')
+
+    # Footnotes.
+    page.setFont('Times-Roman', 14)
+    page.drawString(
+        margin_left, margin_bottom-10, 'ID: %s' % certificate.certificateID)
     page.setFont('Times-Roman', 8)
     page.drawString(
-        70,30, 'You can verify this certificate by visiting this page.')
+        margin_left, (margin_bottom-20),
+        'You can verify this certificate by visiting this page.')
 
     # Close the PDF object cleanly.
     page.showPage()
