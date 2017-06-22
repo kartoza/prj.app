@@ -94,10 +94,10 @@
 
     <tr style="margin-top: 0">
     <th style="margin-top: 0">
-        <h2 style="margin-top: 0 !important;">Training Centers</h2>
+        <h2 style="margin-top: -15px;">Training Centers</h2>
     </th>
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <td class="button1"><div>
+        <td class="button1" style="margin-top: -25px;"><div>
             <div class="btn-group">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url "trainingcenter-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
@@ -119,10 +119,8 @@
     {% for trainingcenter in trainingcenters %}
         <tr>
         <td class="list"><div class="col-lg-10">
-        <li style="margin-left: 20px; " id="{{ trainingcenter.id }}-{{ trainingcenter.name }}">
                 <a href="{% url 'trainingcenter-detail' certifyingorganisation.project.slug certifyingorganisation.slug trainingcenter.slug %}">
                     {{ trainingcenter.name }}</a>
-        </li>
         </div></td>
 
         <td class="button">
@@ -152,12 +150,12 @@
     <table style="width: 100%;">
     <tr>
         <th >
-        <h2 style="margin-top: 0">Course Types</h2>
+        <h2 style="margin-top: -15px">Course Types</h2>
         </th>
 
         <td>
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <div class="button1">
+        <div class="button1" style="margin-top: -25px">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url 'coursetype-create' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
@@ -181,10 +179,8 @@
     {% for coursetype in coursetypes %}
         <tr><td class="list">
         <div class="col-lg-10">
-            <li style="margin-left: 20px;" id="{{ coursetype.id }}-{{ coursetype.name }}">
                 <a href="{% url 'coursetype-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=coursetype.slug %}">
                     {{ coursetype.name }}</a>
-            </li>
         </div></td>
 
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
@@ -212,11 +208,11 @@
     <table>
     <tr>
     <th>
-        <h2 style="margin-top: 0">Course Conveners</h2>
+        <h2 style="margin-top: -15px">Course Conveners</h2>
     </th>
     <td>
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <div class="button1">
+        <div class="button1" style="margin-top: -25px">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url "courseconvener-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
@@ -240,9 +236,7 @@
         <tr>
         <td class="list">
         <div class="col-lg-10">
-        <li style="margin-left: 20px;" id="{{ courseconvener.id }}-{{ courseconvener.user }}">
                 {{ courseconvener.user }}
-        </li>
         </div>
         </td>
 
@@ -271,13 +265,13 @@
     <table>
     <tr>
         <th>
-        <h2 style="margin-top: 0">Courses</h2>
+        <h2 style="margin-top: -15px">Courses</h2>
         </th>
 
         <td>
         {# Organisation owners, staffs and course convener can edit/add course #}
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-            <div class="button1">
+            <div class="button1" style="margin-top: -25px">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'
                data-title="Create New Course">
