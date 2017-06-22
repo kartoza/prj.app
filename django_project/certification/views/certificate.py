@@ -232,42 +232,42 @@ def certificate_pdf_view(request, **kwargs):
     if project_owner_signature is not None:
         page.drawImage(
             project_owner_signature,
-            (margin_left+100), (margin_bottom+70), width=100, height=70,
+            (margin_left + 100), (margin_bottom + 70), width=100, height=70,
             preserveAspectRatio=True, anchor='s')
 
     if convener_signature is not None:
         page.drawImage(
-            convener_signature, (margin_right-200), (margin_bottom+70),
+            convener_signature, (margin_right - 200), (margin_bottom + 70),
             width=100, height=70, preserveAspectRatio=True, anchor='s')
 
     page.setFont('Times-Italic', 12)
     page.drawCentredString(
-        (margin_left+150), (margin_bottom+60),
+        (margin_left + 150), (margin_bottom + 60),
         '%s %s' % (project.owner.first_name, project.owner.last_name))
     page.drawCentredString(
-        (margin_right-150), (margin_bottom + 60),
+        (margin_right - 150), (margin_bottom + 60),
         '%s %s' % (
             course.course_convener.user.first_name,
             course.course_convener.user.last_name))
     page.line(
-        (margin_left+70), (margin_bottom+55),
-        (margin_left+230), (margin_bottom+55))
+        (margin_left + 70), (margin_bottom + 55),
+        (margin_left + 230), (margin_bottom + 55))
     page.line(
         (margin_right - 70), (margin_bottom + 55),
         (margin_right - 230), (margin_bottom + 55))
     page.setFont('Times-Roman', 13)
     page.drawCentredString(
-        (margin_left+150), (margin_bottom+40), 'Project Owner')
+        (margin_left + 150), (margin_bottom + 40), 'Project Owner')
     page.drawCentredString(
-        (margin_right-150), (margin_bottom + 40), 'Convener')
+        (margin_right - 150), (margin_bottom + 40), 'Convener')
 
     # Footnotes.
     page.setFont('Times-Roman', 14)
     page.drawString(
-        margin_left, margin_bottom-10, 'ID: %s' % certificate.certificateID)
+        margin_left, margin_bottom - 10, 'ID: %s' % certificate.certificateID)
     page.setFont('Times-Roman', 8)
     page.drawString(
-        margin_left, (margin_bottom-20),
+        margin_left, (margin_bottom - 20),
         'You can verify this certificate by visiting this page.')
 
     # Close the PDF object cleanly.
