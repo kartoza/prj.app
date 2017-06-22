@@ -30,16 +30,79 @@ class ProjectWebsite(models.Model):
         blank=True
     )
 
-    partners = models.TextField(
-        max_length=3000,
-        blank=True,
+    partners = models.BooleanField(
+        default=False,
         help_text=_('Funders or Partners of this project.')
     )
 
-    integrations = models.CharField(
-        max_length=1000,
-        blank=True,
+    integrations = models.BooleanField(
+        default=False,
         help_text=_('Project integrations, e.g. Travis CI.')
+    )
+
+    sponsor = models.BooleanField(
+        default=False,
+        help_text=_('Sponsor of the project.')
+    )
+
+    donations = models.BooleanField(
+        default=False,
+        help_text=_('Donations for this project.')
+    )
+
+    bug_bounties = models.BooleanField(
+        default=False,
+        help_text=_('Bug bounties for this project.')
+    )
+
+    crowd_funding = models.BooleanField(
+        default=False,
+        help_text=_('Crowd funding for this project.')
+    )
+
+    certification = models.BooleanField(
+        default=False,
+        help_text=_('Certification app of this project.')
+    )
+
+    service_providers = models.BooleanField(
+        default=False,
+        help_text=_('Service providers of this project.')
+    )
+
+    store = models.BooleanField(
+        default=False,
+        help_text=_('Store that sells items/merchandise of this project.')
+    )
+
+    changelog = models.BooleanField(
+        default=True,
+        help_text=_('Changelog app of this project (releases).')
+    )
+
+    developer_map = models.BooleanField(
+        default=True,
+        help_text=_('Developers who build this project.')
+    )
+
+    user_map = models.BooleanField(
+        default=True,
+        help_text= _('Users')
+    )
+
+    upcoming_events = models.BooleanField(
+        default=True,
+        help_text=_('News and upcoming events.')
+    )
+
+    project_teams = models.BooleanField(
+        default=True,
+        help_text=_('Project Teams')
+    )
+
+    votes = models.BooleanField(
+        default=True,
+        help_text=_('Votes')
     )
 
     slug = models.SlugField(blank=True)
