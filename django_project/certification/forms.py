@@ -144,7 +144,7 @@ class CourseConvenerForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('user', css_class='form-control'),)
+                Field('user', css_class='form-control chosen-select'),)
         )
         self.helper.layout = layout
         self.helper.html5_required = False
@@ -272,7 +272,8 @@ class CourseForm(forms.ModelForm):
             Fieldset(
                 form_title,
                 Field('course_type', css_class='form-control'),
-                Field('course_convener', css_class='form-control'),
+                Field('course_convener',
+                      css_class='form-control chosen-select'),
                 Field('training_center', css_class='form-control'),
                 Field('start_date'),
                 Field('end_date'),
@@ -317,7 +318,7 @@ class CourseAttendeeForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('attendee', css_class='form-control'),
+                Field('attendee', css_class='form-control chosen-select'),
             )
         )
         self.helper.layout = layout
