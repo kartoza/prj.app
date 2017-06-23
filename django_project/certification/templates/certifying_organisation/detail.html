@@ -82,7 +82,7 @@
         Country : {{ certifyingorganisation.country.name }}<br/>
         Email : {{ certifyingorganisation.organisation_email }}<br/>
         Phone : {{ certifyingorganisation.organisation_phone }}<br/>
-        Organisation owners : {% for organisation_owners in certifyingorganisation.organisation_owners.all %}{{ organisation_owners }}{{ ", " }}{% endfor %}<br/>
+        Organisation owners : {% for organisation_owners in certifyingorganisation.organisation_owners.all %}{{ organisation_owners.first_name }} {{ organisation_owners.last_name }}{{ ", " }}{% endfor %}<br/>
         Location :
     </div>
     </div>
@@ -271,7 +271,11 @@
         <td class="list">
         <div class="col-lg-10">
         <li style="margin-left: 20px;" id="{{ courseconvener.id }}-{{ courseconvener.user }}">
+            {% if courseconvener.user.first_name %}
+                {{ courseconvener.user.first_name }} {{ courseconvener.user.last_name }}
+            {% else %}
                 {{ courseconvener.user }}
+            {% endif %}
         </li>
         </div>
         </td>
@@ -327,11 +331,14 @@
         </td>
     </tr>
 
+    <table style="border: none">
+    <tr><td>
     {% ifequal num_course 0 %}
         <h5>No courses are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'>create one</a>.</h5>
     {% else %}
+        </td></tr></table>
     </table>
     <table class="course" style="width: 83%">
     <tr>
@@ -360,7 +367,11 @@
                 {{ course.training_center.name }}
         </td>
         <td id="{{ course.id }}-{{ course.course_convener.user }}">
+            {% if course.course_convener.user.first_name %}
+                {{ course.course_convener.user.first_name }} {{ course.course_convener.user.last_name }}
+            {% else %}
                 {{ course.course_convener.user }}
+            {% endif %}
         </td>
 
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}

@@ -149,6 +149,8 @@ class CourseConvenerForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(CourseConvenerForm, self).__init__(*args, **kwargs)
+        self.fields['user'].label_from_instance = \
+            lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
@@ -282,6 +284,8 @@ class CourseForm(forms.ModelForm):
         self.fields['course_convener'].queryset = \
             CourseConvener.objects.filter(
                 certifying_organisation=self.certifying_organisation)
+        self.fields['course_convener'].label_from_instance = \
+            lambda obj: "%s <%s>" % (obj.user.get_full_name(), obj)
         self.fields['course_type'].queryset = \
             CourseType.objects.filter(
                 certifying_organisation=self.certifying_organisation)
