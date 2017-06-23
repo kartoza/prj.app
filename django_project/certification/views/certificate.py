@@ -196,6 +196,8 @@ def certificate_pdf_view(request, **kwargs):
     page.setFillColorRGB(0.1, 0.1, 0.1)
     page.setFont('Times-Roman', 18)
     page.drawString(110, 520, project.name)
+    page.drawRightString(
+        (margin_right - 60), 520, course.certifying_organisation.name)
 
     if project_logo is not None:
         page.drawImage(
