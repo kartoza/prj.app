@@ -78,3 +78,8 @@ table {
     text-align: center;
     margin-top: 0;
 }
+.menu-details {
+    border: 1px solid lightgray;
+    padding: 15px;
+    background-color: #fcfcfc;
+}

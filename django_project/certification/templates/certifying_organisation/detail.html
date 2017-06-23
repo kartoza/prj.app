@@ -106,21 +106,29 @@
     <table style="width: 100%;">
 
     <tr style="margin-top: 0">
-    <th style="margin-top: 0">
-        <h2 style="margin-top: -15px;">Training Centers</h2>
+    <th style="margin-top: 0;">
+        <h2 style="margin-top: -15px; margin-bottom: 20px; ">Training Centers</h2>
     </th>
+
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <td class="button1"><div>
-            <div class="btn-group" style="margin-top: -30px;">
+        <td>
+            <div class="button1" style="margin-top: -30px; margin-bottom: 20px;">
+            <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url "trainingcenter-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
                data-title="Create New Training Center">
                 {% show_button_icon "add" %}
             </a>
             </div>
-        </div></td>
+        </div>
+        </td>
         {% endif %}
     </tr>
+    </table>
+
+
+    <div class="menu-details">
+    <table>
     <tr><td>
     {% ifequal num_trainingcenter 0 %}
         <h5>No training center are defined, but you can <a
@@ -158,17 +166,18 @@
     {%  endfor %}
     </table>
     </div>
+    </div>
 
     <div class="menu-wrapper">
     <table style="width: 100%;">
     <tr>
         <th >
-        <h2 style="margin-top: -15px">Course Types</h2>
+        <h2 style="margin-top: -15px; margin-bottom: 20px;">Course Types</h2>
         </th>
 
         <td>
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <div class="button1" style="margin-top: -25px">
+        <div class="button1" style="margin-top: -30px; margin-bottom: 20px;">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url 'coursetype-create' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
@@ -180,7 +189,10 @@
         {% endif %}
         </td>
     </tr>
+    </table>
 
+    <div class="menu-details">
+    <table>
     <tr><td>
     {% ifequal num_coursetype 0 %}
         <h5>No course types are defined, but you can <a
@@ -216,16 +228,17 @@
     {%  endfor %}
     </table>
     </div>
+    </div>
 
     <div class="menu-wrapper">
     <table>
     <tr>
     <th>
-        <h2 style="margin-top: -15px">Course Conveners</h2>
+        <h2 style="margin-top: -15px; margin-bottom: 20px;">Course Conveners</h2>
     </th>
     <td>
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-        <div class="button1" style="margin-top: -25px">
+        <div class="button1" style="margin-top: -30px; margin-bottom: 20px">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url "courseconvener-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
@@ -237,6 +250,10 @@
         {% endif %}
     </td>
     </tr>
+    </table>
+
+    <div class="menu-details">
+    <table>
     <tr><td>
     {% ifequal num_courseconvener 0 %}
         <h5>No course convener are defined, but you can <a
@@ -273,48 +290,59 @@
     {%  endfor %}
     </table>
     </div>
+    </div>
 
     <div class="menu-wrapper">
     <table>
     <tr>
         <th>
-        <h2 style="margin-top: -15px">Courses</h2>
+        <h2 style="margin-top: -15px; margin-bottom: 20px;">Courses</h2>
         </th>
 
         <td>
         {# Organisation owners, staffs and course convener can edit/add course #}
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-            <div class="button1" style="margin-top: -25px">
+            <div class="button1" style="margin-top: -25px; margin-bottom: 20px;">
+            <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'
                data-title="Create New Course">
                 {% show_button_icon "add" %}
             </a>
             </div>
+            </div>
         {% else %}
             {% for courseconvener in courseconveners %}
                 {% if user == courseconvener.user %}
-                        <div class="button">
+                        <div class="button" style="margin-top: -25px; margin-bottom: 20px;>
+                        <div class="btn-group pull-right">
                             <a class="btn btn-default btn-sm tooltip-toggle"
                                 href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'
                                 data-title="Create New Course Convener">
                                 {% show_button_icon "add" %}
                             </a>
                         </div>
+                        </div>
                 {% endif %}
             {% endfor %}
         {% endif %}
         </td>
     </tr>
-    <tr><td>
+    </table>
+
     {% ifequal num_course 0 %}
+    <div class="menu-details">
+    <table>
+    <tr><td>
         <h5>No courses are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'>create one</a>.</h5>
-    {% else %}
     </td></tr>
     </table>
-    <table class="course" style="width: 100%; margin-top: 15px">
+    </div>
+    {% else %}
+
+    <table class="course" style="width: 100%;">
     <tr>
         <th style="width: 47%">Course Name</th>
         <th style="width: 25%">Training Center</th>
