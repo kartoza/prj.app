@@ -195,9 +195,9 @@ def certificate_pdf_view(request, **kwargs):
             preserveAspectRatio=True)
     page.setFillColorRGB(0.1, 0.1, 0.1)
     page.setFont('Times-Roman', 18)
-    page.drawString(110, 520, project.name)
-    page.drawRightString(
-        (margin_right - 60), 520, course.certifying_organisation.name)
+    # page.drawString(margin_left, 480, project.name)
+    # page.drawRightString(
+    #     (margin_right), 480, course.certifying_organisation.name)
 
     if project_logo is not None:
         page.drawImage(
@@ -212,24 +212,23 @@ def certificate_pdf_view(request, **kwargs):
     page.setFont('Times-Bold', 26)
     page.drawCentredString(center, 480, 'Certificate of Completion')
     page.drawCentredString(
-        center, 420, '%s %s' % (attendee.firstname, attendee.surname))
+        center, 400, '%s %s' % (attendee.firstname, attendee.surname))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
-        center, 380, 'Has attended and completed the course:')
+        center, 360, 'Has attended and completed the course:')
     page.setFont('Times-Bold', 20)
-    page.drawCentredString(center, 340, course.course_type.name)
+    page.drawCentredString(center, 300, course.course_type.name)
     page.setFont('Times-Roman', 16)
-    page.drawString(
-        290, 290, 'Course Date: %s - %s'
-                  % (course.start_date, course.end_date))
-    page.drawString(
-        290, 270, 'Convener: %s %s' % (
-            course.course_convener.user.first_name,
-            course.course_convener.user.last_name))
+    page.drawCentredString(
+        center, 270, 'From %s %s %s to %s %s %s'
+                  % (course.start_date.day, course.start_date.strftime('%B'),
+                     course.start_date.year, course.end_date.day,
+                     course.end_date.strftime('%B'), course.end_date.year))
     page.setFillColorRGB(0.1, 0.1, 0.1)
     page.drawCentredString(
-        center, 220, 'Presented by %s at %s' % (
-            course.certifying_organisation, course.training_center))
+        center, 220, 'Convened by %s %s at %s' % (
+            course.course_convener.user.first_name,
+            course.course_convener.user.last_name, course.training_center))
 
     if project_owner_signature is not None:
         page.drawImage(
@@ -270,7 +269,8 @@ def certificate_pdf_view(request, **kwargs):
     page.setFont('Times-Roman', 8)
     page.drawString(
         margin_left, (margin_bottom - 20),
-        'You can verify this certificate by visiting this page.')
+        'You can verify this certificate by visiting /%s/certificate/%s/.'
+        % (project.slug, certificate.certificateID))
 
     # Close the PDF object cleanly.
     page.showPage()
