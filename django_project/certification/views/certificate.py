@@ -220,10 +220,11 @@ def certificate_pdf_view(request, **kwargs):
     page.drawCentredString(center, 300, course.course_type.name)
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
-        center, 270, 'From %s %s %s to %s %s %s'
-                  % (course.start_date.day, course.start_date.strftime('%B'),
-                     course.start_date.year, course.end_date.day,
-                     course.end_date.strftime('%B'), course.end_date.year))
+        center, 270,
+        'From %s %s %s to %s %s %s'
+        % (course.start_date.day, course.start_date.strftime('%B'),
+           course.start_date.year, course.end_date.day,
+           course.end_date.strftime('%B'), course.end_date.year))
     page.setFillColorRGB(0.1, 0.1, 0.1)
     page.drawCentredString(
         center, 220, 'Convened by %s %s at %s' % (
