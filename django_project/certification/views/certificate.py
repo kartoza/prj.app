@@ -96,10 +96,15 @@ class CertificateDetailView(DetailView):
         """
 
         self.certificateID = self.kwargs.get('id', None)
+        self.project_slug = self.kwargs.get('project_slug', None)
         context = super(
             CertificateDetailView, self).get_context_data(**kwargs)
-        context['certificate'] = \
-            Certificate.objects.get(certificateID=self.certificateID)
+        issued_id = \
+            Certificate.objects.all().values_list('certificateID', flat=True)
+        if self.certificateID in issued_id:
+            context['certificate'] = \
+                Certificate.objects.get(certificateID=self.certificateID)
+        context['project_slug'] = self.project_slug
         return context
 
     def get_queryset(self):
@@ -129,9 +134,11 @@ class CertificateDetailView(DetailView):
             queryset = self.get_queryset()
             certificateID = self.kwargs.get('id', None)
             if certificateID:
-                obj = queryset.get(
-                    certificateID=certificateID)
-                return obj
+                try:
+                    obj = queryset.get(certificateID=certificateID)
+                    return obj
+                except Certificate.DoesNotExist:
+                    return None
             else:
                 raise Http404('Sorry! Certificate by this ID is not exist.')
 
@@ -178,7 +185,9 @@ def certificate_pdf_view(request, **kwargs):
     p.drawString(
         290, 250, 'Course Date: %s - %s'
                   % (course.start_date, course.end_date))
-    p.drawString(290, 220, 'Convener: %s' % course.course_convener.user)
+    p.drawString(290, 220, 'Convener: %s %s' % (
+        course.course_convener.user.first_name,
+        course.course_convener.user.last_name))
     p.setFillColorRGB(0.1, 0.1, 0.1)
     p.drawCentredString(
         center, 170, 'Presented by %s at %s' % (
