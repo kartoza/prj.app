@@ -144,11 +144,13 @@ class CourseConvenerForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('user', css_class='form-control'),)
+                Field('user', css_class='form-control chosen-select'),)
         )
         self.helper.layout = layout
         self.helper.html5_required = False
         super(CourseConvenerForm, self).__init__(*args, **kwargs)
+        self.fields['user'].label_from_instance = \
+            lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
@@ -270,7 +272,8 @@ class CourseForm(forms.ModelForm):
             Fieldset(
                 form_title,
                 Field('course_type', css_class='form-control'),
-                Field('course_convener', css_class='form-control'),
+                Field('course_convener',
+                      css_class='form-control chosen-select'),
                 Field('training_center', css_class='form-control'),
                 Field('start_date'),
                 Field('end_date'),
@@ -282,6 +285,8 @@ class CourseForm(forms.ModelForm):
         self.fields['course_convener'].queryset = \
             CourseConvener.objects.filter(
                 certifying_organisation=self.certifying_organisation)
+        self.fields['course_convener'].label_from_instance = \
+            lambda obj: "%s <%s>" % (obj.user.get_full_name(), obj)
         self.fields['course_type'].queryset = \
             CourseType.objects.filter(
                 certifying_organisation=self.certifying_organisation)
@@ -307,17 +312,21 @@ class CourseAttendeeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         self.course = kwargs.pop('course')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
         form_title = 'Add Course Attendee'
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('attendee', css_class='form-control'),
+                Field('attendee', css_class='form-control chosen-select'),
             )
         )
         self.helper.layout = layout
         self.helper.html5_required = False
         super(CourseAttendeeForm, self).__init__(*args, **kwargs)
+        self.fields['attendee'].queryset = \
+            Attendee.objects.filter(
+                certifying_organisation=self.certifying_organisation)
         self.fields['course'].initial = self.course
         self.fields['course'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Add'))
@@ -337,10 +346,12 @@ class AttendeeForm(forms.ModelForm):
             'firstname',
             'surname',
             'email',
+            'certifying_organisation',
         )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
         form_title = 'Add Attendee'
         self.helper = FormHelper()
         layout = Layout(
@@ -354,11 +365,15 @@ class AttendeeForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(AttendeeForm, self).__init__(*args, **kwargs)
+        self.fields['certifying_organisation'].initial = \
+            self.certifying_organisation
+        self.fields['certifying_organisation'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Add'))
 
     def save(self, commit=True):
         instance = super(AttendeeForm, self).save(commit=False)
         instance.author = self.user
+        instance.certifying_organisation = self.certifying_organisation
         instance.save()
         return instance
 

@@ -10,7 +10,9 @@ from django.utils.text import slugify
 from django.contrib.auth.models import User
 from core.settings.contrib import STOP_WORDS
 from unidecode import unidecode
-from certifying_organisation import validate_email_address
+from certifying_organisation import (
+    validate_email_address,
+    CertifyingOrganisation)
 
 
 def increment_slug(_firstname, _surname):
@@ -66,6 +68,8 @@ class Attendee(models.Model):
     )
 
     slug = models.SlugField()
+    certifying_organisation = \
+        models.ForeignKey(CertifyingOrganisation, null=True)
     author = models.ForeignKey(User)
     objects = models.Manager()
 
@@ -73,7 +77,7 @@ class Attendee(models.Model):
     class Meta:
         ordering = ['firstname']
         unique_together = [
-            'firstname', 'surname', 'email'
+            'firstname', 'surname', 'email', 'certifying_organisation',
         ]
 
     def save(self, *args, **kwargs):

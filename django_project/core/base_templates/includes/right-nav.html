@@ -33,6 +33,9 @@
                 {% endif %}
                     <li><a href='{% url "all-pending-entry-list" the_project.slug %}'>All Pending Entries</a></li>
             {% endif %}
+            {% if has_pending_organisations %}
+                <li><a href='{% url "pending-certifyingorganisation-list" the_project.slug %}'>Certifying Organisations</a> </li>
+            {% endif %}
         {% endif %}
     </ul>
 </li>
