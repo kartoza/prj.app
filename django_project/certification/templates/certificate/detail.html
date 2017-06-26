@@ -27,7 +27,8 @@
             padding-bottom: 10px;
         }
     </style>
-
+  
+  {% if certificate %}
     <div class="row" style="text-align: center">
         <h1>Certificate Details</h1>
     </div>
@@ -56,5 +57,14 @@
         </h4></tr>
     </table>
     </div>
+    
+    {% else %}
+        <div class="row" style="text-align: center; margin-top: 60px">
+        <span class="glyphicon glyphicon-remove" style="color: red; font-size: 40pt"></span>
+        <h3>Sorry, no certificate matching this number has been issued.</h3><br>
+        <a class="btn btn-default btn-mini" href="{% url 'validate-certificate' project_slug %}" style="font-weight: 600">Search another certificate</a>
+        </div>
+    {% endif %}
+
 
 {% endblock %}

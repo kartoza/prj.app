@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.views.generic import (
     CreateView)
 from braces.views import LoginRequiredMixin
-from ..models import Attendee
+from ..models import Attendee, CertifyingOrganisation
 from ..forms import AttendeeForm
 
 
@@ -63,7 +63,10 @@ class AttendeeCreateView(
         self.project_slug = self.kwargs.get('project_slug', None)
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.course_slug = self.kwargs.get('slug', None)
+        self.certifying_organisation = \
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
         kwargs.update({
             'user': self.request.user,
+            'certifying_organisation': self.certifying_organisation
         })
         return kwargs
