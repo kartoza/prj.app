@@ -1,5 +1,6 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
+{% load staticfiles %}
 
 {% block title %}Certifying Organisation - {{ block.super }}{% endblock %}
 
@@ -37,10 +38,9 @@
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
                     attribution:  'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
                 }).addTo(map);
+{#                marker = L.marker( [ lat,long ] ).addTo( map );#}
+            });
 
-                marker = L.marker( [ lat,long ] ).addTo( map );
-
-            })
 
         })
 
@@ -84,12 +84,32 @@
         Country : {{ certifyingorganisation.country.name }}<br/>
         Email : {{ certifyingorganisation.organisation_email }}<br/>
         Phone : {{ certifyingorganisation.organisation_phone }}<br/>
-        Organisation owners : {% for organisation_owners in certifyingorganisation.organisation_owners.all %}{{ organisation_owners }}{{ ", " }}{% endfor %}<br/>
-        Location :
+        Organisation owners : {% for organisation_owners in certifyingorganisation.organisation_owners.all %}{{ organisation_owners.first_name }} {{ organisation_owners.last_name }}{{ ", " }}{% endfor %}<br/>
     </div>
     </div>
 
+    <style>
+    .fa-icon {color: white;}
+    </style>
+
     <div class="map-wrapper" style="horiz-align: center; margin-left: 80px; margin-top: 10px">
+        {% for trainingcenter in trainingcenters %}
+            <script>
+            $(document).ready(function () {
+                var green_icon = L.icon({
+                            iconUrl: '/static/img/marker_green.png',
+                            iconSize:     [30, 40],
+                            iconAnchor:   [14, 39],
+                            popupAnchor:  [0, -30]
+                        });
+               var marker = L.marker(
+                   [{{ trainingcenter.location.y }}, {{ trainingcenter.location.x }}],{
+                        icon: green_icon
+                    }
+               ).addTo(map).bindPopup('{{ trainingcenter.name }}');
+            });
+            </script>
+        {% endfor %}
         <div class="row" id="map"></div>
     </div>
 
@@ -273,7 +293,11 @@
         <td class="list">
         <div class="col-lg-10">
         <li style="margin-left: 20px;" id="{{ courseconvener.id }}-{{ courseconvener.user }}">
+            {% if courseconvener.user.first_name %}
+                {{ courseconvener.user.first_name }} {{ courseconvener.user.last_name }}
+            {% else %}
                 {{ courseconvener.user }}
+            {% endif %}
         </li>
         </div>
         </td>
@@ -329,11 +353,14 @@
         </td>
     </tr>
 
+    <table style="border: none">
+    <tr><td>
     {% ifequal num_course 0 %}
         <h5>No courses are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'>create one</a>.</h5>
     {% else %}
+        </td></tr></table>
     </table>
     <table class="course" style="width: 83%">
     <tr>
@@ -362,7 +389,11 @@
                 {{ course.training_center.name }}
         </td>
         <td id="{{ course.id }}-{{ course.course_convener.user }}">
+            {% if course.course_convener.user.first_name %}
+                {{ course.course_convener.user.first_name }} {{ course.course_convener.user.last_name }}
+            {% else %}
                 {{ course.course_convener.user }}
+            {% endif %}
         </td>
 
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}

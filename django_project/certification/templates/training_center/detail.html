@@ -25,8 +25,16 @@
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
                 attribution:  'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
             }).addTo(map);
-            marker = L.marker( [ lat,long ] ).addTo( map );
 
+            var green_icon = L.icon({
+                            iconUrl: '/static/img/marker_green.png',
+                            iconSize:     [30, 40],
+                            iconAnchor:   [14, 39],
+                            popupAnchor:  [0, -30]
+                        });
+            var lat = {{ trainingcenter.location.y }};
+            var long = {{ trainingcenter.location.x }};
+            marker = L.marker( [ lat,long ], {icon: green_icon} ).addTo( map );
         })
 
     </script>
