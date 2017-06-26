@@ -83,7 +83,14 @@
         <span class="grey-italic">Country : </span><span>{{ certifyingorganisation.country.name }}</span><br/>
         <span class="grey-italic">Email : </span><span>{{ certifyingorganisation.organisation_email }}</span><br/>
         <span class="grey-italic">Phone : </span><span>{{ certifyingorganisation.organisation_phone }}</span><br/>
-        <span class="grey-italic">Organisation owners : </span><span>{% for organisation_owners in certifyingorganisation.organisation_owners.all %}{{ organisation_owners }}{{ ", " }}{% endfor %}</span><br/>
+        <span class="grey-italic">Organisation owners : </span>
+        <span>{% for organisation_owners in certifyingorganisation.organisation_owners.all %}
+        {% if organisation_owners.first_name %}
+            {{ organisation_owners.first_name }} {{ organisation_owners.last_name }}{{ ", " }}
+        {% else %}
+            {{ organisation_owners }}{{ ", " }}
+        {% endif %}
+        {% endfor %}</span><br/>
     </div>
 
     <div>
