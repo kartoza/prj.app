@@ -39,10 +39,15 @@
         </div>
     </div>
 
-    <div class="details">
+    <div class="details" style="margin-top: 15px">
         <span class="grey-italic">Course Name : </span><span>{{ course.name }}<br/></span>
         <span class="grey-italic">Course Type : </span><span>{{ course.course_type }}<br/></span>
-        <span class="grey-italic">Course Convener : </span><span>{{ course.course_convener }}<br/></span>
+        <span class="grey-italic">Course Convener : </span>
+        {% if course.course_convener.user.first_name %}
+        <span>{{ course.course_convener.user.first_name }} {{ course.course_convener.user.last_name }}<br/></span>
+        {% else %}
+        <span>{{ course.course_convener }}<br/></span>
+        {% endif %}
         <span class="grey-italic">Training Center : </span><span>{{ course.training_center }}<br/></span>
         <span class="grey-italic">Organisation : </span><span>{{ course.certifying_organisation }}<br/></span>
         <span class="grey-italic">Start Date : </span><span>{{ course.start_date }}<br/></span>
@@ -65,7 +70,7 @@
         }
     </style>
 
-    <div class="menu-wrapper" style="margin-left: -15px">
+    <div class="menu-wrapper" style="margin-left: -15px; margin-top: 50px;">
     <table style="border: none!important; width: 100%">
     <tr style="border: none"><td style="border: none; padding: 0"><h3 style="margin-top: -20px">Course Attendee</h3></td>
     <td style="border: none; padding: 0;">
@@ -76,6 +81,7 @@
     </td></tr>
     </table>
 
+    <div style="margin: 0 25px">
     <table>
         <tr>
             <th style="width: 50%">Name</th>
@@ -117,6 +123,8 @@
             </tr>
         {% endfor %}
     </table>
+    </div>
+
     </div>
     </div>
 

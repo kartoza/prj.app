@@ -204,7 +204,8 @@ class CertifyingOrganisationDetailView(
             certifying_organisation=certifying_organisation)
         context['num_course'] = context['courses'].count()
         project_slug = self.kwargs.get('project_slug', None)
-        context['attendee'] = Attendee.objects.all()
+        context['attendee'] = Attendee.objects.filter(
+            certifying_organisation=certifying_organisation)
         context['num_attendees'] = context['attendee'].count()
         context['project_slug'] = project_slug
         if project_slug:

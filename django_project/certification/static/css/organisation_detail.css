@@ -3,8 +3,8 @@
     padding: 20px !important;
     width: 100%;
     border-radius: 10px;
-    font-family: 'Lato', sans-serif;
-    font-size: 11pt;
+    font-family: inherit;
+    font-size: 12pt;
     line-height: 175%;
     margin-top: 20px;
 }
@@ -14,8 +14,8 @@
     padding: 20px;
     width: 50%;
     border-radius: 10px;
-    font-family: 'Lato', sans-serif;
-    font-size: 11pt;
+    font-family: inherit;
+    font-size: 12pt;
     line-height: 175%;
 }
 
