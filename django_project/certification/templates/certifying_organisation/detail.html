@@ -343,7 +343,7 @@
         {% else %}
             {% for courseconvener in courseconveners %}
                 {% if user == courseconvener.user %}
-                        <div class="button" style="margin-top: -25px; margin-bottom: 20px;>
+                        <div class="button" style="margin-top: -25px; margin-bottom: 20px;">
                         <div class="btn-group pull-right">
                             <a class="btn btn-default btn-sm tooltip-toggle"
                                 href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'
@@ -418,30 +418,26 @@
                 </a>
             </div>
         </td>
-        {% elif courseconvener in courseconveners %}
-            {% for courseconvener in courseconveners %}
-                {% if user == courseconvener.user %}
-                    <td>
-                        <div class="btn-group pull-right">
-                            <a class="btn btn-default btn-xs tooltip-toggle"
-                                href='{% url "course-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
-                                data-title="Delete">
-                                <span class="glyphicon glyphicon-minus"></span>
-                            </a>
-                            <a class="btn btn-default btn-xs tooltip-toggle"
-                                href='{% url "course-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
-                                data-title="Edit">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                            </a>
-                            <a class="btn btn-default btn-xs tooltip-toggle"
-                                href='{% url 'course-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
-                                data-title="View">
-                                <span class="glyphicon glyphicon-eye-open"></span>
-                            </a>
-                        </div>
-                    </td>
-                {% endif %}
-            {% endfor %}
+        {% elif user == course.course_convener.user %}
+            <td>
+                <div class="btn-group pull-right">
+                    <a class="btn btn-default btn-xs tooltip-toggle"
+                        href='{% url "course-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
+                        data-title="Delete">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-xs tooltip-toggle"
+                        href='{% url "course-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
+                        data-title="Edit">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    <a class="btn btn-default btn-xs tooltip-toggle"
+                        href='{% url 'course-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
+                        data-title="View">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                </div>
+            </td>
         {% else %}
             <td>
                 <div class="btn-group pull-right">
