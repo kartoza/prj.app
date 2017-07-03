@@ -18,29 +18,27 @@
     <script>
         var map;
         var marker;
+        var lat;
+        var long;
+
+        $.getJSON('{{ STATIC_URL }}/static/json/geo.json', function (json) {
+            // Get geo json object with the same country code from certifying organisation
+            var geo_obj = $.grep(json['features'], function (e) {
+                    return e.properties.ISO2 == '{{ certifyingorganisation.country }}';
+                });
+
+            // Put marker of the country on the map
+            lat = geo_obj[0].properties.LAT;
+            long = geo_obj[0].properties.LON;
+        });
 
         $(document).ready(function () {
-
             // Add map
             $('#map').css({'height': 400, 'width': 800});
-            map = L.map('map').setView([40, 0], 2);
-            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+            map = L.map('map').setView([lat, long], 4);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution:  'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
             }).addTo(map);
-
-            $.getJSON('{{ STATIC_URL }}/static/json/geo.json', function (json) {
-
-                // Get geo json object with the same country code from certifying organisation
-                var geo_obj = $.grep(json['features'], function (e) {
-                        return e.properties.ISO2 == '{{ certifyingorganisation.country }}';
-                    });
-
-                // Put marker of the country on the map
-                var lat = geo_obj[0].properties.LAT;
-                var long = geo_obj[0].properties.LON;
-{#                marker = L.marker( [ lat,long ] ).addTo( map );#}
-            });
-
         })
 
     </script>
