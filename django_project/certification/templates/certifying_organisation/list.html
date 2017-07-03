@@ -12,6 +12,12 @@
 {% endblock page_title %}
 
 {% block content %}
+    <style>
+        .order:hover {
+            background-color: #F9F9F9;
+        }
+    </style>
+    
     <div class="page-header">
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
@@ -53,7 +59,7 @@
     {% endifequal %}
 
     {% for certifyingorganisation in certifyingorganisations %}
-        <li class="row order" style="list-style-type: none; margin-top:10px; margin-left: 10px;" id="{{ certifyingorganisation.id }}-{{ certifyingorganisation.name }}">
+        <li class="row order" style="list-style-type: none; margin-top:10px; margin-left: 10px; margin-right: 1px" id="{{ certifyingorganisation.id }}-{{ certifyingorganisation.name }}">
             <div class="col-lg-8">
                 <a class="pull-left" style="font-size: larger"
                    href="{% url 'certifyingorganisation-detail' project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}">
@@ -63,7 +69,7 @@
 
         {# Only staff can add/edit organisations #}
         {% if user.is_staff %}
-            <div class="col-lg-4">
+            <div class="col-lg-4" style="padding: 0">
                 <div class="btn-group pull-right tooltip-toggle">
                     {%  if not certifyingorganisation.approved and user.is_staff %}
                         <a class="btn btn-default btn-mini"
@@ -88,7 +94,6 @@
         </li>
     {%  endfor %}
 
-    </ul>
     <hr />
 
     <script>
