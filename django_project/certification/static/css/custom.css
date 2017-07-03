@@ -31,3 +31,16 @@ textarea.form-control {
 #container img {
     max-width: none !important;
 }
+.certificate-header-details, .certificate-details {
+	width: 70%;
+	margin: 0 auto;
+	border: 1px solid #daffd3;
+	font-family: "Times New Roman", Times, serif;
+}
+
+.certificate-details {
+	font-size: 14pt;
+	color: #6e756b;
+	text-align: left;
+	padding-bottom: 10px;
+}
