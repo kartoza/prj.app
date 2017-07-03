@@ -3,6 +3,8 @@
 
 """
 
+import os
+from django.conf.global_settings import MEDIA_ROOT
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -96,6 +98,14 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
         max_length=1000,
         null=False,
         blank=False
+    )
+
+    logo = models.ImageField(
+        help_text=_('Logo for this organisation. '
+                    'Most browsers support dragging the image directly on to '
+                    'the "Choose File" button above.'),
+        upload_to=os.path.join(MEDIA_ROOT, 'images/organisations'),
+        blank=True
     )
 
     country = CountryField(
