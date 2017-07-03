@@ -1,5 +1,6 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
+{% load staticfiles %}
 
 {% block title %}Course Type - {{ block.super }}{% endblock %}
 
@@ -11,36 +12,21 @@
 {% endblock page_title %}
 
 {% block content %}
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
 
-    <style>
-        .header-details, .details {
-            width: 70%;
-            margin: 0 auto;
-            border: 1px solid #daffd3;
-            font-family: "Times New Roman", Times, serif;
-        }
-
-        .details {
-            font-size: 14pt;
-            color: #6e756b;
-            text-align: left;
-            padding-bottom: 10px;
-        }
-    </style>
-  
   {% if certificate %}
     <div class="row" style="text-align: center">
         <h1>Certificate Details</h1>
     </div>
 
-    <div class="header-details" style="background-color: #bcfcb0; margin-top: 20px; text-align: center;">
+    <div class="certificate-header-details" style="background-color: #bcfcb0; margin-top: 20px; text-align: center;">
         <h3>ID: {{ certificate.certificateID }}
             <span class="glyphicon glyphicon-ok-circle tooltip-toggle"
                   style="font-size: 14pt; color: #2aa36e"
                   data-title="Verified"></span></h3>
     </div>
 
-    <div class="details">
+    <div class="certificate-details">
     <table style="margin: 0 auto">
         <tr><h4><td>Attendee Name</td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.attendee }}</td></h4></tr>
         <tr><h4><td>Project </td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.certifying_organisation.project }}</td></h4></tr>
