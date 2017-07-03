@@ -31,3 +31,8 @@ textarea.form-control {
 #container img {
     max-width: none !important;
 }
+.ui-widget-header {
+    border: 1px solid darkgrey !important;
+    background: #f5f5f5 !important;
+	color: black;
+}
