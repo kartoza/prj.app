@@ -32,8 +32,7 @@
                             iconAnchor:   [14, 39],
                             popupAnchor:  [0, -30]
                         });
-            var lat = {{ trainingcenter.location.y }};
-            var long = {{ trainingcenter.location.x }};
+
             marker = L.marker( [ lat,long ], {icon: green_icon} ).addTo( map );
         })
 
