@@ -125,12 +125,12 @@
         <div id="map"></div>
     </div>
 
-    <div class="menu-wrapper">
+    <div class="menu-wrapper menu-wrapper-head">
     <table style="width: 100%;">
 
     <tr style="margin-top: 0">
     <th style="margin-top: 0;">
-        <h2 style="margin-top: -15px; margin-bottom: 20px; ">Training Centers</h2>
+        <h2 class="custom-heading">Training Centers</h2>
     </th>
 
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
@@ -148,8 +148,9 @@
         {% endif %}
     </tr>
     </table>
+    </div>
 
-
+    <div class="menu-wrapper menu-wrapper-body">
     <div class="menu-details">
     <table>
     <tr><td>
@@ -191,11 +192,11 @@
     </div>
     </div>
 
-    <div class="menu-wrapper">
+    <div class="menu-wrapper menu-wrapper-head">
     <table style="width: 100%;">
     <tr>
         <th >
-        <h2 style="margin-top: -15px; margin-bottom: 20px;">Course Types</h2>
+        <h2 class="custom-heading">Course Types</h2>
         </th>
 
         <td>
@@ -213,7 +214,9 @@
         </td>
     </tr>
     </table>
+    </div>
 
+    <div class="menu-wrapper menu-wrapper-body">
     <div class="menu-details">
     <table>
     <tr><td>
@@ -253,11 +256,11 @@
     </div>
     </div>
 
-    <div class="menu-wrapper">
+    <div class="menu-wrapper menu-wrapper-head">
     <table>
     <tr>
     <th>
-        <h2 style="margin-top: -15px; margin-bottom: 20px;">Course Conveners</h2>
+        <h2 class="custom-heading">Course Conveners</h2>
     </th>
     <td>
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
@@ -274,7 +277,9 @@
     </td>
     </tr>
     </table>
+    </div>
 
+    <div class="menu-wrapper menu-wrapper-body">
     <div class="menu-details">
     <table>
     <tr><td>
@@ -319,11 +324,11 @@
     </div>
     </div>
 
-    <div class="menu-wrapper">
+    <div class="menu-wrapper menu-wrapper-head">
     <table>
     <tr>
         <th>
-        <h2 style="margin-top: -15px; margin-bottom: 20px;">Courses</h2>
+        <h2 class="custom-heading">Courses</h2>
         </th>
 
         <td>
@@ -356,8 +361,9 @@
         </td>
     </tr>
     </table>
+    </div>
 
-    <table style="border: none">
+    <div class="menu-wrapper menu-wrapper-body" style="padding: 25px">
     <tr><td>
     {% ifequal num_course 0 %}
     <div class="menu-details">

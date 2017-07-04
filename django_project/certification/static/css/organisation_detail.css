@@ -1,19 +1,26 @@
 .menu-wrapper {
     border: 1px solid lightgrey !important;
-    padding: 20px !important;
     width: 100%;
-    border-radius: 10px;
     font-family: inherit;
     font-size: 12pt;
     line-height: 175%;
+}
+.menu-wrapper-head {
     margin-top: 20px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: #f5f5f5;
+}
+.menu-wrapper-body {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 .details {
     border: 1px solid lightgrey;
     padding: 20px;
     width: 50%;
-    border-radius: 10px;
+    border-radius: 5px;
     font-family: inherit;
     font-size: 12pt;
     line-height: 175%;
@@ -26,7 +33,7 @@
 .map-wrapper {
     border: 1px solid lightgrey;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 5px;
     margin-top: 30px;
     width: 100%;
 }
@@ -51,15 +58,18 @@ li:hover {
 }
 .button, .button1 {
     text-align: right;
+    margin-top: -10px;
+    margin-bottom: 20px;
 }
 .button1 {
-    padding-top: 15px;
+    padding-top: 30px;
+    margin-right: 25px;
 }
 .course th{
     background-color: lightgrey;
 }
 .course table, .course th, .course td {
-    border: 2px solid darkslategrey;
+    border: 1px solid darkslategrey;
 }
 .course th, .course td{
     padding: 10px;
@@ -79,7 +89,15 @@ table {
     margin-top: 0;
 }
 .menu-details {
-    border: 1px solid lightgray;
     padding: 15px;
-    background-color: #fcfcfc;
+    margin-left: 25px;
+    margin-right: 10px;
+}
+.custom-heading {
+    margin-left: 25px;
+    margin-top: 0;
+}
+.details-wrapper{
+    padding: 20px;
+    border-radius: 5px;
 }

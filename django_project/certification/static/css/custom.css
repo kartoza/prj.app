@@ -36,6 +36,7 @@ textarea.form-control {
     border: 1px solid darkgrey !important;
     background: #f5f5f5 !important;
 	color: black;
+}
 
 .certificate-header-details, .certificate-details {
 	width: 70%;
@@ -49,5 +50,4 @@ textarea.form-control {
 	color: #6e756b;
 	text-align: left;
 	padding-bottom: 10px;
-
 }
