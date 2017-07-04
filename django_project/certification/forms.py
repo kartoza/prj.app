@@ -49,7 +49,8 @@ class CertifyingOrganisationForm(forms.ModelForm):
             'address',
             'country',
             'organisation_phone',
-            'organisation_owners'
+            'logo',
+            'organisation_owners',
         )
 
     def __init__(self, *args, **kwargs):
@@ -65,6 +66,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
                 Field('address', css_class='form-control'),
                 Field('country', css_class='form-control chosen-select'),
                 Field('organisation_phone', css_class='form-control'),
+                Field('logo', css_class='form-control'),
                 Field('organisation_owners', css_class='form-control'),
                 css_id='project-form')
         )
@@ -133,6 +135,7 @@ class CourseConvenerForm(forms.ModelForm):
         model = CourseConvener
         fields = (
             'user',
+            'signature',
         )
 
     def __init__(self, *args, **kwargs):
@@ -144,7 +147,9 @@ class CourseConvenerForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('user', css_class='form-control chosen-select'),)
+                Field('user', css_class='form-control chosen-select'),
+                Field('signature', css_class='form-control'),
+            )
         )
         self.helper.layout = layout
         self.helper.html5_required = False
@@ -247,11 +252,6 @@ class TrainingCenterForm(geoforms.ModelForm):
 
 class CourseForm(forms.ModelForm):
 
-    start_date = forms.DateField(
-        widget=forms.TextInput(attrs={'class': 'datepicker'}))
-    end_date = forms.DateField(
-        widget=forms.TextInput(attrs={'class': 'datepicker'}))
-
     # noinspection PyClassicStyleClass.
     class Meta:
         model = Course
@@ -261,6 +261,7 @@ class CourseForm(forms.ModelForm):
             'training_center',
             'start_date',
             'end_date',
+            'template_certificate'
         )
 
     def __init__(self, *args, **kwargs):
@@ -277,6 +278,7 @@ class CourseForm(forms.ModelForm):
                 Field('training_center', css_class='form-control'),
                 Field('start_date', css_class='datepicker-here'),
                 Field('end_date', css_class='datepicker-here'),
+                Field('template_certificate', css_class='form-control'),
             )
         )
         self.helper.layout = layout

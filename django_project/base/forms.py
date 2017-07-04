@@ -24,7 +24,8 @@ class ProjectForm(forms.ModelForm):
         fields = (
             'name',
             'image_file',
-            'gitter_room'
+            'gitter_room',
+            'signature',
         )
 
     def __init__(self, *args, **kwargs):
@@ -35,6 +36,7 @@ class ProjectForm(forms.ModelForm):
                 'Project details',
                 Field('name', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
+                Field('signature', css_class="form-control"),
                 Field('gitter_room', css_class="form-control"),
                 css_id='project-form')
         )
