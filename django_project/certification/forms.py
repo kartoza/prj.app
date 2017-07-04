@@ -275,8 +275,8 @@ class CourseForm(forms.ModelForm):
                 Field('course_convener',
                       css_class='form-control chosen-select'),
                 Field('training_center', css_class='form-control'),
-                Field('start_date'),
-                Field('end_date'),
+                Field('start_date', css_class='datepicker-here'),
+                Field('end_date', css_class='datepicker-here'),
             )
         )
         self.helper.layout = layout
