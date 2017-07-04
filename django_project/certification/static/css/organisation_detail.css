@@ -1,0 +1,103 @@
+.menu-wrapper {
+    border: 1px solid lightgrey !important;
+    width: 100%;
+    font-family: inherit;
+    font-size: 12pt;
+    line-height: 175%;
+}
+.menu-wrapper-head {
+    margin-top: 20px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: #f5f5f5;
+}
+.menu-wrapper-body {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.details {
+    border: 1px solid lightgrey;
+    padding: 20px;
+    width: 50%;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 12pt;
+    line-height: 175%;
+}
+
+.grey-italic {
+    font-style: italic;
+    color: grey;
+}
+.map-wrapper {
+    border: 1px solid lightgrey;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 30px;
+    width: 100%;
+}
+#map {
+    width: 100% !important;
+    height: 500px;
+}
+#container img {
+    max-width: none !important;
+}
+.menu-wrapper th {
+    width:900px;
+    padding-top: 15px;
+}
+li:hover {
+    background-color: #F9F9F9;
+}
+.list {
+    width: 800px;
+    padding: 0px;
+    margin: 0px;
+}
+.button, .button1 {
+    text-align: right;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+.button1 {
+    padding-top: 30px;
+    margin-right: 25px;
+}
+.course th{
+    background-color: lightgrey;
+}
+.course table, .course th, .course td {
+    border: 1px solid darkslategrey;
+}
+.course th, .course td{
+    padding: 10px;
+}
+table {
+    width: 100%;
+}
+.panel-heading {
+    border: 1px solid lightgrey;
+    background-color: #f5f5f5;
+    margin: 0 auto;
+    text-align: center
+}
+.panel-body {
+    border: 1px solid lightgrey;
+    text-align: center;
+    margin-top: 0;
+}
+.menu-details {
+    padding: 15px;
+    margin-left: 25px;
+    margin-right: 10px;
+}
+.custom-heading {
+    margin-left: 25px;
+    margin-top: 0;
+}
+.details-wrapper{
+    padding: 20px;
+    border-radius: 5px;
+}

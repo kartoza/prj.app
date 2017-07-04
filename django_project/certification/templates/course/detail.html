@@ -1,6 +1,11 @@
 {% extends "project_base.html" %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
+{% load custom_markup %}
+
+{% block js_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/organisation_detail.css' %}">
+{% endblock %}
 
 {% block page_title %}
     <h1>Course Details</h1>
@@ -14,7 +19,8 @@
         </div>
 
         <div class="col-lg-2" style="margin-top: 20px">
-        <div class="btn-group">
+        <div class="btn-group pull-right">
+            {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == course.course_convener.user %}
                 <a class="btn btn-default btn-sm tooltip-toggle"
                    href='{% url "course-delete" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
                    data-title="Delete Course">
@@ -25,6 +31,7 @@
                    data-title="Edit Course">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
+            {% endif %}
                 <a class="btn btn-default btn-sm tooltip-toggle"
                     href='{% url "certifyingorganisation-detail" course.certifying_organisation.project.slug course.certifying_organisation.slug %}'
                     data-title="Back">
@@ -34,16 +41,19 @@
         </div>
     </div>
 
-    <div class="container">
-    <p>
-        Course Name : {{ course.name }}<br/>
-        Course Type : {{ course.course_type }}<br/>
-        Course Convener : {{ course.course_convener }}<br/>
-        Training Center : {{ course.training_center }}<br/>
-        Organisation : {{ course.certifying_organisation }}<br/>
-        Start Date : {{ course.start_date }}<br/>
-        End Date : {{ course.end_date }}<br/>
-    </p>
+    <div class="details" style="margin-top: 15px">
+        <span class="grey-italic">Course Name : </span><span>{{ course.name }}<br/></span>
+        <span class="grey-italic">Course Type : </span><span>{{ course.course_type }}<br/></span>
+        <span class="grey-italic">Course Convener : </span>
+        {% if course.course_convener.user.first_name %}
+        <span>{{ course.course_convener.user.first_name }} {{ course.course_convener.user.last_name }}<br/></span>
+        {% else %}
+        <span>{{ course.course_convener }}<br/></span>
+        {% endif %}
+        <span class="grey-italic">Training Center : </span><span>{{ course.training_center }}<br/></span>
+        <span class="grey-italic">Organisation : </span><span>{{ course.certifying_organisation }}<br/></span>
+        <span class="grey-italic">Start Date : </span><span>{{ course.start_date }}<br/></span>
+        <span class="grey-italic">End Date : </span><span>{{ course.end_date }}<br/></span>
     </div>
 
 
@@ -62,15 +72,29 @@
         }
     </style>
 
-    <h3>Course Attendee</h3>
-    <a class="btn btn-default btn-mini"
-           href='{% url 'courseattendee-create' project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'>
-            Add Course Attendees</a>
+    <div class="menu-wrapper details-wrapper" style="margin-left: -15px; margin-top: 50px;">
+
+    <table style="border: none!important; width: 100%">
+    <tr style="border: none"><td style="border: none; padding: 0"><h3 style="margin-top: -20px">Course Attendee</h3></td>
+    {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == course.course_convener.user %}
+    <td style="border: none; padding: 0;">
+        <a class="btn btn-default btn-sm tooltip-toggle pull-right" style=" margin-top: -30px"
+           href='{% url 'courseattendee-create' project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
+            data-title="Add Course Attendees">
+            {% show_button_icon "add" %}</a>
+    </td></tr>
+    {% endif %}
+    </table>
+
+
+    <div style="margin: 0 25px">
     <table>
         <tr>
             <th style="width: 50%">Name</th>
-            <th>Certificate Issued?</th>
-            <th>Actions</th>
+            <th style="text-align: center">Certificate Issued?</th>
+            {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == course.course_convener.user %}
+            <th style="text-align: right">Actions</th>
+            {% endif %}
         </tr>
 
         {% for attendee in attendees %}
@@ -82,8 +106,9 @@
                         <span class="glyphicon glyphicon-remove tooltip-toggle" data-title="No Certificate Issued"></span>
                     {% endif %}
                 </td>
+                {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == course.course_convener.user %}
                 <td  style="text-align: center">
-                    <div class="btn-group">
+                    <div class="btn-group pull-right">
                         {% if attendee.attendee.pk in certificates %}
                             <a class="btn btn-default btn-xs tooltip-toggle"
                                 href='{% url "print-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
@@ -104,9 +129,13 @@
                     </a>
                     </div>
                 </td>
+                {% endif %}
             </tr>
         {% endfor %}
     </table>
+    </div>
+
+    </div>
     </div>
 
 {% endblock %}

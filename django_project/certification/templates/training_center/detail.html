@@ -1,5 +1,6 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
+{% load staticfiles %}
 
 {% block title %}Training Center - {{ block.super }}{% endblock %}
 
@@ -10,6 +11,7 @@
     <link rel="stylesheet" type="text/css"
           href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.css"/>
     <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/organisation_detail.css' %}">
     <script>
         var map;
         var marker;
@@ -53,7 +55,7 @@
 
         {# Only organisation owners or staff can edit #}
         <div class="col-lg-2">
-            <div class="btn-group">
+            <div class="btn-group pull-right">
                 {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
                 <a class="btn btn-default btn-sm tooltip-toggle"
                    href='{% url "trainingcenter-delete" project_slug=trainingcenter.certifying_organisation.project.slug organisation_slug=trainingcenter.certifying_organisation.slug slug=trainingcenter.slug %}'
@@ -76,18 +78,15 @@
         </div>
     </div>
 
+    <div class="details" style="margin-top: 20px">
+        <span class="grey-italic">Name : </span><span>{{ trainingcenter.name }}<br/></span>
+        <span class="grey-italic">Email : </span><span>{{ trainingcenter.email }}<br/></span>
+        <span class="grey-italic">Address : </span><span>{{ trainingcenter.address }}<br/></span>
+        <span class="grey-italic">Phone : </span><span>{{ trainingcenter.phone }}<br/></span>
     </div>
-    <div class="row">
-    <div class="col-lg-8">
-        Name : {{ trainingcenter.name }}<br/>
-        Email : {{ trainingcenter.email }}<br/>
-        Address : {{ trainingcenter.address }}<br/>
-        Phone : {{ trainingcenter.phone }}<br/>
-        Location : Lat: {{ trainingcenter.location.y }} Lon: {{ trainingcenter.location.x }}<br/>
-    </div>
-        <div class="map-wrapper" style="horiz-align: center; margin-left: 80px; margin-top: 10px">
-        <div class="row" id="map"></div>
-        </div>
+
+    <div class="map-wrapper">
+        <div id="map"></div>
     </div>
 
 {% endblock %}
