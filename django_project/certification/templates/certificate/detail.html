@@ -1,5 +1,6 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
+{% load staticfiles %}
 
 {% block title %}Course Type - {{ block.super }}{% endblock %}
 
@@ -11,17 +12,38 @@
 {% endblock page_title %}
 
 {% block content %}
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
 
-    {% if certificate %}
-        <div class="row" style="text-align: center">
-            <h1>Certificate Details</h1>
-            <h3>ID: {{ certificate.certificateID }}</h3>
-        </div>
+  {% if certificate %}
+    <div class="row" style="text-align: center">
+        <h1>Certificate Details</h1>
+    </div>
 
-        <div class="row" style="text-align: center; font-size: 14pt; color: grey">
-            Attendee : {{ certificate.attendee }}<br/>
-            Course : {{ certificate.course.name }}<br/>
-        </div>
+    <div class="certificate-header-details" style="background-color: #bcfcb0; margin-top: 20px; text-align: center;">
+        <h3>ID: {{ certificate.certificateID }}
+            <span class="glyphicon glyphicon-ok-circle tooltip-toggle"
+                  style="font-size: 14pt; color: #2aa36e"
+                  data-title="Verified"></span></h3>
+    </div>
+
+    <div class="certificate-details">
+    <table style="margin: 0 auto">
+        <tr><h4><td>Attendee Name</td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.attendee }}</td></h4></tr>
+        <tr><h4><td>Project </td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.certifying_organisation.project }}</td></h4></tr>
+        <tr><h4><td>Certifying Organisation </td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.certifying_organisation }}</td></h4></tr>
+        <tr><h4><td>Training Center </td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.training_center }}</td></h4></tr>
+        <tr><h4><td>Course Type </td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.course_type }}</td></h4></tr>
+        <tr><h4><td>Course Date </td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.start_date }} to {{ certificate.course.end_date }}</td></h4></tr>
+        <tr><h4><td>Course Convener</td>
+            {% if certificate.course.course_convener.user.first_name  %}
+            <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.course_convener.user.first_name }} {{ certificate.course.course_convener.user.last_name }}</td>
+            {% else %}
+            <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.course_convener.user }}</td>
+            {% endif %}
+        </h4></tr>
+    </table>
+    </div>
+    
     {% else %}
         <div class="row" style="text-align: center; margin-top: 60px">
         <span class="glyphicon glyphicon-remove" style="color: red; font-size: 40pt"></span>
@@ -29,5 +51,6 @@
         <a class="btn btn-default btn-mini" href="{% url 'validate-certificate' project_slug %}" style="font-weight: 600">Search another certificate</a>
         </div>
     {% endif %}
+
 
 {% endblock %}

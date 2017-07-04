@@ -3,10 +3,13 @@
 
 """
 
+import os
+from django.conf.global_settings import MEDIA_ROOT
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
 from core.settings.contrib import STOP_WORDS
 from unidecode import unidecode
 from certifying_organisation import CertifyingOrganisation
@@ -24,6 +27,14 @@ class CourseConvener(models.Model):
     user = models.ForeignKey(User)
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
     objects = models.Manager()
+
+    signature = models.ImageField(
+        help_text=_('Signature of the course convener. '
+                    'Most browsers support dragging the image directly on to '
+                    'the "Choose File" button above.'),
+        upload_to=os.path.join(MEDIA_ROOT, 'images/organisations/conveners'),
+        blank=True
+    )
 
     class Meta:
         ordering = ['user']

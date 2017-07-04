@@ -89,6 +89,14 @@ class Project(models.Model):
         blank=True
     )
 
+    signature = models.ImageField(
+        help_text=_('Signature of the project owner. '
+                    'Most browsers support dragging the image directly on to '
+                    'the "Choose File" button above.'),
+        upload_to=os.path.join(MEDIA_ROOT, 'images/projects/signatures'),
+        blank=True
+    )
+
     approved = models.BooleanField(
         help_text=_('Whether this project has been approved for use yet.'),
         default=False
