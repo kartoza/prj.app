@@ -205,5 +205,7 @@
 }
 
 .form-control.clearablefileinput {
-    padding: 0 12px !important;
+    padding: 0 !important;
+    border: None;
+    box-shadow: None;
 }
