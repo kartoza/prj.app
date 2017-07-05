@@ -203,3 +203,9 @@
 .bottom-dropdown + .chosen-container .chosen-drop{
     margin-bottom: 75px !important;
 }
+
+.form-control.clearablefileinput {
+    padding: 0 !important;
+    border: None;
+    box-shadow: None;
+}

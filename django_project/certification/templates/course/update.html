@@ -5,23 +5,19 @@
 
 {% block css_head %}
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="stylesheet" href="{% static 'css/datepicker.css' %}">
 {% endblock css_head %}
+
+{% block js_head %}
+    <script src="{% static 'js/datepicker.js' %}"></script>
+    <script src="{% static 'js/i18n/datepicker.en.js' %}"></script>
+{% endblock %}
 
 {% block page_title %}
     <h1>Update Course</h1>
 {% endblock page_title %}
 
 {% block content %}
-
-    <script>
-    $(function() {
-        $( ".datepicker" ).datepicker({
-            changeMonth: true,
-            changeYear: true,
-            yearRange: "2000:2217"
-        });
-    });
-    </script>
 
     <section id="forms">
         <div class='container'>

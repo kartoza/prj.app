@@ -199,7 +199,7 @@ def certificate_pdf_view(request, **kwargs):
     if background is not None:
         page.drawImage(
             background, 0, 0, height=width, width=height,
-            preserveAspectRatio=True)
+            preserveAspectRatio=True, mask='auto')
     page.setFillColorRGB(0.1, 0.1, 0.1)
     page.setFont('Times-Roman', 18)
     # page.drawString(margin_left, 480, project.name)
@@ -209,12 +209,12 @@ def certificate_pdf_view(request, **kwargs):
     if project_logo is not None:
         page.drawImage(
             project_logo, 50, 500, width=50, height=50,
-            preserveAspectRatio=True)
+            preserveAspectRatio=True, mask='auto')
 
     if organisation_logo is not None:
         page.drawImage(
             organisation_logo, max_left, 500, height=50, width=50,
-            preserveAspectRatio=True, anchor='c')
+            preserveAspectRatio=True, anchor='c', mask='auto')
 
     page.setFont('Times-Bold', 26)
     page.drawCentredString(center, 480, 'Certificate of Completion')
@@ -242,12 +242,13 @@ def certificate_pdf_view(request, **kwargs):
         page.drawImage(
             project_owner_signature,
             (margin_left + 100), (margin_bottom + 70), width=100, height=70,
-            preserveAspectRatio=True, anchor='s')
+            preserveAspectRatio=True, anchor='s', mask='auto')
 
     if convener_signature is not None:
         page.drawImage(
             convener_signature, (margin_right - 200), (margin_bottom + 70),
-            width=100, height=70, preserveAspectRatio=True, anchor='s')
+            width=100, height=70, preserveAspectRatio=True, anchor='s',
+            mask='auto')
 
     page.setFont('Times-Italic', 12)
     page.drawCentredString(
