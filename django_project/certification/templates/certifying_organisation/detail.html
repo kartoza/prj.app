@@ -38,8 +38,11 @@
             // Add map
             $('#map').css({'height': 400, 'width': 800});
             map = L.map('map').setView([lat, long], 4);
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-                attribution:  'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
+            L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+                attribution:  '&copy; <a href="http://www.openstreetmap.org/copyright">'+
+                                'OpenStreetMap</a>, Tiles courtesy of '+
+                                '<a href="http://hot.openstreetmap.org/" target="_blank">'+
+                                'Humanitarian OpenStreetMap Team</a>'
             }).addTo(map);
         })
 
