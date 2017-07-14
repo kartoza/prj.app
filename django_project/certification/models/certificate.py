@@ -39,7 +39,7 @@ class Certificate(models.Model):
     class Meta:
         ordering = ['certificateID']
         unique_together = [
-            'course', 'attendee'
+            'course', 'attendee', 'certificateID',
         ]
 
     def __unicode__(self):
