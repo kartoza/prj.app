@@ -101,3 +101,6 @@ table {
     padding: 20px;
     border-radius: 5px;
 }
+.grey-italic.col-lg-4 {
+    padding: 0 !important;
+}
