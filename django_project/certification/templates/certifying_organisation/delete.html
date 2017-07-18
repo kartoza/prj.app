@@ -17,8 +17,8 @@
                 <p class="lead">Are you sure you want to delete the certifying organisation below?</p>
             </div>
             <div class="col-lg-2">
-                <div class="btn-group">
-                    <a class="btn btn-default btn-sm tooltip-toggle pull-right"
+                <div class="btn-group pull-right">
+                    <a class="btn btn-default btn-sm tooltip-toggle"
                        href="#"
                        onClick="$('#delete-confirmation').submit()"
                        data-title="Delete {{ certifyingorganisation.name }}">
@@ -38,13 +38,18 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-8">
-                Organisation Name : {{ certifyingorganisation.name }}<br/>
-                Address : {{ certifyingorganisation.address }}<br/>
-                Country : {{ certifyingorganisation.country.name }}<br/>
-                Email : {{ certifyingorganisation.organisation_email }}<br/>
-                Phone : {{ certifyingorganisation.organisation_phone }}<br/>
-                Organisation owners : {% for organisation_owners in certifyingorganisation.organisation_owners.all %}{{ organisation_owners }}{{ ", " }}{% endfor %}
+            <div class="col-lg-8" style="font-size: 12pt">
+                <span class="col-lg-3">Address</span><span class="col-lg-9">: {{ certifyingorganisation.address }}<br/></span>
+                <span class="col-lg-3">Country</span><span class="col-lg-9">: {{ certifyingorganisation.country.name }}<br/></span>
+                <span class="col-lg-3">Email</span><span class="col-lg-9">: {{ certifyingorganisation.organisation_email }}<br/></span>
+                <span class="col-lg-3">Phone</span><span class="col-lg-9">: {{ certifyingorganisation.organisation_phone }}<br/></span>
+                <span class="col-lg-3">Organisation owners</span><span class="col-lg-9">: {% for organisation_owners in certifyingorganisation.organisation_owners.all %}
+                    {% if organisation_owners.first_name %}
+                        {{ organisation_owners.first_name }} {{ organisation_owners.last_name }}{{ ", " }}
+                    {% else %}
+                        {{ organisation_owners }}{{ ", " }}
+                    {% endif %}
+                    {% endfor %}</span>
             </div>
         </div>
     </form>

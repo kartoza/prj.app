@@ -24,10 +24,10 @@
     font-family: inherit;
     font-size: 12pt;
     line-height: 175%;
+    float: left;
 }
 
 .grey-italic {
-    font-style: italic;
     color: grey;
 }
 .map-wrapper {
@@ -101,6 +101,6 @@ table {
     padding: 20px;
     border-radius: 5px;
 }
-.grey-italic.col-lg-4 {
+.grey-italic {
     padding: 0 !important;
 }
