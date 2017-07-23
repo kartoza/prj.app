@@ -75,9 +75,9 @@
         </div>
 
         {# Only organisation owners or staff can edit #}
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <div class="col-lg-2">
             <div class="btn-group pull-right">
+                {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
                 <a class="btn btn-default btn-mini tooltip-toggle"
                    href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                    data-title="Delete {{ certifyingorganisation.name }}">
@@ -88,6 +88,7 @@
                    data-title="Edit {{ certifyingorganisation.name }}">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
+                {% endif %}
                  <a class="btn btn-default btn-mini tooltip-toggle"
                     href='{% url "certifyingorganisation-list" certifyingorganisation.project.slug %}'
                     data-title="Back">
@@ -95,16 +96,15 @@
                  </a>
             </div>
         </div>
-        {% endif %}
     </div>
     <div class="details col-lg-5" style="margin-bottom: 20px">
-        <span class="grey-italic">Organisation Name : </span><span>{{ certifyingorganisation.name }}</span><br/>
-        <span class="grey-italic">Address : </span><span>{{ certifyingorganisation.address }}</span><br/>
-        <span class="grey-italic">Country : </span><span>{{ certifyingorganisation.country.name }}</span><br/>
-        <span class="grey-italic">Email : </span><span>{{ certifyingorganisation.organisation_email }}</span><br/>
-        <span class="grey-italic">Phone : </span><span>{{ certifyingorganisation.organisation_phone }}</span><br/>
-        <span class="grey-italic">Organisation owners : </span>
-        <span>{% for organisation_owners in certifyingorganisation.organisation_owners.all %}
+        <span class="grey-italic col-lg-4">Organisation name</span><span class="col-lg-8">: {{ certifyingorganisation.name }}</span><br/>
+        <span class="grey-italic col-lg-4">Address</span><span class="col-lg-8">: {{ certifyingorganisation.address }}</span><br/>
+        <span class="grey-italic col-lg-4">Country</span><span class="col-lg-8">: {{ certifyingorganisation.country.name }}</span><br/>
+        <span class="grey-italic col-lg-4">Email</span><span class="col-lg-8">: {{ certifyingorganisation.organisation_email }}</span><br/>
+        <span class="grey-italic col-lg-4">Phone</span><span class="col-lg-8">: {{ certifyingorganisation.organisation_phone }}</span><br/>
+        <span class="grey-italic col-lg-4">Organisation owners</span>
+        <span class="col-lg-8">: {% for organisation_owners in certifyingorganisation.organisation_owners.all %}
         {% if organisation_owners.first_name %}
             {{ organisation_owners.first_name }} {{ organisation_owners.last_name }}{{ ", " }}
         {% else %}
