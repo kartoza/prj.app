@@ -153,6 +153,7 @@ def certificate_pdf_view(request, **kwargs):
     course = Course.objects.get(slug=course_slug)
     attendee = Attendee.objects.get(pk=pk)
     certificate = Certificate.objects.get(course=course, attendee=attendee)
+    current_site = request.META['HTTP_HOST']
 
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
@@ -278,8 +279,9 @@ def certificate_pdf_view(request, **kwargs):
     page.setFont('Times-Roman', 8)
     page.drawString(
         margin_left, (margin_bottom - 20),
-        'You can verify this certificate by visiting /%s/certificate/%s/.'
-        % (project.slug, certificate.certificateID))
+        'You can verify this certificate by visiting '
+        'http://%s/en/%s/certificate/%s/.'
+        % (current_site, project.slug, certificate.certificateID))
 
     # Close the PDF object cleanly.
     page.showPage()
