@@ -9,6 +9,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin
+from base.models import Project
 from ..models import (
     CertifyingOrganisation,
     TrainingCenter)
@@ -121,6 +122,10 @@ class TrainingCenterDetailView(
                         self).get_context_data(**kwargs)
         context['trainingcenters'] = TrainingCenter.objects.filter(
             certifying_organisation=self.certifying_organisation)
+        project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
+        if project_slug:
+            context['the_project'] = Project.objects.get(slug=project_slug)
         return context
 
     def get_queryset(self):

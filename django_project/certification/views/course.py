@@ -9,6 +9,7 @@ from django.views.generic import (
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin
+from base.models import Project
 from ..models import (
     CertifyingOrganisation,
     Course,
@@ -265,6 +266,10 @@ class CourseDetailView(
         context['certificates'] = \
             Certificate.objects.filter(
                 course=self.course).values_list('attendee', flat=True)
+        project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
+        if project_slug:
+            context['the_project'] = Project.objects.get(slug=project_slug)
         return context
 
     def get_queryset(self):

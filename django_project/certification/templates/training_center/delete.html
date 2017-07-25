@@ -17,7 +17,7 @@
                 <p class="lead">Are you sure you want to delete the training center below?</p>
             </div>
             <div class="col-lg-2">
-                <div class="btn-group">
+                <div class="btn-group pull-right">
                     <a class="btn btn-default btn-sm tooltip-toggle"
                        href="#"
                        onClick="$('#delete-confirmation').submit()"
@@ -38,12 +38,11 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-8">
-                Name : {{ trainingcenter.name }}<br/>
-                Email : {{ trainingcenter.email }}<br/>
-                Address : {{ trainingcenter.address }}<br/>
-                Phone : {{ trainingcenter.phone }}<br/>
-                Location : {{ trainingcenter.location }}<br/>
+            <div class="col-lg-8" style="font-size: 12pt">
+                <span class="col-lg-2">Email</span><span class="col-lg-10">: {{ trainingcenter.email }}<br/></span>
+                <span class="col-lg-2">Address</span><span class="col-lg-10">: {{ trainingcenter.address }}<br/></span>
+                <span class="col-lg-2">Phone</span><span class="col-lg-10">: {{ trainingcenter.phone }}<br/></span>
+                <span class="col-lg-2">Location</span><span class="col-lg-10">: {{ trainingcenter.location }}<br/></span>
             </div>
         </div>
     </form>
