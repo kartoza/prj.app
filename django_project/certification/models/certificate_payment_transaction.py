@@ -27,7 +27,7 @@ class CertificatePaymentTransaction(models.Model):
         ordering = ['transaction_date']
 
     def __unicode__(self):
-        return self.pk
+        return str(self.pk)
 
     def save(self, *args, **kwargs):
         super(CertificatePaymentTransaction, self).save(*args, **kwargs)
