@@ -11,7 +11,7 @@ from certification.models import CertifyingOrganisation
 
 class CertificatePaymentTransaction(models.Model):
 
-    certificate = models.ForeignKey(Certificate)
+    certificate = models.ManyToManyField(Certificate)
     certifying_organisation = models.ForeignKey(CertifyingOrganisation)
 
     transaction_date = models.DateField(
@@ -24,3 +24,13 @@ class CertificatePaymentTransaction(models.Model):
         max_digits=10,
         decimal_places=2
     )
+
+    class Meta:
+        ordering = ['transaction_date']
+
+    def __unicode__(self):
+        return self.pk
+
+    def save(self, *args, **kwargs):
+        super(CertificatePaymentTransaction, self).save(*args, **kwargs)
+
