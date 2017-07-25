@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.http import Http404, HttpResponse
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, ListView
 from django.core.urlresolvers import reverse
 from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
@@ -285,3 +285,27 @@ def certificate_pdf_view(request, **kwargs):
     page.showPage()
     page.save()
     return response
+
+
+class UnpaidCertificateListView(
+    LoginRequiredMixin, CertificateMixin, ListView):
+    """List view for unpaid certificates."""
+
+    context_object_name = 'unpaidcertificates'
+    template_name = 'unpaid_certificate.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+
+        context = super(
+            UnpaidCertificateListView, self).get_context_data(**kwargs)
+        context['unpaidcertificate_all'] = \
+            Certificate.objects.filter(is_paid=False)
+
