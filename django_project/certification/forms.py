@@ -78,7 +78,6 @@ class CertifyingOrganisationForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(CertifyingOrganisationForm, self).save(commit=False)
         instance.project = self.project
-        instance.approved = False
         instance.save()
         self.save_m2m()
         return instance

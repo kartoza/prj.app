@@ -143,6 +143,7 @@ class CertifyingOrganisationListView(
         context['project_slug'] = project_slug
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = context['the_project']
         return context
 
     def get_queryset(self, queryset=None):
@@ -210,6 +211,7 @@ class CertifyingOrganisationDetailView(
         context['project_slug'] = project_slug
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = context['the_project']
         return context
 
     def get_queryset(self):
@@ -537,7 +539,9 @@ class PendingCertifyingOrganisationListView(
         context['num_certifyingorganisations'] = self.get_queryset().count()
         context['unapproved'] = True
         context['project_slug'] = self.project_slug
-        context['project'] = self.project
+        if self.project_slug:
+            context['the_project'] = Project.objects.get(slug=self.project_slug)
+            context['project'] = context['the_project']
         return context
 
     # noinspection PyAttributeOutsideInit
