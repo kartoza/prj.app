@@ -12,8 +12,6 @@ env:
 
 sudo: false
 
-dist: precise
-
 python:
   - '2.7'
 
