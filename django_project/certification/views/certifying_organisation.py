@@ -540,7 +540,8 @@ class PendingCertifyingOrganisationListView(
         context['unapproved'] = True
         context['project_slug'] = self.project_slug
         if self.project_slug:
-            context['the_project'] = Project.objects.get(slug=self.project_slug)
+            context['the_project'] = \
+                Project.objects.get(slug=self.project_slug)
             context['project'] = context['the_project']
         return context
 
