@@ -6,7 +6,8 @@ from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.utils import ImageReader
-from ..models import Certificate, Course, Attendee
+from pure_pagination.mixins import PaginationMixin
+from ..models import Certificate, Course, Attendee, CertifyingOrganisation
 from ..forms import CertificateForm
 from base.models.project import Project
 
@@ -288,11 +289,23 @@ def certificate_pdf_view(request, **kwargs):
 
 
 class UnpaidCertificateListView(
-    LoginRequiredMixin, CertificateMixin, ListView):
+        ListView):
     """List view for unpaid certificates."""
 
+    model = Certificate
     context_object_name = 'unpaidcertificates'
-    template_name = 'unpaid_certificate.html'
+    template_name = 'certificate/unpaid_certificate.html'
+
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        :returns: Queryset which is all certificate in the
+            corresponding organisation.
+        :rtype: QuerySet
+        """
+
+        qs = Certificate.objects.all()
+        return qs
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -306,6 +319,19 @@ class UnpaidCertificateListView(
 
         context = super(
             UnpaidCertificateListView, self).get_context_data(**kwargs)
-        context['unpaidcertificate_all'] = \
-            Certificate.objects.filter(is_paid=False)
+        project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
+        if project_slug:
+            context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = context['the_project']
+        context['organisations'] = \
+            CertifyingOrganisation.objects.filter(
+                project=context['project'], approved=True)
+        num_unpaidcertificates = {}
+        for organisation in context['organisations']:
+            num_unpaidcertificates[organisation.name] = \
+                Certificate.objects.filter(
+                    course__certifying_organisation=organisation).count()
+        context['num_unpaidcertificates'] = num_unpaidcertificates
 
+        return context

@@ -1,6 +1,53 @@
 {% extends "project_base.html" %}
+{% load custom_markup %}
 {% load staticfiles %}
 
-{% block content %}
+{% block title %}Unpaid Certificates - {{ block.super }}{% endblock %}
 
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/organisation_detail.css' %}">
+
+    <div class="container" style="font-family: inherit">
+    <h1 style="margin-bottom: 30px">Unpaid Certificates</h1>
+
+    {% for organisation in organisations %}
+    <div class="menu-wrapper menu-wrapper-head">
+        <h3 class="custom-heading" style="margin-top: 10px"> {{ organisation.name }} </h3>
+    </div>
+
+    <div class="menu-wrapper menu-wrapper-body">
+    <div class="menu-details">
+    {% for key, value in num_unpaidcertificates.items %}
+    {% if key == organisation.name %}
+        {% if value == 0 %}
+            <h4>There are no unpaid certificates.</h4>
+        {% else %}
+            <table class="course">
+            <tr>
+                <th>ID</th>
+                <th>Course Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Attendee</th>
+            </tr>
+            {% for unpaid_certificate in unpaidcertificates %}
+                {% if unpaid_certificate.course.certifying_organisation == organisation %}
+                <tr>
+                    <td>{{ unpaid_certificate.certificateID }}</td>
+                    <td>{{ unpaid_certificate.course.course_type }}</td>
+                    <td>{{ unpaid_certificate.course.start_date }}</td>
+                    <td>{{ unpaid_certificate.course.end_date }}</td>
+                    <td>{{ unpaid_certificate.attendee.firstname }} {{ unpaid_certificate.attendee.surname }}</td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+            </table>
+        {% endif %}
+    {% endif %}
+    {% endfor %}
+    </div>
+    </div>
+    {% endfor %}
+
+    </div>
 {% endblock %}
