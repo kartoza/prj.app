@@ -11,7 +11,7 @@
     <h1 style="margin-bottom: 30px">Unpaid Certificates</h1>
 
     {% for organisation in organisations %}
-    {% if user.is_staff or user in organisation.organisation_owners.all %}
+    {% if user.is_staff or user in organisation.organisation_owners.all or user == project.owner %}
     <div class="menu-wrapper menu-wrapper-head">
         <h3 class="custom-heading" style="margin-top: 10px"> Organisation: {{ organisation.name }} </h3>
     </div>
