@@ -333,5 +333,9 @@ class UnpaidCertificateListView(
                 Certificate.objects.filter(
                     course__certifying_organisation=organisation).count()
         context['num_unpaidcertificates'] = num_unpaidcertificates
+        context['organisation_owners_all'] = \
+            CertifyingOrganisation.objects.filter(
+                project=context['project']).values_list(
+                'organisation_owners', flat=True)
 
         return context

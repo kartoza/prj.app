@@ -7,6 +7,7 @@
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/organisation_detail.css' %}">
 
+    {% if user.pk in organisation_owners_all or user.is_staff or user == project.owner %}
     <div class="container" style="font-family: inherit">
     <h1 style="margin-bottom: 30px">Unpaid Certificates</h1>
 
@@ -55,4 +56,10 @@
     {% endfor %}
 
     </div>
+    {% else %}
+        <div class="container" style="margin: 0px auto; text-align: center; top: 30%; position: absolute">
+            <h1><span class="glyphicon glyphicon-warning-sign"></span></h1>
+            <h3>Sorry, this page is not available for you.</h3>
+        </div>
+    {% endif %}
 {% endblock %}
