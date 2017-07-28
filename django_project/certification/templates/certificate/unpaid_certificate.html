@@ -11,8 +11,9 @@
     <h1 style="margin-bottom: 30px">Unpaid Certificates</h1>
 
     {% for organisation in organisations %}
+    {% if user.is_staff or user in organisation.organisation_owners.all %}
     <div class="menu-wrapper menu-wrapper-head">
-        <h3 class="custom-heading" style="margin-top: 10px"> {{ organisation.name }} </h3>
+        <h3 class="custom-heading" style="margin-top: 10px"> Organisation: {{ organisation.name }} </h3>
     </div>
 
     <div class="menu-wrapper menu-wrapper-body">
@@ -29,6 +30,7 @@
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Attendee</th>
+                <th>Certificate Link</th>
             </tr>
             {% for unpaid_certificate in unpaidcertificates %}
                 {% if unpaid_certificate.course.certifying_organisation == organisation %}
@@ -38,15 +40,18 @@
                     <td>{{ unpaid_certificate.course.start_date }}</td>
                     <td>{{ unpaid_certificate.course.end_date }}</td>
                     <td>{{ unpaid_certificate.attendee.firstname }} {{ unpaid_certificate.attendee.surname }}</td>
+                    <td><a href="/en/{{ project_slug }}/certificate/{{ unpaid_certificate.certificateID }}/">link</a> </td>
                 </tr>
                 {% endif %}
             {% endfor %}
             </table>
+            <h4>Total outstanding: USD - </h4>
         {% endif %}
     {% endif %}
     {% endfor %}
     </div>
     </div>
+    {% endif %}
     {% endfor %}
 
     </div>
