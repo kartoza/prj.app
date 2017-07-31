@@ -193,7 +193,7 @@ def certificate_pdf_view(request, **kwargs):
     margin_right = height - 50
     margin_left = 50
     margin_bottom = 50
-    max_left = margin_right - 50
+    max_left = margin_right - 100
 
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.
@@ -209,12 +209,12 @@ def certificate_pdf_view(request, **kwargs):
 
     if project_logo is not None:
         page.drawImage(
-            project_logo, 50, 500, width=50, height=50,
+            project_logo, 50, 450, width=100, height=100,
             preserveAspectRatio=True, mask='auto')
 
     if organisation_logo is not None:
         page.drawImage(
-            organisation_logo, max_left, 500, height=50, width=50,
+            organisation_logo, max_left, 450, height=100, width=100,
             preserveAspectRatio=True, anchor='c', mask='auto')
 
     page.setFont('Times-Bold', 26)
