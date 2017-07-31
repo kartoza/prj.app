@@ -11,6 +11,10 @@
 {% block js_head %}
     <script src="{% static 'js/datepicker.js' %}"></script>
     <script src="{% static 'js/i18n/datepicker.en.js' %}"></script>
+    <script>
+
+
+    </script>
 {% endblock %}
 
 {% block page_title %}
@@ -18,6 +22,47 @@
 {% endblock page_title %}
 
 {% block content %}
+
+    <script>
+        $(function() {
+            var start_date = $("#id_start_date").val();
+            var end_date = $("#id_end_date").val();
+
+            $("#id_start_date").attr('data-language', 'en');
+            $("#id_end_date").attr('data-language', 'en');
+
+            $("#id_start_date").datepicker({
+                dateFormat: 'yyyy-mm-dd',
+                autoClose: true,
+                position: 'top left',
+                onSelect: function (date) {
+                    $("#id_end_date").val(date);
+                    $("#id_end_date").datepicker({minDate: new Date(date)})
+                }
+            });
+
+            $("#id_end_date").datepicker({
+                dateFormat: 'yyyy-mm-dd',
+                autoClose: true,
+                position: 'top left',
+                onSelect: function (date) {
+                    $("#id_start_date").val(date);
+                    $("#id_start_date").datepicker({maxDate: new Date(date)})
+                }
+            });
+
+            $("#id_start_date").datepicker({
+                maxDate: new Date(end_date.toString())
+            });
+            $('#id_start_date').datepicker().data('datepicker').selectDate(new Date(start_date.toString()));
+
+            $("#id_end_date").datepicker({
+                minDate: new Date(start_date.toString())
+            });
+            $('#id_end_date').datepicker().data('datepicker').selectDate(new Date(end_date.toString()));
+
+        });
+    </script>
 
     <section id="forms">
         <div class='container'>
