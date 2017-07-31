@@ -58,6 +58,13 @@
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
                     {% endif %}
+                    {% if user.is_staff or user in certifyingorganisation.organisation_owners.all %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                        href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                        data-title="Edit {{ certifyingorganisation.name }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    {% endif %}
                     <a class="btn btn-default btn-mini"
                        href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                         data-title="Delete">
