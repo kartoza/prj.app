@@ -11,12 +11,16 @@ env:
     - DJANGO_SETTINGS_MODULE=core.settings.test_travis
 
 sudo: false
+dist: trusty
 
 python:
   - '2.7'
 
 addons:
   postgresql: "9.3"
+  apt:
+    packages:
+    - postgresql-9.3-postgis-2.3
 
 install:
   - pip install coveralls
@@ -32,7 +36,7 @@ script:
   - cd django_project
   - python manage.py makemigrations
   - python manage.py migrate
-  - coverage run manage.py test
+  - coverage run manage.py test core certification
 
 after_success:
   - coveralls
