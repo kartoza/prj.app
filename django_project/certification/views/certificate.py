@@ -153,6 +153,7 @@ def certificate_pdf_view(request, **kwargs):
     course = Course.objects.get(slug=course_slug)
     attendee = Attendee.objects.get(pk=pk)
     certificate = Certificate.objects.get(course=course, attendee=attendee)
+    current_site = request.META['HTTP_HOST']
 
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
@@ -192,7 +193,7 @@ def certificate_pdf_view(request, **kwargs):
     margin_right = height - 50
     margin_left = 50
     margin_bottom = 50
-    max_left = margin_right - 50
+    max_left = margin_right - 100
 
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.
@@ -208,12 +209,12 @@ def certificate_pdf_view(request, **kwargs):
 
     if project_logo is not None:
         page.drawImage(
-            project_logo, 50, 500, width=50, height=50,
+            project_logo, 50, 450, width=100, height=100,
             preserveAspectRatio=True, mask='auto')
 
     if organisation_logo is not None:
         page.drawImage(
-            organisation_logo, max_left, 500, height=50, width=50,
+            organisation_logo, max_left, 450, height=100, width=100,
             preserveAspectRatio=True, anchor='c', mask='auto')
 
     page.setFont('Times-Bold', 26)
@@ -278,8 +279,9 @@ def certificate_pdf_view(request, **kwargs):
     page.setFont('Times-Roman', 8)
     page.drawString(
         margin_left, (margin_bottom - 20),
-        'You can verify this certificate by visiting /%s/certificate/%s/.'
-        % (project.slug, certificate.certificateID))
+        'You can verify this certificate by visiting '
+        'http://%s/en/%s/certificate/%s/.'
+        % (current_site, project.slug, certificate.certificateID))
 
     # Close the PDF object cleanly.
     page.showPage()
