@@ -6,7 +6,6 @@ from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.utils import ImageReader
-from pure_pagination.mixins import PaginationMixin
 from ..models import Certificate, Course, Attendee, CertifyingOrganisation
 from ..forms import CertificateForm
 from base.models.project import Project
