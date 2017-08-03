@@ -277,8 +277,8 @@ class CourseForm(forms.ModelForm):
                 Field('course_convener',
                       css_class='form-control chosen-select'),
                 Field('training_center', css_class='form-control'),
-                Field('start_date', css_class='form-control datepicker-here'),
-                Field('end_date', css_class='form-control datepicker-here'),
+                Field('start_date', css_class='form-control'),
+                Field('end_date', css_class='form-control'),
                 Field('template_certificate', css_class='form-control'),
             )
         )

@@ -21,9 +21,27 @@
 
     <script>
     $(function() {
-        $( ".datepicker-here" ).datepicker({
-            language: "en",
-            position: "top left"
+        $("#id_start_date").attr('data-language', 'en');
+        $("#id_end_date").attr('data-language', 'en');
+
+        $("#id_start_date").datepicker({
+            dateFormat: 'yyyy-mm-dd',
+            autoClose: true,
+            position: 'top left',
+            onSelect: function (date) {
+                $("#id_end_date").val(date);
+                $("#id_end_date").datepicker({minDate: new Date(date)})
+            }
+        });
+
+        $("#id_end_date").datepicker({
+            dateFormat: 'yyyy-mm-dd',
+            autoClose: true,
+            position: 'top left',
+            onSelect: function (date) {
+                $("#id_start_date").val(date);
+                $("#id_start_date").datepicker({maxDate: new Date(date)})
+            }
         });
     });
     </script>
