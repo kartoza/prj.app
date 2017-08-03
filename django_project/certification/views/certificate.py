@@ -290,6 +290,7 @@ def certificate_pdf_view(request, **kwargs):
 
 
 class UnpaidCertificateListView(
+        LoginRequiredMixin,
         ListView):
     """List view for unpaid certificates."""
 
@@ -306,7 +307,7 @@ class UnpaidCertificateListView(
         """
 
         qs = Certificate.objects.all()
-        return qs
+        return qs.filter(is_paid=False)
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
