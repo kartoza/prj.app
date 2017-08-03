@@ -2,6 +2,7 @@
 from django.http import Http404, HttpResponse
 from django.views.generic import CreateView, DetailView, ListView
 from django.core.urlresolvers import reverse
+from django.template.defaulttags import register
 from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
@@ -309,6 +310,10 @@ class UnpaidCertificateListView(
         qs = Certificate.objects.all()
         return qs.filter(is_paid=False)
 
+    @register.filter
+    def get_item(dictionary, key):
+        return dictionary.get(key)
+
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
 
@@ -334,7 +339,19 @@ class UnpaidCertificateListView(
             num_unpaidcertificates[organisation.name] = \
                 Certificate.objects.filter(
                     course__certifying_organisation=organisation).count()
+
+        total_outstanding = {}
+        for organisation in context['organisations']:
+            issued_certificates = \
+                Certificate.objects.filter(
+                    course__certifying_organisation=organisation)
+            total_cost = 0
+            for issued_certificate in issued_certificates:
+                total_cost = total_cost + issued_certificate.cost
+            total_outstanding[organisation.name] = total_cost
+
         context['num_unpaidcertificates'] = num_unpaidcertificates
+        context['total_outstanding'] = total_outstanding
         context['organisation_owners_all'] = \
             CertifyingOrganisation.objects.filter(
                 project=context['project']).values_list(

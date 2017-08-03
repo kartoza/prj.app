@@ -24,7 +24,7 @@
         {% if value == 0 %}
             <h4>There are no unpaid certificates.</h4>
         {% else %}
-            <table class="course">
+            <table class="course" style="margin-top: 15px">
             <tr>
                 <th>ID</th>
                 <th>Course Type</th>
@@ -46,7 +46,7 @@
                 {% endif %}
             {% endfor %}
             </table>
-            <h4>Total outstanding: USD - </h4>
+            <span style="line-height: 50px; font-weight: 500">Total outstanding: USD {{ total_outstanding|get_item:key }}</span>
         {% endif %}
     {% endif %}
     {% endfor %}
