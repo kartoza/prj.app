@@ -83,7 +83,7 @@ class CertificateCreateView(
         return kwargs
 
     def form_valid(self, form):
-        """Save new created Sponsor
+        """Save new created certificate
 
         :param form
         :type form
@@ -92,6 +92,7 @@ class CertificateCreateView(
         :rtype: HttpResponseRedirect
 
         We check that there is no referential integrity error when saving."""
+        
         try:
             super(CertificateCreateView, self).form_valid(form)
             certificate_id = form.instance.certificateID
