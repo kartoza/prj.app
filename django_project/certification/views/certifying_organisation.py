@@ -470,7 +470,10 @@ class CertifyingOrganisationUpdateView(
         """
 
         qs = CertifyingOrganisation.objects.all()
-        return qs
+        if self.request.user.is_staff:
+            return qs
+        else:
+            return qs.filter(organisation_owners=self.request.user)
 
     def get_success_url(self):
         """Define the redirect URL.

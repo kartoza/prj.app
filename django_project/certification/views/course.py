@@ -120,6 +120,8 @@ class CourseUpdateView(LoginRequiredMixin, CourseMixin, UpdateView):
 
     def get_queryset(self):
         """Get the queryset for this view.
+            In front end, only staff, organisation owners and course convener
+            can see the edit button.
 
         :returns: All Course objects
         :rtype: QuerySet

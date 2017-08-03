@@ -73,6 +73,8 @@ class CertifyingOrganisationForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(CertifyingOrganisationForm, self).__init__(*args, **kwargs)
+        self.fields['organisation_owners'].label_from_instance = \
+            lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
@@ -275,8 +277,8 @@ class CourseForm(forms.ModelForm):
                 Field('course_convener',
                       css_class='form-control chosen-select'),
                 Field('training_center', css_class='form-control'),
-                Field('start_date', css_class='form-control datepicker-here'),
-                Field('end_date', css_class='form-control datepicker-here'),
+                Field('start_date', css_class='form-control'),
+                Field('end_date', css_class='form-control'),
                 Field('template_certificate', css_class='form-control'),
             )
         )
