@@ -120,16 +120,15 @@ class CourseUpdateView(LoginRequiredMixin, CourseMixin, UpdateView):
 
     def get_queryset(self):
         """Get the queryset for this view.
+            In front end, only staff, organisation owners and course convener
+            can see the edit button.
 
         :returns: All Course objects
         :rtype: QuerySet
         """
 
         qs = Course.objects.all()
-        if self.request.user.is_staff:
-            return qs
-        else:
-            return qs.filter(creator=self.request.user)
+        return qs
 
     def get_success_url(self):
         """Define the redirect URL.
