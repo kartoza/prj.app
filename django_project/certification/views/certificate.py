@@ -92,7 +92,7 @@ class CertificateCreateView(
         :rtype: HttpResponseRedirect
 
         We check that there is no referential integrity error when saving."""
-        
+
         try:
             super(CertificateCreateView, self).form_valid(form)
             certificate_id = form.instance.certificateID
