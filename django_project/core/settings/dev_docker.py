@@ -4,6 +4,9 @@ from .dev import *  # noqa
 import os
 print os.environ
 
+ALLOWED_HOSTS = ['*',
+                 u'0.0.0.0']
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',

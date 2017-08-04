@@ -68,7 +68,7 @@
             </div>
 
         {# Only staff can add/edit organisations #}
-        {% if user.is_staff %}
+        {% if user.is_staff or user in certifyingorganisation.organisation_owners.all %}
             <div class="col-lg-4" style="padding: 0">
                 <div class="btn-group pull-right tooltip-toggle">
                     {%  if not certifyingorganisation.approved and user.is_staff %}
