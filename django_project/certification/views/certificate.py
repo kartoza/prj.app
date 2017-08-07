@@ -373,7 +373,7 @@ def update_cost(request, **kwargs):
             'project_slug': project_slug,
             'organisation_slug': organisation_slug,
             'slug': course_slug
-        })
+    })
 
     if request.method == 'POST':
         if request.POST.get('cost', False):
