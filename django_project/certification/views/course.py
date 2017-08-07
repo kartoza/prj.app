@@ -265,6 +265,8 @@ class CourseDetailView(
         context['certificates'] = \
             Certificate.objects.filter(
                 course=self.course).values_list('attendee', flat=True)
+        context['course_certificates'] = \
+            Certificate.objects.filter(course=self.course)
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:

@@ -138,4 +138,20 @@
     </div>
     </div>
 
+    {% if course_certificates %}
+    {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user %}
+    <div class="container">
+        <div class="menu-wrapper details-wrapper" style="margin-left: -15px; margin-top: 50px; float: left">
+            <span>Cost of the certificate: USD {{ course_certificates.0.cost }}</span>
+            <a class="btn btn-default btn-mini tooltip-toggle"
+               style="margin-left: 10px;"
+               href="cost_certificate/"
+               data-title="change cost of the certificate">
+                change
+            </a>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
 {% endblock %}

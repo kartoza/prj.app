@@ -1,7 +1,8 @@
 # coding=utf-8
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.views.generic import CreateView, DetailView, ListView
 from django.core.urlresolvers import reverse
+from django.shortcuts import render
 from django.template.defaulttags import register
 from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
@@ -347,7 +348,8 @@ class UnpaidCertificateListView(
                     course__certifying_organisation=organisation)
             total_cost = 0
             for issued_certificate in issued_certificates:
-                total_cost = total_cost + issued_certificate.cost
+                if issued_certificate.cost:
+                    total_cost = total_cost + issued_certificate.cost
             total_outstanding[organisation.name] = total_cost
 
         context['num_unpaidcertificates'] = num_unpaidcertificates
@@ -358,3 +360,32 @@ class UnpaidCertificateListView(
                 'organisation_owners', flat=True)
 
         return context
+
+
+def update_cost(request, **kwargs):
+    """View to update the cost of certificate in a course."""
+
+    project_slug = kwargs.pop('project_slug')
+    organisation_slug = kwargs.pop('organisation_slug')
+    course_slug = kwargs.pop('course_slug')
+    course = Course.objects.get(slug=course_slug)
+    url = reverse('course-detail', kwargs={
+            'project_slug': project_slug,
+            'organisation_slug': organisation_slug,
+            'slug': course_slug
+        })
+
+    if request.method == 'POST':
+        if request.POST.get('cost', False):
+            cost_value = request.POST['cost']
+            queryset = Certificate.objects.filter(course=course)
+            queryset.update(cost=cost_value)
+            return HttpResponseRedirect(url)
+
+    return render(
+        request, 'certificate/update_cost.html',
+        context={
+            'course': course,
+            'project_slug': project_slug,
+            'organisation_slug': organisation_slug,
+            'course_slug': course_slug})

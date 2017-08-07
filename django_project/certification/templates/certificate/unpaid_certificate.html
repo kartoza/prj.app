@@ -31,6 +31,7 @@
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Attendee</th>
+                <th>Cost</th>
                 <th>Certificate Link</th>
             </tr>
             {% for unpaid_certificate in unpaidcertificates %}
@@ -41,6 +42,7 @@
                     <td>{{ unpaid_certificate.course.start_date }}</td>
                     <td>{{ unpaid_certificate.course.end_date }}</td>
                     <td>{{ unpaid_certificate.attendee.firstname }} {{ unpaid_certificate.attendee.surname }}</td>
+                    <td>{{ unpaid_certificate.cost }}</td>
                     <td><a href="/en/{{ project_slug }}/certificate/{{ unpaid_certificate.certificateID }}/">link</a> </td>
                 </tr>
                 {% endif %}
