@@ -147,8 +147,8 @@ class CertifyingOrganisationListView(
             context['project'] = context['the_project']
         context['num_unpaidcertificates'] = \
             Certificate.objects.filter(
-                course__certifying_organisation__project=context['project']
-            ).count()
+                course__certifying_organisation__project=context['project'])\
+            .count()
         return context
 
     def get_queryset(self, queryset=None):
