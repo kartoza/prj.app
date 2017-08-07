@@ -21,7 +21,8 @@ from ..models import (
     CourseType,
     CourseConvener,
     Course,
-    Attendee)
+    Attendee,
+    Certificate)
 from ..forms import CertifyingOrganisationForm
 
 
@@ -144,6 +145,10 @@ class CertifyingOrganisationListView(
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
             context['project'] = context['the_project']
+        context['num_unpaidcertificates'] = \
+            Certificate.objects.filter(
+                course__certifying_organisation__project=context['project']
+            ).count()
         return context
 
     def get_queryset(self, queryset=None):
