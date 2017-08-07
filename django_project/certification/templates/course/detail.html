@@ -106,7 +106,7 @@
                         <span class="glyphicon glyphicon-remove tooltip-toggle" data-title="No Certificate Issued"></span>
                     {% endif %}
                 </td>
-                {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == course.course_convener.user %}
+                {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user %}
                 <td  style="text-align: center">
                     <div class="btn-group pull-right">
                         {% if attendee.attendee.pk in certificates %}
