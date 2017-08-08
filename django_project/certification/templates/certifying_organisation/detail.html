@@ -77,7 +77,7 @@
         {# Only organisation owners or staff can edit #}
         <div class="col-lg-2">
             <div class="btn-group pull-right">
-                {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+                {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
                 <a class="btn btn-default btn-mini tooltip-toggle"
                    href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                    data-title="Delete {{ certifyingorganisation.name }}">
@@ -138,7 +138,7 @@
         <h2 class="custom-heading">Training Centers</h2>
     </th>
 
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
         <td>
             <div class="button1" style="margin-top: -30px; margin-bottom: 20px;">
             <div class="btn-group pull-right">
@@ -174,7 +174,7 @@
         </div></td>
 
         <td class="button">
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
         <div>
             <div class="btn-group">
                 <a class="btn btn-default btn-xs tooltip-toggle"
@@ -205,7 +205,7 @@
         </th>
 
         <td>
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
         <div class="button1" style="margin-top: -30px; margin-bottom: 20px;">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
@@ -239,7 +239,7 @@
                     {{ coursetype.name }}</a>
         </div></td>
 
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or project.owner %}
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-default btn-xs tooltip-toggle"
@@ -268,7 +268,7 @@
         <h2 class="custom-heading">Course Conveners</h2>
     </th>
     <td>
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
         <div class="button1" style="margin-top: -30px; margin-bottom: 20px">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
@@ -307,7 +307,7 @@
         </div>
         </td>
 
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-default btn-xs tooltip-toggle"
@@ -338,7 +338,7 @@
 
         <td>
         {# Organisation owners, staffs and course convener can edit/add course #}
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
             <div class="button1" style="margin-top: -25px; margin-bottom: 20px;">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
@@ -407,7 +407,7 @@
             {% endif %}
         </td>
 
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
         <td>
              <div class="btn-group pull-right">
                 <a class="btn btn-default btn-xs tooltip-toggle"
