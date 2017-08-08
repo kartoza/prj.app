@@ -1,6 +1,7 @@
 # coding=utf-8
 from base.models import Project
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.views.generic import (
@@ -145,10 +146,23 @@ class CertifyingOrganisationListView(
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
             context['project'] = context['the_project']
-        context['num_unpaidcertificates'] = \
-            Certificate.objects.filter(
-                course__certifying_organisation__project=context['project'])\
-            .count()
+
+        if self.request.user.is_authenticated():
+            context['num_unpaidcertificates'] = \
+                Certificate.objects.filter(
+                    Q(course__certifying_organisation__project=
+                      context['project']) &
+                    (Q(course__certifying_organisation__organisation_owners=
+                       self.request.user) |
+                     Q(course__certifying_organisation__project__owner=
+                       self.request.user)))\
+                .count()
+        else:
+            context['num_unpaidcertificates'] = 0
+
+        context['organisation_owners'] = \
+            CertifyingOrganisation.objects.filter(project=context['project'])\
+            .values_list('organisation_owners', flat=True)
         return context
 
     def get_queryset(self, queryset=None):

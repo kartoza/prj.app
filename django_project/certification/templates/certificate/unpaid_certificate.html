@@ -8,9 +8,23 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/organisation_detail.css' %}">
 
     {% if user.pk in organisation_owners_all or user.is_staff or user == project.owner %}
-    <div class="container" style="font-family: inherit">
-    <h1 style="margin-bottom: 30px">Unpaid Certificates</h1>
+    <div class="row">
+        <div class="col-lg-10">
+            <h1 style="margin-bottom: 30px">Unpaid Certificates</h1>
+        </div>
 
+        <div class="col-lg-2">
+            <div class="btn-group pull-right">
+                 <a class="btn btn-default btn-mini tooltip-toggle"
+                    href='{% url "certifyingorganisation-list" project.slug %}'
+                    data-title="Back">
+                     <span class="glyphicon glyphicon-arrow-left"></span>
+                 </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="margin-left: -15px; font-family: inherit">
     {% for organisation in organisations %}
     {% if user.is_staff or user in organisation.organisation_owners.all or user == project.owner %}
     <div class="menu-wrapper menu-wrapper-head">
