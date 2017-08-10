@@ -43,11 +43,39 @@
 
     {% for certifyingorganisation in certifyingorganisations %}
         <script>console.debug("{{ certifyingorganisation }}");</script>
+        <script>
+            function toggleDetails(id) {
+                $('#'+id).children().toggle();
+                $('#'+id).next().toggle();
+            }
+        </script>
         <div class="row" style="margin-top:10px;">
             <div class="col-lg-9">
                 <h5>{{ certifyingorganisation.project.name }}</h5>
 
                 <h3>{{ certifyingorganisation.name }}</h3>
+                <p id="{{ certifyingorganisation.pk }}" style="color: grey" onclick="toggleDetails(this.id)">
+                    <span style="font-size: 8pt" class="glyphicon glyphicon-triangle-right"></span>
+                    <span style="font-size: 8pt; display: none" class="glyphicon glyphicon-triangle-bottom"></span>
+                    <span>Show details</span>
+                    <span style="display: none">Hide details</span><br/>
+                </p>
+                <div style="color: grey; display: none">
+                    <span class="grey-italic col-lg-4">Organisation name</span><span class="col-lg-8">{{ certifyingorganisation.name }}</span><br/>
+                    <span class="grey-italic col-lg-4">Address</span><span class="col-lg-8">{{ certifyingorganisation.address }}</span><br/>
+                    <span class="grey-italic col-lg-4">Country</span><span class="col-lg-8">{{ certifyingorganisation.country.name }}</span><br/>
+                    <span class="grey-italic col-lg-4">Email</span><span class="col-lg-8">{{ certifyingorganisation.organisation_email }}</span><br/>
+                    <span class="grey-italic col-lg-4">Phone</span><span class="col-lg-8">{{ certifyingorganisation.organisation_phone }}</span><br/>
+                    <span class="grey-italic col-lg-4">Organisation owners</span>
+                    <span class="col-lg-8">{% for organisation_owners in certifyingorganisation.organisation_owners.all %}
+                    {% if organisation_owners.first_name %}
+                        {{ organisation_owners.first_name }} {{ organisation_owners.last_name }}{{ ", " }}
+                    {% else %}
+                        {{ organisation_owners }}{{ ", " }}
+                    {% endif %}
+                    {% endfor %}</span>
+                </div>
+
             </div>
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
@@ -58,7 +86,7 @@
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
                     {% endif %}
-                    <a class="btn btn-default btn-mini"
+                    <a class="btn btn-danger btn-mini"
                        href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                         data-title="Delete">
                         <span class="glyphicon glyphicon-minus"></span>

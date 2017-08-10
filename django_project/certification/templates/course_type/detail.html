@@ -27,7 +27,7 @@
         <div class="col-lg-2">
             <div class="btn-group pull-right">
                 {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-                <a class="btn btn-default btn-sm tooltip-toggle"
+                <a class="btn btn-danger btn-sm tooltip-toggle"
                    href='{% url "coursetype-delete" project_slug=coursetype.certifying_organisation.project.slug organisation_slug=coursetype.certifying_organisation.slug slug=coursetype.slug %}'
                    data-title="Delete {{ coursetype.name }}">
                     <span class="glyphicon glyphicon-minus"></span>

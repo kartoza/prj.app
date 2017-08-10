@@ -21,7 +21,7 @@
         <div class="col-lg-2" style="margin-top: 20px">
         <div class="btn-group pull-right">
             {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user %}
-                <a class="btn btn-default btn-sm tooltip-toggle"
+                <a class="btn btn-danger btn-sm tooltip-toggle"
                    href='{% url "course-delete" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
                    data-title="Delete Course">
                     <span class="glyphicon glyphicon-minus"></span>
@@ -110,7 +110,7 @@
                 <td  style="text-align: center">
                     <div class="btn-group pull-right">
                         {% if attendee.attendee.pk in certificates %}
-                            <a class="btn btn-default btn-xs tooltip-toggle"
+                            <a class="btn btn-info btn-xs tooltip-toggle"
                                 href='{% url "print-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
                                 data-title="Print Certificate">
                                 <span class="glyphicon glyphicon-print"></span>
@@ -122,7 +122,7 @@
                                 <span class="glyphicon glyphicon-check"></span>
                             </a>
                         {% endif %}
-                    <a class="btn btn-default btn-xs tooltip-toggle"
+                    <a class="btn btn-danger btn-xs tooltip-toggle"
                         href='{% url "courseattendee-delete" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.pk %}'
                         data-title="Delete Course Attendee">
                         <span class="glyphicon glyphicon-minus"></span>

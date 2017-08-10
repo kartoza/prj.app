@@ -78,7 +78,7 @@
         <div class="col-lg-2">
             <div class="btn-group pull-right">
                 {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
-                <a class="btn btn-default btn-mini tooltip-toggle"
+                <a class="btn btn-danger btn-mini tooltip-toggle"
                    href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                    data-title="Delete {{ certifyingorganisation.name }}">
                     <span class="glyphicon glyphicon-minus"></span>
@@ -177,7 +177,7 @@
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <div>
             <div class="btn-group">
-                <a class="btn btn-default btn-xs tooltip-toggle"
+                <a class="btn btn-danger btn-xs tooltip-toggle"
                    href='{% url "trainingcenter-delete" project_slug=trainingcenter.certifying_organisation.project.slug organisation_slug=trainingcenter.certifying_organisation.slug slug=trainingcenter.slug %}'
                    data-title="Delete {{ trainingcenter.name }}">
                     <span class="glyphicon glyphicon-minus"></span>
@@ -242,7 +242,7 @@
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <td>
             <div class="btn-group pull-right">
-                <a class="btn btn-default btn-xs tooltip-toggle"
+                <a class="btn btn-danger btn-xs tooltip-toggle"
                    href='{% url "coursetype-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=coursetype.slug %}'
                    data-title="Delete {{ coursetype.name }}">
                     <span class="glyphicon glyphicon-minus"></span>
@@ -310,7 +310,7 @@
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <td>
             <div class="btn-group pull-right">
-                <a class="btn btn-default btn-xs tooltip-toggle"
+                <a class="btn btn-danger btn-xs tooltip-toggle"
                    href='{% url "courseconvener-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=courseconvener.slug %}'
                    data-title="Delete {{ courseconvener.user }}">
                     <span class="glyphicon glyphicon-minus"></span>
@@ -410,7 +410,7 @@
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff %}
         <td>
              <div class="btn-group pull-right">
-                <a class="btn btn-default btn-xs tooltip-toggle"
+                <a class="btn btn-danger btn-xs tooltip-toggle"
                    href='{% url "course-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                    data-title="Delete">
                     <span class="glyphicon glyphicon-minus"></span>
@@ -420,7 +420,7 @@
                    data-title="Edit">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
-                 <a class="btn btn-default btn-xs tooltip-toggle"
+                 <a class="btn btn-primary btn-xs tooltip-toggle"
                     href='{% url 'course-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                     data-title="View">
                     <span class="glyphicon glyphicon-eye-open"></span>
@@ -430,7 +430,7 @@
         {% elif user == course.course_convener.user %}
             <td>
                 <div class="btn-group pull-right">
-                    <a class="btn btn-default btn-xs tooltip-toggle"
+                    <a class="btn btn-danger btn-xs tooltip-toggle"
                         href='{% url "course-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                         data-title="Delete">
                         <span class="glyphicon glyphicon-minus"></span>
@@ -440,7 +440,7 @@
                         data-title="Edit">
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
-                    <a class="btn btn-default btn-xs tooltip-toggle"
+                    <a class="btn btn-primary btn-xs tooltip-toggle"
                         href='{% url 'course-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                         data-title="View">
                         <span class="glyphicon glyphicon-eye-open"></span>
@@ -450,7 +450,7 @@
         {% else %}
             <td>
                 <div class="btn-group pull-right">
-                    <a class="btn btn-default btn-xs tooltip-toggle"
+                    <a class="btn btn-primary btn-xs tooltip-toggle"
                         href='{% url 'course-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
                         data-title="View">
                         <span class="glyphicon glyphicon-eye-open"></span>
