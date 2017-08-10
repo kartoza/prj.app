@@ -1,4 +1,7 @@
 # coding=utf-8
+import StringIO
+import os
+import zipfile
 from django.http import Http404, HttpResponse
 from django.views.generic import CreateView, DetailView
 from django.core.urlresolvers import reverse
@@ -157,7 +160,8 @@ def certificate_pdf_view(request, **kwargs):
 
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="certificate.pdf"'
+    response['Content-Disposition'] = \
+        'filename=%s.pdf' % certificate.certificateID
 
     # Create the PDF object, using the response object as its "file."
     page = canvas.Canvas(response, pagesize=landscape(A4))
@@ -286,4 +290,46 @@ def certificate_pdf_view(request, **kwargs):
     # Close the PDF object cleanly.
     page.showPage()
     page.save()
+    return response
+
+
+def download_certificates_zip(request, **kwargs):
+    """Download all certificates in a course as one zip file."""
+
+    project_slug = kwargs.pop('project_slug')
+    course_slug = kwargs.pop('course_slug')
+    course = Course.objects.get(slug=course_slug)
+    organisation_slug = kwargs.pop('organisation_slug')
+
+    certificates = Certificate.objects.filter(course=course)
+
+    filenames = []
+    for certificate in certificates:
+        pdf_file = certificate_pdf_view(
+            request, pk=certificate.attendee.pk, project_slug=project_slug,
+            course_slug=course_slug, organisation_slug=organisation_slug)
+
+        with open('/tmp/%s.pdf' % certificate.certificateID, 'wb') as pdf:
+            pdf.write(pdf_file.content)
+
+        filenames.append('/tmp/%s.pdf' % certificate.certificateID)
+
+    zip_subdir = '%s' % course.name
+
+    s = StringIO.StringIO()
+    zf = zipfile.ZipFile(s, "w")
+
+    for fpath in filenames:
+        fdir, fname = os.path.split(fpath)
+        zip_path = os.path.join(zip_subdir, fname)
+
+        zf.write(fpath, zip_path)
+
+    zf.close()
+
+    response = HttpResponse(
+        s.getvalue(), content_type="application/x-zip-compressed")
+    response['Content-Disposition'] = \
+        'attachment; filename=certificates.zip'
+
     return response
