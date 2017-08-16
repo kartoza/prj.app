@@ -20,7 +20,7 @@
 
         <div class="col-lg-2" style="margin-top: 20px">
         <div class="btn-group pull-right">
-            {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user %}
+            {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner %}
                 <a class="btn btn-default btn-sm tooltip-toggle"
                    href='{% url "course-delete" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
                    data-title="Delete Course">
@@ -76,7 +76,7 @@
 
     <table style="border: none!important; width: 100%">
     <tr style="border: none"><td style="border: none; padding: 0"><h3 style="margin-top: -20px">Course attendees</h3></td>
-    {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user %}
+    {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner %}
     <td style="border: none; padding: 0;">
         <a class="btn btn-default btn-sm tooltip-toggle pull-right" style=" margin-top: -30px"
            href='{% url 'courseattendee-create' project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
@@ -92,7 +92,7 @@
         <tr>
             <th style="width: 50%">Name</th>
             <th style="text-align: center">Certificate Issued?</th>
-            {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user %}
+            {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner %}
             <th style="text-align: right">Actions</th>
             {% endif %}
         </tr>
@@ -106,7 +106,7 @@
                         <span class="glyphicon glyphicon-remove tooltip-toggle" data-title="No Certificate Issued"></span>
                     {% endif %}
                 </td>
-                {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == course.course_convener.user %}
+                {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner %}
                 <td  style="text-align: center">
                     <div class="btn-group pull-right">
                         {% if attendee.attendee.pk in certificates %}
