@@ -80,7 +80,7 @@
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
                     {% if not certifyingorganisation.approved and user.is_staff %}
-                        <a class="btn btn-success btn-mini tooltip-toggle"
+                        <a class="btn btn-default btn-mini btn-approved tooltip-toggle"
                            href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                             data-title="Approve {{ certifyingorganisation.name }}">
                             <span class="glyphicon glyphicon-thumbs-up"></span>
@@ -92,7 +92,7 @@
                         data-title="Edit {{ certifyingorganisation.name }}">
                     <span class="glyphicon glyphicon-pencil"></span>
                     </a>
-                    <a class="btn btn-default btn-mini tooltip-toggle"
+                    <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                        href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                         data-title="Delete {{ certifyingorganisation.name }}">
                         <span class="glyphicon glyphicon-minus"></span>
@@ -104,4 +104,23 @@
     {% endfor %}
     <hr/>
     {% include "_pagination.html" %}
+
+    <script>
+        $('.btn-delete').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-danger')
+            },
+            function (){
+                $(this).removeClass('btn-danger').addClass('btn-default')
+            }
+        )
+        $('.btn-approved').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-success')
+            },
+            function (){
+                $(this).removeClass('btn-success').addClass('btn-default')
+            }
+        )
+    </script>
 {% endblock %}
