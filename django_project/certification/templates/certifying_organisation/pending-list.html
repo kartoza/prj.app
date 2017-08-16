@@ -80,17 +80,24 @@
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
                     {% if not certifyingorganisation.approved and user.is_staff %}
-                        <a class="btn btn-default btn-mini"
+                        <a class="btn btn-success btn-mini tooltip-toggle"
                            href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                            data-title="Approve">
+                            data-title="Approve {{ certifyingorganisation.name }}">
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
                     {% endif %}
-                    <a class="btn btn-danger btn-mini"
+                    {% if user.is_staff or user in certifyingorganisation.organisation_owners.all %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                        href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                        data-title="Edit {{ certifyingorganisation.name }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                        data-title="Delete">
+                        data-title="Delete {{ certifyingorganisation.name }}">
                         <span class="glyphicon glyphicon-minus"></span>
                     </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

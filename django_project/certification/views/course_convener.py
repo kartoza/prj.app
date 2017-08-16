@@ -229,10 +229,7 @@ class CourseConvenerUpdateView(
         """
 
         qs = CourseConvener.objects.all()
-        if self.request.user.is_staff:
-            return qs
-        else:
-            return qs.filter(creator=self.request.user)
+        return qs
 
     def get_success_url(self):
         """Define the redirect URL.
