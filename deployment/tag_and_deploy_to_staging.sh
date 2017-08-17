@@ -6,6 +6,10 @@ echo "deploy it to the remote staging server."
 echo "e.g."
 echo "$0 version-1.2.3"
 VERSION=$1
+echo "Last tag on your local system is:"
+git tag --list | tail -1
+echo "New tag to be added to your local repo and pushed upstream:"
+echo $VERSION
 read -p "Are you sure you want to continue? " -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
@@ -24,5 +28,5 @@ then
     # No migrations are run - you should do that manually for now
 	ssh staging.changelog.qgis.org "cd /home/projecta/deployment && git fetch --tags && git checkout $VERSION && make collectstatic && make reload"
 else
-	echo "Tag and deploy to staging aborted.
+	echo "Tag and deploy to staging aborted."
 fi
