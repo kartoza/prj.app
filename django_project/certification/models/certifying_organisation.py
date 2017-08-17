@@ -81,8 +81,7 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
         help_text=_('name of organisation or institution'),
         max_length=200,
         null=False,
-        blank=False,
-        unique=True
+        blank=False
     )
 
     organisation_email = models.CharField(
@@ -143,12 +142,13 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
 
         app_label = 'certification'
         ordering = ['name']
+        unique_together = ['name', 'project']
 
     def save(self, *args, **kwargs):
         super(CertifyingOrganisation, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return self.name
+        return '%s - %s' % (self.project.name, self.name)
 
     def get_absolute_url(self):
         """Return URL to certifying organisation detail page.
