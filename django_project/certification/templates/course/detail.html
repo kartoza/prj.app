@@ -78,10 +78,17 @@
     <tr style="border: none"><td style="border: none; padding: 0"><h3 style="margin-top: -20px">Course attendees</h3></td>
     {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner %}
     <td style="border: none; padding: 0;">
-        <a class="btn btn-default btn-sm tooltip-toggle pull-right" style=" margin-top: -30px"
+    <div class="btn-group pull-right">
+        <a class="btn btn-default btn-sm tooltip-toggle" style=" margin-top: -30px"
            href='{% url 'courseattendee-create' project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
             data-title="Add Course Attendees">
             {% show_button_icon "add" %}</a>
+        <a id='download-zip' class="btn btn-default btn-sm tooltip-toggle pull-right" style=" margin-top: -30px"
+           href='{% url "download_zip_all" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
+            data-title="Download all issued certificates from this course">
+            <span class="glyphicon glyphicon-download-alt"></span>
+            </a>
+    </div>
     </td></tr>
     {% endif %}
     </table>
@@ -139,6 +146,15 @@
     </div>
 
     <script>
+
+        $('#download-zip').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-info')
+            },
+            function () {
+                $(this).removeClass('btn-info').addClass('btn-default')
+            }
+        ),
         $('.btn-delete').hover(
             function (){
                 $(this).removeClass('btn-default').addClass('btn-danger')
