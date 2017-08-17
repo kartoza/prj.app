@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.views.generic import TemplateView
+from base.models.project import Project
 
 
 class ValidateCertificate(TemplateView):
@@ -19,4 +20,8 @@ class ValidateCertificate(TemplateView):
         context = super(
             ValidateCertificate, self).get_context_data(**kwargs)
         context['project_slug'] = self.project_slug
+        if self.project_slug:
+            context['the_project'] = \
+                Project.objects.get(slug=self.project_slug)
+            context['project'] = context['the_project']
         return context

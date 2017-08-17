@@ -2,9 +2,13 @@
 import StringIO
 import os
 import zipfile
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.views.generic import CreateView, DetailView
+from django.contrib.sites.models import Site
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
@@ -80,6 +84,60 @@ class CertificateCreateView(
             'attendee': self.attendee,
         })
         return kwargs
+
+    def form_valid(self, form):
+        """Save new created certificate
+
+        :param form
+        :type form
+
+        :returns HttpResponseRedirect object to success_url
+        :rtype: HttpResponseRedirect
+
+        We check that there is no referential integrity error when saving."""
+
+        try:
+            super(CertificateCreateView, self).form_valid(form)
+            certificate_id = form.instance.certificateID
+
+            # Send email to the attendee when the certificate is issued.
+            if Site._meta.installed:
+                site = Site.objects.get_current().domain
+
+            send_mail(
+                'Certificate from %s Course' % self.course.course_type,
+                'Dear %s %s,\n\n' % (
+                    self.attendee.firstname, self.attendee.surname) +
+                'Congratulations!\n'
+                'Your certificate from the following course '
+                'has been issued.\n\n' +
+                'Course type: %s\n' % self.course.course_type +
+                'Course date: %s to %s\n' % (
+                    self.course.start_date.strftime('%d %B %Y'),
+                    self.course.end_date.strftime('%d %B %Y')) +
+                'Training center: %s\n' % self.course.training_center +
+                'Certifying organisation: %s\n\n'
+                % self.course.certifying_organisation +
+                'You may check the full details of the certificate '
+                'by visiting:\n'
+                'http://%s/en/%s/certificate/%s/\n\n' % (
+                    site,
+                    self.course.certifying_organisation.project.slug,
+                    certificate_id
+                ) +
+                'Sincerely,\n%s %s' % (
+                    self.course.course_convener.user.first_name,
+                    self.course.course_convener.user.last_name
+                ),
+                self.course.course_convener.user.email,
+                [self.attendee.email],
+                fail_silently=False,
+            )
+
+            return HttpResponseRedirect(self.get_success_url())
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Certificate already exists!')
 
 
 class CertificateDetailView(DetailView):
