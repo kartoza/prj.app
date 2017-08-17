@@ -23,11 +23,11 @@
             <h1>{{ coursetype.name }}</h1>
         </div>
 
-        {# Only organisation owners or staff can edit #}
+        {# Only organisation owners, project owner or staff can edit #}
         <div class="col-lg-2">
             <div class="btn-group pull-right">
                 {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
-                <a class="btn btn-default btn-sm tooltip-toggle"
+                <a class="btn btn-default btn-sm btn-delete tooltip-toggle"
                    href='{% url "coursetype-delete" project_slug=coursetype.certifying_organisation.project.slug organisation_slug=coursetype.certifying_organisation.slug slug=coursetype.slug %}'
                    data-title="Delete {{ coursetype.name }}">
                     <span class="glyphicon glyphicon-minus"></span>
@@ -54,5 +54,16 @@
         <span class="grey-italic col-lg-3">Instruction hours</span><span class="col-lg-9">{{ coursetype.instruction_hours }}<br/></span>
         <span class="grey-italic col-lg-3">Link</span><span class="col-lg-9">{{ coursetype.coursetype_link }}<br/></span>
     </div>
+
+    <script>
+        $('.btn-delete').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-danger')
+            },
+            function (){
+                $(this).removeClass('btn-danger').addClass('btn-default')
+            }
+        )
+    </script>
 
 {% endblock %}
