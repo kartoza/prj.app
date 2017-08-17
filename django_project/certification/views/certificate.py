@@ -330,9 +330,9 @@ def certificate_pdf_view(request, **kwargs):
         (margin_right - 230), (margin_bottom + 55))
     page.setFont('Times-Roman', 13)
     page.drawCentredString(
-        (margin_left + 150), (margin_bottom + 40), 'Project Owner')
+        (margin_left + 150), (margin_bottom + 40), 'Project Representative')
     page.drawCentredString(
-        (margin_right - 150), (margin_bottom + 40), 'Convener')
+        (margin_right - 150), (margin_bottom + 40), 'Course Convener')
 
     # Footnotes.
     page.setFont('Times-Roman', 14)
