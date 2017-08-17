@@ -17,5 +17,5 @@ then
 	make mediasync
 	ssh changelog.qgis.org "cd /home/projecta/deployment && git fetch --tags && git checkout $VERSION && make collectstatic && make reload"
 else
-	echo "Deploy to production aborted.
+	echo "Deploy to production aborted."
 fi
