@@ -239,7 +239,7 @@
                     {{ coursetype.name }}</a>
         </div></td>
 
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or project.owner %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-default btn-xs btn-delete tooltip-toggle"
