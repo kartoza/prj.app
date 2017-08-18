@@ -48,6 +48,7 @@ from views import (
     certificate_pdf_view,
     UnpaidCertificateListView,
     update_cost,
+    download_certificates_zip,
 
     # Validate Certificate.
     ValidateCertificate,
@@ -207,6 +208,10 @@ urlpatterns = patterns(
         '(?P<organisation_slug>[\w-]+)/course/'
         '(?P<course_slug>[\w-]+)/cost_certificate/$',
         update_cost, name='update_cost_certificate'),
+    url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+        '(?P<organisation_slug>[\w-]+)/course/'
+        '(?P<course_slug>[\w-]+)/download_zip/$',
+        download_certificates_zip, name='download_zip_all'),
 
     # Search.
     url(regex='^(?P<project_slug>[\w-]+)/certificate/$',

@@ -85,17 +85,17 @@
             </div>
 
         {# Only staff can add/edit organisations #}
-        {% if user.is_staff or user in certifyingorganisation.organisation_owners.all %}
+        {% if user.is_staff or user in certifyingorganisation.organisation_owners.all or user == certifyingorganisation.project.owner %}
             <div class="col-lg-4" style="padding: 0">
                 <div class="btn-group pull-right tooltip-toggle">
                     {%  if not certifyingorganisation.approved and user.is_staff %}
-                        <a class="btn btn-default btn-mini"
+                        <a class="btn btn-success btn-mini"
                            href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                             data-title="Approve {{ certifyingorganisation.name }}">
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
                     {% endif %}
-                    <a class="btn btn-default btn-mini tooltip-toggle"
+                    <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                        href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                         data-title="Delete {{ certifyingorganisation.name }}">
                         <span class="glyphicon glyphicon-minus"></span>
@@ -114,7 +114,14 @@
     <hr />
 
     <script>
-
+        $('.btn-delete').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-danger')
+            },
+            function (){
+                $(this).removeClass('btn-danger').addClass('btn-default')
+            }
+        )
     </script>
 
 {% endblock %}

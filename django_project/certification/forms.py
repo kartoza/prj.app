@@ -75,6 +75,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
         super(CertifyingOrganisationForm, self).__init__(*args, **kwargs)
         self.fields['organisation_owners'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
+        self.fields['organisation_owners'].initial = [self.user]
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):

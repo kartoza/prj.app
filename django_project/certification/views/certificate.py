@@ -1,7 +1,14 @@
 # coding=utf-8
+import StringIO
+import os
+import zipfile
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.views.generic import CreateView, DetailView, ListView
+from django.contrib.sites.models import Site
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from django.shortcuts import render
 from django.template.defaulttags import register
 from braces.views import LoginRequiredMixin
@@ -79,6 +86,60 @@ class CertificateCreateView(
             'attendee': self.attendee,
         })
         return kwargs
+
+    def form_valid(self, form):
+        """Save new created certificate
+
+        :param form
+        :type form
+
+        :returns HttpResponseRedirect object to success_url
+        :rtype: HttpResponseRedirect
+
+        We check that there is no referential integrity error when saving."""
+
+        try:
+            super(CertificateCreateView, self).form_valid(form)
+            certificate_id = form.instance.certificateID
+
+            # Send email to the attendee when the certificate is issued.
+            if Site._meta.installed:
+                site = Site.objects.get_current().domain
+
+            send_mail(
+                'Certificate from %s Course' % self.course.course_type,
+                'Dear %s %s,\n\n' % (
+                    self.attendee.firstname, self.attendee.surname) +
+                'Congratulations!\n'
+                'Your certificate from the following course '
+                'has been issued.\n\n' +
+                'Course type: %s\n' % self.course.course_type +
+                'Course date: %s to %s\n' % (
+                    self.course.start_date.strftime('%d %B %Y'),
+                    self.course.end_date.strftime('%d %B %Y')) +
+                'Training center: %s\n' % self.course.training_center +
+                'Certifying organisation: %s\n\n'
+                % self.course.certifying_organisation +
+                'You may check the full details of the certificate '
+                'by visiting:\n'
+                'http://%s/en/%s/certificate/%s/\n\n' % (
+                    site,
+                    self.course.certifying_organisation.project.slug,
+                    certificate_id
+                ) +
+                'Sincerely,\n%s %s' % (
+                    self.course.course_convener.user.first_name,
+                    self.course.course_convener.user.last_name
+                ),
+                self.course.course_convener.user.email,
+                [self.attendee.email],
+                fail_silently=False,
+            )
+
+            return HttpResponseRedirect(self.get_success_url())
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Certificate already exists!')
 
 
 class CertificateDetailView(DetailView):
@@ -159,7 +220,8 @@ def certificate_pdf_view(request, **kwargs):
 
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="certificate.pdf"'
+    response['Content-Disposition'] = \
+        'filename=%s.pdf' % certificate.certificateID
 
     # Create the PDF object, using the response object as its "file."
     page = canvas.Canvas(response, pagesize=landscape(A4))
@@ -270,9 +332,9 @@ def certificate_pdf_view(request, **kwargs):
         (margin_right - 230), (margin_bottom + 55))
     page.setFont('Times-Roman', 13)
     page.drawCentredString(
-        (margin_left + 150), (margin_bottom + 40), 'Project Owner')
+        (margin_left + 150), (margin_bottom + 40), 'Project Representative')
     page.drawCentredString(
-        (margin_right - 150), (margin_bottom + 40), 'Convener')
+        (margin_right - 150), (margin_bottom + 40), 'Course Convener')
 
     # Footnotes.
     page.setFont('Times-Roman', 14)
@@ -389,3 +451,44 @@ def update_cost(request, **kwargs):
             'project_slug': project_slug,
             'organisation_slug': organisation_slug,
             'course_slug': course_slug})
+
+def download_certificates_zip(request, **kwargs):
+    """Download all certificates in a course as one zip file."""
+
+    project_slug = kwargs.pop('project_slug')
+    course_slug = kwargs.pop('course_slug')
+    course = Course.objects.get(slug=course_slug)
+    organisation_slug = kwargs.pop('organisation_slug')
+
+    certificates = Certificate.objects.filter(course=course)
+
+    filenames = []
+    for certificate in certificates:
+        pdf_file = certificate_pdf_view(
+            request, pk=certificate.attendee.pk, project_slug=project_slug,
+            course_slug=course_slug, organisation_slug=organisation_slug)
+
+        with open('/tmp/%s.pdf' % certificate.certificateID, 'wb') as pdf:
+            pdf.write(pdf_file.content)
+
+        filenames.append('/tmp/%s.pdf' % certificate.certificateID)
+
+    zip_subdir = '%s' % course.name
+
+    s = StringIO.StringIO()
+    zf = zipfile.ZipFile(s, "w")
+
+    for fpath in filenames:
+        fdir, fname = os.path.split(fpath)
+        zip_path = os.path.join(zip_subdir, fname)
+
+        zf.write(fpath, zip_path)
+
+    zf.close()
+
+    response = HttpResponse(
+        s.getvalue(), content_type="application/x-zip-compressed")
+    response['Content-Disposition'] = \
+        'attachment; filename=certificates.zip'
+
+    return response

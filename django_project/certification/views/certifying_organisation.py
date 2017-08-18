@@ -488,11 +488,8 @@ class CertifyingOrganisationUpdateView(
         :rtype: QuerySet
         """
 
-        qs = CertifyingOrganisation.approved_objects
-        if self.request.user.is_staff:
-            return qs
-        else:
-            return qs.filter(organisation_owners=self.request.user)
+        qs = CertifyingOrganisation.objects.all()
+        return qs
 
     def get_success_url(self):
         """Define the redirect URL.
@@ -521,7 +518,7 @@ class CertifyingOrganisationUpdateView(
 
 
 class PendingCertifyingOrganisationListView(
-        StaffuserRequiredMixin,
+        LoginRequiredMixin,
         CertifyingOrganisationMixin,
         PaginationMixin,
         ListView):
