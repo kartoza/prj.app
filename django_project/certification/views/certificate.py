@@ -4,7 +4,6 @@ import os
 import zipfile
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.views.generic import CreateView, DetailView
-from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
