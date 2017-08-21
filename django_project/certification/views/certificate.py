@@ -98,12 +98,10 @@ class CertificateCreateView(
 
         try:
             super(CertificateCreateView, self).form_valid(form)
-            certificate_id = form.instance.certificateID
+            pk = self.attendee.pk
+            site = self.request.get_host()
 
             # Send email to the attendee when the certificate is issued.
-            if Site._meta.installed:
-                site = Site.objects.get_current().domain
-
             send_mail(
                 'Certificate from %s Course' % self.course.course_type,
                 'Dear %s %s,\n\n' % (
@@ -117,13 +115,16 @@ class CertificateCreateView(
                     self.course.end_date.strftime('%d %B %Y')) +
                 'Training center: %s\n' % self.course.training_center +
                 'Certifying organisation: %s\n\n'
-                % self.course.certifying_organisation +
-                'You may check the full details of the certificate '
+                % self.course.certifying_organisation.name +
+                'You may print the certificate '
                 'by visiting:\n'
-                'http://%s/en/%s/certificate/%s/\n\n' % (
+                'http://%s/en/%s/certifyingorganisation/%s/course/'
+                '%s/print/%s/\n\n' % (
                     site,
                     self.course.certifying_organisation.project.slug,
-                    certificate_id
+                    self.course.certifying_organisation.slug,
+                    self.course.slug,
+                    pk
                 ) +
                 'Sincerely,\n%s %s' % (
                     self.course.course_convener.user.first_name,
