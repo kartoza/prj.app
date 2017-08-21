@@ -74,7 +74,7 @@ def validate_email_address(value):
         return False
 
 
-class CertifyingOrganisation(SlugifyingMixin, models.Model):
+class CertifyingOrganisation(models.Model):
     """Certifying organisation model."""
 
     name = models.CharField(
@@ -145,6 +145,13 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
         unique_together = ['name', 'project']
 
     def save(self, *args, **kwargs):
+        if not self.pk:
+            words = self.name.split()
+            filtered_words = [word for word in words if
+                              word.lower() not in STOP_WORDS]
+            # unidecode() represents special characters (unicode data) in ASCII
+            new_list = unidecode(' '.join(filtered_words))
+            self.slug = self.project.name.lower() + '-' + slugify(new_list)[:50]
         super(CertifyingOrganisation, self).save(*args, **kwargs)
 
     def __unicode__(self):
