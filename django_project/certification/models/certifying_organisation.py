@@ -151,7 +151,7 @@ class CertifyingOrganisation(models.Model):
                               word.lower() not in STOP_WORDS]
             # unidecode() represents special characters (unicode data) in ASCII
             new_list = \
-                self.project.name.lower() + ' ' + \
+                self.project.slug + ' ' + \
                 unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
         super(CertifyingOrganisation, self).save(*args, **kwargs)
