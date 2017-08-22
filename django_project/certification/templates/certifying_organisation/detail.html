@@ -394,7 +394,7 @@
     {% for course in courses %}
         <tr style="list-style-type: none; margin-left: 20px; margin-top: 10px;">
         <td id="{{ course.id }}-{{ course.name }}">
-                {{ course.name }}
+                {{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})
         </td>
         <td id="{{ course.id }}-{{ course.training_center.name }}">
                 {{ course.training_center.name }}
