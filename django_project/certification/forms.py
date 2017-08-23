@@ -51,6 +51,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
             'organisation_phone',
             'logo',
             'organisation_owners',
+            'project',
         )
 
     def __init__(self, *args, **kwargs):
@@ -76,11 +77,12 @@ class CertifyingOrganisationForm(forms.ModelForm):
         self.fields['organisation_owners'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
         self.fields['organisation_owners'].initial = [self.user]
+        self.fields['project'].initial = self.project
+        self.fields['project'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
         instance = super(CertifyingOrganisationForm, self).save(commit=False)
-        instance.project = self.project
         instance.save()
         self.save_m2m()
         return instance

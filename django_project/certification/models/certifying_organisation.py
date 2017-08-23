@@ -74,15 +74,14 @@ def validate_email_address(value):
         return False
 
 
-class CertifyingOrganisation(SlugifyingMixin, models.Model):
+class CertifyingOrganisation(models.Model):
     """Certifying organisation model."""
 
     name = models.CharField(
         help_text=_('name of organisation or institution'),
         max_length=200,
         null=False,
-        blank=False,
-        unique=True
+        blank=False
     )
 
     organisation_email = models.CharField(
@@ -143,12 +142,22 @@ class CertifyingOrganisation(SlugifyingMixin, models.Model):
 
         app_label = 'certification'
         ordering = ['name']
+        unique_together = ['name', 'project']
 
     def save(self, *args, **kwargs):
+        if not self.pk:
+            words = self.name.split()
+            filtered_words = [word for word in words if
+                              word.lower() not in STOP_WORDS]
+            # unidecode() represents special characters (unicode data) in ASCII
+            new_list = \
+                self.project.slug + ' ' + \
+                unidecode(' '.join(filtered_words))
+            self.slug = slugify(new_list)[:50]
         super(CertifyingOrganisation, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return self.name
+        return '%s - %s' % (self.project.name, self.name)
 
     def get_absolute_url(self):
         """Return URL to certifying organisation detail page.

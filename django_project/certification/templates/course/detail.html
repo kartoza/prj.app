@@ -15,7 +15,7 @@
 
     <div class="row">
         <div class="col-lg-10">
-        <h1>{{ course.name }}</h1><br/>
+        <h1>{{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})</h1><br/>
         </div>
 
         <div class="col-lg-2" style="margin-top: 20px">
@@ -42,7 +42,7 @@
     </div>
 
     <div class="details" style="margin-top: 15px; width: 60%">
-        <span class="grey-italic col-lg-3">Course name</span><span class="col-lg-9">{{ course.name }}<br/></span>
+        <span class="grey-italic col-lg-3">Course name</span><span class="col-lg-9">{{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})<br/></span>
         <span class="grey-italic col-lg-3">Course type</span><span class="col-lg-9">{{ course.course_type }}<br/></span>
         <span class="grey-italic col-lg-3">Course convener</span>
         {% if course.course_convener.user.first_name %}
