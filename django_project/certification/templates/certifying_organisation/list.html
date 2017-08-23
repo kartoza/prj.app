@@ -16,6 +16,13 @@
         .order:hover {
             background-color: #F9F9F9;
         }
+
+        .badge-notify{
+            background:red !important;
+            position: absolute !important;
+            float: right !important;
+            top: -8px !important;
+        }
     </style>
     
     <div class="page-header">
@@ -42,8 +49,18 @@
                             <span class="glyphicon glyphicon-th-list"></span>
                         </a>
                     {% endif %}
-
+                    {% if user.is_staff or user == project.owner or user.pk in organisation_owners %}
+                        <a class="btn btn-info btn-mini tooltip-toggle"
+                           href='{% url "unpaid-certificate" project_slug %}'
+                           data-title="View Unpaid Certificates" style="position: relative">
+                            <span class="glyphicon glyphicon-folder-open"></span>
+                            {% ifnotequal num_unpaidcertificates 0 %}
+                                <span style="color: white !important;" class="badge badge-notify">!</span>
+                            {% endifnotequal %}
+                        </a>
+                    {% endif %}
                 </div>
+
             {% endif %}
         </h1>
     </div>

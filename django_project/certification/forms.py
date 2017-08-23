@@ -391,12 +391,18 @@ class CertificateForm(forms.ModelForm):
         fields = (
             'course',
             'attendee',
+            'cost',
         )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         self.course = kwargs.pop('course')
         self.attendee = kwargs.pop('attendee')
+        certificate_all = Certificate.objects.filter(course=self.course)
+        cost_value = 0
+        for certificate in certificate_all:
+            if certificate.cost:
+                cost_value = certificate.cost
         self.helper = FormHelper()
         self.helper.html5_required = False
         super(CertificateForm, self).__init__(*args, **kwargs)
@@ -404,6 +410,8 @@ class CertificateForm(forms.ModelForm):
         self.fields['course'].widget = forms.HiddenInput()
         self.fields['attendee'].initial = self.attendee
         self.fields['attendee'].widget = forms.HiddenInput()
+        self.fields['cost'].initial = cost_value
+        self.fields['cost'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Add'))
 
     def save(self, commit=True):

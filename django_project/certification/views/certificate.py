@@ -3,16 +3,18 @@ import StringIO
 import os
 import zipfile
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, ListView
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+from django.shortcuts import render
+from django.template.defaulttags import register
 from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.utils import ImageReader
-from ..models import Certificate, Course, Attendee
+from ..models import Certificate, Course, Attendee, CertifyingOrganisation
 from ..forms import CertificateForm
 from base.models.project import Project
 
@@ -350,6 +352,105 @@ def certificate_pdf_view(request, **kwargs):
     page.save()
     return response
 
+
+class UnpaidCertificateListView(
+        LoginRequiredMixin,
+        ListView):
+    """List view for unpaid certificates."""
+
+    model = Certificate
+    context_object_name = 'unpaidcertificates'
+    template_name = 'certificate/unpaid_certificate.html'
+
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        :returns: Queryset which is all certificate in the
+            corresponding organisation.
+        :rtype: QuerySet
+        """
+
+        qs = Certificate.objects.all()
+        return qs.filter(is_paid=False)
+
+    @register.filter
+    def get_item(dictionary, key):
+        return dictionary.get(key)
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+
+        context = super(
+            UnpaidCertificateListView, self).get_context_data(**kwargs)
+        project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
+        if project_slug:
+            context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = context['the_project']
+        context['organisations'] = \
+            CertifyingOrganisation.objects.filter(
+                project=context['project'], approved=True)
+        num_unpaidcertificates = {}
+        for organisation in context['organisations']:
+            num_unpaidcertificates[organisation.name] = \
+                Certificate.objects.filter(
+                    course__certifying_organisation=organisation).count()
+
+        total_outstanding = {}
+        for organisation in context['organisations']:
+            issued_certificates = \
+                Certificate.objects.filter(
+                    course__certifying_organisation=organisation)
+            total_cost = 0
+            for issued_certificate in issued_certificates:
+                if issued_certificate.cost:
+                    total_cost = total_cost + issued_certificate.cost
+            total_outstanding[organisation.name] = total_cost
+
+        context['num_unpaidcertificates'] = num_unpaidcertificates
+        context['total_outstanding'] = total_outstanding
+        context['organisation_owners_all'] = \
+            CertifyingOrganisation.objects.filter(
+                project=context['project']).values_list(
+                'organisation_owners', flat=True)
+
+        return context
+
+
+def update_cost(request, **kwargs):
+    """View to update the cost of certificate in a course."""
+
+    project_slug = kwargs.pop('project_slug')
+    organisation_slug = kwargs.pop('organisation_slug')
+    course_slug = kwargs.pop('course_slug')
+    course = Course.objects.get(slug=course_slug)
+    url = reverse('course-detail', kwargs={
+            'project_slug': project_slug,
+            'organisation_slug': organisation_slug,
+            'slug': course_slug
+    })
+
+    if request.method == 'POST':
+        if request.POST.get('cost', False):
+            cost_value = request.POST['cost']
+            queryset = Certificate.objects.filter(course=course)
+            queryset.update(cost=cost_value)
+            return HttpResponseRedirect(url)
+
+    return render(
+        request, 'certificate/update_cost.html',
+        context={
+            'course': course,
+            'project_slug': project_slug,
+            'organisation_slug': organisation_slug,
+            'course_slug': course_slug})
 
 def download_certificates_zip(request, **kwargs):
     """Download all certificates in a course as one zip file."""

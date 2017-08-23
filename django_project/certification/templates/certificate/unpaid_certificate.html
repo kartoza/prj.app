@@ -1,0 +1,81 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+{% load staticfiles %}
+
+{% block title %}Unpaid Certificates - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/organisation_detail.css' %}">
+
+    {% if user.pk in organisation_owners_all or user.is_staff or user == project.owner %}
+    <div class="row">
+        <div class="col-lg-10">
+            <h1 style="margin-bottom: 30px">Unpaid Certificates</h1>
+        </div>
+
+        <div class="col-lg-2">
+            <div class="btn-group pull-right">
+                 <a class="btn btn-default btn-mini tooltip-toggle"
+                    href='{% url "certifyingorganisation-list" project.slug %}'
+                    data-title="Back">
+                     <span class="glyphicon glyphicon-arrow-left"></span>
+                 </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="margin-left: -15px; font-family: inherit">
+    {% for organisation in organisations %}
+    {% if user.is_staff or user in organisation.organisation_owners.all or user == project.owner %}
+    <div class="menu-wrapper menu-wrapper-head">
+        <h3 class="custom-heading" style="margin-top: 10px"> Organisation: {{ organisation.name }} </h3>
+    </div>
+
+    <div class="menu-wrapper menu-wrapper-body">
+    <div class="menu-details">
+    {% for key, value in num_unpaidcertificates.items %}
+    {% if key == organisation.name %}
+        {% if value == 0 %}
+            <h4>There are no unpaid certificates.</h4>
+        {% else %}
+            <table class="course" style="margin-top: 15px">
+            <tr>
+                <th>ID</th>
+                <th>Course Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Attendee</th>
+                <th>Cost</th>
+                <th>Certificate Link</th>
+            </tr>
+            {% for unpaid_certificate in unpaidcertificates %}
+                {% if unpaid_certificate.course.certifying_organisation == organisation %}
+                <tr>
+                    <td>{{ unpaid_certificate.certificateID }}</td>
+                    <td>{{ unpaid_certificate.course.course_type }}</td>
+                    <td>{{ unpaid_certificate.course.start_date }}</td>
+                    <td>{{ unpaid_certificate.course.end_date }}</td>
+                    <td>{{ unpaid_certificate.attendee.firstname }} {{ unpaid_certificate.attendee.surname }}</td>
+                    <td>{{ unpaid_certificate.cost }}</td>
+                    <td><a href="/en/{{ project_slug }}/certificate/{{ unpaid_certificate.certificateID }}/">link</a> </td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+            </table>
+            <span style="line-height: 50px; font-weight: 500">Total outstanding: USD {{ total_outstanding|get_item:key }}</span>
+        {% endif %}
+    {% endif %}
+    {% endfor %}
+    </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    </div>
+    {% else %}
+        <div class="container" style="margin: 0px auto; text-align: center; top: 30%; position: absolute">
+            <h1><span class="glyphicon glyphicon-warning-sign"></span></h1>
+            <h3>Sorry, this page is not available for you.</h3>
+        </div>
+    {% endif %}
+{% endblock %}

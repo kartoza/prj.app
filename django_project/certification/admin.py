@@ -10,6 +10,8 @@ from certification.models.course_convener import CourseConvener
 from certification.models.course_type import CourseType
 from certification.models.attendee import Attendee
 from certification.models.course_attendee import CourseAttendee
+from certification.models.certificate_payment_transaction import \
+    CertificatePaymentTransaction
 
 
 class CertificateAdmin(admin.ModelAdmin):
@@ -140,3 +142,4 @@ admin.site.register(TrainingCenter, TrainingCenterAdmin)
 admin.site.register(CourseConvener, CourseConvenerAdmin)
 admin.site.register(CertifyingOrganisation, CertifyingOrganisationAdmin)
 admin.site.register(CourseAttendee, CourseAttendeeAdmin)
+admin.site.register(CertificatePaymentTransaction)
