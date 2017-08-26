@@ -16,7 +16,6 @@ from ..models import Certificate, Course, Attendee
 from ..forms import CertificateForm
 from base.models.project import Project
 
-
 class CertificateMixin(object):
     """Mixin class to provide standard settings for Certificate."""
 
@@ -206,37 +205,34 @@ class CertificateDetailView(DetailView):
 
 
 def certificate_pdf_view(request, **kwargs):
-    #1. Look for certificate under
-    # id = certificate.certificateID
-    # /media/id.pdf
-    #2. Found: Yes - serve the pdf \
-    #3. Found: No - generate the rest of the function
-    #4. Generate the pdf at the ends
-    #5. Refresh button functionality
-    found = os.path.isfile('/media/{}.pdf'.format(certificate.certificateID)) #Returns true/false depending if file was found
+    #1. look for file
+    #2. if found -> yes - open up the pdf and create response
+    #3  if found -> no - generate the pdf and store under /media/certificate.certificateID.pdf
+    project_slug = kwargs.pop('project_slug')
+    course_slug = kwargs.pop('course_slug')
+    pk = kwargs.pop('pk')
+    project = Project.objects.get(slug=project_slug)
+    course = Course.objects.get(slug=course_slug)
+    attendee = Attendee.objects.get(pk=pk)
+    certificate = Certificate.objects.get(course=course, attendee=attendee)
+    current_site = request.META['HTTP_HOST']
+
+    # Create the HttpResponse object with the appropriate PDF headers.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = \
+        'filename=%s.pdf' % certificate.certificateID
+    filename = "{}.{}".format(certificate.certificateID, "pdf")
+    pathname = os.path.join('/home/web/media', 'pdf/{}'.format(filename))
+    found = os.path.exists(pathname)
     if found:
-        with open('/media/{}.pdf'.format(certificate.certificateID), 'r') as pdf:
+        with open(pathname, 'r') as pdf:
             response = HttpResponse(pdf.read(),content_type='application/pdf')
             response['Content-Disposition'] = \
-            'filename=%s.pdf' % certificate.certificateID
+                'filename=%s' % pdf
             return response
     else:
-        project_slug = kwargs.pop('project_slug')
-        course_slug = kwargs.pop('course_slug')
-        pk = kwargs.pop('pk')
-        project = Project.objects.get(slug=project_slug)
-        course = Course.objects.get(slug=course_slug)
-        attendee = Attendee.objects.get(pk=pk)
-        certificate = Certificate.objects.get(course=course, attendee=attendee)
-        current_site = request.META['HTTP_HOST']
-
-        # Create the HttpResponse object with the appropriate PDF headers.
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = \
-            'filename=%s.pdf' % certificate.certificateID
-
         # Create the PDF object, using the response object as its "file."
-        page = canvas.Canvas(response, pagesize=landscape(A4))
+        page = canvas.Canvas(pathname, pagesize=landscape(A4))
         width, height = A4
         center = height * 0.5
 
@@ -362,10 +358,15 @@ def certificate_pdf_view(request, **kwargs):
         # Close the PDF object cleanly.
         page.showPage()
         page.save()
-        #Store the pdf under the /media directory
-        with open('/media/%s.pdf' % certificate.certificateID, 'wb') as pdf:
-            pdf.write(response.content)
-        return response
+        makepath = '/home/web/media/pdf/'
+        #Make pdf directory in /media folder
+        if not os.path.exists(makepath):
+            os.makedirs(makepath)
+        with open(pathname, 'r') as pdf:
+            response = HttpResponse(pdf.read(),content_type='application/pdf')
+            response['Content-Disposition'] = \
+                'filename=%s' % pdf
+            return response
 
 
 def download_certificates_zip(request, **kwargs):
