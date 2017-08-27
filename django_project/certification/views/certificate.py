@@ -16,6 +16,7 @@ from ..models import Certificate, Course, Attendee
 from ..forms import CertificateForm
 from base.models.project import Project
 
+
 class CertificateMixin(object):
     """Mixin class to provide standard settings for Certificate."""
 
@@ -205,9 +206,10 @@ class CertificateDetailView(DetailView):
 
 
 def certificate_pdf_view(request, **kwargs):
-    #1. look for file
-    #2. if found -> yes - open up the pdf and create response
-    #3  if found -> no - generate the pdf and store under /media/certificate.certificateID.pdf
+    # 1. look for file
+    # 2. if found -> yes - open up the pdf and create response
+    # 3  if found -> no - generate the pdf and store under
+    # /media/certificate.certificateID.pdf
     project_slug = kwargs.pop('project_slug')
     course_slug = kwargs.pop('course_slug')
     pk = kwargs.pop('pk')
@@ -226,7 +228,7 @@ def certificate_pdf_view(request, **kwargs):
     found = os.path.exists(pathname)
     if found:
         with open(pathname, 'r') as pdf:
-            response = HttpResponse(pdf.read(),content_type='application/pdf')
+            response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = \
                 'filename=%s' % pdf
             return response
@@ -242,7 +244,8 @@ def certificate_pdf_view(request, **kwargs):
             project_logo = None
 
         if course.certifying_organisation.logo:
-            organisation_logo = ImageReader(course.certifying_organisation.logo)
+            organisation_logo = ImageReader(
+                course.certifying_organisation.logo)
         else:
             organisation_logo = None
 
@@ -314,8 +317,13 @@ def certificate_pdf_view(request, **kwargs):
         if project_owner_signature is not None:
             page.drawImage(
                 project_owner_signature,
-                (margin_left + 100), (margin_bottom + 70), width=100, height=70,
-                preserveAspectRatio=True, anchor='s', mask='auto')
+                (margin_left + 100),
+                (margin_bottom + 70),
+                width=100,
+                height=70,
+                preserveAspectRatio=True,
+                anchor='s',
+                mask='auto')
 
         if convener_signature is not None:
             page.drawImage(
@@ -340,14 +348,20 @@ def certificate_pdf_view(request, **kwargs):
             (margin_right - 230), (margin_bottom + 55))
         page.setFont('Times-Roman', 13)
         page.drawCentredString(
-            (margin_left + 150), (margin_bottom + 40), 'Project Representative')
+            (margin_left + 150),
+            (margin_bottom + 40),
+            'Project Representative')
         page.drawCentredString(
             (margin_right - 150), (margin_bottom + 40), 'Course Convener')
 
         # Footnotes.
         page.setFont('Times-Roman', 14)
         page.drawString(
-            margin_left, margin_bottom - 10, 'ID: %s' % certificate.certificateID)
+            margin_left,
+            margin_bottom -
+            10,
+            'ID: %s' %
+            certificate.certificateID)
         page.setFont('Times-Roman', 8)
         page.drawString(
             margin_left, (margin_bottom - 20),
@@ -362,7 +376,7 @@ def certificate_pdf_view(request, **kwargs):
         if not os.path.exists(makepath):
             os.makedirs(makepath)
         with open(pathname, 'r') as pdf:
-            response = HttpResponse(pdf.read(),content_type='application/pdf')
+            response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = \
                 'filename=%s' % pdf
             return response
