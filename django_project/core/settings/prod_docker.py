@@ -11,7 +11,6 @@ ALLOWED_HOSTS = ['*']
 
 ADMINS = (
     ('Tim Sutton', 'tim@kartoza.com'),
-    ('Ismail Sunni', 'ismail@kartoza.com'),
     ('Christian Christellis', 'christian@kartoza.com'),
     ('Anita Hapsari', 'anita@kartoza.com'),)
 
