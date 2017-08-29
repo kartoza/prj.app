@@ -26,6 +26,7 @@ class ProjectForm(forms.ModelForm):
             'image_file',
             'gitter_room',
             'signature',
+            'certificate_cost'
         )
 
     def __init__(self, *args, **kwargs):
@@ -38,6 +39,7 @@ class ProjectForm(forms.ModelForm):
                 Field('image_file', css_class="form-control"),
                 Field('signature', css_class="form-control"),
                 Field('gitter_room', css_class="form-control"),
+                Field('certificate_cost', css_class="form-control"),
                 css_id='project-form')
         )
         self.helper.layout = layout

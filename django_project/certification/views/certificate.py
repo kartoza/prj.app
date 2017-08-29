@@ -12,7 +12,7 @@ from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.utils import ImageReader
-from ..models import Certificate, Course, Attendee
+from ..models import Certificate, Course, Attendee, CertifyingOrganisation
 from ..forms import CertificateForm
 from base.models.project import Project
 
@@ -97,6 +97,15 @@ class CertificateCreateView(
 
         try:
             super(CertificateCreateView, self).form_valid(form)
+
+            # Update organisation credits every time a certificate is issued.
+            organisation = \
+                CertifyingOrganisation.objects.get(
+                    slug=self.organisation_slug)
+            remaining_credits = organisation.credits_certificate - 1
+            organisation.credits_certificate = remaining_credits
+            organisation.save()
+
             pk = self.attendee.pk
             site = self.request.get_host()
 

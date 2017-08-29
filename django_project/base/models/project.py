@@ -102,6 +102,14 @@ class Project(models.Model):
         default=False
     )
 
+    certificate_cost = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        default=0
+    )
+
     private = models.BooleanField(
         help_text=_('Only visible to logged-in users?'),
         default=False
