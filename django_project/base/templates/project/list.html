@@ -15,6 +15,12 @@
 {% endblock %}
 
 {% block content %}
+    {% if message %}
+      <div class="message-info">
+          <p style="text-align: center; font-family: inherit; color: gray; background: #e0ecff; padding: 10px; border-radius: 5px; border: 1px solid #e0ecff"
+             >{{ message }}</p>
+      </div>
+    {% endif %}
     <div class="page-header">
       <p class="lead text-center text-muted">
         {% trans "High level software project management. Made easy." %}
@@ -51,4 +57,10 @@
     {% for project in projects %}
       {% include 'project/includes/project-panel.html' %}
     {%  endfor %}
+
+    <script>
+        $(document).click(function () {
+            $('.message-info').fadeOut('fast')
+        });
+    </script>
 {% endblock %}
