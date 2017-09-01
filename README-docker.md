@@ -110,6 +110,9 @@ e.g.
 sudo /etc/init.d/nginx restart
 ```
 
+**Note that the default configuration runs the service directly on port 80 since
+we assume there is a dedicated server for deployment.**
+
 # Configuration options
 
 You can configure the base port used and various other options like the
