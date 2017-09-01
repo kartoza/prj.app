@@ -114,3 +114,7 @@ django_project/media
 # Backups
 *.dmp
 deployment/backups
+
+# We should never version the btsync keys
+deployment/btsync-media.env
+deployment/btsync-db.env

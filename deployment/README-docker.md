@@ -21,14 +21,12 @@ images for you in **production mode**.
 
 ```
 cd deployment
-# allow pg volume to be written to
-sudo chmod -R a+rwX pg/postgres_data/
 make deploy
 sudo chmod -R a+rwX static
 ```
 
 Now point your browser at the ip of the web container on port 8080 or to the
-host port mapping as defined in the fig.yml file.
+host port mapping as defined in the docker-compose.yml file.
 
 
 To make a superuser account do:
@@ -89,11 +87,11 @@ sudo /etc/init.d/nginx restart
 
 ### Managing containers
 
-Please refer to the general [fig documentation](http://www.fig.sh/cli.hyml)
-for further notes on how to manage the infrastructure using fig.
+Please refer to the general docker-compose documentation
+for further notes on how to manage the infrastructure using docker-compose.
 
 # Configuration options
 
 You can configure the base port used and various other options like the
-image organisation namespace and postgis user/pass by editing the ``fig*.yml``
+image organisation namespace and postgis user/pass by editing the ``docker-compose*.yml``
 files.
