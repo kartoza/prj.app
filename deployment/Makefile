@@ -32,8 +32,8 @@ web:
 	@# This one runs the postgis-backup cron container
 	@# We add --no-recreate so that it does not destroy & recreate the db container
 	@docker-compose -p $(PROJECT_ID) up --no-recreate --no-deps -d dbbackups
-	@docker-compose -p $(PROJECT_ID) up btsync-db
-	@docker-compose -p $(PROJECT_ID) up btsync-media
+	@docker-compose -p $(PROJECT_ID) up -d btsync-db
+	@docker-compose -p $(PROJECT_ID) up -d btsync-media
 
 permissions:
 	# Probably we want something more granular here....
