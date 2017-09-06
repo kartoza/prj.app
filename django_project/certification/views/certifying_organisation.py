@@ -1,5 +1,6 @@
 # coding=utf-8
 from base.models import Project
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -341,8 +342,31 @@ class CertifyingOrganisationDeleteView(
         return qs
 
 
+class CustomSuccessMessageMixin(object):
+    """
+    Adds a success message and extra tags on successful form submission.
+    """
+    success_message = ''
+    message_extra_tags = ''
+
+    def form_valid(self, form):
+        response = super(CustomSuccessMessageMixin, self).form_valid(form)
+        success_message = self.get_success_message(form.cleaned_data)
+        message_extra_tags = self.get_extra_tags(form.cleaned_data)
+        if success_message:
+            messages.success(self.request, success_message, message_extra_tags)
+        return response
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % cleaned_data
+
+    def get_extra_tags(self, cleaned_data):
+        return self.message_extra_tags % cleaned_data
+
+
 # noinspection PyAttributeOutsideInit
 class CertifyingOrganisationCreateView(
+        CustomSuccessMessageMixin,
         LoginRequiredMixin,
         CertifyingOrganisationMixin,
         CreateView):
@@ -350,6 +374,9 @@ class CertifyingOrganisationCreateView(
 
     context_object_name = 'certifyingorganisation'
     template_name = 'certifying_organisation/create.html'
+    success_message = 'Your organisation is successfully registered. '\
+                      'It is now waiting for an approval.'
+    message_extra_tags = 'organisation_submitted'
 
     def get_success_url(self):
         """Define the redirect URL.

@@ -11,6 +11,28 @@
 {% endblock page_title %}
 
 {% block content %}
+    <style>
+        .success {
+            text-align: center;
+            font-family: inherit;
+            color: inherit;
+            background: #adffd2;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #96ffc5;
+        }
+    </style>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            {% if 'organisation_submitted' in message.tags %}
+                <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="page-header">
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
@@ -106,6 +128,9 @@
     {% include "_pagination.html" %}
 
     <script>
+        $(document).click(function () {
+            $('.messages').fadeOut('fast')
+        });
         $('.btn-delete').hover(
             function (){
                 $(this).removeClass('btn-default').addClass('btn-danger')
@@ -113,7 +138,7 @@
             function (){
                 $(this).removeClass('btn-danger').addClass('btn-default')
             }
-        )
+        );
         $('.btn-approved').hover(
             function (){
                 $(this).removeClass('btn-default').addClass('btn-success')

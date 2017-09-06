@@ -84,12 +84,14 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
         context['num_projects'] = self.get_queryset().count()
         context[
             'PROJECT_VERSION_LIST_SIZE'] = settings.PROJECT_VERSION_LIST_SIZE
-        project = Project.objects.filter(owner=self.request.user)
-        pending_organisation = CertifyingOrganisation.objects.filter(
-            project=project, approved=False
-        )
-        if self.request.user.is_authenticated() and pending_organisation:
-            context['message'] = 'You have pending organisation approval.'
+        if self.request.user.is_authenticated():
+            project = Project.objects.filter(owner=self.request.user)
+            pending_organisation = CertifyingOrganisation.objects.filter(
+                project=project, approved=False
+            )
+            if pending_organisation:
+                context['message'] = \
+                    'You have a pending organisation approval.'
         return context
 
     def get_queryset(self):
