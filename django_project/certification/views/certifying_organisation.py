@@ -1,6 +1,7 @@
 # coding=utf-8
 from base.models import Project
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -422,6 +423,27 @@ class CertifyingOrganisationCreateView(
 
         try:
             super(CertifyingOrganisationCreateView, self).form_valid(form)
+            site = self.request.get_host()
+
+            send_mail(
+                'Projecta - New Pending Organisation Approval',
+                'Dear %s %s,\n\n' % (
+                    self.project.owner.first_name,
+                    self.project.owner.last_name) +
+                'You have a new organisation registered to your project: %s.\n'
+                % self.project.name +
+                'You may review and approve the organisation by following this'
+                ' link:\n'
+                '%s/en/%s/pending-certifyingorganisation/list/\n\n'
+                % (site, self.project_slug) +
+                'Sincerely,\n\n\n\n\n'
+                '----------------------------------------------------------\n'
+                'This is an auto-generated email from the system.'
+                ' Please do not reply to this email.',
+                self.project.owner.email,
+                [self.project.owner.email],
+                fail_silently=False,
+            )
             return HttpResponseRedirect(self.get_success_url())
         except IntegrityError:
             return ValidationError(
