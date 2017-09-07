@@ -19,8 +19,8 @@
       <div class="message-info">
           <p style="text-align: center; font-family: inherit; color: inherit; background: #e0ecff; padding: 10px; border-radius: 5px; border: 1px solid #e0ecff"
              >{{ message }}
-              {% for pending_organisation in pending_organisations %}
-                  <a href="{{ pending_organisation.project.slug }}/pending-certifyingorganisation/list/">here</a>
+              {% for project in project_with_pending %}
+                  <a href="{{ project.slug }}/pending-certifyingorganisation/list/">here</a>
               {% endfor %}
           </p>
       </div>

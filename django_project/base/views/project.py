@@ -90,7 +90,12 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
                 project=project, approved=False
             )
             if pending_organisation:
-                context['pending_organisations'] = pending_organisation
+                context['project_with_pending'] = []
+                for organisation in pending_organisation:
+                    if organisation.project not in \
+                            context['project_with_pending']:
+                        context['project_with_pending'].append(
+                            organisation.project)
                 context['message'] = \
                     'You have a pending organisation approval. ' \
                     'Follow this link to review: '
