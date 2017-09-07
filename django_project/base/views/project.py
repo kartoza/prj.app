@@ -90,8 +90,10 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
                 project=project, approved=False
             )
             if pending_organisation:
+                context['pending_organisations'] = pending_organisation
                 context['message'] = \
-                    'You have a pending organisation approval.'
+                    'You have a pending organisation approval. ' \
+                    'Follow this link to review: '
         return context
 
     def get_queryset(self):

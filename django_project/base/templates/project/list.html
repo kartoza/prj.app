@@ -18,7 +18,11 @@
     {% if message %}
       <div class="message-info">
           <p style="text-align: center; font-family: inherit; color: inherit; background: #e0ecff; padding: 10px; border-radius: 5px; border: 1px solid #e0ecff"
-             >{{ message }}</p>
+             >{{ message }}
+              {% for pending_organisation in pending_organisations %}
+                  <a href="{{ pending_organisation.project.slug }}/pending-certifyingorganisation/list/">here</a>
+              {% endfor %}
+          </p>
       </div>
     {% endif %}
     <div class="page-header">
