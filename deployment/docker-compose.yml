@@ -1,5 +1,6 @@
 #
 # Production server with UWSGI configured to run on port 8080
+# and web configured to run directly on port 80
 #
 # docker-compose build
 # docker-compose up -d web
@@ -127,3 +128,39 @@ devweb:
     - "61202:8080"
     # for ssh
     - "61203:22"
+
+btsync-db:                                                                                                                                   
+  # BTSync backups for database dumps
+  image: kartoza/btsync
+  volumes:
+    # We mount RW so that we can use remove peer to clean up old backups off the server
+    - ./backups:/web:rw
+  env_file:
+    # The environment file should define two variables:
+    # SECRET: a RW btsync key if the server is a production server
+    #         a RO btsync key if it is staging or development machine
+    # DEVICE: a unique device name so you can recognise which host is being peered with in btsync
+    # See the btsync example env in this folder for a template
+    # NOTE:
+    # Do not version control the env file as anyone else could peer it and sync
+    # our database backups etc.
+    - btsync-db.env
+
+btsync-media:                                                                                                                                   
+  # BTSync backups for django media
+  image: kartoza/btsync
+  volumes:
+    # We mount RO as we do not really want peers to change this data
+    - ./media:/web:ro
+  env_file:
+    # The environment file should define two variables:
+    # SECRET: a RW btsync key if the server is a production server
+    #         a RO btsync key if it is staging or development machine
+    # DEVICE: a unique device name so you can recognise which host is being peered with in btsync
+    # See the btsync example env in this folder for a template
+    # NOTE:
+    # Do not version control the env file as anyone else could peer it and sync
+    # our media backups etc.
+    - btsync-media.env
+
+
