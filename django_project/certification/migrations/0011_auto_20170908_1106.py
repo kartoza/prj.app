@@ -12,8 +12,13 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
+            model_name='certificate',
+            name='is_paid',
+            field=models.BooleanField(default=False, help_text='Is this certificate paid?'),
+        ),
+        migrations.AddField(
             model_name='certifyingorganisation',
-            name='credits_certificate',
-            field=models.IntegerField(default=0, help_text='Credits for issuing certificate', null=True, blank=True),
+            name='organisation_credits',
+            field=models.IntegerField(default=0, help_text='Credits available', null=True, blank=True),
         ),
     ]

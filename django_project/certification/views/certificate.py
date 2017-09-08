@@ -102,8 +102,10 @@ class CertificateCreateView(
             organisation = \
                 CertifyingOrganisation.objects.get(
                     slug=self.organisation_slug)
-            remaining_credits = organisation.credits_certificate - 1
-            organisation.credits_certificate = remaining_credits
+            remaining_credits = \
+                organisation.organisation_credits - \
+                organisation.project.certificate_credit
+            organisation.organisation_credits = remaining_credits
             organisation.save()
 
             pk = self.attendee.pk

@@ -119,8 +119,8 @@ class CertifyingOrganisation(models.Model):
         blank=False
     )
 
-    credits_certificate = models.IntegerField(
-        help_text=_('Credits for issuing certificate'),
+    organisation_credits = models.IntegerField(
+        help_text=_('Credits available'),
         default=0,
         null=True,
         blank=True

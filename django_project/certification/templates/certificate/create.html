@@ -11,7 +11,8 @@
     <div class="col-lg-10">
     <div class="container">
         <h3>Are you sure you want to add a certificate for {{ attendee }}?</h3>
-        <h4>Course: {{ course.name }}</h4>
+        <h4>Course: {{ course.name }}</h4></br>
+        <h4>Your organisation credits will be deducted by {{ course.certifying_organisation.project.certificate_credit }}</h4>
     </div>
 
 

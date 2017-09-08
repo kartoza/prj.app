@@ -6,6 +6,7 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 from course import Course
 from attendee import Attendee
 
@@ -29,6 +30,11 @@ class Certificate(models.Model):
         max_length=100,
         blank=True,
         default=''
+    )
+
+    is_paid = models.BooleanField(
+        help_text=_('Is this certificate paid?'),
+        default=False
     )
 
     author = models.ForeignKey(User)
