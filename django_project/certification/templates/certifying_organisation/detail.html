@@ -88,12 +88,14 @@
         {# Only organisation owners or staff can edit #}
         <div class="col-lg-2">
 
+            <div class="pull-right">
             <span class="glyphicon glyphicon-info-sign tooltip-toggle"
-                  style="font-size: 14pt; padding: 7px; color: #D3D3D3;"
+                  style="font-size: 14pt; padding: 7px; color: #D3D3D3; display: inline-block; vertical-align: middle"
                   data-title="Hover to the container to see action buttons">
             </span>
 
-            <div class="btn-group pull-right">
+
+            <div class="btn-group">
                 {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
                 <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                    href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
@@ -111,6 +113,7 @@
                     data-title="Back">
                      <span class="glyphicon glyphicon-arrow-left"></span>
                  </a>
+            </div>
             </div>
         </div>
     </div>

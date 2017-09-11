@@ -100,7 +100,22 @@ http://localhost:61202
 
 At http://localhost:61202/en/site-admin/socialaccount/socialapp/add/
 
-Set teh key and secret from the github key page.
+Set the key and secret from the github key page.
+
+**Backups**
+
+If you wish to sync backups, you need to establish a read / write btsync 
+key on your production server and run one or more btsync clients 
+with a read only key.
+
+```
+cd deployment
+cp btsync-media.env.EXAMPLE btsync-media.env
+cp btsync-db.env.EXAMPLE btsync-db.env
+```
+
+Now edit the ``btsync-media.env`` and ``btsync-db.env`` files, including 
+relevant SECRET and DEVICE settings.
 
 ## Participation
 

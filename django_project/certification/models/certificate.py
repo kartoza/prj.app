@@ -11,13 +11,15 @@ from course import Course
 from attendee import Attendee
 
 
-def increment_id():
+def increment_id(project):
     """Increment the certificate ID."""
 
-    last_certificate = Certificate.objects.all().order_by('int_id').last()
-    if not last_certificate:
+    last_certificate = Certificate.objects.filter(
+        course__certifying_organisation__project=project
+    ).count()
+    if last_certificate == 0:
         return '1'
-    last_int_id = last_certificate.int_id
+    last_int_id = last_certificate
     new_int_id = last_int_id + 1
     return new_int_id
 
@@ -55,8 +57,9 @@ class Certificate(models.Model):
         if self.int_id is None:
             project_name = self.course.certifying_organisation.project.name
             words = project_name.replace(' ', '')
-            self.int_id = increment_id()
-            self.certificateID = '%s-%s' % (words, str(self.int_id))
+            increment_certificate = \
+                increment_id(self.course.certifying_organisation.project)
+            self.certificateID = '%s-%s' % (words, str(increment_certificate))
         super(Certificate, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
