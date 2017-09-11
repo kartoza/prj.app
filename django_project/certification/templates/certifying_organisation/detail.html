@@ -89,7 +89,7 @@
         <div class="col-lg-2">
 
             <span class="glyphicon glyphicon-info-sign tooltip-toggle"
-                  style="font-size: 14pt; padding: 7px; color: #4f74af;"
+                  style="font-size: 14pt; padding: 7px; color: #D3D3D3;"
                   data-title="Hover to the container to see action buttons">
             </span>
 
@@ -132,17 +132,42 @@
         {% endfor %}</span><br/>
     </div>
 
-    <div>
-    <div class="col-lg-2 pull-right" style="padding-right: 0">
+    <div class="col-lg-6">
+    <div class="col-lg-4 pull-right" style="padding-right: 0">
         <h4 class="panel-heading" style="padding-left:0; padding-right: 0">
             Training Centers</h4>
         <h3 class="panel-body">{{ num_trainingcenter }}</h3>
     </div>
 
-    <div class="col-lg-2 pull-right">
+    <div class="col-lg-3 pull-right" style="padding: 0">
         <h4 class="panel-heading">Attendees</h4>
         <h3 class="panel-body">{{ num_attendees }}</h3>
     </div>
+
+    {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
+    <div class="panel-wrap col-lg-4 pull-right">
+        <h4 class="panel-heading" style="padding-left: 30%; text-align: left">Credits
+                <a class="btn btn-default btn-xs tooltip-toggle btn-top-up button-action" style="display: none; float: right; margin-top: -3px"
+                   href= '{% url "top-up" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
+                   data-title="Top up credits">
+                <i class="glyphicon glyphicon-shopping-cart"></i></a>
+        </h4>
+        {% if certifyingorganisation.organisation_credits >= certifyingorganisation.project.certificate_credit %}
+        <h3 class="panel-body tooltip-toggle"
+            data-title="Available credits to issue certificate"
+            data-placement="left"
+        >{{ certifyingorganisation.organisation_credits }}
+        </h3>
+        {% else %}
+        <h3 class="panel-body tooltip-toggle"
+            data-title="Your credits is insufficient to issue more certificates, please top up"
+            data-placement="left"
+            style="color: indianred"
+        >{{ certifyingorganisation.organisation_credits }}
+        </h3>
+        {% endif %}
+    </div>
+    {% endif %}
     </div>
     </div>
 
@@ -510,7 +535,7 @@
                 $(this).removeClass('btn-primary').addClass('btn-default')
             }
         );
-        $('.panel-to-wrap').hover(
+        $('.course-details, .panel-to-wrap, .panel-wrap').hover(
             function () {
                 $(this).find('.button-action').show();
             },
@@ -518,14 +543,14 @@
                 $(this).find('.button-action').hide();
             }
         );
-        $('.course-details').hover(
-            function () {
-                $(this).find('.button-action').show();
+        $('.btn-top-up').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-success')
             },
-             function () {
-                $(this).find('.button-action').hide();
+            function (){
+                $(this).removeClass('btn-success').addClass('btn-default')
             }
-        )
+        );
     </script>
 {% endblock %}
 

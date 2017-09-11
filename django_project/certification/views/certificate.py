@@ -454,4 +454,6 @@ def top_up_unavailable(request, **kwargs):
 
     return render(
         request, 'certificate/top_up_unavailable.html',
-        context={'the_project': project, 'has_pending_organisations': has_pending})
+        context={
+            'the_project': project,
+            'has_pending_organisations': has_pending})
