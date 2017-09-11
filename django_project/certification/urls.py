@@ -48,6 +48,7 @@ from views import (
     certificate_pdf_view,
     download_certificates_zip,
     update_paid_status,
+    top_up_unavailable,
 
     # Validate Certificate.
     ValidateCertificate,
@@ -180,6 +181,10 @@ urlpatterns = patterns(
               '(?P<pk>[\w-]+)/update-certificate-status/$',
         view=update_paid_status,
         name='paid-certificate'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/top-up/$',
+        view=top_up_unavailable,
+        name='top-up'),
 
     # Course.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'

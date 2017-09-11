@@ -442,3 +442,16 @@ def update_paid_status(request, **kwargs):
             'course_slug': course_slug,
             'attendee': attendee,
             'project': project})
+
+
+def top_up_unavailable(request, **kwargs):
+    project_slug = kwargs.get('project_slug', None)
+    project = Project.objects.get(slug=project_slug)
+    organisation = CertifyingOrganisation.objects.filter(approved=False)
+    has_pending = False
+    if organisation:
+        has_pending = True
+
+    return render(
+        request, 'certificate/top_up_unavailable.html',
+        context={'the_project': project, 'has_pending_organisations': has_pending})
