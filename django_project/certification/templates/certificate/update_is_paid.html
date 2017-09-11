@@ -1,0 +1,35 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    <h1>Update Cost Certificate</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="col-lg-10">
+        <h3>Are you sure you want to pay this certificate?</h3>
+        <div style="border: 2px solid #f5f5f5; padding: 15px; width: 70%; font-size: 12pt">
+            <span class="col-lg-2" style="color: grey">Attendee</span><span class="col-lg-10"> {{ attendee }}</span></br>
+            <span class="col-lg-2" style="color: grey">Course</span><span class="col-lg-10"> {{ course.name }}</span></br>
+        </div>
+        <h4>Your organisation's credits will be deducted by {{ project.certificate_credit }}.</h4>
+        <br/>
+        <form id="costform" action="." method="POST">
+          {% csrf_token %}
+          <input class="btn btn-primary tooltip-toggle"
+                 data-title="Pay this certificate"
+                 data-placement="right"
+                 type="submit" value="Pay" id="update_cost" />
+        </form>
+    </div>
+    <div class="col-lg-2">
+        <div class="btn-group pull-right">
+            <a class="btn btn-default btn-sm tooltip-toggle"
+               href='{% url 'course-detail' project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
+               data-title="Cancel">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+            </a>
+        </div>
+    </div>
+{% endblock %}

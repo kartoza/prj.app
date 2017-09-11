@@ -414,7 +414,7 @@ class CertificateForm(forms.ModelForm):
         else:
             self.fields['is_paid'].initial = False
         self.fields['is_paid'].widget = forms.HiddenInput()
-        self.helper.add_input(Submit('submit', 'Add'))
+        self.helper.add_input(Submit('submit', 'Issue Certificate'))
 
     def save(self, commit=True):
         instance = super(CertificateForm, self).save(commit=False)

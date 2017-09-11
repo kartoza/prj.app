@@ -153,7 +153,7 @@
                             {% else %}
                                 {% if course.certifying_organisation.organisation_credits >= course.certifying_organisation.project.certificate_credit %}
                                     <a class="btn btn-default btn-xs tooltip-toggle btn-issue"
-                                       href='#'
+                                       href='{% url "paid-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
                                         data-title="Pay this certificate using credits">
                                         <i class="glyphicon glyphicon-import"></i></a>
                                 {% else %}

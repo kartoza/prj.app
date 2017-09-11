@@ -8,6 +8,7 @@ from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+from django.shortcuts import render
 from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
@@ -402,3 +403,42 @@ def download_certificates_zip(request, **kwargs):
         'attachment; filename=certificates.zip'
 
     return response
+
+
+def update_paid_status(request, **kwargs):
+    """View to update the is_paid status of certificate in a course."""
+
+    project_slug = kwargs.pop('project_slug')
+    organisation_slug = kwargs.pop('organisation_slug')
+    course_slug = kwargs.pop('course_slug')
+    attendee_pk = kwargs.pop('pk')
+    course = Course.objects.get(slug=course_slug)
+    attendee = Attendee.objects.get(pk=attendee_pk)
+    project = Project.objects.get(slug=project_slug)
+    url = reverse('course-detail', kwargs={
+            'project_slug': project_slug,
+            'organisation_slug': organisation_slug,
+            'slug': course_slug
+    })
+
+    if request.method == 'POST':
+        queryset = \
+            Certificate.objects.filter(course=course, attendee=attendee)
+        queryset.update(is_paid=True)
+        organisation = \
+            CertifyingOrganisation.objects.get(slug=organisation_slug)
+        remaining_credits = \
+            organisation.organisation_credits - project.certificate_credit
+        organisation.organisation_credits = remaining_credits
+        organisation.save()
+        return HttpResponseRedirect(url)
+
+    return render(
+        request, 'certificate/update_is_paid.html',
+        context={
+            'course': course,
+            'project_slug': project_slug,
+            'organisation_slug': organisation_slug,
+            'course_slug': course_slug,
+            'attendee': attendee,
+            'project': project})
