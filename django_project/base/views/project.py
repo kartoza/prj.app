@@ -2,6 +2,9 @@
 """Views for projects."""
 # noinspection PyUnresolvedReferences
 import logging
+import stripe
+import requests
+import json
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -23,7 +26,9 @@ from ..forms import ProjectForm
 from vota.models import Committee, Ballot
 from certification.models import CertifyingOrganisation
 from django.conf import settings
-
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.template import loader
 logger = logging.getLogger(__name__)
 
 
@@ -46,8 +51,8 @@ class ProjectBallotListView(ProjectMixin, PaginationMixin, DetailView):
         for committee in committees:
             if self.request.user.is_authenticated and \
                     self.request.user in committee.users.all():
-                    committee_ballots = Ballot.objects.filter(
-                        committee=committee)
+                committee_ballots = Ballot.objects.filter(
+                    committee=committee)
             else:
                 committee_ballots = Ballot.objects.filter(
                     committee=committee).filter(private=False)
@@ -254,3 +259,102 @@ class ApproveProjectView(StaffuserRequiredMixin, ProjectMixin, RedirectView):
         project.approved = True
         project.save()
         return reverse(self.pattern_name)
+
+
+def paymentview(request):
+    '''
+    :param request:
+    :return:
+    To do
+    1. Try catch blocks
+    2. Link to javascript form
+    3. Add webhooks
+    '''
+    stripe.api_key = "sk_test_OHW7bvLJhDtm1k2pI8AwIiEY"
+    ourclientid = "ca_BM5OIMXOFqSOBjJcr4DrGHTsK3tLFuW3"
+    myaccount = stripe.Account.retrieve("acct_1AzNDQGz66mVbJVl")
+    myaccountid = myaccount.id
+    '''
+        Stripe connect
+    '''
+    returnid = request.GET.get(
+        'code')  # token that is sent to retrieve client id to be stored in db
+    # POST request to OAUTH
+
+    r = requests.post(
+        "https://connect.stripe.com/oauth/token",
+        data={
+            'client_secret': stripe.api_key,
+            'code': returnid,
+            'grant_type': "authorization_code"})
+    temp = json.loads(r.content)
+    if r.status_code == 200:
+        merchantid = temp['stripe_user_id']
+    # Hard coded clientid returned- acct_1B1rtDBWHazZ6NrT
+    else:
+        merchantid = "acct_1B1rtDBWHazZ6NrT"
+
+    # 1. View account balances of platform and connected account and card
+    merchantbalance = stripe.Balance.retrieve(
+        stripe_account=merchantid
+    )
+    # clientamount = clientbalance.amount
+    platformbalance = stripe.Balance.retrieve(
+        stripe_account=myaccountid
+    )
+    # platformamount = platformbalance.amount
+    # 3. Customer account info
+    custtok = stripe.Token.create(
+        bank_account={
+            "country": 'US',
+            "currency": 'usd',
+            "account_holder_name": 'Avery White',
+            "account_holder_type": 'individual',
+            "routing_number": '110000000',
+            "account_number": '000123456789'
+        },
+    )
+    customer = stripe.Customer.create(
+        description="This is a customer",
+        source=custtok
+    )
+    customerid = customer.id  # Store to update info
+    # 2. Process a charge
+    charge = stripe.Charge.create(
+        amount=500,
+        currency="usd",
+        source="tok_visa",
+        application_fee=200,
+        stripe_account=merchantid
+    )
+    chargeid = charge.id
+    # 3. View account balances again
+
+    # 4. Create payout - Merchant
+    payoutclient = stripe.Payout.create(
+        amount=800,
+        currency='usd',
+        method='instant',
+        stripe_account=merchantid
+    )
+    # 5. Create a payout - Platform
+    '''
+    payoutplatform = stripe.Payout.create(
+        amount=platformamount,
+        currency='usd',
+        stripe_account=myaccountid
+    )
+    '''
+    context = {
+        # "charge":charge,
+        # "chargeid":chargeid,
+        "ourclientid": ourclientid,
+        "returnid": returnid,
+        "merchantid": merchantid,
+        "merchantbalance": merchantbalance,
+        "platformbalance": platformbalance,
+        "myaccount": myaccount,
+        "customer": customer,
+        "r": r
+    }
+    return render(request, 'payments/pay.html', context)

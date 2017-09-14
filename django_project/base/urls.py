@@ -17,7 +17,8 @@ from views import (
     GithubListView,
     GithubOrgsView,
     GithubSubmitView,
-    custom_404
+    custom_404,
+    paymentview
 )
 
 urlpatterns = patterns(
@@ -26,7 +27,9 @@ urlpatterns = patterns(
     url(regex='^$',
         view=ProjectListView.as_view(),
         name='home'),
-
+    url(regex='^paymenttest/',
+        view=paymentview,
+        name='payment-view'),
     # Project management
     url(regex='^pending-project/list/$',
         view=PendingProjectListView.as_view(),
