@@ -89,16 +89,18 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
             pending_organisation = CertifyingOrganisation.objects.filter(
                 project=project, approved=False
             )
+            context['num_project_with_pending'] = 0
             if pending_organisation:
                 context['project_with_pending'] = []
+
                 for organisation in pending_organisation:
                     if organisation.project not in \
                             context['project_with_pending']:
                         context['project_with_pending'].append(
                             organisation.project)
+                        context['num_project_with_pending'] += 1
                 context['message'] = \
-                    'You have a pending organisation approval. ' \
-                    'Follow this link to review: '
+                    'You have a pending organisation approval. '
         return context
 
     def get_queryset(self):
