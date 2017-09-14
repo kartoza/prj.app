@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Create a merchant</h1>
+<a href="https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id={{ ourclientid }}&scope = read_write">Goto Stripe.com</a>
+<h1>Return ID</h1>
+<p>{{ returnid }}</p>
+<h1>OAUTH response</h1>
+<p>{{ r }}</p>
+<p>Merchant id: {{ merchantid }}</p>
+<h1>Merchant balance</h1>
+<p>{{ merchantbalance }}</p>
+<h1>Merchant id</h1>
+<p>{{ merchantid }}</p>
+<h1>My Account</h1>
+<p>{{ myaccount }}</p>
+<h1>Platform Balance</h1>
+<p>{{ platformbalance }}</p>
+<h1>Customer</h1>
+<p>{{ customer }}</p>
+</body>
+</html>
