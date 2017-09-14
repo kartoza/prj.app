@@ -21,6 +21,7 @@ from changes.models import Version
 from ..models import Project
 from ..forms import ProjectForm
 from vota.models import Committee, Ballot
+from certification.models import CertifyingOrganisation
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
@@ -83,6 +84,23 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
         context['num_projects'] = self.get_queryset().count()
         context[
             'PROJECT_VERSION_LIST_SIZE'] = settings.PROJECT_VERSION_LIST_SIZE
+        if self.request.user.is_authenticated():
+            project = Project.objects.filter(owner=self.request.user)
+            pending_organisation = CertifyingOrganisation.objects.filter(
+                project=project, approved=False
+            )
+            context['num_project_with_pending'] = 0
+            if pending_organisation:
+                context['project_with_pending'] = []
+
+                for organisation in pending_organisation:
+                    if organisation.project not in \
+                            context['project_with_pending']:
+                        context['project_with_pending'].append(
+                            organisation.project)
+                        context['num_project_with_pending'] += 1
+                context['message'] = \
+                    'You have a pending organisation approval. '
         return context
 
     def get_queryset(self):
