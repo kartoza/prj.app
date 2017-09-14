@@ -103,3 +103,7 @@ table {
 .grey-italic {
     padding: 0 !important;
 }
+
+.panel-right {
+    width: 12% !important;
+}

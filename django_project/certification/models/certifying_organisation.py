@@ -119,6 +119,13 @@ class CertifyingOrganisation(models.Model):
         blank=False
     )
 
+    organisation_credits = models.IntegerField(
+        help_text=_('Credits available'),
+        default=0,
+        null=True,
+        blank=True
+    )
+
     approved = models.BooleanField(
         help_text=_('Approval from project admin'),
         default=False

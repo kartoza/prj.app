@@ -102,6 +102,24 @@ class Project(models.Model):
         default=False
     )
 
+    credit_cost = models.DecimalField(
+        help_text=_('Cost for each credit that organisation can buy.'),
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        default=0
+    )
+
+    # Credit that will be spent to issue a certificate
+    certificate_credit = models.IntegerField(
+        help_text=_(
+            'Cost to issue a certificate, i.e. a certificate cost 1 credit'),
+        default=1,
+        null=True,
+        blank=True
+    )
+
     private = models.BooleanField(
         help_text=_('Only visible to logged-in users?'),
         default=False

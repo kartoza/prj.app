@@ -391,12 +391,17 @@ class CertificateForm(forms.ModelForm):
         fields = (
             'course',
             'attendee',
+            'is_paid',
         )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         self.course = kwargs.pop('course')
         self.attendee = kwargs.pop('attendee')
+        organisation_credits = \
+            self.course.certifying_organisation.organisation_credits
+        cost = self.course.certifying_organisation.project.certificate_credit
+        remaining_credits = organisation_credits - cost
         self.helper = FormHelper()
         self.helper.html5_required = False
         super(CertificateForm, self).__init__(*args, **kwargs)
@@ -404,7 +409,12 @@ class CertificateForm(forms.ModelForm):
         self.fields['course'].widget = forms.HiddenInput()
         self.fields['attendee'].initial = self.attendee
         self.fields['attendee'].widget = forms.HiddenInput()
-        self.helper.add_input(Submit('submit', 'Add'))
+        if remaining_credits >= 0:
+            self.fields['is_paid'].initial = True
+        else:
+            self.fields['is_paid'].initial = False
+        self.fields['is_paid'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Issue Certificate'))
 
     def save(self, commit=True):
         instance = super(CertificateForm, self).save(commit=False)
