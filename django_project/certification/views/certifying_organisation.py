@@ -606,10 +606,15 @@ class PendingCertifyingOrganisationListView(
             self.project_slug = self.kwargs.get('project_slug', None)
             if self.project_slug:
                 self.project = Project.objects.get(slug=self.project_slug)
-                queryset = CertifyingOrganisation.unapproved_objects.filter(
-                    Q(project=self.project) &
-                    (Q(project__owner=self.request.user) |
-                     Q(organisation_owners=self.request.user)))
+                if self.request.user.is_staff:
+                    queryset = \
+                        CertifyingOrganisation.unapproved_objects.filter(
+                            project=self.project)
+                else:
+                    queryset = CertifyingOrganisation.unapproved_objects.filter(
+                        Q(project=self.project) &
+                        (Q(project__owner=self.request.user) |
+                         Q(organisation_owners=self.request.user)))
                 return queryset
             else:
                 raise Http404(
@@ -619,7 +624,6 @@ class PendingCertifyingOrganisationListView(
 
 class ApproveCertifyingOrganisationView(
         CertifyingOrganisationMixin,
-        StaffuserRequiredMixin,
         RedirectView):
     """Redirect view for approving Certifying Organisation."""
 
