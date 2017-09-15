@@ -21,6 +21,7 @@ from changes.models import Version
 from ..models import Project
 from ..forms import ProjectForm
 from vota.models import Committee, Ballot
+from changes.models import SponsorshipPeriod
 from certification.models import CertifyingOrganisation
 from django.conf import settings
 
@@ -122,7 +123,7 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
 
 class ProjectDetailView(ProjectMixin, DetailView):
     context_object_name = 'project'
-    template_name = 'project/detail.html'
+    template_name = 'project/new_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
@@ -131,6 +132,10 @@ class ProjectDetailView(ProjectMixin, DetailView):
         page_size = settings.PROJECT_VERSION_LIST_SIZE
         context['versions'] = Version.objects.filter(
             project=self.object).order_by('-padded_version')[:page_size]
+        context['sponsors'] = \
+            SponsorshipPeriod.objects.filter(
+                project=self.object).order_by('-sponsorship_level__value')
+        context['screenshots'] = self.object.screenshots.all()
         return context
 
     def get_queryset(self):

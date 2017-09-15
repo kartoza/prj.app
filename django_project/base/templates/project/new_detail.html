@@ -1,0 +1,82 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load custom_markup %}
+{% load thumbnail %}
+{% block title %}{{ project.name }}{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/project-details.css' %}">
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                    <span class="project-title">{{ project.name }}</span>
+            </div>
+            {% if screenshots %}
+                <div class="panel panel-default custom-panel screenshot-panel">
+                 <div class="slider-display-container">
+                {% for screenshot in screenshots %}
+                    <img class="content-slides"
+                                 src="{{ screenshot.screenshot.url }}" height="400px" width="auto" style="margin: 0 auto">
+                {% endfor %}
+                     <button class="slider-button slider-display-left" onclick="plusDivs(-1)">&#10094;</button>
+                     <button class="slider-button slider-display-right" onclick="plusDivs(1)">&#10095;</button>
+                 </div>
+                </div>
+            {% endif %}
+            {% if project.description %}
+            <div class="panel panel-default custom-panel project-description">
+                <span>{{ project.description }}</span>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='sponsors/list/';">
+                <h3>Sponsors</h3>
+                {% for sponsor in sponsors %}
+                    {% if sponsor.current_sponsor %}
+                            <img class="img-rounded tooltip-toggle"
+                                 src="{% thumbnail sponsor.sponsor.logo 50x50 %}"
+                                 data-title="{{ sponsor.sponsor.name }}">
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='certifyingorganisation/list/';">
+                <h3>Certification</h3>
+            </div>
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='version/list/';">
+                <h3>Releases (Changelog)</h3>
+            </div>
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='committees/';">
+                <h3>Project Teams</h3>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var slideIndex = 1;
+        showDivs(slideIndex);
+        carousel();
+
+        function plusDivs(n) {
+          showDivs(slideIndex += n);
+        }
+        
+        function carousel() {
+            slideIndex++;
+            showDivs(slideIndex);
+            setTimeout(carousel, 2500);
+        }
+
+        function showDivs(n) {
+          var i;
+          var x = document.getElementsByClassName("content-slides");
+          if (n > x.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = x.length}
+          for (i = 0; i < x.length; i++) {
+             x[i].style.display = "none";
+          }
+          x[slideIndex-1].style.display = "block";
+        }
+    </script>
+{% endblock %}

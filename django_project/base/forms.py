@@ -24,6 +24,7 @@ class ProjectForm(forms.ModelForm):
         fields = (
             'name',
             'image_file',
+            'description',
             'gitter_room',
             'signature',
             'credit_cost',
@@ -38,6 +39,7 @@ class ProjectForm(forms.ModelForm):
                 'Project details',
                 Field('name', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
+                Field('description', css_class="form-control"),
                 Field('signature', css_class="form-control"),
                 Field('credit_cost', css_class="form-control"),
                 Field('certificate_credit', css_class="form-control"),
