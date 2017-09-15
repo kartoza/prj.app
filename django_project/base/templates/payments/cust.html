@@ -6,9 +6,22 @@
 </head>
 <body>
 <p>{{ custtok }}</p>
-<form action={% url 'create-charge-view' %}>
-  Merchant: testmerchant
-  <input type="submit" value="Pay $420">
+<p>{{ dbmerchreq }}</p>
+<p>{{ length }}</p>
+<form action={% url 'create-charge-view' %} method=POST>
+{% csrf_token %}
+<select name="merchants">
+{% for i in dbmerchreq %}
+    {% for k,v in i.items %}
+    {% if k == "merchantid" %}
+        <option value={{ v }}>
+    {% else %}
+            {{ v }}</option>
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+</select>
+<input type="submit" value="Pay $420">
 </form>
 </body>
 </html>
