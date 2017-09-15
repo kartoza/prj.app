@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from django.http import HttpResponse
 from django.views.generic import (
     ListView,
@@ -606,7 +607,9 @@ class PendingCertifyingOrganisationListView(
             if self.project_slug:
                 self.project = Project.objects.get(slug=self.project_slug)
                 queryset = CertifyingOrganisation.unapproved_objects.filter(
-                    project=self.project)
+                    Q(project=self.project) &
+                    (Q(project__owner=self.request.user) |
+                     Q(organisation_owners=self.request.user)))
                 return queryset
             else:
                 raise Http404(
