@@ -25,7 +25,7 @@ class ProjectAdmin(reversion.VersionAdmin):
 
     """Admin for the project model."""
 
-    inlines = [ProjectScreenshotsAdmin,]
+    inlines = [ProjectScreenshotsAdmin, ]
 
     def queryset(self, request):
         """Ensure we use the correct manager.
