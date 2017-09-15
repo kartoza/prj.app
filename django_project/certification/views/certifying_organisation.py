@@ -16,7 +16,7 @@ from django.views.generic import (
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from ..models import (
     CertifyingOrganisation,
@@ -611,10 +611,11 @@ class PendingCertifyingOrganisationListView(
                         CertifyingOrganisation.unapproved_objects.filter(
                             project=self.project)
                 else:
-                    queryset = CertifyingOrganisation.unapproved_objects.filter(
-                        Q(project=self.project) &
-                        (Q(project__owner=self.request.user) |
-                         Q(organisation_owners=self.request.user)))
+                    queryset = \
+                        CertifyingOrganisation.unapproved_objects.filter(
+                            Q(project=self.project) &
+                            (Q(project__owner=self.request.user) |
+                             Q(organisation_owners=self.request.user)))
                 return queryset
             else:
                 raise Http404(
