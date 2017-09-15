@@ -190,3 +190,13 @@ class Project(models.Model):
             return True
         else:
             return False
+
+
+class Merchants(models.Model):
+    firstname = models.CharField(max_length=50)
+    merchantid = models.CharField(max_length=50)
+
+
+class Customer(models.Model):
+    firstname = models.CharField(max_length=50)
+    merchantid = models.CharField(max_length=50)
