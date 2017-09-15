@@ -8,6 +8,7 @@ import json
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import (
     ListView,
     CreateView,
@@ -20,7 +21,14 @@ from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from changes.models import Version
 from ..models import Project
+<<<<<<< HEAD
 from ..forms import ProjectForm, ScreenshotFormset
+=======
+from ..models import Merchants
+from ..models import Customer
+from ..forms import ProjectForm
+from ..forms import PayForm
+>>>>>>> stripe progress
 from vota.models import Committee, Ballot
 from changes.models import SponsorshipPeriod
 from certification.models import CertifyingOrganisation
@@ -30,7 +38,7 @@ from django.shortcuts import redirect
 
 =======
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template import loader
 >>>>>>> Developing connect platform WIP
 logger = logging.getLogger(__name__)
@@ -300,6 +308,7 @@ class ApproveProjectView(StaffuserRequiredMixin, ProjectMixin, RedirectView):
         return reverse(self.pattern_name)
 
 
+@csrf_exempt
 def paymentview(request):
     '''
     :param request:
@@ -313,87 +322,167 @@ def paymentview(request):
     ourclientid = "ca_BM5OIMXOFqSOBjJcr4DrGHTsK3tLFuW3"
     myaccount = stripe.Account.retrieve("acct_1AzNDQGz66mVbJVl")
     myaccountid = myaccount.id
-    '''
-        Stripe connect
-    '''
+
+    merchantid = createmerchant(request)
+    # Customer login cerdential should be unique
+
+    fields = "fields"
+
+    #chargeid = createcharge(request,customerid,merchantid)
+    returnid = request.GET.get(
+        'code')
+    context = {
+        # "charge":charge,
+        # "chargeid":chargeid,
+        "ourclientid": ourclientid,
+        "merchantid": merchantid,
+        "myaccount": myaccount,
+        "returnid": returnid,
+        "fields": fields,
+    }
+    return render(request, 'payments/pay.html', context)
+
+
+def createaccount(request):
+    context = {
+
+    }
+    return render(request, 'payments/createaccount.html', context)
+
+
+def processcustomerandcharge(request):
+    firstname = "testcustomerfinal4"  # Look for logged in user
+    customerid = 0
+    merchantid = 0
+    try:
+        dbrequest = Customer.objects.values_list(
+            'merchantid', flat=True).get(
+            firstname=firstname)
+    except BaseException:
+        dbrequest = None
+
+    if dbrequest is None:  # The customer does not exist
+        # 1. Create user -> Click button
+        return redirect(createaccount)  # Create charge and account
+        # 2. Refresh processcustomerandcharge
+    else:
+        customerid = dbrequest
+        # Insert code to specify to whom the payment should go
+        merchantid = "acct_1B1rtDBWHazZ6NrT"
+    context = {
+        'customerid': customerid,
+        'merchantid': merchantid,
+        'dbrequest': dbrequest,
+    }
+    return render(request, 'payments/cust.html', context)
+
+
+def createmerchant(request):  # Call this method after Stripe OAuth
     returnid = request.GET.get(
         'code')  # token that is sent to retrieve client id to be stored in db
     # POST request to OAUTH
-
-    r = requests.post(
-        "https://connect.stripe.com/oauth/token",
-        data={
-            'client_secret': stripe.api_key,
-            'code': returnid,
-            'grant_type': "authorization_code"})
-    temp = json.loads(r.content)
-    if r.status_code == 200:
-        merchantid = temp['stripe_user_id']
-    # Hard coded clientid returned- acct_1B1rtDBWHazZ6NrT
+    if returnid is not None:
+        r = requests.post(
+            "https://connect.stripe.com/oauth/token",
+            data={
+                'client_secret': stripe.api_key,
+                'code': returnid,
+                'grant_type': "authorization_code"})
+        temp = json.loads(r.content)
+        if r.status_code == 200:
+            merchantid = temp['stripe_user_id']
+        # Hard coded clientid returned- acct_1B1rtDBWHazZ6NrT
+        else:
+            merchantid = "acct_1B1rtDBWHazZ6NrT"
+        firstname = "testmerchant"
+        merchantdb = Merchants.objects.create(
+            firstname=firstname, merchantid=merchantid)
+        merchantdb.save()
     else:
         merchantid = "acct_1B1rtDBWHazZ6NrT"
+    return merchantid
 
-    # 1. View account balances of platform and connected account and card
-    merchantbalance = stripe.Balance.retrieve(
-        stripe_account=merchantid
+
+def createcustomer(request):
+    custtok = request.form['stripeToken']
+    if custtok is not None:
+        customer = stripe.Customer.create(
+            description="This is a customer",
+            source=custtok
+        )
+        firstname = "testcustomer"
+        customerid = customer.id
+        customerdb = Customer.objects.create(
+            firstname=firstname, merchantid=customerid)
+    return customerid
+
+
+@csrf_exempt
+def processview(request):
+    stripe.api_key = "sk_test_OHW7bvLJhDtm1k2pI8AwIiEY"
+    myaccount = stripe.Account.retrieve("acct_1AzNDQGz66mVbJVl")
+    myaccountid = myaccount.id
+    custtok = request.POST.get("stripeToken")
+    customer = stripe.Customer.create(
+        description="This is a customer",
+        source=custtok,
+        stripe_account=myaccountid
     )
-    # clientamount = clientbalance.amount
+    firstname = "testcustomerfinal4"  # Get signed in userid
+    customerid = customer.id
+    customerdb = Customer.objects.create(
+        firstname=firstname, merchantid=customerid)
+    context = {
+        'custtok': custtok,
+        'customerid': customerid
+    }
+    # return render(request, 'payments/cust.html', context)
+    return redirect(processcustomerandcharge)
+
+
+def createcharge(request):
+    # Connect the customer to the connected accounts
+    # if this is a POST request we need to process the form data
+    customerid = "cus_BP643ue5uueqr1"
+    merchantid = "acct_1B26bmCAjMMHmviC"
+    if customerid is not None and merchantid is not None:
+        token = stripe.Token.create(
+            customer=customerid,
+            stripe_account=merchantid,
+        )
+
+        charge = stripe.Charge.create(
+            amount=68000,
+            currency="usd",
+            source=token.id,
+            application_fee=200,
+            stripe_account=merchantid
+        )
+        status = "paid"
+    context = {
+        'status': status
+    }
+    return render(request, 'payments/paid.html', context)
+
+
+def platformpayout():
     platformbalance = stripe.Balance.retrieve(
         stripe_account=myaccountid
     )
-    # platformamount = platformbalance.amount
-    # 3. Customer account info
-    custtok = stripe.Token.create(
-        bank_account={
-            "country": 'US',
-            "currency": 'usd',
-            "account_holder_name": 'Avery White',
-            "account_holder_type": 'individual',
-            "routing_number": '110000000',
-            "account_number": '000123456789'
-        },
-    )
-    customer = stripe.Customer.create(
-        description="This is a customer",
-        source=custtok
-    )
-    customerid = customer.id  # Store to update info
-    # 2. Process a charge
-    charge = stripe.Charge.create(
-        amount=500,
-        currency="usd",
-        source="tok_visa",
-        application_fee=200,
-        stripe_account=merchantid
-    )
-    chargeid = charge.id
-    # 3. View account balances again
-
-    # 4. Create payout - Merchant
-    payoutclient = stripe.Payout.create(
-        amount=800,
-        currency='usd',
-        method='instant',
-        stripe_account=merchantid
-    )
-    # 5. Create a payout - Platform
-    '''
     payoutplatform = stripe.Payout.create(
         amount=platformamount,
         currency='usd',
         stripe_account=myaccountid
     )
-    '''
-    context = {
-        # "charge":charge,
-        # "chargeid":chargeid,
-        "ourclientid": ourclientid,
-        "returnid": returnid,
-        "merchantid": merchantid,
-        "merchantbalance": merchantbalance,
-        "platformbalance": platformbalance,
-        "myaccount": myaccount,
-        "customer": customer,
-        "r": r
-    }
-    return render(request, 'payments/pay.html', context)
+
+
+def merchantpayout():
+    merchantbalance = stripe.Balance.retrieve(
+        stripe_account=merchantid
+    )
+    payoutmerchant = stripe.Payout.create(
+        amount=800,
+        currency='usd',
+        method='instant',
+        stripe_account=merchantid
+    )

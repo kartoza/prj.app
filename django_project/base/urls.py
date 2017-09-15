@@ -18,7 +18,11 @@ from views import (
     GithubOrgsView,
     GithubSubmitView,
     custom_404,
-    paymentview
+    paymentview,
+    processview,
+    processcustomerandcharge,
+    createaccount,
+    createcharge
 )
 
 urlpatterns = patterns(
@@ -27,6 +31,19 @@ urlpatterns = patterns(
     url(regex='^$',
         view=ProjectListView.as_view(),
         name='home'),
+    url(regex='^charge/',
+        view=createcharge,
+        name='create-charge-view'
+        ),
+    url(regex='^createaccount/',
+        view=createaccount,
+        name='create-account-view'),
+    url(regex='^customercharge/',
+        view=processcustomerandcharge,
+        name='process-customer-view'),
+    url(regex='^customercreate/',
+        view=processview,
+        name='process-view'),
     url(regex='^paymenttest/',
         view=paymentview,
         name='payment-view'),

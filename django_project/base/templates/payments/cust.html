@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>{{ custtok }}</p>
+<form action={% url 'create-charge-view' %}>
+  Merchant: testmerchant
+  <input type="submit" value="Pay $420">
+</form>
+</body>
+</html>

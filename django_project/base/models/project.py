@@ -224,6 +224,16 @@ class Project(models.Model):
             return False
 
 
+class Merchants(models.Model):
+    firstname = models.CharField(max_length=50)
+    merchantid = models.CharField(max_length=50)
+
+
+class Customer(models.Model):
+    firstname = models.CharField(max_length=50)
+    merchantid = models.CharField(max_length=50)
+
+
 class ProjectScreenshot(models.Model):
     """A model to store a screenshot linked to a project."""
 
