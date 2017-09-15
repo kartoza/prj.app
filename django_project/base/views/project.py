@@ -367,12 +367,19 @@ def processcustomerandcharge(request):
         # 2. Refresh processcustomerandcharge
     else:
         customerid = dbrequest
+        request.session['customerid'] = customerid
         # Insert code to specify to whom the payment should go
-        merchantid = "acct_1B1rtDBWHazZ6NrT"
+        # Get list of merchants
+        dbmerchreq = Merchants.objects.values('merchantid', 'firstname')
+        length = dbmerchreq.count
+        merchantid = "acct_1B1rtDBWHazZ6NrT"  # value must be taken from form
+        request.session['merchantid'] = merchantid
     context = {
         'customerid': customerid,
         'merchantid': merchantid,
         'dbrequest': dbrequest,
+        'dbmerchreq': dbmerchreq,
+        'length': length,
     }
     return render(request, 'payments/cust.html', context)
 
@@ -430,6 +437,7 @@ def processview(request):
     )
     firstname = "testcustomerfinal4"  # Get signed in userid
     customerid = customer.id
+    request.session['customerid'] = customerid
     customerdb = Customer.objects.create(
         firstname=firstname, merchantid=customerid)
     context = {
@@ -443,8 +451,10 @@ def processview(request):
 def createcharge(request):
     # Connect the customer to the connected accounts
     # if this is a POST request we need to process the form data
-    customerid = "cus_BP643ue5uueqr1"
-    merchantid = "acct_1B26bmCAjMMHmviC"
+    #customerid = "cus_BP643ue5uueqr1"
+    customerid = request.session.get('customerid')
+    merchantid = request.POST.get('merchants')
+    status = "not paid"
     if customerid is not None and merchantid is not None:
         token = stripe.Token.create(
             customer=customerid,
@@ -459,8 +469,13 @@ def createcharge(request):
             stripe_account=merchantid
         )
         status = "paid"
+        request.session['customerid'] = 0
+        request.session['merchantid'] = 0
+
     context = {
-        'status': status
+        'status': status,
+        'merchantid': merchantid,
+        'customerid': customerid
     }
     return render(request, 'payments/paid.html', context)
 
