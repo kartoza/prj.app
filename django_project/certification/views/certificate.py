@@ -9,7 +9,6 @@ from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.shortcuts import render
-from django.conf.global_settings import MEDIA_ROOT
 from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
