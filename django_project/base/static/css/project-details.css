@@ -89,3 +89,5 @@
     transform:translate(0%,-50%);
     -ms-transform:translate(0%,-50%)
 }
+
+.slider-animate-opacity{animation:opac 0.5s}@keyframes opac{from{opacity:0} to{opacity:1}}

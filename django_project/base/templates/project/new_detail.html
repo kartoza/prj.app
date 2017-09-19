@@ -16,7 +16,7 @@
                 <div class="panel panel-default custom-panel screenshot-panel">
                  <div class="slider-display-container">
                 {% for screenshot in screenshots %}
-                    <img class="content-slides"
+                    <img class="content-slides slider-animate-opacity"
                                  src="{{ screenshot.screenshot.url }}" height="400px" width="auto" style="margin: 0 auto">
                 {% endfor %}
                      <button class="slider-button slider-display-left" onclick="plusDivs(-1)">&#10094;</button>
@@ -65,7 +65,7 @@
         function carousel() {
             slideIndex++;
             showDivs(slideIndex);
-            setTimeout(carousel, 2500);
+            setTimeout(carousel, 4000);
         }
 
         function showDivs(n) {

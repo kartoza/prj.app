@@ -1,6 +1,7 @@
 # coding=utf-8
 import logging
 from django import forms
+from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
@@ -9,9 +10,30 @@ from crispy_forms.layout import (
     Submit,
     Field,
 )
-from models import Project
+from models import Project, ProjectScreenshots
 
 logger = logging.getLogger(__name__)
+
+
+class ProjectScreenshotsForm(forms.ModelForm):
+
+    class Meta:
+        model = ProjectScreenshots
+        fields = ('screenshot',)
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.form_method = 'post'
+        layout = Layout(
+            Fieldset(
+                'Screenshots',
+                Field('screenshot', css_class="form-control"),
+                css_id='project-form')
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        FormHelper.form_tag = False
+        super(ProjectScreenshotsForm, self).__init__(*args, **kwargs)
 
 
 class ProjectForm(forms.ModelForm):
@@ -49,13 +71,18 @@ class ProjectForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(ProjectForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        # self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
         instance = super(ProjectForm, self).save(commit=False)
         instance.owner = self.user
         instance.save()
         return instance
+
+
+ScreenshotFormset = \
+    inlineformset_factory(
+        Project, ProjectScreenshots, form=ProjectScreenshotsForm, extra=5)
 
 
 class SignupForm(forms.Form):

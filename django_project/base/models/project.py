@@ -75,7 +75,7 @@ class Project(models.Model):
         unique=True)
 
     description = models.CharField(
-        help_text=_('A description for the project'),
+        help_text=_('A short description for the project'),
         max_length=500,
         blank=True,
         null=True
