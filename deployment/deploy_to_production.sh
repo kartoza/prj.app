@@ -6,7 +6,7 @@ echo "to deploy to staging and test there before running this script."
 echo "Note that migrations are not automatically run in this script"
 echo "you should log in to the server and do that manually if needed."
 echo "e.g."
-echo "$0 version-1.2.3"
+echo "$0 1.2.3"
 
 read -p "Are you sure you want to continue? " -n 1 -r
 echo    # (optional) move to a new line
