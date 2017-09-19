@@ -218,10 +218,7 @@ class CertificateDetailView(DetailView):
 
 
 def certificate_pdf_view(request, **kwargs):
-    # 1. look for file
-    # 2. if found -> yes - open up the pdf and create response
-    # 3  if found -> no - generate the pdf and store under
-    # /media/certificate.certificateID.pdf
+
     project_slug = kwargs.pop('project_slug')
     course_slug = kwargs.pop('course_slug')
     pk = kwargs.pop('pk')
@@ -236,7 +233,10 @@ def certificate_pdf_view(request, **kwargs):
     response['Content-Disposition'] = \
         'filename=%s.pdf' % certificate.certificateID
     filename = "{}.{}".format(certificate.certificateID, "pdf")
-    pathname = os.path.join('/home/web/media', 'pdf/{}'.format(filename))
+    project_folder = (project.name.lower()).replace(' ', '_')
+    pathname = \
+        os.path.join(
+            '/home/web/media', 'pdf/%s/{}'.format(filename) % project_folder)
     found = os.path.exists(pathname)
     if found:
         with open(pathname, 'r') as pdf:
@@ -245,6 +245,10 @@ def certificate_pdf_view(request, **kwargs):
                 'filename=%s' % pdf
             return response
     else:
+        makepath = '/home/web/media/pdf/%s/' % project_folder
+        if not os.path.exists(makepath):
+            os.makedirs(makepath)
+
         # Create the PDF object, using the response object as its "file."
         page = canvas.Canvas(pathname, pagesize=landscape(A4))
         width, height = A4
@@ -384,9 +388,6 @@ def certificate_pdf_view(request, **kwargs):
         # Close the PDF object cleanly.
         page.showPage()
         page.save()
-        makepath = '/home/web/media/pdf/'
-        if not os.path.exists(makepath):
-            os.makedirs(makepath)
         with open(pathname, 'r') as pdf:
             response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = \
