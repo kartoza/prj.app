@@ -13,8 +13,6 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
 )
-from django.db import IntegrityError
-from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from changes.models import Version
@@ -246,6 +244,7 @@ class ProjectUpdateView(LoginRequiredMixin, ProjectMixin, UpdateView):
             return redirect(self.get_success_url())
         else:
             return self.render_to_response(self.get_context_data(form=form))
+
 
 class PendingProjectListView(
         ProjectMixin,

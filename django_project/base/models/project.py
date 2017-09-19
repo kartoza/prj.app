@@ -81,6 +81,13 @@ class Project(models.Model):
         null=True
     )
 
+    precis = models.TextField(
+        help_text=_('A detailed summary of the project.'),
+        max_length=2000,
+        blank=True,
+        null=True
+    )
+
     image_file = models.ImageField(
         help_text=_('A logo image for this project. '
                     'Most browsers support dragging the image directly on to '

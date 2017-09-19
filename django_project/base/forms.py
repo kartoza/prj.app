@@ -1,13 +1,12 @@
 # coding=utf-8
 import logging
 from django import forms
-from django.forms import inlineformset_factory, BaseInlineFormSet
+from django.forms import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout,
     Fieldset,
-    Submit,
     Field,
 )
 from models import Project, ProjectScreenshots
@@ -47,6 +46,7 @@ class ProjectForm(forms.ModelForm):
             'name',
             'image_file',
             'description',
+            'precis',
             'gitter_room',
             'signature',
             'credit_cost',
@@ -62,6 +62,7 @@ class ProjectForm(forms.ModelForm):
                 Field('name', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
                 Field('description', css_class="form-control"),
+                Field('precis', css_class="form-control"),
                 Field('signature', css_class="form-control"),
                 Field('credit_cost', css_class="form-control"),
                 Field('certificate_credit', css_class="form-control"),
