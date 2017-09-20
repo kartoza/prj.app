@@ -22,16 +22,17 @@ class ProjectScreenshotsForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
+        self.helper.form_tag = False
         self.form_method = 'post'
         layout = Layout(
             Fieldset(
-                'Screenshots',
+                'Screenshot',
                 Field('screenshot', css_class="form-control"),
+                Field('DELETE', css_class='input-small'),
                 css_id='project-form')
         )
         self.helper.layout = layout
         self.helper.html5_required = False
-        FormHelper.form_tag = False
         super(ProjectScreenshotsForm, self).__init__(*args, **kwargs)
 
 
@@ -56,6 +57,7 @@ class ProjectForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         self.helper = FormHelper()
+        self.helper.form_tag = False
         layout = Layout(
             Fieldset(
                 'Project details',
@@ -83,7 +85,10 @@ class ProjectForm(forms.ModelForm):
 
 ScreenshotFormset = \
     inlineformset_factory(
-        Project, ProjectScreenshots, form=ProjectScreenshotsForm, extra=5)
+        Project,
+        ProjectScreenshots,
+        form=ProjectScreenshotsForm,
+        extra=5)
 
 
 class SignupForm(forms.Form):

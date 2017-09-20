@@ -35,6 +35,9 @@
                 <h3>Sponsors</h3>
                 {% for sponsor in sponsors %}
                     {% if sponsor.current_sponsor %}
+                        {% ifchanged sponsor.sponsorship_level %}
+                           <h4><img src="{% thumbnail sponsor.sponsorship_level.logo 20x20 %}"> {{ sponsor.sponsorship_level.name }}</h4>
+                        {% endifchanged %}
                             <img class="img-rounded tooltip-toggle"
                                  src="{% thumbnail sponsor.sponsor.logo 50x50 %}"
                                  data-title="{{ sponsor.sponsor.name }}">

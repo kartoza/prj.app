@@ -1,5 +1,5 @@
 {% extends "project_base.html" %}
-
+{% load staticfiles %}
 {% load crispy_forms_tags %}
 
 {% block extra_head %}
@@ -14,37 +14,17 @@
 {% endblock page_title %}
 
 {% block content %}
-<style>
-    .form-screenshot {
-        border: 1px solid #dbdbdb;
-        border-radius: 5px;
-        padding: 10px;
-        margin-bottom: 20px;
-        padding-bottom: 0 !important;
-    }
-    .form-screenshot label.control-label {
-        display: none;
-    }
-    .form-screenshot input.clearablefileinput {
-        margin-top: 5px;
-    }
-    .form-screenshot label {
-        margin-bottom: 5px;
-    }
-    .form-screenshot div.checkbox{
-        margin-top: -10px;
-    }
-</style>
+<link rel="stylesheet" type="text/css" href="{% static 'css/create_project.css' %}">
 <section id="forms">
 <div class='container'>
   <form method="post" enctype="multipart/form-data">
     {{ formset.management_form }}
         {% csrf_token %}
-        {% crispy form  %}
+        {% crispy form %}
 
         <label>Screenshots</label>
         <div class="form-screenshot">
-            {% crispy formset %}
+            {% crispy formset formset.form.helper %}
         </div>
 
         <div class="form-actions">

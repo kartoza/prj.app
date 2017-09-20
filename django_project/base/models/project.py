@@ -218,7 +218,7 @@ class Project(models.Model):
 
 
 class ProjectScreenshots(models.Model):
-    """Model to store multiple screenshots of the project."""
+    """Model to store multiple screenshots for each project."""
 
     project = models.ForeignKey(Project, related_name='screenshots')
     screenshot = models.ImageField(
