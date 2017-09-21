@@ -5,20 +5,13 @@
     <title>Title</title>
 </head>
 <body>
-<p>{{ custtok }}</p>
-<p>{{ dbmerchreq }}</p>
-<p>{{ length }}</p>
 <form action={% url 'create-charge-view' %} method=POST>
 {% csrf_token %}
-<select name="merchants">
+<h1>To which project would you like to donate?</h1>
+<select name="projects">
 {% for i in dbmerchreq %}
-    {% for k,v in i.items %}
-    {% if k == "merchantid" %}
-        <option value={{ v }}>
-    {% else %}
-            {{ v }}</option>
-        {% endif %}
-    {% endfor %}
+        <option value={{ i.owner_id }}>
+            {{ i.name }}</option>
 {% endfor %}
 </select>
 <input type="submit" value="Pay $420">

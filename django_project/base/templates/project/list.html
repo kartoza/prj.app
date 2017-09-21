@@ -70,6 +70,14 @@
       <h2 class="text-muted">
         Projects
         {% if user.is_authenticated %}
+            <div class="pull-right btn-group">
+            Make donation
+            <a class="btn btn-default tooltip-toggle"
+                href='{% url "process-customer-view" %}'
+                data-title="Donate to a project">
+                {% show_button_icon "add" %}
+            </a>
+          </div>
           <div class="pull-right btn-group">
             <a class="btn btn-default tooltip-toggle"
                 href='{% url "project-create" %}'

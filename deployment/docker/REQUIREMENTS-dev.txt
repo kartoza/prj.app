@@ -12,4 +12,4 @@ Sphinx
 
 # pdb plus plus
 pdbpp
-
+stripe==1.65.0
