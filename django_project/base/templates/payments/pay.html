@@ -5,8 +5,15 @@
     <title>Title</title>
 </head>
 <body>
+<p>{{ balance }}</p>
+<p>{{ b }}</p>
 <h1>Create a merchant</h1>
+{% if dbrequest == None %}
+    <p>You are not a merchant</p>
 <a href="https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id={{ ourclientid }}&scope = read_write">Goto Stripe.com</a>
+{% else  %}
+<p>You are a merchant</p>
+{% endif %}
 <h1>Create charge</h1>
 <a href="/customercharge/">Create a charge</a>
 <h1>Create a customer</h1>
@@ -23,6 +30,8 @@
 </form>
 <h1>Customer query</h1>
 <p>{{ fields }}</p>
+<h1>User</h1>
+<p>{{ loggeduser }}</p>
 <p></p>
 </body>
 </html>

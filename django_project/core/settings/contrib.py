@@ -3,7 +3,7 @@
 core.settings.contrib
 """
 from .base import *  # noqa
-
+import stripe
 # Extra installed apps - grapelli needs to be added before others
 INSTALLED_APPS = (
     'grappelli',
@@ -37,6 +37,13 @@ STOP_WORDS = (
 )
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+# Stripe Config
+STRIPE_KEY = "sk_test_OHW7bvLJhDtm1k2pI8AwIiEY"
+stripe.api_key = STRIPE_KEY
+OUR_CLIENT_ID = "ca_BM5OIMXOFqSOBjJcr4DrGHTsK3tLFuW3"
+MY_ACCOUNT = stripe.Account.retrieve("acct_1AzNDQGz66mVbJVl")
+MY_ACCOUNT_ID = MY_ACCOUNT.id
 
 # Easy-thumbnails options
 THUMBNAIL_SUBDIR = 'thumbnails'
