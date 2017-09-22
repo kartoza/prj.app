@@ -37,8 +37,8 @@
           Start Date : {{ sponsorshipperiod.start_date }}<br/>
           End Date : {{ sponsorshipperiod.end_date }}<br/>
           Amount Paid :
-            {% ifnotequal sponsorshipperiod.amount_paid None %}
-                {{ sponsorshipperiod.amount_paid }} {{ sponsorshipperiod.currency }}<br/>
+            {% ifnotequal sponsorshipperiod.amount_sponsored None %}
+                {{ sponsorshipperiod.amount_sponsored }} {{ sponsorshipperiod.currency }}<br/>
             {% else %}
                 n/a
             {% endifnotequal %}

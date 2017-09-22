@@ -49,9 +49,9 @@ class SponsorshipPeriod(models.Model):
         help_text='End date of sponsorship period',
         default=timezone.now)
 
-    amount_paid = models.DecimalField(
-        _('Amount Paid'),
-        help_text=_('The sponsorship amount that was paid for this period.'),
+    amount_sponsored = models.DecimalField(
+        _('Amount Sponsored'),
+        help_text=_('The actual amount sponsored for this period.'),
         decimal_places=2,
         max_digits=30,
         null=True,
@@ -59,7 +59,7 @@ class SponsorshipPeriod(models.Model):
     )
 
     currency = models.CharField(
-        help_text=_('The currency used for sponsorship payment.'),
+        help_text=_('The currency that is used for sponsorship payment.'),
         max_length=50,
         null=True,
         blank=True,
