@@ -16,7 +16,7 @@ from unidecode import unidecode
 from core.settings.contrib import STOP_WORDS
 from course_convener import CourseConvener
 from certifying_organisation import CertifyingOrganisation
-from course_type import CourseType
+from course_type import CourseType, increment_name
 from training_center import TrainingCenter
 
 logger = logging.getLogger(__name__)
@@ -68,6 +68,9 @@ class Course(models.Model):
 
     class Meta:
         ordering = ['name']
+        unique_together = [
+            'course_convener', 'course_type', 'training_center', 'start_date',
+            'end_date', 'certifying_organisation']
 
     def save(self, *args, **kwargs):
         project_name = self.certifying_organisation.project.name
@@ -75,7 +78,9 @@ class Course(models.Model):
         self.name = \
             project_name + '_' + course_type_name + '_' + \
             str(self.start_date) + '-' + str(self.end_date)
-        words = self.name.split()
+        registered_course = Course.objects.all()
+        name = increment_name(self.name, registered_course)
+        words = name.split()
         filtered_words = [word for word in words if
                           word.lower() not in STOP_WORDS]
         # unidecode() represents special characters (unicode data) in ASCII
