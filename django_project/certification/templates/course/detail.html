@@ -13,6 +13,28 @@
 
 {% block content %}
 
+    <style>
+        .success {
+            text-align: center;
+            font-family: inherit;
+            color: inherit;
+            background: #adffd2;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #96ffc5;
+        }
+    </style>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            {% if 'email_sent' in message.tags %}
+                <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="row">
         <div class="col-lg-10">
         <h1>{{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})</h1><br/>
@@ -26,13 +48,13 @@
                    data-title="Delete Course">
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
-                <a class="btn btn-default btn-sm tooltip-toggle"
+                <a class="btn btn-default btn-sm tooltip-toggle btn-primary-focus"
                    href='{% url "course-update" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
                    data-title="Edit Course">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
             {% endif %}
-                <a class="btn btn-default btn-sm tooltip-toggle"
+                <a class="btn btn-default btn-sm tooltip-toggle btn-primary-focus"
                     href='{% url "certifyingorganisation-detail" course.certifying_organisation.project.slug course.certifying_organisation.slug %}'
                     data-title="Back">
                      <span class="glyphicon glyphicon-arrow-left"></span>
@@ -99,21 +121,25 @@
         }
     </style>
 
-    <div class="menu-wrapper details-wrapper" style="margin-left: -15px; margin-top: 50px; float: left">
-
+    <div class="menu-wrapper details-wrapper" style="margin-left: -15px; margin-top: 50px;">
     <table style="border: none!important; width: 100%">
     <tr style="border: none"><td style="border: none; padding: 0"><h3 style="margin-top: -20px">Course attendees</h3></td>
     {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner %}
     <td style="border: none; padding: 0;">
-    <div class="btn-group pull-right">
-        <a class="btn btn-default btn-sm tooltip-toggle" style=" margin-top: -30px"
+    <div class="btn-group pull-right" style="margin-top: -30px">
+        <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
            href='{% url 'courseattendee-create' project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
             data-title="Add Course Attendees">
             {% show_button_icon "add" %}</a>
-        <a id='download-zip' class="btn btn-default btn-sm tooltip-toggle pull-right" style=" margin-top: -30px"
+        <a id='download-zip' class="btn btn-default btn-sm tooltip-toggle"
            href='{% url "download_zip_all" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
             data-title="Download all issued certificates from this course">
             <span class="glyphicon glyphicon-download-alt"></span>
+            </a>
+         <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
+           href='{% url "send_email" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
+            data-title="Email all participants with the link to their certificates.">
+            <i class="glyphicon glyphicon-send"></i>
             </a>
     </div>
     </td></tr>
@@ -187,8 +213,11 @@
     </div>
 
     <script>
+        $(document).click(function () {
+            $('.messages').fadeOut('fast')
+        });
 
-        $('#download-zip').hover(
+        $('#download-zip, .btn-print, .btn-info-focus').hover(
             function (){
                 $(this).removeClass('btn-default').addClass('btn-info')
             },
@@ -204,12 +233,12 @@
                 $(this).removeClass('btn-danger').addClass('btn-default')
             }
         );
-        $('.btn-print').hover(
+        $('.btn-primary-focus').hover(
             function (){
-                $(this).removeClass('btn-default').addClass('btn-info')
+                $(this).removeClass('btn-default').addClass('btn-primary')
             },
             function (){
-                $(this).removeClass('btn-info').addClass('btn-default')
+                $(this).removeClass('btn-primary').addClass('btn-default')
             }
         );
         $('.btn-issue').hover(
