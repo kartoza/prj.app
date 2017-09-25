@@ -109,43 +109,6 @@ class CertificateCreateView(
             organisation.organisation_credits = remaining_credits
             organisation.save()
 
-            pk = self.attendee.pk
-            site = self.request.get_host()
-
-            # Send email to the attendee when the certificate is issued.
-            send_mail(
-                'Certificate from %s Course' % self.course.course_type,
-                'Dear %s %s,\n\n' % (
-                    self.attendee.firstname, self.attendee.surname) +
-                'Congratulations!\n'
-                'Your certificate from the following course '
-                'has been issued.\n\n' +
-                'Course type: %s\n' % self.course.course_type +
-                'Course date: %s to %s\n' % (
-                    self.course.start_date.strftime('%d %B %Y'),
-                    self.course.end_date.strftime('%d %B %Y')) +
-                'Training center: %s\n' % self.course.training_center +
-                'Certifying organisation: %s\n\n'
-                % self.course.certifying_organisation.name +
-                'You may print the certificate '
-                'by visiting:\n'
-                'http://%s/en/%s/certifyingorganisation/%s/course/'
-                '%s/print/%s/\n\n' % (
-                    site,
-                    self.course.certifying_organisation.project.slug,
-                    self.course.certifying_organisation.slug,
-                    self.course.slug,
-                    pk
-                ) +
-                'Sincerely,\n%s %s' % (
-                    self.course.course_convener.user.first_name,
-                    self.course.course_convener.user.last_name
-                ),
-                self.course.course_convener.user.email,
-                [self.attendee.email],
-                fail_silently=False,
-            )
-
             return HttpResponseRedirect(self.get_success_url())
         except IntegrityError:
             return ValidationError(
