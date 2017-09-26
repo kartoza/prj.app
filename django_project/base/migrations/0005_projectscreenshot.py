@@ -12,10 +12,10 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='ProjectScreenshots',
+            name='ProjectScreenshot',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('screenshot', models.ImageField(help_text='Screenshots of this project.', upload_to=b'images/projects/screenshots', blank=True)),
+                ('screenshot', models.ImageField(help_text='A project screenshot.', upload_to=b'images/projects/screenshots', blank=True)),
                 ('project', models.ForeignKey(related_name='screenshots', to='base.Project')),
             ],
         ),

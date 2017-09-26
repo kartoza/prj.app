@@ -12,12 +12,12 @@ Note these admin models inherit reversion (which provides history for a model).
 
 
 from django.contrib import admin
-from models import Project, ProjectScreenshots
+from models import Project, ProjectScreenshot
 import reversion
 
 
 class ProjectScreenshotsAdmin(admin.TabularInline):
-    model = ProjectScreenshots
+    model = ProjectScreenshot
     extra = 5
 
 

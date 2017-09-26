@@ -9,15 +9,15 @@ from crispy_forms.layout import (
     Fieldset,
     Field,
 )
-from models import Project, ProjectScreenshots
+from models import Project, ProjectScreenshot
 
 logger = logging.getLogger(__name__)
 
 
-class ProjectScreenshotsForm(forms.ModelForm):
+class ProjectScreenshotForm(forms.ModelForm):
 
     class Meta:
-        model = ProjectScreenshots
+        model = ProjectScreenshot
         fields = ('screenshot',)
 
     def __init__(self, *args, **kwargs):
@@ -33,7 +33,7 @@ class ProjectScreenshotsForm(forms.ModelForm):
         )
         self.helper.layout = layout
         self.helper.html5_required = False
-        super(ProjectScreenshotsForm, self).__init__(*args, **kwargs)
+        super(ProjectScreenshotForm, self).__init__(*args, **kwargs)
 
 
 class ProjectForm(forms.ModelForm):
@@ -86,8 +86,8 @@ class ProjectForm(forms.ModelForm):
 ScreenshotFormset = \
     inlineformset_factory(
         Project,
-        ProjectScreenshots,
-        form=ProjectScreenshotsForm,
+        ProjectScreenshot,
+        form=ProjectScreenshotForm,
         extra=5)
 
 

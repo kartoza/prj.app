@@ -217,12 +217,12 @@ class Project(models.Model):
             return False
 
 
-class ProjectScreenshots(models.Model):
-    """Model to store multiple screenshots for each project."""
+class ProjectScreenshot(models.Model):
+    """A model to store a screenshot linked to a project."""
 
     project = models.ForeignKey(Project, related_name='screenshots')
     screenshot = models.ImageField(
-        help_text=_('Screenshots of this project.'),
+        help_text=_('A project screenshot.'),
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects/screenshots'),
         blank=True
     )
