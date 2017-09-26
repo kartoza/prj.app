@@ -98,6 +98,7 @@ class CourseTypeForm(forms.ModelForm):
             'description',
             'instruction_hours',
             'coursetype_link',
+            'certifying_organisation',
         )
 
     def __init__(self, *args, **kwargs):
@@ -118,11 +119,13 @@ class CourseTypeForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(CourseTypeForm, self).__init__(*args, **kwargs)
+        self.fields['certifying_organisation'].initial = \
+            self.certifying_organisation
+        self.fields['certifying_organisation'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
         instance = super(CourseTypeForm, self).save(commit=False)
-        instance.certifying_organisation = self.certifying_organisation
         instance.author = self.user
         instance.save()
         return instance
@@ -265,7 +268,8 @@ class CourseForm(forms.ModelForm):
             'training_center',
             'start_date',
             'end_date',
-            'template_certificate'
+            'template_certificate',
+            'certifying_organisation',
         )
 
     def __init__(self, *args, **kwargs):
@@ -299,6 +303,9 @@ class CourseForm(forms.ModelForm):
         self.fields['training_center'].queryset = \
             TrainingCenter.objects.filter(
                 certifying_organisation=self.certifying_organisation)
+        self.fields['certifying_organisation'].initial = \
+            self.certifying_organisation
+        self.fields['certifying_organisation'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
@@ -379,7 +386,6 @@ class AttendeeForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(AttendeeForm, self).save(commit=False)
         instance.author = self.user
-        instance.certifying_organisation = self.certifying_organisation
         instance.save()
         return instance
 
