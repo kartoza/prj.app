@@ -229,9 +229,6 @@ def certificate_pdf_view(request, **kwargs):
     current_site = request.META['HTTP_HOST']
 
     # Create the HttpResponse object with the appropriate PDF headers.
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = \
-        'filename=%s.pdf' % certificate.certificateID
     filename = "{}.{}".format(certificate.certificateID, "pdf")
     project_folder = (project.name.lower()).replace(' ', '_')
     pathname = \
@@ -242,7 +239,7 @@ def certificate_pdf_view(request, **kwargs):
         with open(pathname, 'r') as pdf:
             response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = \
-                'filename=%s' % pdf
+                'filename=%s' % certificate.certificateID
             return response
     else:
         makepath = '/home/web/media/pdf/%s/' % project_folder
@@ -391,7 +388,7 @@ def certificate_pdf_view(request, **kwargs):
         with open(pathname, 'r') as pdf:
             response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = \
-                'filename=%s' % pdf
+                'filename=%s' % certificate.certificateID
             return response
 
 
