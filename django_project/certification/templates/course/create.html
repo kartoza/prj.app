@@ -21,6 +21,9 @@
 
     <script>
     $(function() {
+        var start_date = $("#id_start_date").val();
+        var end_date = $("#id_end_date").val();
+
         $("#id_start_date").attr('data-language', 'en');
         $("#id_end_date").attr('data-language', 'en');
 
@@ -43,6 +46,9 @@
                 $("#id_start_date").datepicker({maxDate: new Date(date)})
             }
         });
+
+        $('#id_start_date').datepicker().data('datepicker').selectDate(new Date(start_date.toString()));
+        $('#id_end_date').datepicker().data('datepicker').selectDate(new Date(end_date.toString()));
     });
     </script>
 
