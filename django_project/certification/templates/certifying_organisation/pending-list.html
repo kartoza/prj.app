@@ -101,24 +101,22 @@
             </div>
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
-                    {% if not certifyingorganisation.approved and user.is_staff %}
+                    {% if not certifyingorganisation.approved and user.is_staff or user == project.owner %}
                         <a class="btn btn-default btn-mini btn-approved tooltip-toggle"
                            href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                             data-title="Approve {{ certifyingorganisation.name }}">
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
-                    {% endif %}
-                    {% if user.is_staff or user in certifyingorganisation.organisation_owners.all %}
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                        href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                        data-title="Edit {{ certifyingorganisation.name }}">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
-                    <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                       href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                        data-title="Delete {{ certifyingorganisation.name }}">
-                        <span class="glyphicon glyphicon-minus"></span>
-                    </a>
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                            href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                            data-title="Edit {{ certifyingorganisation.name }}">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                        <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                           href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                            data-title="Delete {{ certifyingorganisation.name }}">
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </a>
                     {% endif %}
                 </div>
             </div>

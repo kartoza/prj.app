@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from django.http import HttpResponse
 from django.views.generic import (
     ListView,
@@ -15,7 +16,7 @@ from django.views.generic import (
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from ..models import (
     CertifyingOrganisation,
@@ -605,8 +606,16 @@ class PendingCertifyingOrganisationListView(
             self.project_slug = self.kwargs.get('project_slug', None)
             if self.project_slug:
                 self.project = Project.objects.get(slug=self.project_slug)
-                queryset = CertifyingOrganisation.unapproved_objects.filter(
-                    project=self.project)
+                if self.request.user.is_staff:
+                    queryset = \
+                        CertifyingOrganisation.unapproved_objects.filter(
+                            project=self.project)
+                else:
+                    queryset = \
+                        CertifyingOrganisation.unapproved_objects.filter(
+                            Q(project=self.project) &
+                            (Q(project__owner=self.request.user) |
+                             Q(organisation_owners=self.request.user)))
                 return queryset
             else:
                 raise Http404(
@@ -616,7 +625,6 @@ class PendingCertifyingOrganisationListView(
 
 class ApproveCertifyingOrganisationView(
         CertifyingOrganisationMixin,
-        StaffuserRequiredMixin,
         RedirectView):
     """Redirect view for approving Certifying Organisation."""
 
