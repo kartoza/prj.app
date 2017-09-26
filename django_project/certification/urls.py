@@ -49,6 +49,7 @@ from views import (
     download_certificates_zip,
     update_paid_status,
     top_up_unavailable,
+    email_all_attendees,
 
     # Validate Certificate.
     ValidateCertificate,
@@ -185,6 +186,22 @@ urlpatterns = patterns(
               '(?P<organisation_slug>[\w-]+)/top-up/$',
         view=top_up_unavailable,
         name='top-up'),
+    url(regex='^(?P<project_slug>[\w-]+)/certificate/'
+              '(?P<id>[\w-]+)/$',
+        view=CertificateDetailView.as_view(),
+        name='certificate-details'),
+    url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+        '(?P<organisation_slug>[\w-]+)/course/'
+        '(?P<course_slug>[\w-]+)/print/(?P<pk>[\w-]+)/$',
+        certificate_pdf_view, name='print-certificate'),
+    url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+        '(?P<organisation_slug>[\w-]+)/course/'
+        '(?P<course_slug>[\w-]+)/download_zip/$',
+        download_certificates_zip, name='download_zip_all'),
+    url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+        '(?P<organisation_slug>[\w-]+)/course/'
+        '(?P<course_slug>[\w-]+)/send_email/$',
+        email_all_attendees, name='send_email'),
 
     # Course.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
@@ -201,20 +218,6 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/delete/$',
         view=CourseDeleteView.as_view(),
         name='course-delete'),
-
-    # Certificate.
-    url(regex='^(?P<project_slug>[\w-]+)/certificate/'
-              '(?P<id>[\w-]+)/$',
-        view=CertificateDetailView.as_view(),
-        name='certificate-details'),
-    url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-        '(?P<organisation_slug>[\w-]+)/course/'
-        '(?P<course_slug>[\w-]+)/print/(?P<pk>[\w-]+)/$',
-        certificate_pdf_view, name='print-certificate'),
-    url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-        '(?P<organisation_slug>[\w-]+)/course/'
-        '(?P<course_slug>[\w-]+)/download_zip/$',
-        download_certificates_zip, name='download_zip_all'),
 
     # Search.
     url(regex='^(?P<project_slug>[\w-]+)/certificate/$',

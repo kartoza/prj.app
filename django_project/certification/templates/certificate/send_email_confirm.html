@@ -1,0 +1,27 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    <h1>Send email</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div>
+        <div class="container">
+            <h4 style="font-size: 16pt">Are you sure you want to send email for the following course attendees along with the link to their certificates?</h4>
+            <div style="border: 2px solid #f5f5f5; padding: 20px 10px 10px 10px; font-size: 12pt; margin-top: 15px">
+            <ul>
+                {% for attendee in attendees %}
+                    <li>{{ attendee }}</li>
+                {% endfor %}
+            </ul>
+            </div>
+            <h5>Note: Only course attendee with paid certificate will receive the email.</h5>
+             <form id="send-email" action="." method="POST">
+                 {% csrf_token %}
+                 <input type="submit" value="Submit" class="btn btn-primary">
+             </form>
+        </div>
+    </div>
+{% endblock %}

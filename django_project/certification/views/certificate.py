@@ -2,6 +2,7 @@
 import StringIO
 import os
 import zipfile
+from django.contrib import messages
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.views.generic import CreateView, DetailView
 from django.core.mail import send_mail
@@ -486,3 +487,78 @@ def top_up_unavailable(request, **kwargs):
         context={
             'the_project': project,
             'has_pending_organisations': has_pending})
+
+
+def email_all_attendees(request, **kwargs):
+    project_slug = kwargs.get('project_slug', None)
+    course_slug = kwargs.get('course_slug', None)
+    organisation_slug = kwargs.get('organisation_slug', None)
+    project = Project.objects.get(slug=project_slug)
+    course = Course.objects.get(slug=course_slug)
+    attendee_list = \
+        Certificate.objects.filter(
+            is_paid=True, course=course).values_list('attendee', flat=True)
+    attendee_list_object = []
+    for attendee_pk in attendee_list:
+        attendee = Attendee.objects.get(pk=attendee_pk)
+        attendee_list_object.append(attendee)
+
+    organisation = CertifyingOrganisation.objects.filter(approved=False)
+    has_pending = False
+    if organisation:
+        has_pending = True
+
+    url = reverse('course-detail', kwargs={
+        'project_slug': project_slug,
+        'organisation_slug': organisation_slug,
+        'slug': course_slug
+    })
+
+    if request.method == 'POST':
+
+        site = request.get_host()
+        for attendee in attendee_list_object:
+            # Send email to each attendee with the link to his certificate.
+
+            send_mail(
+                'Certificate from %s Course' % course.course_type,
+                'Dear %s %s,\n\n' % (
+                    attendee.firstname, attendee.surname) +
+                'Congratulations!\n'
+                'Your certificate from the following course '
+                'has been issued.\n\n' +
+                'Course type: %s\n' % course.course_type +
+                'Course date: %s to %s\n' % (
+                    course.start_date.strftime('%d %B %Y'),
+                    course.end_date.strftime('%d %B %Y')) +
+                'Training center: %s\n' % course.training_center +
+                'Certifying organisation: %s\n\n'
+                % course.certifying_organisation.name +
+                'You may print the certificate '
+                'by visiting:\n'
+                'http://%s/en/%s/certifyingorganisation/%s/course/'
+                '%s/print/%s/\n\n' % (
+                    site,
+                    course.certifying_organisation.project.slug,
+                    course.certifying_organisation.slug,
+                    course.slug,
+                    attendee.pk
+                ) +
+                'Sincerely,\n%s %s' % (
+                    course.course_convener.user.first_name,
+                    course.course_convener.user.last_name
+                ),
+                course.course_convener.user.email,
+                [attendee.email],
+                fail_silently=False,
+            )
+
+        messages.success(request, 'Email sent', 'email_sent')
+        return HttpResponseRedirect(url)
+
+    return render(
+        request, 'certificate/send_email_confirm.html',
+        context={
+            'the_project': project,
+            'has_pending_organisations': has_pending,
+            'attendees': attendee_list_object})
