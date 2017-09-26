@@ -3,6 +3,7 @@ import StringIO
 import os
 import zipfile
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.views.generic import CreateView, DetailView
 from django.core.urlresolvers import reverse
