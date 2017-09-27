@@ -484,30 +484,31 @@ def email_all_attendees(request, **kwargs):
             # Send email to each attendee with the link to his certificate.
 
             send_mail(
-                'Certificate from %s Course' % course.course_type,
-                'Dear %s %s,\n\n' % (
-                    attendee.firstname, attendee.surname) +
+                'Certificate from {} Course'.format(course.course_type),
+                'Dear {} {},\n\n'
                 'Congratulations!\n'
                 'Your certificate from the following course '
-                'has been issued.\n\n' +
-                'Course type: %s\n' % course.course_type +
-                'Course date: %s to %s\n' % (
-                    course.start_date.strftime('%d %B %Y'),
-                    course.end_date.strftime('%d %B %Y')) +
-                'Training center: %s\n' % course.training_center +
-                'Certifying organisation: %s\n\n'
-                % course.certifying_organisation.name +
+                'has been issued.\n\n'
+                'Course type: {}\n'
+                'Course date: {} to {}\n'
+                'Training center: {}\n'
+                'Certifying organisation: {}\n\n'
                 'You may print the certificate '
                 'by visiting:\n'
-                'http://%s/en/%s/certifyingorganisation/%s/course/'
-                '%s/print/%s/\n\n' % (
+                'http://{}/en/{}/certifyingorganisation/{}/course/'
+                '{}/print/{}/\n\n'
+                'Sincerely,\n{} {}'.format(
+                    attendee.firstname, attendee.surname,
+                    course.course_type,
+                    course.start_date.strftime('%d %B %Y'),
+                    course.end_date.strftime('%d %B %Y'),
+                    course.training_center,
+                    course.certifying_organisation.name,
                     site,
                     course.certifying_organisation.project.slug,
                     course.certifying_organisation.slug,
                     course.slug,
-                    attendee.pk
-                ) +
-                'Sincerely,\n%s %s' % (
+                    attendee.pk,
                     course.course_convener.user.first_name,
                     course.course_convener.user.last_name
                 ),
