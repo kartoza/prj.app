@@ -282,14 +282,19 @@ def certificate_pdf_view(request, **kwargs):
         page.drawCentredString(
             center, 270,
             'From {} {} {} to {} {} {}'
-            .format(course.start_date.day, course.start_date.strftime('%B'),
-               course.start_date.year, course.end_date.day,
-               course.end_date.strftime('%B'), course.end_date.year))
+            .format(
+                course.start_date.day,
+                course.start_date.strftime('%B'),
+                course.start_date.year,
+                course.end_date.day,
+                course.end_date.strftime('%B'),
+                course.end_date.year))
         page.setFillColorRGB(0.1, 0.1, 0.1)
         page.drawCentredString(
             center, 220, 'Convened by {} {} at {}' .format(
                 course.course_convener.user.first_name,
-                course.course_convener.user.last_name, course.training_center))
+                course.course_convener.user.last_name,
+                course.training_center))
 
         if project_owner_signature is not None:
             page.drawImage(
