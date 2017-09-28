@@ -485,36 +485,39 @@ def email_all_attendees(request, **kwargs):
         site = request.get_host()
         for attendee in attendee_list_object:
             # Send email to each attendee with the link to his certificate.
+            data = {
+                'firstname': attendee.firstname,
+                'lastname': attendee.surname,
+                'coursetype': course.course_type,
+                'start_date': course.start_date.strftime('%d %B %Y'),
+                'end_date': course.end_date.strftime('%d %B %Y'),
+                'training_center': course.training_center,
+                'organisation': course.certifying_organisation.name,
+                'domain': site,
+                'project_slug':course.certifying_organisation.project.slug,
+                'organisation_slug': course.certifying_organisation.slug,
+                'course_slug': course.slug,
+                'pk': attendee.pk,
+                'convener_firstname': course.course_convener.user.first_name,
+                'convener_lastname': course.course_convener.user.last_name}
 
             send_mail(
                 'Certificate from {} Course'.format(course.course_type),
-                'Dear {} {},\n\n'
+                'Dear {firstname} {lastname},\n\n'
                 'Congratulations!\n'
                 'Your certificate from the following course '
                 'has been issued.\n\n'
-                'Course type: {}\n'
-                'Course date: {} to {}\n'
-                'Training center: {}\n'
-                'Certifying organisation: {}\n\n'
+                'Course type: {coursetype}\n'
+                'Course date: {start_date} to {end_date}\n'
+                'Training center: {training_center}\n'
+                'Certifying organisation: {organisation}\n\n'
                 'You may print the certificate '
                 'by visiting:\n'
-                'http://{}/en/{}/certifyingorganisation/{}/course/'
-                '{}/print/{}/\n\n'
-                'Sincerely,\n{} {}'.format(
-                    attendee.firstname, attendee.surname,
-                    course.course_type,
-                    course.start_date.strftime('%d %B %Y'),
-                    course.end_date.strftime('%d %B %Y'),
-                    course.training_center,
-                    course.certifying_organisation.name,
-                    site,
-                    course.certifying_organisation.project.slug,
-                    course.certifying_organisation.slug,
-                    course.slug,
-                    attendee.pk,
-                    course.course_convener.user.first_name,
-                    course.course_convener.user.last_name
-                ),
+                'http://{domain}/en/{project_slug}/certifyingorganisation/'
+                '{organisation_slug}/course/'
+                '{course_slug}/print/{pk}/\n\n'
+                'Sincerely,\n{convener_firstname} {convener_lastname}'
+                .format(**data),
                 course.course_convener.user.email,
                 [attendee.email],
                 fail_silently=False,
