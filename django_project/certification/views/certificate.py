@@ -494,7 +494,7 @@ def email_all_attendees(request, **kwargs):
                 'training_center': course.training_center,
                 'organisation': course.certifying_organisation.name,
                 'domain': site,
-                'project_slug':course.certifying_organisation.project.slug,
+                'project_slug': course.certifying_organisation.project.slug,
                 'organisation_slug': course.certifying_organisation.slug,
                 'course_slug': course.slug,
                 'pk': attendee.pk,
