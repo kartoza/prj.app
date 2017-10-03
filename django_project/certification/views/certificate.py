@@ -193,20 +193,20 @@ def certificate_pdf_view(request, **kwargs):
     current_site = request.META['HTTP_HOST']
 
     # Create the HttpResponse object with the appropriate PDF headers.
-    filename = "{}.{}".format(certificate.certificateID, "pdf")
+    filename = '{}.{}'.format(certificate.certificateID, 'pdf')
     project_folder = (project.name.lower()).replace(' ', '_')
     pathname = \
         os.path.join(
-            '/home/web/media', 'pdf/%s/{}'.format(filename) % project_folder)
+            '/home/web/media', 'pdf/{}/{}'.format(project_folder, filename))
     found = os.path.exists(pathname)
     if found:
         with open(pathname, 'r') as pdf:
             response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = \
-                'filename=%s' % certificate.certificateID
+                'filename={}.pdf'.format(certificate.certificateID)
             return response
     else:
-        makepath = '/home/web/media/pdf/%s/' % project_folder
+        makepath = '/home/web/media/pdf/{}/'.format(project_folder)
         if not os.path.exists(makepath):
             os.makedirs(makepath)
 
@@ -281,15 +281,20 @@ def certificate_pdf_view(request, **kwargs):
         page.setFont('Times-Roman', 16)
         page.drawCentredString(
             center, 270,
-            'From %s %s %s to %s %s %s'
-            % (course.start_date.day, course.start_date.strftime('%B'),
-               course.start_date.year, course.end_date.day,
-               course.end_date.strftime('%B'), course.end_date.year))
+            'From {} {} {} to {} {} {}'
+            .format(
+                course.start_date.day,
+                course.start_date.strftime('%B'),
+                course.start_date.year,
+                course.end_date.day,
+                course.end_date.strftime('%B'),
+                course.end_date.year))
         page.setFillColorRGB(0.1, 0.1, 0.1)
         page.drawCentredString(
-            center, 220, 'Convened by %s %s at %s' % (
+            center, 220, 'Convened by {} {} at {}' .format(
                 course.course_convener.user.first_name,
-                course.course_convener.user.last_name, course.training_center))
+                course.course_convener.user.last_name,
+                course.training_center))
 
         if project_owner_signature is not None:
             page.drawImage(
@@ -311,10 +316,10 @@ def certificate_pdf_view(request, **kwargs):
         page.setFont('Times-Italic', 12)
         page.drawCentredString(
             (margin_left + 150), (margin_bottom + 60),
-            '%s %s' % (project.owner.first_name, project.owner.last_name))
+            '{} {}' .format(project.owner.first_name, project.owner.last_name))
         page.drawCentredString(
             (margin_right - 150), (margin_bottom + 60),
-            '%s %s' % (
+            '{} {}' .format(
                 course.course_convener.user.first_name,
                 course.course_convener.user.last_name))
         page.line(
@@ -335,16 +340,14 @@ def certificate_pdf_view(request, **kwargs):
         page.setFont('Times-Roman', 14)
         page.drawString(
             margin_left,
-            margin_bottom -
-            10,
-            'ID: %s' %
-            certificate.certificateID)
+            margin_bottom - 10,
+            'ID: {}'.format(certificate.certificateID))
         page.setFont('Times-Roman', 8)
         page.drawString(
             margin_left, (margin_bottom - 20),
             'You can verify this certificate by visiting '
-            'http://%s/en/%s/certificate/%s/.'
-            % (current_site, project.slug, certificate.certificateID))
+            'http://{}/en/{}/certificate/{}/.'
+            .format(current_site, project.slug, certificate.certificateID))
 
         # Close the PDF object cleanly.
         page.showPage()
@@ -352,7 +355,7 @@ def certificate_pdf_view(request, **kwargs):
         with open(pathname, 'r') as pdf:
             response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = \
-                'filename=%s' % certificate.certificateID
+                'filename={}.pdf'.format(certificate.certificateID)
             return response
 
 
@@ -482,35 +485,39 @@ def email_all_attendees(request, **kwargs):
         site = request.get_host()
         for attendee in attendee_list_object:
             # Send email to each attendee with the link to his certificate.
+            data = {
+                'firstname': attendee.firstname,
+                'lastname': attendee.surname,
+                'coursetype': course.course_type,
+                'start_date': course.start_date.strftime('%d %B %Y'),
+                'end_date': course.end_date.strftime('%d %B %Y'),
+                'training_center': course.training_center,
+                'organisation': course.certifying_organisation.name,
+                'domain': site,
+                'project_slug': course.certifying_organisation.project.slug,
+                'organisation_slug': course.certifying_organisation.slug,
+                'course_slug': course.slug,
+                'pk': attendee.pk,
+                'convener_firstname': course.course_convener.user.first_name,
+                'convener_lastname': course.course_convener.user.last_name}
 
             send_mail(
-                'Certificate from %s Course' % course.course_type,
-                'Dear %s %s,\n\n' % (
-                    attendee.firstname, attendee.surname) +
+                'Certificate from {} Course'.format(course.course_type),
+                'Dear {firstname} {lastname},\n\n'
                 'Congratulations!\n'
                 'Your certificate from the following course '
-                'has been issued.\n\n' +
-                'Course type: %s\n' % course.course_type +
-                'Course date: %s to %s\n' % (
-                    course.start_date.strftime('%d %B %Y'),
-                    course.end_date.strftime('%d %B %Y')) +
-                'Training center: %s\n' % course.training_center +
-                'Certifying organisation: %s\n\n'
-                % course.certifying_organisation.name +
+                'has been issued.\n\n'
+                'Course type: {coursetype}\n'
+                'Course date: {start_date} to {end_date}\n'
+                'Training center: {training_center}\n'
+                'Certifying organisation: {organisation}\n\n'
                 'You may print the certificate '
                 'by visiting:\n'
-                'http://%s/en/%s/certifyingorganisation/%s/course/'
-                '%s/print/%s/\n\n' % (
-                    site,
-                    course.certifying_organisation.project.slug,
-                    course.certifying_organisation.slug,
-                    course.slug,
-                    attendee.pk
-                ) +
-                'Sincerely,\n%s %s' % (
-                    course.course_convener.user.first_name,
-                    course.course_convener.user.last_name
-                ),
+                'http://{domain}/en/{project_slug}/certifyingorganisation/'
+                '{organisation_slug}/course/'
+                '{course_slug}/print/{pk}/\n\n'
+                'Sincerely,\n{convener_firstname} {convener_lastname}'
+                .format(**data),
                 course.course_convener.user.email,
                 [attendee.email],
                 fail_silently=False,
