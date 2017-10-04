@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class ProjectScreenshotForm(forms.ModelForm):
+    """Form to input a screenshot linked to a project."""
 
     class Meta:
         model = ProjectScreenshot
@@ -83,6 +84,7 @@ class ProjectForm(forms.ModelForm):
         return instance
 
 
+# Screenshot formset
 ScreenshotFormset = \
     inlineformset_factory(
         Project,

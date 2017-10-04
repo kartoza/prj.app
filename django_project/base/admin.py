@@ -16,16 +16,18 @@ from models import Project, ProjectScreenshot
 import reversion
 
 
-class ProjectScreenshotsAdmin(admin.TabularInline):
+class ProjectScreenshotAdmin(admin.TabularInline):
+    """Admin for project's screenshot model."""
+
     model = ProjectScreenshot
     extra = 5
 
 
 class ProjectAdmin(reversion.VersionAdmin):
-
     """Admin for the project model."""
 
-    inlines = [ProjectScreenshotsAdmin, ]
+    # Screenshot input in admin project panel.
+    inlines = [ProjectScreenshotAdmin, ]
 
     def queryset(self, request):
         """Ensure we use the correct manager.

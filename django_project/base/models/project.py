@@ -67,6 +67,7 @@ def validate_gitter_room_name(value):
 
 class Project(models.Model):
     """A project model e.g. QGIS, InaSAFE etc."""
+
     name = models.CharField(
         help_text=_('Name of this project.'),
         max_length=255,

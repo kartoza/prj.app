@@ -26,9 +26,10 @@ class TestViews(TestCase):
         self.unapproved_project = ProjectF.create(approved=False)
         self.user = UserF.create(**{
             'username': 'timlinux',
-            'password': 'password',
             'is_staff': True
         })
+        self.user.set_password('password')
+        self.user.save()
 
     def test_ProjectListView(self):
         client = Client()
