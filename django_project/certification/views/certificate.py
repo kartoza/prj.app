@@ -181,6 +181,150 @@ class CertificateDetailView(DetailView):
                 raise Http404('Sorry! Certificate by this ID is not exist.')
 
 
+def generate_pdf(
+        pathname, project, course, attendee, certificate, current_site):
+    """Create the PDF object, using the response object as its file."""
+
+    page = canvas.Canvas(pathname, pagesize=landscape(A4))
+    width, height = A4
+    center = height * 0.5
+
+    if project.image_file:
+        project_logo = ImageReader(project.image_file)
+    else:
+        project_logo = None
+
+    if course.certifying_organisation.logo:
+        organisation_logo = ImageReader(
+            course.certifying_organisation.logo)
+    else:
+        organisation_logo = None
+
+    if project.signature:
+        project_owner_signature = ImageReader(project.signature)
+    else:
+        project_owner_signature = None
+
+    if course.course_convener.signature:
+        convener_signature = ImageReader(course.course_convener.signature)
+    else:
+        convener_signature = None
+
+    if course.template_certificate:
+        background = ImageReader(course.template_certificate)
+    else:
+        background = None
+
+    # Certificate margin.
+    margin_right = height - 50
+    margin_left = 50
+    margin_bottom = 50
+    max_left = margin_right - 100
+
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+    if background is not None:
+        page.drawImage(
+            background, 0, 0, height=width, width=height,
+            preserveAspectRatio=True, mask='auto')
+    page.setFillColorRGB(0.1, 0.1, 0.1)
+    page.setFont('Times-Roman', 18)
+
+    if project_logo is not None:
+        page.drawImage(
+            project_logo, 50, 450, width=100, height=100,
+            preserveAspectRatio=True, mask='auto')
+
+    if organisation_logo is not None:
+        page.drawImage(
+            organisation_logo, max_left, 450, height=100, width=100,
+            preserveAspectRatio=True, anchor='c', mask='auto')
+
+    page.setFont('Times-Bold', 26)
+    page.drawCentredString(center, 480, 'Certificate of Completion')
+    page.drawCentredString(
+        center, 400, '%s %s' % (attendee.firstname, attendee.surname))
+    page.setFont('Times-Roman', 16)
+    page.drawCentredString(
+        center, 360, 'Has attended and completed the course:')
+    page.setFont('Times-Bold', 20)
+    page.drawCentredString(center, 300, course.course_type.name)
+    page.setFont('Times-Roman', 16)
+    page.drawCentredString(
+        center, 270,
+        'From {} {} {} to {} {} {}'
+        .format(
+            course.start_date.day,
+            course.start_date.strftime('%B'),
+            course.start_date.year,
+            course.end_date.day,
+            course.end_date.strftime('%B'),
+            course.end_date.year))
+    page.setFillColorRGB(0.1, 0.1, 0.1)
+    page.drawCentredString(
+        center, 220, 'Convened by {} {} at {}'.format(
+            course.course_convener.user.first_name,
+            course.course_convener.user.last_name,
+            course.training_center))
+
+    if project_owner_signature is not None:
+        page.drawImage(
+            project_owner_signature,
+            (margin_left + 100),
+            (margin_bottom + 70),
+            width=100,
+            height=70,
+            preserveAspectRatio=True,
+            anchor='s',
+            mask='auto')
+
+    if convener_signature is not None:
+        page.drawImage(
+            convener_signature, (margin_right - 200), (margin_bottom + 70),
+            width=100, height=70, preserveAspectRatio=True, anchor='s',
+            mask='auto')
+
+    page.setFont('Times-Italic', 12)
+    page.drawCentredString(
+        (margin_left + 150), (margin_bottom + 60),
+        '{} {}'.format(project.owner.first_name, project.owner.last_name))
+    page.drawCentredString(
+        (margin_right - 150), (margin_bottom + 60),
+        '{} {}'.format(
+            course.course_convener.user.first_name,
+            course.course_convener.user.last_name))
+    page.line(
+        (margin_left + 70), (margin_bottom + 55),
+        (margin_left + 230), (margin_bottom + 55))
+    page.line(
+        (margin_right - 70), (margin_bottom + 55),
+        (margin_right - 230), (margin_bottom + 55))
+    page.setFont('Times-Roman', 13)
+    page.drawCentredString(
+        (margin_left + 150),
+        (margin_bottom + 40),
+        'Project Representative')
+    page.drawCentredString(
+        (margin_right - 150), (margin_bottom + 40), 'Course Convener')
+
+    # Footnotes.
+    page.setFont('Times-Roman', 14)
+    page.drawString(
+        margin_left,
+        margin_bottom - 10,
+        'ID: {}'.format(certificate.certificateID))
+    page.setFont('Times-Roman', 8)
+    page.drawString(
+        margin_left, (margin_bottom - 20),
+        'You can verify this certificate by visiting '
+        'http://{}/en/{}/certificate/{}/.'
+        .format(current_site, project.slug, certificate.certificateID))
+
+    # Close the PDF object cleanly.
+    page.showPage()
+    page.save()
+
+
 def certificate_pdf_view(request, **kwargs):
 
     project_slug = kwargs.pop('project_slug')
@@ -210,148 +354,8 @@ def certificate_pdf_view(request, **kwargs):
         if not os.path.exists(makepath):
             os.makedirs(makepath)
 
-        # Create the PDF object, using the response object as its "file."
-        page = canvas.Canvas(pathname, pagesize=landscape(A4))
-        width, height = A4
-        center = height * 0.5
-
-        if project.image_file:
-            project_logo = ImageReader(project.image_file)
-        else:
-            project_logo = None
-
-        if course.certifying_organisation.logo:
-            organisation_logo = ImageReader(
-                course.certifying_organisation.logo)
-        else:
-            organisation_logo = None
-
-        if project.signature:
-            project_owner_signature = ImageReader(project.signature)
-        else:
-            project_owner_signature = None
-
-        if course.course_convener.signature:
-            convener_signature = ImageReader(course.course_convener.signature)
-        else:
-            convener_signature = None
-
-        if course.template_certificate:
-            background = ImageReader(course.template_certificate)
-        else:
-            background = None
-
-        # Certificate margin.
-        margin_right = height - 50
-        margin_left = 50
-        margin_bottom = 50
-        max_left = margin_right - 100
-
-        # Draw things on the PDF. Here's where the PDF generation happens.
-        # See the ReportLab documentation for the full list of functionality.
-        if background is not None:
-            page.drawImage(
-                background, 0, 0, height=width, width=height,
-                preserveAspectRatio=True, mask='auto')
-        page.setFillColorRGB(0.1, 0.1, 0.1)
-        page.setFont('Times-Roman', 18)
-        # page.drawString(margin_left, 480, project.name)
-        # page.drawRightString(
-        #     (margin_right), 480, course.certifying_organisation.name)
-
-        if project_logo is not None:
-            page.drawImage(
-                project_logo, 50, 450, width=100, height=100,
-                preserveAspectRatio=True, mask='auto')
-
-        if organisation_logo is not None:
-            page.drawImage(
-                organisation_logo, max_left, 450, height=100, width=100,
-                preserveAspectRatio=True, anchor='c', mask='auto')
-
-        page.setFont('Times-Bold', 26)
-        page.drawCentredString(center, 480, 'Certificate of Completion')
-        page.drawCentredString(
-            center, 400, '%s %s' % (attendee.firstname, attendee.surname))
-        page.setFont('Times-Roman', 16)
-        page.drawCentredString(
-            center, 360, 'Has attended and completed the course:')
-        page.setFont('Times-Bold', 20)
-        page.drawCentredString(center, 300, course.course_type.name)
-        page.setFont('Times-Roman', 16)
-        page.drawCentredString(
-            center, 270,
-            'From {} {} {} to {} {} {}'
-            .format(
-                course.start_date.day,
-                course.start_date.strftime('%B'),
-                course.start_date.year,
-                course.end_date.day,
-                course.end_date.strftime('%B'),
-                course.end_date.year))
-        page.setFillColorRGB(0.1, 0.1, 0.1)
-        page.drawCentredString(
-            center, 220, 'Convened by {} {} at {}' .format(
-                course.course_convener.user.first_name,
-                course.course_convener.user.last_name,
-                course.training_center))
-
-        if project_owner_signature is not None:
-            page.drawImage(
-                project_owner_signature,
-                (margin_left + 100),
-                (margin_bottom + 70),
-                width=100,
-                height=70,
-                preserveAspectRatio=True,
-                anchor='s',
-                mask='auto')
-
-        if convener_signature is not None:
-            page.drawImage(
-                convener_signature, (margin_right - 200), (margin_bottom + 70),
-                width=100, height=70, preserveAspectRatio=True, anchor='s',
-                mask='auto')
-
-        page.setFont('Times-Italic', 12)
-        page.drawCentredString(
-            (margin_left + 150), (margin_bottom + 60),
-            '{} {}' .format(project.owner.first_name, project.owner.last_name))
-        page.drawCentredString(
-            (margin_right - 150), (margin_bottom + 60),
-            '{} {}' .format(
-                course.course_convener.user.first_name,
-                course.course_convener.user.last_name))
-        page.line(
-            (margin_left + 70), (margin_bottom + 55),
-            (margin_left + 230), (margin_bottom + 55))
-        page.line(
-            (margin_right - 70), (margin_bottom + 55),
-            (margin_right - 230), (margin_bottom + 55))
-        page.setFont('Times-Roman', 13)
-        page.drawCentredString(
-            (margin_left + 150),
-            (margin_bottom + 40),
-            'Project Representative')
-        page.drawCentredString(
-            (margin_right - 150), (margin_bottom + 40), 'Course Convener')
-
-        # Footnotes.
-        page.setFont('Times-Roman', 14)
-        page.drawString(
-            margin_left,
-            margin_bottom - 10,
-            'ID: {}'.format(certificate.certificateID))
-        page.setFont('Times-Roman', 8)
-        page.drawString(
-            margin_left, (margin_bottom - 20),
-            'You can verify this certificate by visiting '
-            'http://{}/en/{}/certificate/{}/.'
-            .format(current_site, project.slug, certificate.certificateID))
-
-        # Close the PDF object cleanly.
-        page.showPage()
-        page.save()
+        generate_pdf(
+            pathname, project, course, attendee, certificate, current_site)
         with open(pathname, 'r') as pdf:
             response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = \
@@ -456,6 +460,8 @@ def top_up_unavailable(request, **kwargs):
 
 
 def email_all_attendees(request, **kwargs):
+    """Send email to all attendees in a course."""
+
     project_slug = kwargs.get('project_slug', None)
     course_slug = kwargs.get('course_slug', None)
     organisation_slug = kwargs.get('organisation_slug', None)
@@ -532,3 +538,132 @@ def email_all_attendees(request, **kwargs):
             'the_project': project,
             'has_pending_organisations': has_pending,
             'attendees': attendee_list_object})
+
+
+def regenerate_certificate(request, **kwargs):
+    """Regenerate a pdf certificate for an attendee."""
+
+    project_slug = kwargs.pop('project_slug', None)
+    course_slug = kwargs.pop('course_slug', None)
+    pk = kwargs.pop('pk')
+    course = Course.objects.get(slug=course_slug)
+    attendee = Attendee.objects.get(pk=pk)
+    project = Project.objects.get(slug=project_slug)
+    certificate = Certificate.objects.get(course=course, attendee=attendee)
+
+    filename = "{}.{}".format(certificate.certificateID, "pdf")
+    project_folder = (project.name.lower()).replace(' ', '_')
+
+    pending_organisation = \
+        CertifyingOrganisation.objects.filter(approved=False)
+    has_pending = False
+    if pending_organisation:
+        has_pending = True
+
+    pathname = \
+        os.path.join(
+            '/home/web/media', 'pdf/{}/{}'.format(project_folder, filename))
+    found = os.path.exists(pathname)
+
+    if request.method == 'POST':
+        if found:
+            # Delete existing certificate
+            os.remove(pathname)
+
+        makepath = '/home/web/media/pdf/%s/' % project_folder
+        if not os.path.exists(makepath):
+            os.makedirs(makepath)
+
+        current_site = request.META['HTTP_HOST']
+        generate_pdf(
+            pathname, project, course, attendee, certificate, current_site)
+        with open(pathname, 'r') as pdf:
+            response = HttpResponse(pdf.read(), content_type='application/pdf')
+            response['Content-Disposition'] = \
+                'filename=%s' % certificate.certificateID
+            return response
+
+    return render(
+        request, 'certificate/regenerate_certificate.html',
+        context={
+            'the_project': project,
+            'has_pending_organisations': has_pending,
+            'attendee': attendee,
+            'id': certificate.certificateID,
+            'course': course})
+
+
+def regenerate_all_certificate(request, **kwargs):
+    """Regenerate all certificates within a course."""
+
+    project_slug = kwargs.pop('project_slug', None)
+    course_slug = kwargs.pop('course_slug', None)
+    organisation_slug = kwargs.get('organisation_slug', None)
+    course = Course.objects.get(slug=course_slug)
+    project = Project.objects.get(slug=project_slug)
+    attendees_pk = \
+        Certificate.objects.filter(
+            course=course).values_list('attendee', flat=True)
+
+    attendees = []
+    for pk in attendees_pk:
+        attendees.append(Attendee.objects.get(pk=pk))
+
+    pending_organisation = \
+        CertifyingOrganisation.objects.filter(approved=False)
+    has_pending = False
+    if pending_organisation:
+        has_pending = True
+
+    url = reverse('course-detail', kwargs={
+        'project_slug': project_slug,
+        'organisation_slug': organisation_slug,
+        'slug': course_slug
+    })
+
+    # Attendee and her certificate
+    certificates_dict = {}
+    for attendee in attendees:
+        certificates_dict[attendee] = \
+            Certificate.objects.get(
+                course=course, attendee=attendee)
+
+    project_folder = (project.name.lower()).replace(' ', '_')
+    if request.method == 'POST':
+
+        # Delete all existing certificate in a course.
+        for key, value in certificates_dict.items():
+            filename = "{}.{}".format(value.certificateID, "pdf")
+            pathname = \
+                os.path.join(
+                    '/home/web/media',
+                    'pdf/{}/{}'.format(project_folder, filename))
+            found = os.path.exists(pathname)
+            if found:
+                os.remove(pathname)
+
+        # Generate all certificates in a course
+        current_site = request.META['HTTP_HOST']
+        makepath = '/home/web/media/pdf/{}/'.format(project_folder)
+        if not os.path.exists(makepath):
+            os.makedirs(makepath)
+
+        for key, value in certificates_dict.items():
+            filename = "{}.{}".format(value.certificateID, "pdf")
+            pathname = \
+                os.path.join(
+                    '/home/web/media',
+                    'pdf/{}/{}'.format(project_folder, filename))
+            generate_pdf(
+                pathname, project, course, key, value, current_site)
+
+        messages.success(request, 'All certificates are updated', 'regenerate')
+        return HttpResponseRedirect(url)
+
+    return render(
+        request, 'certificate/regenerate_all_certificate.html',
+        context={
+            'the_project': project,
+            'has_pending_organisations': has_pending,
+            'certificates': certificates_dict,
+            'course': course})
