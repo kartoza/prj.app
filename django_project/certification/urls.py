@@ -50,6 +50,8 @@ from views import (
     update_paid_status,
     top_up_unavailable,
     email_all_attendees,
+    regenerate_certificate,
+    regenerate_all_certificate,
 
     # Validate Certificate.
     ValidateCertificate,
@@ -202,6 +204,14 @@ urlpatterns = patterns(
         '(?P<organisation_slug>[\w-]+)/course/'
         '(?P<course_slug>[\w-]+)/send_email/$',
         email_all_attendees, name='send_email'),
+    url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+        '(?P<organisation_slug>[\w-]+)/course/'
+        '(?P<course_slug>[\w-]+)/regenerate-certificate/(?P<pk>[\w-]+)/$',
+        regenerate_certificate, name='regenerate-certificate'),
+    url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+        '(?P<organisation_slug>[\w-]+)/course/'
+        '(?P<course_slug>[\w-]+)/regenerate-all-certificate/$',
+        regenerate_all_certificate, name='regenerate-all-certificate'),
 
     # Course.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
