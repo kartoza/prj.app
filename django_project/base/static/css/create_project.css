@@ -1,0 +1,23 @@
+.form-screenshot {
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 0 !important;
+}
+.form-screenshot label.control-label {
+    display: none;
+}
+.form-screenshot input.clearablefileinput {
+    margin-top: 5px;
+}
+.form-screenshot label {
+    margin-bottom: 5px;
+}
+.form-screenshot div.checkbox{
+    margin-top: -10px;
+}
+
+.form-screenshot legend {
+    display: none;
+}

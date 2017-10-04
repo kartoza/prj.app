@@ -12,13 +12,22 @@ Note these admin models inherit reversion (which provides history for a model).
 
 
 from django.contrib import admin
-from models import Project
+from models import Project, ProjectScreenshot
 import reversion
 
 
-class ProjectAdmin(reversion.VersionAdmin):
+class ProjectScreenshotAdmin(admin.TabularInline):
+    """Admin for project's screenshot model."""
 
+    model = ProjectScreenshot
+    extra = 5
+
+
+class ProjectAdmin(reversion.VersionAdmin):
     """Admin for the project model."""
+
+    # Screenshot input in admin project panel.
+    inlines = [ProjectScreenshotAdmin, ]
 
     def queryset(self, request):
         """Ensure we use the correct manager.

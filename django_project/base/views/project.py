@@ -13,16 +13,16 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
 )
-from django.db import IntegrityError
-from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from changes.models import Version
 from ..models import Project
-from ..forms import ProjectForm
+from ..forms import ProjectForm, ScreenshotFormset
 from vota.models import Committee, Ballot
+from changes.models import SponsorshipPeriod
 from certification.models import CertifyingOrganisation
 from django.conf import settings
+from django.shortcuts import redirect
 
 logger = logging.getLogger(__name__)
 
@@ -122,7 +122,7 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
 
 class ProjectDetailView(ProjectMixin, DetailView):
     context_object_name = 'project'
-    template_name = 'project/detail.html'
+    template_name = 'project/new_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
@@ -131,6 +131,10 @@ class ProjectDetailView(ProjectMixin, DetailView):
         page_size = settings.PROJECT_VERSION_LIST_SIZE
         context['versions'] = Version.objects.filter(
             project=self.object).order_by('-padded_version')[:page_size]
+        context['sponsors'] = \
+            SponsorshipPeriod.objects.filter(
+                project=self.object).order_by('-sponsorship_level__value')
+        context['screenshots'] = self.object.screenshots.all()
         return context
 
     def get_queryset(self):
@@ -173,13 +177,26 @@ class ProjectCreateView(LoginRequiredMixin, ProjectMixin, CreateView):
         kwargs.update({'user': self.request.user})
         return kwargs
 
+    def get_context_data(self, **kwargs):
+        context = super(ProjectCreateView, self).get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = \
+                ScreenshotFormset(self.request.POST, self.request.FILES)
+        else:
+            context['formset'] = ScreenshotFormset()
+        return context
+
     def form_valid(self, form):
-        """Check that there is no referential integrity error when saving."""
-        try:
-            return super(ProjectCreateView, self).form_valid(form)
-        except IntegrityError:
-            return ValidationError(
-                'ERROR: Project by this name already exists!')
+        """Check that form and formset are valid."""
+        context = self.get_context_data()
+        formset = context['formset']
+        if formset.is_valid() and form.is_valid():
+            object = form.save()
+            formset.instance = object
+            formset.save()
+            return redirect(self.get_success_url())
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 class ProjectUpdateView(LoginRequiredMixin, ProjectMixin, UpdateView):
@@ -198,6 +215,18 @@ class ProjectUpdateView(LoginRequiredMixin, ProjectMixin, UpdateView):
         else:
             return qs.filter(owner=self.request.user)
 
+    def get_context_data(self, **kwargs):
+        context = super(ProjectUpdateView, self).get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = \
+                ScreenshotFormset(
+                    self.request.POST,
+                    self.request.FILES,
+                    instance=self.object)
+        else:
+            context['formset'] = ScreenshotFormset(instance=self.object)
+        return context
+
     def get_success_url(self):
         if self.object.approved:
             return reverse('project-detail', kwargs={'slug': self.object.slug})
@@ -205,12 +234,16 @@ class ProjectUpdateView(LoginRequiredMixin, ProjectMixin, UpdateView):
             return reverse('pending-project-list')
 
     def form_valid(self, form):
-        """Check that there is no referential integrity error when saving."""
-        try:
-            return super(ProjectUpdateView, self).form_valid(form)
-        except IntegrityError:
-            raise ValidationError(
-                'ERROR: Version by this name already exists!')
+        """Check that form and formset are valid."""
+        context = self.get_context_data()
+        formset = context['formset']
+        if formset.is_valid() and form.is_valid():
+            object = form.save()
+            formset.instance = object
+            formset.save()
+            return redirect(self.get_success_url())
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 class PendingProjectListView(
