@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sponsorshipperiod',
             name='currency',
-            field=models.CharField(help_text='The currency that is used for sponsorship payment.', max_length=50, null=True, blank=True),
+            field=models.CharField(help_text='The currency that is used for sponsorship payment.', max_length=50, null=True, blank=True, default='EUR'),
         ),
     ]

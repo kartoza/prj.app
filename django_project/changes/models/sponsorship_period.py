@@ -63,6 +63,7 @@ class SponsorshipPeriod(models.Model):
         max_length=50,
         null=True,
         blank=True,
+        default='EUR'
     )
 
     approved = models.BooleanField(
