@@ -83,7 +83,8 @@ class Project(models.Model):
     )
 
     precis = models.TextField(
-        help_text=_('A detailed summary of the project.'),
+        help_text=_(
+            'A detailed summary of the project. Markdown is supported.'),
         max_length=2000,
         blank=True,
         null=True

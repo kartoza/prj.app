@@ -6,14 +6,35 @@
 
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/project-details.css' %}">
-
+    <div class="row" style="margin-bottom: 20px">
+        {% if user.is_authenticated %}
+          <div class="btn-group pull-right">
+            <a href="{% url 'project-delete' project.slug %}"
+               class="btn btn-default btn-m tooltip-toggle btn-delete"
+               data-placement="top" data-title="Delete {{ project.name }}">
+              <span class="glyphicon glyphicon-minus"></span>
+            </a>
+            <a href="{% url 'project-update' project.slug %}"
+               class="btn btn-default btn-m tooltip-toggle btn-edit"
+               data-placement="top" data-title="Update {{ project.name }}">
+              <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+          </div>
+        {% endif %}
+    </div>
     <div class="row">
-        <div class="col-md-8">
-            <div class="panel panel-default">
-                    <span class="project-title">{{ project.name }}</span>
+        <div class="panel panel-default col-md-8">
+            <div class="panel panel-default left-panel" style="padding: 15px">
+                {% if project.image_file %}
+                    <img src="{{ project.image_file.url }}" height="150px">
+                {% endif %}
+                    <p><span class="project-title">{{ project.name }}</span></p>
+                {% if project.description %}
+                    <span><i>{{ project.description }}</i></span>
+                {% endif %}
             </div>
             {% if screenshots %}
-                <div class="panel panel-default custom-panel screenshot-panel">
+                <div class="panel panel-default custom-panel screenshot-panel left-panel">
                  <div class="slider-display-container">
                 {% for screenshot in screenshots %}
                     <img class="content-slides slider-animate-opacity"
@@ -25,8 +46,8 @@
                 </div>
             {% endif %}
             {% if project.precis %}
-            <div class="panel panel-default custom-panel project-description">
-                <span>{{ project.precis }}</span>
+            <div class="panel panel-default custom-panel project-precis left-panel">
+                <span>{{ project.precis|base_markdown }}</span>
             </div>
             {% endif %}
         </div>
@@ -49,9 +70,26 @@
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='version/list/';">
                 <h3>Releases (Changelog)</h3>
+                {% if versions %}
+                <h4 class="text-muted">
+                    Latest Versions
+                  </h4>
+                    <div class="version-list">
+                    {% for version in versions %}
+                        {% if version.approved %}
+                        <p><strong><span class="text-muted">Version:</span> <span class="pull-right">{{ version.name }}</span></strong></p>
+                        {% else %}
+                        <p><strong><span class="text-muted">Version:</span> <span class="pull-right"><span>{{ version.name }}</span><span class="text-muted"> (pending)</span></span></strong></p>
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='committees/';">
                 <h3>Project Teams</h3>
+                {% for team in committees %}
+                    <p><strong><span>{{ team.name }}</span></strong></p>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -81,5 +119,22 @@
           }
           x[slideIndex-1].style.display = "block";
         }
+
+        $('.btn-delete').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-danger')
+            },
+            function (){
+                $(this).removeClass('btn-danger').addClass('btn-default')
+            }
+        );
+        $('.btn-edit').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-primary')
+            },
+            function (){
+                $(this).removeClass('btn-primary').addClass('btn-default')
+            }
+        );
     </script>
 {% endblock %}
