@@ -96,8 +96,10 @@
 
     <script>
         var slideIndex = 1;
-        showDivs(slideIndex);
-        carousel();
+        {% if screenshot %}
+            showDivs(slideIndex);
+            carousel();
+        {% endif %}
 
         function plusDivs(n) {
           showDivs(slideIndex += n);
