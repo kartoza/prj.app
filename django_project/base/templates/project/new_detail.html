@@ -67,6 +67,11 @@
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='certifyingorganisation/list/';">
                 <h3>Certification</h3>
+                {% if organisations %}
+                    {% for organisation in organisations %}
+                        <h5><strong>{{ organisation.name }}</strong></h5>
+                    {% endfor %}
+                {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='version/list/';">
                 <h3>Releases (Changelog)</h3>
@@ -88,7 +93,7 @@
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='committees/';">
                 <h3>Project Teams</h3>
                 {% for team in committees %}
-                    <p><strong><span>{{ team.name }}</span></strong></p>
+                    <h5><strong><span>{{ team.name }}</span></strong></h5>
                 {% endfor %}
             </div>
         </div>

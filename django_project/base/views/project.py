@@ -134,6 +134,9 @@ class ProjectDetailView(ProjectMixin, DetailView):
             SponsorshipPeriod.objects.filter(
                 project=self.object).order_by('-sponsorship_level__value')
         context['screenshots'] = self.object.screenshots.all()
+        context['organisations'] = \
+            CertifyingOrganisation.objects.filter(
+                project=self.object, approved=True)
         return context
 
     def get_queryset(self):
