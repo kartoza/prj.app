@@ -253,7 +253,9 @@ class SponsorshipPeriodForm(forms.ModelForm):
             'sponsor',
             'sponsorship_level',
             'start_date',
-            'end_date'
+            'end_date',
+            'amount_sponsored',
+            'currency'
         )
 
     def __init__(self, *args, **kwargs):
@@ -270,6 +272,8 @@ class SponsorshipPeriodForm(forms.ModelForm):
                     css_class='form-control chosen-select'),
                 Field('start_date', css_class='form-control'),
                 Field('end_date', css_class='form-control'),
+                Field('amount_sponsored', css_class='form-control'),
+                Field('currency', css_class='form-control'),
                 css_id='project-form')
         )
         self.helper.layout = layout

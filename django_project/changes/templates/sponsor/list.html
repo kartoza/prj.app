@@ -71,6 +71,9 @@
                         <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
 
                         <h5>{{ sponsor.sponsorship_level }} : {{ sponsor.project.name }}</h5>
+                        {% ifnotequal sponsor.amount_sponsored None %}
+                        <h5>Amount sponsored : {{ sponsor.amount_sponsored }} {{ sponsor.currency }}</h5>
+                        {% endifnotequal %}
                     </div>
                     <div class="col-lg-2">
                         <div class="btn-group pull-right">
