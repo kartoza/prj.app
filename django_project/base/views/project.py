@@ -128,9 +128,8 @@ class ProjectDetailView(ProjectMixin, DetailView):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
         context['projects'] = self.get_queryset()
         context['committees'] = Committee.objects.filter(project=self.object)
-        page_size = settings.PROJECT_VERSION_LIST_SIZE
         context['versions'] = Version.objects.filter(
-            project=self.object).order_by('-padded_version')[:page_size]
+            project=self.object).order_by('-padded_version')[:5]
         context['sponsors'] = \
             SponsorshipPeriod.objects.filter(
                 project=self.object).order_by('-sponsorship_level__value')

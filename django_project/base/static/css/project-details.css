@@ -26,9 +26,19 @@
     color: #013d99;
 }
 
-.project-description {
+.left-panel {
+    border: none !important;
+    box-shadow: none !important;
+    margin-bottom: 0 !important;
+}
+
+.project-description, .project-precis {
     font-size: 12pt;
     padding: 15px !important;
+}
+
+.project-precis {
+    text-align: justify !important;
 }
 
 .screenshot-panel {
@@ -91,3 +101,8 @@
 }
 
 .slider-animate-opacity{animation:opac 0.5s}@keyframes opac{from{opacity:0} to{opacity:1}}
+
+.version-list {
+    border-top: 2px solid #F5F5F5;
+    text-align: justify;
+}

@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='precis',
-            field=models.TextField(help_text='A detailed summary of the project.', max_length=2000, null=True, blank=True),
+            field=models.TextField(help_text='A detailed summary of the project. Markdown is supported.', max_length=2000, null=True, blank=True),
         ),
         migrations.AlterField(
             model_name='project',
