@@ -54,6 +54,11 @@
         <div class="col-md-4">
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='sponsors/list/';">
                 <h3>Sponsors</h3>
+            {% if sponsors %}
+                <h4 class="text-muted">
+                        View Our Project Sponsors
+                </h4>
+                <div class="content-list">
                 {% for sponsor in sponsors %}
                     {% if sponsor.current_sponsor %}
                         {% ifchanged sponsor.sponsorship_level %}
@@ -64,15 +69,27 @@
                                  data-title="{{ sponsor.sponsor.name }}">
                     {% endif %}
                 {% endfor %}
+                </div>
+            {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='certifyingorganisation/list/';">
                 <h3>Certification</h3>
+                {% if organisations %}
+                    <h4 class="text-muted">
+                    Certifying Organisations
+                    </h4>
+                    <div class="content-list">
+                    {% for organisation in organisations %}
+                        <h5><strong>{{ organisation.name }}</strong></h5>
+                    {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='version/list/';">
                 <h3>Releases (Changelog)</h3>
                 {% if versions %}
                 <h4 class="text-muted">
-                    Latest Versions
+                    New Features and Releases
                   </h4>
                     <div class="version-list">
                     {% for version in versions %}
@@ -87,9 +104,16 @@
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='committees/';">
                 <h3>Project Teams</h3>
-                {% for team in committees %}
-                    <p><strong><span>{{ team.name }}</span></strong></p>
-                {% endfor %}
+                {% if committees %}
+                    <h4 class="text-muted">
+                    Collaborate and Decide
+                  </h4>
+                    <div class="content-list">
+                        {% for team in committees %}
+                            <h5><strong><span>{{ team.name }}</span></strong></h5>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
