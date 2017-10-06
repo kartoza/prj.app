@@ -49,12 +49,13 @@
             {% for sponsorshipperiod in sponsorshipperiods %}
                 <tbody>
                 {% ifchanged sponsorshipperiod.sponsorship_level %}
-                   <tr><th style="border-top: none; padding-top: 25px"><h3 class="text-muted"><img
+                   <tr><th style="border-top: none; padding-top: 25px;" colspan="5"><h3 class="text-muted"><img
                                 src="{% thumbnail sponsorshipperiod.sponsorship_level.logo 35x35 %}"/> {{ sponsorshipperiod.sponsorship_level }}
                         </h3></th></tr>
                     <tr>
                         <th>Logo</th>
                         <th>Organisation</th>
+                        <th>Amount Sponsored</th>
                         <th>Sponsorship Period</th>
                         <th>View</th>
                     </tr>
@@ -69,6 +70,13 @@
                     {% endif %}
                     </td>
                     <td>{{ sponsorshipperiod.sponsor }}</td>
+                    <td>
+                        {% if sponsorshipperiod.amount_sponsored %}
+                            {{ sponsorshipperiod.amount_sponsored }} {{ sponsorshipperiod.currency }}
+                            {% else %}
+                            n/a
+                        {% endif %}
+                    </td>
                     <td>{{ sponsorshipperiod.start_date }} - {{ sponsorshipperiod.end_date }}</td>
                     <td>
 
