@@ -67,6 +67,7 @@ def validate_gitter_room_name(value):
 
 class Project(models.Model):
     """A project model e.g. QGIS, InaSAFE etc."""
+
     name = models.CharField(
         help_text=_('Name of this project.'),
         max_length=255,
@@ -75,8 +76,16 @@ class Project(models.Model):
         unique=True)
 
     description = models.CharField(
-        help_text=_('A description for the project'),
+        help_text=_('A short description for the project'),
         max_length=500,
+        blank=True,
+        null=True
+    )
+
+    precis = models.TextField(
+        help_text=_(
+            'A detailed summary of the project. Markdown is supported.'),
+        max_length=2000,
         blank=True,
         null=True
     )
@@ -208,3 +217,14 @@ class Project(models.Model):
             return True
         else:
             return False
+
+
+class ProjectScreenshot(models.Model):
+    """A model to store a screenshot linked to a project."""
+
+    project = models.ForeignKey(Project, related_name='screenshots')
+    screenshot = models.ImageField(
+        help_text=_('A project screenshot.'),
+        upload_to=os.path.join(MEDIA_ROOT, 'images/projects/screenshots'),
+        blank=True
+    )

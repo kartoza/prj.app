@@ -26,9 +26,10 @@ class TestViews(TestCase):
         self.unapproved_project = ProjectF.create(approved=False)
         self.user = UserF.create(**{
             'username': 'timlinux',
-            'password': 'password',
             'is_staff': True
         })
+        self.user.set_password('password')
+        self.user.save()
 
     def test_ProjectListView(self):
         client = Client()
@@ -61,7 +62,9 @@ class TestViews(TestCase):
         client.login(username='timlinux', password='password')
         post_data = {
             'name': u'New Test Project',
-            'owner': self.user.id
+            'owner': self.user.id,
+            'screenshots-TOTAL_FORMS': 5,
+            'screenshots-INITIAL_FORMS': 0
         }
         response = client.post(reverse('project-create'), post_data)
         self.assertRedirects(response, reverse('pending-project-list'))
@@ -98,7 +101,9 @@ class TestViews(TestCase):
         client.login(username='timlinux', password='password')
         post_data = {
             'name': u'New Test Project Updated',
-            'owner': self.user.id
+            'owner': self.user.id,
+            'screenshots-TOTAL_FORMS': 5,
+            'screenshots-INITIAL_FORMS': 0
         }
         response = client.post(reverse('project-update', kwargs={
             'slug': self.test_project.slug
@@ -125,7 +130,7 @@ class TestViews(TestCase):
         }))
         self.assertEqual(response.status_code, 200)
         expected_templates = [
-            'project/detail.html'
+            'project/new_detail.html'
         ]
         self.assertEqual(response.template_name, expected_templates)
 

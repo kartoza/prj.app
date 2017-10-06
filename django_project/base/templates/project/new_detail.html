@@ -1,0 +1,166 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load custom_markup %}
+{% load thumbnail %}
+{% block title %}{{ project.name }}{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/project-details.css' %}">
+    <div class="row" style="margin-bottom: 20px">
+        {% if user.is_authenticated %}
+          <div class="btn-group pull-right">
+            <a href="{% url 'project-delete' project.slug %}"
+               class="btn btn-default btn-m tooltip-toggle btn-delete"
+               data-placement="top" data-title="Delete {{ project.name }}">
+              <span class="glyphicon glyphicon-minus"></span>
+            </a>
+            <a href="{% url 'project-update' project.slug %}"
+               class="btn btn-default btn-m tooltip-toggle btn-edit"
+               data-placement="top" data-title="Update {{ project.name }}">
+              <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+          </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="panel panel-default col-md-8">
+            <div class="panel panel-default left-panel" style="padding: 15px">
+                {% if project.image_file %}
+                    <img src="{{ project.image_file.url }}" height="150px">
+                {% endif %}
+                    <p><span class="project-title">{{ project.name }}</span></p>
+                {% if project.description %}
+                    <span><i>{{ project.description }}</i></span>
+                {% endif %}
+            </div>
+            {% if screenshots %}
+                <div class="panel panel-default custom-panel screenshot-panel left-panel">
+                 <div class="slider-display-container">
+                {% for screenshot in screenshots %}
+                    <img class="content-slides slider-animate-opacity"
+                                 src="{{ screenshot.screenshot.url }}" height="400px" width="auto" style="margin: 0 auto">
+                {% endfor %}
+                     <button class="slider-button slider-display-left" onclick="plusDivs(-1)">&#10094;</button>
+                     <button class="slider-button slider-display-right" onclick="plusDivs(1)">&#10095;</button>
+                 </div>
+                </div>
+            {% endif %}
+            {% if project.precis %}
+            <div class="panel panel-default custom-panel project-precis left-panel">
+                <span>{{ project.precis|base_markdown }}</span>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='sponsors/list/';">
+                <h3>Sponsors</h3>
+            {% if sponsors %}
+                <h4 class="text-muted">
+                        View Our Project Sponsors
+                </h4>
+                <div class="content-list">
+                {% for sponsor in sponsors %}
+                    {% if sponsor.current_sponsor %}
+                        {% ifchanged sponsor.sponsorship_level %}
+                           <h4><img src="{% thumbnail sponsor.sponsorship_level.logo 20x20 %}"> {{ sponsor.sponsorship_level.name }}</h4>
+                        {% endifchanged %}
+                            <img class="img-rounded tooltip-toggle"
+                                 src="{% thumbnail sponsor.sponsor.logo 50x50 %}"
+                                 data-title="{{ sponsor.sponsor.name }}">
+                    {% endif %}
+                {% endfor %}
+                </div>
+            {% endif %}
+            </div>
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='certifyingorganisation/list/';">
+                <h3>Certification</h3>
+                {% if organisations %}
+                    <h4 class="text-muted">
+                    Certifying Organisations
+                    </h4>
+                    <div class="content-list">
+                    {% for organisation in organisations %}
+                        <h5><strong>{{ organisation.name }}</strong></h5>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='version/list/';">
+                <h3>Releases (Changelog)</h3>
+                {% if versions %}
+                <h4 class="text-muted">
+                    New Features and Releases
+                  </h4>
+                    <div class="version-list">
+                    {% for version in versions %}
+                        {% if version.approved %}
+                        <p><strong><span class="text-muted">Version:</span> <span class="pull-right">{{ version.name }}</span></strong></p>
+                        {% else %}
+                        <p><strong><span class="text-muted">Version:</span> <span class="pull-right"><span>{{ version.name }}</span><span class="text-muted"> (pending)</span></span></strong></p>
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='committees/';">
+                <h3>Project Teams</h3>
+                {% if committees %}
+                    <h4 class="text-muted">
+                    Collaborate and Decide
+                  </h4>
+                    <div class="content-list">
+                        {% for team in committees %}
+                            <h5><strong><span>{{ team.name }}</span></strong></h5>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var slideIndex = 1;
+        {% if screenshots %}
+            showDivs(slideIndex);
+            carousel();
+        {% endif %}
+
+        function plusDivs(n) {
+          showDivs(slideIndex += n);
+        }
+        
+        function carousel() {
+            slideIndex++;
+            showDivs(slideIndex);
+            setTimeout(carousel, 4000);
+        }
+
+        function showDivs(n) {
+          var i;
+          var x = document.getElementsByClassName("content-slides");
+          if (n > x.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = x.length}
+          for (i = 0; i < x.length; i++) {
+             x[i].style.display = "none";
+          }
+          x[slideIndex-1].style.display = "block";
+        }
+
+        $('.btn-delete').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-danger')
+            },
+            function (){
+                $(this).removeClass('btn-danger').addClass('btn-default')
+            }
+        );
+        $('.btn-edit').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-primary')
+            },
+            function (){
+                $(this).removeClass('btn-primary').addClass('btn-default')
+            }
+        );
+    </script>
+{% endblock %}

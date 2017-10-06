@@ -28,7 +28,7 @@
     {% if messages %}
     <div class="messages">
         {% for message in messages %}
-            {% if 'email_sent' in message.tags %}
+            {% if 'email_sent' in message.tags or 'regenerate' in message.tags %}
                 <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
             {% endif %}
         {% endfor %}
@@ -136,6 +136,11 @@
             data-title="Download all issued certificates from this course">
             <span class="glyphicon glyphicon-download-alt"></span>
             </a>
+        <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
+           href='{% url "regenerate-all-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
+            data-title="Re-generate all PDF certificate for this course">
+            <i class="glyphicon glyphicon-repeat"></i>
+            </a>
          <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
            href='{% url "send_email" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
             data-title="Email all participants with the link to their certificates.">
@@ -175,6 +180,11 @@
                                     href='{% url "print-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
                                     data-title="Print Certificate">
                                     <span class="glyphicon glyphicon-print"></span>
+                                </a>
+                                <a class="btn btn-default btn-xs btn-print tooltip-toggle"
+                                    href='{% url "regenerate-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
+                                    data-title="Re-generate PDF certificate for this attendee">
+                                    <i class="glyphicon glyphicon-repeat"></i>
                                 </a>
                             {% else %}
                                 {% if course.certifying_organisation.organisation_credits >= course.certifying_organisation.project.certificate_credit %}
