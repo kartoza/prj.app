@@ -84,7 +84,7 @@
                     </h4>
                     <div class="content-list">
                     {% for organisation in organisations %}
-                        <h5><strong>{{ organisation.name }}</strong></h5>
+                        <h5>{{ organisation.name }}</h5>
                     {% endfor %}
                     </div>
                 {% endif %}
@@ -98,9 +98,9 @@
                     <div class="version-list">
                     {% for version in versions %}
                         {% if version.approved %}
-                        <p><strong><span class="text-muted">Version:</span> <span class="pull-right">{{ version.name }}</span></strong></p>
+                        <p><span class="text-muted">Version:</span> <span class="pull-right">{{ version.name }}</span></p>
                         {% else %}
-                        <p><strong><span class="text-muted">Version:</span> <span class="pull-right"><span>{{ version.name }}</span><span class="text-muted"> (pending)</span></span></strong></p>
+                        <p><span class="text-muted">Version:</span> <span class="pull-right"><span>{{ version.name }}</span><span class="text-muted"> (pending)</span></span></p>
                         {% endif %}
                     {% endfor %}
                     </div>

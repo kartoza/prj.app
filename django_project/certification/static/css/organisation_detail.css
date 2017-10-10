@@ -83,6 +83,8 @@ table {
     background-color: #f5f5f5;
     margin: 0 auto;
     text-align: center
+    	font-weight: normal;
+
 }
 .panel-body {
     border: 1px solid lightgrey;
@@ -107,3 +109,4 @@ table {
 .panel-right {
     width: 12% !important;
 }
+

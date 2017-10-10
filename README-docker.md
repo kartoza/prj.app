@@ -26,7 +26,7 @@ images for you in **production mode**.
 ```
 cd deployment
 make build
-make run
+make runmake 
 make migrate migrate
 make collectstatic
 ```
