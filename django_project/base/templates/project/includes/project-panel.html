@@ -40,14 +40,14 @@
       {% if project.image_file %}
         <div class="text-center">
         {% if project.approved %}
-          <a href="{% url 'project-detail' project.slug %}">
+          <a class="icon-thumbnail" href="{% url 'project-detail' project.slug %}">
             <img class="img-rounded"
-                 src="{% thumbnail project.image_file 150x150 crop %}"/>
+                 src="{{ project.image_file.url }}"/>
           </a>
         {% else %}
-          <a>
+          <a class="icon-thumbnail">
             <img class="img-rounded"
-                 src="{% thumbnail project.image_file 150x150 crop %}"/>
+                 src="{{ project.image_file.url }}"/>
           </a>
         {% endif %}
         </div>
