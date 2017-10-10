@@ -28,7 +28,9 @@
                 {% if project.image_file %}
                     <img src="{{ project.image_file.url }}" height="150px">
                 {% endif %}
-                    <p><span class="project-title">{{ project.name }}</span></p>
+                {% if project.project_url %}
+                    <p><a href="{{ project.project_url }}">Project home page</a></p>
+                {% endif %}
                 {% if project.description %}
                     <span><i>{{ project.description }}</i></span>
                 {% endif %}
@@ -128,7 +130,7 @@
         function plusDivs(n) {
           showDivs(slideIndex += n);
         }
-        
+
         function carousel() {
             slideIndex++;
             showDivs(slideIndex);
