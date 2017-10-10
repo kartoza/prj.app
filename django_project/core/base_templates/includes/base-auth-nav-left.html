@@ -28,11 +28,20 @@
         </li>
     </ul>
 {% else %}
+    <style>
+        .icon-thumbnail {
+            line-height: 50px !important;
+        }
+        .icon-thumbnail img {
+            display: table-cell;
+            vertical-align: middle;
+        }
+    </style>
     <ul class="nav navbar-nav">
         {% if the_project.image_file %}
-            <li><a href="{% url "project-detail" the_project.slug %}" style="padding: 0;">
+            <li><a class="icon-thumbnail" href="{% url "project-detail" the_project.slug %}" style="padding: 0;">
                 <img class="img-rounded"
-                     src="{% thumbnail the_project.image_file 50x50 crop %}"/>
+                     src="{% thumbnail the_project.image_file 50x50 %}"/>
             </a>
             </li>
         {% endif %}
