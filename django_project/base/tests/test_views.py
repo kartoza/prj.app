@@ -63,6 +63,7 @@ class TestViews(TestCase):
         post_data = {
             'name': u'New Test Project',
             'owner': self.user.id,
+            'project_url': 'http://foo.org',
             'screenshots-TOTAL_FORMS': 5,
             'screenshots-INITIAL_FORMS': 0
         }

@@ -26,12 +26,16 @@
         <div class="panel panel-default col-md-8">
             <div class="panel panel-default left-panel" style="padding: 15px">
                 {% if project.image_file %}
-                    <img src="{{ project.image_file.url }}" height="150px">
+                    <img src="{{ project.image_file.url }}" height="150px" />
                 {% endif %}
-                    <p><span class="project-title">{{ project.name }}</span></p>
-                {% if project.description %}
-                    <span><i>{{ project.description }}</i></span>
-                {% endif %}
+                <div>
+                    {% if project.project_url %}
+                        <p><a href="{{ project.project_url }}">Project home page</a></p>
+                    {% endif %}
+                    {% if project.description %}
+                        <p><i>{{ project.description }}</i></p>
+                    {% endif %}
+                </div>
             </div>
             {% if screenshots %}
                 <div class="panel panel-default custom-panel screenshot-panel left-panel">
@@ -128,7 +132,7 @@
         function plusDivs(n) {
           showDivs(slideIndex += n);
         }
-        
+
         function carousel() {
             slideIndex++;
             showDivs(slideIndex);

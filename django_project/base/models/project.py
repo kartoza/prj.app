@@ -134,6 +134,11 @@ class Project(models.Model):
         default=False
     )
 
+    project_url = models.URLField(
+        help_text=u'Optional URL for this project\s home page',
+        blank=True,
+        null=True
+    )
     owner = models.ForeignKey(User)
     slug = models.SlugField(unique=True)
     objects = models.Manager()
