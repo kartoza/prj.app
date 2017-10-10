@@ -42,6 +42,13 @@ class TestCategoryViews(TestCase):
             'password': 'password',
             'is_staff': True
         })
+        # Something changed in the way factoryboy works with django 1.8
+        # I think - we need to explicitly set the users password
+        # because the core.model_factories.UserF._prepare method
+        # which sets the password is never called. Next two lines are
+        # a work around for that - sett #581
+        self.user.set_password('password')
+        self.user.save()
 
     def tearDown(self):
         """
@@ -62,10 +69,11 @@ class TestCategoryViews(TestCase):
 
     def test_CategoryCreateView_with_login(self):
 
-        self.client.login(username='timlinux', password='password')
-        response = self.client.get(reverse('category-create', kwargs={
-            'project_slug': self.project.slug
-        }))
+        status = self.client.login(username='timlinux', password='password')
+        self.assertTrue(status)
+        url = reverse(
+            'category-create', kwargs={'project_slug': self.project.slug})
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         expected_templates = [
             'category/create.html'
@@ -273,6 +281,13 @@ class TestEntryViews(TestCase):
             'password': 'password',
             'is_staff': True
         })
+        # Something changed in the way factoryboy works with django 1.8
+        # I think - we need to explicitly set the users password
+        # because the core.model_factories.UserF._prepare method
+        # which sets the password is never called. Next two lines are
+        # a work around for that - sett #581
+        self.user.set_password('password')
+        self.user.save()
 
     def tearDown(self):
         """
@@ -506,6 +521,13 @@ class TestVersionViews(TestCase):
             'password': 'password',
             'is_staff': True
         })
+        # Something changed in the way factoryboy works with django 1.8
+        # I think - we need to explicitly set the users password
+        # because the core.model_factories.UserF._prepare method
+        # which sets the password is never called. Next two lines are
+        # a work around for that - sett #581
+        self.user.set_password('password')
+        self.user.save()
 
     def tearDown(self):
         """
@@ -717,6 +739,13 @@ class TestSponsorshipLevelViews(TestCase):
             'password': 'password',
             'is_staff': True
         })
+        # Something changed in the way factoryboy works with django 1.8
+        # I think - we need to explicitly set the users password
+        # because the core.model_factories.UserF._prepare method
+        # which sets the password is never called. Next two lines are
+        # a work around for that - sett #581
+        self.user.set_password('password')
+        self.user.save()
 
     def tearDown(self):
         """
@@ -862,6 +891,13 @@ class TestSponsorViews(TestCase):
             'password': 'password',
             'is_staff': True
         })
+        # Something changed in the way factoryboy works with django 1.8
+        # I think - we need to explicitly set the users password
+        # because the core.model_factories.UserF._prepare method
+        # which sets the password is never called. Next two lines are
+        # a work around for that - sett #581
+        self.user.set_password('password')
+        self.user.save()
 
     def tearDown(self):
         """
@@ -1010,6 +1046,13 @@ class TestSponsorshipPeriodViews(TestCase):
             'password': 'password',
             'is_staff': True
         })
+        # Something changed in the way factoryboy works with django 1.8
+        # I think - we need to explicitly set the users password
+        # because the core.model_factories.UserF._prepare method
+        # which sets the password is never called. Next two lines are
+        # a work around for that - sett #581
+        self.user.set_password('password')
+        self.user.save()
 
     def tearDown(self):
         """
