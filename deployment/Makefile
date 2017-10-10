@@ -176,7 +176,7 @@ dbsnapshot:
 	@docker exec -t -i $(PROJECT_ID)-db /bin/bash -c "PGPASSWORD=docker pg_dump -Fc -h localhost -U docker -f /tmp/$(PROJECT_ID)-snapshot.dmp gis"
 	@docker cp $(PROJECT_ID)-db:/tmp/$(PROJECT_ID)-snapshot.dmp .
 	@docker exec -t -i $(PROJECT_ID)-db /bin/bash -c "rm /tmp/$(PROJECT_ID)-snapshot.dmp"
-	@ls -lahtr *.dmp 
+	@ls -lahtr *.dmp
 
 dbschema:
 	@echo
@@ -247,6 +247,8 @@ mediasync:
 	@echo "------------------------------------------------------------------"
 	@rsync -av --progress changelog.qgis.org:/home/projecta/deployment/media/ media
 	@rsync -av --progress changelog.qgis.org:/home/projecta/django_project/core/settings/secret.py ../django_project/core/settings/
+	@rsync -av --progress changelog.qgis.org:/home/projecta/deployment/btsync-db.env btsync-db.env.PRODUCTION
+	@rsync -av --progress changelog.qgis.org:/home/projecta/deployment/btsync-media.env btsync-media.env.PRODUCTION
 
 dbsync:
 	@echo
