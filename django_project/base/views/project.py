@@ -293,7 +293,7 @@ class ApproveProjectView(StaffuserRequiredMixin, ProjectMixin, RedirectView):
 
 def project_sponsor_programme(request, **kwargs):
     """Sponsorship programme view of a project."""
-    
+
     project_slug = kwargs.get('slug', None)
     project = Project.objects.get(slug=project_slug)
 
