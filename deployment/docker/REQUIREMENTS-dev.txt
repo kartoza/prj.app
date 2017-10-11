@@ -11,5 +11,5 @@ django-devserver
 Sphinx
 
 # pdb plus plus
-pdbpp
+# pdbpp : may break when running `make devweb` command
 
