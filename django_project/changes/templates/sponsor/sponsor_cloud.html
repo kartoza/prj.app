@@ -1,0 +1,28 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Sponsor Cloud{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Sponsor Cloud</h1>
+{% endblock page_title %}
+
+{% block content %}
+    {% if image != 'none' %}
+    <div>
+        <h4>To download the image, right click on the image and choose <strong>save image as</strong>.</h4>
+    </div>
+    {% endif %}
+
+    <div style="margin: 30px auto; text-align: center">
+    {% if image != 'none' %}
+        <img style="border: 2px solid #F5F5F5" src="{{ MEDIA_URL }}{{ image }}">
+    {% else %}
+        <h3>No current sponsor found</h3>
+    {% endif %}
+    </div>
+
+{% endblock %}
