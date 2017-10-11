@@ -139,6 +139,15 @@ class Project(models.Model):
         blank=True,
         null=True
     )
+
+    sponsorship_programme = models.TextField(
+        help_text=_(
+            'Sponsorship programme for this project. Markdown is supported'),
+        max_length=3000,
+        blank=True,
+        null=True
+    )
+
     owner = models.ForeignKey(User)
     slug = models.SlugField(unique=True)
     objects = models.Manager()
