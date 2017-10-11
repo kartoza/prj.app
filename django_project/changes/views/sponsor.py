@@ -609,7 +609,8 @@ def generate_sponsor_cloud(request, **kwargs):
             os.makedirs(filepath)
 
         background.crop(
-            (0, 0, max_x, max_y)).save(filepath + '{}.png'.format(project_name))
+            (0, 0, max_x, max_y)).save(
+            filepath + '{}.png'.format(project_name))
 
         image_path = '/images/sponsors/{}.png'.format(project_name)
 
