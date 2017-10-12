@@ -4,7 +4,7 @@
 import logging
 from django.core.urlresolvers import reverse
 from django.http import Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.views.generic import (
     ListView,
     CreateView,
@@ -289,3 +289,14 @@ class ApproveProjectView(StaffuserRequiredMixin, ProjectMixin, RedirectView):
         project.approved = True
         project.save()
         return reverse(self.pattern_name)
+
+
+def project_sponsor_programme(request, **kwargs):
+    """Sponsorship programme view of a project."""
+
+    project_slug = kwargs.get('slug', None)
+    project = Project.objects.get(slug=project_slug)
+
+    return render(
+        request, 'project/programme.html',
+        context={'the_project': project})

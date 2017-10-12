@@ -14,8 +14,8 @@
     <div class="page-header">
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}Sponsors
-            {% if user.is_authenticated %}
                 <div class="pull-right btn-group">
+                {% if user.is_authenticated %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "sponsor-create" project_slug %}'
                        data-title="Create New Sponsor">
@@ -28,13 +28,17 @@
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
                     {% endif %}
-                    <a class="btn btn-default btn-mini tooltip-toggle"
+                  <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "sponsor-cloud" project_slug %}'
                        data-title="Generate Current Sponsor Cloud">
                         <i class="glyphicon glyphicon-cloud"></i>
                     </a>
+                {% endif %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "sponsor-programme" project_slug %}'
+                       data-title="View Sponsorship Programme">
+                        <i class="glyphicon glyphicon-info-sign"></i></a>
                 </div>
-            {% endif %}
         </h1>
     </div>
     {% ifequal num_sponsors 0 %}
@@ -64,10 +68,17 @@
              <div class="row" style="margin-top:10px;">
                     <div class="col-lg-1">
                         {% if sponsor.sponsor.logo %}
-                            <a href="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}">
+                            {% if sponsor.sponsor.sponsor_url %}
+                                <a href="{{ sponsor.sponsor.sponsor_url }}">
                                 <img class="img-responsive img-rounded pull-right"
                                      src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
                             </a>
+                            {% else %}
+                                <a href="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}">
+                                    <img class="img-responsive img-rounded pull-right"
+                                         src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
+                                </a>
+                            {% endif %}
                         {% endif %}
 
                     </div>

@@ -54,6 +54,7 @@ class ProjectForm(forms.ModelForm):
             'signature',
             'credit_cost',
             'certificate_credit',
+            'sponsorship_programme',
         )
 
     def __init__(self, *args, **kwargs):
@@ -71,6 +72,7 @@ class ProjectForm(forms.ModelForm):
                 Field('signature', css_class="form-control"),
                 Field('credit_cost', css_class="form-control"),
                 Field('certificate_credit', css_class="form-control"),
+                Field('sponsorship_programme', css_class="form-control"),
                 Field('gitter_room', css_class="form-control"),
                 css_id='project-form')
         )
