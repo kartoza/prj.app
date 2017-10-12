@@ -74,6 +74,8 @@ from views import (
     SponsorshipPeriodUpdateView,
     PendingSponsorshipPeriodListView,
     ApproveSponsorshipPeriodView,
+
+    generate_sponsor_cloud,
 )
 
 urlpatterns = patterns(
@@ -293,6 +295,11 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/sponsorshipperiod/(?P<slug>[\w-]+)/update/$',
         view=SponsorshipPeriodUpdateView.as_view(),
         name='sponsorshipperiod-update'),
+
+    # Sponsor Cloud
+    url(regex='^(?P<project_slug>[\w-]+)/sponsor-cloud/$',
+        view=generate_sponsor_cloud,
+        name='sponsor-cloud'),
 )
 
 

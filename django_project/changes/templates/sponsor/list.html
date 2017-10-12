@@ -20,6 +20,7 @@
                        href='{% url "sponsor-create" project_slug %}'
                        data-title="Create New Sponsor">
                         {% show_button_icon "add" %}
+                    </a>
                     {% if not unapproved %}
                         <a class="btn btn-default btn-mini tooltip-toggle"
                            href='{% url "pending-sponsor-list" project_slug %}'
@@ -27,6 +28,11 @@
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
                     {% endif %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "sponsor-cloud" project_slug %}'
+                       data-title="Generate Current Sponsor Cloud">
+                        <i class="glyphicon glyphicon-cloud"></i>
+                    </a>
                 </div>
             {% endif %}
         </h1>
