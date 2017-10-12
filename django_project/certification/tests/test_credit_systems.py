@@ -32,11 +32,6 @@ class TestCreditSystems(TestCase):
         self.user.set_password('password')
         self.user.save()
         self.project = ProjectF.create(certificate_credit=3)
-        self.organisation = \
-            CertifyingOrganisationF.create(
-                project=self.project)
-        self.course = CourseF.create(certifying_organisation=self.organisation)
-        self.course_attendee = CourseAttendeeF.create(course=self.course)
 
     def tearDown(self):
         pass
@@ -47,16 +42,17 @@ class TestCreditSystems(TestCase):
 
         """
 
-        self.organisation = \
+        organisation = \
             CertifyingOrganisationF.create(
                 project=self.project, organisation_credits=10)
-        self.course = CourseF.create(certifying_organisation=self.organisation)
+        self.course = CourseF.create(certifying_organisation=organisation)
+        self.course_attendee = CourseAttendeeF.create(course=self.course)
 
         # Issue certificate
         certificate_create = \
             CertificateCreateView(
                 project_slug=self.project.slug,
-                organisation_slug=self.organisation.slug,
+                organisation_slug=organisation.slug,
                 course_slug=self.course.slug)
         form = \
             CertificateForm(
@@ -88,7 +84,7 @@ class TestCreditSystems(TestCase):
         certificate_create = \
             CertificateCreateView(
                 project_slug=self.project.slug,
-                organisation_slug=self.organisation.slug,
+                organisation_slug=organisation.slug,
                 course_slug=self.course.slug)
         form2 = \
             CertificateForm(
@@ -114,16 +110,17 @@ class TestCreditSystems(TestCase):
         """Test when the organisation has no credit available."""
 
         # The organisation credit is set to 0
-        self.organisation = \
+        organisation = \
             CertifyingOrganisationF.create(
                 project=self.project, organisation_credits=0)
-        self.course = CourseF.create(certifying_organisation=self.organisation)
+        self.course = CourseF.create(certifying_organisation=organisation)
+        self.course_attendee = CourseAttendeeF.create(course=self.course)
 
         # Issue certificate
         certificate_create = \
             CertificateCreateView(
                 project_slug=self.project.slug,
-                organisation_slug=self.organisation.slug,
+                organisation_slug=organisation.slug,
                 course_slug=self.course.slug)
         form = \
             CertificateForm(
