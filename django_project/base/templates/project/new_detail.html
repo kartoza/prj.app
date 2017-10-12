@@ -19,6 +19,22 @@
                data-placement="top" data-title="Update {{ project.name }}">
               <span class="glyphicon glyphicon-pencil"></span>
             </a>
+            {% if flag %}
+                {% if merchuser == False %}
+            <a href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id={{ ourclientid }}&scope = read_write"
+               class="btn btn-default btn-m tooltip-toggle btn-delete"
+               data-placement="top" data-title="Create Financial information">
+              <span class="glyphicon glyphicon-minus"></span>
+            </a>
+                {% endif %}
+                {% if merchuser %}
+            <a href=""
+               class="btn btn-default btn-m tooltip-toggle btn-edit"
+               data-placement="top" data-title="Update Financial information">
+              <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+                    {% endif %}
+            {% endif %}
           </div>
         {% endif %}
     </div>

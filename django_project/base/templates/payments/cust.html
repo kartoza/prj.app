@@ -10,11 +10,20 @@
 <h1>To which project would you like to donate?</h1>
 <select name="projects">
 {% for i in dbmerchreq %}
-        <option value={{ i.owner_id }}>
+        <option value={{ i.id }}>
             {{ i.name }}</option>
 {% endfor %}
 </select>
 <input type="submit" value="Pay $420">
 </form>
+<h1>Project not on list?</h1>
+<p>If you do not see the project you wish to donate to on the list then they haven't set up their financial information.
+Below is a list of such projects.</p>
+<select name="projects">
+{% for i in projects%}
+        <option value={{ i.owner_id }}>
+            {{ i.name }}</option>
+{% endfor %}
+</select>
 </body>
 </html>

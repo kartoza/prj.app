@@ -233,6 +233,22 @@ class Customer(models.Model):
     firstname = models.CharField(max_length=50)
     merchantid = models.CharField(max_length=50)
 
+class Charges(models.Model):
+    #Needed to conduct refunds and disputes
+    chargestripeID = models.CharField(max_length=50)
+    merchantstripeID = models.CharField(max_length=50)
+    customerstripeID = models.CharField(max_length=50)
+    chargeAmount = models.DecimalField(
+        help_text=_('Amount charged on account in dollars'),
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        default=0
+    )
+    projectid = models.CharField(max_length=50)
+    userid = models.CharField(max_length=50)
+    date = models.DateTimeField()
 
 class ProjectScreenshot(models.Model):
     """A model to store a screenshot linked to a project."""

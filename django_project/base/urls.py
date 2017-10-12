@@ -22,7 +22,8 @@ from views import (
     processview,
     processcustomerandcharge,
     createaccount,
-    createcharge
+    createcharge,
+    createmerchant
 )
 
 urlpatterns = patterns(
@@ -33,8 +34,10 @@ urlpatterns = patterns(
         name='home'),
     url(regex='^charge/',
         view=createcharge,
-        name='create-charge-view'
-        ),
+        name='create-charge-view'),
+    url(regex='merchant/',
+        view=createmerchant,
+        name='create-merchant-view'),
     url(regex='^createaccount/',
         view=createaccount,
         name='create-account-view'),

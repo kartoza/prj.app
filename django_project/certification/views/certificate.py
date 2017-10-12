@@ -326,14 +326,10 @@ def generate_pdf(
 
 
 def certificate_pdf_view(request, **kwargs):
-<<<<<<< HEAD
-
-=======
     # 1. look for file
     # 2. if found -> yes - open up the pdf and create response
     # 3  if found -> no - generate the pdf and store under
     # /media/certificate.certificateID.pdf
->>>>>>> autopep8
     project_slug = kwargs.pop('project_slug')
     course_slug = kwargs.pop('course_slug')
     pk = kwargs.pop('pk')
@@ -357,9 +353,8 @@ def certificate_pdf_view(request, **kwargs):
                 'filename={}.pdf'.format(certificate.certificateID)
             return response
     else:
-<<<<<<< HEAD
         makepath = '/home/web/media/pdf/{}/'.format(project_folder)
-=======
+
         # Create the PDF object, using the response object as its "file."
         page = canvas.Canvas(pathname, pagesize=landscape(A4))
         width, height = A4
@@ -501,7 +496,6 @@ def certificate_pdf_view(request, **kwargs):
         page.save()
         makepath = '/home/web/media/pdf/'
         # Make pdf directory in /media folder
->>>>>>> autopep8
         if not os.path.exists(makepath):
             os.makedirs(makepath)
 
