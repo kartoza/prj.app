@@ -10,6 +10,8 @@ from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+
 from django.views.generic import (
     ListView,
     CreateView,
@@ -18,37 +20,26 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
 )
-<<<<<<< HEAD
-=======
 from collections import OrderedDict
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
->>>>>>> stripe donation integration and payout
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from changes.models import Version
 from ..models import Project
-<<<<<<< HEAD
-from ..forms import ProjectForm, ScreenshotFormset
-=======
 from ..models import Merchants
 from ..models import Customer
 from ..models import User
-from ..forms import ProjectForm
+from ..forms import ProjectForm, ScreenshotFormset
 from ..forms import PayForm
->>>>>>> stripe progress
 from vota.models import Committee, Ballot
 from changes.models import SponsorshipPeriod
 from certification.models import CertifyingOrganisation
-from django.conf import settings
-<<<<<<< HEAD
 from django.shortcuts import redirect
 
-=======
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template import loader
->>>>>>> Developing connect platform WIP
 logger = logging.getLogger(__name__)
 
 
