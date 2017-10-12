@@ -68,10 +68,17 @@
              <div class="row" style="margin-top:10px;">
                     <div class="col-lg-1">
                         {% if sponsor.sponsor.logo %}
-                            <a href="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}">
+                            {% if sponsor.sponsor.sponsor_url %}
+                                <a href="{{ sponsor.sponsor.sponsor_url }}">
                                 <img class="img-responsive img-rounded pull-right"
                                      src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
                             </a>
+                            {% else %}
+                                <a href="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}">
+                                    <img class="img-responsive img-rounded pull-right"
+                                         src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
+                                </a>
+                            {% endif %}
                         {% endif %}
 
                     </div>
