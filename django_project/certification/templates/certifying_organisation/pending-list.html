@@ -11,6 +11,28 @@
 {% endblock page_title %}
 
 {% block content %}
+    <style>
+        .success {
+            text-align: center;
+            font-family: inherit;
+            color: inherit;
+            background: #adffd2;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #96ffc5;
+        }
+    </style>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            {% if 'organisation_submitted' in message.tags %}
+                <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="page-header">
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
@@ -50,7 +72,7 @@
             }
         </script>
         <div class="row" style="margin-top:10px;">
-            <div class="col-lg-9">
+            <div class="col-lg-10">
                 <h5>{{ certifyingorganisation.project.name }}</h5>
 
                 <h3>{{ certifyingorganisation.name }}</h3>
@@ -79,24 +101,22 @@
             </div>
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
-                    {% if not certifyingorganisation.approved and user.is_staff %}
+                    {% if not certifyingorganisation.approved and user.is_staff or user == project.owner %}
                         <a class="btn btn-default btn-mini btn-approved tooltip-toggle"
                            href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                             data-title="Approve {{ certifyingorganisation.name }}">
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
-                    {% endif %}
-                    {% if user.is_staff or user in certifyingorganisation.organisation_owners.all %}
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                        href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                        data-title="Edit {{ certifyingorganisation.name }}">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
-                    <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                       href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                        data-title="Delete {{ certifyingorganisation.name }}">
-                        <span class="glyphicon glyphicon-minus"></span>
-                    </a>
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                            href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                            data-title="Edit {{ certifyingorganisation.name }}">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                        <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                           href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                            data-title="Delete {{ certifyingorganisation.name }}">
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </a>
                     {% endif %}
                 </div>
             </div>
@@ -106,6 +126,9 @@
     {% include "_pagination.html" %}
 
     <script>
+        $(document).click(function () {
+            $('.messages').fadeOut('fast')
+        });
         $('.btn-delete').hover(
             function (){
                 $(this).removeClass('btn-default').addClass('btn-danger')
@@ -113,7 +136,7 @@
             function (){
                 $(this).removeClass('btn-danger').addClass('btn-default')
             }
-        )
+        );
         $('.btn-approved').hover(
             function (){
                 $(this).removeClass('btn-default').addClass('btn-success')

@@ -1,12 +1,13 @@
 __author__ = 'rischan'
 
 
+import os
 import logging
 from base.models import Project
 
-
+from PIL import Image
 from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.views.generic import (
     ListView,
@@ -555,3 +556,66 @@ class ApproveSponsorView(SponsorMixin, StaffuserRequiredMixin, RedirectView):
         return reverse(self.pattern_name, kwargs={
             'project_slug': project_slug
         })
+
+
+def generate_sponsor_cloud(request, **kwargs):
+    """Generate image for sponsor logos."""
+
+    project_slug = kwargs.pop('project_slug')
+    project = Project.objects.get(slug=project_slug)
+    project_name = project.name.lower().replace(' ', '_')
+    queryset = SponsorshipPeriod.objects.filter(
+        project=project).order_by('-sponsorship_level__value')
+    background = Image.new("RGB", (1200, 1000), "white")
+    max_x = 0
+    max_y = 0
+    y = 0
+    x = 0
+    sponsor_level = ''
+    xy_size = 100
+    for sponsor in queryset:
+        if sponsor.current_sponsor():
+            if sponsor.sponsorship_level.name != sponsor_level:
+                if sponsor_level != '':
+                    sponsor_level = sponsor.sponsorship_level.name
+                    xy_size -= 25
+                    y += 25
+                    if xy_size < 25:
+                        xy_size = 25
+                        y -= 25
+                else:
+                    sponsor_level = sponsor.sponsorship_level.name
+
+            im = Image.open(
+                sponsor.sponsor.logo).convert("RGBA")
+            size = xy_size, xy_size
+            im.thumbnail(size, Image.ANTIALIAS)
+            width, height = im.size
+            if (x + xy_size) >= 1000:
+                x = 0
+                y += xy_size
+            if max_x <= (x + xy_size):
+                max_x = x + xy_size
+            if max_y <= y:
+                max_y = y + xy_size
+            background.paste(
+                im, box=(x, y + ((xy_size - height) / 2)), mask=im)
+            x += xy_size
+
+    image_path = 'none'
+    if max_x != 0:
+        filepath = '/home/web/media/images/sponsors/'
+        if not os.path.exists(filepath):
+            os.makedirs(filepath)
+
+        background.crop(
+            (0, 0, max_x, max_y)).save(
+            filepath + '{}.png'.format(project_name))
+
+        image_path = '/images/sponsors/{}.png'.format(project_name)
+
+    return render(
+        request, 'sponsor/sponsor_cloud.html',
+        context={
+            'image': image_path,
+            'the_project': project})

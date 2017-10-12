@@ -15,6 +15,54 @@
 {% endblock %}
 
 {% block content %}
+    <style>
+        .pending-notification {
+            text-align: center;
+            font-family: inherit;
+            color: inherit;
+            background: #e0ecff;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #e0ecff
+        }
+        .cursor-pointer {
+            cursor: pointer;
+        }
+        .icon-thumbnail {
+            line-height: 150px;
+        }
+        .icon-thumbnail img {
+            display: table-cell;
+            vertical-align: middle;
+            max-width: 250px !important;
+            max-height: 150px;
+        }
+    </style>
+
+    {% if message %}
+        {% if num_project_with_pending == 1 %}
+          <div class="message-info">
+              <p class="pending-notification"
+                 >{{ message }}
+                      Follow <a href="{{ project_with_pending.0.slug }}/pending-certifyingorganisation/list/">this link</a> to review.
+              </p>
+          </div>
+        {% elif num_project_with_pending > 1 %}
+            <div class="message-info-multiple">
+                <p class="pending-notification"
+                 >{{ message }}
+                  Follow <a class="cursor-pointer" onclick="displayLink()" >this link</a> to review.
+                </p>
+                <p style="text-align: center">
+                {% for project in project_with_pending %}
+                    <span class="pending-notification pending-project-link" style="display: none">
+                        <a href="{{ project.slug }}/pending-certifyingorganisation/list/">{{ project.name }}</a>
+                    </span>&nbsp;
+                {% endfor %}
+                </p>
+          </div>
+        {% endif %}
+    {% endif %}
     <div class="page-header">
       <p class="lead text-center text-muted">
         {% trans "High level software project management. Made easy." %}
@@ -51,4 +99,22 @@
     {% for project in projects %}
       {% include 'project/includes/project-panel.html' %}
     {%  endfor %}
+
+    <script>
+        $(document).click(function () {
+            $('.message-info').fadeOut('fast')
+        });
+
+        $(document).click(function (event) {
+            if (!$(event.target).is(".cursor-pointer")) {
+                $('.message-info-multiple').fadeOut('fast');
+            }
+        });
+
+        function displayLink() {
+            $('.pending-project-link').each(function () {
+                $(this).show()
+            })
+        }
+    </script>
 {% endblock %}

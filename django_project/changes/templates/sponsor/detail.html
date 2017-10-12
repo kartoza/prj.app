@@ -105,6 +105,16 @@
                         </div>
                     </p>
                 {% endif %}
+                {% if sponsor.amount_sponsored and sponsor.currency %}
+                    <p>
+                        <div class="sponsor-detail-title">
+                            Amount Sponsored
+                        </div>
+                        <div>
+                            {{ sponsor.amount_sponsored }} {{ sponsor.currency }}
+                        </div>
+                    </p>
+                {% endif %}
             {% else %}
                 <p>No description</p>
             {% endif %}

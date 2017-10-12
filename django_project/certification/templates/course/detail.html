@@ -13,6 +13,28 @@
 
 {% block content %}
 
+    <style>
+        .success {
+            text-align: center;
+            font-family: inherit;
+            color: inherit;
+            background: #adffd2;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #96ffc5;
+        }
+    </style>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            {% if 'email_sent' in message.tags or 'regenerate' in message.tags %}
+                <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="row">
         <div class="col-lg-10">
         <h1>{{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})</h1><br/>
@@ -26,13 +48,13 @@
                    data-title="Delete Course">
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
-                <a class="btn btn-default btn-sm tooltip-toggle"
+                <a class="btn btn-default btn-sm tooltip-toggle btn-primary-focus"
                    href='{% url "course-update" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
                    data-title="Edit Course">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
             {% endif %}
-                <a class="btn btn-default btn-sm tooltip-toggle"
+                <a class="btn btn-default btn-sm tooltip-toggle btn-primary-focus"
                     href='{% url "certifyingorganisation-detail" course.certifying_organisation.project.slug course.certifying_organisation.slug %}'
                     data-title="Back">
                      <span class="glyphicon glyphicon-arrow-left"></span>
@@ -41,7 +63,8 @@
         </div>
     </div>
 
-    <div class="details" style="margin-top: 15px; width: 60%">
+    <div class="row" style="margin-left: inherit; margin-top: 15px;">
+    <div class="details col-lg-10" style="width: 60%">
         <span class="grey-italic col-lg-3">Course name</span><span class="col-lg-9">{{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})<br/></span>
         <span class="grey-italic col-lg-3">Course type</span><span class="col-lg-9">{{ course.course_type }}<br/></span>
         <span class="grey-italic col-lg-3">Course convener</span>
@@ -51,9 +74,35 @@
         <span class="col-lg-9">{{ course.course_convener }}<br/></span>
         {% endif %}
         <span class="grey-italic col-lg-3">Training center</span><span class="col-lg-9">{{ course.training_center }}<br/></span>
-        <span class="grey-italic col-lg-3">Organisation</span><span class="col-lg-9">{{ course.certifying_organisation }}<br/></span>
+        <span class="grey-italic col-lg-3">Organisation</span><span class="col-lg-9">{{ course.certifying_organisation.name }}<br/></span>
         <span class="grey-italic col-lg-3">Start date</span><span class="col-lg-9">{{ course.start_date }}<br/></span>
         <span class="grey-italic col-lg-3">End date</span><span class="col-lg-9">{{ course.end_date }}<br/></span>
+    </div>
+
+    <div class="col-lg-2 pull-right" style="width: 20%;">
+        <h4 class="panel-heading" style="padding-left:10px; padding-right: 10px">
+            Available Credits
+            {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner %}
+            <a class="btn btn-default btn-xs tooltip-toggle btn-top-up" style="float: right; margin-top: -3px"
+               href= '{% url "top-up" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug %}'
+                data-title="Top up credits">
+                <i class="glyphicon glyphicon-shopping-cart"></i></a>
+            {% endif %}</h4>
+        {% if course.certifying_organisation.organisation_credits >= course.certifying_organisation.project.certificate_credit %}
+        <h3 class="panel-body tooltip-toggle"
+            data-title="Available credits to issue certificate"
+            data-placement="left"
+        >{{ course.certifying_organisation.organisation_credits }}
+        </h3>
+        {% else %}
+        <h3 class="panel-body tooltip-toggle"
+            data-title="Your credits is insufficient to issue more certificates, please top up"
+            data-placement="left"
+            style="color: indianred"
+        >{{ course.certifying_organisation.organisation_credits }}
+        </h3>
+        {% endif %}
+    </div>
     </div>
 
 
@@ -72,21 +121,30 @@
         }
     </style>
 
-    <div class="menu-wrapper details-wrapper" style="margin-left: -15px; margin-top: 50px; float: left">
-
+    <div class="menu-wrapper details-wrapper" style="margin-left: -15px; margin-top: 50px;">
     <table style="border: none!important; width: 100%">
     <tr style="border: none"><td style="border: none; padding: 0"><h3 style="margin-top: -20px">Course attendees</h3></td>
     {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner %}
     <td style="border: none; padding: 0;">
-    <div class="btn-group pull-right">
-        <a class="btn btn-default btn-sm tooltip-toggle" style=" margin-top: -30px"
+    <div class="btn-group pull-right" style="margin-top: -30px">
+        <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
            href='{% url 'courseattendee-create' project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
             data-title="Add Course Attendees">
             {% show_button_icon "add" %}</a>
-        <a id='download-zip' class="btn btn-default btn-sm tooltip-toggle pull-right" style=" margin-top: -30px"
+        <a id='download-zip' class="btn btn-default btn-sm tooltip-toggle"
            href='{% url "download_zip_all" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
             data-title="Download all issued certificates from this course">
             <span class="glyphicon glyphicon-download-alt"></span>
+            </a>
+        <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
+           href='{% url "regenerate-all-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
+            data-title="Re-generate all PDF certificate for this course">
+            <i class="glyphicon glyphicon-repeat"></i>
+            </a>
+         <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
+           href='{% url "send_email" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
+            data-title="Email all participants with the link to their certificates.">
+            <i class="glyphicon glyphicon-send"></i>
             </a>
     </div>
     </td></tr>
@@ -117,11 +175,30 @@
                 <td  style="text-align: center">
                     <div class="btn-group pull-right">
                         {% if attendee.attendee.pk in certificates %}
-                            <a class="btn btn-default btn-xs btn-print tooltip-toggle"
-                                href='{% url "print-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
-                                data-title="Print Certificate">
-                                <span class="glyphicon glyphicon-print"></span>
-                            </a>
+                            {% if attendee.attendee.pk in paid_certificates %}
+                                <a class="btn btn-default btn-xs btn-print tooltip-toggle"
+                                    href='{% url "print-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
+                                    data-title="Print Certificate">
+                                    <span class="glyphicon glyphicon-print"></span>
+                                </a>
+                                <a class="btn btn-default btn-xs btn-print tooltip-toggle"
+                                    href='{% url "regenerate-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
+                                    data-title="Re-generate PDF certificate for this attendee">
+                                    <i class="glyphicon glyphicon-repeat"></i>
+                                </a>
+                            {% else %}
+                                {% if course.certifying_organisation.organisation_credits >= course.certifying_organisation.project.certificate_credit %}
+                                    <a class="btn btn-default btn-xs tooltip-toggle btn-issue"
+                                       href='{% url "paid-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
+                                        data-title="Pay this certificate using credits">
+                                        <i class="glyphicon glyphicon-import"></i></a>
+                                {% else %}
+                                    <a class="btn btn-default btn-xs tooltip-toggle btn-top-up"
+                                       href='{% url "top-up" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug %}'
+                                        data-title="Top up credits to print the certificate">
+                                        <i class="glyphicon glyphicon-shopping-cart"></i></a>
+                                {% endif %}
+                            {% endif %}
                         {% else %}
                             <a class="btn btn-default btn-xs btn-issue tooltip-toggle"
                                 href='{% url "certificate-create" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
@@ -146,15 +223,18 @@
     </div>
 
     <script>
+        $(document).click(function () {
+            $('.messages').fadeOut('fast')
+        });
 
-        $('#download-zip').hover(
+        $('#download-zip, .btn-print, .btn-info-focus').hover(
             function (){
                 $(this).removeClass('btn-default').addClass('btn-info')
             },
             function () {
                 $(this).removeClass('btn-info').addClass('btn-default')
             }
-        ),
+        );
         $('.btn-delete').hover(
             function (){
                 $(this).removeClass('btn-default').addClass('btn-danger')
@@ -162,15 +242,15 @@
             function (){
                 $(this).removeClass('btn-danger').addClass('btn-default')
             }
-        ),
-        $('.btn-print').hover(
+        );
+        $('.btn-primary-focus').hover(
             function (){
-                $(this).removeClass('btn-default').addClass('btn-info')
+                $(this).removeClass('btn-default').addClass('btn-primary')
             },
             function (){
-                $(this).removeClass('btn-info').addClass('btn-default')
+                $(this).removeClass('btn-primary').addClass('btn-default')
             }
-        ),
+        );
         $('.btn-issue').hover(
             function (){
                 $(this).removeClass('btn-default').addClass('btn-warning')
@@ -178,7 +258,15 @@
             function (){
                 $(this).removeClass('btn-warning').addClass('btn-default')
             }
-        )
+        );
+        $('.btn-top-up').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-success')
+            },
+            function (){
+                $(this).removeClass('btn-success').addClass('btn-default')
+            }
+        );
     </script>
 
 {% endblock %}

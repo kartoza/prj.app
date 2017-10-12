@@ -50,6 +50,7 @@ class TestProjectCRUD(TestCase):
             'description': u'New description',
             'approved': False,
             'private': True,
+            'project_url': u'http://foo.org',
             'slug': u'new-project-slug',
             'gitter_room': u'test/new',
         }
@@ -82,6 +83,7 @@ class TestProjectCRUD(TestCase):
             'description': u'New description',
             'approved': False,
             'private': True,
+            'project_url': u'http://foo.org',
             'slug': u'new-project-slug',
             'gitter_room': u'invalid',
         }

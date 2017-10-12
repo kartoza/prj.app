@@ -133,8 +133,10 @@ class SponsorshipPeriodListView(
         """
         context = super(SponsorshipPeriodListView,
                         self).get_context_data(**kwargs)
+        project_slug = self.kwargs.get('project_slug', None)
+        project = Project.objects.get(slug=project_slug)
         context['num_sponsorshipperiods'] = \
-            context['sponsorshipperiods'].count()
+            SponsorshipPeriod.objects.filter(project=project).count()
         context['unapproved'] = False
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
@@ -156,7 +158,20 @@ class SponsorshipPeriodListView(
             project_slug = self.kwargs.get('project_slug', None)
             if project_slug:
                 project = Project.objects.get(slug=project_slug)
-                queryset = SponsorshipPeriod.objects.filter(project=project)
+                queryset = \
+                    SponsorshipPeriod.objects.filter(
+                        project=project).order_by(
+                        '-sponsorship_level__value', '-end_date')
+
+                # Retrofill amount sponsored with sponsorship level value
+                # when it is not available
+                for index, item in enumerate(queryset):
+                    if not queryset[index].amount_sponsored:
+                        queryset[index].amount_sponsored = \
+                            queryset[index].sponsorship_level.value
+                        queryset[index].currency = \
+                            queryset[index].sponsorship_level.currency
+                        queryset[index].save()
                 return queryset
             else:
                 raise Http404('Sorry! We could not find your Sponsor Period!')

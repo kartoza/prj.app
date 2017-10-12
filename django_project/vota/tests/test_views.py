@@ -25,6 +25,14 @@ class TestVoteViews(TestCase):
             'password': 'password',
             'is_staff': True
         })
+        # Something changed in the way factoryboy works with django 1.8
+        # I think - we need to explicitly set the users password
+        # because the core.model_factories.UserF._prepare method
+        # which sets the password is never called. Next two lines are
+        # a work around for that - sett #581
+        self.user.set_password('password')
+        self.user.save()
+
         self.project = ProjectF.create()
         self.committee = CommitteeF.create(project=self.project,
                                              users=[self.user])
@@ -97,6 +105,14 @@ class TestBallotViews(TestCase):
             'password': 'password',
             'is_staff': True
         })
+        # Something changed in the way factoryboy works with django 1.8
+        # I think - we need to explicitly set the users password
+        # because the core.model_factories.UserF._prepare method
+        # which sets the password is never called. Next two lines are
+        # a work around for that - sett #581
+        self.user.set_password('password')
+        self.user.save()
+
         self.project = ProjectF.create()
         self.committee = CommitteeF.create(project=self.project,
                                              users=[self.user])
@@ -333,6 +349,14 @@ class TestCommitteeViews(TestCase):
             'password': 'password',
             'is_staff': True
         })
+        # Something changed in the way factoryboy works with django 1.8
+        # I think - we need to explicitly set the users password
+        # because the core.model_factories.UserF._prepare method
+        # which sets the password is never called. Next two lines are
+        # a work around for that - sett #581
+        self.user.set_password('password')
+        self.user.save()
+
         self.project = ProjectF.create()
         self.committee = CommitteeF.create(project=self.project,
                                              users=[self.user])

@@ -85,6 +85,7 @@
                        href='{% url "category-delete" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-minus"></span>
                     </a>
+                    {% if category.approved %}
                     <a class="btn btn-default btn-mini"
                        href='{% url "category-update" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-pencil"></span>
@@ -93,6 +94,7 @@
                        href='{% url "category-detail" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
+                    {% endif %}
                 </div>
             </div>
         </li>

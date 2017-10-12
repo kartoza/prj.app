@@ -20,6 +20,7 @@
                        href='{% url "sponsor-create" project_slug %}'
                        data-title="Create New Sponsor">
                         {% show_button_icon "add" %}
+                    </a>
                     {% if not unapproved %}
                         <a class="btn btn-default btn-mini tooltip-toggle"
                            href='{% url "pending-sponsor-list" project_slug %}'
@@ -27,6 +28,11 @@
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
                     {% endif %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "sponsor-cloud" project_slug %}'
+                       data-title="Generate Current Sponsor Cloud">
+                        <i class="glyphicon glyphicon-cloud"></i>
+                    </a>
                 </div>
             {% endif %}
         </h1>
@@ -71,6 +77,9 @@
                         <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
 
                         <h5>{{ sponsor.sponsorship_level }} : {{ sponsor.project.name }}</h5>
+                        {% ifnotequal sponsor.amount_sponsored None %}
+                        <h5>Amount sponsored : {{ sponsor.amount_sponsored }} {{ sponsor.currency }}</h5>
+                        {% endifnotequal %}
                     </div>
                     <div class="col-lg-2">
                         <div class="btn-group pull-right">

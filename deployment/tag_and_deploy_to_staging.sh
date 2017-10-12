@@ -4,10 +4,10 @@ echo "Use this to tag a version on your local"
 echo "machine, push the tag upstream and then"
 echo "deploy it to the remote staging server."
 echo "e.g."
-echo "$0 version-1.2.3"
+echo "$0 1.2.3"
 VERSION=$1
 echo "Last tag on your local system is:"
-git tag --list | tail -1
+git tag --list | grep "[0-9]\.[0-9]\.[0-9]" | tail -1
 echo "New tag to be added to your local repo and pushed upstream:"
 echo $VERSION
 read -p "Are you sure you want to continue? " -n 1 -r

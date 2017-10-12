@@ -36,6 +36,12 @@
           Sponsorship Level : {{ sponsorshipperiod.sponsorship_level }}<br/>
           Start Date : {{ sponsorshipperiod.start_date }}<br/>
           End Date : {{ sponsorshipperiod.end_date }}<br/>
+          Amount Paid :
+            {% ifnotequal sponsorshipperiod.amount_sponsored None %}
+                {{ sponsorshipperiod.amount_sponsored }} {{ sponsorshipperiod.currency }}<br/>
+            {% else %}
+                n/a
+            {% endifnotequal %}
         {% if sponsorshipperiod.sponsorshiplevel.logo %}
         <img class="img-responsive img-rounded"
              src="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsorshiplevel.logo }}" width="100" />
