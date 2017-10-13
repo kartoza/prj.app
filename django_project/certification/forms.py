@@ -429,3 +429,4 @@ class CertificateForm(forms.ModelForm):
         instance.attendee = self.attendee
         instance.save()
         return instance
+

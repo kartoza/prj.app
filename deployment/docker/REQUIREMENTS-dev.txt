@@ -13,3 +13,5 @@ Sphinx
 # pdb plus plus
 pdbpp
 
+# csv data import
+django-import-export
