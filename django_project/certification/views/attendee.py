@@ -92,4 +92,4 @@ def upload_csv(request):
     if not result.has_errors():
         attendee_resource.import_data(dataset, dry_run=False)  # Actually import now
 
-        return render(request, 'attendee/create.html'
+        return render(request, 'attendee/create.html')

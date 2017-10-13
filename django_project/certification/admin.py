@@ -2,6 +2,7 @@
 """Model admin class definitions."""
 
 from django.contrib.gis import admin
+from import_export.admin import ImportMixin
 from certification.models.certificate import Certificate
 from certification.models.course import Course
 from certification.models.certifying_organisation import CertifyingOrganisation
@@ -29,7 +30,7 @@ class CertificateAdmin(admin.ModelAdmin):
 class AttendeeAdmin(ImportMixin, admin.ModelAdmin):
     """Attendee admin model."""
 
-    resource_class = AttendeeModelResource""
+    resource_class = AttendeeModelResource
 
     def queryset(self, request):
         """Ensure we use the correct manager.
