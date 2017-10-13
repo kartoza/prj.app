@@ -21,6 +21,8 @@ INSTALLED_APPS += (
     'django_countries',  # for sponsor addresses
     # 'user_map',
     'disqus',
+    # participants csv import
+    'import_export',
 )
 
 # Set disqus and shortname
@@ -37,6 +39,9 @@ STOP_WORDS = (
 )
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+# Use database transactions on data import, just to be on the safe side.
+IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 # Easy-thumbnails options
 THUMBNAIL_SUBDIR = 'thumbnails'
