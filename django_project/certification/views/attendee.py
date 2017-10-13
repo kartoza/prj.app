@@ -74,6 +74,7 @@ class AttendeeCreateView(
         })
         return kwargs
 
+
 def upload_csv(request):
     """Upload attendee csv file.
 
@@ -87,10 +88,10 @@ def upload_csv(request):
     dataset = Dataset()
     new_attendees = request.FILES['csv_file']
 
-    imported_data = dataset.load(new_attendees.read())
-    result = attendee_resource.import_data(dataset, dry_run=True)  # Test the data import
-
+    dataset.load(new_attendees.read())
+    result = attendee_resource.import_data(dataset,
+                                           dry_run=True)  # Test the data import
     if not result.has_errors():
-        attendee_resource.import_data(dataset, dry_run=False)  # Actually import now
-
+        attendee_resource.import_data(dataset,
+                                      dry_run=False)  # Actually import now
         return render(request, 'attendee/create.html')
