@@ -3,7 +3,6 @@
 
 from django.contrib.gis import admin
 from import_export.admin import ImportMixin
-from import_export import resources
 from certification.models.certificate import Certificate
 from certification.models.course import Course
 from certification.models.certifying_organisation import CertifyingOrganisation
