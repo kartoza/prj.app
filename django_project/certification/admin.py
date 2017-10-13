@@ -10,7 +10,7 @@ from certification.models.course_convener import CourseConvener
 from certification.models.course_type import CourseType
 from certification.models.attendee import Attendee
 from certification.models.course_attendee import CourseAttendee
-
+from .resources improt AttendeeModelResource
 
 class CertificateAdmin(admin.ModelAdmin):
     """Certificate admin model."""
@@ -26,8 +26,10 @@ class CertificateAdmin(admin.ModelAdmin):
         return query_set
 
 
-class AttendeeAdmin(admin.ModelAdmin):
+class AttendeeAdmin(ImportMixin, admin.ModelAdmin):
     """Attendee admin model."""
+
+    resource_class = AttendeeModelResource""
 
     def queryset(self, request):
         """Ensure we use the correct manager.
