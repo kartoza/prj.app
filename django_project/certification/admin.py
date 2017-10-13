@@ -10,7 +10,7 @@ from certification.models.course_convener import CourseConvener
 from certification.models.course_type import CourseType
 from certification.models.attendee import Attendee
 from certification.models.course_attendee import CourseAttendee
-from .resources improt AttendeeModelResource
+from .resources import AttendeeModelResource
 
 class CertificateAdmin(admin.ModelAdmin):
     """Certificate admin model."""
