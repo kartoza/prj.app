@@ -13,6 +13,7 @@ from certification.models.attendee import Attendee
 from certification.models.course_attendee import CourseAttendee
 from .resources import AttendeeModelResource
 
+
 class CertificateAdmin(admin.ModelAdmin):
     """Certificate admin model."""
     def queryset(self, request):

@@ -89,9 +89,11 @@ def upload_csv(request):
     new_attendees = request.FILES['csv_file']
 
     dataset.load(new_attendees.read())
+    # Test the data import
     result = attendee_resource.import_data(dataset,
-                                           dry_run=True)  # Test the data import
+                 dry_run=True)
+    # Actually import now
     if not result.has_errors():
         attendee_resource.import_data(dataset,
-                                      dry_run=False)  # Actually import now
+                        dry_run=False)
         return render(request, 'attendee/create.html')
