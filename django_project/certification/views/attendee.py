@@ -7,7 +7,7 @@ from braces.views import LoginRequiredMixin
 from tablib import Dataset
 from ..models import Attendee, CertifyingOrganisation
 from ..forms import AttendeeForm
-from ..resources import  AttendeeResource
+from ..resources import  AttendeeModelResource
 
 
 class AttendeeMixin(object):
@@ -84,7 +84,7 @@ def upload_csv(request):
          :returns: URL
          :rtype: HttpResponse
     """
-    attendee_resource = AttendeeResource()
+    attendee_resource = AttendeeModelResource()
     dataset = Dataset()
     new_attendees = request.FILES['csv_file']
 
