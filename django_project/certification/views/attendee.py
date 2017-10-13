@@ -7,6 +7,7 @@ from braces.views import LoginRequiredMixin
 from tablib import Dataset
 from ..models import Attendee, CertifyingOrganisation
 from ..forms import AttendeeForm
+from ..resources import AttendeeModelResource
 
 
 class AttendeeMixin(object):
