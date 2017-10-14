@@ -49,5 +49,13 @@ textarea.form-control {
 	font-size: 14pt;
 	color: #6e756b;
 	text-align: left;
-	padding-bottom: 10px;
+	padding: 20px;
+}
+
+.td-title, .top-vertical {
+	vertical-align: top;
+}
+
+.td-title {
+	width: 200px;
 }
