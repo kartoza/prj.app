@@ -21,4 +21,9 @@ class Migration(migrations.Migration):
             name='title',
             field=models.CharField(help_text='Title of the course convener, e.g. Prof.', max_length=50, null=True, blank=True),
         ),
+        migrations.AlterField(
+            model_name='certifyingorganisation',
+            name='name',
+            field=models.CharField(help_text='Name of organisation or institution', max_length=200),
+        ),
     ]

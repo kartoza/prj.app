@@ -78,7 +78,7 @@ class CertifyingOrganisation(models.Model):
     """Certifying organisation model."""
 
     name = models.CharField(
-        help_text=_('name of organisation or institution'),
+        help_text=_('Name of organisation or institution'),
         max_length=200,
         null=False,
         blank=False
