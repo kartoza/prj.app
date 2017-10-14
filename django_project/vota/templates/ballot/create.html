@@ -1,5 +1,5 @@
 {% extends "project_base.html" %}
-
+{% load staticfiles %}
 {% load crispy_forms_tags %}
 
 {% block extra_head %}
@@ -9,11 +9,58 @@
 
 {% endblock %}
 
+{% block css_head %}
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="stylesheet" href="{% static 'css/datepicker.css' %}">
+{% endblock css_head %}
+
+{% block js_head %}
+    <script src="{% static 'js/datepicker.js' %}"></script>
+    <script src="{% static 'js/i18n/datepicker.en.js' %}"></script>
+{% endblock %}
+
 {% block page_title %}
     <h1>Add Committee</h1>
 {% endblock page_title %}
 
 {% block content %}
+
+    <script>
+    $(function() {
+        var open_from = $("#id_open_from").val();
+        var closes = $("#id_closes").val();
+
+        $("#id_open_from").attr('data-language', 'en');
+        $("#id_closes").attr('data-language', 'en');
+
+        $("#id_open_from").datepicker({
+            dateFormat: 'yyyy-mm-dd',
+            autoClose: true,
+            position: 'top left',
+            timepicker: true,
+            timeFormat: "hh:ii",
+            onSelect: function (fd, d, picker) {
+                $("#id_closes").val(d);
+                $("#id_closes").datepicker({minDate: new Date(d)})
+            }
+        });
+
+        $("#id_closes").datepicker({
+            dateFormat: 'yyyy-mm-dd',
+            autoClose: true,
+            position: 'top left',
+            timepicker: true,
+            timeFormat: "hh:ii",
+            onSelect: function (fd, d, picker) {
+                $("#id_open_from").val(d);
+                $("#id_open_from").datepicker({maxDate: new Date(d)})
+            }
+        });
+
+        $('#id_open_from').datepicker().data('datepicker').selectDate(new Date(open_from.toString()));
+        $('#id_closes').datepicker().data('datepicker').selectDate(new Date(closes.toString()));
+    });
+    </script>
 
     <section id="forms">
         <div class='container'>
