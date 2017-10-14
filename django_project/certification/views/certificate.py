@@ -188,6 +188,18 @@ def generate_pdf(
     page = canvas.Canvas(pathname, pagesize=landscape(A4))
     width, height = A4
     center = height * 0.5
+    convener_name = \
+        '{} {}'.format(
+            course.course_convener.user.first_name,
+            course.course_convener.user.last_name)
+
+    if course.course_convener.title:
+        convener_name = \
+            '{} {}'.format(course.course_convener.title, convener_name)
+
+    if course.course_convener.degree:
+        convener_name = \
+            '{}, {}'.format(convener_name, course.course_convener.degree)
 
     if project.image_file:
         project_logo = ImageReader(project.image_file)
@@ -262,9 +274,8 @@ def generate_pdf(
             course.end_date.year))
     page.setFillColorRGB(0.1, 0.1, 0.1)
     page.drawCentredString(
-        center, 220, 'Convened by {} {} at {}'.format(
-            course.course_convener.user.first_name,
-            course.course_convener.user.last_name,
+        center, 220, 'Convened by {} at {}'.format(
+            convener_name,
             course.training_center))
 
     if project_owner_signature is not None:
@@ -290,9 +301,7 @@ def generate_pdf(
         '{} {}'.format(project.owner.first_name, project.owner.last_name))
     page.drawCentredString(
         (margin_right - 150), (margin_bottom + 60),
-        '{} {}'.format(
-            course.course_convener.user.first_name,
-            course.course_convener.user.last_name))
+        '{}'.format(convener_name))
     page.line(
         (margin_left + 70), (margin_bottom + 55),
         (margin_left + 230), (margin_bottom + 55))
