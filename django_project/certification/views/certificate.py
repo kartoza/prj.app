@@ -220,6 +220,21 @@ def generate_pdf(
         convener_name = \
             '{}, {}'.format(convener_name, course.course_convener.degree)
 
+    course_duration = \
+        'From {} {} {} to {} {} {}'.format(
+            course.start_date.day,
+            course.start_date.strftime('%B'),
+            course.start_date.year,
+            course.end_date.day,
+            course.end_date.strftime('%B'),
+            course.end_date.year)
+
+    if course.course_type.instruction_hours:
+        course_duration = \
+            '{} ({} of instruction)'.format(
+                course_duration,
+                course.course_type.instruction_hours)
+
     if project.image_file:
         project_logo = ImageReader(project.image_file)
     else:
@@ -282,15 +297,7 @@ def generate_pdf(
     page.drawCentredString(center, 300, course.course_type.name)
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
-        center, 270,
-        'From {} {} {} to {} {} {}'
-        .format(
-            course.start_date.day,
-            course.start_date.strftime('%B'),
-            course.start_date.year,
-            course.end_date.day,
-            course.end_date.strftime('%B'),
-            course.end_date.year))
+        center, 270, '{}'.format(course_duration))
     page.setFillColorRGB(0.1, 0.1, 0.1)
     page.drawCentredString(
         center, 220, 'Convened by {} at {}'.format(
