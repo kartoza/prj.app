@@ -142,6 +142,25 @@ class CertificateDetailView(DetailView):
         if self.certificateID in issued_id:
             context['certificate'] = \
                 Certificate.objects.get(certificateID=self.certificateID)
+            certificate = context['certificate']
+            convener_name = \
+                '{} {}'.format(
+                    certificate.course.course_convener.user.first_name,
+                    certificate.course.course_convener.user.last_name)
+
+            if certificate.course.course_convener.title:
+                convener_name = \
+                    '{} {}'.format(
+                        certificate.course.course_convener.title,
+                        convener_name)
+
+            if certificate.course.course_convener.degree:
+                convener_name = \
+                    '{}, {}'.format(
+                        convener_name,
+                        certificate.course.course_convener.degree)
+
+            context['convener_name'] = convener_name
         context['project_slug'] = self.project_slug
         return context
 
@@ -188,6 +207,33 @@ def generate_pdf(
     page = canvas.Canvas(pathname, pagesize=landscape(A4))
     width, height = A4
     center = height * 0.5
+    convener_name = \
+        '{} {}'.format(
+            course.course_convener.user.first_name,
+            course.course_convener.user.last_name)
+
+    if course.course_convener.title:
+        convener_name = \
+            '{} {}'.format(course.course_convener.title, convener_name)
+
+    if course.course_convener.degree:
+        convener_name = \
+            '{}, {}'.format(convener_name, course.course_convener.degree)
+
+    course_duration = \
+        'From {} {} {} to {} {} {}'.format(
+            course.start_date.day,
+            course.start_date.strftime('%B'),
+            course.start_date.year,
+            course.end_date.day,
+            course.end_date.strftime('%B'),
+            course.end_date.year)
+
+    if course.course_type.instruction_hours:
+        course_duration = \
+            '{} ({} of instruction)'.format(
+                course_duration,
+                course.course_type.instruction_hours)
 
     if project.image_file:
         project_logo = ImageReader(project.image_file)
@@ -251,20 +297,11 @@ def generate_pdf(
     page.drawCentredString(center, 300, course.course_type.name)
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
-        center, 270,
-        'From {} {} {} to {} {} {}'
-        .format(
-            course.start_date.day,
-            course.start_date.strftime('%B'),
-            course.start_date.year,
-            course.end_date.day,
-            course.end_date.strftime('%B'),
-            course.end_date.year))
+        center, 270, '{}'.format(course_duration))
     page.setFillColorRGB(0.1, 0.1, 0.1)
     page.drawCentredString(
-        center, 220, 'Convened by {} {} at {}'.format(
-            course.course_convener.user.first_name,
-            course.course_convener.user.last_name,
+        center, 220, 'Convened by {} at {}'.format(
+            convener_name,
             course.training_center))
 
     if project_owner_signature is not None:
@@ -290,9 +327,7 @@ def generate_pdf(
         '{} {}'.format(project.owner.first_name, project.owner.last_name))
     page.drawCentredString(
         (margin_right - 150), (margin_bottom + 60),
-        '{} {}'.format(
-            course.course_convener.user.first_name,
-            course.course_convener.user.last_name))
+        '{}'.format(convener_name))
     page.line(
         (margin_left + 70), (margin_bottom + 55),
         (margin_left + 230), (margin_bottom + 55))

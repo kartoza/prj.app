@@ -36,6 +36,20 @@ class CourseConvener(models.Model):
         blank=True
     )
 
+    title = models.CharField(
+        help_text=_('Title of the course convener, e.g. Prof.'),
+        max_length=50,
+        blank=True,
+        null=True
+    )
+
+    degree = models.CharField(
+        help_text=_('Degree of the course convener, e.g. MSc.'),
+        max_length=50,
+        blank=True,
+        null=True
+    )
+
     class Meta:
         ordering = ['user']
 
