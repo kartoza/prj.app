@@ -410,6 +410,7 @@ class CertifyingOrganisationCreateView(
             CertifyingOrganisationCreateView, self).get_context_data(**kwargs)
         context['certifyingorganisations'] = \
             self.get_queryset().filter(project=self.project)
+        context['the_project'] = self.project
         return context
 
     def form_valid(self, form):
