@@ -51,3 +51,7 @@ textarea.form-control {
 	text-align: left;
 	padding-bottom: 10px;
 }
+
+.selector select[multiple=multiple] {
+    max-width: 366px !important;
+}

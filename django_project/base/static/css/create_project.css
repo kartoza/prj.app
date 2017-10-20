@@ -77,3 +77,7 @@ input[type=submit]{
     background-color: #265a88 !important;
     background-position: 0 -15px !important;
 }
+
+.selector select[multiple=multiple] {
+    max-width: 366px !important;
+}
