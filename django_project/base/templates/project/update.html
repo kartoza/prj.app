@@ -2,6 +2,20 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
+{% block js_head %}
+    <script type="text/javascript" src="/static/js/jsi18n.js"></script>
+    <script type="text/javascript" src="/static/grappelli/jquery/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="/static/grappelli/jquery/ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/static/grappelli/js/grappelli.js"></script>
+    <script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+    <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
+{% endblock %}
+
+{% block css_head %}
+    {{ form.media }}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+{% endblock %}
+
 {% block extra_head %}
 {{ Other }}
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
