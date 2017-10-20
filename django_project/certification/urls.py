@@ -55,11 +55,19 @@ from views import (
 
     # Validate Certificate.
     ValidateCertificate,
+
+    # About.
+    AboutView,
 )
 
 
 urlpatterns = patterns(
     '',
+
+    # About page
+    url(regex='^(?P<project_slug>[\w-]+)/about/$',
+        view=AboutView.as_view(),
+        name='about'),
 
     # Certifying Organisation management
     url(regex='^(?P<project_slug>[\w-]+)/pending-certifyingorganisation/'
