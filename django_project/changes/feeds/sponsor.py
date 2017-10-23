@@ -109,7 +109,7 @@ class RssSponsorFeed(Feed):
             'currency': item.currency,
             'amount_sponsored': item.amount_sponsored,
         }
-        
+
         descriptions = \
             '<div>' \
             '<img src="{media_url}{sponsor_logo}" width="300px"></div>' \
