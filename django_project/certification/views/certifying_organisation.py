@@ -652,6 +652,41 @@ class ApproveCertifyingOrganisationView(
             get_object_or_404(certifyingorganisation_qs, slug=slug)
         certifyingorganisation.approved = True
         certifyingorganisation.save()
+
+        site = self.request.get_host()
+        for organisation_owner in certifyingorganisation.organisation_owners.all():
+            data = {
+                'owner_firstname': organisation_owner.first_name,
+                'owner_lastname': organisation_owner.last_name,
+                'organisation_name': certifyingorganisation.name,
+                'project_name': certifyingorganisation.project.name,
+                'project_owner_firstname':
+                    certifyingorganisation.project.owner.first_name,
+                'project_owner_lastname':
+                    certifyingorganisation.project.owner.last_name,
+                'site': site,
+                'project_slug': project_slug,
+            }
+            send_mail(
+                'Projecta - Your organisation is approved',
+                'Dear {owner_firstname} {owner_lastname},\n\n'
+                'Congratulations!\n'
+                'Your certifying organisation has been approved. The following'
+                ' is the details of the newly approved organisation:\n'
+                'Name of organisation: {organisation_name}\n'
+                'Project: {project_name}\n'
+                'You may now start creating your training center, '
+                'course type, course convener and course.\n'
+                'For further information please visit: '
+                '{site}/en/{project_slug}/about/\n\n'
+                'Sincerely,\n'
+                '{project_owner_firstname} {project_owner_lastname}'
+                .format(**data),
+                certifyingorganisation.project.owner.email,
+                [organisation_owner.email],
+                fail_silently=False,
+            )
+
         return reverse(self.pattern_name, kwargs={
             'project_slug': project_slug
         })
