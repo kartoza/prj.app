@@ -59,3 +59,12 @@ textarea.form-control {
 .td-title {
 	width: 200px;
 }
+
+.about-icon:hover {
+	color: black !important;
+	text-decoration: none;
+}
+.info-text {
+	color: #737373;
+	margin-bottom: 20px;
+}
