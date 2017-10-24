@@ -16,7 +16,7 @@ as you deploy and would not be relevant for server side deployments.
 Everything is managed using docker containers, with pycharm
 making ssh connections into the developer container and using the
 python interpreter found therein. Newer versions of PyCharm have 'native' docker support
-but after testing we opted to continue to use the ssh method described here. You may want to 
+but after testing we opted to continue to use the ssh method described here. You may want to
 test when new versions of PyCharm come out in case they have improved the direct docker support.
 
 **Note:** You don't need to use this architecture, you can deploy as a standard
@@ -95,6 +95,12 @@ able to step through views etc as you work.
 I made a general overview screencast describing this process here:
 
 [![YouTube Screencast](http://img.youtube.com/vi/n-wwp17MqhU/0.jpg)](https://www.youtube.com/watch?v=n-wwp17MqhU "YouTube Screencast")
+
+
+## Running Tests
+
+Tim write stuff here....
+
 
 ## Developer FAQ
 
