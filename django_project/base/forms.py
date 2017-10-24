@@ -1,6 +1,7 @@
 # coding=utf-8
 import logging
 from django import forms
+from django.contrib.auth.models import User
 from django.forms import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
@@ -10,6 +11,7 @@ from crispy_forms.layout import (
     Field,
 )
 from models import Project, ProjectScreenshot
+from certification.forms import CustomSelectMultipleWidget
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +42,16 @@ class ProjectScreenshotForm(forms.ModelForm):
 class ProjectForm(forms.ModelForm):
     """Form for creating projects."""
 
+    certification_manager = forms.ModelMultipleChoiceField(
+        queryset=User.objects.order_by('username'),
+        widget=CustomSelectMultipleWidget("user", is_stacked=False),
+        required=False,
+        help_text=_(
+            'Managers of the certification app in this project. '
+            'They will receive email notification about organisation and have'
+            ' the same permissions as project owner in the certification app.')
+    )
+
     # noinspection PyClassicStyleClass
     class Meta:
         """Meta class."""
@@ -52,6 +64,7 @@ class ProjectForm(forms.ModelForm):
             'precis',
             'gitter_room',
             'signature',
+            'certification_manager',
             'credit_cost',
             'certificate_credit',
             'sponsorship_programme',
@@ -70,6 +83,7 @@ class ProjectForm(forms.ModelForm):
                 Field('project_url', css_class="form-control"),
                 Field('precis', css_class="form-control"),
                 Field('signature', css_class="form-control"),
+                Field('certification_manager', css_class="form-control"),
                 Field('credit_cost', css_class="form-control"),
                 Field('certificate_credit', css_class="form-control"),
                 Field('sponsorship_programme', css_class="form-control"),
@@ -79,12 +93,15 @@ class ProjectForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(ProjectForm, self).__init__(*args, **kwargs)
+        self.fields['certification_manager'].label_from_instance = \
+            lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
         # self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
         instance = super(ProjectForm, self).save(commit=False)
         instance.owner = self.user
         instance.save()
+        self.save_m2m()
         return instance
 
 

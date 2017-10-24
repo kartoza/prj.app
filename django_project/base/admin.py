@@ -26,6 +26,8 @@ class ProjectScreenshotAdmin(admin.TabularInline):
 class ProjectAdmin(reversion.VersionAdmin):
     """Admin for the project model."""
 
+    filter_horizontal = ('certification_manager',)
+
     # Screenshot input in admin project panel.
     inlines = [ProjectScreenshotAdmin, ]
 

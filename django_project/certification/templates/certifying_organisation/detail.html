@@ -96,7 +96,7 @@
 
 
             <div class="btn-group">
-                {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
+                {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
                 <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                    href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                    data-title="Delete {{ certifyingorganisation.name }}">
@@ -133,6 +133,14 @@
             {{ organisation_owners }}{{ ", " }}
         {% endif %}
         {% endfor %}</span><br/>
+        <span class="grey-italic col-lg-4">Certification managers</span>
+        <span class="col-lg-8">{% for manager in certifyingorganisation.certification_manager.all %}
+        {% if manager.first_name %}
+            {{ manager.first_name }} {{ manager.last_name }}{{ ", " }}
+        {% else %}
+            {{ manager }}{{ ", " }}
+        {% endif %}
+        {% endfor %}</span><br/>
     </div>
 
     <div class="col-lg-6">
@@ -147,7 +155,7 @@
         <h3 class="panel-body">{{ num_attendees }}</h3>
     </div>
 
-    {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
+    {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
     <div class="panel-wrap col-lg-4 pull-right">
         <h4 class="panel-heading" style="padding-left: 30%; text-align: left">Credits
                 <a class="btn btn-default btn-xs tooltip-toggle btn-top-up button-action" style="display: none; float: right; margin-top: -3px"
@@ -184,7 +192,7 @@
 
         <td>
         {# Organisation owners, staffs and course convener can edit/add course #}
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
             <div class="button1 button-action" style="display: none; margin-top: -25px; margin-bottom: 20px;">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
@@ -253,7 +261,7 @@
             {% endif %}
         </td>
 
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
         <td style="padding-right: 0">
              <div class="btn-group pull-right button-action" style="display: none;">
                 <a class="btn btn-default btn-xs btn-delete tooltip-toggle"
@@ -325,7 +333,7 @@
         <h2 class="custom-heading">Training Centers</h2>
     </th>
 
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
         <td>
             <div class="button1 button-action" style="display: none; margin-top: -30px; margin-bottom: 20px;">
             <div class="btn-group pull-right">
@@ -361,7 +369,7 @@
         </div></td>
 
         <td class="button">
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
         <div>
             <div class="btn-group button-action" style="display: none">
                 <a class="btn btn-default btn-xs btn-delete tooltip-toggle"
@@ -394,7 +402,7 @@
         </th>
 
         <td>
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
         <div class="button1 button-action" style="display: none; margin-top: -30px; margin-bottom: 20px;">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
@@ -428,7 +436,7 @@
                     {{ coursetype.name }}</a>
         </div></td>
 
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
         <td>
             <div class="btn-group pull-right button-action" style="display: none">
                 <a class="btn btn-default btn-xs btn-delete tooltip-toggle"
@@ -459,7 +467,7 @@
         <h2 class="custom-heading">Course Conveners</h2>
     </th>
     <td>
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
         <div class="button1 button-action" style="display: none; margin-top: -30px; margin-bottom: 20px">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
@@ -498,7 +506,7 @@
         </div>
         </td>
 
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
+        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
         <td>
             <div class="btn-group pull-right button-action" style="display: none">
                 <a class="btn btn-default btn-xs btn-delete tooltip-toggle"

@@ -615,7 +615,9 @@ class PendingCertifyingOrganisationListView(
                         CertifyingOrganisation.unapproved_objects.filter(
                             Q(project=self.project) &
                             (Q(project__owner=self.request.user) |
-                             Q(organisation_owners=self.request.user)))
+                             Q(organisation_owners=self.request.user) |
+                             Q(project__certification_manager=self.request.user
+                               )))
                 return queryset
             else:
                 raise Http404(
