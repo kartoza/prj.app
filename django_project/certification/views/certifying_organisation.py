@@ -654,7 +654,8 @@ class ApproveCertifyingOrganisationView(
         certifyingorganisation.save()
 
         site = self.request.get_host()
-        for organisation_owner in certifyingorganisation.organisation_owners.all():
+        for organisation_owner in \
+                certifyingorganisation.organisation_owners.all():
             data = {
                 'owner_firstname': organisation_owner.first_name,
                 'owner_lastname': organisation_owner.last_name,
