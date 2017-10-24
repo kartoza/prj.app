@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Use this build a production image of the projecta-uwsgi"
+echo "Use this to build a production image of the projecta-uwsgi"
 echo "docker, push the image upstream with tag :latest and "
 echo "a versioned tag e.g. :1.6.19."
 echo "Useage:"
