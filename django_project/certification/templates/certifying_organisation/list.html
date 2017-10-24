@@ -68,10 +68,10 @@
             </div>
 
         {# Only staff can add/edit organisations #}
-        {% if user.is_staff or user in certifyingorganisation.organisation_owners.all or user == certifyingorganisation.project.owner %}
+        {% if user.is_staff or user in certifyingorganisation.organisation_owners.all or user == certifyingorganisation.project.owner or user in certifyingorganisation.project.certification_manager.all %}
             <div class="col-lg-4" style="padding: 0">
                 <div class="btn-group pull-right tooltip-toggle">
-                    {%  if not certifyingorganisation.approved and user.is_staff %}
+                    {%  if not certifyingorganisation.approved %}
                         <a class="btn btn-success btn-mini"
                            href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                             data-title="Approve {{ certifyingorganisation.name }}">
