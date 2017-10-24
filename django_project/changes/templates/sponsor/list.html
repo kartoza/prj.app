@@ -1,6 +1,7 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
 {% load custom_markup %}
+{% load staticfiles %}
 {% block title %}Sponsors - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
@@ -38,6 +39,16 @@
                        href='{% url "sponsor-programme" project_slug %}'
                        data-title="View Sponsorship Programme">
                         <i class="glyphicon glyphicon-info-sign"></i></a>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "sponsor-rss-feed" project_slug %}'
+                       data-title="RSS Feed for Sponsors">
+                        <img src="{% static "img/feed-icon-14x14.png" %}" style="margin-top: -5px"/>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "sponsor-atom-feed" project_slug %}'
+                       data-title="Atom Feed for Sponsors">
+                        <i class="fa fa-rss"></i>
+                    </a>
                 </div>
         </h1>
     </div>
