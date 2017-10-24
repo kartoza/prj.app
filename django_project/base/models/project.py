@@ -148,6 +148,17 @@ class Project(models.Model):
         null=True
     )
 
+    certification_manager = models.ManyToManyField(
+        User,
+        related_name='certification_manager',
+        blank=True,
+        null=True,
+        help_text=_(
+            'Managers of the certification app in this project. '
+            'They will receive email notification about organisation and have'
+            ' the same permissions as project owner in the certification app.')
+    )
+
     owner = models.ForeignKey(User)
     slug = models.SlugField(unique=True)
     objects = models.Manager()

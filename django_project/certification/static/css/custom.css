@@ -59,3 +59,7 @@ textarea.form-control {
 .td-title {
 	width: 200px;
 }
+
+.selector select[multiple=multiple] {
+    max-width: 366px !important;
+}
