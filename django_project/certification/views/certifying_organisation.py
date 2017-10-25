@@ -425,26 +425,38 @@ class CertifyingOrganisationCreateView(
         try:
             super(CertifyingOrganisationCreateView, self).form_valid(form)
             site = self.request.get_host()
+            recipients = [self.project.owner, ]
+            for manager in self.project.certification_manager.all():
+                recipients.append(manager)
 
-            send_mail(
-                'Projecta - New Pending Organisation Approval',
-                'Dear %s %s,\n\n' % (
-                    self.project.owner.first_name,
-                    self.project.owner.last_name) +
-                'You have a new organisation registered to your project: %s.\n'
-                % self.project.name +
-                'You may review and approve the organisation by following this'
-                ' link:\n'
-                '%s/en/%s/pending-certifyingorganisation/list/\n\n'
-                % (site, self.project_slug) +
-                'Sincerely,\n\n\n\n\n'
-                '----------------------------------------------------------\n'
-                'This is an auto-generated email from the system.'
-                ' Please do not reply to this email.',
-                self.project.owner.email,
-                [self.project.owner.email],
-                fail_silently=False,
-            )
+            for recipient in recipients:
+                data = {
+                    'recipient_firstname': recipient.first_name,
+                    'recipient_lastname': recipient.last_name,
+                    'project_name': self.project.name,
+                    'site': site,
+                    'project_slug': self.project_slug
+                }
+
+                # Send email notification to project owner and
+                # certification managers
+                send_mail(
+                    'Projecta - New Pending Organisation Approval',
+                    'Dear {recipient_firstname} {recipient_lastname},\n\n'
+                    'You have a new organisation registered to your project: '
+                    '{project_name}.\n'
+                    'You may review and approve the organisation by following '
+                    'this link:\n'
+                    '{site}/en/{project_slug}/pending-certifyingorganisation/'
+                    'list/\n\n'
+                    'Sincerely,\n\n\n\n\n'
+                    '-------------------------------------------------------\n'
+                    'This is an auto-generated email from the system.'
+                    ' Please do not reply to this email.'.format(**data),
+                    self.project.owner.email,
+                    [recipient.email],
+                    fail_silently=False,
+                )
             return HttpResponseRedirect(self.get_success_url())
         except IntegrityError:
             return ValidationError(
