@@ -445,6 +445,41 @@ class CertifyingOrganisationCreateView(
                 [self.project.owner.email],
                 fail_silently=False,
             )
+
+            contact_person = \
+                '{} {}: {}\n'.format(
+                    self.project.owner.first_name,
+                    self.project.owner.last_name,
+                    self.project.owner.email)
+
+            for manager in self.project.certification_manager.all():
+                contact_person += \
+                    '{} {}: {}\n'.format(
+                        manager.first_name, manager.last_name, manager.email)
+
+            # Email the applicant notify that the organisation is successfully
+            # submitted.
+            for applicant in self.object.organisation_owners.all():
+                email_data = {
+                    'applicant_firstname': applicant.first_name,
+                    'applicant_lastname': applicant.last_name,
+                    'contact_person': contact_person,
+                }
+
+                send_mail(
+                    'Projecta - Your Organisation is Successfully Submitted',
+                    'Dear {applicant_firstname} {applicant_lastname},\n\n'
+                    'Your organisation is successfully submitted.\n'
+                    'It is now waiting for an approval from the project\'s '
+                    'owner and certification managers.\n'
+                    'If you have not heard from us in few weeks you may '
+                    'contact us:\n'
+                    '{contact_person}'
+                    '\n\nSincerely,\n'.format(**email_data),
+                    self.project.owner.email,
+                    [applicant.email]
+                )
+
             return HttpResponseRedirect(self.get_success_url())
         except IntegrityError:
             return ValidationError(
