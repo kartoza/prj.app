@@ -12,7 +12,8 @@ from django.views.generic import (
     DeleteView,
     DetailView,
     UpdateView,
-    RedirectView)
+    RedirectView,
+    TemplateView)
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
@@ -409,6 +410,7 @@ class CertifyingOrganisationCreateView(
             CertifyingOrganisationCreateView, self).get_context_data(**kwargs)
         context['certifyingorganisations'] = \
             self.get_queryset().filter(project=self.project)
+        context['the_project'] = self.project
         return context
 
     def form_valid(self, form):
@@ -457,6 +459,41 @@ class CertifyingOrganisationCreateView(
                     [recipient.email],
                     fail_silently=False,
                 )
+
+            contact_person = \
+                '{} {}: {}\n'.format(
+                    self.project.owner.first_name,
+                    self.project.owner.last_name,
+                    self.project.owner.email)
+
+            for manager in self.project.certification_manager.all():
+                contact_person += \
+                    '{} {}: {}\n'.format(
+                        manager.first_name, manager.last_name, manager.email)
+
+            # Email the applicant notify that the organisation is successfully
+            # submitted.
+            for applicant in self.object.organisation_owners.all():
+                email_data = {
+                    'applicant_firstname': applicant.first_name,
+                    'applicant_lastname': applicant.last_name,
+                    'contact_person': contact_person,
+                }
+
+                send_mail(
+                    'Projecta - Your Organisation is Successfully Submitted',
+                    'Dear {applicant_firstname} {applicant_lastname},\n\n'
+                    'Your organisation is successfully submitted.\n'
+                    'It is now waiting for an approval from the project\'s '
+                    'owner and certification managers.\n'
+                    'If you have not heard from us in few weeks you may '
+                    'contact us:\n'
+                    '{contact_person}'
+                    '\n\nSincerely,\n'.format(**email_data),
+                    self.project.owner.email,
+                    [applicant.email]
+                )
+
             return HttpResponseRedirect(self.get_success_url())
         except IntegrityError:
             return ValidationError(
@@ -521,6 +558,7 @@ class CertifyingOrganisationUpdateView(
             CertifyingOrganisationUpdateView, self).get_context_data(**kwargs)
         context['certifyingorganisations'] = self.get_queryset() \
             .filter(project=self.project)
+        context['the_project'] = self.project
         return context
 
     def get_queryset(self):
@@ -705,3 +743,22 @@ class ApproveCertifyingOrganisationView(
         return reverse(self.pattern_name, kwargs={
             'project_slug': project_slug
         })
+
+
+class AboutView(TemplateView):
+    template_name = 'about.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+
+        context = super(AboutView, self).get_context_data(**kwargs)
+        project_slug = self.kwargs.get('project_slug')
+        context['the_project'] = Project.objects.get(slug=project_slug)
+        return context

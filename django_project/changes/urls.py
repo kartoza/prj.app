@@ -208,10 +208,10 @@ urlpatterns = patterns(
         name='entry-atom-feed'),
 
     # Feeds sponsors in a specific project
-    url(regex='^(?P<project_slug>[\w-]+)/sponsor/rss$',
+    url(regex='^(?P<project_slug>[\w-]+)/sponsors/rss/$',
         view=RssSponsorFeed(),
         name='sponsor-rss-feed'),
-    url(regex='^(?P<project_slug>[\w-]+)/sponsor/atom$',
+    url(regex='^(?P<project_slug>[\w-]+)/sponsors/atom/$',
         view=AtomSponsorFeed(),
         name='sponsor-atom-feed'),
 
