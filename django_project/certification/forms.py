@@ -429,28 +429,3 @@ class CertificateForm(forms.ModelForm):
         instance.attendee = self.attendee
         instance.save()
         return instance
-
-
-import csv
-from django.contrib.auth.models import User
-from .models.attendee import CertifyingOrganisation
-from .models.attendee import Attendee
-
-class UploadAttendeeCsvForm(forms.Form):
-    csv = forms.FileField()
-    # firstname = forms.CharField()
-    # surname = forms.CharField()
-    # email = forms.CharField()
-    # slug = forms.SlugField()
-    # certifying_organisation = forms.ModelChoiceField(
-    #     queryset = CertifyingOrganisation.objects.all(),
-    # )
-    # author = forms.ModelChoiceField(
-    #     queryset = User.objects.all(),
-    # )
-
-    def upload_data(self):
-        print(self.cleaned_data)
-        csv_data = csv.reader(self.fields('csv'))
-
-        Attendee()

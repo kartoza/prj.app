@@ -73,7 +73,9 @@ class AttendeeCreateView(
 
 
 class CsvUpload(CreateView):
-
+    """
+    Import Attendee CSV file into Attendee Model.
+    """
     def upload_csv(self):
         filename = self.request.FILES['file'].open('rb')
 
