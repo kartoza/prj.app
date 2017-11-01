@@ -160,9 +160,9 @@ urlpatterns = patterns(
         name='attendee-create'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/course/'
-              '(?P<slug>[\w-]+)/create-attendee/upload-attendee/$',
+              '(?P<slug>[\w-]+)/create-attendee/$',
         view=CsvUpload,
-        name='attendee-csv-upload'),
+        name='csv-upload'),
 
     # Course Attendee.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
