@@ -73,6 +73,7 @@ class AttendeeCreateView(
         })
         return kwargs
 
+
 class CsvUpload(View):
     """
     Import Attendee CSV file into Attendee Model.
@@ -80,16 +81,16 @@ class CsvUpload(View):
 
     template_name = \
         'attendee/_include/upload_attendee_csv.html'
-    from django.core.urlresolvers import reverse
 
     def upload_csv(self):
         filename = self.request.FILES['file'].open('rb')
 
         with open(filename) as f:
             reader = csv.reader(f, delimiter=',')
-            header = next(reader)
-            Attendee.objects.bulk_create([Attendee(firstname=row[0], surname=row[1],
-                                           email=row[2]) for row in reader])
+            next(reader)
+            Attendee.objects.bulk_create([Attendee(
+                firstname=row[0], surname=row[1],
+                email=row[2]) for row in reader])
 
     def get_success_url(self):
         """Define the redirect URL.
@@ -120,5 +121,3 @@ class CsvUpload(View):
         context = super(
             CsvUpload, self).get_context_data(**kwargs)
         return context
-
-  
