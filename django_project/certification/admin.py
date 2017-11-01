@@ -3,6 +3,7 @@
 
 from django.contrib.gis import admin
 from import_export.admin import ImportMixin
+from import_export import resources
 from certification.models.certificate import Certificate
 from certification.models.course import Course
 from certification.models.certifying_organisation import CertifyingOrganisation
@@ -11,7 +12,15 @@ from certification.models.course_convener import CourseConvener
 from certification.models.course_type import CourseType
 from certification.models.attendee import Attendee
 from certification.models.course_attendee import CourseAttendee
-from .resources import AttendeeModelResource
+
+
+class AttendeeModelResource(resources.ModelResource):
+    """Resource definition for Attendee Admin."""
+    class Meta:
+        model = Attendee
+        skip_unchanged = True
+        report_skipped = False
+        fields = ('id', 'firstname', 'surname', 'email',)
 
 
 class CertificateAdmin(admin.ModelAdmin):
