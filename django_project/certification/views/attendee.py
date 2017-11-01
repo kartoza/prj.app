@@ -1,7 +1,9 @@
 # coding=utf-8
+import csv
+
 from django.core.urlresolvers import reverse
 from django.views.generic import (
-    CreateView)
+    CreateView, View)
 from braces.views import LoginRequiredMixin
 from ..models import Attendee, CertifyingOrganisation
 from ..forms import AttendeeForm
@@ -71,7 +73,6 @@ class AttendeeCreateView(
         })
         return kwargs
 
-from django.views.generic import View
 class CsvUpload(View):
     """
     Import Attendee CSV file into Attendee Model.
@@ -80,11 +81,10 @@ class CsvUpload(View):
     template_name = \
         'attendee/_include/upload_attendee_csv.html'
     from django.core.urlresolvers import reverse
-    reverse_url = reverse('courseattendee-create')
+
     def upload_csv(self):
         filename = self.request.FILES['file'].open('rb')
 
-        import csv
         with open(filename) as f:
             reader = csv.reader(f, delimiter=',')
             header = next(reader)
@@ -121,21 +121,4 @@ class CsvUpload(View):
             CsvUpload, self).get_context_data(**kwargs)
         return context
 
-    # def get_form_kwargs(self):
-    #     """Get keyword arguments from form.
-    #
-    #     :returns keyword argument from the form
-    #     :rtype: dict
-    #     """
-    #
-    #     kwargs = super(CsvUpload, self).get_form_kwargs()
-    #     self.project_slug = self.kwargs.get('project_slug', None)
-    #     self.organisation_slug = self.kwargs.get('organisation_slug', None)
-    #     self.course_slug = self.kwargs.get('slug', None)
-    #     self.certifying_organisation = \
-    #         CertifyingOrganisation.objects.get(slug=self.organisation_slug)
-    #     kwargs.update({
-    #         'user': self.request.user,
-    #         'certifying_organisation': self.certifying_organisation
-    #     })
-    #     return kwargs
+  
