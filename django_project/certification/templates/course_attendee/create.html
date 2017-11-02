@@ -21,6 +21,11 @@
                    data-title="Add another attendee to the list">
                     {% show_button_icon "add" %}
                 </a>
+        <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='{% url "upload-attendee" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
+                   data-title="Upload Attendee CSV file">
+                    {% show_button_icon "add" %}
+                </a>
     </div>
 
     <section id="forms">

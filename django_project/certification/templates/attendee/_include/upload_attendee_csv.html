@@ -1,6 +1,15 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    <h1>Upload Attendee CSV File.</h1>
+{% endblock page_title %}
+
+{% block content %}
     <hr />
     <div class="container">
-        <form action="{% url "csv-upload" %}" method="POST" enctype="multipart/form-data" class="form-horizontal">
+        <form action="{% url 'upload-attendee' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}" method="POST" enctype="multipart/form-data" class="form-horizontal">
             {% csrf_token %}
             <div class="form-group">
                 <label for="name" class="col-md-3 col-sm-3 col-xs-12 control-label">Attendee(s) Csv File: </label>
@@ -15,3 +24,4 @@
             </div>
         </form>
     </div>
+{% endblock %}

@@ -3,7 +3,8 @@ import csv
 
 from django.core.urlresolvers import reverse
 from django.views.generic import (
-    CreateView, View)
+    CreateView, TemplateView)
+from django.core.urlresolvers import reverse_lazy
 from braces.views import LoginRequiredMixin
 from ..models import Attendee, CertifyingOrganisation
 from ..forms import AttendeeForm
@@ -74,50 +75,36 @@ class AttendeeCreateView(
         return kwargs
 
 
-class CsvUpload(View):
+class CsvUploadView(TemplateView):
     """
     Import Attendee CSV file into Attendee Model.
     """
-
     template_name = \
         'attendee/_include/upload_attendee_csv.html'
 
     def upload_csv(self):
-        filename = self.request.FILES['file'].open('rb')
-
-        with open(filename) as f:
-            reader = csv.reader(f, delimiter=',')
-            next(reader)
-            Attendee.objects.bulk_create([Attendee(
-                firstname=row[0], surname=row[1],
-                email=row[2]) for row in reader])
+        if self.request.method == "POST":
+            filename = self.request.FILES['file'].open('rb')
+            with open(filename) as f:
+                reader = csv.reader(f, delimiter=',')
+                next(reader)
+                Attendee.objects.bulk_create([Attendee(
+                    firstname=row[0],
+                    surname=row[1],
+                    email=row[2])
+                    for row in reader])
 
     def get_success_url(self):
         """Define the redirect URL.
 
         After successful creation of the object, the User will be redirected
-        to the create course attendee page.
+        to the Course detail page.
 
        :returns: URL
        :rtype: HttpResponse
        """
-
         return reverse('courseattendee-create', kwargs={
             'project_slug': self.project_slug,
             'organisation_slug': self.organisation_slug,
             'slug': self.course_slug,
         })
-
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-
-        context = super(
-            CsvUpload, self).get_context_data(**kwargs)
-        return context
