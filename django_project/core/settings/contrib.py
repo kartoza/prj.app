@@ -21,8 +21,6 @@ INSTALLED_APPS += (
     'django_countries',  # for sponsor addresses
     # 'user_map',
     'disqus',
-    # Importing of attendee csv files
-    'import_export',
 )
 
 # Set disqus and shortname
