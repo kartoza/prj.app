@@ -4,7 +4,6 @@ import csv
 from django.core.urlresolvers import reverse
 from django.views.generic import (
     CreateView, TemplateView)
-from django.core.urlresolvers import reverse_lazy
 from braces.views import LoginRequiredMixin
 from ..models import Attendee, CertifyingOrganisation
 from ..forms import AttendeeForm
