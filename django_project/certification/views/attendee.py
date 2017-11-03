@@ -79,7 +79,7 @@ class CsvUploadView(TemplateView):
     Import Attendee CSV file into Attendee Model.
     """
     template_name = \
-        'attendee/_include/upload_attendee_csv.html'
+        'attendee/upload_attendee_csv.html'
 
     def upload_csv(self):
         if self.request.method == "POST":
@@ -107,3 +107,20 @@ class CsvUploadView(TemplateView):
             'organisation_slug': self.organisation_slug,
             'slug': self.course_slug,
         })
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        certifying_organisation = \
+            CertifyingOrganisation.objects.get(
+            slug=kwargs['organisation_slug'])
+        context = super(
+            CsvUploadView, self).get_context_data(**kwargs)
+        context['certifying_organisation'] = certifying_organisation
+        return context
