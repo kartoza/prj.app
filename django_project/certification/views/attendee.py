@@ -81,7 +81,10 @@ class CsvUploadView(TemplateView):
     template_name = \
         'attendee/upload_attendee_csv.html'
 
-    def upload_csv(self):
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def upload_csv(self, **kwargs):
         if self.request.method == "POST":
             filename = self.request.FILES['file'].open('rb')
             with open(filename) as f:
@@ -118,8 +121,11 @@ class CsvUploadView(TemplateView):
         :rtype: dict
         """
         certifying_organisation = \
-            CertifyingOrganisation.objects.get(slug=kwargs['organisation_slug'])
+            CertifyingOrganisation.\
+                objects.get(slug=kwargs['organisation_slug'])
         context = super(
             CsvUploadView, self).get_context_data(**kwargs)
-        context['certifying_organisation'] = certifying_organisation
+        context['certifying_organisation'] = \
+            certifying_organisation
         return context
+
