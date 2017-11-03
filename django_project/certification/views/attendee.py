@@ -118,8 +118,7 @@ class CsvUploadView(TemplateView):
         :rtype: dict
         """
         certifying_organisation = \
-            CertifyingOrganisation.objects.\
-                get(slug=kwargs['organisation_slug'])
+            CertifyingOrganisation.objects.get(slug=kwargs['organisation_slug'])
         context = super(
             CsvUploadView, self).get_context_data(**kwargs)
         context['certifying_organisation'] = certifying_organisation
