@@ -9,19 +9,28 @@
 {% block content %}
     <hr />
     <div class="container">
-        <form action="{% url 'upload-attendee' project_slug=project_slug organisation_slug=certifying_organisation.slug slug=slug %}" method="POST" enctype="multipart/form-data" class="form-horizontal">
+
+{#        <form action="{% url 'upload-attendee' organisation_slug=certifying_organisation.slug slug=slug project_slug=project_slug %}" method="post" enctype="multipart/form-data">#}
+        <form action="file" method="post" name="file" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="name" class="col-md-3 col-sm-3 col-xs-12 control-label">Attendee(s) Csv File: </label>
-                <div class="col-md-8">
-                    <input type="file" name="file" id="file" required="True" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-md-3 col-sm-3 col-xs-12 col-md-offset-3" style="margin-bottom:10px;">
-                     <button class="btn btn-primary"> <span class="glyphicon glyphicon-upload" style="margin-right:5px;"></span>Upload </button>
-                </div>
-            </div>
+            {{ form.as_p }}
+            <input type="submit" value="submit" />
         </form>
+{#         <form action="' project_slug=project_slug organisation_slug=certifying_organisation.slug slug=slug %}" method="POST" enctype="multipart/form-data" class="form-horizontal">#}
+{#         <form action="" method="POST" enctype="multipart/form-data" class="form-horizontal">#}
+{#            {% csrf_token %}#}
+{#            <div class="form-group">#}
+{##}
+{#                <div class="col-md-8">#}
+{#                 {{ form.as_p }}#}
+{#                    <input type="file" name="file" id="file" required="True" class="form-control">#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <div class="col-md-3 col-sm-3 col-xs-12 col-md-offset-3" style="margin-bottom:10px;">#}
+{#                     <button class="btn btn-primary"> <span class="glyphicon glyphicon-upload" style="margin-right:5px;"></span>Upload </button>#}
+{#                </div>#}
+{#            </div>#}
+{#        </form>#}
     </div>
 {% endblock %}

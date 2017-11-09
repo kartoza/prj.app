@@ -3,7 +3,7 @@ import csv
 
 from django.core.urlresolvers import reverse
 from django.views.generic import (
-    CreateView, TemplateView)
+    CreateView, FormView)
 from braces.views import LoginRequiredMixin
 from ..models import Attendee, CertifyingOrganisation
 from ..forms import AttendeeForm
@@ -73,59 +73,95 @@ class AttendeeCreateView(
         })
         return kwargs
 
+from ..forms import CsvAttendeeForm
 
-class CsvUploadView(TemplateView):
+
+class CsvUploadView(FormView):
     """
     Import Attendee CSV file into Attendee Model.
     """
+
     template_name = \
         'attendee/upload_attendee_csv.html'
+    form_class = CsvAttendeeForm
+    success_url = '/thanks/'
 
-    def post(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
-
-    def upload_csv(self, **kwargs):
+    # def post(self, request, *args, **kwargs):
+    #     """
+    #     Handles POST requests, instantiating a form instance with the passed
+    #     POST variables and then checked for validity.
+    #     """
+    #     form = self.get_form()
+    #     if form.is_valid():
+    #         return self.form_valid(form)
+    #     else:
+    #         return self.form_invalid(form)
+    def form_valid(self, form):
+        filename = CsvAttendeeForm(self.request.POST, self.request.FILES['file'])
         if self.request.method == "POST":
-            filename = self.request.FILES['file'].open('rb')
-            with open(filename) as f:
+            # form = CsvAttendeeForm(self.request.POST, self.request.FILES)
+            # filename = self.request.get('file').open('rb')
+            # filename = (self.request.FILES['file'])
+            with open(filename, 'rb') as f:
                 reader = csv.reader(f, delimiter=',')
                 next(reader)
                 Attendee.objects.bulk_create([Attendee(
-                    firstname=row[0],
-                    surname=row[1],
-                    email=row[2])
-                    for row in reader])
+                        firstname=row[0],
+                        surname=row[1],
+                        email=row[2]
+                    )for row in reader])
+                # attendee_model = Attendee.objects.bulk_create(
+                #     firstname=self.get_form_kwargs().get('file')['firstname'],
+                #     surname = self.get_form_kwargs().get('file')['surname'],
+                #     email = self.get_form_kwargs().get('file')['email'])
+                Attendee.save()
+                self.id = Attendee.id()
 
-    def get_success_url(self):
-        """Define the redirect URL.
 
-        After successful creation of the object, the User will be redirected
-        to the Course detail page.
+from django.shortcuts import render,redirect
+def csv_upload(request, project_slug, organisation_slug, slug):
 
-       :returns: URL
-       :rtype: HttpResponse
-       """
-        return reverse('courseattendee-create', kwargs={
-            'project_slug': self.project_slug,
-            'organisation_slug': self.organisation_slug,
-            'slug': self.course_slug,
-        })
+    if request.method == 'POST':
+        form = CsvAttendeeForm(request.POST, request.FILES)
+        if form.is_valid():
+            # c = form.save(commit=False)
+            form.author = request.user
+            form.file = request.FILES
+            import csv
 
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
+            with open(form.file, 'rb') as f:
+                reader = csv.reader(f, delimiter=',')
+                next(reader)
+                Attendee.objects.bulk_create(
+                    [Attendee(firstname=row[0],
+                              surname=row[1],
+                              email=row[2])
+                     for row in reader(form)])
+                Attendee.save()
+                request.id = Attendee.id()
 
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
 
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        certifying_organisation = \
-            CertifyingOrganisation.\
-                objects.get(slug=kwargs['organisation_slug'])
-        context = super(
-            CsvUploadView, self).get_context_data(**kwargs)
-        context['certifying_organisation'] = \
-            certifying_organisation
-        return context
+            return redirect('/')
+        else:
+            template = 'attendee/upload_attendee_csv.html'
 
+            render(request, template, {'form': form})
+
+    else:
+        form = CsvAttendeeForm()
+
+    template = 'attendee/upload_attendee_csv.html'
+    context = {
+        'form': form
+    }
+
+    return render(request, template, context)
+
+# class AttendeeCsvUploadMixin(object):
+#     model = Attendee
+#     form_class = CsvAttendeeForm
+#
+#
+# class CsvUploadView(LoginRequiredMixin,
+#                     AttendeeCsvUploadMixin,
+#                     CreateView):

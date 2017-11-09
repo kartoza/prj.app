@@ -429,3 +429,17 @@ class CertificateForm(forms.ModelForm):
         instance.attendee = self.attendee
         instance.save()
         return instance
+
+
+class CsvAttendeeForm(forms.Form):
+    """Form to upload CSV file."""
+
+    file = forms.FileField(
+        label="Choose Attendee CSV File:",
+        widget=forms.FileInput(
+            attrs={
+                'accept': ".csv"
+            }
+        )
+    )
+
