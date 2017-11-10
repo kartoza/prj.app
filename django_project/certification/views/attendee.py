@@ -82,7 +82,7 @@ class CsvUploadView(FormView):
     """
     form_class = CsvAttendeeForm
     template_name = 'attendee/upload_attendee_csv.html'
-    success_url = reverse_lazy('courseattendee-create')
+    success_url = reverse_lazy('home')
 
     def post(self, request, *args, **kwargs):
         """Get form instance from upload.
