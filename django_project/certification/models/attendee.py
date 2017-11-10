@@ -70,7 +70,7 @@ class Attendee(models.Model):
     slug = models.SlugField()
     certifying_organisation = \
         models.ForeignKey(CertifyingOrganisation, null=True)
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, null=True)
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass.

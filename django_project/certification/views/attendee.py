@@ -82,9 +82,18 @@ class CsvUploadView(FormView):
     """
     form_class = CsvAttendeeForm
     template_name = 'attendee/upload_attendee_csv.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('courseattendee-create')
 
     def post(self, request, *args, **kwargs):
+        """Get form instance from upload.
+
+               After successful creation of the object, the User will be redirected
+               to the create course attendee page.
+
+              :returns: URL
+              :rtype: HttpResponse
+              """
+
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         file = request.FILES.get('file')
@@ -92,16 +101,15 @@ class CsvUploadView(FormView):
             if file:
                 reader = csv.reader(file, delimiter=',')
                 next(reader)
-                attendee = Attendee()
+                attendee_instance = Attendee()
                 Attendee.objects.bulk_create(
                     [Attendee(firstname=row[0],
                               surname=row[1],
                               email=row[2],
-                              author=self.request.user
                               )
                      for row in reader])
 
-                attendee.save()
+                attendee_instance.save()
 
             return self.form_valid(form)
 
