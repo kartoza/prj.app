@@ -442,4 +442,3 @@ class CsvAttendeeForm(forms.Form):
             }
         )
     )
-
