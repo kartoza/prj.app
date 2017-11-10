@@ -1,12 +1,13 @@
 # coding=utf-8
 import csv
-
 from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy
 from django.views.generic import (
     CreateView, FormView)
 from braces.views import LoginRequiredMixin
 from ..models import Attendee, CertifyingOrganisation
 from ..forms import AttendeeForm
+from ..forms import CsvAttendeeForm
 
 
 class AttendeeMixin(object):
@@ -73,95 +74,36 @@ class AttendeeCreateView(
         })
         return kwargs
 
-from ..forms import CsvAttendeeForm
-
 
 class CsvUploadView(FormView):
     """
-    Import Attendee CSV file into Attendee Model.
+    Allow upload of attendees
+    through CSV file.
     """
-
-    template_name = \
-        'attendee/upload_attendee_csv.html'
     form_class = CsvAttendeeForm
-    success_url = '/thanks/'
+    template_name = 'attendee/upload_attendee_csv.html'
+    success_url = reverse_lazy('home')
 
-    # def post(self, request, *args, **kwargs):
-    #     """
-    #     Handles POST requests, instantiating a form instance with the passed
-    #     POST variables and then checked for validity.
-    #     """
-    #     form = self.get_form()
-    #     if form.is_valid():
-    #         return self.form_valid(form)
-    #     else:
-    #         return self.form_invalid(form)
-    def form_valid(self, form):
-        filename = CsvAttendeeForm(self.request.POST, self.request.FILES['file'])
-        if self.request.method == "POST":
-            # form = CsvAttendeeForm(self.request.POST, self.request.FILES)
-            # filename = self.request.get('file').open('rb')
-            # filename = (self.request.FILES['file'])
-            with open(filename, 'rb') as f:
-                reader = csv.reader(f, delimiter=',')
-                next(reader)
-                Attendee.objects.bulk_create([Attendee(
-                        firstname=row[0],
-                        surname=row[1],
-                        email=row[2]
-                    )for row in reader])
-                # attendee_model = Attendee.objects.bulk_create(
-                #     firstname=self.get_form_kwargs().get('file')['firstname'],
-                #     surname = self.get_form_kwargs().get('file')['surname'],
-                #     email = self.get_form_kwargs().get('file')['email'])
-                Attendee.save()
-                self.id = Attendee.id()
-
-
-from django.shortcuts import render,redirect
-def csv_upload(request, project_slug, organisation_slug, slug):
-
-    if request.method == 'POST':
-        form = CsvAttendeeForm(request.POST, request.FILES)
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        file = request.FILES.get('file')
         if form.is_valid():
-            # c = form.save(commit=False)
-            form.author = request.user
-            form.file = request.FILES
-            import csv
-
-            with open(form.file, 'rb') as f:
-                reader = csv.reader(f, delimiter=',')
+            if file:
+                reader = csv.reader(file, delimiter=',')
                 next(reader)
+                attendee = Attendee()
                 Attendee.objects.bulk_create(
                     [Attendee(firstname=row[0],
                               surname=row[1],
-                              email=row[2])
-                     for row in reader(form)])
-                Attendee.save()
-                request.id = Attendee.id()
+                              email=row[2],
+                              author=self.request.user
+                              )
+                     for row in reader])
 
+                attendee.save()
 
-            return redirect('/')
+            return self.form_valid(form)
+
         else:
-            template = 'attendee/upload_attendee_csv.html'
-
-            render(request, template, {'form': form})
-
-    else:
-        form = CsvAttendeeForm()
-
-    template = 'attendee/upload_attendee_csv.html'
-    context = {
-        'form': form
-    }
-
-    return render(request, template, context)
-
-# class AttendeeCsvUploadMixin(object):
-#     model = Attendee
-#     form_class = CsvAttendeeForm
-#
-#
-# class CsvUploadView(LoginRequiredMixin,
-#                     AttendeeCsvUploadMixin,
-#                     CreateView):
+            return self.form_invalid(form)
