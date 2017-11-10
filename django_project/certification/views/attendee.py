@@ -85,16 +85,16 @@ class CsvUploadView(FormView):
     template_name = 'attendee/upload_attendee_csv.html'
     success_url = reverse_lazy('home')
 
-    @transaction.atomic
+    @transaction.atomic()
     def post(self, request, *args, **kwargs):
         """Get form instance from upload.
 
-               After successful creation of the object, the User will be redirected
-               to the create course attendee page.
+           After successful creation of the object, the User will be redirected
+           to the create course attendee page.
 
-              :returns: URL
-              :rtype: HttpResponse
-              """
+          :returns: URL
+          :rtype: HttpResponse
+        """
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         file = request.FILES.get('file')
