@@ -85,7 +85,7 @@ class CsvUploadView(LoginRequiredMixin, FormView):
     template_name = 'attendee/upload_attendee_csv.html'
     success_url = reverse_lazy('home')
 
-    # @transaction.atomic()
+    @transaction.atomic()
     def post(self, request, *args, **kwargs):
         """Get form instance from upload.
 

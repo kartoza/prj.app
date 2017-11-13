@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('surname', models.CharField(help_text=b'Surname of the course attendee.', max_length=200)),
                 ('email', models.CharField(help_text=b'Email address.', max_length=200)),
                 ('slug', models.SlugField()),
-                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
                 'ordering': ['firstname'],
