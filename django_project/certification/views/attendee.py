@@ -75,6 +75,7 @@ class AttendeeCreateView(
         })
         return kwargs
 
+
 class CsvUploadView(LoginRequiredMixin, FormView):
     """
     Allow upload of attendees
