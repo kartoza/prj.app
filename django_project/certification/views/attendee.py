@@ -75,8 +75,7 @@ class AttendeeCreateView(
         })
         return kwargs
 
-
-class CsvUploadView(FormView):
+class CsvUploadView(LoginRequiredMixin, FormView):
     """
     Allow upload of attendees
     through CSV file.
@@ -85,12 +84,13 @@ class CsvUploadView(FormView):
     template_name = 'attendee/upload_attendee_csv.html'
     success_url = reverse_lazy('home')
 
-    @transaction.atomic()
+    # @transaction.atomic()
     def post(self, request, *args, **kwargs):
         """Get form instance from upload.
 
-           After successful creation of the object, the User will be redirected
-           to the create course attendee page.
+           After successful creation of the object,
+           the User will be redirected to the create
+           course attendee page.
 
           :returns: URL
           :rtype: HttpResponse
@@ -102,15 +102,12 @@ class CsvUploadView(FormView):
             if file:
                 reader = csv.reader(file, delimiter=',')
                 next(reader)
-                attendee_instance = Attendee()
                 Attendee.objects.bulk_create(
                     [Attendee(firstname=row[0],
                               surname=row[1],
                               email=row[2],
                               )
                      for row in reader])
-
-                attendee_instance.save()
 
             return self.form_valid(form)
 
