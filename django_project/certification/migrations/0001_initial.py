@@ -12,8 +12,8 @@ import certification.models.certifying_organisation
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0008_project_sponsorship_programme'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('base', '0002_project_gitter_room'),
     ]
 
     operations = [
@@ -21,9 +21,9 @@ class Migration(migrations.Migration):
             name='Attendee',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('firstname', models.CharField(help_text='First name of the attendee.', max_length=200)),
-                ('surname', models.CharField(help_text='Surname of the attendee.', max_length=200)),
-                ('email', models.CharField(help_text='Email address.', max_length=200, validators=[certification.models.certifying_organisation.validate_email_address])),
+                ('firstname', models.CharField(help_text=b'First name of the course attendee.', max_length=200)),
+                ('surname', models.CharField(help_text=b'Surname of the course attendee.', max_length=200)),
+                ('email', models.CharField(help_text=b'Email address.', max_length=200)),
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True)),
             ],
@@ -36,7 +36,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('int_id', models.AutoField(serialize=False, primary_key=True)),
                 ('certificateID', models.CharField(default=b'', max_length=100, blank=True)),
-                ('is_paid', models.BooleanField(default=False, help_text='Is this certificate paid?')),
                 ('attendee', models.ForeignKey(to='certification.Attendee')),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
@@ -48,15 +47,13 @@ class Migration(migrations.Migration):
             name='CertifyingOrganisation',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(help_text='name of organisation or institution', max_length=200)),
-                ('organisation_email', models.CharField(help_text='Email address organisation or institution.', max_length=200, validators=[certification.models.certifying_organisation.validate_email_address])),
-                ('address', models.TextField(help_text='Address of Organisation or Institution.', max_length=1000)),
-                ('logo', models.ImageField(help_text='Logo for this organisation. Most browsers support dragging the image directly on to the "Choose File" button above.', upload_to=b'images/organisations', blank=True)),
-                ('country', django_countries.fields.CountryField(blank=True, max_length=2, null=True, help_text='Select the country for this Institution')),
-                ('organisation_phone', models.CharField(help_text='Phone number: (country code)(number) e.g. +6221551553', max_length=200)),
-                ('organisation_credits', models.IntegerField(default=0, help_text='Credits available', null=True, blank=True)),
-                ('approved', models.BooleanField(default=False, help_text='Approval from project admin')),
-                ('enabled', models.BooleanField(default=True, help_text='Project enabled')),
+                ('name', models.CharField(help_text=b'Name of Organisation or Institution.', max_length=200)),
+                ('organisation_email', models.CharField(help_text=b'Email address Organisation or Institution.', max_length=200)),
+                ('address', models.CharField(help_text=b'Contact of Organisation or Institution.', max_length=200)),
+                ('country', django_countries.fields.CountryField(blank=True, max_length=2, null=True, help_text=b'Select the country for this Institution')),
+                ('organisation_phone', models.CharField(help_text=b'Contact of Organisation or Institution.', max_length=200)),
+                ('approved', models.BooleanField(default=False, help_text=b'Approval from project admin')),
+                ('enabled', models.BooleanField(default=True, help_text=b'Project enabled')),
                 ('slug', models.SlugField()),
                 ('organisation_owners', models.ManyToManyField(to=settings.AUTH_USER_MODEL)),
                 ('project', models.ForeignKey(to='base.Project')),
@@ -64,16 +61,15 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['name'],
             },
+            bases=(certification.models.certifying_organisation.SlugifyingMixin, models.Model),
         ),
         migrations.CreateModel(
             name='Course',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(help_text='Course name.', max_length=200, null=True, blank=True)),
-                ('start_date', models.DateField(default=django.utils.timezone.now, help_text='Course start date', verbose_name='Start date')),
-                ('end_date', models.DateField(default=django.utils.timezone.now, help_text='Course end date', verbose_name='End date')),
-                ('slug', models.CharField(default=b'', max_length=400, blank=True)),
-                ('template_certificate', models.ImageField(help_text='Background template of the certificate. Most browsers support dragging the image directly on to the "Choose File" button above.', upload_to=b'images/organisations/certificates', blank=True)),
+                ('name', models.CharField(help_text=b'Course name.', max_length=200, null=True, blank=True)),
+                ('start_date', models.DateField(default=django.utils.timezone.now, help_text=b'Course start date', verbose_name='Start date')),
+                ('end_date', models.DateField(default=django.utils.timezone.now, help_text=b'Course end date', verbose_name='End date')),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
             ],
@@ -95,7 +91,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('slug', models.CharField(default=b'', max_length=100, blank=True)),
-                ('signature', models.ImageField(help_text='Signature of the course convener. Most browsers support dragging the image directly on to the "Choose File" button above.', upload_to=b'images/organisations/conveners', blank=True)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
                 ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
@@ -107,10 +102,10 @@ class Migration(migrations.Migration):
             name='CourseType',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(help_text='Course type.', max_length=200)),
-                ('description', models.TextField(help_text='Course type description.', max_length=250, null=True, blank=True)),
-                ('instruction_hours', models.CharField(help_text='Number of instruction hours e.g. 40 hours', max_length=200, null=True, blank=True)),
-                ('coursetype_link', models.CharField(help_text=b'Link to course types e.g. http://kartoza.com/', max_length=200, null=True, verbose_name=b'Link', blank=True)),
+                ('name', models.CharField(help_text=b'Course type.', max_length=200)),
+                ('description', models.TextField(help_text=b'Course type description.', max_length=250, null=True, blank=True)),
+                ('instruction_hours', models.CharField(help_text=b'Number of instruction hours e.g. 40 hours', max_length=200, null=True, blank=True)),
+                ('coursetype_link', models.CharField(help_text=b'Link to course types', max_length=200, null=True, blank=True)),
                 ('slug', models.SlugField(unique=True)),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
@@ -118,15 +113,16 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['name'],
             },
+            bases=(certification.models.certifying_organisation.SlugifyingMixin, models.Model),
         ),
         migrations.CreateModel(
             name='TrainingCenter',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(help_text='Training Center name.', unique=True, max_length=150)),
-                ('email', models.CharField(help_text='Valid email address for communication purposes.', max_length=150, validators=[certification.models.certifying_organisation.validate_email_address])),
-                ('address', models.TextField(help_text='Address of the training center.', max_length=250)),
-                ('phone', models.CharField(help_text='Phone number: (country code)(number) e.g. +6221551553', max_length=150)),
+                ('name', models.CharField(help_text='Organisation/Institution name.', unique=True, max_length=150)),
+                ('email', models.CharField(help_text='Valid email address for communication purposes.', max_length=150)),
+                ('address', models.TextField(help_text='Address of the organisation/institution.', max_length=250)),
+                ('phone', models.CharField(help_text='Phone number/Landline.', max_length=150)),
                 ('location', django.contrib.gis.db.models.fields.GeometryField(srid=4326, null=True, blank=True)),
                 ('slug', models.SlugField()),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
@@ -157,33 +153,8 @@ class Migration(migrations.Migration):
             name='course',
             field=models.ForeignKey(to='certification.Course'),
         ),
-        migrations.AddField(
-            model_name='attendee',
-            name='certifying_organisation',
-            field=models.ForeignKey(to='certification.CertifyingOrganisation', null=True),
-        ),
-        migrations.AlterUniqueTogether(
-            name='coursetype',
-            unique_together=set([('name', 'certifying_organisation')]),
-        ),
         migrations.AlterUniqueTogether(
             name='courseattendee',
             unique_together=set([('attendee', 'course')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='course',
-            unique_together=set([('course_convener', 'course_type', 'training_center', 'start_date', 'end_date', 'certifying_organisation')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='certifyingorganisation',
-            unique_together=set([('name', 'project')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='certificate',
-            unique_together=set([('course', 'attendee', 'certificateID')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='attendee',
-            unique_together=set([('firstname', 'surname', 'email', 'certifying_organisation')]),
         ),
     ]
