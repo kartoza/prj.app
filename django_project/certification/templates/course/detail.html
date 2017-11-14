@@ -136,6 +136,12 @@
             data-title="Download all issued certificates from this course">
             <span class="glyphicon glyphicon-download-alt"></span>
             </a>
+        <a id='upload-attendee' class="btn btn-default btn-sm tooltip-toggle"
+           href=''
+            data-title="Import Attendee from CSV file.">
+            <span class="glyphicon glyphicon-import"></span>
+            </a>
+
         <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
            href='{% url "regenerate-all-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
             data-title="Re-generate all PDF certificate for this course">
