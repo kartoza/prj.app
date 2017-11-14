@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import (
     CreateView, FormView)
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, FormMessagesMixin
 from ..models import Attendee, CertifyingOrganisation
 from ..forms import AttendeeForm
 from ..forms import CsvAttendeeForm
@@ -76,7 +76,8 @@ class AttendeeCreateView(
         return kwargs
 
 
-class CsvUploadView(LoginRequiredMixin, FormView):
+class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
+                    FormView):
     """
     Allow upload of attendees
     through CSV file.
