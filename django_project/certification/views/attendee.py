@@ -169,7 +169,8 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
                     ) for row in reader])
 
                 self.form_valid_message = \
-                    "3 Attendees were successfully added to the course : %s" % \
+                    "3 Attendees were successfully " \
+                    "added to the course : %s" % \
                     (self.course)
                 self.form_invalid_message = \
                     "Something wrong happened while " \
