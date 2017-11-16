@@ -12,7 +12,13 @@
 {% endblock page_title %}
 
 {% block content %}
-
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
     <style>
         .success {
             text-align: center;
