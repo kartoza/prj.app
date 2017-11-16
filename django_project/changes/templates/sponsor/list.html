@@ -1,6 +1,7 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
 {% load custom_markup %}
+{% load staticfiles %}
 {% block title %}Sponsors - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
@@ -11,33 +12,51 @@
 {% endblock page_title %}
 
 {% block content %}
+    <style>
+        .rss-icon:hover {
+            color: darkorange;
+        }
+        .icon:hover {
+            color: #2a62bc;
+        }
+    </style>
     <div class="page-header">
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}Sponsors
                 <div class="pull-right btn-group">
                 {% if user.is_authenticated %}
-                    <a class="btn btn-default btn-mini tooltip-toggle"
+                    <a class="btn btn-default btn-mini tooltip-toggle icon"
                        href='{% url "sponsor-create" project_slug %}'
                        data-title="Create New Sponsor">
                         {% show_button_icon "add" %}
                     </a>
                     {% if not unapproved %}
-                        <a class="btn btn-default btn-mini tooltip-toggle"
+                        <a class="btn btn-default btn-mini tooltip-toggle icon"
                            href='{% url "pending-sponsor-list" project_slug %}'
                            data-title="View Pending sponsorship period">
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
                     {% endif %}
-                  <a class="btn btn-default btn-mini tooltip-toggle"
+                  <a class="btn btn-default btn-mini tooltip-toggle icon"
                        href='{% url "sponsor-cloud" project_slug %}'
                        data-title="Generate Current Sponsor Cloud">
                         <i class="glyphicon glyphicon-cloud"></i>
                     </a>
                 {% endif %}
-                    <a class="btn btn-default btn-mini tooltip-toggle"
+                    <a class="btn btn-default btn-mini tooltip-toggle icon"
                        href='{% url "sponsor-programme" project_slug %}'
                        data-title="View Sponsorship Programme">
                         <i class="glyphicon glyphicon-info-sign"></i></a>
+                    <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
+                       href='{% url "sponsor-rss-feed" project_slug %}'
+                       data-title="RSS Feed for Sponsors">
+                        <i class="fa fa-rss-square"></i>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
+                       href='{% url "sponsor-atom-feed" project_slug %}'
+                       data-title="Atom Feed for Sponsors">
+                        <i class="fa fa-rss"></i>
+                    </a>
                 </div>
         </h1>
     </div>

@@ -141,7 +141,9 @@ class CourseConvenerForm(forms.ModelForm):
     class Meta:
         model = CourseConvener
         fields = (
+            'title',
             'user',
+            'degree',
             'signature',
         )
 
@@ -154,7 +156,9 @@ class CourseConvenerForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
+                Field('title', css_class='form-control'),
                 Field('user', css_class='form-control chosen-select'),
+                Field('degree', css_class='form-control'),
                 Field('signature', css_class='form-control'),
             )
         )

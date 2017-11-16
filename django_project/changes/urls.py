@@ -8,6 +8,7 @@ from django.conf import settings
 
 from feeds.version import RssVersionFeed, AtomVersionFeed
 from feeds.entry import RssEntryFeed, AtomEntryFeed
+from feeds.sponsor import RssSponsorFeed, AtomSponsorFeed
 from views import (
     # Category
     CategoryDetailView,
@@ -205,6 +206,14 @@ urlpatterns = patterns(
               '\w.-]+)/atom$',
         view=AtomEntryFeed(),
         name='entry-atom-feed'),
+
+    # Feeds sponsors in a specific project
+    url(regex='^(?P<project_slug>[\w-]+)/sponsors/rss/$',
+        view=RssSponsorFeed(),
+        name='sponsor-rss-feed'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsors/atom/$',
+        view=AtomSponsorFeed(),
+        name='sponsor-atom-feed'),
 
     # User map
     # url(r'^user-map/', include('user_map.urls')),

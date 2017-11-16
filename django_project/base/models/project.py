@@ -143,9 +143,20 @@ class Project(models.Model):
     sponsorship_programme = models.TextField(
         help_text=_(
             'Sponsorship programme for this project. Markdown is supported'),
-        max_length=3000,
+        max_length=10000,
         blank=True,
         null=True
+    )
+
+    certification_manager = models.ManyToManyField(
+        User,
+        related_name='certification_manager',
+        blank=True,
+        null=True,
+        help_text=_(
+            'Managers of the certification app in this project. '
+            'They will receive email notification about organisation and have'
+            ' the same permissions as project owner in the certification app.')
     )
 
     owner = models.ForeignKey(User)

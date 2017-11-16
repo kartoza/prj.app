@@ -12,7 +12,8 @@ from django.views.generic import (
     DeleteView,
     DetailView,
     UpdateView,
-    RedirectView)
+    RedirectView,
+    TemplateView)
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
@@ -409,6 +410,7 @@ class CertifyingOrganisationCreateView(
             CertifyingOrganisationCreateView, self).get_context_data(**kwargs)
         context['certifyingorganisations'] = \
             self.get_queryset().filter(project=self.project)
+        context['the_project'] = self.project
         return context
 
     def form_valid(self, form):
@@ -425,26 +427,73 @@ class CertifyingOrganisationCreateView(
         try:
             super(CertifyingOrganisationCreateView, self).form_valid(form)
             site = self.request.get_host()
+            recipients = [self.project.owner, ]
+            for manager in self.project.certification_manager.all():
+                recipients.append(manager)
 
-            send_mail(
-                'Projecta - New Pending Organisation Approval',
-                'Dear %s %s,\n\n' % (
+            for recipient in recipients:
+                data = {
+                    'recipient_firstname': recipient.first_name,
+                    'recipient_lastname': recipient.last_name,
+                    'project_name': self.project.name,
+                    'site': site,
+                    'project_slug': self.project_slug
+                }
+
+                # Send email notification to project owner and
+                # certification managers
+                send_mail(
+                    'Projecta - New Pending Organisation Approval',
+                    'Dear {recipient_firstname} {recipient_lastname},\n\n'
+                    'You have a new organisation registered to your project: '
+                    '{project_name}.\n'
+                    'You may review and approve the organisation by following '
+                    'this link:\n'
+                    '{site}/en/{project_slug}/pending-certifyingorganisation/'
+                    'list/\n\n'
+                    'Sincerely,\n\n\n\n\n'
+                    '-------------------------------------------------------\n'
+                    'This is an auto-generated email from the system.'
+                    ' Please do not reply to this email.'.format(**data),
+                    self.project.owner.email,
+                    [recipient.email],
+                    fail_silently=False,
+                )
+
+            contact_person = \
+                '{} {}: {}\n'.format(
                     self.project.owner.first_name,
-                    self.project.owner.last_name) +
-                'You have a new organisation registered to your project: %s.\n'
-                % self.project.name +
-                'You may review and approve the organisation by following this'
-                ' link:\n'
-                '%s/en/%s/pending-certifyingorganisation/list/\n\n'
-                % (site, self.project_slug) +
-                'Sincerely,\n\n\n\n\n'
-                '----------------------------------------------------------\n'
-                'This is an auto-generated email from the system.'
-                ' Please do not reply to this email.',
-                self.project.owner.email,
-                [self.project.owner.email],
-                fail_silently=False,
-            )
+                    self.project.owner.last_name,
+                    self.project.owner.email)
+
+            for manager in self.project.certification_manager.all():
+                contact_person += \
+                    '{} {}: {}\n'.format(
+                        manager.first_name, manager.last_name, manager.email)
+
+            # Email the applicant notify that the organisation is successfully
+            # submitted.
+            for applicant in self.object.organisation_owners.all():
+                email_data = {
+                    'applicant_firstname': applicant.first_name,
+                    'applicant_lastname': applicant.last_name,
+                    'contact_person': contact_person,
+                }
+
+                send_mail(
+                    'Projecta - Your Organisation is Successfully Submitted',
+                    'Dear {applicant_firstname} {applicant_lastname},\n\n'
+                    'Your organisation is successfully submitted.\n'
+                    'It is now waiting for an approval from the project\'s '
+                    'owner and certification managers.\n'
+                    'If you have not heard from us in few weeks you may '
+                    'contact us:\n'
+                    '{contact_person}'
+                    '\n\nSincerely,\n'.format(**email_data),
+                    self.project.owner.email,
+                    [applicant.email]
+                )
+
             return HttpResponseRedirect(self.get_success_url())
         except IntegrityError:
             return ValidationError(
@@ -509,6 +558,7 @@ class CertifyingOrganisationUpdateView(
             CertifyingOrganisationUpdateView, self).get_context_data(**kwargs)
         context['certifyingorganisations'] = self.get_queryset() \
             .filter(project=self.project)
+        context['the_project'] = self.project
         return context
 
     def get_queryset(self):
@@ -615,7 +665,9 @@ class PendingCertifyingOrganisationListView(
                         CertifyingOrganisation.unapproved_objects.filter(
                             Q(project=self.project) &
                             (Q(project__owner=self.request.user) |
-                             Q(organisation_owners=self.request.user)))
+                             Q(organisation_owners=self.request.user) |
+                             Q(project__certification_manager=self.request.user
+                               )))
                 return queryset
             else:
                 raise Http404(
@@ -652,6 +704,61 @@ class ApproveCertifyingOrganisationView(
             get_object_or_404(certifyingorganisation_qs, slug=slug)
         certifyingorganisation.approved = True
         certifyingorganisation.save()
+
+        site = self.request.get_host()
+        for organisation_owner in \
+                certifyingorganisation.organisation_owners.all():
+            data = {
+                'owner_firstname': organisation_owner.first_name,
+                'owner_lastname': organisation_owner.last_name,
+                'organisation_name': certifyingorganisation.name,
+                'project_name': certifyingorganisation.project.name,
+                'project_owner_firstname':
+                    certifyingorganisation.project.owner.first_name,
+                'project_owner_lastname':
+                    certifyingorganisation.project.owner.last_name,
+                'site': site,
+                'project_slug': project_slug,
+            }
+            send_mail(
+                'Projecta - Your organisation is approved',
+                'Dear {owner_firstname} {owner_lastname},\n\n'
+                'Congratulations!\n'
+                'Your certifying organisation has been approved. The following'
+                ' is the details of the newly approved organisation:\n'
+                'Name of organisation: {organisation_name}\n'
+                'Project: {project_name}\n'
+                'You may now start creating your training center, '
+                'course type, course convener and course.\n'
+                'For further information please visit: '
+                '{site}/en/{project_slug}/about/\n\n'
+                'Sincerely,\n'
+                '{project_owner_firstname} {project_owner_lastname}'
+                .format(**data),
+                certifyingorganisation.project.owner.email,
+                [organisation_owner.email],
+                fail_silently=False,
+            )
+
         return reverse(self.pattern_name, kwargs={
             'project_slug': project_slug
         })
+
+
+class AboutView(TemplateView):
+    template_name = 'about.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+
+        context = super(AboutView, self).get_context_data(**kwargs)
+        project_slug = self.kwargs.get('project_slug')
+        context['the_project'] = Project.objects.get(slug=project_slug)
+        return context
