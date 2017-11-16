@@ -15,7 +15,7 @@
     {% if messages %}
         <ul class="messages">
             {% for message in messages %}
-                <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %} style="list-style-type: none;">{{ message }}</li>
+                <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %} style="list-style-type: none; padding: 10px;">{{ message }}</li>
             {% endfor %}
         </ul>
     {% endif %}
@@ -28,6 +28,7 @@
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #96ffc5;
+            list-style-type: none;
         }
     </style>
 

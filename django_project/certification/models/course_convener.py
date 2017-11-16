@@ -74,3 +74,4 @@ class CourseConvener(models.Model):
         return reverse('course-convener-detail', kwargs={
             'slug': self.slug,
         })
+    
