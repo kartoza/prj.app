@@ -133,11 +133,6 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
         self.course = Course.objects.get(slug=self.slug)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
-        kwargs.update({
-            # 'user': self.request.user,
-            # 'course': self.course,
-            # 'certifying_organisation': self.certifying_organisation,
-        })
         return kwargs
 
     @transaction.atomic()
