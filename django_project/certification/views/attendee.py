@@ -2,7 +2,6 @@
 import csv
 from django.db import transaction
 from django.core.urlresolvers import reverse
-from django.core.urlresolvers import reverse_lazy
 from django.views.generic import (
     CreateView, FormView)
 from braces.views import LoginRequiredMixin, FormMessagesMixin
@@ -10,6 +9,7 @@ from ..models import Attendee, CertifyingOrganisation
 from ..forms import AttendeeForm
 from ..forms import CsvAttendeeForm
 from ..models.course_attendee import Course
+
 
 class AttendeeMixin(object):
     """Mixin class to provide standard settings for Attendee."""
@@ -87,45 +87,6 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
     form_class = CsvAttendeeForm
     template_name = 'attendee/upload_attendee_csv.html'
 
-    @transaction.atomic()
-    def post(self, request, *args, **kwargs):
-        """Get form instance from upload.
-
-           After successful creation of the object,
-           the User will be redirected to the create
-           course attendee page.
-
-          :returns: URL
-          :rtype: HttpResponse
-        """
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        file = request.FILES.get('file')
-        if form.is_valid():
-            if file:
-                reader = csv.reader(file, delimiter=',')
-                next(reader)
-                Attendee.objects.bulk_create(
-                    [Attendee(
-                        firstname=row[0],
-                        surname=row[1],
-                        email=row[2],
-                    )for row in reader])
-
-                num_of_attendees_uploaded = \
-                    len([row for row in reader])
-                self.form_valid_message = \
-                    "%s Attendees uploaded Successfully." % \
-                                          (num_of_attendees_uploaded)
-                self.form_invalid_message = \
-                    "Something wrong happened while runing the upload. " \
-                    "Please try again."
-            return self.form_valid(form)
-
-        else:
-            return self.form_invalid(form)
-
-
     def get_success_url(self):
         """Define the redirect URL.
 
@@ -179,3 +140,43 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
             # 'certifying_organisation': self.certifying_organisation,
         })
         return kwargs
+
+    @transaction.atomic()
+    def post(self, request, *args, **kwargs):
+        """Get form instance from upload.
+
+           After successful creation of the object,
+           the User will be redirected to the create
+           course attendee page.
+
+          :returns: URL
+          :rtype: HttpResponse
+        """
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        file = request.FILES.get('file')
+        if form.is_valid():
+            if file:
+                reader = csv.reader(file, delimiter=',')
+                next(reader)
+                Attendee.objects.bulk_create(
+                    [Attendee(
+                        firstname=row[0],
+                        surname=row[1],
+                        email=row[2],
+                        certifying_organisation=self.certifying_organisation,
+                        author=self.request.user,
+                    ) for row in reader])
+
+                num_of_attendees_uploaded = \
+                    len([row for row in reader])
+                self.form_valid_message = \
+                    "%s Attendees uploaded Successfully." % \
+                    (num_of_attendees_uploaded)
+                self.form_invalid_message = \
+                    "Something wrong happened while runing the upload. " \
+                    "Please try again."
+            return self.form_valid(form)
+
+        else:
+            return self.form_invalid(form)
