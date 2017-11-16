@@ -108,9 +108,7 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
                     firstname=row[0],
                     surname=row[1],
                     email=row[2],
-                    )
-                     for row in reader]
-                )
+                    )for row in reader])
 
                 num_of_attendees_uploaded = \
                     len([row for row in reader])
