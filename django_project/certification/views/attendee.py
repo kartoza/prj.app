@@ -100,7 +100,7 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
         return reverse('course-detail', kwargs={
             'project_slug': self.project_slug,
             'organisation_slug': self.organisation_slug,
-            'slug': self.slug
+            'slug': self.slug,
         })
 
     def get_context_data(self, **kwargs):
