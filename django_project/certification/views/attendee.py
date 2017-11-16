@@ -18,9 +18,7 @@ class AttendeeMixin(object):
     form_class = AttendeeForm
 
 
-class AttendeeCreateView(
-        LoginRequiredMixin,
-        AttendeeMixin, CreateView):
+class AttendeeCreateView(LoginRequiredMixin, AttendeeMixin, CreateView):
     """Create view for Attendee."""
 
     context_object_name = 'attendee'
@@ -76,8 +74,7 @@ class AttendeeCreateView(
         return kwargs
 
 
-class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
-                    FormView):
+class CsvUploadView(FormMessagesMixin, LoginRequiredMixin, FormView):
     """
     Allow upload of attendees through CSV file.
     """
