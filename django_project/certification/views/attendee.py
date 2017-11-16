@@ -82,8 +82,7 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
     Allow upload of attendees
     through CSV file.
     """
-    context_object_name = 'courseattendee'
-
+    context_object_name = 'csvupload'
     form_class = CsvAttendeeForm
     template_name = 'attendee/upload_attendee_csv.html'
 
