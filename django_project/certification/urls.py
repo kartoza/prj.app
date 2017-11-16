@@ -161,7 +161,7 @@ urlpatterns = patterns(
 
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/course/'
-              '(?P<slug>[\w-]+)/$',
+              '(?P<slug>[\w-]+)/upload/$',
         view=CsvUploadView.as_view(),
         name='upload-attendee'),
 

@@ -85,6 +85,9 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
     form_class = CsvAttendeeForm
     template_name = 'attendee/upload_attendee_csv.html'
     success_url = reverse_lazy('home')
+    count = 2
+    # form_valid_message = "%s Uploaded successfuly.", (count)
+    # form_invalid_message =
 
     @transaction.atomic()
     def post(self, request, *args, **kwargs):
@@ -104,13 +107,23 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
             if file:
                 reader = csv.reader(file, delimiter=',')
                 next(reader)
-                Attendee.objects.bulk_create(
-                    [Attendee(firstname=row[0],
+                attendee_list = [Attendee(firstname=row[0],
                               surname=row[1],
                               email=row[2],
                               )
-                     for row in reader])
+                     for row in reader]
+                Attendee.objects.bulk_create(
+                    attendee_list
+                )
 
+                uploaded_list = [entry for entry in reader]
+                num_of_attendees_uploaded = \
+                    len(uploaded_list)
+                self.form_valid_message = "%s Uploaded Successfully." % \
+                                          (num_of_attendees_uploaded)
+                self.form_invalid_message = \
+                    "Something wrong happened while runing the upload. " \
+                    "Please try again."
             return self.form_valid(form)
 
         else:
