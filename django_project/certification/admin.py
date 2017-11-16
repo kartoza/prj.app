@@ -28,6 +28,7 @@ class CertificateAdmin(admin.ModelAdmin):
 
 class AttendeeAdmin(admin.ModelAdmin):
     """Attendee admin model."""
+    list_display = ('firstname', 'surname', 'email')
 
     def queryset(self, request):
         """Ensure we use the correct manager.
@@ -43,6 +44,8 @@ class AttendeeAdmin(admin.ModelAdmin):
 
 class CourseAttendeeAdmin(admin.ModelAdmin):
     """Certificate admin model."""
+    list_display = ('course', 'attendee', 'author')
+
     def queryset(self, request):
         """Ensure we use the correct manager.
 
