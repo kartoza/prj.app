@@ -37,6 +37,7 @@ from views import (
 
     # Attendee.
     AttendeeCreateView,
+    CsvUploadView,
 
     # Course Attendee.
     CourseAttendeeCreateView,
@@ -166,12 +167,19 @@ urlpatterns = patterns(
         view=AttendeeCreateView.as_view(),
         name='attendee-create'),
 
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/course/'
+              '(?P<slug>[\w-]+)/upload/$',
+        view=CsvUploadView.as_view(),
+        name='upload-attendee'),
+
     # Course Attendee.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/course/'
               '(?P<slug>[\w-]+)/create-courseattendee/$',
         view=CourseAttendeeCreateView.as_view(),
         name='courseattendee-create'),
+
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/course/'
               '(?P<course_slug>[\w-]+)/courseattendee/'
