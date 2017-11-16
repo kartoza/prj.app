@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.views.generic import (
     CreateView, FormView)
 from braces.views import LoginRequiredMixin, FormMessagesMixin
-from ..models import Attendee, CertifyingOrganisation
+from ..models import Attendee, CertifyingOrganisation, CourseAttendee
 from ..forms import AttendeeForm
 from ..forms import CsvAttendeeForm
 from ..models.course_attendee import Course
@@ -153,27 +153,58 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
         """
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        file = request.FILES.get('file')
+        attendees_file = request.FILES.get('file')
+        course = Course.objects.get(slug=self.slug)
         if form.is_valid():
-            if file:
-                reader = csv.reader(file, delimiter=',')
+            if attendees_file:
+                reader = csv.reader(attendees_file, delimiter=',')
                 next(reader)
-                Attendee.objects.bulk_create(
-                    [Attendee(
+                attendee_count = 0
+                course_attendee_count = 0
+                for row in reader:
+                    # We should have logic here to first see if the attendee
+                    # already exists and if they do, just add them to the
+                    # course
+                    attendee = Attendee(
                         firstname=row[0],
                         surname=row[1],
                         email=row[2],
                         certifying_organisation=self.certifying_organisation,
                         author=self.request.user,
-                    ) for row in reader])
+                    )
+                    try:
+                        attendee.save()
+                        attendee_count += 1
+                    except:
+                        #  Could not save - probably they exist already
+                        attendee = None
 
-                self.form_valid_message = \
-                    "3 Attendees were successfully " \
-                    "added to the course : %s" % \
-                    (self.course)
-                self.form_invalid_message = \
-                    "Something wrong happened while " \
-                    "running the upload. Please try again."
+                    if not attendee:
+                        # put more checks in case attendee
+                        # does not already exist
+                        continue
+
+                    course_attendee = CourseAttendee(
+                        attendee=attendee,
+                        course=course,
+                        author=self.request.user,
+                    )
+                    try:
+                        course_attendee.save()
+                        course_attendee_count += 1
+                    except:
+                        #  They are probably already associated with a course
+                        pass
+
+                self.form_valid_message = (
+                    '%i new attendees were created, and %i attendees were '
+                    'added to the course: % s' % (
+                        attendee_count, course_attendee_count, self.course)
+                )
+
+                self.form_invalid_message = (
+                    'Something wrong happened while running the upload. '
+                    'Please contact site support to help resolving the issue.')
             return self.form_valid(form)
 
         else:
