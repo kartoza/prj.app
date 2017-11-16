@@ -9,7 +9,7 @@ from braces.views import LoginRequiredMixin, FormMessagesMixin
 from ..models import Attendee, CertifyingOrganisation
 from ..forms import AttendeeForm
 from ..forms import CsvAttendeeForm
-
+from ..models.course_attendee import Course
 
 class AttendeeMixin(object):
     """Mixin class to provide standard settings for Attendee."""
@@ -82,9 +82,10 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
     Allow upload of attendees
     through CSV file.
     """
+    context_object_name = 'courseattendee'
+
     form_class = CsvAttendeeForm
     template_name = 'attendee/upload_attendee_csv.html'
-    success_url = reverse_lazy('upload-attendee')
 
     @transaction.atomic()
     def post(self, request, *args, **kwargs):
@@ -104,10 +105,11 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
             if file:
                 reader = csv.reader(file, delimiter=',')
                 next(reader)
-                Attendee.objects.bulk_create([Attendee(
-                    firstname=row[0],
-                    surname=row[1],
-                    email=row[2],
+                Attendee.objects.bulk_create(
+                    [Attendee(
+                        firstname=row[0],
+                        surname=row[1],
+                        email=row[2],
                     )for row in reader])
 
                 num_of_attendees_uploaded = \
@@ -122,3 +124,58 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
 
         else:
             return self.form_invalid(form)
+
+
+    def get_success_url(self):
+        """Define the redirect URL.
+
+        After successful creation of the object, the User will be redirected
+        to the Course detail page.
+
+       :returns: URL
+       :rtype: HttpResponse
+       """
+
+        return reverse('course-detail', kwargs={
+            'project_slug': self.project_slug,
+            'organisation_slug': self.organisation_slug,
+            'slug': self.slug
+        })
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+
+        context = super(
+            CsvUploadView, self).get_context_data(**kwargs)
+        context['certifyingorganisation'] = \
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        context['course'] = Course.objects.get(slug=self.slug)
+        return context
+
+    def get_form_kwargs(self):
+        """Get keyword arguments from form.
+
+        :returns keyword argument from the form
+        :rtype: dict
+        """
+
+        kwargs = super(CsvUploadView, self).get_form_kwargs()
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+        self.slug = self.kwargs.get('slug', None)
+        self.course = Course.objects.get(slug=self.slug)
+        self.certifying_organisation = \
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        kwargs.update({
+            # 'user': self.request.user,
+            # 'course': self.course,
+            # 'certifying_organisation': self.certifying_organisation,
+        })
+        return kwargs
