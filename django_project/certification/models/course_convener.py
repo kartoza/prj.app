@@ -68,7 +68,6 @@ class CourseConvener(models.Model):
 
     def get_absolute_url(self):
         """Return URL to course convener detail page.
-
         :return: URL
         :rtype: str
         """

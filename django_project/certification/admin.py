@@ -4,12 +4,12 @@
 from django.contrib.gis import admin
 from certification.models.certificate import Certificate
 from certification.models.course import Course
-from certification.models.certifying_organisation import CertifyingOrganisation
 from certification.models.training_center import TrainingCenter
 from certification.models.course_convener import CourseConvener
 from certification.models.course_type import CourseType
 from certification.models.attendee import Attendee
 from certification.models.course_attendee import CourseAttendee
+from certification.models.certifying_organisation import CertifyingOrganisation
 
 
 class CertificateAdmin(admin.ModelAdmin):
