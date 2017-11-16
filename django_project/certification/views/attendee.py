@@ -112,7 +112,8 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
 
                 num_of_attendees_uploaded = \
                     len([row for row in reader])
-                self.form_valid_message = "%s Attendees uploaded Successfully." % \
+                self.form_valid_message = \
+                    "%s Attendees uploaded Successfully." % \
                                           (num_of_attendees_uploaded)
                 self.form_invalid_message = \
                     "Something wrong happened while runing the upload. " \
