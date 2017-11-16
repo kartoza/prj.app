@@ -144,9 +144,8 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
     def post(self, request, *args, **kwargs):
         """Get form instance from upload.
 
-           After successful creation of the object,
-           the User will be redirected to the create
-           course attendee page.
+           After successful creation of the object,the User
+           will be redirected to the create course attendee page.
 
           :returns: URL
           :rtype: HttpResponse
