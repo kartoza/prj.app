@@ -209,4 +209,3 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin,
 
         else:
             return self.form_invalid(form)
-        
