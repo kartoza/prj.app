@@ -21,6 +21,7 @@ INSTALLED_APPS += (
     'django_countries',  # for sponsor addresses
     # 'user_map',
     'disqus',
+    'graphos'
 )
 
 # Set disqus and shortname

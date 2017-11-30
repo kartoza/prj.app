@@ -39,6 +39,11 @@
         {% endif %}
     </div>
     <div class="row">
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart"]});
+    </script>
+
         <div class="panel panel-default col-md-8">
             <div class="panel panel-default left-panel" style="padding: 15px">
                 {% if project.image_file %}
@@ -70,6 +75,9 @@
                 <span>{{ project.precis|base_markdown }}</span>
             </div>
             {% endif %}
+        {{ chart.as_html }}
+        {{ chart2.as_html }}
+        {{ chart3.as_html }}
         </div>
         <div class="col-md-4">
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='sponsors/list/';">

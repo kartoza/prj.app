@@ -5,7 +5,10 @@ import logging
 import stripe
 import requests
 import json
-import datetime
+from datetime import timedelta,datetime
+from graphos.sources.model import ModelDataSource
+from graphos.renderers.gchart import LineChart, BarChart, ColumnChart
+
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import Http404
@@ -179,6 +182,14 @@ class ProjectDetailView(ProjectMixin, DetailView):
         context['ourclientid']=ourclientid
         context['merchuser']=merchuser
         context['flag']=flag
+        graphqueryset = Charges.objects.all()
+        data_source = ModelDataSource(graphqueryset,fields=['date','chargeAmount'])
+        chart = LineChart(data_source,options = {'title': 'Sponsorship Growth'},width=750)
+        chart2 = BarChart(data_source,options = {'title': 'Sponsorship Growth'},width=750)
+        chart3 = ColumnChart(data_source,options = {'title': 'Sponsorship Growth'},width=750)
+        context['chart']=chart
+        context['chart2']=chart2
+        context['chart3']=chart3
         return context
 
     def get_queryset(self):
@@ -352,7 +363,6 @@ def paymentview(request):
     #merchantid = createmerchant(request)
     # Customer login cerdential should be unique
     #chargeid = createcharge(request,customerid,merchantid)
-    print("Loggeduser: %s"%loggeduser)
     try:
         dbrequest = Merchants.objects.values_list(
             'merchantid', flat=True).get(
@@ -363,8 +373,8 @@ def paymentview(request):
     returnid = request.GET.get(
         'code')
     # Payout testing
-    merchantid = "acct_1B4V9NJeuZPvjWZO"
-    balance, b = merchantpayout(merchantid)
+    #merchantid = "acct_1B4V9NJeuZPvjWZO"
+    #balance, b = merchantpayout(merchantid)
     # platformpayout()
     context = {
         'ourclientid': ourclientid,
@@ -406,15 +416,11 @@ def processcustomerandcharge(request):
 
         #1.Get list of usernames in merchant database.
         firstnames = list(Merchants.objects.values_list('firstname',flat=True))
-        print(firstnames)
         firstnamesid = list(User.objects.filter(username__in=firstnames).values_list('id',flat=True))
-        print(firstnamesid)
         dbmerchreq = Project.objects.filter(owner_id__in=firstnamesid).values('id','name')
         projects = Project.objects.exclude(owner_id__in=firstnamesid).values('id','name')
         lengthout = projects.count
         lengthin = dbmerchreq.count
-        print(projects)
-        print(dbmerchreq)
     context = {
         'customerid': customerid,
         'merchantid': merchantid,
@@ -501,9 +507,7 @@ def createcharge(request):
     customerid = request.session.get('customerid')
     # Get the project that the payment is to be made to
     projectid = request.POST.get('projects')
-    print("projectid %s"%projectid)
     ownerid = Project.objects.values_list('owner_id',flat=True).get(id=projectid)
-    print(ownerid)
     error = "Unknown"
     try:
         dbrequest2 = User.objects.values_list(  # Get the username of the account holder
@@ -538,35 +542,26 @@ def createcharge(request):
         chargeAmount = (charge.amount)/100
         projectid = projectid
         userid = request.user.id
-        date = datetime.datetime.now()
-        print(chargestripeid)
-        print(customerstripeid)
-        print(chargeAmount)
-        print(projectid)
-        print(userid)
-        print(datetime.datetime.now())
-        status = "paid"
+        date1 = datetime.now()
+        date1 = datetime(int(2017),int(5),int(8))
+        status = 1
+        request.session['customerid'] = 0
+        request.session['merchantid'] = 0
         storecharge = Charges.objects.create(chargestripeID=chargestripeid, merchantstripeID=merchantstripeid,
                                              customerstripeID=customerstripeid, chargeAmount=chargeAmount,
                                              projectid=projectid,
-                                             userid=userid,date=date)
+                                             userid=userid, date=date1)
         storecharge.save()
-        request.session['customerid'] = 0
-        request.session['merchantid'] = 0
     except BaseException:
-        status = "not paid"
-    print(status)
-    context = {
-        'status': status,
-        'merchantid': merchantid,
-        'customerid': customerid,
-        'dbrequest2': dbrequest2,
-        'dbrequest3': dbrequest3,
-        'ownerid': ownerid,
-        'error': error,
-    }
-    #return render(request, 'payments/paid.html', context)
-    return redirect('home')
+        status = 0
+    if status == 1:
+        return redirect('home')
+    else:
+        context = {
+            'status': status,
+        }
+        return render(request, 'payments/paid.html', context)
+
 
 def platformpayout():
     balance = stripe.Balance.retrieve(

@@ -87,3 +87,4 @@ try:
     )
 except ImportError:
     pass
+DOMAIN = 'http://192.168.0.108'

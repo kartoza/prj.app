@@ -35,3 +35,4 @@ django-allauth==0.25.2
 Unidecode==0.4.20
 reportlab==3.4.0
 stripe==1.65.0
+django-graphos=0.3.41
