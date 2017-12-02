@@ -24,6 +24,7 @@ from django.views.generic import (
     RedirectView)
 from django.http import HttpResponse
 from django.db import IntegrityError
+from django.db.models import Q
 from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
@@ -492,7 +493,7 @@ class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
 
 
 class PendingVersionListView(
-        StaffuserRequiredMixin,
+        LoginRequiredMixin,
         VersionMixin,
         PaginationMixin,
         ListView):
@@ -544,13 +545,15 @@ class PendingVersionListView(
                 if self.request.user.is_staff:
                     return queryset
                 else:
-                    return queryset.filter(author=self.request.user)
+                    return queryset.filter(
+                        Q(author=self.request.user) |
+                        Q(project__changelog_manager=self.request.user))
             else:
                 raise Http404('Sorry! We could not find your version!')
         return self.queryset
 
 
-class ApproveVersionView(StaffuserRequiredMixin, VersionMixin, RedirectView):
+class ApproveVersionView(LoginRequiredMixin, VersionMixin, RedirectView):
     """View for approving Version."""
     permanent = False
     query_string = True

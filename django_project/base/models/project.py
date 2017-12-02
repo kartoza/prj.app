@@ -148,6 +148,17 @@ class Project(models.Model):
         null=True
     )
 
+    changelog_manager = models.ManyToManyField(
+        User,
+        related_name='changelog_manager',
+        blank=True,
+        null=True,
+        help_text=_(
+            'Managers of the changelog in this project. '
+            'They will be allowed to approve changelog entries in the '
+            'moderation queue.')
+    )
+
     certification_manager = models.ManyToManyField(
         User,
         related_name='certification_manager',
