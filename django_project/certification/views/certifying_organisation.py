@@ -437,7 +437,9 @@ class CertifyingOrganisationCreateView(
                     'recipient_lastname': recipient.last_name,
                     'project_name': self.project.name,
                     'site': site,
-                    'project_slug': self.project_slug
+                    'project_slug': self.project_slug,
+                    'organisation_name': self.object.name,
+                    'organisation_country': self.object.country.name,
                 }
 
                 # Send email notification to project owner and
@@ -447,6 +449,8 @@ class CertifyingOrganisationCreateView(
                     'Dear {recipient_firstname} {recipient_lastname},\n\n'
                     'You have a new organisation registered to your project: '
                     '{project_name}.\n'
+                    'Organisation name: {organisation_name}\n'
+                    'Country: {organisation_country}\n'
                     'You may review and approve the organisation by following '
                     'this link:\n'
                     '{site}/en/{project_slug}/pending-certifyingorganisation/'
