@@ -34,6 +34,17 @@
                     {% endif %}
                     {% if project.description %}
                         <p><i>{{ project.description }}</i></p>
+                    {% else %}
+                        {% if user.is_staff or user.project.owner %}
+                            <h3>No project description defined, but you can
+                                <a href="{% url 'project-update' project.slug %}"
+                                   class="btn btn-default btn-mini btn-edit"
+                                   data-placement="top" data-title="Update {{ project.name }}">
+                                  <span class="glyphicon glyphicon-pencil"></span>
+                                  add one
+                                </a>
+                            </h3>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
