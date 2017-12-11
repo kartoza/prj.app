@@ -74,6 +74,12 @@
                     {% endif %}
                 {% endfor %}
                 </div>
+            {% else %}
+                {% if user.is_staff or user == project.owner %}
+                    <h6>No sponsors are defined, but you can <a
+                    class="btn btn-default btn-mini" id="action_text"
+                    href='#'>create one</a></h6>
+                {% endif %}
             {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='certifyingorganisation/list/';">
@@ -87,12 +93,12 @@
                         <h5>{{ organisation.name }}</h5>
                     {% endfor %}
                     </div>
-                    {% else %}
-                        {% if user.is_staff or user == project.owner %}
-                            <h5>No teams are defined, but you can <a
-                                    class="btn btn-default btn-mini"
-                                    href='#'>create one</a></h5>
-                        {% endif %}
+                {% else %}
+                    {% if user.is_staff or user == project.owner %}
+                        <h6>No certifying organisation are defined, but you can <a
+                                class="btn btn-default btn-mini" id="action_text"
+                                href='#'>register one</a></h6>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='version/list/';">
@@ -110,6 +116,12 @@
                         {% endif %}
                     {% endfor %}
                     </div>
+                {% else %}
+                    {% if user.is_staff or user == project.owner %}
+                        <h6>No versions are defined, but you can <a
+                        class="btn btn-default btn-mini" id="action_text"
+                        href='#'>create one</a></h6>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='committees/';">
@@ -120,20 +132,27 @@
                   </h4>
                     <div class="content-list">
                         {% for team in committees %}
-                            <h5><strong><span>{{ team.name }}</span></strong></h5>
+                            <h6><strong><span>{{ team.name }}</span></strong></h6>
                         {% endfor %}
                     </div>
                     {% else %}
                     {% if user.is_staff or user == project.owner %}
                         <h5>No teams are defined, but you can <a
-                                class="btn btn-default btn-mini"
+                                class="btn btn-default btn-mini" id="action_text"
                                 href='#'>create one</a></h5>
                     {% endif %}
                 {% endif %}
             </div>
         </div>
     </div>
-
+    <style>
+    #action_text {
+        font-size: 8px;
+        font-weight: bold;
+        padding: 3px;
+        float: right;
+    }
+    </style>
     <script>
         var slideIndex = 1;
         {% if screenshots %}
