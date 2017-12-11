@@ -87,6 +87,12 @@
                         <h5>{{ organisation.name }}</h5>
                     {% endfor %}
                     </div>
+                    {% else %}
+                        {% if user.is_staff or user == project.owner %}
+                            <h5>No teams are defined, but you can <a
+                                    class="btn btn-default btn-mini"
+                                    href='#'>create one</a></h5>
+                        {% endif %}
                 {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='version/list/';">
@@ -122,9 +128,7 @@
                         <h5>No teams are defined, but you can <a
                                 class="btn btn-default btn-mini"
                                 href='#'>create one</a></h5>
-                                
                     {% endif %}
-
                 {% endif %}
             </div>
         </div>

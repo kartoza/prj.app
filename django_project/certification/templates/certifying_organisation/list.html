@@ -17,7 +17,7 @@
             background-color: #F9F9F9;
         }
     </style>
-    
+
     <div class="page-header">
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
@@ -52,9 +52,11 @@
         {% if unapproved %}
             <h3>All certifying organisation are approved.</h3>
         {% else %}
+            {% if user.is_staff or user.project.owner %}
             <h3>No certifying organisation are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='{% url "certifyingorganisation-create" project_slug %}'>register one</a>.</h3>
+            {% endif %}
         {% endif %}
     {% endifequal %}
 
