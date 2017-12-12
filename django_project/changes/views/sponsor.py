@@ -7,6 +7,7 @@ from base.models import Project
 
 from PIL import Image
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.views.generic import (
@@ -447,11 +448,18 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
         projects which user created (staff gets all projects)
         :rtype: QuerySet
         """
-        qs = Sponsor.approved_objects
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        queryset = Sponsor.approved_objects
         if self.request.user.is_staff:
-            return qs
+            queryset = queryset
         else:
-            return qs.filter(creator=self.request.user)
+            queryset = queryset.filter(
+                Q(project=self.project) &
+                (Q(author=self.request.user) |
+                 Q(project__owner=self.request.user) |
+                 Q(project__changelog_manager=self.request.user)))
+        return queryset
 
     def get_success_url(self):
         """Define the redirect URL

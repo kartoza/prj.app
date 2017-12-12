@@ -11,6 +11,22 @@
 {% endblock page_title %}
 
 {% block content %}
+    <div class="row" style="margin-bottom: 15px">
+    <div class="btn-group pull-right">
+                {% if user in sponsor.project.changelog_manager.all or user.is_staff or user == sponsor.project.owner or user == sponsor.sponsor.author %}
+                <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                   href='{% url "sponsor-delete" project_slug=sponsor.project.slug slug=sponsor.sponsor.slug %}'
+                   data-title="Delete {{ certifyingorganisation.name }}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                   href='{% url "sponsor-update" project_slug=sponsor.project.slug slug=sponsor.sponsor.slug %}'
+                   data-title="Edit {{ certifyingorganisation.name }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                {% endif %}
+            </div>
+    </div>
 
     <div class="row">
         <div class=".col-md-4">
