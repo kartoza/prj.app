@@ -84,7 +84,9 @@
                     </h4>
                     <div class="content-list">
                     {% for organisation in organisations %}
+                    <a href="#">
                         <h5>{{ organisation.name }}</h5>
+                    </a>
                     {% endfor %}
                     </div>
                 {% endif %}
@@ -119,7 +121,12 @@
                   </h4>
                     <div class="content-list">
                         {% for team in committees %}
-                            <h5><strong><span>{{ team.name }}</span></strong></h5>
+                            <h5>
+                                <span><a href="#">
+                                    {{ team.name }}
+                                </a>
+                                </span>
+                            </h5>
                         {% endfor %}
                     </div>
                 {% endif %}
