@@ -68,9 +68,11 @@
                         {% ifchanged sponsor.sponsorship_level %}
                            <h4><img src="{% thumbnail sponsor.sponsorship_level.logo 20x20 %}"> {{ sponsor.sponsorship_level.name }}</h4>
                         {% endifchanged %}
-                            <img class="img-rounded tooltip-toggle"
+                            <a href="{% url 'sponsor-detail' project_slug=sponsor.project.slug slug=sponsor.slug %}">
+                                <img class="img-rounded tooltip-toggle"
                                  src="{% thumbnail sponsor.sponsor.logo 50x50 %}"
                                  data-title="{{ sponsor.sponsor.name }}">
+                             </a>
                     {% endif %}
                 {% endfor %}
                 </div>
@@ -84,7 +86,9 @@
                     </h4>
                     <div class="content-list">
                     {% for organisation in organisations %}
+                    <a href="{% url 'certifyingorganisation-detail' project_slug=organisation.project.slug slug=organisation.slug %}">
                         <h5>{{ organisation.name }}</h5>
+                    </a>
                     {% endfor %}
                     </div>
                 {% endif %}
@@ -98,7 +102,12 @@
                     <div class="version-list">
                     {% for version in versions %}
                         {% if version.approved %}
-                        <p><span class="text-muted">Version:</span> <span class="pull-right">{{ version.name }}</span></p>
+                        <p><span class="text-muted">Version:</span>
+                            <span class="pull-right">
+                                <a href="{% url 'version-detail' project_slug=version.project.slug slug=version.slug %}">
+                                    {{ version.name }}</a>
+                            </span>
+                        </p>
                         {% else %}
                         <p><span class="text-muted">Version:</span> <span class="pull-right"><span>{{ version.name }}</span><span class="text-muted"> (pending)</span></span></p>
                         {% endif %}
@@ -114,7 +123,13 @@
                   </h4>
                     <div class="content-list">
                         {% for team in committees %}
-                            <h5><strong><span>{{ team.name }}</span></strong></h5>
+                            <h5>
+                                <span>
+                                    <a href="{% url 'committee-detail' project_slug=team.project.slug slug=team.slug %}">
+                                        {{ team.name }}
+                                    </a>
+                                </span>
+                            </h5>
                         {% endfor %}
                     </div>
                 {% endif %}
