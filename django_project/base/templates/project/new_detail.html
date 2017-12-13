@@ -69,6 +69,7 @@
         <div class="col-md-4">
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='sponsors/list/';">
                 <h3>Sponsors</h3>
+                <hr />
             {% if sponsors %}
                 <h4 class="text-muted">
                         View Our Project Sponsors
@@ -98,10 +99,12 @@
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='certifyingorganisation/list/';">
                 <h3>Certification</h3>
+                <hr />
                 {% if organisations %}
                     <h4 class="text-muted">
                     Certifying Organisations
                     </h4>
+                    <hr />
                     <div class="content-list">
                     {% for organisation in organisations %}
                         <h5>{{ organisation.name }}</h5>
@@ -120,6 +123,7 @@
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='version/list/';">
                 <h3>Release Changelogs</h3>
+                <hr />
                 {% if versions %}
                 <h4 class="text-muted">
                     New Features and Releases
@@ -146,6 +150,7 @@
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='committees/';">
                 <h3>Project Teams</h3>
+                <hr />
                 {% if committees %}
                     <h4 class="text-muted">
                     Collaborate and Decide
@@ -172,10 +177,11 @@
     #action_text {
         font-size: 8px;
         font-weight: bold;
-        padding: 3px;
+        padding: 4px;
+        /*float: right;*/
     }
     h6 {
-        float: center;
+
     }
     </style>
     <script>
