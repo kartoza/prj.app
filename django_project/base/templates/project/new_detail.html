@@ -162,10 +162,10 @@
                     </div>
                     {% else %}
                     {% if user.is_staff or user == project.owner %}
-                        <h6>No teams are defined, but you can
+                        <h6><span id="sent">No teams are defined, but you can</span>
                             <a
                                 class="btn btn-default btn-mini" id="action_text"
-                                href='{% url "committee-create" project.slug %}'>create one
+                                href='{% url "committee-create" project.slug %}'> create one
                             </a>
                         </h6>
                     {% endif %}
@@ -179,9 +179,13 @@
         font-weight: bold;
         padding: 4px;
         /*float: right;*/
+
+
+        /*position: relative;*/
     }
     h6 {
-
+    white-space: pre-line;
+    /*text-align: inherit;*/
     }
     </style>
     <script>
