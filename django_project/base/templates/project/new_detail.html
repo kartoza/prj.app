@@ -34,6 +34,17 @@
                     {% endif %}
                     {% if project.description %}
                         <p><i>{{ project.description }}</i></p>
+                    {% else %}
+                        {% if user.is_staff or user.project.owner %}
+                            <h3>No project description defined, but you can
+                                <a href="{% url 'project-update' project.slug %}"
+                                   class="btn btn-default btn-mini btn-edit"
+                                   data-placement="top" data-title="Update {{ project.name }}">
+                                  <span class="glyphicon glyphicon-pencil"></span>
+                                  add one
+                                </a>
+                            </h3>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
@@ -58,6 +69,7 @@
         <div class="col-md-4">
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='sponsors/list/';">
                 <h3>Sponsors</h3>
+                <hr />
             {% if sponsors %}
                 <h4 class="text-muted">
                         View Our Project Sponsors
@@ -76,14 +88,25 @@
                     {% endif %}
                 {% endfor %}
                 </div>
+            {% else %}
+                {% if user.is_staff or user == project.owner %}
+                    <h6>No sponsors are defined, but you can
+                        <a
+                            class="btn btn-default btn-mini" id="action_text"
+                            href='{% url "sponsor-create" project.slug %}'>create one
+                        </a>
+                    </h6>
+                {% endif %}
             {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='certifyingorganisation/list/';">
                 <h3>Certification</h3>
+                <hr />
                 {% if organisations %}
                     <h4 class="text-muted">
                     Certifying Organisations
                     </h4>
+                    <hr />
                     <div class="content-list">
                     {% for organisation in organisations %}
                     <a href="{% url 'certifyingorganisation-detail' project_slug=organisation.project.slug slug=organisation.slug %}">
@@ -91,10 +114,20 @@
                     </a>
                     {% endfor %}
                     </div>
+                {% else %}
+                    {% if user.is_staff or user == project.owner %}
+                        <h6>No certifying organisation are defined, but you can
+                            <a
+                                class="btn btn-default btn-mini" id="action_text"
+                                href='{% url "certifyingorganisation-create" project.slug %}'>register one
+                            </a>
+                        </h6>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='version/list/';">
                 <h3>Release Changelogs</h3>
+                <hr />
                 {% if versions %}
                 <h4 class="text-muted">
                     New Features and Releases
@@ -113,10 +146,20 @@
                         {% endif %}
                     {% endfor %}
                     </div>
+                {% else %}
+                    {% if user.is_staff or user == project.owner %}
+                        <h6>No versions are defined, but you can
+                            <a
+                                class="btn btn-default btn-mini" id="action_text"
+                                href='{% url "version-create" project.slug %}'>create one
+                            </a>
+                        </h6>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='committees/';">
                 <h3>Project Teams</h3>
+                <hr />
                 {% if committees %}
                     <h4 class="text-muted">
                     Collaborate and Decide
@@ -132,11 +175,29 @@
                             </h5>
                         {% endfor %}
                     </div>
+                    {% else %}
+                    {% if user.is_staff or user == project.owner %}
+                        <h6><span id="sent">No teams are defined, but you can</span>
+                            <a
+                                class="btn btn-default btn-mini" id="action_text"
+                                href='{% url "committee-create" project.slug %}'> create one
+                            </a>
+                        </h6>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
     </div>
-
+    <style>
+    #action_text {
+        font-size: 8px;
+        font-weight: bold;
+        padding: 4px;
+    }
+    h6 {
+    white-space: pre-line;
+    }
+    </style>
     <script>
         var slideIndex = 1;
         {% if screenshots %}

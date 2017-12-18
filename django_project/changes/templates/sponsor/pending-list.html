@@ -16,12 +16,14 @@
             {% if unapproved %}Unapproved {% endif %}
             Sponsors
             {% if user.is_authenticated %}
-                <div class="pull-right btn-group">
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                       href='{% url "sponsor-create" project_slug %}'
-                       data-title="Create New Sponsor">
-                        {% show_button_icon "add" %}</a>
-
+                    {% if user.is_staff or user.project.owner %}
+                        <div class="pull-right btn-group">
+                            <a class="btn btn-default btn-mini tooltip-toggle"
+                               href='{% url "sponsor-create" project_slug %}'
+                               data-title="Create New Sponsor">
+                                {% show_button_icon "add" %}
+                            </a>
+                    {% endif %}
                     {% if not unapproved %}
                         <a class="btn btn-default btn-mini tooltip-toggle"
                            href='{% url "pending-sponsor-list" project_slug %}'
