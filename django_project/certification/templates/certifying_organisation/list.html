@@ -17,12 +17,12 @@
             background-color: #F9F9F9;
         }
     </style>
-    
+
     <div class="page-header">
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
             Certifying Organisations
-            {% if user.is_authenticated %}
+            {% if user.is_staff or user.project.owner %}
                 <div class="pull-right btn-group">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "certifyingorganisation-create" project_slug %}'
@@ -52,9 +52,7 @@
         {% if unapproved %}
             <h3>All certifying organisation are approved.</h3>
         {% else %}
-            <h3>No certifying organisation are defined, but you can <a
-                    class="btn btn-default btn-mini"
-                    href='{% url "certifyingorganisation-create" project_slug %}'>register one</a>.</h3>
+            <h3>No certifying organisation are defined.</h3>
         {% endif %}
     {% endifequal %}
 
