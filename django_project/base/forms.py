@@ -62,6 +62,16 @@ class ProjectForm(forms.ModelForm):
             'moderation queue.')
     )
 
+    sponsorship_manager = forms.ModelMultipleChoiceField(
+        queryset=User.objects.order_by('username'),
+        widget=CustomSelectMultipleWidget("user", is_stacked=False),
+        required=False,
+        help_text=_(
+            'Managers of the sponsorship in this project. '
+            'They will be allowed to approve sponsorship entries in the '
+            'moderation queue.')
+    )
+
     # noinspection PyClassicStyleClass
     class Meta:
         """Meta class."""
@@ -75,6 +85,7 @@ class ProjectForm(forms.ModelForm):
             'gitter_room',
             'signature',
             'changelog_manager',
+            'sponsorship_manager',
             'certification_manager',
             'credit_cost',
             'certificate_credit',
@@ -95,6 +106,7 @@ class ProjectForm(forms.ModelForm):
                 Field('precis', css_class="form-control"),
                 Field('signature', css_class="form-control"),
                 Field('changelog_manager', css_class="form-control"),
+                Field('sponsorship_manager', css_class="form-control"),
                 Field('certification_manager', css_class="form-control"),
                 Field('credit_cost', css_class="form-control"),
                 Field('certificate_credit', css_class="form-control"),
@@ -106,6 +118,8 @@ class ProjectForm(forms.ModelForm):
         self.helper.html5_required = False
         super(ProjectForm, self).__init__(*args, **kwargs)
         self.fields['changelog_manager'].label_from_instance = \
+            lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
+        self.fields['sponsorship_manager'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
         self.fields['certification_manager'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
