@@ -21,13 +21,12 @@ from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.core import serializers
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from ..models import Sponsor, SponsorshipPeriod  # noqa
 from ..models import SponsorshipLevel  # noqa
 from ..forms import SponsorForm
-from changes.views.sponsorship_period import SponsorshipPeriodListView  # noqa
 
 logger = logging.getLogger(__name__)
 
@@ -156,7 +155,7 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
             project_slug = self.kwargs.get('project_slug', None)
             if project_slug:
                 project = Project.objects.get(slug=project_slug)
-                queryset = SponsorshipPeriod.objects.filter(
+                queryset = SponsorshipPeriod.approved_objects.filter(
                     project=project).order_by('-sponsorship_level__value')
                 return queryset
             else:
@@ -450,7 +449,7 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
         """
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
-        queryset = Sponsor.approved_objects
+        queryset = Sponsor.objects.all()
         if self.request.user.is_staff:
             queryset = queryset
         else:
@@ -458,7 +457,7 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
                 Q(project=self.project) &
                 (Q(author=self.request.user) |
                  Q(project__owner=self.request.user) |
-                 Q(project__changelog_manager=self.request.user)))
+                 Q(project__sponsorship_manager=self.request.user)))
         return queryset
 
     def get_success_url(self):
@@ -483,7 +482,7 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
                 'ERROR: Sponsor by this name already exists!')
 
 
-class PendingSponsorListView(StaffuserRequiredMixin, SponsorMixin,
+class PendingSponsorListView(LoginRequiredMixin, SponsorMixin,
                              PaginationMixin, ListView):  # noqa
     """List view for pending Sponsor."""
     context_object_name = 'sponsors'
@@ -539,7 +538,7 @@ class PendingSponsorListView(StaffuserRequiredMixin, SponsorMixin,
         return self.queryset
 
 
-class ApproveSponsorView(SponsorMixin, StaffuserRequiredMixin, RedirectView):
+class ApproveSponsorView(SponsorMixin, LoginRequiredMixin, RedirectView):
     """Redirect view for approving Sponsor."""
     permanent = False
     query_string = True
@@ -557,7 +556,12 @@ class ApproveSponsorView(SponsorMixin, StaffuserRequiredMixin, RedirectView):
         :returns: URL
         :rtype: str
         """
-        sponsor_qs = Sponsor.unapproved_objects.all()
+        if self.request.user.is_staff:
+            sponsor_qs = Sponsor.unapproved_objects.all()
+        else:
+            sponsor_qs = Sponsor.unapproved_objects.filter(
+                Q(project__owner=self.request.user) |
+                Q(project__sponsorship_manager=self.request.user))
         sponsor = get_object_or_404(sponsor_qs, slug=slug)
         sponsor.approved = True
         sponsor.save()

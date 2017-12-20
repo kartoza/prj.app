@@ -13,7 +13,7 @@
 {% block content %}
     <div class="row" style="margin-bottom: 15px">
     <div class="btn-group pull-right">
-                {% if user in sponsor.project.changelog_manager.all or user.is_staff or user == sponsor.project.owner or user == sponsor.sponsor.author %}
+                {% if user in sponsor.project.sponsorship_manager.all or user.is_staff or user == sponsor.project.owner or user == sponsor.sponsor.author %}
                 <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                    href='{% url "sponsor-delete" project_slug=sponsor.project.slug slug=sponsor.sponsor.slug %}'
                    data-title="Delete {{ certifyingorganisation.name }}">

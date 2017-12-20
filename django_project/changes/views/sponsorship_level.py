@@ -5,6 +5,7 @@ import logging
 from base.models import Project
 
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.views.generic import (
@@ -407,7 +408,11 @@ class SponsorshipLevelUpdateView(
         if self.request.user.is_staff:
             return qs
         else:
-            return qs.filter(creator=self.request.user)
+            return qs.filter(
+                Q(project=self.project) &
+                (Q(author=self.request.user) |
+                 Q(project__owner=self.request.user) |
+                 Q(project__sponsorship_manager=self.request.user)))
 
     def get_success_url(self):
         """Define the redirect URL
