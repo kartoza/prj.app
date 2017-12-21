@@ -2,7 +2,6 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-import os
 
 
 ROLE = (
@@ -23,7 +22,7 @@ class Domain(models.Model):
         max_length=30
     )
     domain = models.CharField(
-        help_text=_('Custom domain, i.e. www.kartoza.com'),
+        help_text=_('Custom domain, i.e. http://projecta.kartoza.com'),
         max_length=30,
         null=False,
         blank=False,

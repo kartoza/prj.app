@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('role', models.CharField(default=b'project', max_length=30, choices=[(b'project', b'project'), (b'organisation', b'organisation')])),
-                ('domain', models.CharField(help_text='Custom domain, i.e. www.kartoza.com', unique=True, max_length=30)),
+                ('domain', models.CharField(help_text='Custom domain, i.e. http://projecta.kartoza.com', unique=True, max_length=30)),
                 ('approved', models.BooleanField(default=False, help_text='Whether this user domain has been approved for use yet.')),
                 ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
