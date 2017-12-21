@@ -137,12 +137,12 @@ class SponsorshipPeriodListView(
         project_slug = self.kwargs.get('project_slug', None)
         project = Project.objects.get(slug=project_slug)
         context['num_sponsorshipperiods'] = \
-            SponsorshipPeriod.objects.filter(project=project).count()
+            self.get_queryset().count()
         context['unapproved'] = False
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
-            context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = Project.objects.get(slug=project_slug)
         return context
 
     def get_queryset(self, queryset=None):
@@ -232,7 +232,7 @@ class SponsorshipPeriodDetailView(SponsorshipPeriodMixin, DetailView):
                         self).get_context_data(**kwargs)
         project_slug = self.kwargs.get('project_slug', None)
         if project_slug:
-            context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = Project.objects.get(slug=project_slug)
         return context
 
 
@@ -319,6 +319,22 @@ class SponsorshipPeriodDeleteView(
         qs = SponsorshipPeriod.objects.filter(project=self.project)
         return qs
 
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(SponsorshipPeriodDeleteView,
+                        self).get_context_data(**kwargs)
+        project_slug = self.kwargs.get('project_slug', None)
+        if project_slug:
+            context['project'] = Project.objects.get(slug=project_slug)
+        return context
+
 
 # noinspection PyAttributeOutsideInit
 class SponsorshipPeriodCreateView(
@@ -356,6 +372,7 @@ class SponsorshipPeriodCreateView(
                 self).get_context_data(**kwargs)
         context['sponsorshipperiod'] = self.get_queryset() \
             .filter(project=self.project)
+        context['project'] = self.project
         return context
 
     def form_valid(self, form):
@@ -431,6 +448,7 @@ class SponsorshipPeriodUpdateView(
                 self).get_context_data(**kwargs)
         context['sponsorshipperiod'] = self.get_queryset() \
             .filter(project=self.project)
+        context['project'] = self.project
         return context
 
     def get_queryset(self):
@@ -443,7 +461,7 @@ class SponsorshipPeriodUpdateView(
 
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
-        qs = SponsorshipPeriod.approved_objects
+        qs = SponsorshipPeriod.objects.all()
         if self.request.user.is_staff:
             return qs
         else:

@@ -279,6 +279,11 @@ class SponsorshipPeriodForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(SponsorshipPeriodForm, self).__init__(*args, **kwargs)
+        self.fields['sponsor'].queryset = \
+            Sponsor.objects.filter(project=self.project).order_by('name')
+        self.fields['sponsorship_level'].queryset = \
+            SponsorshipLevel.objects.filter(
+                project=self.project).order_by('name')
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
