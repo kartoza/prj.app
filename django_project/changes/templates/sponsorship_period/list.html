@@ -16,11 +16,14 @@
             {% if unapproved %}Unapproved {% endif %}
             Sponsorship Periods
             {% if user.is_authenticated %}
-                <div class="pull-right btn-group">
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                       href='{% url "sponsorshipperiod-create" project_slug %}'
-                       data-title="Create New sponsorship period">
-                        <span class="glyphicon glyphicon-asterisk"></span></a>
+                    {% if user.is_staff or user.project.owner %}
+                        <div class="pull-right btn-group">
+                            <a class="btn btn-default btn-mini tooltip-toggle"
+                               href='{% url "sponsorshipperiod-create" project_slug %}'
+                               data-title="Create New sponsorship period">
+                                <span class="glyphicon glyphicon-asterisk"></span>
+                            </a>
+                    {% endif %}
                     {% if not unapproved %}
                         <a class="btn btn-default btn-mini tooltip-toggle"
                            href='{% url "pending-sponsorshipperiod-list" project_slug %}'
@@ -63,11 +66,11 @@
                 <tr>
                     <td>
                         {% if sponsorshipperiod.sponsor.logo %}
-                        <a href="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsor.logo }}">
-                            <img class="img-responsive"
-                                 src="{% thumbnail sponsorshipperiod.sponsor.logo 30x30 %}"/>
-                        </a>
-                    {% endif %}
+                            <a href="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsor.logo }}">
+                                <img class="img-responsive"
+                                     src="{% thumbnail sponsorshipperiod.sponsor.logo 30x30 %}"/>
+                            </a>
+                        {% endif %}
                     </td>
                     <td>{{ sponsorshipperiod.sponsor }}</td>
                     <td>
@@ -80,24 +83,28 @@
                     <td>{{ sponsorshipperiod.start_date }} - {{ sponsorshipperiod.end_date }}</td>
                     <td>
 
-                        {% if not sponsorshipperiod.approved and user.is_staff %}
+                        {% if not sponsorshipperiod.approved %}
+                            {% if user.is_staff or user == sponsorshipperiod.project.owner or user in sponsorshipperiod.project.sponsorship_manager.all %}
+                                <a class="btn btn-default btn-mini"
+                                   href='{% url "sponsorshipperiod-approve" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                                    <span class="glyphicon glyphicon-thumbs-up"></span>
+                                </a>
+                                <a class="btn btn-default btn-mini"
+                                   href='{% url "sponsorshipperiod-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                                    {% show_button_icon "delete" %}
+                                </a>
+                                <a class="btn btn-default btn-mini"
+                                   href='{% url "sponsorshipperiod-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                                    {% show_button_icon "update" %}
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                        {% if sponsorshipperiod.approved %}
                             <a class="btn btn-default btn-mini"
-                               href='{% url "sponsorshipperiod-approve" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
-                                <span class="glyphicon glyphicon-thumbs-up"></span>
-                            </a>
-                            <a class="btn btn-default btn-mini"
-                               href='{% url "sponsorshipperiod-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
-                                {% show_button_icon "delete" %}
-                            </a>
-                            <a class="btn btn-default btn-mini"
-                               href='{% url "sponsorshipperiod-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
-                                {% show_button_icon "update" %}
+                               href='{% url "sponsorshipperiod-detail" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
+                                <span class="glyphicon glyphicon-eye-open"></span>
                             </a>
                         {% endif %}
-                        <a class="btn btn-default btn-mini"
-                           href='{% url "sponsorshipperiod-detail" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
-                            <span class="glyphicon glyphicon-eye-open"></span>
-                        </a>
                     </td>
                 </tr>
             {% endfor %}

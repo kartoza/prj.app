@@ -61,11 +61,16 @@ some knowledge of running a django site.
 ```
 git clone git://github.com/kartoza/projecta.git
 cd projecta/deployment
+cp btsync-db.env.EXAMPLE btsync-db.env
+cp btsync-media.env.EXAMPLE btsync-media.env
 make build
 make run
 make migrate
 make collectstatic
 ```
+
+If you need backups, put btsync keys in these files. If you don't need backups, 
+you can let the default content.
 
 **intercom.io**
 
@@ -167,5 +172,5 @@ Thank you to the individual contributors who have helped to build projecta:
 * George Irwin : github@grvhi.com
 * Ismail Sunni : ismail@kartoza.com
 * Richard Duivenvoorde : richard@duif.net
-* Rischan Mafrur : rischan@kartoza.com
+* Rischan Mafrur
 

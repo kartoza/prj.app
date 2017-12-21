@@ -437,7 +437,9 @@ class CertifyingOrganisationCreateView(
                     'recipient_lastname': recipient.last_name,
                     'project_name': self.project.name,
                     'site': site,
-                    'project_slug': self.project_slug
+                    'project_slug': self.project_slug,
+                    'organisation_name': self.object.name,
+                    'organisation_country': self.object.country.name,
                 }
 
                 # Send email notification to project owner and
@@ -447,6 +449,8 @@ class CertifyingOrganisationCreateView(
                     'Dear {recipient_firstname} {recipient_lastname},\n\n'
                     'You have a new organisation registered to your project: '
                     '{project_name}.\n'
+                    'Organisation name: {organisation_name}\n'
+                    'Country: {organisation_country}\n'
                     'You may review and approve the organisation by following '
                     'this link:\n'
                     '{site}/en/{project_slug}/pending-certifyingorganisation/'
@@ -569,8 +573,17 @@ class CertifyingOrganisationUpdateView(
         :rtype: QuerySet
         """
 
-        qs = CertifyingOrganisation.objects.all()
-        return qs
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        if self.request.user.is_staff:
+            queryset = CertifyingOrganisation.objects.all()
+        else:
+            queryset = CertifyingOrganisation.objects.filter(
+                Q(project=self.project) &
+                (Q(project__owner=self.request.user) |
+                 Q(organisation_owners=self.request.user) |
+                 Q(project__certification_manager=self.request.user)))
+        return queryset
 
     def get_success_url(self):
         """Define the redirect URL.
