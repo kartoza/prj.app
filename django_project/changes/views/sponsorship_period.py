@@ -142,7 +142,7 @@ class SponsorshipPeriodListView(
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
-            context['project'] = Project.objects.get(slug=project_slug)
+            context['project'] = project
         return context
 
     def get_queryset(self, queryset=None):

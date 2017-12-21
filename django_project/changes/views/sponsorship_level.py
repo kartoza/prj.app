@@ -16,7 +16,7 @@ from django.views.generic import (
     UpdateView,
     RedirectView)
 from django.http import HttpResponseRedirect, Http404
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from ..models import SponsorshipLevel  # noqa
@@ -156,7 +156,8 @@ class SponsorshipLevelListView(
             project_slug = self.kwargs.get('project_slug', None)
             if project_slug:
                 project = Project.objects.get(slug=project_slug)
-                queryset = SponsorshipLevel.approved_objects.filter(project=project)
+                queryset = \
+                    SponsorshipLevel.approved_objects.filter(project=project)
                 return queryset
             else:
                 raise Http404('Sorry! We could not find your Sponsor Period!')
