@@ -11,7 +11,7 @@ ROLE = (
 )
 
 
-class CustomDomain(models.Model):
+class Domain(models.Model):
     """Model to save subscribed user and their custom domain."""
 
     user = models.ForeignKey(User)
@@ -22,11 +22,12 @@ class CustomDomain(models.Model):
         null=False,
         max_length=30
     )
-    custom_domain = models.CharField(
+    domain = models.CharField(
         help_text=_('Custom domain, i.e. www.kartoza.com'),
         max_length=30,
-        null=True,
-        blank=True
+        null=False,
+        blank=False,
+        unique=True,
     )
     approved = models.BooleanField(
         help_text=_('Whether this user domain has been approved for use yet.'),
@@ -34,24 +35,10 @@ class CustomDomain(models.Model):
     )
 
     class Meta:
-        ordering = ['user']
-        unique_together = ['user', 'custom_domain']
+        ordering = ['domain']
 
     def save(self, *args, **kwargs):
-        # update the server_name variable for nginx
-        with open('/home/web/media/server-name.txt', 'w') as f:
-            f.write('server_name ')
-            if not self.pk:
-                for domain in CustomDomain.objects.filter(approved=True):
-                    f.write(domain.custom_domain + ' ')
-            else:
-                for query in CustomDomain.objects.filter(
-                        approved=True).exclude(pk=self.pk):
-                    f.write(query.custom_domain + ' ')
-            if self.approved:
-                f.write(self.custom_domain + ' ')
-            f.write(';')
-        super(CustomDomain, self).save(*args, **kwargs)
+        super(Domain, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'{}: {}'.format(self.user, self.custom_domain)
+        return self.domain

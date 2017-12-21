@@ -12,7 +12,7 @@ Note these admin models inherit reversion (which provides history for a model).
 
 
 from django.contrib import admin
-from models import Project, ProjectScreenshot, CustomDomain
+from models import Project, ProjectScreenshot, Domain
 import reversion
 
 
@@ -44,4 +44,4 @@ class ProjectAdmin(reversion.VersionAdmin):
 
 
 admin.site.register(Project, ProjectAdmin)
-admin.site.register(CustomDomain)
+admin.site.register(Domain)
