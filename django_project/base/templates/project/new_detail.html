@@ -106,7 +106,6 @@
                     <h4 class="text-muted">
                     Certifying Organisations
                     </h4>
-                    <hr />
                     <div class="content-list">
                     {% for organisation in organisations %}
                     <a href="{% url 'certifyingorganisation-detail' project_slug=organisation.project.slug slug=organisation.slug %}">
