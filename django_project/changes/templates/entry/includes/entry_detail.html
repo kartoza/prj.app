@@ -31,7 +31,7 @@
 
             <a class="btn btn-default btn-mini tooltip-toggle"
                data-title="Get Permalink"
-               onclick="copyToClipboard('{{ request.get_host }}{{ request.path }}#{{ entry.slug }}')">
+               onclick="copyToClipboard('http://' + '{{ request.get_host }}{{ request.path }}#{{ entry.slug }}')">
                 <span class="glyphicon glyphicon-link"></span>
             </a>
         </div>
