@@ -116,7 +116,7 @@ class Sponsor(models.Model):
             ('project', 'slug')
         )
         app_label = 'changes'
-        ordering = ['name']
+        ordering = ['project', 'name']
 
     def save(self, *args, **kwargs):
         if not self.pk:

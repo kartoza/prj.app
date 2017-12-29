@@ -16,8 +16,8 @@
             {% if unapproved %}Unapproved {% endif %}
             Sponsorship Periods
             {% if user.is_authenticated %}
-                    {% if user.is_staff or user.project.owner %}
-                        <div class="pull-right btn-group">
+                <div class="pull-right btn-group">
+                    {% if user.is_staff or user == project.owner or user in project.changelog_manager.all %}
                             <a class="btn btn-default btn-mini tooltip-toggle"
                                href='{% url "sponsorshipperiod-create" project_slug %}'
                                data-title="Create New sponsorship period">

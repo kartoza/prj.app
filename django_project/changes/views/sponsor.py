@@ -136,7 +136,7 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
         context['project_slug'] = project_slug
         if project_slug:
             project = Project.objects.get(slug=project_slug)
-            context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = Project.objects.get(slug=project_slug)
             context['levels'] = SponsorshipLevel.objects.filter(
                 project=project)
         return context
@@ -180,7 +180,7 @@ class SponsorWorldMapView(SponsorMixin, ListView):
         project_slug = self.kwargs.get('project_slug', None)
         context = super(SponsorWorldMapView, self).get_context_data(**kwargs)
         if project_slug:
-            context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = Project.objects.get(slug=project_slug)
             project = Project.objects.get(slug=project_slug)
             levels = SponsorshipLevel.objects.filter(project=project)
             context['levels'] = serializers.serialize(
@@ -228,7 +228,7 @@ class SponsorDetailView(SponsorMixin, DetailView):
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
-            context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = Project.objects.get(slug=project_slug)
         return context
 
     def get_queryset(self):
@@ -370,6 +370,7 @@ class SponsorCreateView(LoginRequiredMixin, SponsorMixin, CreateView):
         context = super(SponsorCreateView, self).get_context_data(**kwargs)
         context['sponsors'] = self.get_queryset() \
             .filter(project=self.project)
+        context['project'] = self.project
         return context
 
     def form_valid(self, form):
@@ -438,6 +439,7 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
         context = super(SponsorUpdateView, self).get_context_data(**kwargs)
         context['sponsors'] = self.get_queryset() \
             .filter(project=self.project)
+        context['project'] = self.project
         return context
 
     def get_queryset(self):
@@ -459,6 +461,32 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
                  Q(project__owner=self.request.user) |
                  Q(project__sponsorship_manager=self.request.user)))
         return queryset
+
+    def get_object(self, queryset=None):
+        """Get the object for this view.
+
+        Because Sponsor slugs are unique within a Project,
+        we need to make sure that we fetch the correct Sponsor
+        from the correct Project
+
+        :param queryset: A query set
+        :type queryset: QuerySet
+
+        :returns: Queryset which is filtered to only show a project
+        :rtype: QuerySet
+        :raises: Http404
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+            slug = self.kwargs.get('slug', None)
+            project_slug = self.kwargs.get('project_slug', None)
+            if slug and project_slug:
+                project = Project.objects.get(slug=project_slug)
+                obj = queryset.get(project=project, slug=slug)
+                return obj
+            else:
+                raise Http404(
+                    'Sorry! We could not find your sponsor!')
 
     def get_success_url(self):
         """Define the redirect URL
