@@ -1,22 +1,15 @@
 from django import template
-from django.contrib.auth.models import User
-
+from django.contrib.auth.models import Permission
+from django.shortcuts import get_object_or_404
 
 register = template.Library()
 
-
-@register.assignment_tag(takes_context=True)
-def get_user_perm(context, perm):
-    try:
-        request = context['request']
-        # obj = Project.objects.get(user=request.user)
-        obj = User.objects.get(user=request.user)
-        obj_perms = obj.permission_tags.all()
-        flag = False
-        for p in obj_perms:
-            if perm.lower() == p.codename.lower():
-                flag = True
-                return flag
-        return flag
-    except:
+@register.filter(name='has_perm')
+def has_perm(user, perm_name):
+    perm = get_object_or_404(Permission, name=perm_name)
+    # perm = Permission.objects.get(name=perm_name)
+    perms = perm.permissions.all()
+    if perms:
+        return perm in user.get_all_permissions()
+    else:
         return ""

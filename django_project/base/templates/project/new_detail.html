@@ -1,6 +1,7 @@
 {% extends "project_base.html" %}
 {% load staticfiles %}
 {% load custom_markup %}
+{% load  user_perm %}
 {% load thumbnail %}
 {% block title %}{{ project.name }}{% endblock %}
 
@@ -176,7 +177,7 @@
                         {% endfor %}
                     </div>
                     {% else %}
-                    {% if user.is_staff or user == project.owner %}
+                    {% if request.user|has_perm:"can add project" %}
                         <h6><span id="sent">No teams are defined, but you can</span>
                             <a
                                 class="btn btn-default btn-mini" id="action_text"
@@ -184,6 +185,8 @@
                             </a>
                         </h6>
                     {% endif %}
+{#                {% if user.is_staff or user == project.owner %}#}
+
                 {% endif %}
             </div>
         </div>
