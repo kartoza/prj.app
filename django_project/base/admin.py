@@ -12,7 +12,7 @@ Note these admin models inherit reversion (which provides history for a model).
 
 
 from django.contrib import admin
-from models import Project, ProjectScreenshot, Domain
+from models import Project, ProjectScreenshot, Domain, Organisation
 import reversion
 
 
@@ -46,5 +46,21 @@ class ProjectAdmin(reversion.VersionAdmin):
         return qs
 
 
+class OrganisationAdmin(reversion.VersionAdmin):
+    """Admin for the organisation model."""
+
+    def queryset(self, request):
+        """Ensure we use the correct manager.
+
+        :param request: HttpRequest object
+        """
+        qs = self.model.objects
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
+        return qs
+
+
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Domain)
+admin.site.register(Organisation, OrganisationAdmin)

@@ -15,6 +15,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from unidecode import unidecode
+from organisation import Organisation
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +64,19 @@ def validate_gitter_room_name(value):
             _('%(value)s is not proper gitter room name'),
             params={'value': value},
         )
+
+
+def get_default_organisation():
+    try:
+        owner = User.objects.get(username='timlinux')
+        organisation = \
+            Organisation.objects.get_or_create(
+                name='Kartoza', approved=True, owner=owner)[0]
+    except User.DoesNotExist:
+        organisation = \
+            Organisation.objects.get_or_create(
+                name='Kartoza', approved=True)[0]
+    return organisation.pk
 
 
 class Project(models.Model):
@@ -179,6 +193,13 @@ class Project(models.Model):
             'Managers of the certification app in this project. '
             'They will receive email notification about organisation and have'
             ' the same permissions as project owner in the certification app.')
+    )
+
+    organisation = models.ForeignKey(
+        Organisation,
+        default=get_default_organisation,
+        null=True,
+        on_delete=models.SET_DEFAULT,
     )
 
     owner = models.ForeignKey(User)

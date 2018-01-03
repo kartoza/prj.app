@@ -9,7 +9,7 @@
     <div class="row" style="margin-bottom: 20px">
         {% if user.is_authenticated %}
           <div class="btn-group pull-right">
-            <a href="#"
+            <a href="{% url 'register-domain' %}"
                class="btn btn-default btn-m tooltip-toggle btn-edit"
                data-placement="top" data-title="Set up custom domain">
               <i class="fa fa-exchange"></i>

@@ -19,6 +19,18 @@ from views import (
     GithubSubmitView,
     custom_404,
     project_sponsor_programme,
+
+    DomainNotFound,
+    RegisterDomainView,
+    DomainThankYouView,
+    DomainListView,
+    PendingDomainListView,
+    ApproveDomainView,
+
+    CreateOrganisationView,
+    OrganisationListView,
+    ApproveOrganisationView,
+    PendingOrganisationListView,
 )
 
 urlpatterns = patterns(
@@ -27,6 +39,40 @@ urlpatterns = patterns(
     url(regex='^$',
         view=ProjectListView.as_view(),
         name='home'),
+
+    # Custom domain management
+    url(regex='^domain-not-found/$',
+        view=DomainNotFound.as_view(),
+        name='domain-not-found'),
+    url(regex='^register-domain/$',
+        view=RegisterDomainView.as_view(),
+        name='register-domain'),
+    url(regex='^domain-success/$',
+        view=DomainThankYouView.as_view(),
+        name='domain-registered'),
+    url(regex='^domain-list/$',
+        view=DomainListView.as_view(),
+        name='domain-list'),
+    url(regex='^pending-list-domain/$',
+        view=PendingDomainListView.as_view(),
+        name='domain-pending-list'),
+    url(regex='^domain-approve/(?P<pk>[\w-]+)/$',
+        view=ApproveDomainView.as_view(),
+        name='domain-approve'),
+
+    # Organisation management
+    url(regex='^create-organisation/$',
+        view=CreateOrganisationView.as_view(),
+        name='create-organisation'),
+    url(regex='^list-organisation/$',
+        view=OrganisationListView.as_view(),
+        name='list-organisation'),
+    url(regex='^pending-list-organisation/$',
+        view=PendingOrganisationListView.as_view(),
+        name='pending-list-organisation'),
+    url(regex='^approve-organisation/(?P<pk>[\w-]+)/$',
+        view=ApproveOrganisationView.as_view(),
+        name='approve-organisation'),
 
     # Project management
     url(regex='^pending-project/list/$',
