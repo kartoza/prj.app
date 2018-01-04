@@ -2,7 +2,7 @@
 # flake8: noqa
 
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.test.client import Client
 from base.tests.model_factories import ProjectF
 from vota.tests.model_factories import VoteF, CommitteeF, BallotF
@@ -15,6 +15,7 @@ import datetime
 class TestVoteViews(TestCase):
     """Tests that Vote views work."""
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """
         Setup before each test
@@ -39,6 +40,7 @@ class TestVoteViews(TestCase):
         self.ballot = BallotF.create(committee=self.committee)
         self.vote = VoteF.create(ballot=self.ballot)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VoteCreateView_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -53,6 +55,7 @@ class TestVoteViews(TestCase):
         ]
         self.assertEqual(resp.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VoteCreateView_no_login(self):
         client = Client()
         response = client.get(reverse('vote-create', kwargs={
@@ -62,6 +65,7 @@ class TestVoteViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VoteCreate_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -77,6 +81,7 @@ class TestVoteViews(TestCase):
         data = json.loads(json_return)
         self.assertTrue(data['successful'])
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VoteCreate_no_login(self):
         client = Client()
         post_data = {
@@ -95,10 +100,14 @@ class TestVoteViews(TestCase):
 class TestBallotViews(TestCase):
     """Tests that Ballot views work."""
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """
         Setup before each test
         """
+        self.client = Client()
+        self.client.post(
+            '/set_language/', data={'language': 'en'})
         logging.disable(logging.CRITICAL)
         self.user = UserF.create(**{
             'username': 'timlinux',
@@ -118,6 +127,7 @@ class TestBallotViews(TestCase):
                                              users=[self.user])
         self.ballot = BallotF.create(committee=self.committee)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotDetailView_no_login(self):
         client = Client()
         response = client.get(reverse('ballot-detail', kwargs={
@@ -127,6 +137,7 @@ class TestBallotViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotDetailView_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -143,6 +154,7 @@ class TestBallotViews(TestCase):
         self.assertEqual(response.context_data['ballot'],
                          self.ballot)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotListView_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -156,6 +168,7 @@ class TestBallotViews(TestCase):
         # ]
         # self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotCreateView_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -169,6 +182,7 @@ class TestBallotViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotCreateView_no_login(self):
         client = Client()
         response = client.get(reverse('ballot-create', kwargs={
@@ -177,6 +191,7 @@ class TestBallotViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotCreate_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -200,6 +215,7 @@ class TestBallotViews(TestCase):
             'slug': 'new-test-ballot'
         }))
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotCreate_no_login(self):
         client = Client()
         post_data = {
@@ -218,6 +234,7 @@ class TestBallotViews(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotUpdateView_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -232,6 +249,7 @@ class TestBallotViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotUpdateView_no_login(self):
         client = Client()
         response = client.get(reverse('ballot-update', kwargs={
@@ -241,6 +259,7 @@ class TestBallotViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotUpdate_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -265,6 +284,7 @@ class TestBallotViews(TestCase):
             'slug': self.ballot.slug
         }))
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotUpdate_no_login(self):
         client = Client()
         post_data = {
@@ -284,6 +304,7 @@ class TestBallotViews(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotDeleteView_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -298,6 +319,7 @@ class TestBallotViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotDeleteView_no_login(self):
         client = Client()
         response = client.get(reverse('ballot-delete', kwargs={
@@ -307,6 +329,7 @@ class TestBallotViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotDelete_with_login(self):
         client = Client()
         ballot_to_delete = BallotF.create(committee=self.committee)
@@ -325,6 +348,7 @@ class TestBallotViews(TestCase):
         # the object is deleted does not currently pass as expected.
         # self.assertTrue(category_to_delete.pk is None)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_BallotDelete_no_login(self):
         client = Client()
         ballot_to_delete = BallotF.create(committee=self.committee)
@@ -339,6 +363,7 @@ class TestBallotViews(TestCase):
 class TestCommitteeViews(TestCase):
     """Tests that Committee views work."""
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """
         Setup before each test
@@ -361,6 +386,7 @@ class TestCommitteeViews(TestCase):
         self.committee = CommitteeF.create(project=self.project,
                                              users=[self.user])
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CommitteeDetailView(self):
         client = Client()
         response = client.get(reverse('committee-detail', kwargs={
@@ -375,6 +401,7 @@ class TestCommitteeViews(TestCase):
         self.assertEqual(response.context_data['committee'],
                          self.committee)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CommitteeCreateView_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -387,6 +414,7 @@ class TestCommitteeViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CommitteeCreateView_no_login(self):
         client = Client()
         response = client.get(reverse('committee-create', kwargs={
@@ -394,6 +422,7 @@ class TestCommitteeViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CommitteeCreate_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -413,6 +442,7 @@ class TestCommitteeViews(TestCase):
             'project_slug': self.project.slug
         }))
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CommitteeCreate_no_login(self):
         client = Client()
         post_data = {
@@ -425,6 +455,7 @@ class TestCommitteeViews(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CommitteeUpdateView_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -438,6 +469,7 @@ class TestCommitteeViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CommitteeUpdateView_no_login(self):
         client = Client()
         response = client.get(reverse('committee-update', kwargs={
@@ -446,6 +478,7 @@ class TestCommitteeViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CommitteeUpdate_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -467,6 +500,7 @@ class TestCommitteeViews(TestCase):
             'slug': self.committee.slug
         }))
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CommitteeUpdate_no_login(self):
         client = Client()
         post_data = {
@@ -484,6 +518,7 @@ class TestCommitteeViews(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CommitteeDeleteView_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -497,6 +532,7 @@ class TestCommitteeViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CommitteeDeleteView_no_login(self):
         client = Client()
         response = client.get(reverse('committee-delete', kwargs={
@@ -505,6 +541,7 @@ class TestCommitteeViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CommitteeDelete_with_login(self):
         client = Client()
         committee_to_delete = CommitteeF.create(project=self.project)
@@ -520,6 +557,7 @@ class TestCommitteeViews(TestCase):
         # currently pass as expected.
         # self.assertTrue(category_to_delete.pk is None)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryDelete_no_login(self):
         client = Client()
         committee_to_delete = CommitteeF.create()

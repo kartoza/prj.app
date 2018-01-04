@@ -67,15 +67,12 @@ def validate_gitter_room_name(value):
 
 
 def get_default_organisation():
-    try:
-        owner = User.objects.get(username='timlinux')
-        organisation = \
-            Organisation.objects.get_or_create(
-                name='Kartoza', approved=True, owner=owner)[0]
-    except User.DoesNotExist:
-        organisation = \
-            Organisation.objects.get_or_create(
-                name='Kartoza', approved=True)[0]
+    # The owner of the default organisation is purposely empty because in the
+    # unittest it raises error since there are duplicates. But the owner of
+    # default organisation can be changed in the live site.
+
+    organisation = \
+        Organisation.objects.get_or_create(name='Kartoza', approved=True)[0]
     return organisation.pk
 
 
@@ -195,6 +192,8 @@ class Project(models.Model):
             ' the same permissions as project owner in the certification app.')
     )
 
+    # Organisation where a project belongs, when the organisation is deleted,
+    #  the project will automatically belongs to default organisation.
     organisation = models.ForeignKey(
         Organisation,
         default=get_default_organisation,

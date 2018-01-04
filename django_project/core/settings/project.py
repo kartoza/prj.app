@@ -77,3 +77,13 @@ PIPELINE_CSS['project'] = {
         'media': 'screen, projection',
     },
 }
+
+VALID_DOMAIN = [
+            '0.0.0.0',
+            'staging.projecta.kartoza.com',
+            'changelog.linfiniti.com',
+            'changelog.kartoza.com',
+            'changelog.qgis.org',
+            'changelog.inasafe.org',
+            'staging.changelog.qgis.org'
+        ]

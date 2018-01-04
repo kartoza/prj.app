@@ -137,19 +137,10 @@ class CheckDomainMiddleware(object):
         pass
 
     def process_request(self, request):
-        valid_domain = [
-            '0.0.0.0',
-            'staging.projecta.kartoza.com',
-            'changelog.linfiniti.com',
-            'changelog.kartoza.com',
-            'changelog.qgis.org',
-            'changelog.inasafe.org',
-            'staging.changelog.qgis.org'
-        ]
 
         try:
             domain = request.get_host().split(':')[0]
-            if domain in valid_domain:
+            if domain in settings.VALID_DOMAIN:
                 return None
             else:
                 custom_domain = \
@@ -170,8 +161,7 @@ class CheckDomainMiddleware(object):
                 return HttpResponseRedirect(
                     'http://0.0.0.0:61202/en/domain-not-found/')
             else:
-                # for production
-                site = Site.objects.get_current()
+                # for production the domain is hardcoded for consistency
                 return HttpResponseRedirect(
-                    'http://{}/en/domain-not-found/'.format(site)
+                    'http://changelog.qgis.org/en/domain-not-found/'
                 )
