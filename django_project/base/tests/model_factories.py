@@ -29,4 +29,3 @@ class OrganisationF(factory.django.DjangoModelFactory):
     name = 'Test Organisation'
     owner = factory.SubFactory(UserF)
     approved = True
-

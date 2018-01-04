@@ -16,7 +16,8 @@ class Organisation(models.Model):
     )
 
     approved = models.BooleanField(
-        help_text=_('Whether this organisation has been approved for use yet.'),
+        help_text=_(
+            'Whether this organisation has been approved for use yet.'),
         default=False
     )
 

@@ -10,7 +10,7 @@ import logging
 class TestViews(TestCase):
     """Tests that Project views work."""
 
-    @override_settings(VALID_DOMAIN=['testserver',])
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """
         Setup before each test
@@ -39,7 +39,7 @@ class TestViews(TestCase):
         self.unapproved_project = ProjectF.create(approved=False)
         self.test_organisation = OrganisationF.create()
 
-    @override_settings(VALID_DOMAIN=['testserver',])
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_ProjectListView(self):
         client = Client()
         response = client.get(reverse('home'))
@@ -51,7 +51,7 @@ class TestViews(TestCase):
         self.assertEqual(response.context_data['object_list'][0],
                          self.test_project)
 
-    @override_settings(VALID_DOMAIN=['testserver',])
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_ProjectCreateView_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -62,13 +62,13 @@ class TestViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
-    @override_settings(VALID_DOMAIN=['testserver',])
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_ProjectCreateView_no_login(self):
         client = Client()
         response = client.get(reverse('project-create'))
         self.assertEqual(response.status_code, 302)
 
-    @override_settings(VALID_DOMAIN=['testserver',])
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_ProjectCreate_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -83,7 +83,7 @@ class TestViews(TestCase):
         response = client.post(reverse('project-create'), post_data)
         self.assertRedirects(response, reverse('pending-project-list'))
 
-    @override_settings(VALID_DOMAIN=['testserver',])
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_ProjectCreate_no_login(self):
         client = Client()
         post_data = {
@@ -92,7 +92,7 @@ class TestViews(TestCase):
         response = client.post(reverse('project-create'), post_data)
         self.assertEqual(response.status_code, 302)
 
-    @override_settings(VALID_DOMAIN=['testserver',])
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_ProjectUpdateView_with_login(self):
         client = Client()
         client.login(username='timlinux', password='password')
@@ -105,7 +105,7 @@ class TestViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
-    @override_settings(VALID_DOMAIN=['testserver',])
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_ProjectUpdateView_no_login(self):
         client = Client()
         response = client.get(reverse('project-update', kwargs={

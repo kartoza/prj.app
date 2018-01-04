@@ -18,7 +18,7 @@ class TestCheckDomainMiddleware(TestCase):
         logging.disable(logging.CRITICAL)
 
     # Override project settings to include testdomain as valid domain.
-    @override_settings(VALID_DOMAIN=['testdomain',])
+    @override_settings(VALID_DOMAIN=['testdomain', ])
     def test_valid_domain(self):
         client = Client(SERVER_NAME='testdomain')
         client.post(
