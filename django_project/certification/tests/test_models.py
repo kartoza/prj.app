@@ -113,6 +113,12 @@ class TestAttendee(TestCase):
 
         # check if model variable exists.
         self.assertTrue(model.firstname is not None)
+        self.assertTrue(model.surname is not None)
+        self.assertTrue(model.email is not None)
+        self.assertTrue(model.slug is not None)
+        self.assertTrue(model.certifying_organisation is not None)
+        self.assertTrue(model.author is not None)
+
 
     def test_Attendee_delete(self):
         """Test attendee model deletion."""
@@ -130,7 +136,8 @@ class TestAttendee(TestCase):
         new_model_data = {
             'firstname': 'new attendee firstname',
             'surname': 'new attendee surname',
-            'email': 'new attendee email'
+            'email': 'new attendee email',
+            'slug': 'new-attendee-slug'
         }
         model.__dict__.update(new_model_data)
         model.save()
