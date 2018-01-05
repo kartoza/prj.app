@@ -29,8 +29,13 @@ class TestCertifyingOrganisation(TestCase):
         # check if PK exists.
         self.assertTrue(model.pk is not None)
 
-        # check if model name exists.
+        # check if model attributes exists.
         self.assertTrue(model.name is not None)
+        self.assertTrue(model.organisation_email is not None)
+        self.assertTrue(model.address is not None)
+        self.assertTrue(model.organisation_phone is not None)
+        self.assertTrue(model.approved is not None)
+        self.assertTrue(model.project is not None)
 
     def test_Certifying_Organisation_delete(self):
         """Test course type model creation."""
@@ -163,8 +168,13 @@ class TestCourse(TestCase):
         # check if PK exists.
         self.assertTrue(model.pk is not None)
 
-        # check if model name exists.
+        # check if model attributes exists.
         self.assertTrue(model.name is not None)
+        self.assertTrue(model.course_convener is not None)
+        self.assertTrue(model.certifying_organisation is not None)
+        self.assertTrue(model.course_type is not None)
+        self.assertTrue(model.training_center is not None)
+        self.assertTrue(model.author is not None)
 
     def test_Course_delete(self):
         """Test course model deletion."""
