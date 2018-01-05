@@ -50,7 +50,11 @@ class TestCertifyingOrganisation(TestCase):
         """Test certifying organisation model read."""
 
         model = CertifyingOrganisationF.create(
-            name=u'Certifying Organisation update'
+            name=u'Certifying Organisation update',
+            organisation_email=u'CertifyingOrganisation@gmail.com',
+            address=u'Certifying Org address 123',
+            organisation_phone=u'+260972394874',
+            approved=u'True',
         )
 
         self.assertTrue(model.name == 'Certifying Organisation update')
