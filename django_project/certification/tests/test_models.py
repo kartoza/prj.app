@@ -57,7 +57,21 @@ class TestCertifyingOrganisation(TestCase):
             approved=u'True',
         )
 
-        self.assertTrue(model.name == 'Certifying Organisation update')
+        self.assertTrue(
+            model.name == 'Certifying Organisation update'
+        )
+        self.assertTrue(
+            model.organisation_email == 'CertifyingOrganisation@gmail.com'
+        )
+        self.assertTrue(
+            model.address == 'Certifying Org address 123'
+        )
+        self.assertTrue(
+            model.organisation_phone == '+260972394874'
+        )
+        self.assertTrue(
+            model.approved == 'True'
+        )
 
     def test_Certifying_Organisation_update(self):
         """Test certifying organisation update."""
@@ -237,7 +251,10 @@ class TestTrainingCenter(TestCase):
         # check if updated.
         for key, val in new_model_data.items():
             self.assertEqual(model.__dict__.get(key), val)
-        self.assertTrue(model.Address == 'new Training Center address')
+            self.assertTrue(model.Address == 'new Training Center address')
+            self.assertTrue(model.phone == 'new Training Center phone')
+            self.assertTrue(model.email == 'new Training Center email')
+            self.assertTrue(model.name == 'new Training Center name')
 
 
 class TestCourseType(TestCase):
