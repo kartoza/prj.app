@@ -295,6 +295,7 @@ class TestCourseType(TestCase):
         # check if updated.
         for key, val in new_model_data.items():
             self.assertEqual(model.__dict__.get(key), val)
+            self.assertTrue(model.name == 'new Course Type name')
 
 
 class TestCourseConvener(TestCase):
@@ -309,6 +310,18 @@ class TestCourseConvener(TestCase):
         """Test course convener model creation."""
 
         model = CourseConvenerF.create()
+        new_model_data = {
+            'title' : 'new Course Convener Title',
+            'degree' : 'new Course Convener Degree',
+        }
+        model.__dict__.update(new_model_data)
+        model.save()
+
+        # check if updated
+        for key, val in new_model_data.items():
+            self.assertEqual(model.__dict__.get(key), val)
+            self.assertTrue(model.title == 'new Course Convener Title')
+            self.assertTrue(model.degree == 'new Course Convener Degree')
 
         # check if PK exists.
         self.assertTrue(model.pk is not None)
