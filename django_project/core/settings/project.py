@@ -18,6 +18,7 @@ INSTALLED_APPS += (
     'github_issue',
     'vota',
     'certification',
+    'lesson',
 )
 
 # Due to profile page does not available,
