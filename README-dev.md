@@ -52,7 +52,14 @@ Now use these credentials:
 * Password: docker
 * Python interpreter path: ``/usr/local/bin/python``
 
-When prompted about host authenticity, click Yes
+When prompted about host authenticity, click Yes.
+After the python interpreter is set, set its path mapping:
+
+  * **Local path:** `<path to your git repo>/django_project`
+  * **Remote path:** `/home/web/django_project`
+
+After that you should see something like this:
+   `<Project root>/django_project→/home/web/django_project`
 
 In settings, django support:
 
@@ -67,14 +74,14 @@ In settings, django support:
 ### Create the django run configuration
 
 * Run -> Edit configurations
-* Click the green + icon in the top left corner
+* Click the `+` icon in the top left corner
 * Choose ``Django server`` from the popup list
 
 Now set these options:
 
 * **Name:** Django Server
 * **Host:** 0.0.0.0
-* **Port:** (use the http port specified in the docker-compose.yml file)
+* **Port:** (use the http port specified in the docker-compose.yml file, e.g. 8080)`*` **Run browser** If checked, it will open the url after you click run. You should be able to access the running projecta on 0.0.0.0:61202 (the port that mapped to 8080)
 * **Additional options:** ``--settings=core.settings.dev_docker``
 * **Environment vars:** Leave as default unless you need to add something to the env
 * **Python interpreter:** Ensure it is set you your remote interpreter (should be

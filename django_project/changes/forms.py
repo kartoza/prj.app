@@ -279,6 +279,13 @@ class SponsorshipPeriodForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(SponsorshipPeriodForm, self).__init__(*args, **kwargs)
+        # Filter items to only show the approved items in the same project
+        self.fields['sponsor'].queryset = \
+            Sponsor.objects.filter(
+                project=self.project, approved=True).order_by('name')
+        self.fields['sponsorship_level'].queryset = \
+            SponsorshipLevel.objects.filter(
+                project=self.project, approved=True).order_by('name')
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):

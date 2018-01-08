@@ -74,11 +74,10 @@
         <div class="col-md-4">
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='sponsors/list/';">
                 <h3>Sponsors</h3>
-                <hr />
             {% if sponsors %}
-                <h4 class="text-muted">
-                        View Our Project Sponsors
-                </h4>
+                <h6 class="text-muted">
+                    View Our Project Sponsors
+                </h6>
                 <div class="content-list">
                 {% for sponsor in sponsors %}
                     {% if sponsor.current_sponsor %}
@@ -106,12 +105,10 @@
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='certifyingorganisation/list/';">
                 <h3>Certification</h3>
-                <hr />
                 {% if organisations %}
-                    <h4 class="text-muted">
+                    <h6 class="text-muted">
                     Certifying Organisations
-                    </h4>
-                    <hr />
+                    </h6>
                     <div class="content-list">
                     {% for organisation in organisations %}
                     <a href="{% url 'certifyingorganisation-detail' project_slug=organisation.project.slug slug=organisation.slug %}">
@@ -132,11 +129,10 @@
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='version/list/';">
                 <h3>Release Changelogs</h3>
-                <hr />
                 {% if versions %}
-                <h4 class="text-muted">
+                <h6 class="text-muted">
                     New Features and Releases
-                  </h4>
+                  </h6>
                     <div class="version-list">
                     {% for version in versions %}
                         {% if version.approved %}
@@ -164,11 +160,10 @@
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='committees/';">
                 <h3>Project Teams</h3>
-                <hr />
                 {% if committees %}
-                    <h4 class="text-muted">
+                    <h6 class="text-muted">
                     Collaborate and Decide
-                  </h4>
+                  </h6>
                     <div class="content-list">
                         {% for team in committees %}
                             <h5>
@@ -200,7 +195,12 @@
         padding: 4px;
     }
     h6 {
-    white-space: pre-line;
+        white-space: pre-line;
+        font-size: 12pt;
+        margin-top: -5px;
+    }
+    h3 {
+        margin-bottom: -5px;
     }
     </style>
     <script>
