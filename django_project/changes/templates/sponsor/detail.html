@@ -19,6 +19,15 @@
                    data-title="Delete {{ certifyingorganisation.name }}">
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
+
+                <p>
+                  <a class="btn btn-default btn-mini tooltip-toggle"
+                         data-title="Download invoice"
+                         href='{% url 'sponsor-invoice' project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                    <span class="glyphicon glyphicon-download"></span> Invoice
+                  </a>
+                </p>
+
                 <a class="btn btn-default btn-mini tooltip-toggle"
                    href='{% url "sponsor-update" project_slug=sponsor.project.slug slug=sponsor.sponsor.slug %}'
                    data-title="Edit {{ certifyingorganisation.name }}">

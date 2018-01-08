@@ -53,6 +53,7 @@ from views import (
     SponsorUpdateView,
     PendingSponsorListView,
     ApproveSponsorView,
+    GenerateSponsorPDFView,
 
     # Sponsorship Level
 
@@ -206,6 +207,10 @@ urlpatterns = patterns(
               '\w.-]+)/atom$',
         view=AtomEntryFeed(),
         name='entry-atom-feed'),
+
+    # url(regex='^(?P<project_slug>[\w-]+)/sponsor/(?P<slug>[\w-]+)/invoice/$',
+    #     view=GenerateSponsorPDFView.as_view(),
+    #     name='sponsor-invoice'),
 
     # Feeds sponsors in a specific project
     url(regex='^(?P<project_slug>[\w-]+)/sponsors/rss/$',
