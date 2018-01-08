@@ -664,11 +664,11 @@ def generate_sponsor_cloud(request, **kwargs):
             'image': image_path,
             'the_project': project})
 
-class GenerateSponsorPDFView(SponsorMixin, LoginRequiredMixin, TemplateView):
 
+class GenerateSponsorPDFView(SponsorMixin, LoginRequiredMixin, TemplateView):
+    """Template View for invoice generation"""
     context_object_name = 'sponsors'
     template_name = 'sponsor/invoice.html'
-
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
