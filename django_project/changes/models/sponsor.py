@@ -49,6 +49,12 @@ class Sponsor(models.Model):
         blank=False,
         unique=False)  # there is a unique together rule in meta class below
 
+    sponsorship_contact_name = models.CharField(
+        help_text=_("Full name of sponsorship contact person."),
+        max_length=255,
+        null=True,
+        blank=True)
+
     sponsor_url = models.CharField(
         help_text='Input the sponsor URL.',
         max_length=255,
@@ -77,6 +83,12 @@ class Sponsor(models.Model):
 
     sponsor_email = models.CharField(
         help_text='Input an email of sponsor.',
+        max_length=255,
+        null=True,
+        blank=True)
+
+    sponsorship_contact_email = models.CharField(
+        help_text='Email of sponsorship contact.',
         max_length=255,
         null=True,
         blank=True)

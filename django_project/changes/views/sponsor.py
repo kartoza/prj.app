@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.views.generic import (
-    View,
+    TemplateView,
     ListView,
     CreateView,
     DeleteView,
@@ -22,6 +22,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.core import serializers
+from django.template.loader import get_template
 from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
@@ -663,11 +664,11 @@ def generate_sponsor_cloud(request, **kwargs):
             'image': image_path,
             'the_project': project})
 
-
- class GenerateSponsorPDFView(View):
+class GenerateSponsorPDFView(SponsorMixin, LoginRequiredMixin, TemplateView):
 
     context_object_name = 'sponsors'
     template_name = 'sponsor/invoice.html'
+
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -678,21 +679,22 @@ def generate_sponsor_cloud(request, **kwargs):
         :returns: Context data which will be passed to the template.
         :rtype: dict
         """
-    context = super(GenerateSponsorPDFView, self).get_context_data(
-            pagesize="A4",
-            **kwargs
-        )
+        context = super(GenerateSponsorPDFView, self).get_context_data(
+                pagesize="A4",
+                **kwargs
+            )
         project_slug = self.kwargs.get('project_slug', None)
         sponsor_slug = self.kwargs.get('slug', None)
         sponsors = SponsorshipPeriod.approved_objects.all()
 
         context['project_slug'] = project_slug
+        context['sponsor_slug'] = sponsor_slug
+        context['sponsors'] = sponsors
         if project_slug and sponsor_slug:
             project = Project.objects.get(slug=project_slug)
             context['sponsor'] = sponsors.get(
                 project=project,
                 slug=sponsor_slug)
-            # context['date'] = time.strftime("%d/%m/%Y")
             context['project'] = project
             context['invoice_no'] = '12345'
             context['title'] = '{}-invoice-{}-{}'.format(
@@ -709,7 +711,7 @@ def generate_sponsor_cloud(request, **kwargs):
         pdf = render_to_pdf('sponsor/invoice.html', context)
         if pdf:
             response = HttpResponse(pdf, content_type='application/pdf')
-            filename = "Invoice_%s.pdf" %("12341231")
+            filename = "Invoice_%s.pdf" %(context['title'])
             content = "inline; filename='%s'" %(filename)
             download = request.GET.get("download")
             if download:
