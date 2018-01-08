@@ -679,10 +679,8 @@ class GenerateSponsorPDFView(SponsorMixin, LoginRequiredMixin, TemplateView):
         :returns: Context data which will be passed to the template.
         :rtype: dict
         """
-        context = super(GenerateSponsorPDFView, self).get_context_data(
-                pagesize="A4",
-                **kwargs
-            )
+        context = super(GenerateSponsorPDFView, self).\
+            get_context_data(pagesize="A4", **kwargs)
         project_slug = self.kwargs.get('project_slug', None)
         sponsor_slug = self.kwargs.get('slug', None)
         sponsors = SponsorshipPeriod.approved_objects.all()
@@ -707,15 +705,15 @@ class GenerateSponsorPDFView(SponsorMixin, LoginRequiredMixin, TemplateView):
         template = get_template('sponsor/invoice.html')
         context = self.get_context_data(**kwargs)
 
-        html = template.render(context)
+        template.render(context)
         pdf = render_to_pdf('sponsor/invoice.html', context)
         if pdf:
             response = HttpResponse(pdf, content_type='application/pdf')
-            filename = "Invoice_%s.pdf" %(context['title'])
-            content = "inline; filename='%s'" %(filename)
+            filename = "Invoice_%s.pdf" % (context['title'])
+            content = "inline; filename='%s'" % (filename)
             download = request.GET.get("download")
             if download:
-                content = "attachment; filename='%s'" %(filename)
+                content = "attachment; filename='%s'" % (filename)
             response['Content-Disposition'] = content
             return response
         return HttpResponse("Not found")
