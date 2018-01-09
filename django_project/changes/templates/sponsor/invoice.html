@@ -13,6 +13,10 @@
             body {
                 font-family: "Arial", "Helvetica", "sans-serif";
                 color: #333333;
+                padding-top: 10pt;
+                padding-left: 7pt;
+                padding-right: 7pt;
+                padding-bottom: 7pt;
             }
 
             img {
@@ -26,6 +30,15 @@
             p {
                 padding-bottom: -10px;
                 font-size: 9pt;
+            }
+
+            #sponsorship-title {
+                padding-top: 2pt;
+            }
+
+            #salutation {
+                margin: 0;
+                padding-left: inherit;
             }
 
         </style>
@@ -44,9 +57,8 @@
                         </td>
                         <td colspan="2" style="vertical-align:top">
                             <p><b>{{ project.name }}</b></p>
-                            <p><b>{{ project.description }}</b></p>
-                            <p></p>
-                            <p>{{ project.owner.first_name }} {{ project.owner.last_name }}</p>
+                            <p id="sponsorship-title"><b>{{ sponsor.sponsor.sponsorship_contact_title }}</b></pid>
+                            <p>{{ sponsor.sponsor.sponsorship_office_address | linebreaksbr }}</p>
                         </td>
                         <td colspan="1" align="right" style="vertical-align: top">
                             <p><a href="#">http://{{ project.slug }}.org</a></p>
@@ -58,7 +70,7 @@
                     </tr>
                     <tr style="padding-bottom: 25px;">
                         <td colspan="4" style="vertical-align: top" align="right">
-                            <p>{{ date }}</p>
+                            <p>Date: <i>{{ date }}</i></p>
                         </td>
                     </tr>
                     <tr style="padding-bottom: 50px;">
@@ -66,7 +78,7 @@
                             <p><b>{{ sponsor.sponsor.name }}</b></p>
                             <p>{{ sponsor.sponsor.contact_person }}</p>
                             {% if sponsor.sponsor.address %}
-                                <p>{{ sponsor.sponsor.address }}</p>
+                                <p>{{ sponsor.sponsor.address | linebreaksbr }}</p>
                             {% endif %}
 
                             <p>{{ sponsor.sponsor.country.name }}</p>
@@ -107,8 +119,7 @@
                     </tr>
                     <tr style="padding-top: 35px">
                         <td colspan="4">
-                            <p> Best Regards</p>
-                            <br/>
+                            <p id="salutation"> Best Regards</p>
                             <p>
                                 {{ sponsor.sponsor.sponsorship_contact_name }} <br/>
                                 {{ project.name }}
@@ -119,7 +130,6 @@
             </table>
 
         </div>
-        <hr class='hrItem' />
     {% endblock %}
     </body>
 </html>

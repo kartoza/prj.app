@@ -165,6 +165,8 @@ class SponsorForm(forms.ModelForm):
         fields = (
             'name',
             'sponsorship_contact_name',
+            'sponsorship_contact_title',
+            'sponsorship_office_address',
             'address',
             'country',
             'sponsor_url',
@@ -186,6 +188,8 @@ class SponsorForm(forms.ModelForm):
                 form_title,
                 Field('name', css_class='form-control'),
                 Field('sponsorship_contact_name', css_class='form-control'),
+                Field('sponsorship_contact_title', css_class='form-control'),
+                Field('sponsorship_office_address', css_class='form-control'),
                 Field('address', css_class='form-control'),
                 Field('country', css_class='form-control chosen-select'),
                 Field('sponsor_url', css_class='form-control'),

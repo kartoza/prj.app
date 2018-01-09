@@ -2,10 +2,9 @@ __author__ = 'rischan'
 
 
 import os
+import time
 import logging
-from base.models import Project
 
-from PIL import Image
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
@@ -23,14 +22,18 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.core import serializers
 from django.template.loader import get_template
+
 from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
+from PIL import Image
 
-from ..utils import render_to_pdf
 
+from base.models import Project
 from ..models import Sponsor, SponsorshipPeriod  # noqa
 from ..models import SponsorshipLevel  # noqa
 from ..forms import SponsorForm
+
+from ..utils import render_to_pdf
 
 logger = logging.getLogger(__name__)
 
@@ -688,6 +691,7 @@ class GenerateSponsorPDFView(SponsorMixin, LoginRequiredMixin, TemplateView):
         context['project_slug'] = project_slug
         context['sponsor_slug'] = sponsor_slug
         context['sponsors'] = sponsors
+        context['date'] = time.strftime("%d/%m/%Y")
         if project_slug and sponsor_slug:
             project = Project.objects.get(slug=project_slug)
             context['sponsor'] = sponsors.get(

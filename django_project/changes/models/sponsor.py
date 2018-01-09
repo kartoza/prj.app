@@ -55,6 +55,22 @@ class Sponsor(models.Model):
         null=True,
         blank=True)
 
+    sponsorship_contact_title = models.CharField(
+        _('Sponsorship Representative Title'),
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text=_('Title of the sponsorship representative i.e Treasurer.')
+    )
+
+    sponsorship_office_address = models.TextField(
+        help_text=(
+            'Enter the complete address for the sponsorship office. '
+            'Use line breaks to separate address elements'
+        ),
+        null=True,
+        blank=True)
+
     sponsor_url = models.CharField(
         help_text='Input the sponsor URL.',
         max_length=255,
