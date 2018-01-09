@@ -15,6 +15,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from unidecode import unidecode
+from organisation import Organisation
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +64,16 @@ def validate_gitter_room_name(value):
             _('%(value)s is not proper gitter room name'),
             params={'value': value},
         )
+
+
+def get_default_organisation():
+    # The owner of the default organisation is purposely empty because in the
+    # unittest it raises error since there are duplicates. But the owner of
+    # default organisation can be changed in the live site.
+
+    organisation = \
+        Organisation.objects.get_or_create(name='Kartoza', approved=True)[0]
+    return organisation.pk
 
 
 class Project(models.Model):
@@ -179,6 +190,15 @@ class Project(models.Model):
             'Managers of the certification app in this project. '
             'They will receive email notification about organisation and have'
             ' the same permissions as project owner in the certification app.')
+    )
+
+    # Organisation where a project belongs, when the organisation is deleted,
+    #  the project will automatically belongs to default organisation.
+    organisation = models.ForeignKey(
+        Organisation,
+        default=get_default_organisation,
+        null=True,
+        on_delete=models.SET_DEFAULT,
     )
 
     owner = models.ForeignKey(User)

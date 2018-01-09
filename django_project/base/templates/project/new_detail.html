@@ -9,15 +9,20 @@
     <div class="row" style="margin-bottom: 20px">
         {% if user.is_authenticated %}
           <div class="btn-group pull-right">
-            <a href="{% url 'project-delete' project.slug %}"
-               class="btn btn-default btn-m tooltip-toggle btn-delete"
-               data-placement="top" data-title="Delete {{ project.name }}">
-              <span class="glyphicon glyphicon-minus"></span>
+            <a href="{% url 'register-domain' %}"
+               class="btn btn-default btn-m tooltip-toggle btn-edit"
+               data-placement="top" data-title="Set up custom domain">
+              <i class="fa fa-exchange"></i>
             </a>
             <a href="{% url 'project-update' project.slug %}"
                class="btn btn-default btn-m tooltip-toggle btn-edit"
                data-placement="top" data-title="Update {{ project.name }}">
               <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+            <a href="{% url 'project-delete' project.slug %}"
+               class="btn btn-default btn-m tooltip-toggle btn-delete"
+               data-placement="top" data-title="Delete {{ project.name }}">
+              <span class="glyphicon glyphicon-minus"></span>
             </a>
           </div>
         {% endif %}
