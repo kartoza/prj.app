@@ -113,6 +113,14 @@ class Sponsor(models.Model):
         default=False
     )
 
+    sponsor_invoice_number = models.CharField(
+        _("Sponsorship invoice number"),
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text=_("Invoice number for the sponsor.")
+    )
+
     author = models.ForeignKey(User)
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')

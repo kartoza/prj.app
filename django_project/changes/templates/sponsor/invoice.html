@@ -68,12 +68,13 @@
                             {% if sponsor.sponsor.address %}
                                 <p>{{ sponsor.sponsor.address }}</p>
                             {% endif %}
+
                             <p>{{ sponsor.sponsor.country.name }}</p>
                         </td>
                     </tr>
                     <tr style="padding-bottom: 25px;">
                         <td colspan="4" style="vertical-align: top">
-                            <p><b>Invoice Nr: {{ invoice_no }}</b></p>
+                            <p><b>Invoice Nr: {{ sponsor.sponsor.sponsor_invoice_number }}</b></p>
                             <p><b>{{ project.name }} {{ sponsor.sponsorship_level.name }}
                                 sponsoring {{ sponsor.start_date }} to {{ sponsor.end_date }}</b></p>
                         </td>

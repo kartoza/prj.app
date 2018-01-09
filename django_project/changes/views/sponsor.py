@@ -694,11 +694,9 @@ class GenerateSponsorPDFView(SponsorMixin, LoginRequiredMixin, TemplateView):
                 project=project,
                 slug=sponsor_slug)
             context['project'] = project
-            context['invoice_no'] = '12345'
-            context['title'] = '{}-invoice-{}-{}'.format(
+            context['title'] = '{}-{}'.format(
                 project_slug,
-                sponsor_slug,
-                context['invoice_no'])
+                sponsor_slug,)
         return context
 
     def get(self, request, *args, **kwargs):
