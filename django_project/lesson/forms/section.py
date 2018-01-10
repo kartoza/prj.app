@@ -20,10 +20,15 @@ class SectionForm(ModelForm):
 
     class Meta:
         model = Section
-        fields = '__all__'
+        fields = (
+            'section_number',
+            'name',
+            'notes'
+        )
 
     def __init__(self, *args, **kwargs):
         self.project = kwargs.pop('project')
+        self.helper = FormHelper()
         layout = Layout(
             Fieldset(
                 _('Section details'),
@@ -35,8 +40,6 @@ class SectionForm(ModelForm):
             )
         )
 
-        self.helper = FormHelper()
-        self.helper.form_tag = False
         self.helper.layout = layout
         self.helper.html5_required = False
 

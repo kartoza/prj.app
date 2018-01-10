@@ -11,6 +11,8 @@ from django.views.generic import (
     RedirectView)
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
@@ -31,7 +33,7 @@ class SectionCreateView(LoginRequiredMixin, SectionMixin, CreateView):
     """Create view for Section."""
 
     context_object_name = 'section'
-    template_name = ''
+    template_name = 'section/create.html'
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -59,6 +61,31 @@ class SectionCreateView(LoginRequiredMixin, SectionMixin, CreateView):
         return reverse('section-list', kwargs={
             'project_slug': self.object.project.slug
         })
+
+
+    def get_form_kwargs(self):
+        """Get keyword arguments from form.
+
+        :returns keyword argument from the form
+        :rtype dict
+        """
+        kwargs = super(SectionCreateView, self).get_form_kwargs()
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        kwargs.update({
+            # 'user': self.request.user,
+            'project': self.project
+        })
+        return kwargs
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+        try:
+            result = super(SectionCreateView, self).form_valid(form)
+            return result
+        except IntegrityError:
+            raise ValidationError(
+                'ERROR: Section by this name already exists!')
 
 
 class SectionListView(SectionMixin, PaginationMixin, ListView):
