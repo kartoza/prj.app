@@ -13,23 +13,31 @@ logger = logging.getLogger(__name__)
 
 
 class FurtherReading(models.Model):
-    """Further reading lesson model."""
+    """Further reading lesson model.
+
+    This is a forward link for the topic so that the lesson reader can find
+    more info about the topic.
+    """
 
     worksheet = models.ForeignKey(Worksheet)
 
     text = models.CharField(
         help_text=_('Text of the further reading.'),
         max_length=200,
+        blank=False,
+        null=False,
     )
 
     link = models.CharField(
-        help_text=_('Link of the further reading.'),
+        help_text=_('Further reading link.'),
+        blank=True,
+        null=False,
         max_length=200,
     )
 
     # noinspection PyClassicStyleClass.
     class Meta:
-        """Meta class for Course attendee."""
+        """Meta class for Further Reading model."""
 
         app_label = 'lesson'
 

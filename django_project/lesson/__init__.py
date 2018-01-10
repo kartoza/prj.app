@@ -1,2 +1,2 @@
 # coding=utf-8
-"""Docstring here."""
+"""Lesson app for projecta."""

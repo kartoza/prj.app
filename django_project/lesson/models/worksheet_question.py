@@ -15,14 +15,18 @@ logger = logging.getLogger(__name__)
 
 
 class WorksheetQuestion(models.Model):
-    """Worksheet question lesson model."""
+    """Worksheet question lesson model.
+
+    Question for checking participant's knowledge for each worksheet/module.
+    """
 
     worksheet = models.ForeignKey(Worksheet)
 
     question = models.CharField(
         help_text=_('Question.'),
+        blank=False,
+        null=False,
         max_length=200,
-        blank=False
     )
 
     question_number = models.IntegerField(
@@ -42,7 +46,7 @@ class WorksheetQuestion(models.Model):
 
     # noinspection PyClassicStyleClass.
     class Meta:
-        """Meta class for Worksheet Question."""
+        """Meta class for Worksheet Question model."""
 
         app_label = 'lesson'
         ordering = ['question_number', 'worksheet']
