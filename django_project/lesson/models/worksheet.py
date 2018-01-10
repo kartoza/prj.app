@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Section model definitions for lesson apps.
+"""Worksheet model definitions for lesson apps.
 
 """
 import os
@@ -14,6 +14,7 @@ from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
 
 from lesson.models.section import Section
+
 logger = logging.getLogger(__name__)
 
 
@@ -23,22 +24,30 @@ class Worksheet(models.Model):
     section = models.ForeignKey(Section)
 
     module = models.CharField(
-        help_text=_('Name of module.'),
+        help_text=_('Name of worksheet.'),
+        blank=False,
+        null=False,
         max_length=200,
     )
 
     title = models.CharField(
         help_text=_('Title of module.'),
+        blank=False,
+        null=False,
         max_length=200,
     )
 
     summary_leader = models.CharField(
         help_text=_('Title of the summary.'),
+        blank=False,
+        null=False,
         max_length=200,
     )
 
     summary_text = models.TextField(
         help_text=_('Content of the summary.'),
+        blank=False,
+        null=False,
         max_length=1000,
     )
 
@@ -53,16 +62,22 @@ class Worksheet(models.Model):
 
     exercise_goal = models.CharField(
         help_text=_('The goal of the exercise.'),
+        blank=False,
+        null=False,
         max_length=200,
     )
 
     exercise_task = models.TextField(
         help_text=_('Task in the exercise.'),
+        blank=False,
+        null=False,
         max_length=1000,
     )
 
     more_about_text = models.TextField(
         help_text=_('More detail about the content of the worksheet.'),
+        blank=False,
+        null=False,
         max_length=2000,
     )
 
@@ -77,7 +92,7 @@ class Worksheet(models.Model):
 
     # noinspection PyClassicStyleClass.
     class Meta:
-        """Meta class for Course attendee."""
+        """Meta class for Worksheet model."""
 
         app_label = 'lesson'
         ordering = ['module']

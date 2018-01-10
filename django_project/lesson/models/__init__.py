@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Docstring here."""
+"""Model for lesson app.."""
 
 from answer import *
 from further_reading import *

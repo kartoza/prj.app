@@ -13,23 +13,37 @@ from lesson.models.worksheet_question import WorksheetQuestion
 class AnswerAdmin(admin.ModelAdmin):
     """Answer admin model."""
 
+    pass
+
 
 class FurtherReadingAdmin(admin.ModelAdmin):
     """Further reading admin model."""
+
+    pass
 
 
 class SectionAdmin(admin.ModelAdmin):
     """Section admin model."""
 
+    pass
+
 
 class SpecificationAdmin(admin.ModelAdmin):
     """Specification admin model."""
 
+    pass
+
+
 class WorksheetAdmin(admin.ModelAdmin):
     """Worksheet admin model."""
 
+    pass
+
+
 class WorksheetQuestionAdmin(admin.ModelAdmin):
     """Worksheet question admin model."""
+
+    pass
 
 
 admin.site.register(Answer, AnswerAdmin)

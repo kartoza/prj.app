@@ -2,38 +2,57 @@
 """Section model definitions for lesson apps.
 
 """
+import logging
+from unidecode import unidecode
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from unidecode import unidecode
-from core.settings.contrib import STOP_WORDS
 from django.utils.text import slugify
-import logging
+
+from core.settings.contrib import STOP_WORDS
+
 logger = logging.getLogger(__name__)
 
 
 class Section(models.Model):
-    """Section lesson model."""
+    """Section lesson model.
+
+    A section is a grouping for one or more lessons on a common theme
+    e.g. digitising. Sections can be ordered so that the learner goes through
+    the sections in the correct sequence.
+
+    """
 
     section_number = models.IntegerField(
+        verbose_name=_('Section number'),
         help_text=_('Section number.'),
+        blank=False,
+        null=False,
+        unique=True,
     )
 
     name = models.CharField(
-        help_text=_('Name of lesson.'),
+        verbose_name=_('Name of section'),
+        help_text=_('Name of section.'),
+        blank=False,
+        null=False,
         max_length=200,
     )
 
     notes = models.TextField(
-        help_text=_('Name of lesson.'),
+        verbose_name=_('Section notes.'),
+        help_text=_('Section notes.'),
+        blank=False,
+        null=False,
         max_length=1000,
     )
 
     slug = models.SlugField()
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', verbose_name=_('Project name'))
 
     # noinspection PyClassicStyleClass.
     class Meta:
-        """Meta class for Section."""
+        """Meta class for Section model."""
 
         app_label = 'lesson'
         ordering = ['section_number']
