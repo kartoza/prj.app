@@ -5,16 +5,12 @@ from django.core.urlresolvers import reverse
 from django.views.generic import (
     ListView,
     CreateView,
-    DeleteView,
-    DetailView,
-    UpdateView,
-    RedirectView)
+)
 from django.http import Http404
-from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from base.models.project import Project
@@ -61,7 +57,6 @@ class SectionCreateView(LoginRequiredMixin, SectionMixin, CreateView):
         return reverse('section-list', kwargs={
             'project_slug': self.object.project.slug
         })
-
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
