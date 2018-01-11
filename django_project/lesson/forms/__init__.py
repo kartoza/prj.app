@@ -1,2 +1,2 @@
 # coding=utf-8
-"""Docstring here."""
+"""Forms for lesson app."""
