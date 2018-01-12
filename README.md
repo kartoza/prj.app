@@ -128,7 +128,7 @@ relevant SECRET and DEVICE settings.
 We work under the philosophy that stakeholders should have access to the
 development and source code, and be able to participate in every level of the 
 project - we invite comments, suggestions and contributions.  See
-[our milestones list](https://github.com/kartoza/projecta/issues/milestones) and
+[our milestones list](https://github.com/kartoza/projecta/milestones) and
 [our open issues list](https://github.com/kartoza/projecta/issues?page=1&state=open)
 for known bugs and outstanding tasks. You can also chat live with our developers
 and community members using the link below.
