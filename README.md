@@ -64,13 +64,20 @@ cd projecta/deployment
 cp btsync-db.env.EXAMPLE btsync-db.env
 cp btsync-media.env.EXAMPLE btsync-media.env
 make build
-make run
+make permissions
+make web
+# Wait a few seconds for the DB to start before to do the next command
 make migrate
 make collectstatic
 ```
 
 If you need backups, put btsync keys in these files. If you don't need backups, 
 you can let the default content.
+
+So as to create your admin account:
+```
+make superuser
+```
 
 **intercom.io**
 
