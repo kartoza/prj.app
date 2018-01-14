@@ -92,6 +92,12 @@ class CertifyingOrganisation(models.Model):
         validators=[validate_email_address],
     )
 
+    url = models.URLField(
+        help_text=u'Optional URL for the certifying organisation\'s home page',
+        blank=True,
+        null=True
+    )
+
     address = models.TextField(
         help_text=_('Address of Organisation or Institution.'),
         max_length=1000,
