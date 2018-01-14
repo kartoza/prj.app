@@ -9,8 +9,9 @@ from crispy_forms.layout import (
     Layout,
     Fieldset,
     Field,
+    Submit,
 )
-from models import Project, ProjectScreenshot
+from models import Project, ProjectScreenshot, Domain, Organisation
 from certification.forms import CustomSelectMultipleWidget
 
 logger = logging.getLogger(__name__)
@@ -78,6 +79,7 @@ class ProjectForm(forms.ModelForm):
         model = Project
         fields = (
             'name',
+            'organisation',
             'image_file',
             'description',
             'project_url',
@@ -100,6 +102,7 @@ class ProjectForm(forms.ModelForm):
             Fieldset(
                 'Project details',
                 Field('name', css_class="form-control"),
+                Field('organisation', css_class="form-control"),
                 Field('image_file', css_class="form-control"),
                 Field('description', css_class="form-control"),
                 Field('project_url', css_class="form-control"),
@@ -167,3 +170,75 @@ class SignupForm(forms.Form):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.save()
+
+
+class RegisterDomainForm(forms.ModelForm):
+    """Form to register a domain."""
+
+    # noinspection PyClassicStyleClass
+    class Meta:
+        """Meta class."""
+        model = Domain
+        fields = (
+            'domain',
+            'role',
+            'project',
+            'organisation',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        form_title = 'Register a Domain'
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('domain', css_class='form-control'),
+                Field('role', css_class='form-control'),
+                Field('project', css_class='form-control'),
+                Field('organisation', css_class='form-control'),
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(RegisterDomainForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(RegisterDomainForm, self).save(commit=False)
+        instance.user = self.user
+        instance.save()
+        return instance
+
+
+class OrganisationForm(forms.ModelForm):
+    """Form to create an organisation that is associated to a project."""
+
+    # noinspection PyClassicStyleClass
+    class Meta:
+        """Meta class."""
+        model = Organisation
+        fields = (
+            'name',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        form_title = 'Create an Organisation'
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('name', css_class='form-control'),
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(OrganisationForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(OrganisationForm, self).save(commit=False)
+        instance.owner = self.user
+        instance.save()
+        return instance

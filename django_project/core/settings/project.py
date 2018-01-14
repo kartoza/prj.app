@@ -18,6 +18,7 @@ INSTALLED_APPS += (
     'github_issue',
     'vota',
     'certification',
+    'lesson',
 )
 
 # Due to profile page does not available,
@@ -77,3 +78,13 @@ PIPELINE_CSS['project'] = {
         'media': 'screen, projection',
     },
 }
+
+VALID_DOMAIN = [
+            '0.0.0.0',
+            'staging.projecta.kartoza.com',
+            'changelog.linfiniti.com',
+            'changelog.kartoza.com',
+            'changelog.qgis.org',
+            'changelog.inasafe.org',
+            'staging.changelog.qgis.org'
+        ]

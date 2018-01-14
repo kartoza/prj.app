@@ -6,7 +6,7 @@ from django.utils.datastructures import MultiValueDict
 from django.utils.http import urlencode
 
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.test.client import Client
 from base.tests.model_factories import ProjectF
 from changes.tests.model_factories import (
@@ -24,6 +24,7 @@ class TestCategoryViews(TestCase):
 
     """Tests that Category views work."""
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """
         Setup before each test
@@ -50,6 +51,7 @@ class TestCategoryViews(TestCase):
         self.user.set_password('password')
         self.user.save()
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
         """
         Teardown after each test.
@@ -60,6 +62,7 @@ class TestCategoryViews(TestCase):
         self.category.delete()
         self.user.delete()
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryListView(self):
 
         response = self.client.get(reverse('category-list', kwargs={
@@ -67,6 +70,7 @@ class TestCategoryViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryCreateView_with_login(self):
 
         status = self.client.login(username='timlinux', password='password')
@@ -80,6 +84,7 @@ class TestCategoryViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryCreateView_no_login(self):
 
         response = self.client.get(reverse('category-create', kwargs={
@@ -87,6 +92,7 @@ class TestCategoryViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryCreate_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -104,6 +110,7 @@ class TestCategoryViews(TestCase):
                 'pending-category-list',
                 kwargs={'project_slug': self.project.slug}))
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryCreate_no_login(self):
 
         post_data = {
@@ -114,6 +121,7 @@ class TestCategoryViews(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryDetailView(self):
 
         response = self.client.get(reverse('category-detail', kwargs={
@@ -126,6 +134,7 @@ class TestCategoryViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryDeleteView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -139,6 +148,7 @@ class TestCategoryViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryDeleteView_no_login(self):
 
         response = self.client.get(reverse('category-delete', kwargs={
@@ -147,6 +157,7 @@ class TestCategoryViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryDelete_with_login(self):
 
         category_to_delete = CategoryF.create(project=self.project)
@@ -162,6 +173,7 @@ class TestCategoryViews(TestCase):
         # the object is deleted does not currently pass as expected.
         # self.assertTrue(category_to_delete.pk is None)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryDelete_no_login(self):
 
         category_to_delete = CategoryF.create()
@@ -171,6 +183,7 @@ class TestCategoryViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryOrederView_wiht_login_as_no_staff(self):
         self.user = UserF.create(**{
             'username': 'dimas',
@@ -185,6 +198,7 @@ class TestCategoryViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryOrderView_with_login_as_staff(self):
         self.client.login(
             username='timlinux',
@@ -198,6 +212,7 @@ class TestCategoryViews(TestCase):
         ]
         self.assertTrue(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryOrderView_no_login(self):
 
         response = self.client.get(reverse('category-order', kwargs={
@@ -205,6 +220,7 @@ class TestCategoryViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryOrder_with_login(self):
         category_to_order = CategoryF.create(
             project=self.project,
@@ -223,6 +239,7 @@ class TestCategoryViews(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_CategoryOrder_with_no_login(self):
         category_to_order = CategoryF.create(
             project=self.project,
@@ -245,6 +262,7 @@ class TestEntryViews(TestCase):
 
     """Tests that Entry views work."""
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """
         Setup before each test
@@ -289,6 +307,7 @@ class TestEntryViews(TestCase):
         self.user.set_password('password')
         self.user.save()
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
         """
         Teardown after each test.
@@ -301,6 +320,7 @@ class TestEntryViews(TestCase):
         self.entry.delete()
         self.user.delete()
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryListView(self):
         """Test entry list view."""
         response = self.client.get(reverse('entry-list', kwargs={
@@ -315,6 +335,7 @@ class TestEntryViews(TestCase):
         self.assertEqual(response.context_data['object_list'][0],
                          self.pending_entry)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryCreateView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -328,6 +349,7 @@ class TestEntryViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryCreateView_no_login(self):
 
         response = self.client.get(reverse('entry-create', kwargs={
@@ -336,6 +358,7 @@ class TestEntryViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryCreate_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -354,6 +377,7 @@ class TestEntryViews(TestCase):
                 'project_slug': self.project.slug,
                 'version_slug': self.version.slug}))
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryCreate_no_login(self):
 
         post_data = {
@@ -367,6 +391,7 @@ class TestEntryViews(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryUpdateView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -379,6 +404,7 @@ class TestEntryViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryUpdateView_no_login(self):
 
         response = self.client.get(reverse('entry-update', kwargs={
@@ -386,6 +412,7 @@ class TestEntryViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryUpdate_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -403,6 +430,7 @@ class TestEntryViews(TestCase):
                 'project_slug': self.project.slug,
                 'version_slug': self.version.slug}))
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryUpdate_no_login(self):
 
         post_data = {
@@ -415,6 +443,7 @@ class TestEntryViews(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryDetailView(self):
         """Test the entry detail view."""
         # Verify our entry exists
@@ -430,6 +459,7 @@ class TestEntryViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryDeleteView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -442,6 +472,7 @@ class TestEntryViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryDeleteView_no_login(self):
 
         response = self.client.get(reverse('entry-delete', kwargs={
@@ -449,6 +480,7 @@ class TestEntryViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryDelete_with_login(self):
 
         entry_to_delete = EntryF.create(
@@ -466,6 +498,7 @@ class TestEntryViews(TestCase):
         # currently pass as expected.
         # self.assertTrue(entry_to_delete.pk is None)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryDelete_no_login(self):
 
         entry_to_delete = EntryF.create(
@@ -476,6 +509,7 @@ class TestEntryViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_AllEntryPendingView(self):
         """Test the all pending entry view."""
         # Verify our pending entry exists
@@ -496,6 +530,7 @@ class TestVersionViews(TestCase):
 
     """Tests that Version views work."""
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """
         Setup before each test
@@ -529,6 +564,7 @@ class TestVersionViews(TestCase):
         self.user.set_password('password')
         self.user.save()
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
         """
         Teardown after each test.
@@ -540,6 +576,7 @@ class TestVersionViews(TestCase):
         self.category.delete()
         self.user.delete()
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionListView(self):
 
         response = self.client.get(reverse('version-list', kwargs={
@@ -553,6 +590,7 @@ class TestVersionViews(TestCase):
         self.assertEqual(response.context_data['object_list'][0],
                          self.version)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionCreateView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -565,6 +603,7 @@ class TestVersionViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionCreateView_no_login(self):
 
         response = self.client.get(reverse('version-create', kwargs={
@@ -572,6 +611,7 @@ class TestVersionViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionCreate_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -589,6 +629,7 @@ class TestVersionViews(TestCase):
                 'project_slug': self.project.slug})
         )
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionCreate_no_login(self):
 
         post_data = {
@@ -601,6 +642,7 @@ class TestVersionViews(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionUpdateView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -614,6 +656,7 @@ class TestVersionViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionUpdateView_no_login(self):
 
         response = self.client.get(reverse('version-update', kwargs={
@@ -622,6 +665,7 @@ class TestVersionViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionUpdate_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -639,6 +683,7 @@ class TestVersionViews(TestCase):
             'project_slug': self.project.slug
         }))
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionUpdate_no_login(self):
 
         post_data = {
@@ -652,6 +697,7 @@ class TestVersionViews(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionDetailView(self):
 
         response = self.client.get(reverse('version-detail', kwargs={
@@ -664,6 +710,7 @@ class TestVersionViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionDeleteView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -677,6 +724,7 @@ class TestVersionViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionDeleteView_no_login(self):
 
         response = self.client.get(reverse('version-delete', kwargs={
@@ -685,6 +733,7 @@ class TestVersionViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionDelete_with_login(self):
 
         version_to_delete = VersionF.create(
@@ -705,6 +754,7 @@ class TestVersionViews(TestCase):
         # not currently pass as expected.
         # self.assertTrue(version_to_delete.pk is None)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionDelete_no_login(self):
 
         version_to_delete = VersionF.create(
@@ -720,6 +770,7 @@ class TestVersionViews(TestCase):
 class TestSponsorshipLevelViews(TestCase):
     """Tests that SponsorshipLevel views work."""
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """
         Setup before each test
@@ -747,6 +798,7 @@ class TestSponsorshipLevelViews(TestCase):
         self.user.set_password('password')
         self.user.save()
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
         """
         Teardown after each test.
@@ -757,6 +809,7 @@ class TestSponsorshipLevelViews(TestCase):
         self.sponsorship_level.delete()
         self.user.delete()
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipLevelListView(self):
 
         response = self.client.get(reverse('sponsorshiplevel-list', kwargs={
@@ -771,6 +824,7 @@ class TestSponsorshipLevelViews(TestCase):
         self.assertEqual(response.context_data['object_list'][0],
                          self.sponsorship_level)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipLevelCreateView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -783,6 +837,7 @@ class TestSponsorshipLevelViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipLevelCreateView_no_login(self):
 
         response = self.client.get(reverse('sponsorshiplevel-create', kwargs={
@@ -790,6 +845,7 @@ class TestSponsorshipLevelViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipLevelCreate_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -803,6 +859,7 @@ class TestSponsorshipLevelViews(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipLevelCreate_no_login(self):
 
         post_data = {
@@ -813,6 +870,7 @@ class TestSponsorshipLevelViews(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipLevelDetailView(self):
 
         response = self.client.get(reverse('sponsorshiplevel-detail', kwargs={
@@ -825,6 +883,7 @@ class TestSponsorshipLevelViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipLevelDeleteView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -838,6 +897,7 @@ class TestSponsorshipLevelViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipLevelDeleteView_no_login(self):
 
         response = self.client.get(reverse('sponsorshiplevel-delete', kwargs={
@@ -846,6 +906,7 @@ class TestSponsorshipLevelViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipLevelDelete_with_login(self):
 
         sponsorship_level_to_delete = SponsorshipLevelF.create(
@@ -859,6 +920,7 @@ class TestSponsorshipLevelViews(TestCase):
             response, reverse('sponsorshiplevel-list', kwargs={
                 'project_slug': self.project.slug}))
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipLevelDelete_no_login(self):
 
         sponsorshiplevel_to_delete = SponsorshipLevelF.create()
@@ -872,6 +934,7 @@ class TestSponsorshipLevelViews(TestCase):
 class TestSponsorViews(TestCase):
     """Tests that Sponsor views work."""
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """
         Setup before each test
@@ -899,6 +962,7 @@ class TestSponsorViews(TestCase):
         self.user.set_password('password')
         self.user.save()
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
         """
         Teardown after each test.
@@ -909,6 +973,7 @@ class TestSponsorViews(TestCase):
         self.sponsor.delete()
         self.user.delete()
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorListView(self):
 
         response = self.client.get(reverse('sponsor-list', kwargs={
@@ -916,6 +981,7 @@ class TestSponsorViews(TestCase):
         }))
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorWorldMapView(self):
 
         response = self.client.get(reverse('sponsor-world-map', kwargs={
@@ -928,6 +994,7 @@ class TestSponsorViews(TestCase):
         ]
         self.assertEqual(expected_templates, response.template_name)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorCreateView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -940,6 +1007,7 @@ class TestSponsorViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorCreateView_no_login(self):
 
         response = self.client.get(reverse('sponsor-create', kwargs={
@@ -947,6 +1015,7 @@ class TestSponsorViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorCreate_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -960,6 +1029,7 @@ class TestSponsorViews(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorCreate_no_login(self):
 
         post_data = {
@@ -970,6 +1040,7 @@ class TestSponsorViews(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorDeleteView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -983,6 +1054,7 @@ class TestSponsorViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorDeleteView_no_login(self):
 
         response = self.client.get(reverse('sponsor-delete', kwargs={
@@ -991,6 +1063,7 @@ class TestSponsorViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorDelete_with_login(self):
 
         sponsor_to_delete = SponsorF.create(project=self.project)
@@ -1003,6 +1076,7 @@ class TestSponsorViews(TestCase):
             'project_slug': self.project.slug
         }))
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorDelete_no_login(self):
 
         sponsor_to_delete = SponsorF.create()
@@ -1016,6 +1090,7 @@ class TestSponsorViews(TestCase):
 class TestSponsorshipPeriodViews(TestCase):
     """Tests that SponsorshipPeriod views work."""
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """
         Setup before each test
@@ -1054,6 +1129,7 @@ class TestSponsorshipPeriodViews(TestCase):
         self.user.set_password('password')
         self.user.save()
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
         """
         Teardown after each test.
@@ -1066,6 +1142,7 @@ class TestSponsorshipPeriodViews(TestCase):
         self.sponsorship_period.delete()
         self.user.delete()
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipPeriodListView(self):
         """Test SponsorshipPeriod list view."""
         response = self.client.get(reverse('sponsorshipperiod-list', kwargs={
@@ -1078,6 +1155,7 @@ class TestSponsorshipPeriodViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipPeriodCreateView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -1090,6 +1168,7 @@ class TestSponsorshipPeriodViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipPeriodCreateView_no_login(self):
 
         response = self.client.get(reverse('sponsorshipperiod-create', kwargs={
@@ -1097,6 +1176,7 @@ class TestSponsorshipPeriodViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipPeriodCreate_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -1111,6 +1191,7 @@ class TestSponsorshipPeriodViews(TestCase):
                     'project_slug': self.project.slug}), post_data)
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipPeriodCreate_no_login(self):
 
         post_data = {
@@ -1123,6 +1204,7 @@ class TestSponsorshipPeriodViews(TestCase):
             }), post_data)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipPeriodUpdateView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -1137,6 +1219,7 @@ class TestSponsorshipPeriodViews(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipPeriodUpdateView_no_login(self):
 
         response = self.client.get(reverse('sponsorshipperiod-update', kwargs={
@@ -1145,6 +1228,7 @@ class TestSponsorshipPeriodViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipPeriodUpdate_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -1160,6 +1244,7 @@ class TestSponsorshipPeriodViews(TestCase):
             }), post_data)
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipPeriodUpdate_no_login(self):
 
         post_data = {
@@ -1173,6 +1258,7 @@ class TestSponsorshipPeriodViews(TestCase):
             }), post_data)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipPeriodDeleteView_no_login(self):
 
         response = self.client.get(reverse('sponsorshipperiod-delete', kwargs={
@@ -1181,6 +1267,7 @@ class TestSponsorshipPeriodViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorshipPeriodDelete_no_login(self):
 
         response = self.client.post(
