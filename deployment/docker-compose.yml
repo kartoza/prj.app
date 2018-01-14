@@ -129,7 +129,7 @@ devweb:
     # for ssh
     - "61203:22"
 
-btsync-db:                                                                                                                                   
+btsync-db:
   # BTSync backups for database dumps
   image: kartoza/btsync
   volumes:
@@ -146,7 +146,7 @@ btsync-db:
     # our database backups etc.
     - btsync-db.env
 
-btsync-media:                                                                                                                                   
+btsync-media:
   # BTSync backups for django media
   image: kartoza/btsync
   volumes:

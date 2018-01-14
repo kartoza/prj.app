@@ -27,9 +27,11 @@ django app using virtualenv and locally installed postgis, nginx etc.
 ### Build and run your dev docker image
 
 This image extends the production one, adding ssh to it. You must
-have built the production one first!
+have built the production one first by following the "Quick Installation Guide"!
+When it's done, you can continue with this command:
 
 ```
+make build-devweb
 make devweb
 ```
 
