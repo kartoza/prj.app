@@ -231,7 +231,7 @@ def generate_pdf(
 
     if course.course_type.instruction_hours:
         course_duration = \
-            '{} ({} of instruction)'.format(
+            '{} ({} hours of instruction)'.format(
                 course_duration,
                 course.course_type.instruction_hours)
 
