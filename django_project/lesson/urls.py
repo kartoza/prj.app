@@ -9,6 +9,7 @@ from lesson.views.section import (
     SectionCreateView,
     SectionListView,
     SectionDetailView,
+    SectionDeleteView,
 )
 
 urlpatterns = patterns(
@@ -23,6 +24,9 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/section/(?P<slug>[\w-]+)/$',
         view=SectionDetailView.as_view(),
         name='section-detail'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/(?P<slug>[\w-]+)/delete/$',
+        view=SectionDeleteView.as_view(),
+        name='section-delete'),
 )
 
 

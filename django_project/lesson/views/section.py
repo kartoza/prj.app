@@ -6,6 +6,7 @@ from django.views.generic import (
     ListView,
     CreateView,
     DetailView,
+    DeleteView,
 )
 from django.http import Http404
 from django.core.exceptions import ValidationError
@@ -188,3 +189,87 @@ class SectionDetailView(SectionMixin, DetailView):
             else:
                 raise Http404(
                     'Sorry! We could not find your Section!')
+
+
+# noinspection PyAttributeOutsideInit
+class SectionDeleteView(
+        LoginRequiredMixin,
+        SectionMixin,
+        DeleteView):
+    """Delete view for Section."""
+
+    context_object_name = 'section'
+    template_name = 'section/delete.html'
+
+    def get(self, request, *args, **kwargs):
+        """Get the project_slug from the URL and define the Project.
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        """
+
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        return super(SectionDeleteView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """Post the project_slug from the URL and define the Project.
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        """
+
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        return super(SectionDeleteView, self).post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        """Define the redirect URL.
+
+        After successful deletion  of the object, the User will be redirected
+        to the Certifying Organisation list page
+        for the object's parent Project.
+
+        :returns: URL
+        :rtype: HttpResponse
+        """
+
+        return reverse('section-list', kwargs={
+            'project_slug': self.project.slug
+        })
+
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        We need to filter the CertifyingOrganisation objects by
+        Project before passing to get_object() to ensure that we
+        return the correct Certifying Organisation object.
+        The requesting User must be authenticated.
+
+        :returns: Certifying Organisation queryset filtered by Project
+        :rtype: QuerySet
+        :raises: Http404
+        """
+
+        if not self.request.user.is_authenticated():
+            raise Http404
+        qs = Section.objects.filter(project=self.project)
+        return qs

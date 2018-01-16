@@ -15,7 +15,7 @@
         <div class="btn-group pull-right">
             {% if user.is_staff or user == section.project.owner %}
                 <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                    href=''
+                    href='{% url "section-delete" project_slug=section.project.slug slug=section.slug %}'
                     data-title="Delete {{ section.name }}">
                         <span class="glyphicon glyphicon-minus"></span>
                 </a>
