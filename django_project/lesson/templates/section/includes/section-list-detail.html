@@ -15,7 +15,7 @@
                 <span class="glyphicon glyphicon-minus"></span>
             </a>
             <a class="btn btn-default btn-mini"
-               href=''>
+               href='{% url "section-update" project_slug=section.project.slug slug=section.slug %}'>
                 <span class="glyphicon glyphicon-pencil"></span>
             </a>
         </div>

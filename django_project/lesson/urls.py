@@ -10,6 +10,7 @@ from lesson.views.section import (
     SectionListView,
     SectionDetailView,
     SectionDeleteView,
+    SectionUpdateView,
 )
 
 urlpatterns = patterns(
@@ -27,6 +28,10 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/section/(?P<slug>[\w-]+)/delete/$',
         view=SectionDeleteView.as_view(),
         name='section-delete'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<slug>[\w-]+)/update/$',
+        view=SectionUpdateView.as_view(),
+        name='section-update'),
 )
 
 

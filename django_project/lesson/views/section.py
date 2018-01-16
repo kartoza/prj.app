@@ -7,6 +7,7 @@ from django.views.generic import (
     CreateView,
     DetailView,
     DeleteView,
+    UpdateView,
 )
 from django.http import Http404
 from django.core.exceptions import ValidationError
@@ -273,3 +274,90 @@ class SectionDeleteView(
             raise Http404
         qs = Section.objects.filter(project=self.project)
         return qs
+
+
+# noinspection PyAttributeOutsideInit
+class SectionUpdateView(
+        LoginRequiredMixin,
+        SectionMixin,
+        UpdateView):
+    """Update view for Section."""
+
+    context_object_name = 'section'
+    template_name = 'section/update.html'
+
+    def get_form_kwargs(self):
+        """Get keyword arguments from form.
+
+        :returns keyword argument from the form
+        :rtype: dict
+        """
+
+        kwargs = super(
+            SectionUpdateView, self).get_form_kwargs()
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        kwargs.update({
+            'project': self.project
+        })
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+
+        context = super(
+            SectionUpdateView, self).get_context_data(**kwargs)
+        context['section'] = self.get_queryset() \
+            .filter(project=self.project)
+        context['the_project'] = self.project
+        return context
+
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        :returns: A queryset which is filtered to only show all approved
+        projects which user created (staff gets all projects)
+        :rtype: QuerySet
+        """
+
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        if self.request.user.is_staff:
+            queryset = Section.objects.all()
+        else:
+            queryset = Section.objects.filter(
+                Q(project=self.project) &
+                (Q(project__owner=self.request.user) |
+                 Q(organisation_owners=self.request.user)))
+        return queryset
+
+    def get_success_url(self):
+        """Define the redirect URL.
+
+        After successful update of the object, the User will be redirected to
+        the section list page for the object's parent Project.
+
+        :returns: URL
+        :rtype: HttpResponse
+        """
+
+        return reverse('section-list', kwargs={
+            'project_slug': self.object.project.slug
+        })
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+
+        try:
+            return super(
+                SectionUpdateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Section by this name is already exists!')
