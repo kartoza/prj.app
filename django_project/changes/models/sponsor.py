@@ -20,6 +20,7 @@ __author__ = 'rischan'
 logger = logging.getLogger(__name__)
 utc = pytz.UTC
 
+
 def validate_email_address(value):
     try:
         validate_email(value)
@@ -28,6 +29,7 @@ def validate_email_address(value):
             _('%(value)s is not a valid email address'),
             params={'value': value},):
         return False
+
 
 class ApprovedSponsorManager(models.Manager):
     """Custom sponsor manager that shows only approved records."""
