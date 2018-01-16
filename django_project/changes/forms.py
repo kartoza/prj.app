@@ -164,18 +164,15 @@ class SponsorForm(forms.ModelForm):
         model = Sponsor
         fields = (
             'name',
-            'sponsorship_contact_name',
-            'sponsorship_contact_title',
-            'sponsorship_office_address',
+            'contact_title',
             'address',
             'country',
             'sponsor_url',
             'contact_person',
             'sponsor_email',
-            'sponsorship_contact_email',
             'agreement',
             'logo',
-            'sponsor_invoice_number'
+            'invoice_number'
         )
 
     def __init__(self, *args, **kwargs):
@@ -187,18 +184,15 @@ class SponsorForm(forms.ModelForm):
             Fieldset(
                 form_title,
                 Field('name', css_class='form-control'),
-                Field('sponsorship_contact_name', css_class='form-control'),
-                Field('sponsorship_contact_title', css_class='form-control'),
-                Field('sponsorship_office_address', css_class='form-control'),
+                Field('contact_title', css_class='form-control'),
                 Field('address', css_class='form-control'),
                 Field('country', css_class='form-control chosen-select'),
                 Field('sponsor_url', css_class='form-control'),
                 Field('contact_person', css_class='form-control'),
                 Field('sponsor_email', css_class='form-control'),
-                Field('sponsorship_contact_email', css_class='form-control'),
                 Field('agreement', css_class='form-control'),
                 Field('logo', css_class='form-control'),
-                Field('sponsor_invoice_number', css_class='form-control'),
+                Field('invoice_number', css_class='form-control'),
                 css_id='project-form')
         )
         self.helper.layout = layout

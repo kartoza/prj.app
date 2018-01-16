@@ -57,11 +57,10 @@
                         </td>
                         <td colspan="2" style="vertical-align:top">
                             <p><b>{{ project.name }}</b></p>
-                            <p id="sponsorship-title"><b>{{ sponsor.sponsor.sponsorship_contact_title }}</b></pid>
-                            <p>{{ sponsor.sponsor.sponsorship_office_address | linebreaksbr }}</p>
+                            <p id="sponsorship-title"><b>{{ sponsor.sponsor.contact_title }}</b></pid>
+                            <p>{{ sponsor.sponsor.address | linebreaksbr }}</p>
                         </td>
                         <td colspan="1" align="right" style="vertical-align: top">
-                            <p><a href="#">http://{{ project.slug }}.org</a></p>
                             <p><a href="#">http://{{ project.slug }}.org</a></p>
                             <p><a href="#">{{ project.owner.email }}</a></p>
                             <p>Tel 1: +41 41 728 56 29</p>
@@ -86,7 +85,7 @@
                     </tr>
                     <tr style="padding-bottom: 25px;">
                         <td colspan="4" style="vertical-align: top">
-                            <p><b>Invoice Number: {{ sponsor.sponsor.sponsor_invoice_number }}</b></p>
+                            <p><b>Invoice Number: {{ sponsor.sponsor.invoice_number }}</b></p>
                             <p><b>{{ project.name }} {{ sponsor.sponsorship_level.name }}
                                 sponsoring {{ sponsor.start_date }} to {{ sponsor.end_date }}</b></p>
                         </td>
@@ -121,7 +120,7 @@
                         <td colspan="4">
                             <p id="salutation"> Best Regards</p>
                             <p>
-                                {{ sponsor.sponsor.sponsorship_contact_name }} <br/>
+                                {{ sponsor.sponsor.contact_person }} <br/>
                                 {{ project.name }}
                             </p>
                         </td>

@@ -10,6 +10,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django_countries.fields import CountryField
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from unidecode import unidecode
 
 
@@ -18,6 +20,14 @@ __author__ = 'rischan'
 logger = logging.getLogger(__name__)
 utc = pytz.UTC
 
+def validate_email_address(value):
+    try:
+        validate_email(value)
+        return True
+    except ValidationError(
+            _('%(value)s is not a valid email address'),
+            params={'value': value},):
+        return False
 
 class ApprovedSponsorManager(models.Manager):
     """Custom sponsor manager that shows only approved records."""
@@ -49,13 +59,7 @@ class Sponsor(models.Model):
         blank=False,
         unique=False)  # there is a unique together rule in meta class below
 
-    sponsorship_contact_name = models.CharField(
-        help_text=_("Full name of sponsorship contact person."),
-        max_length=255,
-        null=True,
-        blank=True)
-
-    sponsorship_contact_title = models.CharField(
+    contact_title = models.CharField(
         _('Sponsorship Representative Title'),
         max_length=255,
         null=True,
@@ -63,19 +67,12 @@ class Sponsor(models.Model):
         help_text=_('Title of the sponsorship representative i.e Treasurer.')
     )
 
-    sponsorship_office_address = models.TextField(
-        help_text=(
-            'Enter the complete address for the sponsorship office. '
-            'Use line breaks to separate address elements'
-        ),
-        null=True,
-        blank=True)
-
     sponsor_url = models.CharField(
         help_text='Input the sponsor URL.',
         max_length=255,
         null=True,
-        blank=True)
+        blank=True,
+    )
 
     contact_person = models.CharField(
         help_text='Input the contact person of sponsor.',
@@ -101,13 +98,9 @@ class Sponsor(models.Model):
         help_text='Input an email of sponsor.',
         max_length=255,
         null=True,
-        blank=True)
-
-    sponsorship_contact_email = models.CharField(
-        help_text='Email of sponsorship contact.',
-        max_length=255,
-        null=True,
-        blank=True)
+        blank=True,
+        validators=[validate_email_address],
+    )
 
     agreement = models.FileField(
         help_text='Attach sponsor agreement',
@@ -129,7 +122,7 @@ class Sponsor(models.Model):
         default=False
     )
 
-    sponsor_invoice_number = models.CharField(
+    invoice_number = models.CharField(
         _("Sponsorship invoice number"),
         max_length=255,
         null=True,
