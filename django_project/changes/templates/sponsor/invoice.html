@@ -75,7 +75,6 @@
                     <tr style="padding-bottom: 50px;">
                         <td colspan="4" style="vertical-align: top">
                             <p><b>{{ sponsor.sponsor.name }}</b></p>
-                            <p>{{ sponsor.sponsor.contact_person }}</p>
                             {% if sponsor.sponsor.address %}
                                 <p>{{ sponsor.sponsor.address | linebreaksbr }}</p>
                             {% endif %}
@@ -104,12 +103,15 @@
                                 Please send the money to the following bank account of the {{ project.name }}
                                 Association using the above mentioned invoice number in the payment message.
                             </p>
-                            <p>{{ project.name }}<br/>
-                            Böschacherstrasse 10a<br/>
-                            CH-8624 Grüt (Gossau ZH)</p>
-                            <p>Migros Bank Solothurn <br/>
-                            IBAN: CH87 0840 1000 0570 8858 6 <br/>
-                            SWIFT: MIGRCHZZ80A</p>
+                            <p><b>{{ project.name }}</b><br/>
+                            Account name: QGIS.ORG<br/>
+                            Address: Boeschacherstrasse 10a, CH-8624 Gruet<br/>
+                            BIC/SWIFT: POFICHBEXXX<br/>
+                            IBAN: CH09 0900 0000 9146 3839 8<br/>
+                            Reference: Donation QGIS<br/>
+                            Currency: EUR<br/>
+                            Bank name: PostFinance AG<br/>
+                            Bank address: Mingerstrasse 20, 3030 Berne, Switzerland
                             <p>
                                 Through your commitment you are making an important contribution to the ongoing development
                                 and prosperity of the {{ project.name }} project. Thank you for your support!
