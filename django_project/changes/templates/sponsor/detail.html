@@ -19,6 +19,13 @@
                    data-title="Delete {{ certifyingorganisation.name }}">
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
+                {% if user in sponsor.project.sponsorship_manager.all or user.is_staff or user == sponsor.project.owner or user == sponsor.sponsor.author %}
+                      <a class="btn btn-default btn-mini tooltip-toggle"
+                             data-title="Download invoice"
+                             href='{% url 'sponsor-invoice' project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                        <span class="glyphicon glyphicon-download"></span> Invoice
+                      </a>
+                {% endif %}
                 <a class="btn btn-default btn-mini tooltip-toggle"
                    href='{% url "sponsor-update" project_slug=sponsor.project.slug slug=sponsor.sponsor.slug %}'
                    data-title="Edit {{ certifyingorganisation.name }}">

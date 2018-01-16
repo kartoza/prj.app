@@ -2,15 +2,15 @@ __author__ = 'rischan'
 
 
 import os
+import time
 import logging
-from base.models import Project
 
-from PIL import Image
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.views.generic import (
+    TemplateView,
     ListView,
     CreateView,
     DeleteView,
@@ -21,12 +21,19 @@ from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.core import serializers
+from django.template.loader import get_template
+
 from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
+from PIL import Image
 
+
+from base.models import Project
 from ..models import Sponsor, SponsorshipPeriod  # noqa
 from ..models import SponsorshipLevel  # noqa
 from ..forms import SponsorForm
+
+from ..utils import render_to_pdf
 
 logger = logging.getLogger(__name__)
 
@@ -659,3 +666,56 @@ def generate_sponsor_cloud(request, **kwargs):
         context={
             'image': image_path,
             'the_project': project})
+
+
+class GenerateSponsorPDFView(SponsorMixin, LoginRequiredMixin, TemplateView):
+    """Template View for invoice generation"""
+    context_object_name = 'sponsors'
+    template_name = 'sponsor/invoice.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(GenerateSponsorPDFView, self).\
+            get_context_data(pagesize="A4", **kwargs)
+        project_slug = self.kwargs.get('project_slug', None)
+        sponsor_slug = self.kwargs.get('slug', None)
+        sponsors = SponsorshipPeriod.approved_objects.all()
+
+        context['project_slug'] = project_slug
+        context['sponsor_slug'] = sponsor_slug
+        context['sponsors'] = sponsors
+        context['date'] = time.strftime("%d/%m/%Y")
+        if project_slug and sponsor_slug:
+            project = Project.objects.get(slug=project_slug)
+            context['sponsor'] = sponsors.get(
+                project=project,
+                slug=sponsor_slug)
+            context['project'] = project
+            context['title'] = '{}-{}'.format(
+                project_slug,
+                sponsor_slug,)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        template = get_template('sponsor/invoice.html')
+        context = self.get_context_data(**kwargs)
+
+        template.render(context)
+        pdf = render_to_pdf('sponsor/invoice.html', context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "Invoice_%s.pdf" % (context['title'])
+            content = "inline; filename='%s'" % (filename)
+            download = request.GET.get("download")
+            if download:
+                content = "attachment; filename='%s'" % (filename)
+            response['Content-Disposition'] = content
+            return response
+        return HttpResponse("Not found")
