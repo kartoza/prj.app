@@ -204,7 +204,7 @@
                         {% for section in sections %}
                             <h5>
                                 <span>
-                                    <a href="">
+                                    <a href="{% url 'section-detail' project_slug=section.project.slug slug=section.slug %}">
                                         {{ section.name }}
                                     </a>
                                 </span>
