@@ -2,7 +2,7 @@
 <div class="row section-list" style="margin-top:5px;">
     <div class="col-lg-9">
         <h3>
-            <a href="">
+            <a href="{% url 'section-detail' project_slug=section.project.slug slug=section.slug %}">
                 {{ section.name }}
             </a>
         </h3>
