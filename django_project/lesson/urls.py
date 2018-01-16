@@ -8,6 +8,7 @@ from django.conf import settings
 from lesson.views.section import (
     SectionCreateView,
     SectionListView,
+    SectionDetailView,
 )
 
 urlpatterns = patterns(
@@ -19,6 +20,9 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/section/list/$',
         view=SectionListView.as_view(),
         name='section-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/(?P<slug>[\w-]+)/$',
+        view=SectionDetailView.as_view(),
+        name='section-detail'),
 )
 
 

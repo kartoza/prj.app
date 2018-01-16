@@ -2,13 +2,17 @@
 {% load thumbnail %}
 {% load staticfiles %}
 {% load custom_markup %}
+
 {% block title %} {{ project.name }} Lessons {% endblock %}
+
+{% block js_head %}
+{% endblock js_head %}
 
 {% block extra_head %}
 {% endblock %}
 
 {% block page_title %}
-    <h1>Section for {{ project.name }} </h1>
+    <h1 xmlns="http://www.w3.org/1999/html">Section for {{ project.name }} </h1>
 {% endblock page_title %}
 
 {% block content %}
