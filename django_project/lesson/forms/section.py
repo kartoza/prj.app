@@ -1,7 +1,6 @@
 # coding=utf-8
 """Section forms."""
 
-from django.forms import ModelForm
 from django.utils.translation import ugettext_lazy as _
 
 from crispy_forms.helper import FormHelper
@@ -12,16 +11,17 @@ from crispy_forms.layout import (
     Submit,
 )
 
+from modeltranslation.forms import TranslationModelForm
+
 from lesson.models.section import Section
 
 
-class SectionForm(ModelForm):
+class SectionForm(TranslationModelForm):
     """Form for creating section"""
 
     class Meta:
         model = Section
         fields = (
-            'section_number',
             'name',
             'notes'
         )
@@ -32,7 +32,6 @@ class SectionForm(ModelForm):
         layout = Layout(
             Fieldset(
                 _('Section details'),
-                Field('section_number', css_class='form_control'),
                 Field('name', css_class='form_control'),
                 Field('notes', css_class='form_control'),
 

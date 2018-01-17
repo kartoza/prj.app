@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.views.generic import (
     ListView,
     CreateView,
+    DetailView,
     DeleteView,
     UpdateView,
 )
@@ -135,6 +136,52 @@ class SectionListView(SectionMixin, PaginationMixin, ListView):
             return section_qs
         else:
             raise Http404('Sorry! We could not find your section!')
+
+
+class SectionDetailView(SectionMixin, DetailView):
+    """Detail view for Section."""
+
+    context_object_name = 'section'
+    template_name = 'section/detail.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(SectionDetailView, self).get_context_data(**kwargs)
+
+        return context
+
+    def get_object(self, queryset=None):
+        """Get the object for this view.
+
+        Because Section slugs are unique within a Project,
+        we need to make sure that we fetch the correct
+        Section from the correct Project
+
+        :param queryset: A query set
+        :type queryset: QuerySet
+
+        :returns: Queryset which is filtered to only show a project
+        :rtype: QuerySet
+        :raises: Http404
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+            slug = self.kwargs.get('slug', None)
+            project_slug = self.kwargs.get('project_slug', None)
+            if slug and project_slug:
+                project = Project.objects.get(slug=project_slug)
+                obj = queryset.get(project=project, slug=slug)
+                return obj
+            else:
+                raise Http404(
+                    'Sorry! We could not find your Section!')
 
 
 # noinspection PyAttributeOutsideInit
