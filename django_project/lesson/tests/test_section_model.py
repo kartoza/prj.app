@@ -3,7 +3,7 @@
 
 from django.test import TestCase
 
-from lesson.test.model_factories import (
+from lesson.tests.model_factories import (
     SectionF
 )
 

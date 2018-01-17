@@ -8,7 +8,7 @@ from django.test import TestCase, override_settings, Client
 
 from base.tests.model_factories import ProjectF
 from core.model_factories import UserF
-from lesson.test.model_factories import SectionF
+from lesson.tests.model_factories import SectionF
 
 
 class TestViews(TestCase):
