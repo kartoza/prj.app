@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Test for models."""
+"""Test for lesson models."""
 
 from django.test import TestCase
 

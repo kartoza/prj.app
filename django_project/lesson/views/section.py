@@ -350,8 +350,9 @@ class SectionUpdateView(
         :rtype: HttpResponse
         """
 
-        return reverse('section-list', kwargs={
-            'project_slug': self.object.project.slug
+        return reverse('section-detail', kwargs={
+            'project_slug': self.object.project.slug,
+            'slug': self.object.slug
         })
 
     def form_valid(self, form):
