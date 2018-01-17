@@ -90,6 +90,8 @@ class Worksheet(models.Model):
         blank=True
     )
 
+    slug = models.SlugField()
+
     # noinspection PyClassicStyleClass.
     class Meta:
         """Meta class for Worksheet model."""

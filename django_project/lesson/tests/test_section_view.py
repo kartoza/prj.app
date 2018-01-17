@@ -43,9 +43,13 @@ class TestViews(TestCase):
         self.test_section = SectionF.create()
         self.kwargs_project = {'project_slug': self.test_section.project.slug}
         self.kwargs_section = {'slug': self.test_section.slug}
-        self.kwargs_full = {
+        self.kwargs_section_full = {
             'project_slug': self.test_section.project.slug,
             'slug': self.test_section.slug
+        }
+        self.kwargs_worksheet_full = {
+            'project_slug': self.test_section.project.slug,
+            'section_slug': self.test_section.slug
         }
 
     @override_settings(VALID_DOMAIN=['testserver', ])
@@ -119,7 +123,7 @@ class TestViews(TestCase):
         client = Client()
         client.login(username='timlinux', password='password')
         response = client.get(reverse(
-            'section-update', kwargs=self.kwargs_full))
+            'section-update', kwargs=self.kwargs_section_full))
         self.assertEqual(response.status_code, 200)
         expected_templates = [
             'section/update.html'
@@ -131,7 +135,7 @@ class TestViews(TestCase):
         """Test access update section without login."""
         client = Client()
         response = client.get(reverse(
-            'section-update', kwargs=self.kwargs_full))
+            'section-update', kwargs=self.kwargs_section_full))
         self.assertEqual(response.status_code, 302)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
@@ -146,10 +150,10 @@ class TestViews(TestCase):
             'project': self.test_project.id,
         }
         response = client.post(
-            reverse('section-update', kwargs=self.kwargs_full),
+            reverse('section-update', kwargs=self.kwargs_section_full),
             post_data)
         self.assertRedirects(response, reverse(
-            'section-detail', kwargs=self.kwargs_full))
+            'worksheet-list', kwargs=self.kwargs_worksheet_full))
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SectionUpdate_no_login(self):
@@ -159,21 +163,9 @@ class TestViews(TestCase):
             'name': u'New Test Project Updated',
         }
         response = client.post(
-            reverse('section-update', kwargs=self.kwargs_full),
+            reverse('section-update', kwargs=self.kwargs_section_full),
             post_data)
         self.assertEqual(response.status_code, 302)
-
-    @override_settings(VALID_DOMAIN=['testserver', ])
-    def test_SectionDetailView(self):
-        """Test access section."""
-        client = Client()
-        response = client.get(reverse(
-            'section-detail', kwargs=self.kwargs_full))
-        self.assertEqual(response.status_code, 200)
-        expected_templates = [
-            'section/detail.html'
-        ]
-        self.assertEqual(response.template_name, expected_templates)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SectionDeleteView_with_login(self):
@@ -181,7 +173,7 @@ class TestViews(TestCase):
         client = Client()
         client.login(username='timlinux', password='password')
         response = client.get(reverse(
-            'section-delete', kwargs=self.kwargs_full))
+            'section-delete', kwargs=self.kwargs_section_full))
         self.assertEqual(response.status_code, 200)
         expected_templates = [
             'section/delete.html'
@@ -192,7 +184,7 @@ class TestViews(TestCase):
         """Test access delete section without login."""
         client = Client()
         response = client.get(reverse(
-            'section-delete', kwargs=self.kwargs_full))
+            'section-delete', kwargs=self.kwargs_section_full))
         self.assertEqual(response.status_code, 302)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
