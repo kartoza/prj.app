@@ -24,8 +24,7 @@ class FurtherReadingAdmin(admin.ModelAdmin):
 
 class SectionAdmin(admin.ModelAdmin):
     """Section admin model."""
-
-    pass
+    list_display = ('section_number', 'name', 'notes')
 
 
 class SpecificationAdmin(admin.ModelAdmin):
