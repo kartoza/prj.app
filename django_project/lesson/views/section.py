@@ -160,9 +160,9 @@ class SectionDetailView(SectionMixin, DetailView):
     def get_object(self, queryset=None):
         """Get the object for this view.
 
-        Because Certifying Organisation slugs are unique within a Project,
+        Because Section slugs are unique within a Project,
         we need to make sure that we fetch the correct
-        Certifying Organisation from the correct Project
+        Section from the correct Project
 
         :param queryset: A query set
         :type queryset: QuerySet
@@ -238,7 +238,7 @@ class SectionDeleteView(
         """Define the redirect URL.
 
         After successful deletion  of the object, the User will be redirected
-        to the Certifying Organisation list page
+        to the Section list page
         for the object's parent Project.
 
         :returns: URL
@@ -252,12 +252,12 @@ class SectionDeleteView(
     def get_queryset(self):
         """Get the queryset for this view.
 
-        We need to filter the CertifyingOrganisation objects by
+        We need to filter the Section objects by
         Project before passing to get_object() to ensure that we
-        return the correct Certifying Organisation object.
+        return the correct Section object.
         The requesting User must be authenticated.
 
-        :returns: Certifying Organisation queryset filtered by Project
+        :returns: Section queryset filtered by Project
         :rtype: QuerySet
         :raises: Http404
         """
