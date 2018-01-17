@@ -8,15 +8,36 @@ from django.conf import settings
 from lesson.views.section import (
     SectionCreateView,
     SectionListView,
-    SectionDetailView,
     SectionDeleteView,
     SectionUpdateView,
     SectionOrderView,
     SectionOrderSubmitView,
 )
-
+from lesson.views.worksheet import (
+    WorksheetCreateView,
+    WorksheetUpdateView,
+    WorksheetDeleteView,
+    WorksheetListView,
+)
 urlpatterns = patterns(
     '',
+    # Worksheet
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/worksheet/create/$',
+        view=WorksheetCreateView.as_view(),
+        name='worksheet-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/update/(?P<pk>[\w-]+)/$',
+        view=WorksheetUpdateView.as_view(),
+        name='worksheet-update'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/delete/(?P<pk>[\w-]+)/$',
+        view=WorksheetDeleteView.as_view(),
+        name='worksheet-delete'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/worksheet/list/$',
+        view=WorksheetListView.as_view(),
+        name='worksheet-list'),
     # Section
     url(regex='^(?P<project_slug>[\w-]+)/section/create/$',
         view=SectionCreateView.as_view(),
@@ -30,9 +51,6 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/section/submit_order/$',
         view=SectionOrderSubmitView.as_view(),
         name='section-submit-order'),
-    url(regex='^(?P<project_slug>[\w-]+)/section/(?P<slug>[\w-]+)/$',
-        view=SectionDetailView.as_view(),
-        name='section-detail'),
     url(regex='^(?P<project_slug>[\w-]+)/section/(?P<slug>[\w-]+)/update/$',
         view=SectionUpdateView.as_view(),
         name='section-update'),
