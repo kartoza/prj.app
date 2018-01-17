@@ -14,6 +14,7 @@ from django.views.generic import (
 from django.http import Http404, HttpResponse
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
+from django.db.models import Q
 
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
@@ -142,7 +143,6 @@ class SectionDetailView(SectionMixin, DetailView):
 
     context_object_name = 'section'
     template_name = 'section/detail.html'
-
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -363,7 +363,6 @@ class SectionUpdateView(
         except IntegrityError:
             return ValidationError(
                 'ERROR: Section by this name is already exists!')
-
 
 
 class SectionOrderView(SectionMixin, StaffuserRequiredMixin, ListView):
