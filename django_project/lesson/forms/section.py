@@ -22,7 +22,6 @@ class SectionForm(TranslationModelForm):
     class Meta:
         model = Section
         fields = (
-            'section_number',
             'name',
             'notes'
         )
@@ -33,7 +32,6 @@ class SectionForm(TranslationModelForm):
         layout = Layout(
             Fieldset(
                 _('Section details'),
-                Field('section_number', css_class='form_control'),
                 Field('name', css_class='form_control'),
                 Field('notes', css_class='form_control'),
 
