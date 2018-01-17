@@ -157,16 +157,6 @@ class SectionDetailView(SectionMixin, DetailView):
 
         return context
 
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: Queryset for All Sections
-        :rtype: QuerySet
-        """
-
-        qs = Section.objects.all()
-        return qs
-
     def get_object(self, queryset=None):
         """Get the object for this view.
 
@@ -445,16 +435,16 @@ class SectionOrderSubmitView(LoginRequiredMixin, SectionMixin, UpdateView):
         sections_json = request.body
 
         try:
-            section_request = json.loads(sections_json)
+            sections_request = json.loads(sections_json)
         except ValueError:
             raise Http404(
                 'Error json values'
             )
 
-        for sec in section_request:
-            section = sections.get(id=sec['id'])
+        for section_request in sections_request:
+            section = sections.get(id=section_request['id'])
             if section:
-                section.section_number = sec['sort_number']
+                section.section_number = section_request['sort_number']
                 section.save()
 
         return HttpResponse('')
