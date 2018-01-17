@@ -136,7 +136,6 @@ class SectionListView(SectionMixin, PaginationMixin, ListView):
         else:
             raise Http404('Sorry! We could not find your section!')
 
-
 # noinspection PyAttributeOutsideInit
 class SectionDeleteView(
         LoginRequiredMixin,
