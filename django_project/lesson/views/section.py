@@ -1,6 +1,8 @@
 # coding=utf-8
 """Section views."""
 
+import json
+
 from django.core.urlresolvers import reverse
 from django.views.generic import (
     ListView,
@@ -9,11 +11,11 @@ from django.views.generic import (
     DeleteView,
     UpdateView,
 )
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from base.models.project import Project
@@ -129,7 +131,7 @@ class SectionListView(SectionMixin, PaginationMixin, ListView):
                     'The requested project does not exist.'
                 )
             section_qs = section_qs.filter(
-                project=project).order_by('-section_number')
+                project=project).order_by('section_number')
             return section_qs
         else:
             raise Http404('Sorry! We could not find your section!')
@@ -361,3 +363,98 @@ class SectionUpdateView(
         except IntegrityError:
             return ValidationError(
                 'ERROR: Section by this name is already exists!')
+
+
+
+class SectionOrderView(SectionMixin, StaffuserRequiredMixin, ListView):
+    """List view to order section"""
+    context_object_name = 'sections'
+    template_name = 'section/order.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(SectionOrderView, self).get_context_data(**kwargs)
+        context['num_sections'] = context['sections'].count()
+        project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
+        if project_slug:
+            context['the_project'] = Project.objects.get(slug=project_slug)
+        return context
+
+    def get_queryset(self, queryset=None):
+        """Get the queryset for this view.
+
+        :returns: A queryset which is filtered to only show approved
+            Categories.
+
+        :param queryset: Optional queryset.
+        :rtype: QuerySet
+        :raises: Http404
+        """
+        if queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            if project_slug:
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                except Project.DoesNotExist:
+                    raise Http404(
+                        'Sorry! The project you are requesting a section for '
+                        'could not be found or you do not have permission to '
+                        'view the section.')
+                queryset = Section.objects.filter(
+                    project=project).order_by('section_number')
+                return queryset
+            else:
+                raise Http404(
+                        'Sorry! We could not find the project for '
+                        'your section!')
+        else:
+            return queryset
+
+
+class SectionOrderSubmitView(LoginRequiredMixin, SectionMixin, UpdateView):
+    """Update order view for Section"""
+    context_object_name = 'section'
+
+    def post(self, request, *args, **kwargs):
+        """Post the project_slug from the URL and define the Project
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        :raises: Http404
+        """
+        project_slug = kwargs.get('project_slug')
+        project = Project.objects.get(slug=project_slug)
+        sections = Section.objects.filter(project=project)
+        sections_json = request.body
+
+        try:
+            section_request = json.loads(sections_json)
+        except ValueError:
+            raise Http404(
+                'Error json values'
+            )
+
+        for sec in section_request:
+            section = sections.get(id=sec['id'])
+            if section:
+                section.section_number = sec['sort_number']
+                section.save()
+
+        return HttpResponse('')

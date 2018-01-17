@@ -27,6 +27,13 @@
                         {% show_button_icon "add" %}
                     </a>
                 {% endif %}
+                {% if user.is_staff %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                        href='{% url "section-order" project_slug %}'
+                        data-title="Order Section">
+                        <span class="glyphicon glyphicon-sort-by-order"></span>
+                    </a>
+                {% endif %}
             </div>
         </h1>
     </div>

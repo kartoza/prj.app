@@ -11,6 +11,8 @@ from lesson.views.section import (
     SectionDetailView,
     SectionDeleteView,
     SectionUpdateView,
+    SectionOrderView,
+    SectionOrderSubmitView,
 )
 
 urlpatterns = patterns(
@@ -22,16 +24,21 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/section/list/$',
         view=SectionListView.as_view(),
         name='section-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/order/$',
+        view=SectionOrderView.as_view(),
+        name='section-order'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/submit_order/$',
+        view=SectionOrderSubmitView.as_view(),
+        name='section-submit-order'),
     url(regex='^(?P<project_slug>[\w-]+)/section/(?P<slug>[\w-]+)/$',
         view=SectionDetailView.as_view(),
         name='section-detail'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/(?P<slug>[\w-]+)/update/$',
+        view=SectionUpdateView.as_view(),
+        name='section-update'),
     url(regex='^(?P<project_slug>[\w-]+)/section/(?P<slug>[\w-]+)/delete/$',
         view=SectionDeleteView.as_view(),
         name='section-delete'),
-    url(regex='^(?P<project_slug>[\w-]+)/section/'
-              '(?P<slug>[\w-]+)/update/$',
-        view=SectionUpdateView.as_view(),
-        name='section-update'),
 )
 
 

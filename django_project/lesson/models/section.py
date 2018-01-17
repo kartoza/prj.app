@@ -25,10 +25,11 @@ class Section(models.Model):
 
     section_number = models.IntegerField(
         verbose_name=_('Section number'),
-        help_text=_('Section number.'),
+        help_text=_(
+            'The order in which this section is listed within a project'),
         blank=False,
         null=False,
-        unique=True,
+        default=0
     )
 
     name = models.CharField(
@@ -56,7 +57,7 @@ class Section(models.Model):
 
         app_label = 'lesson'
         ordering = ['section_number']
-        unique_together = ['section_number', 'project']
+        unique_together = ['slug', 'project']
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -64,9 +65,7 @@ class Section(models.Model):
             filtered_words = [word for word in words if
                               word.lower() not in STOP_WORDS]
             # unidecode() represents special characters (unicode data) in ASCII
-            new_list = \
-                self.project.slug + ' ' + \
-                unidecode(' '.join(filtered_words))
+            new_list = unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
         super(Section, self).save(*args, **kwargs)
 
