@@ -7,7 +7,6 @@ from django.core.urlresolvers import reverse
 from django.views.generic import (
     ListView,
     CreateView,
-    DetailView,
     DeleteView,
     UpdateView,
 )
@@ -138,52 +137,6 @@ class SectionListView(SectionMixin, PaginationMixin, ListView):
             raise Http404('Sorry! We could not find your section!')
 
 
-class SectionDetailView(SectionMixin, DetailView):
-    """Detail view for Section."""
-
-    context_object_name = 'section'
-    template_name = 'section/detail.html'
-
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(SectionDetailView, self).get_context_data(**kwargs)
-
-        return context
-
-    def get_object(self, queryset=None):
-        """Get the object for this view.
-
-        Because Certifying Organisation slugs are unique within a Project,
-        we need to make sure that we fetch the correct
-        Certifying Organisation from the correct Project
-
-        :param queryset: A query set
-        :type queryset: QuerySet
-
-        :returns: Queryset which is filtered to only show a project
-        :rtype: QuerySet
-        :raises: Http404
-        """
-        if queryset is None:
-            queryset = self.get_queryset()
-            slug = self.kwargs.get('slug', None)
-            project_slug = self.kwargs.get('project_slug', None)
-            if slug and project_slug:
-                project = Project.objects.get(slug=project_slug)
-                obj = queryset.get(project=project, slug=slug)
-                return obj
-            else:
-                raise Http404(
-                    'Sorry! We could not find your Section!')
-
-
 # noinspection PyAttributeOutsideInit
 class SectionDeleteView(
         LoginRequiredMixin,
@@ -238,7 +191,7 @@ class SectionDeleteView(
         """Define the redirect URL.
 
         After successful deletion  of the object, the User will be redirected
-        to the Certifying Organisation list page
+        to the Section list page
         for the object's parent Project.
 
         :returns: URL
@@ -252,12 +205,12 @@ class SectionDeleteView(
     def get_queryset(self):
         """Get the queryset for this view.
 
-        We need to filter the CertifyingOrganisation objects by
+        We need to filter the Section objects by
         Project before passing to get_object() to ensure that we
-        return the correct Certifying Organisation object.
+        return the correct Section object.
         The requesting User must be authenticated.
 
-        :returns: Certifying Organisation queryset filtered by Project
+        :returns: Section queryset filtered by Project
         :rtype: QuerySet
         :raises: Http404
         """
@@ -340,9 +293,9 @@ class SectionUpdateView(
         :rtype: HttpResponse
         """
 
-        return reverse('section-detail', kwargs={
+        return reverse('worksheet-list', kwargs={
             'project_slug': self.object.project.slug,
-            'slug': self.object.slug
+            'section_slug': self.object.slug
         })
 
     def form_valid(self, form):
