@@ -10,6 +10,7 @@ INSTALLED_APPS = (
 ) + INSTALLED_APPS
 
 INSTALLED_APPS += (
+    'modeltranslation',
     'raven.contrib.django.raven_compat',  # enable Raven plugin
     'crispy_forms',
     'widget_tweaks',  # lets us add some bootstrap css to form elements
