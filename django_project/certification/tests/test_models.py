@@ -311,8 +311,8 @@ class TestCourseConvener(TestCase):
 
         model = CourseConvenerF.create()
         new_model_data = {
-            'title' : 'new Course Convener Title',
-            'degree' : 'new Course Convener Degree',
+            'title': 'new Course Convener Title',
+            'degree': 'new Course Convener Degree',
         }
         model.__dict__.update(new_model_data)
         model.save()
