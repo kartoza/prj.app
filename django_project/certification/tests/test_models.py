@@ -142,7 +142,6 @@ class TestAttendee(TestCase):
         self.assertTrue(model.certifying_organisation is not None)
         self.assertTrue(model.author is not None)
 
-
     def test_Attendee_delete(self):
         """Test attendee model deletion."""
 
