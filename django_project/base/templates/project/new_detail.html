@@ -177,16 +177,15 @@
                         {% endfor %}
                     </div>
                     {% else %}
-                    {% if request.user|has_perm:"can add project" %}
-                        <h6><span id="sent">No teams are defined, but you can</span>
-                            <a
-                                class="btn btn-default btn-mini" id="action_text"
-                                href='{% url "committee-create" project.slug %}'> create one
-                            </a>
-                        </h6>
-                    {% endif %}
-{#                {% if user.is_staff or user == project.owner %}#}
+                        {% if user.is_staff or user == project.owner %}
 
+                            <h6><span id="sent">No teams are defined, but you can</span>
+                                <a
+                                    class="btn btn-default btn-mini" id="action_text"
+                                    href='{% url "committee-create" project.slug %}'> create one
+                                </a>
+                            </h6>
+                        {% endif %}
                 {% endif %}
             </div>
         </div>

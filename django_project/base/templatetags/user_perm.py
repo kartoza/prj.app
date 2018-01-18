@@ -1,15 +1,13 @@
 from django import template
-from django.contrib.auth.models import Permission
-from django.shortcuts import get_object_or_404
 
 register = template.Library()
 
-@register.filter(name='has_perm')
+
+@register.filter(name='has_perm', is_safe=True)
 def has_perm(user, perm_name):
-    perm = get_object_or_404(Permission, name=perm_name)
-    # perm = Permission.objects.get(name=perm_name)
-    perms = perm.permissions.all()
-    if perms:
-        return perm in user.get_all_permissions()
+    perm = user.user_permissions.get(codename=perm_name)
+    if perm in user.user_permissions.all():
+     return True
     else:
-        return ""
+        return False
+
