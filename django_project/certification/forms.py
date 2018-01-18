@@ -46,6 +46,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
         fields = (
             'name',
             'organisation_email',
+            'url',
             'address',
             'country',
             'organisation_phone',
@@ -64,6 +65,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
                 form_title,
                 Field('name', css_class='form-control'),
                 Field('organisation_email', css_class='form-control'),
+                Field('url', css_class='form-control'),
                 Field('address', css_class='form-control'),
                 Field('country', css_class='form-control chosen-select'),
                 Field('organisation_phone', css_class='form-control'),

@@ -16,11 +16,12 @@ from django.views.generic import (
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from changes.models import Version
-from ..models import Project
+from ..models import Project, Domain
 from ..forms import ProjectForm, ScreenshotFormset
 from vota.models import Committee, Ballot
 from changes.models import SponsorshipPeriod
 from certification.models import CertifyingOrganisation
+from lesson.models.section import Section
 from django.conf import settings
 from django.shortcuts import redirect
 
@@ -117,6 +118,16 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
             projects_qs = Project.approved_objects.all()
         else:
             projects_qs = Project.public_objects.all()
+
+        # filter project query set for custom domain
+        try:
+            domain = self.request.get_host().split(':')[0]
+            custom_domain = Domain.objects.get(domain=domain, approved=True)
+            main_organisation = custom_domain.organisation
+            projects_qs = projects_qs.filter(organisation=main_organisation)
+        except Domain.DoesNotExist:
+            projects_qs = projects_qs
+
         return projects_qs
 
 
@@ -133,6 +144,9 @@ class ProjectDetailView(ProjectMixin, DetailView):
         context['sponsors'] = \
             SponsorshipPeriod.objects.filter(
                 project=self.object).order_by('-sponsorship_level__value')
+        context['sections'] = \
+            Section.objects.filter(
+                project=self.object)
         context['screenshots'] = self.object.screenshots.all()
         context['organisations'] = \
             CertifyingOrganisation.objects.filter(

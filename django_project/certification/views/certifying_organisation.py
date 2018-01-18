@@ -573,8 +573,17 @@ class CertifyingOrganisationUpdateView(
         :rtype: QuerySet
         """
 
-        qs = CertifyingOrganisation.objects.all()
-        return qs
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        if self.request.user.is_staff:
+            queryset = CertifyingOrganisation.objects.all()
+        else:
+            queryset = CertifyingOrganisation.objects.filter(
+                Q(project=self.project) &
+                (Q(project__owner=self.request.user) |
+                 Q(organisation_owners=self.request.user) |
+                 Q(project__certification_manager=self.request.user)))
+        return queryset
 
     def get_success_url(self):
         """Define the redirect URL.

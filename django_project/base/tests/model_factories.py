@@ -1,6 +1,6 @@
 # noinspection PyUnresolvedReferences,PyPackageRequirements
 import factory
-from base.models.project import Project
+from base.models import Project, Organisation
 from core.model_factories import UserF
 
 
@@ -17,3 +17,15 @@ class ProjectF(factory.django.DjangoModelFactory):
     approved = True
     private = False
     gitter_room = u'test/test'
+
+
+class OrganisationF(factory.django.DjangoModelFactory):
+    """
+    Organisation model factory
+    """
+    class Meta:
+        model = Organisation
+
+    name = 'Test Organisation'
+    owner = factory.SubFactory(UserF)
+    approved = True

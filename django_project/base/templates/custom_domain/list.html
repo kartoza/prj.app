@@ -1,0 +1,89 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block title %}Domains{% endblock %}
+
+{% block page_title %}
+    <h1>Domains</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <style>
+        .order:hover {
+            background-color: #F9F9F9;
+        }
+        .btn-approve:hover {
+            background: green;
+            color: white;
+            border-color: green;
+        }
+    </style>
+
+    <div class="page-header">
+        <h1 class="text-muted">
+            Organisations
+            {% if user.is_authenticated %}
+                <div class="pull-right btn-group">
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "register-domain" %}'
+                       data-title="Register New Domain">
+                        {% show_button_icon "add" %}
+                    </a>
+                    {% if not unapproved %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "domain-pending-list" %}'
+                           data-title="View Pending Domains">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </a>
+                    {% else %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "domain-list" %}'
+                           data-title="View Domains List">
+                            <span class="glyphicon glyphicon-th-list"></span>
+                        </a>
+                    {% endif %}
+
+                </div>
+            {% endif %}
+        </h1>
+    </div>
+
+    {% ifequal num_domains 0 %}
+        {% if unapproved %}
+            <h3>All organisation are approved.</h3>
+        {% else %}
+            <h3>No organisation are defined.</h3>
+        {% endif %}
+    {% endifequal %}
+
+    {% for domain in domains %}
+        <li class="row order" style="list-style-type: none; margin-top:10px; margin-left: 10px; margin-right: 1px" id="{{ domain.id }}-{{ domain.name }}">
+            <div class="col-lg-8">
+                <h4>{{ domain.domain }}
+                {% if not domain.approved %}
+                    <span class="text-muted" style="font-size: 16px"> &nbsp;&nbsp;(pending)</span>
+                {% endif %}
+                </h4>
+            </div>
+
+        {# Only staff can approve domains #}
+        {% if user.is_staff %}
+            <div class="col-lg-4" style="padding: 0">
+                <div class="btn-group pull-right tooltip-toggle">
+                    {%  if not domain.approved %}
+                        <a class="btn btn-default btn-mini btn-approve"
+                           href='{% url "domain-approve" domain.pk %}'
+                            data-title="Approve {{ organisation.name }}">
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+        </li>
+    {%  endfor %}
+
+{% endblock %}
+

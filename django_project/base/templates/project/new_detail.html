@@ -10,15 +10,20 @@
     <div class="row" style="margin-bottom: 20px">
         {% if user.is_authenticated %}
           <div class="btn-group pull-right">
-            <a href="{% url 'project-delete' project.slug %}"
-               class="btn btn-default btn-m tooltip-toggle btn-delete"
-               data-placement="top" data-title="Delete {{ project.name }}">
-              <span class="glyphicon glyphicon-minus"></span>
+            <a href="{% url 'register-domain' %}"
+               class="btn btn-default btn-m tooltip-toggle btn-edit"
+               data-placement="top" data-title="Set up custom domain">
+              <i class="fa fa-exchange"></i>
             </a>
             <a href="{% url 'project-update' project.slug %}"
                class="btn btn-default btn-m tooltip-toggle btn-edit"
                data-placement="top" data-title="Update {{ project.name }}">
               <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+            <a href="{% url 'project-delete' project.slug %}"
+               class="btn btn-default btn-m tooltip-toggle btn-delete"
+               data-placement="top" data-title="Delete {{ project.name }}">
+              <span class="glyphicon glyphicon-minus"></span>
             </a>
           </div>
         {% endif %}
@@ -70,11 +75,10 @@
         <div class="col-md-4">
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='sponsors/list/';">
                 <h3>Sponsors</h3>
-                <hr />
             {% if sponsors %}
-                <h4 class="text-muted">
-                        View Our Project Sponsors
-                </h4>
+                <h6 class="text-muted">
+                    View Our Project Sponsors
+                </h6>
                 <div class="content-list">
                 {% for sponsor in sponsors %}
                     {% if sponsor.current_sponsor %}
@@ -92,22 +96,22 @@
             {% else %}
                 {% if user.is_staff or user == project.owner %}
                     <h6>No sponsors are defined, but you can
+                    <span>
                         <a
-                            class="btn btn-default btn-mini" id="action_text"
-                            href='{% url "sponsor-create" project.slug %}'>create one
+                          class="btn btn-default btn-mini" id="action_text"
+                          href='{% url "sponsor-create" project.slug %}'>create one
                         </a>
+                      </span>
                     </h6>
                 {% endif %}
             {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='certifyingorganisation/list/';">
                 <h3>Certification</h3>
-                <hr />
                 {% if organisations %}
-                    <h4 class="text-muted">
+                    <h6 class="text-muted">
                     Certifying Organisations
-                    </h4>
-                    <hr />
+                    </h6>
                     <div class="content-list">
                     {% for organisation in organisations %}
                     <a href="{% url 'certifyingorganisation-detail' project_slug=organisation.project.slug slug=organisation.slug %}">
@@ -118,21 +122,22 @@
                 {% else %}
                     {% if user.is_staff or user == project.owner %}
                         <h6>No certifying organisation are defined, but you can
+                          <span>
                             <a
                                 class="btn btn-default btn-mini" id="action_text"
                                 href='{% url "certifyingorganisation-create" project.slug %}'>register one
                             </a>
+                          </span>
                         </h6>
                     {% endif %}
                 {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='version/list/';">
                 <h3>Release Changelogs</h3>
-                <hr />
                 {% if versions %}
-                <h4 class="text-muted">
+                <h6 class="text-muted">
                     New Features and Releases
-                  </h4>
+                  </h6>
                     <div class="version-list">
                     {% for version in versions %}
                         {% if version.approved %}
@@ -150,21 +155,22 @@
                 {% else %}
                     {% if user.is_staff or user == project.owner %}
                         <h6>No versions are defined, but you can
+                          <span>
                             <a
                                 class="btn btn-default btn-mini" id="action_text"
                                 href='{% url "version-create" project.slug %}'>create one
                             </a>
+                          </span>
                         </h6>
                     {% endif %}
                 {% endif %}
             </div>
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='committees/';">
                 <h3>Project Teams</h3>
-                <hr />
                 {% if committees %}
-                    <h4 class="text-muted">
+                    <h6 class="text-muted">
                     Collaborate and Decide
-                  </h4>
+                  </h6>
                     <div class="content-list">
                         {% for team in committees %}
                             <h5>
@@ -177,15 +183,46 @@
                         {% endfor %}
                     </div>
                     {% else %}
-                        {% if user.is_staff or user == project.owner %}
-
-                            <h6><span id="sent">No teams are defined, but you can</span>
-                                <a
-                                    class="btn btn-default btn-mini" id="action_text"
-                                    href='{% url "committee-create" project.slug %}'> create one
-                                </a>
-                            </h6>
-                        {% endif %}
+                    {% if user.is_staff or user == project.owner %}
+                        <h6><span>No teams are defined, but you can </span>
+                          <span>
+                            <a
+                                class="btn btn-default btn-mini" id="action_text"
+                                href='{% url "committee-create" project.slug %}'> create one
+                            </a>
+                          </span>
+                      </h6>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='section/list/';">
+                <h3>Lessons</h3>
+                {% if sections %}
+                    <h6 class="text-muted">
+                    Learn and learn
+                  </h6>
+                    <div class="content-list">
+                        {% for section in sections %}
+                            <h5>
+                                <span>
+                                    <a href="{% url 'worksheet-list' project_slug=section.project.slug section_slug=section.slug %}">
+                                        {{ section.name }}
+                                    </a>
+                                </span>
+                            </h5>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {% if user.is_staff or user == project.owner %}
+                        <h6><span>No sections exist, but you can </span>
+                          <span>
+                            <a
+                                class="btn btn-default btn-mini" id="action_text"
+                                href='{% url "section-create" project.slug %}'> create one
+                            </a>
+                          </span>
+                      </h6>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -193,11 +230,17 @@
     <style>
     #action_text {
         font-size: 8px;
-        font-weight: bold;
+        font-weight: normal;
         padding: 4px;
     }
+
     h6 {
-    white-space: pre-line;
+        white-space: pre-line;
+        font-size: 10pt;
+        margin-top: 10px;
+    }
+    h3 {
+        margin-bottom: -5px;
     }
     </style>
     <script>

@@ -16,21 +16,21 @@
             {% if unapproved %}Unapproved {% endif %}
             Sponsors
             {% if user.is_authenticated %}
-                    {% if user.is_staff or user.project.owner %}
-                        <div class="pull-right btn-group">
-                            <a class="btn btn-default btn-mini tooltip-toggle"
-                               href='{% url "sponsor-create" project_slug %}'
-                               data-title="Create New Sponsor">
-                                {% show_button_icon "add" %}
-                            </a>
-                    {% endif %}
-                    {% if not unapproved %}
+                {% if user.is_staff or user == project.owner or user in project.sponsorship_manager.all %}
+                    <div class="pull-right btn-group">
                         <a class="btn btn-default btn-mini tooltip-toggle"
-                           href='{% url "pending-sponsor-list" project_slug %}'
-                           data-title="View Pending Sponsors">
-                            <span class="glyphicon glyphicon-time"></span>
+                           href='{% url "sponsor-create" project_slug %}'
+                           data-title="Create New Sponsor">
+                            {% show_button_icon "add" %}
                         </a>
-                    {% endif %}
+                {% endif %}
+                {% if not unapproved %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "pending-sponsor-list" project_slug %}'
+                       data-title="View Pending Sponsors">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </a>
+                {% endif %}
                 </div>
             {% endif %}
         </h1>
@@ -63,11 +63,13 @@
             </div>
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
-                    {% if not sponsor.approved and user.is_staff %}
+                    {% if not sponsor.approved %}
+                        {% if user.is_staff or user == sponsor.project.owner or user in sponsor.project.sponsorship_manager.all %}
                         <a class="btn btn-default btn-mini"
                            href='{% url "sponsor-approve" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
+                        {% endif %}
                     {% endif %}
                     <a class="btn btn-default btn-mini"
                        href='{% url "sponsor-delete" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
@@ -77,10 +79,12 @@
                        href='{% url "sponsor-update" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
+                    {% if not unapproved %}
                     <a class="btn btn-default btn-mini"
                        href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
                         <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

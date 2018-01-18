@@ -18,6 +18,7 @@ INSTALLED_APPS += (
     'github_issue',
     'vota',
     'certification',
+    'lesson',
 )
 
 # Due to profile page does not available,
@@ -36,9 +37,7 @@ SOUTH_TESTS_MIGRATE = False
 # Set languages which want to be translated
 LANGUAGES = (
     ('en', _('English')),
-    ('af', _('Afrikaans')),
     ('id', _('Indonesian')),
-    ('ko', _('Korean')),
 )
 
 # Set storage path for the translation files
@@ -77,3 +76,13 @@ PIPELINE_CSS['project'] = {
         'media': 'screen, projection',
     },
 }
+
+VALID_DOMAIN = [
+            '0.0.0.0',
+            'staging.projecta.kartoza.com',
+            'changelog.linfiniti.com',
+            'changelog.kartoza.com',
+            'changelog.qgis.org',
+            'changelog.inasafe.org',
+            'staging.changelog.qgis.org'
+        ]
