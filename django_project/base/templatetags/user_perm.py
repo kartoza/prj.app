@@ -7,7 +7,6 @@ register = template.Library()
 def has_perm(user, perm_name):
     perm = user.user_permissions.get(codename=perm_name)
     if perm in user.user_permissions.all():
-     return True
+        return True
     else:
         return False
-
