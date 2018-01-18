@@ -2,14 +2,15 @@ __author__ = 'rischan'
 
 
 import os
+import time
 import logging
-from base.models import Project
 
-from PIL import Image
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.views.generic import (
+    TemplateView,
     ListView,
     CreateView,
     DeleteView,
@@ -20,13 +21,19 @@ from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.core import serializers
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
-from pure_pagination.mixins import PaginationMixin
+from django.template.loader import get_template
 
+from braces.views import LoginRequiredMixin
+from pure_pagination.mixins import PaginationMixin
+from PIL import Image
+
+
+from base.models import Project
 from ..models import Sponsor, SponsorshipPeriod  # noqa
 from ..models import SponsorshipLevel  # noqa
 from ..forms import SponsorForm
-from changes.views.sponsorship_period import SponsorshipPeriodListView  # noqa
+
+from ..utils import render_to_pdf
 
 logger = logging.getLogger(__name__)
 
@@ -136,7 +143,7 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
         context['project_slug'] = project_slug
         if project_slug:
             project = Project.objects.get(slug=project_slug)
-            context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = Project.objects.get(slug=project_slug)
             context['levels'] = SponsorshipLevel.objects.filter(
                 project=project)
         return context
@@ -155,7 +162,7 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
             project_slug = self.kwargs.get('project_slug', None)
             if project_slug:
                 project = Project.objects.get(slug=project_slug)
-                queryset = SponsorshipPeriod.objects.filter(
+                queryset = SponsorshipPeriod.approved_objects.filter(
                     project=project).order_by('-sponsorship_level__value')
                 return queryset
             else:
@@ -180,7 +187,7 @@ class SponsorWorldMapView(SponsorMixin, ListView):
         project_slug = self.kwargs.get('project_slug', None)
         context = super(SponsorWorldMapView, self).get_context_data(**kwargs)
         if project_slug:
-            context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = Project.objects.get(slug=project_slug)
             project = Project.objects.get(slug=project_slug)
             levels = SponsorshipLevel.objects.filter(project=project)
             context['levels'] = serializers.serialize(
@@ -228,7 +235,7 @@ class SponsorDetailView(SponsorMixin, DetailView):
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
-            context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = Project.objects.get(slug=project_slug)
         return context
 
     def get_queryset(self):
@@ -370,6 +377,7 @@ class SponsorCreateView(LoginRequiredMixin, SponsorMixin, CreateView):
         context = super(SponsorCreateView, self).get_context_data(**kwargs)
         context['sponsors'] = self.get_queryset() \
             .filter(project=self.project)
+        context['project'] = self.project
         return context
 
     def form_valid(self, form):
@@ -438,6 +446,7 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
         context = super(SponsorUpdateView, self).get_context_data(**kwargs)
         context['sponsors'] = self.get_queryset() \
             .filter(project=self.project)
+        context['project'] = self.project
         return context
 
     def get_queryset(self):
@@ -447,11 +456,44 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
         projects which user created (staff gets all projects)
         :rtype: QuerySet
         """
-        qs = Sponsor.approved_objects
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        queryset = Sponsor.objects.all()
         if self.request.user.is_staff:
-            return qs
+            queryset = queryset
         else:
-            return qs.filter(creator=self.request.user)
+            queryset = queryset.filter(
+                Q(project=self.project) &
+                (Q(author=self.request.user) |
+                 Q(project__owner=self.request.user) |
+                 Q(project__sponsorship_manager=self.request.user)))
+        return queryset
+
+    def get_object(self, queryset=None):
+        """Get the object for this view.
+
+        Because Sponsor slugs are unique within a Project,
+        we need to make sure that we fetch the correct Sponsor
+        from the correct Project
+
+        :param queryset: A query set
+        :type queryset: QuerySet
+
+        :returns: Queryset which is filtered to only show a project
+        :rtype: QuerySet
+        :raises: Http404
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+            slug = self.kwargs.get('slug', None)
+            project_slug = self.kwargs.get('project_slug', None)
+            if slug and project_slug:
+                project = Project.objects.get(slug=project_slug)
+                obj = queryset.get(project=project, slug=slug)
+                return obj
+            else:
+                raise Http404(
+                    'Sorry! We could not find your sponsor!')
 
     def get_success_url(self):
         """Define the redirect URL
@@ -475,7 +517,7 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
                 'ERROR: Sponsor by this name already exists!')
 
 
-class PendingSponsorListView(StaffuserRequiredMixin, SponsorMixin,
+class PendingSponsorListView(LoginRequiredMixin, SponsorMixin,
                              PaginationMixin, ListView):  # noqa
     """List view for pending Sponsor."""
     context_object_name = 'sponsors'
@@ -531,7 +573,7 @@ class PendingSponsorListView(StaffuserRequiredMixin, SponsorMixin,
         return self.queryset
 
 
-class ApproveSponsorView(SponsorMixin, StaffuserRequiredMixin, RedirectView):
+class ApproveSponsorView(SponsorMixin, LoginRequiredMixin, RedirectView):
     """Redirect view for approving Sponsor."""
     permanent = False
     query_string = True
@@ -549,7 +591,12 @@ class ApproveSponsorView(SponsorMixin, StaffuserRequiredMixin, RedirectView):
         :returns: URL
         :rtype: str
         """
-        sponsor_qs = Sponsor.unapproved_objects.all()
+        if self.request.user.is_staff:
+            sponsor_qs = Sponsor.unapproved_objects.all()
+        else:
+            sponsor_qs = Sponsor.unapproved_objects.filter(
+                Q(project__owner=self.request.user) |
+                Q(project__sponsorship_manager=self.request.user))
         sponsor = get_object_or_404(sponsor_qs, slug=slug)
         sponsor.approved = True
         sponsor.save()
@@ -619,3 +666,56 @@ def generate_sponsor_cloud(request, **kwargs):
         context={
             'image': image_path,
             'the_project': project})
+
+
+class GenerateSponsorPDFView(SponsorMixin, LoginRequiredMixin, TemplateView):
+    """Template View for invoice generation"""
+    context_object_name = 'sponsors'
+    template_name = 'sponsor/invoice.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(GenerateSponsorPDFView, self).\
+            get_context_data(pagesize="A4", **kwargs)
+        project_slug = self.kwargs.get('project_slug', None)
+        sponsor_slug = self.kwargs.get('slug', None)
+        sponsors = SponsorshipPeriod.approved_objects.all()
+
+        context['project_slug'] = project_slug
+        context['sponsor_slug'] = sponsor_slug
+        context['sponsors'] = sponsors
+        context['date'] = time.strftime("%d/%m/%Y")
+        if project_slug and sponsor_slug:
+            project = Project.objects.get(slug=project_slug)
+            context['sponsor'] = sponsors.get(
+                project=project,
+                slug=sponsor_slug)
+            context['project'] = project
+            context['title'] = '{}-{}'.format(
+                project_slug,
+                sponsor_slug,)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        template = get_template('sponsor/invoice.html')
+        context = self.get_context_data(**kwargs)
+
+        template.render(context)
+        pdf = render_to_pdf('sponsor/invoice.html', context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "Invoice_%s.pdf" % (context['title'])
+            content = "inline; filename='%s'" % (filename)
+            download = request.GET.get("download")
+            if download:
+                content = "attachment; filename='%s'" % (filename)
+            response['Content-Disposition'] = content
+            return response
+        return HttpResponse("Not found")

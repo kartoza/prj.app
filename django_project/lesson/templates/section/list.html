@@ -1,0 +1,43 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+{% load staticfiles %}
+{% load custom_markup %}
+
+{% block title %} {{ project.name }} Lessons {% endblock %}
+
+{% block js_head %}
+{% endblock js_head %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1 xmlns="http://www.w3.org/1999/html">Section for {{ project.name }} </h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+            {{ project.name }} Worksheet Sections
+            <div class="pull-right btn-group">
+                {% if user.is_staff or user.project.owner %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "section-create" project.slug %}'
+                       data-title="Create New Section">
+                        {% show_button_icon "add" %}
+                    </a>
+                {% endif %}
+                {% if user.is_staff %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                        href='{% url "section-order" project_slug %}'
+                        data-title="Order Section">
+                        <span class="glyphicon glyphicon-sort-by-order"></span>
+                    </a>
+                {% endif %}
+            </div>
+        </h1>
+    </div>
+    {% for section in sections %}
+        {% include 'section/includes/section-list-detail.html' %}
+    {%  endfor %}
+{% endblock %}

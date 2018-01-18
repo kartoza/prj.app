@@ -25,7 +25,7 @@
             {% if unapproved %}Unapproved {% endif %}Sponsors
                 <div class="pull-right btn-group">
                 {% if user.is_authenticated %}
-                    {% if user.is_staff or user.project.owner %}
+                    {% if user.is_staff or user == the_project.owner or user in the_project.sponsorship_manager.all %}
                         <a class="btn btn-default btn-mini tooltip-toggle icon"
                            href='{% url "sponsor-create" project_slug %}'
                            data-title="Create New Sponsor">
@@ -102,7 +102,7 @@
 
                         <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
 
-                        <h5>{{ sponsor.sponsorship_level }} : {{ sponsor.project.name }}</h5>
+                        <h5>{{ sponsor.sponsorship_level }}</h5>
                         {% ifnotequal sponsor.amount_sponsored None %}
                         <h5>Amount sponsored : {{ sponsor.amount_sponsored }} {{ sponsor.currency }}</h5>
                         {% endifnotequal %}

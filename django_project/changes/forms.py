@@ -164,13 +164,15 @@ class SponsorForm(forms.ModelForm):
         model = Sponsor
         fields = (
             'name',
+            'contact_title',
             'address',
             'country',
             'sponsor_url',
             'contact_person',
             'sponsor_email',
             'agreement',
-            'logo'
+            'logo',
+            'invoice_number'
         )
 
     def __init__(self, *args, **kwargs):
@@ -182,6 +184,7 @@ class SponsorForm(forms.ModelForm):
             Fieldset(
                 form_title,
                 Field('name', css_class='form-control'),
+                Field('contact_title', css_class='form-control'),
                 Field('address', css_class='form-control'),
                 Field('country', css_class='form-control chosen-select'),
                 Field('sponsor_url', css_class='form-control'),
@@ -189,6 +192,7 @@ class SponsorForm(forms.ModelForm):
                 Field('sponsor_email', css_class='form-control'),
                 Field('agreement', css_class='form-control'),
                 Field('logo', css_class='form-control'),
+                Field('invoice_number', css_class='form-control'),
                 css_id='project-form')
         )
         self.helper.layout = layout
@@ -279,6 +283,13 @@ class SponsorshipPeriodForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(SponsorshipPeriodForm, self).__init__(*args, **kwargs)
+        # Filter items to only show the approved items in the same project
+        self.fields['sponsor'].queryset = \
+            Sponsor.objects.filter(
+                project=self.project, approved=True).order_by('name')
+        self.fields['sponsorship_level'].queryset = \
+            SponsorshipLevel.objects.filter(
+                project=self.project, approved=True).order_by('name')
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):

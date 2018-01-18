@@ -26,8 +26,10 @@ images for you in **production mode**.
 ```
 cd deployment
 make build
-make run
-make migrate migrate
+make permissions
+make web
+# Wait a few seconds for the DB to start before to do the next command
+make migrate
 make collectstatic
 ```
 

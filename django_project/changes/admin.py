@@ -68,6 +68,8 @@ class EntryAdmin(reversion.VersionAdmin):
 class SponsorAdmin(reversion.VersionAdmin):
     """Sponsor admin model."""
 
+    list_display = ['__unicode__', 'project']
+
     def queryset(self, request):
         """Ensure we use the correct manager.
 
@@ -83,6 +85,8 @@ class SponsorAdmin(reversion.VersionAdmin):
 class SponsorLevelAdmin(reversion.VersionAdmin):
     """Sponsor level admin model."""
 
+    list_display = ['__unicode__', 'project']
+
     def queryset(self, request):
         """Ensure we use the correct manager.
 
@@ -97,6 +101,8 @@ class SponsorLevelAdmin(reversion.VersionAdmin):
 
 class SponsorRenewedAdmin(reversion.VersionAdmin):
     """Renewed sponsor admin model."""
+
+    list_display = ['__unicode__', 'project']
 
     def queryset(self, request):
         """Ensure we use the correct manager.
