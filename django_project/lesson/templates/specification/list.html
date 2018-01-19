@@ -1,0 +1,43 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+{% load staticfiles %}
+{% load custom_markup %}
+
+{% block title %} {{ project.name }} {{ section.name }} {{ worksheet.title }} Specifications {% endblock %}
+
+{% block js_head %}
+{% endblock js_head %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Specification for {{ project.name }} {{ section.name }} {{ worksheet.title }}</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+            {{ worksheet.title }} Worksheet Specifications
+            <div class="pull-right btn-group">
+                {% if user.is_staff or user.worksheet.owner %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "specification-create" project.slug section.slug worksheet.slug %}'
+                       data-title="Create New Specification">
+                        {% show_button_icon "add" %}
+                    </a>
+                {% endif %}
+                {% if user.is_staff %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                        href='{% url "specification-order" project.slug section.slug worksheet.slug %}'
+                        data-title="Order Specification">
+                        <span class="glyphicon glyphicon-sort-by-order"></span>
+                    </a>
+                {% endif %}
+            </div>
+        </h1>
+    </div>
+    {% for specification in specifications %}
+        {% include 'specification/includes/specification-list-detail.html' %}
+    {%  endfor %}
+{% endblock %}

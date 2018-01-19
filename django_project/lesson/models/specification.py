@@ -3,11 +3,15 @@
 
 """
 import logging
+from unidecode import unidecode
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.text import slugify
 
 from lesson.models.worksheet import Worksheet
+
+from core.settings.contrib import STOP_WORDS
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +31,7 @@ class Specification(models.Model):
             'sequence.'),
         blank=False,
         null=False,
+        default=0
     )
 
     title = models.CharField(
@@ -50,13 +55,24 @@ class Specification(models.Model):
         max_length=200,
     )
 
+    slug = models.SlugField()
+
     # noinspection PyClassicStyleClass.
     class Meta:
         """Meta class for specification."""
 
         app_label = 'lesson'
         ordering = ['specification_number']
-        unique_together = ['specification_number', 'worksheet']
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            words = self.title.split()
+            filtered_words = [word for word in words if
+                              word.lower() not in STOP_WORDS]
+            # unidecode() represents special characters (unicode data) in ASCII
+            new_list = unidecode(' '.join(filtered_words))
+            self.slug = slugify(new_list)[:50]
+        super(Specification, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.title
