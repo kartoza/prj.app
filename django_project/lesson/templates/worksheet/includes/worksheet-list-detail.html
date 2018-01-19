@@ -2,7 +2,7 @@
 <div class="row section-list" style="margin-top:5px;">
     <div class="col-lg-9">
         <h3>
-            <a href="">
+            <a href="{% url 'specification-list' project_slug=project.slug section_slug=section.slug worksheet_slug=worksheet.slug %}">
                 {{ worksheet.title }}
             </a>
         </h3>
@@ -12,7 +12,7 @@
         <div class="btn-group pull-right">
             <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
-                data-title="Delete {{ workseet.title }}">
+                data-title="Delete {{ worksheet.title }}">
                 <span class="glyphicon glyphicon-minus"></span>
             </a>
             <a class="btn btn-default btn-mini"
