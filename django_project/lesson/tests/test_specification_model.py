@@ -42,7 +42,7 @@ class TestSpecification(TestCase):
         model = SpecificationF.create(
             title=u'Title 1',
             value=u'Value 1',
-            name=u'Name 1'
+            notes=u'Notes 1'
         )
 
         self.assertTrue(model.title == 'Title 1')
@@ -54,7 +54,7 @@ class TestSpecification(TestCase):
         new_model_data = {
             'title': u'new title',
             'value': u'new value',
-            'name': u'new name'
+            'notes': u'new notes'
         }
         model.__dict__.update(new_model_data)
         model.save()
