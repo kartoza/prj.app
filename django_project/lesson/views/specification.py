@@ -16,7 +16,6 @@ from django.db import IntegrityError
 from django.db.models import Q
 
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
-from pure_pagination.mixins import PaginationMixin
 
 from base.models.project import Project
 from lesson.models.section import Section
@@ -64,8 +63,8 @@ class SpecificationCreateView(
         :returns: URL
         :rtype: HttpResponse
         """
-        return reverse('specification-list', kwargs={
-            'worksheet_slug': self.object.worksheet.slug,
+        return reverse('worksheet-detail', kwargs={
+            'pk': self.object.worksheet.pk,
             'section_slug': self.object.worksheet.section.slug,
             'project_slug': self.object.worksheet.section.project.slug
         })
@@ -93,57 +92,6 @@ class SpecificationCreateView(
         except IntegrityError:
             raise ValidationError(
                 'ERROR: Specification by this name already exists!')
-
-
-class SpecificationListView(SpecificationMixin, PaginationMixin, ListView):
-    """List view for Specification."""
-
-    context_object_name = 'specifications'
-    template_name = 'specification/list.html'
-    paginate_by = 10
-
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(SpecificationListView, self).get_context_data(**kwargs)
-        project_slug = self.kwargs.get('project_slug', None)
-        section_slug = self.kwargs.get('section_slug', None)
-        worksheet_slug = self.kwargs.get('worksheet_slug', None)
-        if project_slug and section_slug and worksheet_slug:
-            context['project'] = Project.objects.get(slug=project_slug)
-            context['section'] = Section.objects.get(slug=section_slug)
-            context['worksheet'] = Worksheet.objects.get(slug=worksheet_slug)
-        return context
-
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: A queryset which is filtered to only show approved Version
-        for this worksheet.
-        :rtype: QuerySet
-
-        :raises: Http404
-        """
-        specification_qs = Specification.objects.all()
-        worksheet_slug = self.kwargs.get('worksheet_slug', None)
-        if worksheet_slug:
-            try:
-                worksheet = Worksheet.objects.get(slug=worksheet_slug)
-            except Worksheet.DoesNotExist:
-                raise Http404(
-                    'The requested worksheet does not exist.'
-                )
-            specification_qs = specification_qs.filter(
-                worksheet=worksheet).order_by('specification_number')
-            return specification_qs
-        else:
-            raise Http404('Sorry! We could not find your specification!')
 
 
 # noinspection PyAttributeOutsideInit
@@ -205,10 +153,10 @@ class SpecificationDeleteView(
         :rtype: HttpResponse
         """
 
-        return reverse('specification-list', kwargs={
-            'worksheet_slug': self.object.worksheet.slug,
+        return reverse('worksheet-detail', kwargs={
+            'pk': self.object.worksheet.pk,
             'section_slug': self.object.worksheet.section.slug,
-            'project_slug': self.object.worksheet.section.project.slug,
+            'project_slug': self.object.worksheet.section.project.slug
         })
 
     def get_queryset(self):
@@ -302,10 +250,10 @@ class SpecificationUpdateView(
         :rtype: HttpResponse
         """
 
-        return reverse('specification-list', kwargs={
-            'worksheet_slug': self.object.worksheet.slug,
+        return reverse('worksheet-detail', kwargs={
+            'pk': self.object.worksheet.pk,
             'section_slug': self.object.worksheet.section.slug,
-            'project_slug': self.object.worksheet.section.project.slug,
+            'project_slug': self.object.worksheet.section.project.slug
         })
 
     def form_valid(self, form):

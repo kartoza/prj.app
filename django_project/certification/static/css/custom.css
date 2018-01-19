@@ -68,6 +68,7 @@ textarea.form-control {
 .info-text {
 	color: #737373;
 	margin-bottom: 20px;
+}
 
 .selector select[multiple=multiple] {
     max-width: 366px !important;

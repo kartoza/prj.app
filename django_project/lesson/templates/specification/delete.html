@@ -25,7 +25,7 @@
                         <span class="glyphicon glyphicon-minus"></span>
                     </a>
                     <a class="btn btn-default btn-sm tooltip-toggle"
-                       href='{% url "specification-list" specification.worksheet.section.project.slug specification.worksheet.section.slug specification.worksheet.slug %}'
+                       href='{% url "worksheet-detail" project_slug=specification.worksheet.section.project.slug section_slug=specification.worksheet.section.slug pk=specification.worksheet.pk %}'
                        data-title="Cancel">
                         <span class="glyphicon glyphicon-arrow-left"></span>
                     </a>
