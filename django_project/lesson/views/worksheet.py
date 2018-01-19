@@ -4,6 +4,7 @@
 from django.core.urlresolvers import reverse
 from django.views.generic import (
     ListView,
+    DetailView,
     CreateView,
     UpdateView,
     DeleteView,
@@ -17,9 +18,13 @@ from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from base.models.project import Project
-from lesson.models.worksheet import Worksheet
-from lesson.models.section import Section
 from lesson.forms.worksheet import WorksheetForm
+from lesson.models.answer import Answer
+from lesson.models.further_reading import FurtherReading
+from lesson.models.section import Section
+from lesson.models.specification import Specification
+from lesson.models.worksheet import Worksheet
+from lesson.models.worksheet_question import WorksheetQuestion
 
 
 class WorksheetMixin(object):
@@ -27,6 +32,42 @@ class WorksheetMixin(object):
 
     model = Worksheet
     form_class = WorksheetForm
+
+
+class WorksheetDetailView(
+        WorksheetMixin,
+        DetailView):
+    """Detail view for worksheet."""
+
+    context_object_name = 'worksheet'
+    template_name = 'worksheet/detail.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(WorksheetDetailView, self).get_context_data(**kwargs)
+        pk = self.kwargs.get('pk', None)
+
+        context['requirements'] = Specification.objects.filter(
+            worksheet=pk).order_by('specification_number')
+
+        questions = WorksheetQuestion.objects.filter(
+            worksheet=pk).order_by('question_number')
+        context['questions'] = {}
+        for question in questions:
+            context['questions'][question] = Answer.objects.filter(
+                question=question).order_by('answer_number')
+
+        context['further_reading'] = FurtherReading.objects.filter(
+            worksheet=pk)
+
+        return context
 
 
 class WorksheetCreateView(LoginRequiredMixin, WorksheetMixin, CreateView):
@@ -57,7 +98,8 @@ class WorksheetCreateView(LoginRequiredMixin, WorksheetMixin, CreateView):
         :returns: URL
         :rtype: HttpResponse
         """
-        return reverse('worksheet-list', kwargs={
+        return reverse('worksheet-detail', kwargs={
+            'pk': self.object.pk,
             'section_slug': self.object.section.slug,
             'project_slug': self.object.section.project.slug
         })
@@ -128,7 +170,8 @@ class WorksheetUpdateView(LoginRequiredMixin, WorksheetMixin, UpdateView):
         :returns: URL
         :rtype: HttpResponse
         """
-        return reverse('worksheet-list', kwargs={
+        return reverse('worksheet-detail', kwargs={
+            'pk': self.object.pk,
             'project_slug': self.object.section.project.slug,
             'section_slug': self.object.section.slug,
         })

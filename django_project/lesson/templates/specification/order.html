@@ -19,11 +19,11 @@
             <span id="order-not-saved" hidden class="alert alert-danger" style="font-size: 9pt; padding: 3px;font-style: italic;">
                 order not saved</span>
             <div class="pull-right btn-group" style="margin-top: 5px;">
-                <a class="btn btn-default btn-mini tooltip-toggle"
-                   href='{% url "specification-list" project.slug section.slug worksheet.slug %}'
-                   data-title="Specifications List">
-                    <span class="glyphicon glyphicon-th-list"></span>
-                </a>
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "worksheet-detail" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
+                       data-title="Back to worksheet">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
             </div>
         </h1>
     </div>

@@ -55,8 +55,6 @@ class Specification(models.Model):
         max_length=200,
     )
 
-    slug = models.SlugField()
-
     # noinspection PyClassicStyleClass.
     class Meta:
         """Meta class for specification."""

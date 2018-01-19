@@ -17,11 +17,11 @@ from lesson.views.worksheet import (
     WorksheetCreateView,
     WorksheetUpdateView,
     WorksheetDeleteView,
+    WorksheetDetailView,
     WorksheetListView,
 )
 from lesson.views.specification import (
     SpecificationCreateView,
-    SpecificationListView,
     SpecificationOrderView,
     SpecificationOrderSubmitView,
     SpecificationUpdateView,
@@ -63,6 +63,10 @@ urlpatterns = patterns(
         view=WorksheetDeleteView.as_view(),
         name='worksheet-delete'),
     url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/detail/(?P<pk>[\w-]+)/$',
+        view=WorksheetDetailView.as_view(),
+        name='worksheet-detail'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
               '(?P<section_slug>[\w-]+)/worksheet/list/$',
         view=WorksheetListView.as_view(),
         name='worksheet-list'),
@@ -72,11 +76,6 @@ urlpatterns = patterns(
               '(?P<worksheet_slug>[\w-]+)/specification/create/$',
         view=SpecificationCreateView.as_view(),
         name='specification-create'),
-    url(regex='^(?P<project_slug>[\w-]+)/section/'
-              '(?P<section_slug>[\w-]+)/worksheet/'
-              '(?P<worksheet_slug>[\w-]+)/specification/list/$',
-        view=SpecificationListView.as_view(),
-        name='specification-list'),
     url(regex='^(?P<project_slug>[\w-]+)/section/'
               '(?P<section_slug>[\w-]+)/worksheet/'
               '(?P<worksheet_slug>[\w-]+)/specification/order/$',

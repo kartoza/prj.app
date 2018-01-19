@@ -2,23 +2,25 @@
 <div class="row section-list" style="margin-top:5px;">
     <div class="col-lg-9">
         <h3>
-            <a href="{% url 'specification-list' project_slug=project.slug section_slug=section.slug worksheet_slug=worksheet.slug %}">
+            <a href="{% url "worksheet-detail" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}">
                 {{ worksheet.title }}
             </a>
         </h3>
     </div>
 
     <div class="col-lg-3">
-        <div class="btn-group pull-right">
-            <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-               href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
-                data-title="Delete {{ worksheet.title }}">
-                <span class="glyphicon glyphicon-minus"></span>
-            </a>
-            <a class="btn btn-default btn-mini"
-               href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.id %}'>
-                <span class="glyphicon glyphicon-pencil"></span>
-            </a>
-        </div>
+        {% if user.is_staff or user == project.owner %}
+            <div class="btn-group pull-right">
+                <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                   href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
+                    data-title="Delete {{ worksheet.title }}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-mini"
+                   href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.id %}'>
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </div>
+        {% endif %}
     </div>
 </div>
