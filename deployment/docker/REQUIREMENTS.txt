@@ -36,3 +36,5 @@ Unidecode==0.4.20
 reportlab==3.4.0
 xhtml2pdf==0.2b1
 django-modeltranslation
+# stripe payment integration
+stripe==1.77.1

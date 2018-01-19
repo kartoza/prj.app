@@ -2,9 +2,20 @@
 """Views for projects."""
 # noinspection PyUnresolvedReferences
 import logging
+from django.template import RequestContext
+from django.http import (
+    Http404,
+    HttpResponse
+    )
+from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.http import Http404
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import (
+    get_object_or_404,
+    render_to_response,
+    render
+    )
+
+from django.shortcuts import redirect
 from django.views.generic import (
     ListView,
     CreateView,
@@ -12,18 +23,30 @@ from django.views.generic import (
     DetailView,
     UpdateView,
     RedirectView,
-)
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+    )
+
+from braces.views import (
+    LoginRequiredMixin,
+    StaffuserRequiredMixin
+    )
 from pure_pagination.mixins import PaginationMixin
-from changes.models import Version
-from ..models import Project, Domain
-from ..forms import ProjectForm, ScreenshotFormset
+
 from vota.models import Committee, Ballot
 from changes.models import SponsorshipPeriod
 from certification.models import CertifyingOrganisation
 from lesson.models.section import Section
-from django.conf import settings
-from django.shortcuts import redirect
+from changes.models import Version
+from ..models import (
+    Project,
+    Domain
+)
+from django_project.base.models.stripe_sale import Sale
+from ..forms import (
+    ProjectForm,
+    ScreenshotFormset,
+    SalePaymentForm
+    )
+
 
 logger = logging.getLogger(__name__)
 
@@ -161,6 +184,44 @@ class ProjectDetailView(ProjectMixin, DetailView):
         obj = super(ProjectDetailView, self).get_object(queryset)
         obj.request_user = self.request.user
         return obj
+
+#
+# def charge(request):
+#     """View for rendering template and charge form."""
+#     if request.method == "POST":
+#         form = SalePaymentForm(request.POST)
+#
+#         if form.is_valid():  # charges the card
+#             return HttpResponse("Success! We've charged your card!")
+#     else:
+#         form = SalePaymentForm()
+#
+#     return render_to_response(
+#         'project/charge.html',
+#
+#         RequestContext(
+#             request, {'form': form})
+#     )
+
+class PayForCertificationView(LoginRequiredMixin, CreateView):
+    """View for certification payment."""
+
+    context_object_name = 'payment'
+    template_name = 'project/charge.html'
+    form_class = SalePaymentForm
+    model = Sale
+
+    def get_success_url(self):
+        return reverse('project-list')
+
+    def get_context_data(self, **kwargs):
+        context = super(PayForCertificationView, self).get_context_data(**kwargs)
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(PayForCertificationView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
 
 
 class ProjectDeleteView(LoginRequiredMixin, ProjectMixin, DeleteView):

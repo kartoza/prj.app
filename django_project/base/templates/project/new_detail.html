@@ -24,6 +24,11 @@
                data-placement="top" data-title="Delete {{ project.name }}">
               <span class="glyphicon glyphicon-minus"></span>
             </a>
+            <a href="{% url 'make-payment' %}"
+               class="btn btn-default btn-m tooltip-toggle btn-edit"
+               data-placement="top" data-title="Make payment for certificate">
+              <i class="fa fa-exchange"></i>
+            </a>
           </div>
         {% endif %}
     </div>

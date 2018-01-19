@@ -5,6 +5,7 @@ from django.conf import settings
 
 from views import (
     # Project
+    PayForCertificationView,
     ProjectDetailView,
     ProjectDeleteView,
     ProjectCreateView,
@@ -87,6 +88,12 @@ urlpatterns = patterns(
     url(regex='^(?P<slug>[\w-]+)/$',
         view=ProjectDetailView.as_view(),
         name='project-detail'),
+
+    # stripe charge path
+    url(regex='^payment/$',
+        view=PayForCertificationView.as_view(),
+        name='make-payment'),
+
     url(regex='^(?P<slug>[\w-]+)/ballots/$',
         view=ProjectBallotListView.as_view(),
         name='project-ballot-list'),
