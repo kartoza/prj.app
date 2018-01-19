@@ -1,7 +1,6 @@
 # coding=utf-8
 """Section worksheet."""
 
-from django.forms import ModelForm
 from django.utils.translation import ugettext_lazy as _
 
 from crispy_forms.helper import FormHelper
@@ -12,10 +11,11 @@ from crispy_forms.layout import (
     Submit,
 )
 
+from modeltranslation.forms import TranslationModelForm
 from lesson.models.worksheet import Worksheet
 
 
-class WorksheetForm(ModelForm):
+class WorksheetForm(TranslationModelForm):
     """Form for creating worksheet."""
 
     class Meta:
