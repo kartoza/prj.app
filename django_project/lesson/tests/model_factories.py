@@ -7,6 +7,7 @@ from base.tests.model_factories import ProjectF
 
 from lesson.models import (
     Section,
+    Specification,
     Worksheet,
 )
 
@@ -47,3 +48,18 @@ class WorksheetF(factory.django.DjangoModelFactory):
         lambda n: u'More about text %s' % n)
     more_about_image = factory.sequence(
         lambda n: u'More about image %s' % n)
+
+
+class SpecificationF(factory.django.DjangoModelFactory):
+    """Specification model factory"""
+
+    class Meta:
+        model = Specification
+
+    worksheet = factory.SubFactory(WorksheetF)
+    title = factory.sequence(
+        lambda n: u'Test title %s' % n)
+    value = factory.sequence(
+        lambda n: u'Test value %s' % n)
+    notes = factory.sequence(
+        lambda n: u'Test section notes %s' % n)
