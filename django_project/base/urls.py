@@ -34,7 +34,7 @@ from views import (
 
     # stripe payment
     make_payment,
-    )
+)
 
 
 urlpatterns = patterns(

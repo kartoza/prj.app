@@ -1,5 +1,4 @@
 # coding=utf-8
-import datetime
 import logging
 from django import forms
 from django.contrib.auth.models import User
@@ -12,7 +11,7 @@ from crispy_forms.layout import (
     Field,
     Submit,
 )
-from models import(
+from models import (
     Project,
     ProjectScreenshot,
     Domain,

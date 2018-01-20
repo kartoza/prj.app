@@ -18,7 +18,7 @@ from models import (
     Domain,
     Organisation,
     StripeUser
-    )
+)
 import reversion
 
 

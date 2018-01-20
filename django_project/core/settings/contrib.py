@@ -3,10 +3,12 @@
 core.settings.contrib
 """
 from .base import *  # noqa
-from .secret import (
-    STRIPE_PUBLISHABLE_KEY,
-    STRIPE_SECRET_KEY
-    )
+
+# noinspection PyUnresolvedReferences
+from .secret import STRIPE_PUBLISHABLE_KEY # noqa
+
+# noinspection PyUnresolvedReferences
+from .secret import STRIPE_SECRET_KEY #noqa
 
 
 # Extra installed apps - grapelli needs to be added before others

@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import (
     get_object_or_404,
     render
-    )
+)
 
 from django.shortcuts import redirect
 from django.views.generic import (
@@ -20,12 +20,12 @@ from django.views.generic import (
     DetailView,
     UpdateView,
     RedirectView,
-    )
+)
 
 from braces.views import (
     LoginRequiredMixin,
     StaffuserRequiredMixin
-    )
+)
 from pure_pagination.mixins import PaginationMixin
 
 from vota.models import Committee, Ballot

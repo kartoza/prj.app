@@ -2,10 +2,11 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.conf import settings
+
 from allauth.account.signals import (
         user_logged_in,
         user_signed_up
-    )
+)
 
 import stripe
 

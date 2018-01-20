@@ -24,10 +24,10 @@ def make_payment(request):
         # this will charge the user's card
         try:
             stripe.Charge.create(
-            amount = settings.STRIPE_CHARGE_AMOUNT,
-            currency = settings.STRIPE_CHARGE_CURRENCY,
-            card = token,
-            description = email
+                amount = settings.STRIPE_CHARGE_AMOUNT,
+                currency = settings.STRIPE_CHARGE_CURRENCY,
+                card = token,
+                description = email
             )
 
         # The card has been declined

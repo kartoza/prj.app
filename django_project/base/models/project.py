@@ -296,5 +296,3 @@ class ProjectScreenshot(models.Model):
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects/screenshots'),
         blank=True
     )
-
-
