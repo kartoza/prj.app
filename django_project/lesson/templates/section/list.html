@@ -19,20 +19,25 @@
     <div class="page-header">
         <h1 class="text-muted">
             {{ project.name }} Worksheet Sections
-            {% if user.is_staff or user == project.owner %}
-                <div class="pull-right btn-group">
-                        <a class="btn btn-default btn-mini tooltip-toggle"
-                           href='{% url "section-create" project.slug %}'
-                           data-title="Create New Section">
-                            {% show_button_icon "add" %}
-                        </a>
-                        <a class="btn btn-default btn-mini tooltip-toggle"
-                            href='{% url "section-order" project_slug %}'
-                            data-title="Order Section">
-                            <span class="glyphicon glyphicon-sort-by-order"></span>
-                        </a>
-                </div>
-            {% endif %}
+            <div class="pull-right btn-group">
+                {% if user.is_staff or user == project.owner %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "section-create" project.slug %}'
+                       data-title="Create New Section">
+                        {% show_button_icon "add" %}
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "section-order" project_slug %}'
+                       data-title="Order Section">
+                        <span class="glyphicon glyphicon-sort-by-order"></span>
+                    </a>
+                {% endif %}
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                   href='{% url "project-detail" slug=project.slug %}'
+                   data-title="Back">
+                    <span class="glyphicon glyphicon-arrow-left"></span>
+                </a>
+            </div>
         </h1>
     </div>
     {% for section in sections %}

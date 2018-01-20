@@ -23,6 +23,11 @@
                         {% show_button_icon "add" %}
                     </a>
                 {% endif %}
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                   href='{% url "section-list" project_slug=project.slug %}'
+                   data-title="Back">
+                    <span class="glyphicon glyphicon-arrow-left"></span>
+                </a>
             </div>
         </h1>
         <p>
