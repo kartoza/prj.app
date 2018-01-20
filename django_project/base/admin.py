@@ -12,7 +12,13 @@ Note these admin models inherit reversion (which provides history for a model).
 
 
 from django.contrib import admin
-from models import Project, ProjectScreenshot, Domain, Organisation
+from models import (
+    Project,
+    ProjectScreenshot,
+    Domain,
+    Organisation,
+    StripeUser
+    )
 import reversion
 
 
@@ -61,6 +67,16 @@ class OrganisationAdmin(reversion.VersionAdmin):
         return qs
 
 
+class StripeUserAdmin(admin.ModelAdmin):
+    """Admin for the stripe user."""
+
+    list_display = ['stripe_user_id', 'user']
+
+    class Meta:
+        model = StripeUser
+
+
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Domain)
 admin.site.register(Organisation, OrganisationAdmin)
+admin.site.register(StripeUser, StripeUserAdmin)

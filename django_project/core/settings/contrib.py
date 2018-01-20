@@ -4,7 +4,7 @@ core.settings.contrib
 """
 from .base import *  # noqa
 from .secret import (
-    STRIPE_PUBLIC_KEY,
+    STRIPE_PUBLISHABLE_KEY,
     STRIPE_SECRET_KEY
     )
 
@@ -127,8 +127,8 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 STRIPE_CHARGE_AMOUNT = 100
 
 # set charge currency to be used here
-CHARGE_CURRENCY="usd"
+STRIPE_CHARGE_CURRENCY="usd"
 
 # stripe configuration settings
-STRIPE_PUBLIC_KEY = (STRIPE_PUBLIC_KEY, '')
-STRIPE_SECRET_KEY = (STRIPE_SECRET_KEY, '')
+STRIPE_PUBLISHABLE_KEY = STRIPE_PUBLISHABLE_KEY
+STRIPE_SECRET_KEY = STRIPE_SECRET_KEY

@@ -1,97 +1,57 @@
-import stripe
-from django.conf import settings
-from django.db import models
-from django.utils import timezone
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+from django.db import models
+from django.conf import settings
+from allauth.account.signals import (
+        user_logged_in,
+        user_signed_up
+    )
+
+import stripe
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-class Sale(models.Model):
-    def __init__(self, *args, **kwargs):
-        super(Sale, self).__init__(*args, **kwargs)
+class StripeUser(models.Model):
+    """Stripe User identity model."""
 
-        # bring in stripe, and get the api key from settings.py
-        stripe.api_key = settings.STRIPE_API_KEY
+    user = models.OneToOneField(User)
 
-        self.stripe = stripe
-
-    # store the stripe charge id for this sale
-    charge_id = models.CharField(
-        _('Charge ID'),
-        max_length=32,
+    stripe_user_id = models.CharField(
+        _('Stripe user ID'),
+        max_length=200,
         null=True,
         blank=True
     )
 
-    charge_amount = models.DecimalField(
-        _('Charge amount'),
-        max_digits=10,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        default=0,
-        help_text=_('Amount charged on account in dollars'),
-    )
+    def __str__(self):
+        return self.__unicode__()
 
-    charge_stripe_id = models.CharField(
-        _('Charge stripe ID'),
-        max_length=50,
-        null=True,
-        blank=True
-    )
-
-    merchant_stripe_id = models.CharField(
-        _('Mechant stripe ID'),
-        max_length=50,
-        null=True,
-        blank=True
-    )
-
-    customer_stripe_id = models.CharField(
-        _('Customer stripe ID'),
-        max_length=50,
-        null=True,
-        blank=True
-    )
-
-    timestamp = models.DateTimeField(
-        _('Timestamp'),
-        default=timezone.now,
-        blank=False,
-        null=False,
-        help_text=_('Enter the date and time when the payment was made.')
-    )
+    def __unicode__(self):
+        if self.stripe_user_id:
+            return str(self.stripe_user_id)
+        else:
+            return self.user.username
 
 
-    def charge(self, price_in_cents, number, exp_month, exp_year, cvc):
-        """
-        Takes the price and credit card details: number, exp_month,
-        exp_year, cvc.
+def stripe_call_back(sender, request, user, **kwargs):
+    """Check if stripe user account has stripe id for user
+        identification else assign one to that user.
+    """
 
-        Returns a tuple: (Boolean, Class) where the boolean is if
-        the charge was successful, and the class is response (or error)
-        instance.
-        """
+    stripe_user_account, created = StripeUser.objects.get_or_create(user=user)
+    if created:
+        if stripe_user_account.stripe_user_id is None or \
+                stripe_user_account == '':
+            new_stripe_user_id = stripe.Customer.create(email=user.email)
+            stripe_user_account.stripe_user_id = new_stripe_user_id['id']
+            stripe_user_account.save()
+        else:
+            stripe_user_account.stripe_user_id = ''
 
-        if self.charge_id:  # don't let this be charged twice!
-            return False, Exception(message='Already charged.')
 
-        try:
-            response = self.stripe.Charge.create(
-                amount=price_in_cents,
-                currency=settings.CHARGE_CURRENCY,
-                card={
-                    'number': number,
-                    'exp_month': exp_month,
-                    'exp_year': exp_year,
-                    'cvc': cvc,
-                },
+# django signal to attach the stripe ID to the currently signed up user.
+user_signed_up.connect(stripe_call_back)
 
-                description='Thank you for your purchase!')
-
-            self.charge_id = response.id
-
-        except self.stripe.CardError, ce:
-            # charge failed
-            return False, ce
-
-        return True, response
+# django signal to attach the stripe ID to the currently logged in user.
+user_logged_in.connect(stripe_call_back)
