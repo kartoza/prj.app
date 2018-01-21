@@ -30,9 +30,12 @@ class WorksheetQuestion(models.Model):
     )
 
     question_number = models.IntegerField(
-        help_text=_('Question number.'),
+        help_text=_(
+            'Used to order the questions for a lesson into the correct '
+            'sequence.'),
         null=False,
         blank=False,
+        default=0
     )
 
     question_image = models.ImageField(

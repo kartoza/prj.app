@@ -1,0 +1,46 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Answer Deleted - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Answer Deleted</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+        <div class="alert row">
+            <div class="col-lg-10">
+                <p class="lead">Please confirm you wish to delete the answer below!</p>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group">
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href="#"
+                       onClick="$('#delete-confirmation').submit()"
+                       data-title="Confirm Delete {{ answer.answer }}">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "worksheet-detail" project_slug=answer.question.worksheet.section.project.slug section_slug=answer.question.worksheet.section.slug pk=answer.question.worksheet.pk %}'
+                       data-title="Cancel">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3><span class="text-muted">Answer:</span> {{ answer.answer }}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8">
+                {{ answer.answer_explanation|base_markdown }}
+            </div>
+        </div>
+    </form>
+{% endblock %}
