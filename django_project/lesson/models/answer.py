@@ -5,6 +5,7 @@
 import logging
 
 from django.db import models
+from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 
 from lesson.models.worksheet_question import WorksheetQuestion
@@ -24,9 +25,12 @@ class Answer(models.Model):
     question = models.ForeignKey(WorksheetQuestion)
 
     answer_number = models.IntegerField(
-        help_text=_('Answer number.'),
+        help_text=_(
+            'Used to order the answers for a question into the correct '
+            'sequence.'),
         blank=False,
         null=False,
+        default=0,
     )
 
     is_correct = models.BooleanField(
@@ -55,6 +59,13 @@ class Answer(models.Model):
 
         app_label = 'lesson'
         unique_together = ['answer_number', 'question']
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            max_answer_number = Answer.objects.all().\
+                filter(question=self.question).aggregate(Max('answer_number'))
+            self.answer_number = max_answer_number['answer_number__max'] + 1
+        super(Answer, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.answer

@@ -136,12 +136,12 @@
             {% if user.is_staff or user == project.owner %}
                 <div class="pull-right btn-group">
                     <a class="btn btn-default btn-mini tooltip-toggle"
-    {#                    href='{% url "worksheet-create" project.slug section.slug %}'#}
+                        href='{% url "question-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
                         data-title="Create New Question">
                             {% show_button_icon "add" %}
                     </a>
                     <a class="btn btn-default btn-mini tooltip-toggle"
-{#                        href='{% url "specification-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'#}
+                        href='{% url "question-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
                         data-title="Question Order">
                         <span class="glyphicon glyphicon-sort-by-order"></span>
                     </a>
@@ -160,13 +160,18 @@
                         {% endif %}
                         {% if user.is_staff or user == project.owner %}
                             <div class="pull-right btn-group">
+                                <a class="btn btn-default btn-mini tooltip-toggle"
+                              href='{% url "answer-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug question.pk %}'
+                                   data-title="Create New Answer">
+                                {% show_button_icon "add" %}
+                                </a>
                                 <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-{#                                    href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
+                                    href='{% url "question-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=question.pk %}'
                                     data-title="Delete {{ question.question }}">
                                     <span class="glyphicon glyphicon-minus"></span>
                                 </a>
                                 <a class="btn btn-default btn-mini tooltip-toggle"
-{#                                    href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
+                                    href='{% url "question-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=question.pk %}'
                                     data-title="Edit {{ question.question }}">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
@@ -184,12 +189,12 @@
                                 {{ answer.answer }}: <em>{{ answer.answer_explanation }}</em>
                                 <div class="pull-right btn-group">
                                 <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-{#                                    href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
+                                    href='{% url "answer-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
                                     data-title="Delete {{ answer.answer }}">
                                     <span class="glyphicon glyphicon-minus"></span>
                                 </a>
                                 <a class="btn btn-default btn-mini tooltip-toggle"
-{#                                    href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
+                                    href='{% url "answer-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
                                     data-title="Edit {{ answer.answer }}">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
@@ -211,7 +216,7 @@
             Further reading
             {% if user.is_staff or user == project.owner %}
                 <div class="pull-right btn-group">
-                    <a class="btn btn-default btn-mini tooltip-toggle"
+                    <a class="btn btn-default btn-mini tooltip-toggle disabled"
     {#                    href='{% url "worksheet-create" project.slug section.slug %}'#}
                         data-title="Create New Further More Item">
                             {% show_button_icon "add" %}
@@ -231,12 +236,12 @@
                         {% endif %}
                         {% if user.is_staff or user == project.owner %}
                             <div class="pull-right btn-group">
-                                <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                                <a class="btn btn-default btn-mini btn-delete tooltip-toggle disabled"
 {#                                    href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
                                     data-title="Delete {{ info.text }}">
                                     <span class="glyphicon glyphicon-minus"></span>
                                 </a>
-                                <a class="btn btn-default btn-mini tooltip-toggle"
+                                <a class="btn btn-default btn-mini tooltip-toggle disabled"
 {#                                    href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
                                     data-title="Edit {{ info.text }}">
                                     <span class="glyphicon glyphicon-pencil"></span>

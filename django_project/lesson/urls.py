@@ -5,6 +5,18 @@ from django.conf.urls import patterns, url
 
 from django.conf import settings
 
+from lesson.views.answer import (
+    AnswerCreateView,
+    AnswerUpdateView,
+    AnswerDeleteView,
+)
+from lesson.views.question import (
+    QuestionCreateView,
+    QuestionDeleteView,
+    QuestionUpdateView,
+    QuestionOrderView,
+    QuestionOrderSubmitView,
+)
 from lesson.views.section import (
     SectionCreateView,
     SectionListView,
@@ -88,14 +100,63 @@ urlpatterns = patterns(
         name='specification-submit-order'),
     url(regex='^(?P<project_slug>[\w-]+)/section/'
               '(?P<section_slug>[\w-]+)/worksheet/'
-              '(?P<worksheet_slug>[\w-]+)/update/(?P<pk>[\w-]+)/$',
+              '(?P<worksheet_slug>[\w-]+)/specification/'
+              'update/(?P<pk>[\w-]+)/$',
         view=SpecificationUpdateView.as_view(),
         name='specification-update'),
     url(regex='^(?P<project_slug>[\w-]+)/section/'
               '(?P<section_slug>[\w-]+)/worksheet/'
-              '(?P<worksheet_slug>[\w-]+)/delete/(?P<pk>[\w-]+)/$',
+              '(?P<worksheet_slug>[\w-]+)/specification/'
+              'delete/(?P<pk>[\w-]+)/$',
         view=SpecificationDeleteView.as_view(),
         name='specification-delete'),
+    # Question
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/worksheet/'
+              '(?P<worksheet_slug>[\w-]+)/question/create/$',
+        view=QuestionCreateView.as_view(),
+        name='question-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/worksheet/'
+              '(?P<worksheet_slug>[\w-]+)/question/'
+              'delete/(?P<pk>[\w-]+)/$',
+        view=QuestionDeleteView.as_view(),
+        name='question-delete'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/worksheet/'
+              '(?P<worksheet_slug>[\w-]+)/question/'
+              'update/(?P<pk>[\w-]+)/$',
+        view=QuestionUpdateView.as_view(),
+        name='question-update'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/worksheet/'
+              '(?P<worksheet_slug>[\w-]+)/question/order/$',
+        view=QuestionOrderView.as_view(),
+        name='question-order'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/worksheet/'
+              '(?P<worksheet_slug>[\w-]+)/question/submit_order/$',
+        view=QuestionOrderSubmitView.as_view(),
+        name='question-submit-order'),
+    # Answer
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/worksheet/'
+              '(?P<worksheet_slug>[\w-]+)/question/'
+              '(?P<question_pk>[\w-]+)/answer/create$',
+        view=AnswerCreateView.as_view(),
+        name='answer-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/worksheet/'
+              '(?P<worksheet_slug>[\w-]+)/answer/'
+              'update/(?P<pk>[\w-]+)/$',
+        view=AnswerUpdateView.as_view(),
+        name='answer-update'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/worksheet/'
+              '(?P<worksheet_slug>[\w-]+)/answer/'
+              'delete/(?P<pk>[\w-]+)/$',
+        view=AnswerDeleteView.as_view(),
+        name='answer-delete'),
 )
 
 

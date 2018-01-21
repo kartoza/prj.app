@@ -1,6 +1,7 @@
 # coding=utf-8
 """Worksheet views."""
 
+from collections import OrderedDict
 from django.core.urlresolvers import reverse
 from django.views.generic import (
     ListView,
@@ -59,7 +60,7 @@ class WorksheetDetailView(
 
         questions = WorksheetQuestion.objects.filter(
             worksheet=pk).order_by('question_number')
-        context['questions'] = {}
+        context['questions'] = OrderedDict()
         for question in questions:
             context['questions'][question] = Answer.objects.filter(
                 question=question).order_by('answer_number')
