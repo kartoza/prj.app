@@ -5,7 +5,6 @@
 import logging
 
 from django.db import models
-from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 
 from lesson.models.worksheet_question import WorksheetQuestion
@@ -58,13 +57,21 @@ class Answer(models.Model):
         """Meta class for Answer module."""
 
         app_label = 'lesson'
-        unique_together = ['answer_number', 'question']
+        unique_together = ['question', 'answer_number']
+        ordering = ['question', 'answer_number']
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            max_answer_number = Answer.objects.all().\
-                filter(question=self.question).aggregate(Max('answer_number'))
-            self.answer_number = max_answer_number['answer_number__max'] + 1
+            # Answer number
+            max_number = Answer.objects.all().\
+                filter(question=self.question).aggregate(
+                models.Max('answer_number'))
+            max_number = max_number['answer_number__max']
+            # We take the maximum number. If the table is empty, we let the
+            # default value defined in the field definitions.
+            if max_number is not None:
+                self.answer_number = max_number + 1
+
         super(Answer, self).save(*args, **kwargs)
 
     def __unicode__(self):

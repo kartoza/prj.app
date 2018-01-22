@@ -52,8 +52,21 @@ class WorksheetQuestion(models.Model):
         """Meta class for Worksheet Question model."""
 
         app_label = 'lesson'
-        ordering = ['question_number', 'worksheet']
+        ordering = ['question', 'question_number']
         unique_together = ['question_number', 'question']
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # Question number
+            max_number = WorksheetQuestion.objects.all().\
+                filter(worksheet=self.worksheet).aggregate(
+                models.Max('question_number'))
+            max_number = max_number['question_number__max']
+            # We take the maximum number. If the table is empty, we let the
+            # default value defined in the field definitions.
+            if max_number is not None:
+                self.question_number = max_number + 1
+        super(WorksheetQuestion, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.question

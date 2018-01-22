@@ -315,7 +315,7 @@ class QuestionOrderView(
                         'question for could not be found or you do not '
                         'have permission to view the question.')
                 queryset = WorksheetQuestion.objects.filter(
-                    worksheet=worksheet).order_by('question_number')
+                    worksheet=worksheet)
                 return queryset
             else:
                 raise Http404(

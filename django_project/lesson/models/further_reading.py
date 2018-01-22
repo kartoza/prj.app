@@ -40,6 +40,7 @@ class FurtherReading(models.Model):
         """Meta class for Further Reading model."""
 
         app_label = 'lesson'
+        ordering = ['worksheet']
 
     def __unicode__(self):
         return self.text
