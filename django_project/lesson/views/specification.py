@@ -354,9 +354,12 @@ class SpecificationOrderSubmitView(
         try:
             specifications_request = json.loads(specifications_json)
         except ValueError:
-            raise Http404(
-                'Error json values'
-            )
+            raise Http404('Error json values')
+
+        # Add dummy shift in the DB to avoid Integrity about unique_together
+        for specification in specifications:
+            specification.specification_number += len(specifications_request)
+            specification.save()
 
         for specification_request in specifications_request:
             specification = specifications.get(id=specification_request['id'])

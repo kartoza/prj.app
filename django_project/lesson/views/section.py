@@ -388,9 +388,12 @@ class SectionOrderSubmitView(LoginRequiredMixin, SectionMixin, UpdateView):
         try:
             sections_request = json.loads(sections_json)
         except ValueError:
-            raise Http404(
-                'Error json values'
-            )
+            raise Http404('Error json values')
+
+        # Add dummy shift in the DB to avoid Integrity about unique_together
+        for section in sections:
+            section.section_number += len(sections_request)
+            section.save()
 
         for section_request in sections_request:
             section = sections.get(id=section_request['id'])
