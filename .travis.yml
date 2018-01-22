@@ -36,7 +36,7 @@ script:
   - cd django_project
   - python manage.py makemigrations
   - python manage.py migrate
-  - python manage.py collectstatic --noinput
+  - python manage.py collectstatic --noinput --verbosity 0
   - coverage run manage.py test
 
 after_success:
