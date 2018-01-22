@@ -2,6 +2,7 @@
 """Section views."""
 
 import json
+from collections import OrderedDict
 
 from django.core.urlresolvers import reverse
 from django.views.generic import (
@@ -14,12 +15,14 @@ from django.http import Http404, HttpResponse
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from base.models.project import Project
 from lesson.models.section import Section
+from lesson.models.worksheet import Worksheet
 from lesson.forms.section import SectionForm
 
 
@@ -59,9 +62,13 @@ class SectionCreateView(LoginRequiredMixin, SectionMixin, CreateView):
         :returns: URL
         :rtype: HttpResponse
         """
-        return reverse('section-list', kwargs={
-            'project_slug': self.object.project.slug
-        })
+        url = '{url}#{anchor}'.format(
+            url=reverse(
+                'section-list',
+                kwargs={'project_slug': self.object.project.slug}),
+            anchor=self.object.slug
+        )
+        return url
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
@@ -105,11 +112,12 @@ class SectionListView(SectionMixin, PaginationMixin, ListView):
         :rtype: dict
         """
         context = super(SectionListView, self).get_context_data(**kwargs)
-        project_slug = self.kwargs.get('project_slug', None)
-        context['project_slug'] = project_slug
-        if project_slug:
-            context['the_project'] = Project.objects.get(slug=project_slug)
-            context['project'] = context['the_project']
+        context['project'] = get_object_or_404(
+            Project, slug=self.kwargs.get('project_slug', None))
+        context['worksheets'] = OrderedDict()
+        for section in context['sections']:
+            query_set = Worksheet.objects.filter(section=section)
+            context['worksheets'][section] = query_set
         return context
 
     def get_queryset(self):
@@ -291,11 +299,13 @@ class SectionUpdateView(
         :returns: URL
         :rtype: HttpResponse
         """
-
-        return reverse('worksheet-list', kwargs={
-            'project_slug': self.object.project.slug,
-            'section_slug': self.object.slug
-        })
+        url = '{url}#{anchor}'.format(
+            url=reverse(
+                'section-list',
+                kwargs={'project_slug': self.object.project.slug}),
+            anchor=self.object.slug
+        )
+        return url
 
     def form_valid(self, form):
         """Check that there is no referential integrity error when saving."""

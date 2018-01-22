@@ -22,12 +22,12 @@
             <div class="pull-right btn-group">
                 {% if user.is_staff or user == project.owner %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
-                       href='{% url "section-create" project.slug %}'
+                       href='{% url "section-create" project_slug=project.slug %}'
                        data-title="Create New Section">
                         {% show_button_icon "add" %}
                     </a>
                     <a class="btn btn-default btn-mini tooltip-toggle"
-                       href='{% url "section-order" project_slug %}'
+                       href='{% url "section-order" project_slug=project.slug %}'
                        data-title="Order Section">
                         <span class="glyphicon glyphicon-sort-by-order"></span>
                     </a>
@@ -40,7 +40,7 @@
             </div>
         </h1>
     </div>
-    {% for section in sections %}
+    {% for section, worksheets in worksheets.items %}
         {% include 'section/includes/section-list-detail.html' %}
     {%  endfor %}
 {% endblock %}

@@ -41,7 +41,7 @@
                 </a>
                 {% endif %}
                  <a class="btn btn-default btn-mini tooltip-toggle"
-                    href='{% url "worksheet-list" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug %}'
+                    href='{% url "section-list" project_slug=worksheet.section.project.slug %}#{{ worksheet.section.slug }}'
                     data-title="Back">
                      <span class="glyphicon glyphicon-arrow-left"></span>
                  </a>

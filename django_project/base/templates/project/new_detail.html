@@ -115,9 +115,7 @@
                         {% for section in sections %}
                             <h5>
                                 <span>
-                                    <a href="{% url 'worksheet-list' project_slug=section.project.slug section_slug=section.slug %}">
-                                        {{ section.name }}
-                                    </a>
+                                    <a href="{% url 'section-list' project_slug=section.project.slug %}#{{ section.slug }}">{{ section.name }}</a>
                                 </span>
                             </h5>
                         {% endfor %}

@@ -30,7 +30,6 @@ from lesson.views.worksheet import (
     WorksheetUpdateView,
     WorksheetDeleteView,
     WorksheetDetailView,
-    WorksheetListView,
 )
 from lesson.views.specification import (
     SpecificationCreateView,
@@ -78,10 +77,6 @@ urlpatterns = patterns(
               '(?P<section_slug>[\w-]+)/detail/(?P<pk>[\w-]+)/$',
         view=WorksheetDetailView.as_view(),
         name='worksheet-detail'),
-    url(regex='^(?P<project_slug>[\w-]+)/section/'
-              '(?P<section_slug>[\w-]+)/worksheet/list/$',
-        view=WorksheetListView.as_view(),
-        name='worksheet-list'),
     # Specification
     url(regex='^(?P<project_slug>[\w-]+)/section/'
               '(?P<section_slug>[\w-]+)/worksheet/'

@@ -1,21 +1,33 @@
 {% load thumbnail %}
+{% load custom_markup %}
 <div class="row section-list" style="margin-top:5px;">
-    <div class="col-lg-9">
+    <div class="col-lg-9" id="{{ section.slug }}">
         <h3>
-            <a href="{% url 'worksheet-list' project_slug=section.project.slug section_slug=section.slug %}">
-                {{ section.name }}
-            </a>
+            {{ section.name }}
         </h3>
+         {{ section.notes }}
     </div>
 
     <div class="col-lg-3">
         {% if user.is_staff or user == project.owner %}
             <div class="btn-group pull-right">
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                   href='{% url "worksheet-create" project.slug section.slug %}'
+                   data-title="Create New Worksheet">
+                    {% show_button_icon "add" %}
+                </a>
+                <a class="btn btn-default btn-mini tooltip-toggle disabled"
+{#                   href='{% url "specification-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'#}
+                   data-title="Worksheet Order">
+                    <span class="glyphicon glyphicon-sort-by-order"></span>
+                </a>
                 <a class="btn btn-default btn-mini"
+                   data-title="Delete {{ section.name }}"
                    href='{% url "section-delete" project_slug=section.project.slug slug=section.slug %}'>
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
                 <a class="btn btn-default btn-mini"
+                   data-title="Update {{ section.name }}"
                    href='{% url "section-update" project_slug=section.project.slug slug=section.slug %}'>
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
@@ -23,3 +35,7 @@
         {% endif %}
     </div>
 </div>
+{% for worksheet in worksheets %}
+   {% include 'section/includes/row-worksheet.html' %}
+{% endfor %}
+<hr>

@@ -101,7 +101,10 @@ class TestViews(TestCase):
         response = client.post(
             reverse('section-create', kwargs=self.kwargs_project), post_data)
         self.assertRedirects(
-            response, reverse('section-list', kwargs=self.kwargs_project))
+            response, reverse(
+                'section-list', kwargs={
+                    'project_slug': self.test_section.project.slug}
+            ) + '#new-section')
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SectionCreate_no_login(self):
@@ -153,7 +156,9 @@ class TestViews(TestCase):
             reverse('section-update', kwargs=self.kwargs_section_full),
             post_data)
         self.assertRedirects(response, reverse(
-            'worksheet-list', kwargs=self.kwargs_worksheet_full))
+            'section-list', kwargs={
+                'project_slug': self.test_section.project.slug}) +
+                    '#' + self.test_section.slug)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SectionUpdate_no_login(self):
