@@ -321,21 +321,6 @@ class TestEntryViews(TestCase):
         self.user.delete()
 
     @override_settings(VALID_DOMAIN=['testserver', ])
-    def test_EntryListView(self):
-        """Test entry list view."""
-        response = self.client.get(reverse('entry-list', kwargs={
-            'project_slug': self.project.slug,
-            'version_slug': self.entry.version.slug
-        }))
-        self.assertEqual(response.status_code, 200)
-        expected_templates = [
-            'entry/list.html', u'changes/entry_list.html'
-        ]
-        self.assertEqual(response.template_name, expected_templates)
-        self.assertEqual(response.context_data['object_list'][0],
-                         self.pending_entry)
-
-    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryCreateView_with_login(self):
 
         self.client.login(username='timlinux', password='password')
@@ -490,9 +475,9 @@ class TestEntryViews(TestCase):
         response = self.client.post(reverse('entry-delete', kwargs={
             'pk': entry_to_delete.id
         }), {})
-        self.assertRedirects(response, reverse('entry-list', kwargs={
+        self.assertRedirects(response, reverse('version-detail', kwargs={
             'project_slug': self.project.slug,
-            'version_slug': self.version.slug
+            'slug': self.version.slug
         }))
         # TODO: The following line to test that the object is deleted does not
         # currently pass as expected.

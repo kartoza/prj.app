@@ -25,7 +25,7 @@
                         <span class="glyphicon glyphicon-minus"></span>
                     </a>
                     <a class="btn btn-default btn-sm tooltip-toggle"
-                       href='{% url "entry-list" project_slug=entry.version.project.slug version_slug=entry.version.slug %}'
+                       href='{% url "version-detail" project_slug=entry.version.project.slug slug=entry.version.slug %}'
                        data-title="Cancel">
                         <span class="glyphicon glyphicon-arrow-left"></span>
                     </a>
