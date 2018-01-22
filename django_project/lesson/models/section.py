@@ -23,6 +23,8 @@ class Section(models.Model):
 
     """
 
+    project = models.ForeignKey('base.Project', verbose_name=_('Project name'))
+
     section_number = models.IntegerField(
         verbose_name=_('Section number'),
         help_text=_(
@@ -49,7 +51,6 @@ class Section(models.Model):
     )
 
     slug = models.SlugField()
-    project = models.ForeignKey('base.Project', verbose_name=_('Project name'))
 
     # noinspection PyClassicStyleClass.
     class Meta:
