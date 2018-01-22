@@ -354,9 +354,12 @@ class QuestionOrderSubmitView(
         try:
             questions_request = json.loads(specifications_json)
         except ValueError:
-            raise Http404(
-                'Error json values'
-            )
+            raise Http404('Error json values')
+
+        # Add dummy shift in the DB to avoid Integrity about unique_together
+        for question in questions:
+            question.question_number += len(questions_request)
+            question.save()
 
         for question_request in questions_request:
             question = questions.get(pk=question_request['id'])
