@@ -12,37 +12,53 @@ from lesson.models.worksheet_question import WorksheetQuestion
 
 class AnswerAdmin(admin.ModelAdmin):
     """Answer admin model."""
-
-    pass
+    list_display = (
+        'question', 'answer_number', 'answer', 'is_correct',
+        'answer_explanation')
+    fields = (
+        'question', 'answer', 'is_correct', 'answer_explanation')
 
 
 class FurtherReadingAdmin(admin.ModelAdmin):
     """Further reading admin model."""
-
-    pass
+    list_display = ('worksheet', 'text', 'link')
+    fields = ('worksheet', 'text', 'link')
 
 
 class SectionAdmin(admin.ModelAdmin):
     """Section admin model."""
-    list_display = ('section_number', 'name', 'notes')
+    list_display = ('project', 'section_number', 'name', 'notes')
+    fields = ('project', 'name', 'notes')
 
 
 class SpecificationAdmin(admin.ModelAdmin):
     """Specification admin model."""
-
-    pass
+    list_display = (
+        'worksheet', 'specification_number', 'title', 'value', 'notes')
+    fields = ('worksheet', 'title', 'value', 'notes')
 
 
 class WorksheetAdmin(admin.ModelAdmin):
     """Worksheet admin model."""
-
-    pass
+    list_display = (
+        'section', 'order_number', 'module', 'title', 'summary_leader',
+        'summary_text', 'summary_image', 'exercise_goal', 'exercise_task',
+        'more_about_text', 'more_about_image', 'external_data', 'youtube_link',
+        'author_name', 'author_link'
+    )
+    fields = (
+        'section', 'module', 'title', 'summary_leader',
+        'summary_text', 'summary_image', 'exercise_goal', 'exercise_task',
+        'more_about_text', 'more_about_image', 'external_data', 'youtube_link',
+        'author_name', 'author_link'
+    )
 
 
 class WorksheetQuestionAdmin(admin.ModelAdmin):
     """Worksheet question admin model."""
-
-    pass
+    list_display = (
+        'worksheet', 'question', 'question_number', 'question_image')
+    fields = ('worksheet', 'question', 'question_image')
 
 
 admin.site.register(Answer, AnswerAdmin)
