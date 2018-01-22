@@ -55,15 +55,13 @@ class WorksheetDetailView(
         context = super(WorksheetDetailView, self).get_context_data(**kwargs)
         pk = self.kwargs.get('pk', None)
 
-        context['requirements'] = Specification.objects.filter(
-            worksheet=pk).order_by('specification_number')
+        context['requirements'] = Specification.objects.filter(worksheet=pk)
 
-        questions = WorksheetQuestion.objects.filter(
-            worksheet=pk).order_by('question_number')
+        questions = WorksheetQuestion.objects.filter(worksheet=pk)
         context['questions'] = OrderedDict()
         for question in questions:
             context['questions'][question] = Answer.objects.filter(
-                question=question).order_by('answer_number')
+                question=question)
 
         context['further_reading'] = FurtherReading.objects.filter(
             worksheet=pk)
@@ -303,8 +301,7 @@ class WorksheetListView(WorksheetMixin, PaginationMixin, ListView):
         section_slug = self.kwargs.get('section_slug', None)
         if section_slug:
             section = get_object_or_404(Section, slug=section_slug)
-            worksheet_qs = worksheet_qs.filter(
-                section=section).order_by('-module')
+            worksheet_qs = worksheet_qs.filter(section=section)
             return worksheet_qs
         else:
             raise Http404('Sorry! We could not find your section!')

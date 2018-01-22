@@ -315,8 +315,7 @@ class SpecificationOrderView(
                         'Sorry! The worksheet you are requesting a '
                         'specification for could not be found or you do not '
                         'have permission to view the specification.')
-                queryset = Specification.objects.filter(
-                    worksheet=worksheet).order_by('specification_number')
+                queryset = Specification.objects.filter(worksheet=worksheet)
                 return queryset
             else:
                 raise Http404(

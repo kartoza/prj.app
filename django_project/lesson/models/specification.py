@@ -57,7 +57,22 @@ class Specification(models.Model):
         """Meta class for specification."""
 
         app_label = 'lesson'
-        ordering = ['specification_number']
+        ordering = ['worksheet', 'specification_number']
+        unique_together = ['worksheet', 'specification_number']
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # Specification number
+            max_number = Specification.objects.all(). \
+                filter(worksheet=self.worksheet).aggregate(
+                models.Max('specification_number'))
+            max_number = max_number['specification_number__max']
+            # We take the maximum number. If the table is empty, we let the
+            # default value defined in  the field definitions.
+            if max_number is not None:
+                self.specification_number = max_number + 1
+
+        super(Specification, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.title

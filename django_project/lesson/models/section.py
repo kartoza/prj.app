@@ -56,8 +56,8 @@ class Section(models.Model):
         """Meta class for Section model."""
 
         app_label = 'lesson'
-        ordering = ['section_number']
-        unique_together = ['slug', 'project']
+        ordering = ['project', 'section_number']
+        unique_together = ['project', 'section_number']
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -67,6 +67,17 @@ class Section(models.Model):
             # unidecode() represents special characters (unicode data) in ASCII
             new_list = unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
+
+            # Section number
+            max_number = Section.objects.all().\
+                filter(project=self.project).aggregate(
+                models.Max('section_number'))
+            max_number = max_number['section_number__max']
+            # We take the maximum number. If the table is empty, we let the
+            # default value defined in the field definitions.
+            if max_number is not None:
+                self.section_number = max_number + 1
+
         super(Section, self).save(*args, **kwargs)
 
     def __unicode__(self):

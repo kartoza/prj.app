@@ -130,8 +130,7 @@ class SectionListView(SectionMixin, PaginationMixin, ListView):
                 raise Http404(
                     'The requested project does not exist.'
                 )
-            section_qs = section_qs.filter(
-                project=project).order_by('section_number')
+            section_qs = section_qs.filter(project=project)
             return section_qs
         else:
             raise Http404('Sorry! We could not find your section!')
@@ -351,8 +350,7 @@ class SectionOrderView(SectionMixin, StaffuserRequiredMixin, ListView):
                         'Sorry! The project you are requesting a section for '
                         'could not be found or you do not have permission to '
                         'view the section.')
-                queryset = Section.objects.filter(
-                    project=project).order_by('section_number')
+                queryset = Section.objects.filter(project=project)
                 return queryset
             else:
                 raise Http404(

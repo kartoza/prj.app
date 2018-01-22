@@ -23,6 +23,15 @@ class Worksheet(models.Model):
 
     section = models.ForeignKey(Section)
 
+    order_number = models.IntegerField(
+        verbose_name=_('Worksheet number'),
+        help_text=_(
+            'The order in which this worksheet is listed within a section'),
+        blank=False,
+        null=False,
+        default=0
+    )
+
     module = models.CharField(
         help_text=_('Name of worksheet.'),
         blank=False,
@@ -122,7 +131,8 @@ class Worksheet(models.Model):
         """Meta class for Worksheet model."""
 
         app_label = 'lesson'
-        ordering = ['module']
+        ordering = ['section', 'order_number']
+        unique_together = ['section', 'order_number']
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -132,6 +142,17 @@ class Worksheet(models.Model):
             # unidecode() represents special characters (unicode data) in ASCII
             new_list = unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
+
+            # Section number
+            max_number = Worksheet.objects.all().\
+                filter(section=self.section).aggregate(
+                models.Max('order_number'))
+            max_number = max_number['order_number__max']
+            # We take the maximum number. If the table is empty, we let the
+            # default value defined in the field definitions.
+            if max_number is not None:
+                self.order_number = max_number + 1
+
         super(Worksheet, self).save(*args, **kwargs)
 
     def __unicode__(self):
