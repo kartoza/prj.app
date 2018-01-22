@@ -90,6 +90,31 @@ class Worksheet(models.Model):
         blank=True
     )
 
+    external_data = models.FileField(
+        help_text=_('External data used in this worksheet. Usually a ZIP '
+                    'file. Most browsers support dragging the file directly '
+                    'on to the "Choose File" button above.'),
+        upload_to=os.path.join(
+            MEDIA_ROOT, 'images/lesson/worksheet/external_data'),
+        blank=True
+    )
+    youtube_link = models.URLField(
+        help_text=_('Link to a YouTube video.'),
+        null=True,
+        blank=True
+    )
+    author_name = models.TextField(
+        help_text=_('The author of this worksheet.'),
+        blank=True,
+        null=True,
+        max_length=200,
+    )
+    author_link = models.URLField(
+        help_text=_('Link to the author webpage.'),
+        blank=True,
+        null=True,
+    )
+
     slug = models.SlugField()
 
     # noinspection PyClassicStyleClass.
