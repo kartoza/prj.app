@@ -2,9 +2,17 @@
 """Views for projects."""
 # noinspection PyUnresolvedReferences
 import logging
+from django.http import (
+    Http404
+)
+from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.http import Http404
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import (
+    get_object_or_404,
+    render
+)
+
+from django.shortcuts import redirect
 from django.views.generic import (
     ListView,
     CreateView,
@@ -13,17 +21,27 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
 )
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+
+from braces.views import (
+    LoginRequiredMixin,
+    StaffuserRequiredMixin
+)
 from pure_pagination.mixins import PaginationMixin
-from changes.models import Version
-from ..models import Project, Domain
-from ..forms import ProjectForm, ScreenshotFormset
+
 from vota.models import Committee, Ballot
 from changes.models import SponsorshipPeriod
 from certification.models import CertifyingOrganisation
 from lesson.models.section import Section
-from django.conf import settings
-from django.shortcuts import redirect
+from changes.models import Version
+from ..models import (
+    Project,
+    Domain
+)
+from ..forms import (
+    ProjectForm,
+    ScreenshotFormset
+)
+
 
 logger = logging.getLogger(__name__)
 

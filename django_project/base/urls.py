@@ -31,7 +31,11 @@ from views import (
     OrganisationListView,
     ApproveOrganisationView,
     PendingOrganisationListView,
+
+    # stripe payment
+    make_payment,
 )
+
 
 urlpatterns = patterns(
     '',
@@ -87,6 +91,12 @@ urlpatterns = patterns(
     url(regex='^(?P<slug>[\w-]+)/$',
         view=ProjectDetailView.as_view(),
         name='project-detail'),
+
+    # stripe payment
+    url(regex='^project/payment/$',
+        view=make_payment,
+        name='make-payment'),
+
     url(regex='^(?P<slug>[\w-]+)/ballots/$',
         view=ProjectBallotListView.as_view(),
         name='project-ballot-list'),

@@ -4,6 +4,13 @@ core.settings.contrib
 """
 from .base import *  # noqa
 
+# noinspection PyUnresolvedReferences
+from .secret import STRIPE_PUBLISHABLE_KEY # noqa
+
+# noinspection PyUnresolvedReferences
+from .secret import STRIPE_SECRET_KEY #noqa
+
+
 # Extra installed apps - grapelli needs to be added before others
 INSTALLED_APPS = (
     'grappelli',
@@ -117,3 +124,13 @@ ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_SIGNUP_FORM_CLASS = 'base.forms.SignupForm'
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+
+# set stripe charge amount in cents here.
+STRIPE_CHARGE_AMOUNT = 100
+
+# set charge currency to be used here
+STRIPE_CHARGE_CURRENCY="usd"
+
+# stripe configuration settings
+STRIPE_PUBLISHABLE_KEY = STRIPE_PUBLISHABLE_KEY
+STRIPE_SECRET_KEY = STRIPE_SECRET_KEY

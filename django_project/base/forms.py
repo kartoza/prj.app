@@ -11,7 +11,12 @@ from crispy_forms.layout import (
     Field,
     Submit,
 )
-from models import Project, ProjectScreenshot, Domain, Organisation
+from models import (
+    Project,
+    ProjectScreenshot,
+    Domain,
+    Organisation
+)
 from certification.forms import CustomSelectMultipleWidget
 
 logger = logging.getLogger(__name__)
