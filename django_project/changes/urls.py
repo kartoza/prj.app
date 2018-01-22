@@ -38,7 +38,6 @@ from views import (
     EntryDetailView,
     EntryDeleteView,
     EntryCreateView,
-    EntryListView,
     EntryUpdateView,
     PendingEntryListView,
     AllPendingEntryList,
@@ -166,10 +165,6 @@ urlpatterns = patterns(
     url(regex='^entry/approve/(?P<pk>\d+)$',
         view=ApproveEntryView.as_view(),
         name='entry-approve'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w'
-              '.-]+)/entry/list/$',
-        view=EntryListView.as_view(),
-        name='entry-list'),
     url(regex='^entry/(?P<pk>\d+)$',
         view=EntryDetailView.as_view(),
         name='entry-detail'),
