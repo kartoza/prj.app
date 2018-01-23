@@ -4,7 +4,6 @@
 from collections import OrderedDict
 from django.core.urlresolvers import reverse
 from django.views.generic import (
-    ListView,
     DetailView,
     CreateView,
     UpdateView,
@@ -13,12 +12,9 @@ from django.views.generic import (
 from django.http import Http404
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.shortcuts import get_object_or_404
 
 from braces.views import LoginRequiredMixin
-from pure_pagination.mixins import PaginationMixin
 
-from base.models.project import Project
 from lesson.forms.worksheet import WorksheetForm
 from lesson.models.answer import Answer
 from lesson.models.further_reading import FurtherReading
@@ -241,10 +237,13 @@ class WorksheetDeleteView(
         :returns: URL
         :rtype: HttpResponse
         """
-        return reverse('worksheet-list', kwargs={
-            'section_slug': self.object.section.slug,
-            'project_slug': self.object.section.project.slug,
-        })
+        url = '{url}#{anchor}'.format(
+            url=reverse(
+                'section-list',
+                kwargs={'project_slug': self.object.section.project.slug}),
+            anchor=self.object.section.slug
+        )
+        return url
 
     def get_queryset(self):
         """Get the queryset for this view.
@@ -262,46 +261,3 @@ class WorksheetDeleteView(
             raise Http404
         qs = Worksheet.objects.filter(pk=self.pk)
         return qs
-
-
-class WorksheetListView(WorksheetMixin, PaginationMixin, ListView):
-    """List view for Worksheet."""
-
-    context_object_name = 'worksheets'
-    template_name = 'worksheet/list.html'
-    paginate_by = 10
-
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(WorksheetListView, self).get_context_data(**kwargs)
-        project_slug = self.kwargs.get('project_slug', None)
-        section_slug = self.kwargs.get('section_slug', None)
-        if project_slug and section_slug:
-            context['project'] = Project.objects.get(slug=project_slug)
-            context['section'] = Section.objects.get(slug=section_slug)
-        return context
-
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: A queryset which is filtered to only show approved Version
-        for this project.
-        :rtype: QuerySet
-
-        :raises: Http404
-        """
-        worksheet_qs = Worksheet.objects.all()
-        section_slug = self.kwargs.get('section_slug', None)
-        if section_slug:
-            section = get_object_or_404(Section, slug=section_slug)
-            worksheet_qs = worksheet_qs.filter(section=section)
-            return worksheet_qs
-        else:
-            raise Http404('Sorry! We could not find your section!')
