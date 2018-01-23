@@ -69,7 +69,7 @@
     <div class="row details-worksheet" style="margin-top:10px;">
         <div class="col-lg-8">
           <p>“{{ worksheet.summary_leader }}”</p>
-          <p>{{ worksheet.summary_text }}</p>
+          <p>{{ worksheet.summary_text | base_markdown }}</p>
         </div>
         <div class="col-lg-4">
           {% if worksheet.summary_image %}
@@ -82,7 +82,7 @@
         <div class="col-lg-7">
             <h4><strong>You try: </strong></h4>
             <p><strong><i>Goal: {{ worksheet.exercise_goal }}</i></strong></p>
-            <p>{{ worksheet.exercise_task }}</p>
+            <p>{{ worksheet.exercise_task | base_markdown }}</p>
         </div>
         <div style="margin-bottom: 20px" class="details-worksheet col-lg-5 requirement-table">
             {% if user.is_staff or user == project.owner %}
@@ -147,7 +147,7 @@
 
     <div class="row details-worksheet" style="margin-top:10px;">
         <div class="col-lg-8">
-          <p>{{ worksheet.more_about_text }}</p>
+          <p>{{ worksheet.more_about_text | base_markdown }}</p>
         </div>
         <div class="col-lg-4">
             {% if worksheet.more_about_image %}
