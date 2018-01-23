@@ -1,7 +1,6 @@
 # coding=utf-8
 """Section views."""
 
-import json
 from collections import OrderedDict
 
 from django.core.urlresolvers import reverse
@@ -11,7 +10,7 @@ from django.views.generic import (
     DeleteView,
     UpdateView,
 )
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Q
@@ -24,6 +23,7 @@ from base.models.project import Project
 from lesson.models.section import Section
 from lesson.models.worksheet import Worksheet
 from lesson.forms.section import SectionForm
+from lesson.utilities import re_order_features
 
 
 class SectionMixin(object):
@@ -390,25 +390,6 @@ class SectionOrderSubmitView(LoginRequiredMixin, SectionMixin, UpdateView):
         :rtype: HttpResponse
         :raises: Http404
         """
-        project_slug = kwargs.get('project_slug')
-        project = Project.objects.get(slug=project_slug)
+        project = Project.objects.get(slug=kwargs.get('project_slug'))
         sections = Section.objects.filter(project=project)
-        sections_json = request.body
-
-        try:
-            sections_request = json.loads(sections_json)
-        except ValueError:
-            raise Http404('Error json values')
-
-        # Add dummy shift in the DB to avoid Integrity about unique_together
-        for section in sections:
-            section.section_number += len(sections_request)
-            section.save()
-
-        for section_request in sections_request:
-            section = sections.get(id=section_request['id'])
-            if section:
-                section.section_number = section_request['sort_number']
-                section.save()
-
-        return HttpResponse('')
+        return re_order_features(request, sections)

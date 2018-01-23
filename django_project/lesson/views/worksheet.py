@@ -1,8 +1,6 @@
 # coding=utf-8
 """Worksheet views."""
 
-import json
-
 from collections import OrderedDict
 from django.core.urlresolvers import reverse
 from django.views.generic import (
@@ -12,7 +10,7 @@ from django.views.generic import (
     DeleteView,
     ListView,
 )
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
@@ -26,6 +24,7 @@ from lesson.models.section import Section
 from lesson.models.specification import Specification
 from lesson.models.worksheet import Worksheet
 from lesson.models.worksheet_question import WorksheetQuestion
+from lesson.utilities import re_order_features
 
 
 class WorksheetMixin(object):
@@ -323,25 +322,6 @@ class WorksheetOrderSubmitView(LoginRequiredMixin, WorksheetMixin, UpdateView):
         :rtype: HttpResponse
         :raises: Http404
         """
-        section_slug = kwargs.get('section_slug')
-        section = Section.objects.get(slug=section_slug)
+        section = Section.objects.get(slug=kwargs.get('section_slug'))
         worksheets = Worksheet.objects.filter(section=section)
-        worksheets_json = request.body
-
-        try:
-            worksheets_request = json.loads(worksheets_json)
-        except ValueError:
-            raise Http404('Error json values')
-
-        # Add dummy shift in the DB to avoid Integrity about unique_together
-        for worksheet in worksheets:
-            worksheet.order_number += len(worksheets_request)
-            worksheet.save()
-
-        for worksheet_request in worksheets_request:
-            worksheet = worksheets.get(id=worksheet_request['id'])
-            if worksheet:
-                worksheet.order_number = worksheet_request['sort_number']
-                worksheet.save()
-
-        return HttpResponse('')
+        return re_order_features(request, worksheets)

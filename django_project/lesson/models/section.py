@@ -25,7 +25,7 @@ class Section(models.Model):
 
     project = models.ForeignKey('base.Project', verbose_name=_('Project name'))
 
-    section_number = models.IntegerField(
+    sequence_number = models.IntegerField(
         verbose_name=_('Section number'),
         help_text=_(
             'The order in which this section is listed within a project'),
@@ -57,8 +57,8 @@ class Section(models.Model):
         """Meta class for Section model."""
 
         app_label = 'lesson'
-        ordering = ['project', 'section_number']
-        unique_together = ['project', 'section_number']
+        ordering = ['project', 'sequence_number']
+        unique_together = ['project', 'sequence_number']
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -72,12 +72,12 @@ class Section(models.Model):
             # Section number
             max_number = Section.objects.all().\
                 filter(project=self.project).aggregate(
-                models.Max('section_number'))
-            max_number = max_number['section_number__max']
+                models.Max('sequence_number'))
+            max_number = max_number['sequence_number__max']
             # We take the maximum number. If the table is empty, we let the
             # default value defined in the field definitions.
             if max_number is not None:
-                self.section_number = max_number + 1
+                self.sequence_number = max_number + 1
 
         super(Section, self).save(*args, **kwargs)
 
