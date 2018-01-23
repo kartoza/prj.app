@@ -42,7 +42,7 @@ class WorksheetForm(TranslationModelForm):
                 _('Worksheet details'),
                 Field('module', css_class='form_control'),
                 Field('title', css_class='form_control'),
-                Field('summary_header', css_class='form_control'),
+                Field('summary_leader', css_class='form_control'),
                 Field('summary_text', css_class='form_control'),
                 Field('summary_image', css_class='form_control'),
                 Field('exercise_goal', css_class='form_control'),
