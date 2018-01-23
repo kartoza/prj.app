@@ -31,7 +31,8 @@ class SpecificationForm(TranslationModelForm):
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
-                _('Specification details'),
+                _('Worksheet {}: specification details').format(
+                    self.worksheet),
                 Field('title', css_class='form_control'),
                 Field('value', css_class='form_control'),
                 Field('notes', css_class='form_control'),

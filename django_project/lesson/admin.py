@@ -43,14 +43,14 @@ class WorksheetAdmin(admin.ModelAdmin):
     list_display = (
         'section', 'order_number', 'module', 'title', 'summary_leader',
         'summary_text', 'summary_image', 'exercise_goal', 'exercise_task',
-        'more_about_text', 'more_about_image', 'external_data', 'youtube_link',
-        'author_name', 'author_link'
+        'more_about_title', 'more_about_text', 'more_about_image',
+        'external_data', 'youtube_link', 'author_name', 'author_link'
     )
     fields = (
         'section', 'module', 'title', 'summary_leader',
         'summary_text', 'summary_image', 'exercise_goal', 'exercise_task',
-        'more_about_text', 'more_about_image', 'external_data', 'youtube_link',
-        'author_name', 'author_link'
+        'more_about_title', 'more_about_text', 'more_about_image',
+        'external_data', 'youtube_link', 'author_name', 'author_link'
     )
 
 

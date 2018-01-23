@@ -31,7 +31,7 @@ class AnswerForm(TranslationModelForm):
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
-                _('Answer details'),
+                _('{question}: answer details').format(question=self.question),
                 Field('answer', css_class='form_control'),
                 Field('answer_explanation', css_class='form_control'),
                 Field('is_correct', css_class='form_control'),
