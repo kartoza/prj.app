@@ -12,6 +12,8 @@ from django.http import Http404
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext_lazy as _
 
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 
@@ -35,23 +37,8 @@ class QuestionCreateView(
     """Create view for Question."""
 
     context_object_name = 'question'
-    template_name = 'specification/create.html'
-
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(
-            QuestionCreateView, self).get_context_data(**kwargs)
-        context['question'] = WorksheetQuestion.objects.filter(
-            worksheet=self.worksheet)
-        context['worksheet'] = self.worksheet
-        return context
+    template_name = 'create.html'
+    creation_label = _('Add worksheet')
 
     def get_success_url(self):
         """Define the redirect URL
@@ -75,11 +62,8 @@ class QuestionCreateView(
         :rtype dict
         """
         kwargs = super(QuestionCreateView, self).get_form_kwargs()
-        self.worksheet_slug = self.kwargs.get('worksheet_slug', None)
-        self.worksheet = Worksheet.objects.get(slug=self.worksheet_slug)
-        kwargs.update({
-            'worksheet': self.worksheet
-        })
+        worksheet_slug = self.kwargs['worksheet_slug']
+        kwargs['worksheet'] = get_object_or_404(Worksheet, slug=worksheet_slug)
         return kwargs
 
     def form_valid(self, form):

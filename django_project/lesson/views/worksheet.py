@@ -14,6 +14,7 @@ from django.http import Http404
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext_lazy as _
 
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 
@@ -72,20 +73,8 @@ class WorksheetCreateView(LoginRequiredMixin, WorksheetMixin, CreateView):
     """Create view for Section."""
 
     context_object_name = 'worksheet'
-    template_name = 'worksheet/create.html'
-
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(WorksheetCreateView, self).get_context_data(**kwargs)
-        context['section'] = self.section
-        return context
+    template_name = 'create.html'
+    creation_label = _('Add worksheet')
 
     def get_success_url(self):
         """Define the redirect URL
@@ -109,11 +98,8 @@ class WorksheetCreateView(LoginRequiredMixin, WorksheetMixin, CreateView):
         :rtype dict
         """
         kwargs = super(WorksheetCreateView, self).get_form_kwargs()
-        self.section = Section.objects.get(
-            slug=self.kwargs.get('section_slug', None))
-        kwargs.update({
-            'section': self.section,
-        })
+        section_slug = self.kwargs['section_slug']
+        kwargs['section'] = get_object_or_404(Section, slug=section_slug)
         return kwargs
 
     def form_valid(self, form):
