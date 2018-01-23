@@ -9,6 +9,7 @@ from django.views.generic import (
 )
 from django.http import Http404
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 
 from braces.views import LoginRequiredMixin
 
@@ -81,7 +82,7 @@ class AnswerCreateView(
         try:
             result = super(AnswerCreateView, self).form_valid(form)
             return result
-        except ArithmeticError:
+        except IntegrityError:
             raise ValidationError(
                 'ERROR: Answer by this name already exists!')
 
