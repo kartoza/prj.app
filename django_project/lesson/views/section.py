@@ -15,6 +15,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext_lazy as _
 
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
@@ -37,21 +38,8 @@ class SectionCreateView(LoginRequiredMixin, SectionMixin, CreateView):
     """Create view for Section."""
 
     context_object_name = 'section'
-    template_name = 'section/create.html'
-
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(SectionCreateView, self).get_context_data(**kwargs)
-        context['section'] = Section.objects.filter(project=self.project)
-        context['project'] = self.project
-        return context
+    template_name = 'create.html'
+    creation_label = _('Add section')
 
     def get_success_url(self):
         """Define the redirect URL
@@ -77,12 +65,8 @@ class SectionCreateView(LoginRequiredMixin, SectionMixin, CreateView):
         :rtype dict
         """
         kwargs = super(SectionCreateView, self).get_form_kwargs()
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.project = Project.objects.get(slug=self.project_slug)
-        kwargs.update({
-            # 'user': self.request.user,
-            'project': self.project
-        })
+        project_slug = self.kwargs['project_slug']
+        kwargs['project'] = get_object_or_404(Project, slug=project_slug)
         return kwargs
 
     def form_valid(self, form):

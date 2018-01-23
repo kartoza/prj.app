@@ -75,7 +75,7 @@ class TestViews(TestCase):
             'section-create', kwargs=self.kwargs_project))
         self.assertEqual(response.status_code, 200)
         expected_templates = [
-            'section/create.html'
+            'create.html'
         ]
         self.assertEqual(response.template_name, expected_templates)
 
