@@ -14,131 +14,165 @@
 {% endblock %}
 
 {% block page_title %}
-    <h1>Worksheet</h1>
+    <h2>Worksheet</h2>
 {% endblock page_title %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-lg-10">
-            <h1>Section : {{ worksheet.section.name }}</h1>
-            <h2><strong>Module : {{ worksheet.module }}</strong></h2>
-            <h2><em>{{ worksheet.title }}</em></h2>
-        </div>
-
-        <div class="col-lg-2">
+    <div class="row page-header" style="border-bottom: 8px solid {{ worksheet.section.project.accent_color }};">
+        <div class="col-lg-12">
             <div class="pull-right">
-            <div class="btn-group">
-                {% if user.is_staff or user == project.owner %}
-                <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                   href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
-                   data-title="Delete {{ worksheet.title }}">
-                    <span class="glyphicon glyphicon-minus"></span>
-                </a>
-                <a class="btn btn-default btn-mini tooltip-toggle"
-                   href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
-                   data-title="Edit {{ worksheet.title }}">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                </a>
-                {% endif %}
-                 <a class="btn btn-default btn-mini tooltip-toggle"
-                    href='{% url "section-list" project_slug=worksheet.section.project.slug %}#{{ worksheet.section.slug }}'
-                    data-title="Back">
-                     <span class="glyphicon glyphicon-arrow-left"></span>
-                 </a>
-            </div>
+                <div class="btn-group worksheet-action" style="display:none;">
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                        href='{% url "section-list" project_slug=worksheet.section.project.slug %}#{{ worksheet.section.slug }}'
+                        data-title="Back">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                    {% if user.is_staff or user == project.owner %}
+                        <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                           href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
+                           data-title="Delete {{ worksheet.module }}">
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </a>
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
+                           data-title="Edit {{ worksheet.module }}">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="menu-wrapper menu-wrapper-head">
-        <h2 class="custom-heading">{{ worksheet.summary_leader }}</h2>
-    </div>
-
-    <div class="container row">
-        <div class="details-worksheet col-lg-12" style="margin-bottom: 20px">
-            {{ worksheet.summary_text }}
-            <br />
-            {% if worksheet.summary_image %}
-                <img src="{{ MEDIA_URL }}{{ worksheet.summary_image }}"/>
+        <div class="col-lg-4">
+            {% if worksheet.section.project.image_file %}
+                <img src="{{ MEDIA_URL }}{{ worksheet.section.project.image_file }}" style="height:30%;width:80%">
             {% endif %}
         </div>
-    </div>
-
-    <div class="menu-wrapper menu-wrapper-head">
-        <h3 class="custom-heading"><strong>You try: </strong></h3><br>
-        <h4 class="custom-heading">{{ worksheet.exercise_goal }}</h4>
-    </div>
-
-    <div class="container row">
-        <div class="details-worksheet col-lg-6" style="margin-bottom: 20px">
-            {{ worksheet.exercise_task }}
+        <div class="col-lg-8" style="text-align:right;">
+            <h2><strong>Section : {{ worksheet.section.name }}</strong></h2>
+            <h3 style="margin-top:-10px;margin-bottom:20px;"><i>Module : {{ worksheet.module }}</i></h3>
         </div>
-        <div class="details-worksheet col-lg-6" style="margin-bottom: 20px">
-            <table>
-                <tr>
-                    <th>Requirement</th><th>Value</th><th>Note</th>
-                    {% if user.is_staff or user == project.owner %}
-                        <th><div class="pull-right btn-group">
-                            <a class="btn btn-default btn-mini tooltip-toggle"
-                               href='{% url "specification-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
-                               data-title="Create New Requirement">
-                                {% show_button_icon "add" %}
-                            </a>
-                            <a class="btn btn-default btn-mini tooltip-toggle"
-                                href='{% url "specification-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
-                                data-title="Specification Order">
-                                <span class="glyphicon glyphicon-sort-by-order"></span>
-                            </a>
-                        </div></th>
-                    {% endif %}
-                </tr>
-                {% for requirement in requirements %}
-                    <tr>
-                        <td>{{ requirement.title }}</td><td>{{ requirement.value }}</td><td>{{ requirement.notes }}</td>
-                        {% if user.is_staff or user == project.owner %}
-                        <td><div class="pull-right btn-group">
-                            <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                               href='{% url "specification-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=requirement.pk %}'
-                               data-title="Delete {{ requirement.title }}">
-                                <span class="glyphicon glyphicon-minus"></span>
-                            </a>
-                            <a class="btn btn-default btn-mini tooltip-toggle"
-                               href='{% url "specification-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=requirement.pk %}'
-                               data-title="Edit {{ requirement.title }}">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                            </a>
-                        </div></td>
-                    {% endif %}
+    </div>
+
+    <div class="row details-worksheet" style="margin-top:10px;">
+        <div class="col-lg-1">
+          <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+              <img src="{% static "img/info.png" %}" style="height:50px;width:50px"">
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <h3 class="custom-heading" style="margin-left:-40px"><strong>{{ worksheet.title }}</strong></h3>
+        </div>
+        <div class="col-lg-3">
+        </div>
+    </div>
+
+    <div class="row details-worksheet" style="margin-top:10px;">
+        <div class="col-lg-8">
+          <p>“{{ worksheet.summary_leader }}”</p>
+          <p>{{ worksheet.summary_text }}</p>
+        </div>
+        <div class="col-lg-4">
+          {% if worksheet.summary_image %}
+            <img src="{{ MEDIA_URL }}{{ worksheet.summary_image }}" class="img-responsive img-rounded pull-right" style="width:100%;height:100%;">
+          {% endif %}
+        </div>
+    </div>
+
+    <div class="row details-worksheet" style="margin-top:10px;">
+        <div class="col-lg-7">
+            <h4><strong>You try: </strong></h4>
+            <p><strong><i>Goal: {{ worksheet.exercise_goal }}</i></strong></p>
+            <p>{{ worksheet.exercise_task }}</p>
+        </div>
+        <div style="margin-bottom: 20px" class="details-worksheet col-lg-5 requirement-table">
+            {% if user.is_staff or user == project.owner %}
+                <div class="pull-right btn-group requirement-action" style="margin-bottom:5px;display:none;">
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "specification-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
+                       data-title="Create New Requirement">
+                        {% show_button_icon "add" %}
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                        href='{% url "specification-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
+                        data-title="Specification Order">
+                        <span class="glyphicon glyphicon-sort-by-order"></span>
+                    </a>
+                </div>
+            {% endif %}
+            <table style="margin-top: 30px;">
+                <tbody>
+                    <tr style="background-color:#d6e6fb;">
+                        <th style="padding:5px;">Name</th>
+                        <th style="padding:5px;">Expectation</th>
+                        <th class="requirement-action" style="text-align:right;padding-right:0px;display:none;background-color:#FFFFFF">Actions</th>
                     </tr>
-                {% endfor %}
+                    {% for requirement in requirements %}
+                        <tr>
+                            <td style="background-color:#f3f9fe;padding:5px;">{{ requirement.title }}</td>
+                            <td style="padding:5px;">{{ requirement.value }}</td>
+                            <td style="padding-right: 0">
+                                <div class="btn-group pull-right requirement-action" style="display:none;">
+                                    <a class="btn btn-default btn-mini tooltip-toggle"
+                                       href='{% url "specification-delete" worksheet.section.project.slug worksheet.section.slug worksheet.slug requirement.pk %}'
+                                       data-title="Delete {{ requirement.title }}" data-original-title="" title="">
+                                        <span class="glyphicon glyphicon-minus"></span>
+                                    </a>
+                                    <a class="btn btn-default btn-mini tooltip-toggle"
+                                       href='{% url "specification-update" worksheet.section.project.slug worksheet.section.slug worksheet.slug requirement.pk %}'
+                                       data-title="Edit {{ requirement.title }}" data-original-title="" title="">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
     </div>
 
-{#    More about#}
-    <div class="menu-wrapper menu-wrapper-head">
-        <h2 class="custom-heading">More about</h2>
-    </div>
-    <div class="container row">
-        <div class="details-worksheet col-lg-12" style="margin-bottom: 20px">
-            {{ worksheet.more_about_text }}
-            <br />
-            {% if worksheet.more_about_image %}
-                <img src="{{ MEDIA_URL }}{{ worksheet.more_about_image }}"/>
-            {% endif %}
+    {# More about #}
+    <div class="row details-worksheet" style="margin-top:10px;">
+        <div class="col-lg-1">
+          <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+              <img src="{% static "img/info.png" %}" style="height:50px;width:50px"">
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <h3 class="custom-heading" style="margin-left:-40px"><strong>{{ worksheet.more_about_title }}</strong></h3>
+        </div>
+        <div class="col-lg-3">
         </div>
     </div>
 
-{#    Check your knowledge#}
-    <div class="menu-wrapper menu-wrapper-head">
-        <h2 class="custom-heading">
-            Check your knowledge
+    <div class="row details-worksheet" style="margin-top:10px;">
+        <div class="col-lg-8">
+          <p>{{ worksheet.more_about_text }}</p>
+        </div>
+        <div class="col-lg-4">
+            {% if worksheet.more_about_image %}
+                <img src="{{ MEDIA_URL }}{{ worksheet.more_about_image }}" class="img-responsive img-rounded pull-right" style="width:100%;height:100%;"/>
+            {% endif %}
+          </div>
+    </div>
+
+    {# Check your knowledge #}
+    <div class="row details-worksheet question-answer" style="margin-top:10px;">
+        <div class="col-lg-1">
+          <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+              <img src="{% static "img/check.png" %}" style="height:50px;width:50px"">
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <h3 class="custom-heading" style="margin-left:-40px"><strong>Check your knowledge:</strong></h3>
+        </div>
+        <div class="col-lg-3 pull-right">
             {% if user.is_staff or user == project.owner %}
-                <div class="pull-right btn-group">
+                <div class="pull-right btn-group question-answer-action" style="display:none;">
                     <a class="btn btn-default btn-mini tooltip-toggle"
-                        href='{% url "question-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
-                        data-title="Create New Question">
-                            {% show_button_icon "add" %}
+                  href='{% url "question-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
+                       data-title="Create New Question">
+                    {% show_button_icon "add" %}
                     </a>
                     <a class="btn btn-default btn-mini tooltip-toggle"
                         href='{% url "question-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
@@ -147,85 +181,97 @@
                     </a>
                 </div>
             {% endif %}
-        </h2>
+        </div>
     </div>
-    <div class="container row">
-        <div class="details-worksheet col-lg-12" style="margin-bottom: 20px">
+
+    <div class="row details-worksheet question-answer" style="margin-top:10px;">
+        <div style="margin-bottom: 20px" class="col-lg-12">
             <ol type="1">
                 {% for question, answers in questions.items %}
-                    <li style="margin-bottom: 20px">
-                        {{ question.question }}
-                        {% if question.question_image %}
-                            <img src="{{ MEDIA_URL }}{{ question.question_image }}"/>
-                        {% endif %}
-                        {% if user.is_staff or user == project.owner %}
-                            <div class="pull-right btn-group">
-                                <a class="btn btn-default btn-mini tooltip-toggle"
-                              href='{% url "answer-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug question.pk %}'
-                                   data-title="Create New Answer">
-                                {% show_button_icon "add" %}
-                                </a>
-                                <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                                    href='{% url "question-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=question.pk %}'
-                                    data-title="Delete {{ question.question }}">
-                                    <span class="glyphicon glyphicon-minus"></span>
-                                </a>
-                                <a class="btn btn-default btn-mini tooltip-toggle"
-                                    href='{% url "question-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=question.pk %}'
-                                    data-title="Edit {{ question.question }}">
-                                    <span class="glyphicon glyphicon-pencil"></span>
-                                </a>
-                                </div>
-                        {% endif %}
-                    </li>
-                    <ol type="a">
-                    {% for answer in answers %}
+                    <div class="row">
                         <li style="margin-bottom: 20px">
-                            {% if user.is_staff or user == project.owner %}
-{#                          We insert a tick for the correct answer and if the user is allowed and we display explanations. #}
-                                {% if answer.is_correct %}
-                                    &#10004;
-                                {%  endif %}
-                                {{ answer.answer }}: <em>{{ answer.answer_explanation }}</em>
-                                <div class="pull-right btn-group">
-                                <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                                    href='{% url "answer-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
-                                    data-title="Delete {{ answer.answer }}">
-                                    <span class="glyphicon glyphicon-minus"></span>
-                                </a>
-                                <a class="btn btn-default btn-mini tooltip-toggle"
-                                    href='{% url "answer-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
-                                    data-title="Edit {{ answer.answer }}">
-                                    <span class="glyphicon glyphicon-pencil"></span>
-                                </a>
-                                </div>
-                            {% else %}
-                                {{ answer.answer }}
-                            {% endif %}
+                            <div class="col-lg-10">
+                              <strong>{{ question.question }}:</strong>
+                            </div>
+                            <div class="col-lg-2">
+                                {% if user.is_staff or user == project.owner %}
+                                    <div class="pull-right btn-group question-answer-action" style="display:none;">
+                                        <a class="btn btn-default btn-mini tooltip-toggle"
+                                      href='{% url "answer-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug question.pk %}'
+                                           data-title="Create New Answer">
+                                        {% show_button_icon "add" %}
+                                        </a>
+                                        <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                                            href='{% url "question-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=question.pk %}'
+                                            data-title="Delete {{ question.question }}">
+                                            <span class="glyphicon glyphicon-minus"></span>
+                                        </a>
+                                        <a class="btn btn-default btn-mini tooltip-toggle"
+                                            href='{% url "question-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=question.pk %}'
+                                            data-title="Edit {{ question.question }}">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
                         </li>
-                    {% endfor %}
+                    </div>
+                    <ol type="a">
+                        {% for answer in answers %}
+                            <li style="margin-bottom: 10px">
+                                {% if user.is_staff or user == project.owner %}
+                                    {# We insert a tick for the correct answer and if the user is allowed and we display explanations. #}
+                                    {% if answer.is_correct %}
+                                        &#10004;
+                                    {%  endif %}
+                                    {{ answer.answer }}: <em>{{ answer.answer_explanation }}</em>
+                                    <div class="pull-right btn-group question-answer-action" style="display:none;">
+                                        <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                                            href='{% url "answer-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
+                                            data-title="Delete {{ answer.answer }}">
+                                            <span class="glyphicon glyphicon-minus"></span>
+                                        </a>
+                                        <a class="btn btn-default btn-mini tooltip-toggle"
+                                            href='{% url "answer-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
+                                            data-title="Edit {{ answer.answer }}">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    {{ answer.answer }}
+                                {% endif %}
+                            </li>
+                        {% endfor %}
                     </ol>
                 {% endfor %}
             </ol>
         </div>
     </div>
 
-{#    Read more#}
-    <div class="menu-wrapper menu-wrapper-head">
-        <h2 class="custom-heading">
-            Further reading
+    {# Further reading #}
+    <div class="row details-worksheet further-reading" style="margin-top:10px;">
+        <div class="col-lg-1">
+          <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+              <img src="{% static "img/book.png" %}" style="height:50px;width:50px">
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <h3 class="custom-heading" style="margin-left:-40px"><strong>Further reading: </strong></h3>
+        </div>
+        <div class="col-lg-3 pull-right">
             {% if user.is_staff or user == project.owner %}
-                <div class="pull-right btn-group">
+                <div class="pull-right btn-group further-reading-action" style="display:none;">
                     <a class="btn btn-default btn-mini tooltip-toggle disabled"
-    {#                    href='{% url "worksheet-create" project.slug section.slug %}'#}
-                        data-title="Create New Further More Item">
+                        {# href='{% url "worksheet-create" project.slug section.slug %}'#}
+                        data-title="Create New Further Reading Item">
                             {% show_button_icon "add" %}
                     </a>
                 </div>
             {% endif %}
-        </h2>
+        </div>
     </div>
-    <div class="container row">
+
+    <div class="row details-worksheet" style="margin-top:10px;">
         <div class="details-worksheet col-lg-12" style="margin-bottom: 20px">
             <ul>
                 {% for info in further_reading %}
@@ -237,12 +283,12 @@
                         {% if user.is_staff or user == project.owner %}
                             <div class="pull-right btn-group">
                                 <a class="btn btn-default btn-mini btn-delete tooltip-toggle disabled"
-{#                                    href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
+                                    {# href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
                                     data-title="Delete {{ info.text }}">
                                     <span class="glyphicon glyphicon-minus"></span>
                                 </a>
                                 <a class="btn btn-default btn-mini tooltip-toggle disabled"
-{#                                    href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
+                                    {# href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
                                     data-title="Edit {{ info.text }}">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
@@ -277,6 +323,38 @@
             },
             function (){
                 $(this).removeClass('btn-success').addClass('btn-default')
+            }
+        );
+        $('.page-header').hover(
+            function () {
+                $(this).find('.worksheet-action').show();
+            },
+             function () {
+                $(this).find('.worksheet-action').hide();
+            }
+        );
+        $('.requirement-table').hover(
+            function () {
+                $(this).find('.requirement-action').show();
+            },
+             function () {
+                $(this).find('.requirement-action').hide();
+            }
+        );
+        $('.question-answer').hover(
+            function () {
+                $(this).find('.question-answer-action').show();
+            },
+             function () {
+                $(this).find('.question-answer-action').hide();
+            }
+        );
+        $('.further-reading').hover(
+            function () {
+                $(this).find('.further-reading-action').show();
+            },
+             function () {
+                $(this).find('.further-reading-action').hide();
             }
         );
     </script>

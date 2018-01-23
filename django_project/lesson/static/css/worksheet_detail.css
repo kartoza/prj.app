@@ -3,11 +3,10 @@ Inspired from the "details" class in organisation_detail.css
 */
 
 .details-worksheet {
-    border: 1px solid lightgrey;
-    padding: 20px;
-    border-radius: 5px;
+    padding: 10px;
     font-family: inherit;
     font-size: 12pt;
     line-height: 175%;
     float: left;
+    width: 100%;
 }
