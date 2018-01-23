@@ -1,8 +1,6 @@
 # coding=utf-8
 """Question views."""
 
-import json
-
 from django.core.urlresolvers import reverse
 from django.views.generic import (
     ListView,
@@ -10,7 +8,7 @@ from django.views.generic import (
     DeleteView,
     UpdateView,
 )
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Q
@@ -22,6 +20,7 @@ from lesson.forms.question import QuestionForm
 from lesson.models.section import Section
 from lesson.models.worksheet_question import WorksheetQuestion
 from lesson.models.worksheet import Worksheet
+from lesson.utilities import re_order_features
 
 
 class QuestionMixin(object):
@@ -346,25 +345,6 @@ class QuestionOrderSubmitView(
         :rtype: HttpResponse
         :raises: Http404
         """
-        worksheet_slug = kwargs.get('worksheet_slug')
-        worksheet = Worksheet.objects.get(slug=worksheet_slug)
+        worksheet = Worksheet.objects.get(slug=kwargs.get('worksheet_slug'))
         questions = WorksheetQuestion.objects.filter(worksheet=worksheet)
-        specifications_json = request.body
-
-        try:
-            questions_request = json.loads(specifications_json)
-        except ValueError:
-            raise Http404('Error json values')
-
-        # Add dummy shift in the DB to avoid Integrity about unique_together
-        for question in questions:
-            question.question_number += len(questions_request)
-            question.save()
-
-        for question_request in questions_request:
-            question = questions.get(pk=question_request['id'])
-            if question:
-                question.question_number = question_request['sort_number']
-                question.save()
-
-        return HttpResponse('')
+        return re_order_features(request, questions)

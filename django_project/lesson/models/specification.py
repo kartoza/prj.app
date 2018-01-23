@@ -22,7 +22,7 @@ class Specification(models.Model):
 
     worksheet = models.ForeignKey(Worksheet)
 
-    specification_number = models.IntegerField(
+    sequence_number = models.IntegerField(
         help_text=_(
             'Used to order the specifications for a lesson into the correct '
             'sequence.'),
@@ -57,20 +57,20 @@ class Specification(models.Model):
         """Meta class for specification."""
 
         app_label = 'lesson'
-        ordering = ['worksheet', 'specification_number']
-        unique_together = ['worksheet', 'specification_number']
+        ordering = ['worksheet', 'sequence_number']
+        unique_together = ['worksheet', 'sequence_number']
 
     def save(self, *args, **kwargs):
         if not self.pk:
             # Specification number
             max_number = Specification.objects.all(). \
                 filter(worksheet=self.worksheet).aggregate(
-                models.Max('specification_number'))
-            max_number = max_number['specification_number__max']
+                models.Max('sequence_number'))
+            max_number = max_number['sequence_number__max']
             # We take the maximum number. If the table is empty, we let the
             # default value defined in  the field definitions.
             if max_number is not None:
-                self.specification_number = max_number + 1
+                self.sequence_number = max_number + 1
 
         super(Specification, self).save(*args, **kwargs)
 

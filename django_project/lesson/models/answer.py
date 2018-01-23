@@ -23,7 +23,7 @@ class Answer(models.Model):
 
     question = models.ForeignKey(WorksheetQuestion)
 
-    answer_number = models.IntegerField(
+    sequence_number = models.IntegerField(
         help_text=_(
             'Used to order the answers for a question into the correct '
             'sequence.'),
@@ -57,20 +57,20 @@ class Answer(models.Model):
         """Meta class for Answer module."""
 
         app_label = 'lesson'
-        unique_together = ['question', 'answer_number']
-        ordering = ['question', 'answer_number']
+        unique_together = ['question', 'sequence_number']
+        ordering = ['question', 'sequence_number']
 
     def save(self, *args, **kwargs):
         if not self.pk:
             # Answer number
             max_number = Answer.objects.all().\
                 filter(question=self.question).aggregate(
-                models.Max('answer_number'))
-            max_number = max_number['answer_number__max']
+                models.Max('sequence_number'))
+            max_number = max_number['sequence_number__max']
             # We take the maximum number. If the table is empty, we let the
             # default value defined in the field definitions.
             if max_number is not None:
-                self.answer_number = max_number + 1
+                self.sequence_number = max_number + 1
 
         super(Answer, self).save(*args, **kwargs)
 

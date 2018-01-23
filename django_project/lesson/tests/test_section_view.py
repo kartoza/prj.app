@@ -95,7 +95,7 @@ class TestViews(TestCase):
         post_data = {
             'name': u'New Section',
             'notes': 'New Notes',
-            'section_number': 1,
+            'sequence_number': 1,
             'project': self.test_project.id,
         }
         response = client.post(
@@ -113,7 +113,7 @@ class TestViews(TestCase):
         post_data = {
             'name': u'Newer Section',
             'notes': 'Newer Notes',
-            'section_number': 2,
+            'sequence_number': 2,
             'project': self.test_project.id,
         }
         response = client.post(
@@ -149,7 +149,7 @@ class TestViews(TestCase):
         post_data = {
             'name': u'New Section Update',
             'notes': 'New Notes Update',
-            'section_number': 10,
+            'sequence_number': 10,
             'project': self.test_project.id,
         }
         response = client.post(

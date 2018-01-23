@@ -13,7 +13,7 @@ from lesson.models.worksheet_question import WorksheetQuestion
 class AnswerAdmin(admin.ModelAdmin):
     """Answer admin model."""
     list_display = (
-        'question', 'answer_number', 'answer', 'is_correct',
+        'question', 'sequence_number', 'answer', 'is_correct',
         'answer_explanation')
     fields = (
         'question', 'answer', 'is_correct', 'answer_explanation')
@@ -27,21 +27,21 @@ class FurtherReadingAdmin(admin.ModelAdmin):
 
 class SectionAdmin(admin.ModelAdmin):
     """Section admin model."""
-    list_display = ('project', 'section_number', 'name', 'notes')
+    list_display = ('project', 'sequence_number', 'name', 'notes')
     fields = ('project', 'name', 'notes')
 
 
 class SpecificationAdmin(admin.ModelAdmin):
     """Specification admin model."""
     list_display = (
-        'worksheet', 'specification_number', 'title', 'value', 'notes')
+        'worksheet', 'sequence_number', 'title', 'value', 'notes')
     fields = ('worksheet', 'title', 'value', 'notes')
 
 
 class WorksheetAdmin(admin.ModelAdmin):
     """Worksheet admin model."""
     list_display = (
-        'section', 'order_number', 'module', 'title', 'summary_leader',
+        'section', 'sequence_number', 'module', 'title', 'summary_leader',
         'summary_text', 'summary_image', 'exercise_goal', 'exercise_task',
         'more_about_title', 'more_about_text', 'more_about_image',
         'external_data', 'youtube_link', 'author_name', 'author_link'
@@ -57,7 +57,7 @@ class WorksheetAdmin(admin.ModelAdmin):
 class WorksheetQuestionAdmin(admin.ModelAdmin):
     """Worksheet question admin model."""
     list_display = (
-        'worksheet', 'question', 'question_number', 'question_image')
+        'worksheet', 'question', 'sequence_number', 'question_image')
     fields = ('worksheet', 'question', 'question_image')
 
 

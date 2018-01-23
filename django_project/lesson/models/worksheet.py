@@ -23,7 +23,7 @@ class Worksheet(models.Model):
 
     section = models.ForeignKey(Section)
 
-    order_number = models.IntegerField(
+    sequence_number = models.IntegerField(
         verbose_name=_('Worksheet number'),
         help_text=_(
             'The order in which this worksheet is listed within a section'),
@@ -139,8 +139,8 @@ class Worksheet(models.Model):
         """Meta class for Worksheet model."""
 
         app_label = 'lesson'
-        ordering = ['section', 'order_number']
-        unique_together = ['section', 'order_number']
+        ordering = ['section', 'sequence_number']
+        unique_together = ['section', 'sequence_number']
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -154,12 +154,12 @@ class Worksheet(models.Model):
             # Section number
             max_number = Worksheet.objects.all().\
                 filter(section=self.section).aggregate(
-                models.Max('order_number'))
-            max_number = max_number['order_number__max']
+                models.Max('sequence_number'))
+            max_number = max_number['sequence_number__max']
             # We take the maximum number. If the table is empty, we let the
             # default value defined in the field definitions.
             if max_number is not None:
-                self.order_number = max_number + 1
+                self.sequence_number = max_number + 1
 
         super(Worksheet, self).save(*args, **kwargs)
 

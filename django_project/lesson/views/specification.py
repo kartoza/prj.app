@@ -1,8 +1,6 @@
 # coding=utf-8
 """Specification views."""
 
-import json
-
 from django.core.urlresolvers import reverse
 from django.views.generic import (
     ListView,
@@ -10,7 +8,7 @@ from django.views.generic import (
     DeleteView,
     UpdateView,
 )
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Q
@@ -22,6 +20,7 @@ from lesson.models.section import Section
 from lesson.models.specification import Specification
 from lesson.models.worksheet import Worksheet
 from lesson.forms.specification import SpecificationForm
+from lesson.utilities import re_order_features
 
 
 class SpecificationMixin(object):
@@ -346,26 +345,6 @@ class SpecificationOrderSubmitView(
         :rtype: HttpResponse
         :raises: Http404
         """
-        worksheet_slug = kwargs.get('worksheet_slug')
-        worksheet = Worksheet.objects.get(slug=worksheet_slug)
+        worksheet = Worksheet.objects.get(slug=kwargs.get('worksheet_slug'))
         specifications = Specification.objects.filter(worksheet=worksheet)
-        specifications_json = request.body
-
-        try:
-            specifications_request = json.loads(specifications_json)
-        except ValueError:
-            raise Http404('Error json values')
-
-        # Add dummy shift in the DB to avoid Integrity about unique_together
-        for specification in specifications:
-            specification.specification_number += len(specifications_request)
-            specification.save()
-
-        for specification_request in specifications_request:
-            specification = specifications.get(id=specification_request['id'])
-            if specification:
-                specification.specification_number = (
-                    specification_request['sort_number'])
-                specification.save()
-
-        return HttpResponse('')
+        return re_order_features(request, specifications)

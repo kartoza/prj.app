@@ -22,20 +22,20 @@ class WorksheetQuestion(models.Model):
 
     worksheet = models.ForeignKey(Worksheet)
 
-    question = models.CharField(
-        help_text=_('Question.'),
-        blank=False,
-        null=False,
-        max_length=200,
-    )
-
-    question_number = models.IntegerField(
+    sequence_number = models.IntegerField(
         help_text=_(
             'Used to order the questions for a lesson into the correct '
             'sequence.'),
         null=False,
         blank=False,
         default=0
+    )
+
+    question = models.CharField(
+        help_text=_('Question.'),
+        blank=False,
+        null=False,
+        max_length=200,
     )
 
     question_image = models.ImageField(
@@ -52,20 +52,20 @@ class WorksheetQuestion(models.Model):
         """Meta class for Worksheet Question model."""
 
         app_label = 'lesson'
-        ordering = ['question', 'question_number']
-        unique_together = ['question_number', 'question']
+        ordering = ['question', 'sequence_number']
+        unique_together = ['sequence_number', 'question']
 
     def save(self, *args, **kwargs):
         if not self.pk:
             # Question number
             max_number = WorksheetQuestion.objects.all().\
                 filter(worksheet=self.worksheet).aggregate(
-                models.Max('question_number'))
-            max_number = max_number['question_number__max']
+                models.Max('sequence_number'))
+            max_number = max_number['sequence_number__max']
             # We take the maximum number. If the table is empty, we let the
             # default value defined in the field definitions.
             if max_number is not None:
-                self.question_number = max_number + 1
+                self.sequence_number = max_number + 1
         super(WorksheetQuestion, self).save(*args, **kwargs)
 
     def __unicode__(self):
