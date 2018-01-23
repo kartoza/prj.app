@@ -30,7 +30,7 @@ class QuestionForm(TranslationModelForm):
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
-                _('Question details'),
+                _('Worksheet {}: question details').format(self.worksheet),
                 Field('question', css_class='form_control'),
                 Field('question_image', css_class='form_control'),
                 css_id='project-form'

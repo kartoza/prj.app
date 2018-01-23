@@ -83,6 +83,14 @@ class Worksheet(models.Model):
         max_length=1000,
     )
 
+    more_about_title = models.TextField(
+        help_text=_('More about title.'),
+        blank=False,
+        null=False,
+        max_length=200,
+        default=_('More about'),
+    )
+
     more_about_text = models.TextField(
         help_text=_('More detail about the content of the worksheet.'),
         blank=False,
@@ -112,7 +120,7 @@ class Worksheet(models.Model):
         null=True,
         blank=True
     )
-    author_name = models.TextField(
+    author_name = models.CharField(
         help_text=_('The author of this worksheet.'),
         blank=True,
         null=True,

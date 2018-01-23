@@ -31,7 +31,7 @@ class SectionForm(TranslationModelForm):
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
-                _('Section details'),
+                _('Project {}: section details').format(self.project),
                 Field('name', css_class='form_control'),
                 Field('notes', css_class='form_control'),
 

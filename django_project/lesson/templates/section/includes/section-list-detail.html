@@ -16,8 +16,8 @@
                    data-title="Create New Worksheet">
                     {% show_button_icon "add" %}
                 </a>
-                <a class="btn btn-default btn-mini tooltip-toggle disabled"
-{#                   href='{% url "specification-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'#}
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                   href='{% url "worksheet-order" project_slug=section.project.slug section_slug=section.slug %}'
                    data-title="Worksheet Order">
                     <span class="glyphicon glyphicon-sort-by-order"></span>
                 </a>

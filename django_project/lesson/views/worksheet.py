@@ -1,6 +1,8 @@
 # coding=utf-8
 """Worksheet views."""
 
+import json
+
 from collections import OrderedDict
 from django.core.urlresolvers import reverse
 from django.views.generic import (
@@ -8,12 +10,14 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView,
+    ListView,
 )
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
+from django.shortcuts import get_object_or_404
 
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 
 from lesson.forms.worksheet import WorksheetForm
 from lesson.models.answer import Answer
@@ -261,3 +265,83 @@ class WorksheetDeleteView(
             raise Http404
         qs = Worksheet.objects.filter(pk=self.pk)
         return qs
+
+
+class WorksheetOrderView(WorksheetMixin, StaffuserRequiredMixin, ListView):
+    """List view to order worksheet."""
+    context_object_name = 'worksheet'
+    template_name = 'worksheet/order.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(WorksheetOrderView, self).get_context_data(**kwargs)
+        context['num_items'] = context['worksheet'].count()
+        section_slug = self.kwargs.get('section_slug', None)
+        context['section'] = Section.objects.get(slug=section_slug)
+        return context
+
+    def get_queryset(self, queryset=None):
+        """Get the queryset for this view.
+
+        :returns: A queryset which is filtered to only show approved
+            Categories.
+
+        :param queryset: Optional queryset.
+        :rtype: QuerySet
+        :raises: Http404
+        """
+        section_slug = self.kwargs.get('section_slug', None)
+        section = get_object_or_404(Section, slug=section_slug)
+        queryset = Worksheet.objects.filter(section=section)
+        return queryset
+
+
+class WorksheetOrderSubmitView(LoginRequiredMixin, WorksheetMixin, UpdateView):
+    """Update order view for Section"""
+    context_object_name = 'section'
+
+    def post(self, request, *args, **kwargs):
+        """Post the project_slug from the URL and define the Project
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        :raises: Http404
+        """
+        section_slug = kwargs.get('section_slug')
+        section = Section.objects.get(slug=section_slug)
+        worksheets = Worksheet.objects.filter(section=section)
+        worksheets_json = request.body
+
+        try:
+            worksheets_request = json.loads(worksheets_json)
+        except ValueError:
+            raise Http404('Error json values')
+
+        # Add dummy shift in the DB to avoid Integrity about unique_together
+        for worksheet in worksheets:
+            worksheet.order_number += len(worksheets_request)
+            worksheet.save()
+
+        for worksheet_request in worksheets_request:
+            worksheet = worksheets.get(id=worksheet_request['id'])
+            if worksheet:
+                worksheet.order_number = worksheet_request['sort_number']
+                worksheet.save()
+
+        return HttpResponse('')
