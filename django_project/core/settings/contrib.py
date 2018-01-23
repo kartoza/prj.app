@@ -20,6 +20,7 @@ INSTALLED_APPS += (
     'embed_video',
     'django_hashedfilenamestorage',
     'django_countries',  # for sponsor addresses
+    'colorfield',  # for color picker
     # 'user_map',
     'disqus',
 )

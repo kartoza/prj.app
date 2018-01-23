@@ -16,6 +16,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from unidecode import unidecode
 from organisation import Organisation
+from colorfield.fields import ColorField
 
 logger = logging.getLogger(__name__)
 
@@ -108,6 +109,12 @@ class Project(models.Model):
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),
         blank=True
     )
+
+    accent_color = ColorField(
+        help_text=_('A color represent the project color'),
+        blank=True,
+        null=True,
+        default='#FF0000')
 
     signature = models.ImageField(
         help_text=_('Signature of the project owner. '
