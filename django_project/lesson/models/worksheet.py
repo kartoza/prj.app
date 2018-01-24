@@ -92,7 +92,9 @@ class Worksheet(models.Model):
     )
 
     more_about_text = models.TextField(
-        help_text=_('More detail about the content of the worksheet. Markdown is supported.'),
+        help_text=_(
+            'More detail about the content of the worksheet. '
+            'Markdown is supported.'),
         blank=False,
         null=False,
         max_length=2000,
