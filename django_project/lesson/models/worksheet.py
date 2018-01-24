@@ -54,16 +54,16 @@ class Worksheet(models.Model):
     )
 
     summary_text = models.TextField(
-        help_text=_('Content of the summary.'),
+        help_text=_('Content of the summary. Markdown is supported.'),
         blank=False,
         null=False,
         max_length=1000,
     )
 
     summary_image = models.ImageField(
-        help_text=_('Image of the summary. '
-                    'Most browsers support dragging the image directly on to '
-                    'the "Choose File" button above.'),
+        help_text=_('Image of the summary. A landscape image, approximately '
+                    '800*200. Most browsers support dragging the image '
+                    'directly on to the "Choose File" button above.'),
         upload_to=os.path.join(
             MEDIA_ROOT, 'images/lesson/worksheet/summary_image'),
         blank=True
@@ -77,13 +77,13 @@ class Worksheet(models.Model):
     )
 
     exercise_task = models.TextField(
-        help_text=_('Task in the exercise.'),
+        help_text=_('Task in the exercise. Markdown is supported.'),
         blank=False,
         null=False,
         max_length=1000,
     )
 
-    more_about_title = models.TextField(
+    more_about_title = models.CharField(
         help_text=_('More about title.'),
         blank=False,
         null=False,
@@ -92,7 +92,9 @@ class Worksheet(models.Model):
     )
 
     more_about_text = models.TextField(
-        help_text=_('More detail about the content of the worksheet.'),
+        help_text=_(
+            'More detail about the content of the worksheet. '
+            'Markdown is supported.'),
         blank=False,
         null=False,
         max_length=2000,
