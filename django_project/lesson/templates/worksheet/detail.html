@@ -261,17 +261,17 @@
         <div class="col-lg-3 pull-right">
             {% if user.is_staff or user == project.owner %}
                 <div class="pull-right btn-group further-reading-action" style="display:none;">
-                    <a class="btn btn-default btn-mini tooltip-toggle disabled"
-                        {# href='{% url "worksheet-create" project.slug section.slug %}'#}
-                        data-title="Create New Further Reading Item">
-                            {% show_button_icon "add" %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "further-reading-create" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug %}'
+                       data-title="Create New Further Reading Item">
+                        {% show_button_icon "add" %}
                     </a>
                 </div>
             {% endif %}
         </div>
     </div>
 
-    <div class="row details-worksheet" style="margin-top:10px;">
+    <div class="row details-worksheet further-reading" style="margin-top:10px;">
         <div class="details-worksheet col-lg-12" style="margin-bottom: 20px">
             <ul>
                 {% for info in further_reading %}
@@ -282,14 +282,14 @@
                         {% endif %}
                         {% if user.is_staff or user == project.owner %}
                             <div class="pull-right btn-group">
-                                <a class="btn btn-default btn-mini btn-delete tooltip-toggle disabled"
-                                    {# href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
-                                    data-title="Delete {{ info.text }}">
+                                <a class="btn btn-default btn-mini btn-delete tooltip-toggle further-reading-action" style="display:none;"
+                                   href='{% url "further-reading-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
+                                   data-title="Delete {{ info.text }}">
                                     <span class="glyphicon glyphicon-minus"></span>
                                 </a>
-                                <a class="btn btn-default btn-mini tooltip-toggle disabled"
-                                    {# href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
-                                    data-title="Edit {{ info.text }}">
+                                <a class="btn btn-default btn-mini tooltip-toggle further-reading-action" style="display:none;"
+                                   href='{% url "further-reading-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
+                                   data-title="Edit {{ info.text }}">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
                             </div>
