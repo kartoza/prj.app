@@ -17,6 +17,11 @@ from lesson.views.question import (
     QuestionOrderView,
     QuestionOrderSubmitView,
 )
+from lesson.views.further_reading import (
+    FurtherReadingCreateView,
+    FurtherReadingDeleteView,
+    FurtherReadingUpdateView,
+)
 from lesson.views.section import (
     SectionCreateView,
     SectionListView,
@@ -115,6 +120,24 @@ urlpatterns = patterns(
               'delete/(?P<pk>[\w-]+)/$',
         view=SpecificationDeleteView.as_view(),
         name='specification-delete'),
+    # Further more
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/worksheet/'
+              '(?P<worksheet_slug>[\w-]+)/further-reading/create/$',
+        view=FurtherReadingCreateView.as_view(),
+        name='further-reading-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/worksheet/'
+              '(?P<worksheet_slug>[\w-]+)/further-reading/'
+              'update/(?P<pk>[\w-]+)/$',
+        view=FurtherReadingUpdateView.as_view(),
+        name='further-reading-update'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/worksheet/'
+              '(?P<worksheet_slug>[\w-]+)/further-reading/'
+              'delete/(?P<pk>[\w-]+)/$',
+        view=FurtherReadingDeleteView.as_view(),
+        name='further-reading-delete'),
     # Question
     url(regex='^(?P<project_slug>[\w-]+)/section/'
               '(?P<section_slug>[\w-]+)/worksheet/'

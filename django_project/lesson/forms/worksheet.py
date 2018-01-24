@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Section worksheet."""
+"""Worksheet form."""
 
 from django.utils.translation import ugettext_lazy as _
 
