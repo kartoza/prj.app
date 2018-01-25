@@ -65,13 +65,11 @@ PIPELINE_JS['project'] = {
 
 # Project specific css files to be pipelined
 # For third party libs like bootstrap should go in contrib.py
-# Order is significant here - apply style changes after bootstrap-theme
 PIPELINE_CSS['project'] = {
     'source_filenames': (
-        'css/bootstrap-theme.css'
         'css/changelog.css',
         'css/form.css',
-        'css/fonts.css',
+        'css/fonts.css'
     ),
     'output_filename': 'css/project.css',
     'extra_context': {
