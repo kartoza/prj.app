@@ -79,7 +79,7 @@ class AnswerDeleteView(
     """Delete view for Answer."""
 
     context_object_name = 'answer'
-    template_name = 'question/delete.html'
+    template_name = 'answer/delete.html'
 
     def get(self, request, *args, **kwargs):
         """Get the worksheet_slug from the URL and define the Worksheet.
@@ -131,9 +131,9 @@ class AnswerDeleteView(
         """
 
         return reverse('worksheet-detail', kwargs={
-            'pk': self.object.worksheet.pk,
-            'section_slug': self.object.worksheet.section.slug,
-            'project_slug': self.object.worksheet.section.project.slug
+            'pk': self.object.question.worksheet.pk,
+            'section_slug': self.object.question.worksheet.section.slug,
+            'project_slug': self.object.question.worksheet.section.project.slug
         })
 
     def get_queryset(self):
@@ -151,7 +151,7 @@ class AnswerDeleteView(
 
         if not self.request.user.is_authenticated():
             raise Http404
-        qs = WorksheetQuestion.objects.filter(pk=self.pk)
+        qs = Answer.objects.filter(pk=self.pk)
         return qs
 
 
