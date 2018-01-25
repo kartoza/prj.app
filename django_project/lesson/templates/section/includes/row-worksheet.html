@@ -3,7 +3,7 @@
     <div class="col-lg-9" id="{{ worksheet.module }}">
         <h4>
             <a href="{% url "worksheet-detail" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}">
-                {{ worksheet.title }}
+                {{ worksheet.module }}
             </a>
         </h4>
     </div>
