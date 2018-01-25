@@ -233,7 +233,7 @@ class WorksheetDeleteView(
         return qs
 
 
-class WorksheetOrderView(WorksheetMixin, StaffuserRequiredMixin, ListView):
+class WorksheetOrderView(StaffuserRequiredMixin, WorksheetMixin, ListView):
     """List view to order worksheet."""
     context_object_name = 'worksheet'
     template_name = 'worksheet/order.html'

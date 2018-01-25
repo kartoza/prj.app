@@ -27,7 +27,7 @@
                         data-title="Back">
                         <span class="glyphicon glyphicon-arrow-left"></span>
                     </a>
-                    {% if user.is_staff or user == project.owner %}
+                    {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                         <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                            href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
                            data-title="Delete {{ worksheet.module }}">
@@ -83,7 +83,7 @@
             <p>{{ worksheet.exercise_task | base_markdown }}</p>
         </div>
         <div style="margin-bottom: 20px" class="details-worksheet col-lg-5 requirement-table">
-            {% if user.is_staff or user == project.owner %}
+            {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                 <div class="pull-right btn-group requirement-action" style="margin-bottom:5px;display:none;">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "specification-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
@@ -103,12 +103,15 @@
                         <tr style="background-color:#d6e6fb;">
                             <th style="padding:5px;">Name</th>
                             <th style="padding:5px;">Expectation</th>
+                         {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                             <th class="requirement-action" style="text-align:right;padding-right:0px;display:none;background-color:#FFFFFF">Actions</th>
+                         {% endif %}
                         </tr>
                         {% for requirement in requirements %}
                             <tr>
                                 <td style="background-color:#f3f9fe;padding:5px;">{{ requirement.title }}</td>
                                 <td style="padding:5px;">{{ requirement.value }}</td>
+                                {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                                 <td style="padding-right: 0">
                                     <div class="btn-group pull-right requirement-action" style="display:none;">
                                         <a class="btn btn-default btn-mini tooltip-toggle"
@@ -123,6 +126,7 @@
                                         </a>
                                     </div>
                                 </td>
+                                {% endif %}
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -172,7 +176,7 @@
           <h3 class="custom-heading" style="margin-left:-40px"><strong>Check your knowledge:</strong></h3>
         </div>
         <div class="col-lg-3 pull-right">
-            {% if user.is_staff or user == project.owner %}
+            {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                 <div class="pull-right btn-group question-answer-action" style="display:none;">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                   href='{% url "question-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
@@ -199,7 +203,7 @@
                               <strong>{{ question.question }}:</strong>
                             </div>
                             <div class="col-lg-2">
-                                {% if user.is_staff or user == project.owner %}
+                                {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                                     <div class="pull-right btn-group question-answer-action" style="display:none;">
                                         <a class="btn btn-default btn-mini tooltip-toggle"
                                       href='{% url "answer-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug question.pk %}'
@@ -224,7 +228,7 @@
                     <ol type="a">
                         {% for answer in answers %}
                             <li style="margin-bottom: 10px">
-                                {% if user.is_staff or user == project.owner %}
+                                {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                                     {# We insert a tick for the correct answer and if the user is allowed and we display explanations. #}
                                     {% if answer.is_correct %}
                                         <span class="question-answer-action" style="display:none;">&#10004;</span>
@@ -267,7 +271,7 @@
           <h3 class="custom-heading" style="margin-left:-40px"><strong>Further reading: </strong></h3>
         </div>
         <div class="col-lg-3 pull-right">
-            {% if user.is_staff or user == project.owner %}
+            {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                 <div class="pull-right btn-group further-reading-action" style="display:none;">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "further-reading-create" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug %}'
@@ -288,7 +292,7 @@
                         {% if info.link %}
                             <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
                         {% endif %}
-                        {% if user.is_staff or user == project.owner %}
+                        {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                             <div class="pull-right btn-group">
                                 <a class="btn btn-default btn-mini btn-delete tooltip-toggle further-reading-action" style="display:none;"
                                    href='{% url "further-reading-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'

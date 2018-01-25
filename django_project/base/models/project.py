@@ -188,6 +188,16 @@ class Project(models.Model):
             'moderation queue.')
     )
 
+    lesson_manager = models.ManyToManyField(
+        User,
+        related_name='lesson_manager',
+        blank=True,
+        null=True,
+        help_text=_(
+            'Managers of the lesson app in this project. '
+            'They will be allowed to create or remove lessons.')
+    )
+
     certification_manager = models.ManyToManyField(
         User,
         related_name='certification_manager',
