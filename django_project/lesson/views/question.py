@@ -9,8 +9,6 @@ from django.views.generic import (
     UpdateView,
 )
 from django.http import Http404
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
@@ -65,15 +63,6 @@ class QuestionCreateView(
         worksheet_slug = self.kwargs['worksheet_slug']
         kwargs['worksheet'] = get_object_or_404(Worksheet, slug=worksheet_slug)
         return kwargs
-
-    def form_valid(self, form):
-        """Check that there is no referential integrity error when saving."""
-        try:
-            result = super(QuestionCreateView, self).form_valid(form)
-            return result
-        except IntegrityError:
-            raise ValidationError(
-                'ERROR: Question by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit
@@ -237,16 +226,6 @@ class QuestionUpdateView(
             'section_slug': self.object.worksheet.section.slug,
             'project_slug': self.object.worksheet.section.project.slug
         })
-
-    def form_valid(self, form):
-        """Check that there is no referential integrity error when saving."""
-
-        try:
-            return super(
-                QuestionUpdateView, self).form_valid(form)
-        except IntegrityError:
-            return ValidationError(
-                'ERROR: Question by this name is already exists!')
 
 
 class QuestionOrderView(
