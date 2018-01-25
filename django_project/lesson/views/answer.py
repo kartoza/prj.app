@@ -8,8 +8,6 @@ from django.views.generic import (
     UpdateView,
 )
 from django.http import Http404
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
@@ -60,15 +58,6 @@ class AnswerCreateView(
         pk = self.kwargs['question_pk']
         kwargs['question'] = get_object_or_404(WorksheetQuestion, pk=pk)
         return kwargs
-
-    def form_valid(self, form):
-        """Check that there is no referential integrity error when saving."""
-        try:
-            result = super(AnswerCreateView, self).form_valid(form)
-            return result
-        except IntegrityError:
-            raise ValidationError(
-                'ERROR: Answer by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit
