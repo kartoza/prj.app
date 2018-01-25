@@ -69,8 +69,7 @@ PIPELINE_CSS['project'] = {
     'source_filenames': (
         'css/changelog.css',
         'css/form.css',
-        'css/fonts.css',
-        'css/bootstrap-theme.css'
+        'css/fonts.css'
     ),
     'output_filename': 'css/project.css',
     'extra_context': {
