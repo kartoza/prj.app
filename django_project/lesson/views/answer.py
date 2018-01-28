@@ -7,7 +7,6 @@ from django.views.generic import (
     DeleteView,
     UpdateView,
 )
-from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
@@ -70,44 +69,6 @@ class AnswerDeleteView(
     context_object_name = 'answer'
     template_name = 'answer/delete.html'
 
-    def get(self, request, *args, **kwargs):
-        """Get the worksheet_slug from the URL and define the Worksheet.
-
-        :param request: HTTP request object
-        :type request: HttpRequest
-
-        :param args: Positional arguments
-        :type args: tuple
-
-        :param kwargs: Keyword arguments
-        :type kwargs: dict
-
-        :returns: Unaltered request object
-        :rtype: HttpResponse
-        """
-        self.pk = self.kwargs.get('pk', None)
-        return super(
-            AnswerDeleteView, self).get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        """Post the worksheet_slug from the URL and define the Worksheet.
-
-        :param request: HTTP request object
-        :type request: HttpRequest
-
-        :param args: Positional arguments
-        :type args: tuple
-
-        :param kwargs: Keyword arguments
-        :type kwargs: dict
-
-        :returns: Unaltered request object
-        :rtype: HttpResponse
-        """
-        self.pk = self.kwargs.get('pk', None)
-        return super(
-            AnswerDeleteView, self).post(request, *args, **kwargs)
-
     def get_success_url(self):
         """Define the redirect URL.
 
@@ -118,30 +79,11 @@ class AnswerDeleteView(
         :returns: URL
         :rtype: HttpResponse
         """
-
         return reverse('worksheet-detail', kwargs={
             'pk': self.object.question.worksheet.pk,
             'section_slug': self.object.question.worksheet.section.slug,
             'project_slug': self.object.question.worksheet.section.project.slug
         })
-
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        We need to filter the CertifyingOrganisation objects by
-        Worksheet before passing to get_object() to ensure that we
-        return the correct Certifying Organisation object.
-        The requesting User must be authenticated.
-
-        :returns: Certifying Organisation queryset filtered by Worksheet
-        :rtype: QuerySet
-        :raises: Http404
-        """
-
-        if not self.request.user.is_authenticated():
-            raise Http404
-        qs = Answer.objects.filter(pk=self.pk)
-        return qs
 
 
 # noinspection PyAttributeOutsideInit
@@ -152,7 +94,8 @@ class AnswerUpdateView(
     """Update view for Answer."""
 
     context_object_name = 'answer'
-    template_name = 'answer/update.html'
+    template_name = 'update.html'
+    update_label = _('Update answer')
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
@@ -160,13 +103,9 @@ class AnswerUpdateView(
         :returns keyword argument from the form
         :rtype: dict
         """
-
         kwargs = super(AnswerUpdateView, self).get_form_kwargs()
-        self.pk = self.kwargs.get('pk', None)
-        self.answer = Answer.objects.get(pk=self.pk)
-        kwargs.update({
-            'question': self.answer.question
-        })
+        answer = get_object_or_404(Answer, self.pk_url_kwarg)
+        kwargs['question'] = answer.question
         return kwargs
 
     def get_success_url(self):
@@ -178,7 +117,6 @@ class AnswerUpdateView(
         :returns: URL
         :rtype: HttpResponse
         """
-
         return reverse('worksheet-detail', kwargs={
             'pk': self.object.question.worksheet.pk,
             'section_slug': self.object.question.worksheet.section.slug,

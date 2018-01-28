@@ -10,7 +10,6 @@ from django.views.generic import (
     DeleteView,
     ListView,
 )
-from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
@@ -105,7 +104,8 @@ class WorksheetUpdateView(LoginRequiredMixin, WorksheetMixin, UpdateView):
     """Update view for worksheet."""
 
     context_object_name = 'worksheet'
-    template_name = 'worksheet/update.html'
+    template_name = 'update.html'
+    update_label = _('Update worksheet')
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.
@@ -114,25 +114,9 @@ class WorksheetUpdateView(LoginRequiredMixin, WorksheetMixin, UpdateView):
         :rtype: dict
         """
         kwargs = super(WorksheetUpdateView, self).get_form_kwargs()
-        self.section = Section.objects.get(
-            slug=self.kwargs.get('section_slug', None))
-        kwargs.update({
-            'section': self.section
-        })
+        slug = self.kwargs.get('section_slug', None)
+        kwargs['section'] = get_object_or_404(Section, slug=slug)
         return kwargs
-
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(WorksheetUpdateView, self).get_context_data(**kwargs)
-        context['section'] = self.section
-        return context
 
     def get_success_url(self):
         """Define the redirect URL.
@@ -159,44 +143,6 @@ class WorksheetDeleteView(
     context_object_name = 'worksheet'
     template_name = 'worksheet/delete.html'
 
-    def get(self, request, *args, **kwargs):
-        """Get the project_slug from the URL and define the Project.
-
-        :param request: HTTP request object
-        :type request: HttpRequest
-
-        :param args: Positional arguments
-        :type args: tuple
-
-        :param kwargs: Keyword arguments
-        :type kwargs: dict
-
-        :returns: Unaltered request object
-        :rtype: HttpResponse
-        """
-        self.pk = self.kwargs.get('pk', None)
-        return super(
-            WorksheetDeleteView, self).get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        """Post the project_slug from the URL and define the Project.
-
-        :param request: HTTP request object
-        :type request: HttpRequest
-
-        :param args: Positional arguments
-        :type args: tuple
-
-        :param kwargs: Keyword arguments
-        :type kwargs: dict
-
-        :returns: Unaltered request object
-        :rtype: HttpResponse
-        """
-        self.pk = self.kwargs.get('pk', None)
-        return super(
-            WorksheetDeleteView, self).post(request, *args, **kwargs)
-
     def get_success_url(self):
         """Define the redirect URL.
 
@@ -214,23 +160,6 @@ class WorksheetDeleteView(
             anchor=self.object.section.slug
         )
         return url
-
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        We need to filter the Worksheet objects by
-        Project before passing to get_object() to ensure that we
-        return the correct Worksheet object.
-        The requesting User must be authenticated.
-
-        :returns: Worksheet queryset filtered by Project
-        :rtype: QuerySet
-        :raises: Http404
-        """
-        if not self.request.user.is_authenticated():
-            raise Http404
-        qs = Worksheet.objects.filter(pk=self.pk)
-        return qs
 
 
 class WorksheetOrderView(StaffuserRequiredMixin, WorksheetMixin, ListView):
