@@ -57,7 +57,7 @@ class Worksheet(models.Model):
         help_text=_('Content of the summary. Markdown is supported.'),
         blank=False,
         null=False,
-        max_length=1000,
+        # max_length=1000, Not enough for now
     )
 
     summary_image = models.ImageField(
@@ -97,7 +97,7 @@ class Worksheet(models.Model):
             'Markdown is supported.'),
         blank=False,
         null=False,
-        max_length=2000,
+        # max_length=2000, Not enough for now
     )
 
     more_about_image = models.ImageField(
