@@ -18,6 +18,7 @@ from django.views.generic import (
     RedirectView)
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
+from django.db.models import Q
 from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from ..models import Category, Version
@@ -127,7 +128,7 @@ class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
         return qs
 
 
-class CategoryListView(CategoryMixin, StaffuserRequiredMixin, ListView):
+class CategoryListView(CategoryMixin, LoginRequiredMixin, ListView):
     """List view for Category."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
@@ -183,7 +184,7 @@ class CategoryListView(CategoryMixin, StaffuserRequiredMixin, ListView):
             return queryset
 
 
-class CategoryOrderView(StaffuserRequiredMixin, CategoryMixin, ListView):
+class CategoryOrderView(LoginRequiredMixin, CategoryMixin, ListView):
     """List view to order category"""
     context_object_name = 'categories'
     template_name = 'category/order.html'
@@ -228,7 +229,10 @@ class CategoryOrderView(StaffuserRequiredMixin, CategoryMixin, ListView):
                         'approved yet. Try logging in as a staff member if '
                         'you wish to view it.')
                 queryset = Category.approved_objects.filter(
-                    project=project).order_by('sort_number')
+                    Q(project=project) &
+                    (Q(project__owner=self.request.user) |
+                     Q(project__changelog_manager=self.request.user))
+                ).order_by('sort_number')
                 return queryset
             else:
                 raise Http404(
@@ -238,7 +242,7 @@ class CategoryOrderView(StaffuserRequiredMixin, CategoryMixin, ListView):
             return queryset
 
 
-class CategoryDetailView(CategoryMixin, DetailView):
+class CategoryDetailView(LoginRequiredMixin, CategoryMixin, DetailView):
     """Detail view for Category."""
     context_object_name = 'category'
     template_name = 'category/detail.html'
@@ -506,11 +510,16 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
         projects which user created (staff gets all projects)
         :rtype: QuerySet
         """
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
         qs = Category.approved_objects
         if self.request.user.is_staff:
             return qs
         else:
-            return qs.filter(creator=self.request.user)
+            return qs.filter(
+                Q(project=self.project) &
+                (Q(project__owner=self.request.user) |
+                 Q(project__changelog_manager=self.request.user)))
 
     def get_success_url(self):
         """Define the redirect URL
@@ -535,7 +544,7 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
 
 
 class PendingCategoryListView(
-        StaffuserRequiredMixin, CategoryMixin, ListView):
+        LoginRequiredMixin, CategoryMixin, ListView):
     """List view for pending Category."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
@@ -590,7 +599,9 @@ class PendingCategoryListView(
                         'approved yet. Try logging in as a staff member if '
                         'you wish to view it.')
                 self.queryset = Category.unapproved_objects.filter(
-                    project=self.project)
+                    Q(project=self.project) &
+                    (Q(project__owner=self.request.user) |
+                     Q(project__changelog_manager=self.request.user)))
                 return self.queryset
             else:
                 raise Http404(
@@ -599,7 +610,7 @@ class PendingCategoryListView(
         return self.queryset
 
 
-class ApproveCategoryView(CategoryMixin, StaffuserRequiredMixin, RedirectView):
+class ApproveCategoryView(CategoryMixin, LoginRequiredMixin, RedirectView):
     """Redirect view for approving Category."""
     permanent = False
     query_string = True

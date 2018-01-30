@@ -371,13 +371,19 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
         :rtype: QuerySet
         :raises: Http404
         """
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
         if not self.request.user.is_authenticated():
             raise Http404
         qs = Version.objects.filter(project=self.project)
         if self.request.user.is_staff:
             return qs
         else:
-            return qs.filter(author=self.request.user)
+            return qs.filter(
+                Q(project=self.project) &
+                (Q(author=self.request.user) |
+                 Q(project__owner=self.request.user) |
+                 Q(project__changelog_manager=self.request.user)))
 
 
 # noinspection PyAttributeOutsideInit
@@ -438,7 +444,7 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
 
 
 # noinspection PyAttributeOutsideInit
-class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
+class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
     """Update view for Version."""
     context_object_name = 'version'
     template_name = 'version/update.html'
@@ -464,10 +470,17 @@ class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
         :returns: A queryset which is filtered to only show approved Versions.
         :rtype: QuerySet
         """
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        versions_qs = Version.objects.all()
         if self.request.user.is_staff:
-            versions_qs = Version.objects.all()
+            versions_qs = versions_qs
         else:
-            versions_qs = Version.approved_objects.all()
+            versions_qs = versions_qs.filter(
+                Q(project=self.project) &
+                (Q(author=self.request.user) |
+                 Q(project__owner=self.request.user) |
+                 Q(project__changelog_manager=self.request.user)))
         return versions_qs
 
     def get_success_url(self):
