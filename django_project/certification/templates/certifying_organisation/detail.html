@@ -80,6 +80,13 @@
 {% endblock %}
 
 {% block content %}
+    <style>
+        .about-link:hover {
+            color: darkblue !important;
+            text-decoration: none !important;
+        }
+    </style>
+
     <div class="row">
         <div class="col-lg-10">
             <h1>{{ certifyingorganisation.name }}</h1><br/>
@@ -89,10 +96,11 @@
         <div class="col-lg-2">
 
             <div class="pull-right">
-            <span class="glyphicon glyphicon-info-sign tooltip-toggle"
-                  style="font-size: 14pt; padding: 7px; color: #D3D3D3; display: inline-block; vertical-align: middle"
-                  data-title="Hover to the container to see action buttons">
-            </span>
+            <a class="glyphicon glyphicon-info-sign tooltip-toggle about-link"
+               style="font-size: 14pt; padding: 7px; color: #D3D3D3; display: inline-block; vertical-align: middle"
+               data-title="About Certification"
+               href="{% url 'about' certifyingorganisation.project.slug %}"
+            ></a>
 
 
             <div class="btn-group">
