@@ -7,6 +7,11 @@ print os.environ
 ALLOWED_HOSTS = ['*',
                  u'0.0.0.0']
 
+
+VALID_DOMAIN = [
+    '192.168.1.110',
+]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',

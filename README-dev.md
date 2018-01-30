@@ -30,9 +30,18 @@ This image extends the production one, adding ssh to it. You must
 have built the production one first by following the "Quick Installation Guide"!
 When it's done, you can continue with this command:
 
+Linux and MacOS:
+
 ```
 make build-devweb
 make devweb
+```
+
+Windows:
+
+```
+make-devbuild.bat
+make-devweb.bat
 ```
 
 ### Create a remote interpreter in pycharm
@@ -69,7 +78,11 @@ In settings, django support:
 * Set django project root to the path on your host that holds django code e.g.
   ``<path to code base>/django_project``
 * Set the settings option to your setting profile e.g.
-  ``core/settings/dev_docker.py``
+  ``core/settings/dev_docker.py``. If you need to use custom settings, copy
+  this file e.g. ``dev_docker_tim.py`` and place your modifications in your
+  personalised copy. The first import of your custom file should import from
+  dev_docker.
+
 * manage script (leave default)
 
 
@@ -85,6 +98,7 @@ Now set these options:
 * **Host:** 0.0.0.0
 * **Port:** (use the http port specified in the docker-compose.yml file, e.g. 8080)`*` **Run browser** If checked, it will open the url after you click run. You should be able to access the running projecta on 0.0.0.0:61202 (the port that mapped to 8080)
 * **Additional options:** ``--settings=core.settings.dev_docker``
+* **Run browser:** Optionally set this to your IP address (MacOS/Linux) or your specific IP address (Windows) followed by the port forward address for port 8080 specified in your ``docker-compose.yml`` file. For example: ``http://0.0.0.0:61202``.
 * **Environment vars:** Leave as default unless you need to add something to the env
 * **Python interpreter:** Ensure it is set you your remote interpreter (should be
   set to that by default)
