@@ -98,7 +98,7 @@ class SponsorshipPeriod(models.Model):
             ('project', 'slug')
         )
         app_label = 'changes'
-        ordering = ['-end_date']
+        ordering = ['project', '-end_date']
 
     def save(self, *args, **kwargs):
 

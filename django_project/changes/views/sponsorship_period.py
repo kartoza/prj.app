@@ -4,6 +4,7 @@ __date__ = '12/28/15'
 import logging
 from base.models import Project
 
+from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -15,7 +16,7 @@ from django.views.generic import (
     UpdateView,
     RedirectView)
 from django.http import HttpResponseRedirect, Http404
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from ..models import SponsorshipPeriod  # noqa
@@ -136,12 +137,12 @@ class SponsorshipPeriodListView(
         project_slug = self.kwargs.get('project_slug', None)
         project = Project.objects.get(slug=project_slug)
         context['num_sponsorshipperiods'] = \
-            SponsorshipPeriod.objects.filter(project=project).count()
+            self.get_queryset().count()
         context['unapproved'] = False
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
-            context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = project
         return context
 
     def get_queryset(self, queryset=None):
@@ -159,7 +160,7 @@ class SponsorshipPeriodListView(
             if project_slug:
                 project = Project.objects.get(slug=project_slug)
                 queryset = \
-                    SponsorshipPeriod.objects.filter(
+                    SponsorshipPeriod.approved_objects.filter(
                         project=project).order_by(
                         '-sponsorship_level__value', '-end_date')
 
@@ -217,6 +218,22 @@ class SponsorshipPeriodDetailView(SponsorshipPeriodMixin, DetailView):
             else:
                 raise Http404('Sorry! We could not find '
                               'your Sponsorship Period!')
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(SponsorshipPeriodDetailView,
+                        self).get_context_data(**kwargs)
+        project_slug = self.kwargs.get('project_slug', None)
+        if project_slug:
+            context['project'] = Project.objects.get(slug=project_slug)
+        return context
 
 
 # noinspection PyAttributeOutsideInit
@@ -302,6 +319,22 @@ class SponsorshipPeriodDeleteView(
         qs = SponsorshipPeriod.objects.filter(project=self.project)
         return qs
 
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(SponsorshipPeriodDeleteView,
+                        self).get_context_data(**kwargs)
+        project_slug = self.kwargs.get('project_slug', None)
+        if project_slug:
+            context['project'] = Project.objects.get(slug=project_slug)
+        return context
+
 
 # noinspection PyAttributeOutsideInit
 class SponsorshipPeriodCreateView(
@@ -339,6 +372,7 @@ class SponsorshipPeriodCreateView(
                 self).get_context_data(**kwargs)
         context['sponsorshipperiod'] = self.get_queryset() \
             .filter(project=self.project)
+        context['project'] = self.project
         return context
 
     def form_valid(self, form):
@@ -414,6 +448,7 @@ class SponsorshipPeriodUpdateView(
                 self).get_context_data(**kwargs)
         context['sponsorshipperiod'] = self.get_queryset() \
             .filter(project=self.project)
+        context['project'] = self.project
         return context
 
     def get_queryset(self):
@@ -423,11 +458,18 @@ class SponsorshipPeriodUpdateView(
         projects which user created (staff gets all projects)
         :rtype: QuerySet
         """
-        qs = SponsorshipPeriod.approved_objects
+
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        qs = SponsorshipPeriod.objects.all()
         if self.request.user.is_staff:
             return qs
         else:
-            return qs.filter(creator=self.request.user)
+            return qs.filter(
+                Q(project=self.project) &
+                (Q(author=self.request.user) |
+                 Q(project__owner=self.request.user) |
+                 Q(project__sponsorship_manager=self.request.user)))
 
     def get_success_url(self):
         """Define the redirect URL
@@ -444,7 +486,7 @@ class SponsorshipPeriodUpdateView(
 
 
 class PendingSponsorshipPeriodListView(
-        StaffuserRequiredMixin,
+        LoginRequiredMixin,
         SponsorshipPeriodMixin,
         PaginationMixin,
         ListView):
@@ -505,7 +547,7 @@ class PendingSponsorshipPeriodListView(
 
 class ApproveSponsorshipPeriodView(
         SponsorshipPeriodMixin,
-        StaffuserRequiredMixin,
+        LoginRequiredMixin,
         RedirectView):
     """Redirect view for approving Sponsorship Period."""
     permanent = False
@@ -525,7 +567,14 @@ class ApproveSponsorshipPeriodView(
         :returns: URL
         :rtype: str
         """
-        sponsor_qs = SponsorshipPeriod.unapproved_objects.all()
+
+        if self.request.user.is_staff:
+            sponsor_qs = SponsorshipPeriod.unapproved_objects.all()
+        else:
+            sponsor_qs = SponsorshipPeriod.unapproved_objects.filter(
+                Q(project__owner=self.request.user) |
+                Q(project__sponsorship_manager=self.request.user)
+            )
         sponsor = get_object_or_404(sponsor_qs, slug=slug)
         sponsor.approved = True
         sponsor.save()

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="512" height="512" viewBox="0, 0, 512, 512">
+  <g id="Layer_1">
+    <text transform="matrix(1, 0, 0, 1, 274.22, 312.5)">
+      <tspan x="-87.68" y="31" font-family="HelveticaNeue-Bold" font-size="256" fill="#000000">A</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 237.78, 312.5)">
+      <tspan x="-87.68" y="31" font-family="HelveticaNeue-Bold" font-size="256" fill="#43AFFF">A</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 264.136, 379)">
+      <tspan x="-151.136" y="23.5" font-family="HelveticaNeue-Bold" font-size="64" fill="#000000">PROJECT</tspan>
+    </text>
+    <path d="M84.347,352.5 C84.347,38.5 444.925,32.5 444.925,353.5" fill-opacity="0" stroke="#43AFFF" stroke-width="16" stroke-dasharray="32,128"/>
+  </g>
+</svg>

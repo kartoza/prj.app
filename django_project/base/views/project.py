@@ -15,7 +15,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-
+from django.shortcuts import get_object_or_404, render
 from django.views.generic import (
     ListView,
     CreateView,
@@ -35,11 +35,14 @@ from ..models import Merchants
 from ..models import Customer
 from ..models import User
 from ..models import Charges
+from ..models import Project, Domain
 from ..forms import ProjectForm, ScreenshotFormset
 from ..forms import PayForm
 from vota.models import Committee, Ballot
 from changes.models import SponsorshipPeriod
 from certification.models import CertifyingOrganisation
+from lesson.models.section import Section
+from django.conf import settings
 from django.shortcuts import redirect
 
 from django.http import HttpResponse
@@ -138,6 +141,16 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
             projects_qs = Project.approved_objects.all()
         else:
             projects_qs = Project.public_objects.all()
+
+        # filter project query set for custom domain
+        try:
+            domain = self.request.get_host().split(':')[0]
+            custom_domain = Domain.objects.get(domain=domain, approved=True)
+            main_organisation = custom_domain.organisation
+            projects_qs = projects_qs.filter(organisation=main_organisation)
+        except Domain.DoesNotExist:
+            projects_qs = projects_qs
+
         return projects_qs
 
 
@@ -175,6 +188,9 @@ class ProjectDetailView(ProjectMixin, DetailView):
         context['sponsors'] = \
             SponsorshipPeriod.objects.filter(
                 project=self.object).order_by('-sponsorship_level__value')
+        context['sections'] = \
+            Section.objects.filter(
+                project=self.object)
         context['screenshots'] = self.object.screenshots.all()
         context['organisations'] = \
             CertifyingOrganisation.objects.filter(
@@ -342,7 +358,6 @@ class ApproveProjectView(StaffuserRequiredMixin, ProjectMixin, RedirectView):
         project.approved = True
         project.save()
         return reverse(self.pattern_name)
-
 
 @login_required
 @csrf_exempt
@@ -592,3 +607,13 @@ def merchantpayout(merchantid):
     )
     '''
     return balance, b
+def project_sponsor_programme(request, **kwargs):
+    """Sponsorship programme view of a project."""
+
+    project_slug = kwargs.get('slug', None)
+    project = Project.objects.get(slug=project_slug)
+
+    return render(
+        request, 'project/programme.html',
+        context={'the_project': project})
+  

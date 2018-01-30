@@ -8,7 +8,7 @@ from .utils import absolute_path
 
 ADMINS = (
     ('Tim Sutton', 'tim@kartoza.com'),
-    ('Rischan Mafrur', 'rischan@kartoza.com')
+    ('Etienne Trimaille', 'etienne@kartoza.com'),
 )
 
 MANAGERS = ADMINS
@@ -118,6 +118,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    # For custom domain checking
+    'core.custom_middleware.CheckDomainMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )

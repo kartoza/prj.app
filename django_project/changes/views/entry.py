@@ -38,55 +38,6 @@ class EntryMixin(object):
     form_class = EntryForm
 
 
-class EntryListView(EntryMixin, PaginationMixin, ListView):
-    """List view for Entry."""
-    context_object_name = 'entries'
-    template_name = 'entry/list.html'
-    paginate_by = 1000
-
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(EntryListView, self).get_context_data(**kwargs)
-        context['num_entries'] = self.get_queryset().count()
-        context['unapproved'] = False
-        context['project_slug'] = self.project_slug
-        context['version_slug'] = self.version_slug
-        return context
-
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: A queryset which is filtered to only show approved Entry.
-        :rtype: QuerySet
-        :raises: Http404
-        """
-        if self.queryset is None:
-            self.project_slug = self.kwargs.get('project_slug', None)
-            self.version_slug = self.kwargs.get('version_slug', None)
-            if self.project_slug and self.version_slug:
-                try:
-                    project = Project.objects.get(slug=self.project_slug)
-                except:
-                    raise Http404('Project not found')
-                try:
-                    version = Version.objects.get(
-                        slug=self.version_slug, project=project)
-                except:
-                    raise Http404('Version not found')
-                queryset = Entry.objects.filter(version=version)
-                return queryset
-            else:
-                raise Http404('Sorry! We could not find your entry!')
-        return self.queryset
-
-
 class EntryDetailView(EntryMixin, DetailView):
     """Detail view for Entry."""
     context_object_name = 'entry'
@@ -170,9 +121,9 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
         :return: URL
         :rtype: HttpResponse
         """
-        return reverse('entry-list', kwargs={
+        return reverse('version-detail', kwargs={
             'project_slug': self.object.version.project.slug,
-            'version_slug': self.object.version.slug
+            'slug': self.object.version.slug
         })
 
     def get_queryset(self):

@@ -7,7 +7,7 @@ echo "e.g."
 echo "$0 1.2.3"
 VERSION=$1
 echo "Last tag on your local system is:"
-git tag --list | grep "[0-9]\.[0-9]\.[0-9]" | tail -1
+git tag | grep -v version | sort --version-sort | tail -1
 echo "New tag to be added to your local repo and pushed upstream:"
 echo $VERSION
 read -p "Are you sure you want to continue? " -n 1 -r

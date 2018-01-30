@@ -16,6 +16,9 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from unidecode import unidecode
 import dateutil.relativedelta
+from organisation import Organisation
+from colorfield.fields import ColorField
+
 logger = logging.getLogger(__name__)
 
 
@@ -65,6 +68,16 @@ def validate_gitter_room_name(value):
         )
 
 
+def get_default_organisation():
+    # The owner of the default organisation is purposely empty because in the
+    # unittest it raises error since there are duplicates. But the owner of
+    # default organisation can be changed in the live site.
+
+    organisation = \
+        Organisation.objects.get_or_create(name='Kartoza', approved=True)[0]
+    return organisation.pk
+
+
 class Project(models.Model):
     """A project model e.g. QGIS, InaSAFE etc."""
     name = models.CharField(
@@ -96,6 +109,12 @@ class Project(models.Model):
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),
         blank=True
     )
+
+    accent_color = ColorField(
+        help_text=_('A color represent the project color'),
+        blank=True,
+        null=True,
+        default='#FF0000')
 
     signature = models.ImageField(
         help_text=_('Signature of the project owner. '
@@ -138,6 +157,67 @@ class Project(models.Model):
         blank=True,
         null=True
     )
+
+    sponsorship_programme = models.TextField(
+        help_text=_(
+            'Sponsorship programme for this project. Markdown is supported'),
+        max_length=10000,
+        blank=True,
+        null=True
+    )
+
+    changelog_manager = models.ManyToManyField(
+        User,
+        related_name='changelog_manager',
+        blank=True,
+        null=True,
+        help_text=_(
+            'Managers of the changelog in this project. '
+            'They will be allowed to approve changelog entries in the '
+            'moderation queue.')
+    )
+
+    sponsorship_manager = models.ManyToManyField(
+        User,
+        related_name='sponsorship_manager',
+        blank=True,
+        null=True,
+        help_text=_(
+            'Managers of the sponsorship in this project. '
+            'They will be allowed to approve sponsor entries in the '
+            'moderation queue.')
+    )
+
+    lesson_manager = models.ManyToManyField(
+        User,
+        related_name='lesson_manager',
+        blank=True,
+        null=True,
+        help_text=_(
+            'Managers of the lesson app in this project. '
+            'They will be allowed to create or remove lessons.')
+    )
+
+    certification_manager = models.ManyToManyField(
+        User,
+        related_name='certification_manager',
+        blank=True,
+        null=True,
+        help_text=_(
+            'Managers of the certification app in this project. '
+            'They will receive email notification about organisation and have'
+            ' the same permissions as project owner in the certification app.')
+    )
+
+    # Organisation where a project belongs, when the organisation is deleted,
+    #  the project will automatically belongs to default organisation.
+    organisation = models.ForeignKey(
+        Organisation,
+        default=get_default_organisation,
+        null=True,
+        on_delete=models.SET_DEFAULT,
+    )
+
     owner = models.ForeignKey(User)
     slug = models.SlugField(unique=True)
     objects = models.Manager()

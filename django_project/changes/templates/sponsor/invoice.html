@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+{% load staticfiles %}
+{% load static %}
+{% load static from staticfiles %}
+<html>
+    <head>
+        <title>Title</title>
+
+    </head>
+    <body>
+      {% block extra_style %}
+        <style type="text/css">
+            body {
+                font-family: "Arial", "Helvetica", "sans-serif";
+                color: #333333;
+                padding-top: 10pt;
+                padding-left: 7pt;
+                padding-right: 7pt;
+                padding-bottom: 7pt;
+            }
+
+            img {
+                width: 125px;
+            }
+
+            h1, h2, h3, h4, h5, h6 {
+                -pdf-outline: false;
+            }
+
+            p {
+                padding-bottom: -10px;
+                font-size: 9pt;
+            }
+
+            #sponsorship-title {
+                padding-top: 2pt;
+            }
+
+            #salutation {
+                margin: 0;
+                padding-left: inherit;
+            }
+
+        </style>
+    {% endblock %}
+
+    {% block content %}
+
+        <div id="content">
+            <table class="table-no-border" style="width: 100%; border-collapse:collapse;">
+                <tbody>
+                    <tr style="padding-bottom: 25px;">
+                        <td colspan="1" style="vertical-align:top">
+                            {% if project.image_file %}
+                                <img src="{{ MEDIA_URL }}{{ project.image_file }}" />
+                            {% endif %}
+                        </td>
+                        <td colspan="2" style="vertical-align:top">
+                            <p><b>{{ project.name }}</b></p>
+                            <p id="sponsorship-title"><b>{{ sponsor.sponsor.contact_title }}</b></pid>
+                            <p>{{ sponsor.sponsor.address | linebreaksbr }}</p>
+                        </td>
+                        <td colspan="1" align="right" style="vertical-align: top">
+                            <p><a href="#">http://{{ project.slug }}.org</a></p>
+                            <p><a href="#">{{ project.owner.email }}</a></p>
+                            <p>Tel 1: +41 41 728 56 29</p>
+                            <p>Tel 1: +41 41 273 66 68</p>
+                        </td>
+                    </tr>
+                    <tr style="padding-bottom: 25px;">
+                        <td colspan="4" style="vertical-align: top" align="right">
+                            <p>Date: <i>{{ date }}</i></p>
+                        </td>
+                    </tr>
+                    <tr style="padding-bottom: 50px;">
+                        <td colspan="4" style="vertical-align: top">
+                            <p><b>{{ sponsor.sponsor.name }}</b></p>
+                        </td>
+                    </tr>
+                    <tr style="padding-bottom: 25px;">
+                        <td colspan="4" style="vertical-align: top">
+                            <p><b>Invoice Number: {{ sponsor.sponsor.invoice_number }}</b></p>
+                            <p><b>{{ project.name }} {{ sponsor.sponsorship_level.name }}
+                                sponsoring {{ sponsor.start_date }} to {{ sponsor.end_date }}</b></p>
+                        </td>
+                    </tr>
+                    <tr style="border: 1px solid #FFFFCC;">
+                        <td colspan="3" style="background-color: #FFFFCC" >
+                            <p><b>Total : </b></p>
+                        </td>
+                        <td colspan="1" align="right" style="background-color: #FFFFCC">
+                            <p><b>{{ sponsor.sponsorship_level.value }} {{ sponsor.sponsorship_level.currency }}</b></p>
+                        </td>
+                    </tr>
+                    <tr style="padding-top: 15px">
+                        <td colspan="4">
+                            <p>
+                                Please send the money to the following bank account of the {{ project.name }}
+                                Association using the above mentioned invoice number in the payment message.
+                            </p>
+                            <p><b>{{ project.name }}</b><br/>
+                            Account name: QGIS.ORG<br/>
+                            Address: Boeschacherstrasse 10a, CH-8624 Gruet<br/>
+                            BIC/SWIFT: POFICHBEXXX<br/>
+                            IBAN: CH09 0900 0000 9146 3839 8<br/>
+                            Reference: Donation QGIS<br/>
+                            Currency: EUR<br/>
+                            Bank name: PostFinance AG<br/>
+                            Bank address: Mingerstrasse 20, 3030 Berne, Switzerland
+                            <p>
+                                Through your commitment you are making an important contribution to the ongoing development
+                                and prosperity of the {{ project.name }} project. Thank you for your support!
+                            </p>
+                        </td>
+                    </tr>
+                    <tr style="padding-top: 35px">
+                        <td colspan="4">
+                            <p id="salutation"> Best Regards</p>
+                            <p>
+                                {{ sponsor.sponsor.contact_person }} <br/>
+                                {{ project.name }}
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    {% endblock %}
+    </body>
+</html>

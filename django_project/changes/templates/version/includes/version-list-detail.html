@@ -23,11 +23,13 @@
 
     <div class="col-lg-3">
         <div class="btn-group pull-right">
-            {%  if not version.approved and user.is_staff %}
+            {%  if not version.approved %}
+                {% if user.is_staff or user in version.project.changelog_manager.all %}
                 <a class="btn btn-default btn-mini"
                    href='{% url "version-approve" project_slug=version.project.slug slug=version.slug %}'>
                     <span class="glyphicon glyphicon-thumbs-up"></span>
                 </a>
+                {% endif %}
             {% endif %}
             <a class="btn btn-default btn-mini"
                href='{% url "version-delete" project_slug=version.project.slug slug=version.slug %}'>

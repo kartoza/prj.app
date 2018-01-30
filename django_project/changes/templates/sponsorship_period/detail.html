@@ -14,18 +14,18 @@
 
   <div class="row">
     <div class="col-lg-10">
-      <h3>{{ sponsorshipperiod.project.name }}</h3>
+      <h3>{{ sponsorshipperiod.sponsor.name }}</h3>
     </div>
     <div class="col-lg-2">
-      <div class="btn-group">
+      <div class="btn-group pull-right">
         <a class="btn btn-default btn-sm tooltip-toggle"
            href='{% url "sponsorshipperiod-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
-           data-title="Delete {{ sponsorshipperiod.project.name }}">
+           data-title="Delete {{ sponsorshipperiod.sponsor.name }}">
           <span class="glyphicon glyphicon-minus"></span>
         </a>
         <a class="btn btn-default btn-sm tooltip-toggle"
            href='{% url "sponsorshipperiod-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
-           data-title="Edit {{ sponsorshipperiod.project.name }}">
+           data-title="Edit {{ sponsorshipperiod.sponsor.name }}">
           <span class="glyphicon glyphicon-pencil"></span>
         </a>
       </div>

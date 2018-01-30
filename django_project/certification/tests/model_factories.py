@@ -92,6 +92,8 @@ class AttendeeF(factory.django.DjangoModelFactory):
     firstname = factory.sequence(lambda n: u'Test attendee firstname %s' % n)
     surname = factory.sequence(lambda n: u'Test surname %s' % n)
     email = factory.sequence(lambda n: u'Test email %s' % n)
+    slug = factory.sequence(lambda n: u'test attendee slug %s' % n)
+    certifying_organisation = factory.SubFactory(CertifyingOrganisationF)
     author = factory.SubFactory(UserF)
 
 

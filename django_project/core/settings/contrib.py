@@ -10,6 +10,7 @@ INSTALLED_APPS = (
 ) + INSTALLED_APPS
 
 INSTALLED_APPS += (
+    'modeltranslation',
     'raven.contrib.django.raven_compat',  # enable Raven plugin
     'crispy_forms',
     'widget_tweaks',  # lets us add some bootstrap css to form elements
@@ -19,6 +20,7 @@ INSTALLED_APPS += (
     'embed_video',
     'django_hashedfilenamestorage',
     'django_countries',  # for sponsor addresses
+    'colorfield',  # for color picker
     # 'user_map',
     'disqus',
     'graphos'

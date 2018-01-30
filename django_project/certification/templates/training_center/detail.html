@@ -59,7 +59,7 @@
         {# Only organisation owners or staff can edit #}
         <div class="col-lg-2">
             <div class="btn-group pull-right">
-                {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner %}
+                {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in project.certification_manager.all %}
                 <a class="btn btn-default btn-sm btn-delete tooltip-toggle"
                    href='{% url "trainingcenter-delete" project_slug=trainingcenter.certifying_organisation.project.slug organisation_slug=trainingcenter.certifying_organisation.slug slug=trainingcenter.slug %}'
                    data-title="Delete {{ trainingcenter.name }}">

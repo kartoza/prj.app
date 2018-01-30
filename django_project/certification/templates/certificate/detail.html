@@ -27,20 +27,21 @@
     </div>
 
     <div class="certificate-details">
-    <table style="margin: 0 auto">
-        <tr><h4><td>Attendee Name</td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.attendee }}</td></h4></tr>
-        <tr><h4><td>Project </td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.certifying_organisation.project }}</td></h4></tr>
-        <tr><h4><td>Certifying Organisation </td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.certifying_organisation }}</td></h4></tr>
-        <tr><h4><td>Training Center </td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.training_center }}</td></h4></tr>
-        <tr><h4><td>Course Type </td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.course_type }}</td></h4></tr>
-        <tr><h4><td>Course Date </td> <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.start_date }} to {{ certificate.course.end_date }}</td></h4></tr>
-        <tr><h4><td>Course Convener</td>
+    <table style="margin: 0 auto;">
+        <tr><td class="td-title">Attendee Name </td> <td class="top-vertical">&nbsp;:&nbsp;</td> <td>{{ certificate.attendee }}</td></tr>
+        <tr><td class="td-title">Project </td> <td class="top-vertical">&nbsp;:&nbsp;</td> <td>{{ certificate.course.certifying_organisation.project }}</td></tr>
+        <tr><td class="td-title">Certifying Organisation </td> <td class="top-vertical">&nbsp;:&nbsp;</td> <td>{{ certificate.course.certifying_organisation.name }}</td></tr>
+        <tr><td class="td-title">Training Center </td> <td class="top-vertical">&nbsp;:&nbsp;</td> <td>{{ certificate.course.training_center }}</td></tr>
+        <tr><td class="td-title">Course Type </td> <td class="top-vertical">&nbsp;:&nbsp;</td> <td>{{ certificate.course.course_type }}</td></tr>
+        <tr><td class="td-title">Course Date </td> <td class="top-vertical">&nbsp;:&nbsp;</td> <td>{{ certificate.course.start_date }} to {{ certificate.course.end_date }}</td></tr>
+        <tr><td class="td-title">Instruction hours </td> <td class="top-vertical">&nbsp;:&nbsp;</td> <td>{{ certificate.course.course_type.instruction_hours }}</td></tr>
+        <tr><td class="td-title">Course Convener</td> <td class="top-vertical">&nbsp;:&nbsp;</td>
             {% if certificate.course.course_convener.user.first_name  %}
-            <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.course_convener.user.first_name }} {{ certificate.course.course_convener.user.last_name }}</td>
+            <td>{{ convener_name }}</td>
             {% else %}
-            <td>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ certificate.course.course_convener.user }}</td>
+            <td>{{ certificate.course.course_convener.user }}</td>
             {% endif %}
-        </h4></tr>
+        </tr>
     </table>
     </div>
     

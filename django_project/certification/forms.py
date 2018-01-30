@@ -46,6 +46,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
         fields = (
             'name',
             'organisation_email',
+            'url',
             'address',
             'country',
             'organisation_phone',
@@ -64,6 +65,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
                 form_title,
                 Field('name', css_class='form-control'),
                 Field('organisation_email', css_class='form-control'),
+                Field('url', css_class='form-control'),
                 Field('address', css_class='form-control'),
                 Field('country', css_class='form-control chosen-select'),
                 Field('organisation_phone', css_class='form-control'),
@@ -141,7 +143,9 @@ class CourseConvenerForm(forms.ModelForm):
     class Meta:
         model = CourseConvener
         fields = (
+            'title',
             'user',
+            'degree',
             'signature',
         )
 
@@ -154,7 +158,9 @@ class CourseConvenerForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
+                Field('title', css_class='form-control'),
                 Field('user', css_class='form-control chosen-select'),
+                Field('degree', css_class='form-control'),
                 Field('signature', css_class='form-control'),
             )
         )
@@ -429,3 +435,16 @@ class CertificateForm(forms.ModelForm):
         instance.attendee = self.attendee
         instance.save()
         return instance
+
+
+class CsvAttendeeForm(forms.Form):
+    """Form to upload CSV file."""
+
+    file = forms.FileField(
+        label="Choose Attendee CSV File:",
+        widget=forms.FileInput(
+            attrs={
+                'accept': ".csv"
+            }
+        )
+    )

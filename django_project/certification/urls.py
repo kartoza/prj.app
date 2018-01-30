@@ -37,6 +37,7 @@ from views import (
 
     # Attendee.
     AttendeeCreateView,
+    CsvUploadView,
 
     # Course Attendee.
     CourseAttendeeCreateView,
@@ -55,11 +56,19 @@ from views import (
 
     # Validate Certificate.
     ValidateCertificate,
+
+    # About.
+    AboutView,
 )
 
 
 urlpatterns = patterns(
     '',
+
+    # About page
+    url(regex='^(?P<project_slug>[\w-]+)/about/$',
+        view=AboutView.as_view(),
+        name='about'),
 
     # Certifying Organisation management
     url(regex='^(?P<project_slug>[\w-]+)/pending-certifyingorganisation/'
@@ -158,12 +167,19 @@ urlpatterns = patterns(
         view=AttendeeCreateView.as_view(),
         name='attendee-create'),
 
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/course/'
+              '(?P<slug>[\w-]+)/upload/$',
+        view=CsvUploadView.as_view(),
+        name='upload-attendee'),
+
     # Course Attendee.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/course/'
               '(?P<slug>[\w-]+)/create-courseattendee/$',
         view=CourseAttendeeCreateView.as_view(),
         name='courseattendee-create'),
+
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/course/'
               '(?P<course_slug>[\w-]+)/courseattendee/'

@@ -8,6 +8,7 @@ from django.conf import settings
 
 from feeds.version import RssVersionFeed, AtomVersionFeed
 from feeds.entry import RssEntryFeed, AtomEntryFeed
+from feeds.sponsor import RssSponsorFeed, AtomSponsorFeed
 from views import (
     # Category
     CategoryDetailView,
@@ -37,7 +38,6 @@ from views import (
     EntryDetailView,
     EntryDeleteView,
     EntryCreateView,
-    EntryListView,
     EntryUpdateView,
     PendingEntryListView,
     AllPendingEntryList,
@@ -52,6 +52,7 @@ from views import (
     SponsorUpdateView,
     PendingSponsorListView,
     ApproveSponsorView,
+    GenerateSponsorPDFView,
 
     # Sponsorship Level
 
@@ -164,10 +165,6 @@ urlpatterns = patterns(
     url(regex='^entry/approve/(?P<pk>\d+)$',
         view=ApproveEntryView.as_view(),
         name='entry-approve'),
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w'
-              '.-]+)/entry/list/$',
-        view=EntryListView.as_view(),
-        name='entry-list'),
     url(regex='^entry/(?P<pk>\d+)$',
         view=EntryDetailView.as_view(),
         name='entry-detail'),
@@ -205,6 +202,18 @@ urlpatterns = patterns(
               '\w.-]+)/atom$',
         view=AtomEntryFeed(),
         name='entry-atom-feed'),
+
+    url(regex='^(?P<project_slug>[\w-]+)/sponsor/(?P<slug>[\w-]+)/invoice/$',
+        view=GenerateSponsorPDFView.as_view(),
+        name='sponsor-invoice'),
+
+    # Feeds sponsors in a specific project
+    url(regex='^(?P<project_slug>[\w-]+)/sponsors/rss/$',
+        view=RssSponsorFeed(),
+        name='sponsor-rss-feed'),
+    url(regex='^(?P<project_slug>[\w-]+)/sponsors/atom/$',
+        view=AtomSponsorFeed(),
+        name='sponsor-atom-feed'),
 
     # User map
     # url(r'^user-map/', include('user_map.urls')),

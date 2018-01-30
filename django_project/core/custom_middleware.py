@@ -3,7 +3,13 @@
 """
 core.custom_middleware
 """
-from base.models import Project, Version
+from django.contrib.sites.models import Site
+from django.conf import settings
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+from django.utils.translation import activate
+from base.models import Project, Version, Domain
 from changes.models import Category, SponsorshipLevel, SponsorshipPeriod, Entry
 from certification.models import CertifyingOrganisation
 
@@ -120,3 +126,42 @@ class NavContextMiddleware(object):
                 pass
 
         return response
+
+
+class CheckDomainMiddleware(object):
+    """
+    Custom middleware to check if domain is valid.
+    """
+
+    def __init__(self):
+        pass
+
+    def process_request(self, request):
+
+        try:
+            domain = request.get_host().split(':')[0]
+            if domain in settings.VALID_DOMAIN:
+                return None
+            else:
+                custom_domain = \
+                    Domain.objects.get(domain=domain, approved=True)
+                request.site = custom_domain.domain
+                activate('en')
+                url = reverse('project-list')
+                home_url = reverse('home')
+                if custom_domain.role == 'Project':
+                    if request.path == url or request.path == home_url:
+                        return redirect(
+                            'project-detail', custom_domain.project.slug)
+                elif custom_domain.role == 'Organisation':
+                    return None
+        except Domain.DoesNotExist:
+            if settings.DEBUG:
+                # for dev
+                return HttpResponseRedirect(
+                    'http://0.0.0.0:61202/en/domain-not-found/')
+            else:
+                # for production the domain is hardcoded for consistency
+                return HttpResponseRedirect(
+                    'http://changelog.qgis.org/en/domain-not-found/'
+                )

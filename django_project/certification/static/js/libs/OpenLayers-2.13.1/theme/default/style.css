@@ -510,7 +510,7 @@ a.olControlZoomOut {
     display: none;
 }
 
-/* override any max-width image settings (e.g. bootstrap.css) */
+/* override any max-width image settings (e.g. bootstrap-theme.css) */
 img.olTileImage {
     max-width: none;
 }

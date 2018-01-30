@@ -24,6 +24,46 @@
     </ul>
     <ul class="nav navbar-nav">
         <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Organisation <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="{% url 'create-organisation' %}">
+                            Create Organisation
+                        </a>
+                </li>
+                <li>
+                    <a href="{% url 'list-organisation' %}">
+                            Organisation List
+                        </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Domain <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="{% url 'register-domain' %}">
+                            Register a Domain
+                        </a>
+                </li>
+                {% if user.is_staff %}
+                <li>
+                    <a href="{% url 'domain-list' %}">
+                            Domain List
+                        </a>
+                </li>
+                {% endif %}
+            </ul>
+        </li>
+    </ul>
+    <ul class="nav navbar-nav">
+        <li>
             <a href="{% url 'project-create' %}">Create Project</a>
         </li>
     </ul>
@@ -33,7 +73,6 @@
             line-height: 50px !important;
         }
         .icon-thumbnail img {
-            display: table-cell;
             vertical-align: middle;
         }
     </style>
@@ -78,7 +117,7 @@
             {% endif %}
         </li>
     </ul>
-    {% if user.is_staff %}
+    {% if user.is_staff or user in the_project.changelog_manager.all %}
         <ul class="nav navbar-nav">
         <li>
             <a href="{% url "version-create" the_project.slug %}" class="dropdown-toggle" data-toggle="dropdown">

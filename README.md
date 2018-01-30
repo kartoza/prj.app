@@ -61,10 +61,22 @@ some knowledge of running a django site.
 ```
 git clone git://github.com/kartoza/projecta.git
 cd projecta/deployment
+cp btsync-db.env.EXAMPLE btsync-db.env
+cp btsync-media.env.EXAMPLE btsync-media.env
 make build
-make run
+make permissions
+make web
+# Wait a few seconds for the DB to start before to do the next command
 make migrate
 make collectstatic
+```
+
+If you need backups, put btsync keys in these files. If you don't need backups, 
+you can let the default content.
+
+So as to create your admin account:
+```
+make superuser
 ```
 
 **intercom.io**
@@ -123,7 +135,7 @@ relevant SECRET and DEVICE settings.
 We work under the philosophy that stakeholders should have access to the
 development and source code, and be able to participate in every level of the 
 project - we invite comments, suggestions and contributions.  See
-[our milestones list](https://github.com/kartoza/projecta/issues/milestones) and
+[our milestones list](https://github.com/kartoza/projecta/milestones) and
 [our open issues list](https://github.com/kartoza/projecta/issues?page=1&state=open)
 for known bugs and outstanding tasks. You can also chat live with our developers
 and community members using the link below.
@@ -167,5 +179,5 @@ Thank you to the individual contributors who have helped to build projecta:
 * George Irwin : github@grvhi.com
 * Ismail Sunni : ismail@kartoza.com
 * Richard Duivenvoorde : richard@duif.net
-* Rischan Mafrur : rischan@kartoza.com
+* Rischan Mafrur
 

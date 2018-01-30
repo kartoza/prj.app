@@ -1,0 +1,358 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+{% load custom_markup %}
+
+{% block title %}About{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>About</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <style>
+    .sub-header {
+        border-bottom: 1px solid #f2f2f2;
+{#        background-color: #f9f9f9;#}
+        margin-top: 20px;
+        padding: 1px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .arrow-menu {
+        font-size: 14pt !important;
+        margin-top: 10px !important;
+    }
+    .sub-header-body {
+        margin-top: 15px;
+        padding: 0 10px;
+    }
+    </style>
+
+    <div class="page-header">
+        <h1 class="text-muted">
+            Certification programme overview
+        </h1>
+    </div>
+
+    <div>
+        <p>
+            The certification platform in Projecta is designed to provide an easy path for
+            projects to be able to issue certification certificates. The system allows
+            a project to approve one or more certification providers. These
+            providers can then set up training centers and course conveners.
+            Course conveners prepare a course and then attendees are assigned
+            to that course. Once the course is completed, certificates get
+            issued by the course convener in digital form. There is the
+            opportunity to charge a fee for each certificate issued. This
+            mechanism can be used to support the parent project.
+        </p>
+        <p>
+            The following diagram provides a generalised overview of the
+            certification process from the point of view of a certifying organisation.
+        </p>
+        <img src="https://raw.githubusercontent.com/kartoza/projecta/develop/docs/CertificationWorkflow.png"/>
+        <p>
+            You may be wondering about our approach to certification. We looked
+            at a number of approaches where we could provide a more rigorous
+            and systematic way of certifying software users. These approaches can
+            be split in two general approaches:
+        </p>
+        <ol>
+            <li>
+                Computer based testing: Favoured by industry, in this approach the project owner
+                would create a large pool of questions and then provide a test
+                environment where a random subset of questions are allocated to
+                the person being tested and they would carry out an online
+                examination. There are a few issues with this approach including
+                the need for a way to verify that the correct user actually
+                undertook the exam and not a proxy, the need for a large amount
+                of project input to create and maintain the test questions, and the
+                general trend for examinees to go online and share the questions
+                the were asked for future examinees. There is also the issue that
+                sometimes complex (especially graphical) software is hard to
+                examine in an environment where text based answers are expected.
+            </li>
+            <li>
+                Portfolio based testing: Favoured by academia, this approach
+                requires attendees to submit mini-projects or other projects
+                such as maps and reports to demonstrate their competency. This
+                has a downside that each evaluation is very personal and subjective.
+            </li>
+        </ol>
+        <p>
+            Neither of these systems is really suitable for our needs so we have
+            opted for a third choice: In this approach we create a "web of
+            trust". In this approach we trust the organisations that provide
+            training to properly issue certificates for their course attendees.
+            We spend our time verifying the certifying organisation and then
+            trust them to 'do the right thing' after that.
+        </p>
+    </div>
+
+    <div class="sub-header" onclick="expandDiv(this)">
+        <h2 class="text-muted">Certification managers
+            <i class="glyphicon glyphicon-menu-down pull-right arrow-menu"></i>
+            <i class="glyphicon glyphicon-menu-up pull-right arrow-menu" style="display: none"></i></h2>
+    </div>
+    <div class="sub-header-body" style="display: none">
+        <p>
+            Setting up the certification programme for your project starts with the
+            creation of one or more certification managers in your project. Certification
+            managers are moderators for the certification programme in your project.
+            Only a project administrator can update the list of certification
+            managers. The project owner and certification managers can then
+            manage which users can approve and manage the list of certifying
+            organisations. Whenever a new certifying organisation is registered,
+            the project certification managers will receive a notification
+            by email that there is a new organisation ready for review and approval.
+            You can manage the list of certication managers for a project by
+            clicking on the project edit button and then scrolling down until you find
+            the certification managers list. Add and remove members from the
+            list as needed and then save your project.
+        </p>
+
+    </div>
+
+    <div class="sub-header" onclick="expandDiv(this)">
+        <h2 class="text-muted">Registering a certifying organisation
+            <i class="glyphicon glyphicon-menu-down pull-right arrow-menu"></i>
+            <i class="glyphicon glyphicon-menu-up pull-right arrow-menu" style="display: none"></i></h2>
+    </div>
+    <div class="sub-header-body" style="display: none">
+        <p>
+            To register a new certifying organisation, go to a project page
+            and open the <strong>Certification</strong> menu. Click on <strong>Organisations</strong>
+            and then click on the <strong>asterisk icon</strong> next to the page heading for
+            <strong>Certifying Organisations</strong>.
+        </p>
+        <img src="https://raw.githubusercontent.com/kartoza/projecta/develop/docs/certification-organisation-creation.gif"/>
+        <p>
+            On the registration page you can fill in all the key details about
+            your organisation including its, address (physical and online),
+            contact person email, logo and so on. It is important to include
+            a logo if you have one as that will be used on the certificates issued
+            by the system. We recommend that you use a logo with a square aspect ratio for this.
+        </p>
+
+    </div>
+    <div class="sub-header" onclick="expandDiv(this)">
+        <h2 class="text-muted">Approval process for certifying organisations
+            <i class="glyphicon glyphicon-menu-down pull-right arrow-menu"></i>
+            <i class="glyphicon glyphicon-menu-up pull-right arrow-menu" style="display: none"></i></h2>
+    </div>
+    <div class="sub-header-body" style="display: none">
+        <p>
+            The approval process is largely a norm established in your project.
+            One approach that can be taken is to approve 'known' organisations
+            associated with the project based on your knowledge of the
+            organisation's skills and competencies. For organisations that
+            are not known to the project, a more rigorous process can be followed
+            whereby moderators review the applicant certifying organisation's
+            web site, ask to review their training course curricula, the
+            training materials used by the organisation, or possibly even sit in
+            on a training course conducted by the applicant to verify that they
+            "know their stuff". Once the organisation has passed approval, the
+            organisation owner and mangers will be able to proceed with
+            setting up courses, conveners and so on using the management
+            interface provided on projecta.
+        </p>
+        <img src="https://raw.githubusercontent.com/kartoza/projecta/develop/docs/certification-managers.gif"/>
+    </div>
+    <div class="sub-header" onclick="expandDiv(this)">
+        <h2 class="text-muted">Managing your certifying organisation
+            <i class="glyphicon glyphicon-menu-down pull-right arrow-menu"></i>
+            <i class="glyphicon glyphicon-menu-up pull-right arrow-menu" style="display: none"></i></h2>
+    </div>
+    <div class="sub-header-body" style="display: none">
+        <p>
+            Once the organisation is approved, you will receive a confirmation
+            email and the organisation can be managed from the project
+            certication menu. Your new project will look something like this:
+        </p>
+        <img src="https://raw.githubusercontent.com/kartoza/projecta/develop/docs/certification-organisation-new.gif"/>
+        <p>
+            The top of your organisation page gives a quick dashboard overview
+            of your organisation, credits, training centers and attendees.
+            The map will be zoomed in to the region where your organisation operates.
+            There are then four main things that can be managed:
+        </p>
+        <ol>
+            <li>Courses</li>
+            <li>Training Centers</li>
+            <li>Course Types</li>
+            <li>Course conveners</li>
+        </ol>
+        <p>
+            Typically you will first create Training Centers, Course conveners, Course types
+            and then create courses.
+        </p>
+    </div>
+    <div class="sub-header" onclick="expandDiv(this)">
+        <h2 class="text-muted">Training centers
+            <i class="glyphicon glyphicon-menu-down pull-right arrow-menu"></i>
+            <i class="glyphicon glyphicon-menu-up pull-right arrow-menu" style="display: none"></i></h2>
+    </div>
+    <div class="sub-header-body" style="display: none">
+        <p>
+            A training center is a venue where you regularly conduct courses.
+            Each organisation may have one or more training centers. If you
+            are doing onsite or 'roaming' training, I suggest to either
+            make a training center per location where you offer training, or
+            create a single location (e.g. at your offices) that you can
+            use as a proxy for other venues.
+
+        </p>
+        <img src="https://raw.githubusercontent.com/kartoza/projecta/develop/docs/certification-new-training-center.png"/>
+        <p>
+            In the future we will provide a map with pins showing where
+            upcoming training courses will be provided for all Certification
+            organisations.
+        </p>
+
+    </div>
+    <div class="sub-header" onclick="expandDiv(this)">
+        <h2 class="text-muted">Course conveners
+            <i class="glyphicon glyphicon-menu-down pull-right arrow-menu"></i>
+            <i class="glyphicon glyphicon-menu-up pull-right arrow-menu" style="display: none"></i></h2>
+    </div>
+    <div class="sub-header-body" style="display: none">
+        <p>
+            A course convener is either the trainer or the person responsible
+            for the course. The certificate will be issued with the name of
+            the course convener on it. Be sure to upload a digital signature
+            for each course convener if you do not want to manually print
+            and sign the certificates.
+
+        </p>
+        <img src="https://raw.githubusercontent.com/kartoza/projecta/develop/docs/certification-new-course-convener.png"/>
+
+    </div>
+    <div class="sub-header" onclick="expandDiv(this)">
+        <h2 class="text-muted">Course types
+            <i class="glyphicon glyphicon-menu-down pull-right arrow-menu"></i>
+            <i class="glyphicon glyphicon-menu-up pull-right arrow-menu" style="display: none"></i></h2>
+    </div>
+    <div class="sub-header-body" style="display: none">
+        <p>
+            Course types describe the different content offering you offer.
+            You can include how many hours of instruction that are included
+            in the course. If you do this, this information will be included
+            on the certificate when it is generated. Probably you will
+            define your course types around topics (e.g. working with
+            databases) or around skill leve (beginner, intermediate etc.).
+
+        </p>
+        <img src="https://raw.githubusercontent.com/kartoza/projecta/develop/docs/certification-new-course-type.png"/>
+
+    </div>
+    <div class="sub-header" onclick="expandDiv(this)">
+        <h2 class="text-muted">Courses
+            <i class="glyphicon glyphicon-menu-down pull-right arrow-menu"></i>
+            <i class="glyphicon glyphicon-menu-up pull-right arrow-menu" style="display: none"></i></h2>
+    </div>
+    <div class="sub-header-body" style="display: none">
+        <p>
+            A course is run at a training center by a course convener for
+            a particular course. When creating a course, you can add
+            attendees to the course. Attendees do not need to register on the
+            Projecta web platform.
+
+        </p>
+        <img src="https://raw.githubusercontent.com/kartoza/projecta/develop/docs/certification-new-course.png"/>
+
+    </div>
+
+
+    <div class="sub-header" onclick="expandDiv(this)">
+        <h2 class="text-muted">Creating a certificate template <i class="glyphicon glyphicon-menu-down pull-right arrow-menu"></i><i class="glyphicon glyphicon-menu-up pull-right arrow-menu" style="display: none"></i></h2>
+    </div>
+    <div class="sub-header-body" style="display: none">
+        <p>
+            You can create your own custom templates for the certificates that you issue. In this workflow
+            we use the Gimp to open one of the generated certificate PDF's from your course.
+        </p>
+        <img src="https://raw.githubusercontent.com/kartoza/projecta/develop/docs/certificate-template-step1.png"/>
+
+        <p>
+            Next decorate around the pre-planned text from the certificate.
+            We don't have a templating language so you cannot move the
+            pre-defined elements currently.
+        </p>
+        <img src="https://raw.githubusercontent.com/kartoza/projecta/develop/docs/certificate-template-step2.png"/>
+
+        <p>
+            Once your template is prepared, you hide again the original certificate layer and export
+            your gimp document as a PNG image.
+        </p>
+        <img src="https://raw.githubusercontent.com/kartoza/projecta/develop/docs/certificate-template-step3.png"/>
+        <p>
+            Now upload the image to the course edit page and test your template
+            by adding one course participant and using the ‘Print Certificate’ icon to preview it.
+        </p>
+
+        <p>
+            <strong>Note that the template you upload should be formatted to A4, not US Letter.</strong>
+        </p>
+    </div>
+
+    <div class="sub-header" onclick="expandDiv(this)">
+        <h2 class="text-muted">Payments<i class="glyphicon glyphicon-menu-down pull-right arrow-menu"></i><i class="glyphicon glyphicon-menu-up pull-right arrow-menu" style="display: none"></i></h2>
+    </div>
+    <div class="sub-header-body" style="display: none">
+        <span>
+            We are planning to introduce an e-commerce system soon. When that is implemented, you
+            will be able to purchase credits which can be used to then pay for the
+            certificates you issue. Currently we work on a somewhat manual system -
+            when you are going to be running a course, ask one of the project
+            administrators to load credits for your organisation. Then add attendees to your
+            course (you can do this individually or in buld by providing a CSV file).
+        </span>
+    </div>
+   <div class="sub-header" onclick="expandDiv(this)">
+        <h2 class="text-muted">Issuing certificates<i class="glyphicon glyphicon-menu-down pull-right arrow-menu"></i><i class="glyphicon glyphicon-menu-up pull-right arrow-menu" style="display: none"></i></h2>
+    </div>
+    <div class="sub-header-body" style="display: none">
+        <span>
+            We are planning to introduce an e-commerce system soon. When that is implemented, you
+            will be able to purchase credits which can be used to then pay for the
+            certificates you issue. Currently we work on a somewhat manual system -
+            when you are going to be running a course, ask one of the project
+            administrators to load credits for your organisation. Then add attendees to your
+            course (you can do this individually or in bulk by providing a CSV file).
+
+            Once you have issued certificates for each attendee you can issue certificates.
+            The process of registering an attendee and issuing the certificate is separated
+            so you need only issue certificate to those that pass your course.
+
+            Each attendee will receive an email with a link to a downloadable copy of the
+            certificate. The certificate includes a unique number which is allocated to each certificate
+            and a unique link that they can provide (for example in their CV) to
+            verify that they have indeed completed the course. This mechanism should
+            help to prevent fake certificates.
+
+            Course conveners should upload a digital signature to their
+            profile. This is embedded into the certificate together with
+            the digital signature of the project leader (who needs to set this
+            in the project profile options page).
+        </span>
+    </div>
+    <div class="sub-header" onclick="expandDiv(this)">
+        <h2 class="text-muted">Getting Help<i class="glyphicon glyphicon-menu-down pull-right arrow-menu"></i><i class="glyphicon glyphicon-menu-up pull-right arrow-menu" style="display: none"></i></h2>
+    </div>
+    <div class="sub-header-body" style="display: none">
+        <span>
+            If you have any problems using the certification platform please file an
+            issue at https://github.com/kartoza/projecta/issues.
+        </span>
+    </div>
+
+    <script>
+        function expandDiv(parent_div) {
+            $(parent_div).children().children().toggle();
+            $(parent_div).next().toggle();
+        }
+    </script>
+{% endblock %}

@@ -15,20 +15,22 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
             Sponsorship Levels
-           {% if user.is_staff %}
-                <div class="pull-right btn-group">
+            {% if user.is_authenticated %}
+                {% if user.is_staff or user == project.owner or user in project.sponsorship_manager.all %}
+                    <div class="pull-right btn-group">
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "sponsorshiplevel-create" project_slug %}'
+                           data-title="Create New Sponsorship Level">
+                            {% show_button_icon "add" %}
+                        </a>
+                {% endif%}
+                {% if not unapproved %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
-                       href='{% url "sponsorshiplevel-create" project_slug %}'
-                       data-title="Create New Sponsorship Level">
-                        {% show_button_icon "add" %}</a>
-
-                        {% if not unapproved %}
-                            <a class="btn btn-default btn-mini tooltip-toggle"
-                               href='{% url "pending-sponsorshiplevel-list" project_slug %}'
-                               data-title="View Pending Sponsorship level">
-                                <span class="glyphicon glyphicon-time"></span>
-                            </a>
-                        {% endif %}
+                       href='{% url "pending-sponsorshiplevel-list" project_slug %}'
+                       data-title="View Pending Sponsorship level">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </a>
+                {% endif %}
                 </div>
             {% endif %}
         </h1>
@@ -61,24 +63,28 @@
             </div>
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
-                    {% if not sponsorshiplevel.approved and user.is_staff %}
+                    {% if not sponsorshiplevel.approved %}
+                        {% if user.is_staff or user == project.owner or user in project.sponsorship_manager.all %}
+                            <a class="btn btn-default btn-mini"
+                               href='{% url "sponsorshiplevel-approve" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
+                                <span class="glyphicon glyphicon-thumbs-up"></span>
+                            </a>
+                            <a class="btn btn-default btn-mini"
+                               href='{% url "sponsorshiplevel-delete" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
+                                {% show_button_icon "delete" %}
+                            </a>
+                            <a class="btn btn-default btn-mini"
+                               href='{% url "sponsorshiplevel-update" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
+                                {% show_button_icon "update" %}
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                    {% if not unapproved %}
                         <a class="btn btn-default btn-mini"
-                           href='{% url "sponsorshiplevel-approve" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
-                            <span class="glyphicon glyphicon-thumbs-up"></span>
-                        </a>
-                        <a class="btn btn-default btn-mini"
-                           href='{% url "sponsorshiplevel-delete" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
-                            {% show_button_icon "delete" %}
-                        </a>
-                        <a class="btn btn-default btn-mini"
-                           href='{% url "sponsorshiplevel-update" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
-                            {% show_button_icon "update" %}
+                           href='{% url "sponsorshiplevel-detail" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
+                            <span class="glyphicon glyphicon-eye-open"></span>
                         </a>
                     {% endif %}
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "sponsorshiplevel-detail" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
-                        <span class="glyphicon glyphicon-eye-open"></span>
-                    </a>
                 </div>
             </div>
         </div>
