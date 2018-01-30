@@ -20,7 +20,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.db.models import Q
 from django.core.exceptions import ValidationError
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin
 from ..models import Category, Version
 from ..forms import CategoryForm
 
