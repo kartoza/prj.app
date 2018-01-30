@@ -11,8 +11,6 @@ from django.views.generic import (
     ListView,
 )
 from django.http import Http404
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
@@ -102,15 +100,6 @@ class WorksheetCreateView(LoginRequiredMixin, WorksheetMixin, CreateView):
         kwargs['section'] = get_object_or_404(Section, slug=section_slug)
         return kwargs
 
-    def form_valid(self, form):
-        """Check that there is no referential integrity error when saving."""
-        try:
-            result = super(WorksheetCreateView, self).form_valid(form)
-            return result
-        except IntegrityError:
-            raise ValidationError(
-                'ERROR: Worksheet by this name already exists!')
-
 
 class WorksheetUpdateView(LoginRequiredMixin, WorksheetMixin, UpdateView):
     """Update view for worksheet."""
@@ -159,14 +148,6 @@ class WorksheetUpdateView(LoginRequiredMixin, WorksheetMixin, UpdateView):
             'project_slug': self.object.section.project.slug,
             'section_slug': self.object.section.slug,
         })
-
-    def form_valid(self, form):
-        """Check that there is no referential integrity error when saving."""
-        try:
-            return super(WorksheetUpdateView, self).form_valid(form)
-        except IntegrityError:
-            return ValidationError(
-                'ERROR: Worksheet is already existing!')
 
 
 class WorksheetDeleteView(
@@ -252,7 +233,7 @@ class WorksheetDeleteView(
         return qs
 
 
-class WorksheetOrderView(WorksheetMixin, StaffuserRequiredMixin, ListView):
+class WorksheetOrderView(StaffuserRequiredMixin, WorksheetMixin, ListView):
     """List view to order worksheet."""
     context_object_name = 'worksheet'
     template_name = 'worksheet/order.html'

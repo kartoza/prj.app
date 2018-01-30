@@ -7,10 +7,14 @@ print os.environ
 ALLOWED_HOSTS = ['*',
                  u'0.0.0.0']
 
+ADMINS = ()
 
-VALID_DOMAIN = [
-    '192.168.1.110',
-]
+# Set debug to True for development
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
+LOGGING_OUTPUT_ENABLED = DEBUG
+LOGGING_LOG_SQL = DEBUG
+CRISPY_FAIL_SILENTLY = not DEBUG
 
 DATABASES = {
     'default': {

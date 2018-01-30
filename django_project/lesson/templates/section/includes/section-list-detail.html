@@ -5,11 +5,11 @@
         <h3>
             {{ section.name }}
         </h3>
-         {{ section.notes }}
+         {{ section.notes | base_markdown }}
     </div>
 
     <div class="col-lg-3">
-        {% if user.is_staff or user == project.owner %}
+        {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
             <div class="btn-group pull-right">
                 <a class="btn btn-default btn-mini tooltip-toggle"
                    href='{% url "worksheet-create" project.slug section.slug %}'
@@ -21,12 +21,12 @@
                    data-title="Worksheet Order">
                     <span class="glyphicon glyphicon-sort-by-order"></span>
                 </a>
-                <a class="btn btn-default btn-mini"
+                <a class="btn btn-default btn-mini tooltip-toggle"
                    data-title="Delete {{ section.name }}"
                    href='{% url "section-delete" project_slug=section.project.slug slug=section.slug %}'>
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
-                <a class="btn btn-default btn-mini"
+                <a class="btn btn-default btn-mini tooltip-toggle"
                    data-title="Update {{ section.name }}"
                    href='{% url "section-update" project_slug=section.project.slug slug=section.slug %}'>
                     <span class="glyphicon glyphicon-pencil"></span>

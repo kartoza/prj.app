@@ -42,7 +42,7 @@
                 <span class="col-lg-3">Module</span><span class="col-lg-9">: {{ worksheet.module }}<br/></span>
                 <span class="col-lg-3">Title</span><span class="col-lg-9">: {{ worksheet.title }}<br/></span>
                 <span class="col-lg-3">Summary</span><span class="col-lg-9">: {{ worksheet.summary_leader }}<br/></span>
-                <span class="col-lg-3">Content</span><span class="col-lg-9">: {{ worksheet.summary_text }}<br/></span>
+                <span class="col-lg-3">Content</span><span class="col-lg-9">: {{ worksheet.summary_text | base_markdown }}<br/></span>
             </div>
         </div>
     </form>

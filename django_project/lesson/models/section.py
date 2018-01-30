@@ -43,7 +43,7 @@ class Section(models.Model):
     )
 
     notes = models.TextField(
-        verbose_name=_('Section notes.'),
+        verbose_name=_('Section notes. Markdown is supported.'),
         help_text=_('Section notes.'),
         blank=False,
         null=False,

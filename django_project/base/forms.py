@@ -73,6 +73,15 @@ class ProjectForm(forms.ModelForm):
             'moderation queue.')
     )
 
+    lesson_manager = forms.ModelMultipleChoiceField(
+        queryset=User.objects.order_by('username'),
+        widget=CustomSelectMultipleWidget("user", is_stacked=False),
+        required=False,
+        help_text=_(
+            'Managers of the lesson app in this project. '
+            'They will be allowed to create or remove lessons.')
+    )
+
     # noinspection PyClassicStyleClass
     class Meta:
         """Meta class."""
@@ -89,6 +98,7 @@ class ProjectForm(forms.ModelForm):
             'signature',
             'changelog_manager',
             'sponsorship_manager',
+            'lesson_manager',
             'certification_manager',
             'credit_cost',
             'certificate_credit',
@@ -112,6 +122,7 @@ class ProjectForm(forms.ModelForm):
                 Field('signature', css_class="form-control"),
                 Field('changelog_manager', css_class="form-control"),
                 Field('sponsorship_manager', css_class="form-control"),
+                Field('lesson_manager', css_class="form-control"),
                 Field('certification_manager', css_class="form-control"),
                 Field('credit_cost', css_class="form-control"),
                 Field('certificate_credit', css_class="form-control"),
@@ -127,6 +138,8 @@ class ProjectForm(forms.ModelForm):
         self.fields['sponsorship_manager'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
         self.fields['certification_manager'].label_from_instance = \
+            lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
+        self.fields['lesson_manager'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
         # self.helper.add_input(Submit('submit', 'Submit'))
 

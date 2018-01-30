@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Specifications form."""
+"""Further reading form."""
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -12,18 +12,17 @@ from crispy_forms.layout import (
 )
 
 from modeltranslation.forms import TranslationModelForm
-from lesson.models.specification import Specification
+from lesson.models.further_reading import FurtherReading
 
 
-class SpecificationForm(TranslationModelForm):
-    """Form for creating specification"""
+class FurtherReadingForm(TranslationModelForm):
+    """Form for creating further reading item."""
 
     class Meta:
-        model = Specification
+        model = FurtherReading
         fields = (
-            'title',
-            'value',
-            'notes'
+            'text',
+            'link',
         )
 
     def __init__(self, *args, **kwargs):
@@ -31,11 +30,10 @@ class SpecificationForm(TranslationModelForm):
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
-                _('Worksheet {}: specification details').format(
+                _('Worksheet {}: further more item details').format(
                     self.worksheet),
-                Field('title', css_class='form_control'),
-                Field('value', css_class='form_control'),
-                Field('notes', css_class='form_control'),
+                Field('text', css_class='form_control'),
+                Field('link', css_class='form_control'),
                 css_id='project-form'
             )
         )
@@ -43,12 +41,12 @@ class SpecificationForm(TranslationModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
 
-        super(SpecificationForm, self).__init__(*args, **kwargs)
+        super(FurtherReadingForm, self).__init__(*args, **kwargs)
 
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
-        instance = super(SpecificationForm, self).save(commit=False)
+        instance = super(FurtherReadingForm, self).save(commit=False)
         instance.worksheet = self.worksheet
         instance.save()
         return instance

@@ -27,7 +27,7 @@
                         data-title="Back">
                         <span class="glyphicon glyphicon-arrow-left"></span>
                     </a>
-                    {% if user.is_staff or user == project.owner %}
+                    {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                         <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                            href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
                            data-title="Delete {{ worksheet.module }}">
@@ -67,11 +67,9 @@
     </div>
 
     <div class="row details-worksheet" style="margin-top:10px;">
-        <div class="col-lg-8">
-          <p>“{{ worksheet.summary_leader }}”</p>
+        <div class="col-lg-12">
+          <p><em>“{{ worksheet.summary_leader }}”</em></p>
           <p>{{ worksheet.summary_text | base_markdown }}</p>
-        </div>
-        <div class="col-lg-4">
           {% if worksheet.summary_image %}
             <img src="{{ MEDIA_URL }}{{ worksheet.summary_image }}" class="img-responsive img-rounded pull-right" style="width:100%;height:100%;">
           {% endif %}
@@ -85,7 +83,7 @@
             <p>{{ worksheet.exercise_task | base_markdown }}</p>
         </div>
         <div style="margin-bottom: 20px" class="details-worksheet col-lg-5 requirement-table">
-            {% if user.is_staff or user == project.owner %}
+            {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                 <div class="pull-right btn-group requirement-action" style="margin-bottom:5px;display:none;">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "specification-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
@@ -99,35 +97,41 @@
                     </a>
                 </div>
             {% endif %}
-            <table style="margin-top: 30px;">
-                <tbody>
-                    <tr style="background-color:#d6e6fb;">
-                        <th style="padding:5px;">Name</th>
-                        <th style="padding:5px;">Expectation</th>
-                        <th class="requirement-action" style="text-align:right;padding-right:0px;display:none;background-color:#FFFFFF">Actions</th>
-                    </tr>
-                    {% for requirement in requirements %}
-                        <tr>
-                            <td style="background-color:#f3f9fe;padding:5px;">{{ requirement.title }}</td>
-                            <td style="padding:5px;">{{ requirement.value }}</td>
-                            <td style="padding-right: 0">
-                                <div class="btn-group pull-right requirement-action" style="display:none;">
-                                    <a class="btn btn-default btn-mini tooltip-toggle"
-                                       href='{% url "specification-delete" worksheet.section.project.slug worksheet.section.slug worksheet.slug requirement.pk %}'
-                                       data-title="Delete {{ requirement.title }}" data-original-title="" title="">
-                                        <span class="glyphicon glyphicon-minus"></span>
-                                    </a>
-                                    <a class="btn btn-default btn-mini tooltip-toggle"
-                                       href='{% url "specification-update" worksheet.section.project.slug worksheet.section.slug worksheet.slug requirement.pk %}'
-                                       data-title="Edit {{ requirement.title }}" data-original-title="" title="">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </a>
-                                </div>
-                            </td>
+            {% if requirements.count > 0 %}
+                <table style="margin-top: 30px;" >
+                    <tbody>
+                        <tr style="background-color:#d6e6fb;">
+                            <th style="padding:5px;">Name</th>
+                            <th style="padding:5px;">Expectation</th>
+                         {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
+                            <th class="requirement-action" style="text-align:right;padding-right:0px;display:none;background-color:#FFFFFF">Actions</th>
+                         {% endif %}
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        {% for requirement in requirements %}
+                            <tr>
+                                <td style="background-color:#f3f9fe;padding:5px;">{{ requirement.title }}</td>
+                                <td style="padding:5px;">{{ requirement.value }}</td>
+                                {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
+                                <td style="padding-right: 0">
+                                    <div class="btn-group pull-right requirement-action" style="display:none;">
+                                        <a class="btn btn-default btn-mini tooltip-toggle"
+                                           href='{% url "specification-delete" worksheet.section.project.slug worksheet.section.slug worksheet.slug requirement.pk %}'
+                                           data-title="Delete {{ requirement.title }}" data-original-title="" title="">
+                                            <span class="glyphicon glyphicon-minus"></span>
+                                        </a>
+                                        <a class="btn btn-default btn-mini tooltip-toggle"
+                                           href='{% url "specification-update" worksheet.section.project.slug worksheet.section.slug worksheet.slug requirement.pk %}'
+                                           data-title="Edit {{ requirement.title }}" data-original-title="" title="">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </a>
+                                    </div>
+                                </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
         </div>
     </div>
 
@@ -151,7 +155,12 @@
         </div>
         <div class="col-lg-4">
             {% if worksheet.more_about_image %}
-                <img src="{{ MEDIA_URL }}{{ worksheet.more_about_image }}" class="img-responsive img-rounded pull-right" style="width:100%;height:100%;"/>
+                <a href="#" class="pop-image">
+                    <img id="{{ MEDIA_URL }}{{ worksheet.more_about_image }}" class="img-responsive img-rounded pull-right"
+                         src="{{ MEDIA_URL }}{{ worksheet.more_about_image }}"
+                         style="max-width: 100% !important;"
+                         alt="" />
+                </a>
             {% endif %}
           </div>
     </div>
@@ -167,7 +176,7 @@
           <h3 class="custom-heading" style="margin-left:-40px"><strong>Check your knowledge:</strong></h3>
         </div>
         <div class="col-lg-3 pull-right">
-            {% if user.is_staff or user == project.owner %}
+            {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                 <div class="pull-right btn-group question-answer-action" style="display:none;">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                   href='{% url "question-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
@@ -194,7 +203,7 @@
                               <strong>{{ question.question }}:</strong>
                             </div>
                             <div class="col-lg-2">
-                                {% if user.is_staff or user == project.owner %}
+                                {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                                     <div class="pull-right btn-group question-answer-action" style="display:none;">
                                         <a class="btn btn-default btn-mini tooltip-toggle"
                                       href='{% url "answer-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug question.pk %}'
@@ -219,12 +228,15 @@
                     <ol type="a">
                         {% for answer in answers %}
                             <li style="margin-bottom: 10px">
-                                {% if user.is_staff or user == project.owner %}
+                                {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                                     {# We insert a tick for the correct answer and if the user is allowed and we display explanations. #}
                                     {% if answer.is_correct %}
-                                        &#10004;
+                                        <span class="question-answer-action" style="display:none;">&#10004;</span>
                                     {%  endif %}
-                                    {{ answer.answer }}: <em>{{ answer.answer_explanation }}</em>
+                                    {{ answer.answer }}
+                                    {% if answer.answer_explanation %}
+                                        <span class="question-answer-action" style="display:none;">: <em>{{ answer.answer_explanation | base_markdown }}</em></span>
+                                    {% endif %}
                                     <div class="pull-right btn-group question-answer-action" style="display:none;">
                                         <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                                             href='{% url "answer-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
@@ -251,27 +263,27 @@
     {# Further reading #}
     <div class="row details-worksheet further-reading" style="margin-top:10px;">
         <div class="col-lg-1">
-          <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
-              <img src="{% static "img/book.png" %}" style="height:50px;width:50px">
+          <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }}; height:50px;width:50px; margin-left:-15px;">
+              <span class="glyphicon glyphicon-list-alt fa-3x" style="color:white"></span>
           </div>
         </div>
         <div class="col-lg-8">
           <h3 class="custom-heading" style="margin-left:-40px"><strong>Further reading: </strong></h3>
         </div>
         <div class="col-lg-3 pull-right">
-            {% if user.is_staff or user == project.owner %}
+            {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                 <div class="pull-right btn-group further-reading-action" style="display:none;">
-                    <a class="btn btn-default btn-mini tooltip-toggle disabled"
-                        {# href='{% url "worksheet-create" project.slug section.slug %}'#}
-                        data-title="Create New Further Reading Item">
-                            {% show_button_icon "add" %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "further-reading-create" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug %}'
+                       data-title="Create New Further Reading Item">
+                        {% show_button_icon "add" %}
                     </a>
                 </div>
             {% endif %}
         </div>
     </div>
 
-    <div class="row details-worksheet" style="margin-top:10px;">
+    <div class="row details-worksheet further-reading" style="margin-top:10px;">
         <div class="details-worksheet col-lg-12" style="margin-bottom: 20px">
             <ul>
                 {% for info in further_reading %}
@@ -280,16 +292,16 @@
                         {% if info.link %}
                             <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
                         {% endif %}
-                        {% if user.is_staff or user == project.owner %}
+                        {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                             <div class="pull-right btn-group">
-                                <a class="btn btn-default btn-mini btn-delete tooltip-toggle disabled"
-                                    {# href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
-                                    data-title="Delete {{ info.text }}">
+                                <a class="btn btn-default btn-mini btn-delete tooltip-toggle further-reading-action" style="display:none;"
+                                   href='{% url "further-reading-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
+                                   data-title="Delete {{ info.text }}">
                                     <span class="glyphicon glyphicon-minus"></span>
                                 </a>
-                                <a class="btn btn-default btn-mini tooltip-toggle disabled"
-                                    {# href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'#}
-                                    data-title="Edit {{ info.text }}">
+                                <a class="btn btn-default btn-mini tooltip-toggle further-reading-action" style="display:none;"
+                                   href='{% url "further-reading-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
+                                   data-title="Edit {{ info.text }}">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
                             </div>

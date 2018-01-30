@@ -52,8 +52,8 @@ class WorksheetQuestion(models.Model):
         """Meta class for Worksheet Question model."""
 
         app_label = 'lesson'
-        ordering = ['question', 'sequence_number']
-        unique_together = ['sequence_number', 'question']
+        ordering = ['worksheet', 'sequence_number']
+        unique_together = ['worksheet', 'sequence_number']
 
     def save(self, *args, **kwargs):
         if not self.pk:

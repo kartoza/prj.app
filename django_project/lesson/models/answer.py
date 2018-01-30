@@ -46,7 +46,7 @@ class Answer(models.Model):
     )
 
     answer_explanation = models.TextField(
-        help_text=_('Answer explanation.'),
+        help_text=_('Answer explanation. Markdown is supported.'),
         blank=True,
         null=False,
         max_length=1000,
