@@ -371,16 +371,16 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
         :rtype: QuerySet
         :raises: Http404
         """
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.project = Project.objects.get(slug=self.project_slug)
+        project_slug = self.kwargs.get('project_slug', None)
+        project = Project.objects.get(slug=project_slug)
         if not self.request.user.is_authenticated():
             raise Http404
-        qs = Version.objects.filter(project=self.project)
+        qs = Version.objects.filter(project=project)
         if self.request.user.is_staff:
             return qs
         else:
             return qs.filter(
-                Q(project=self.project) &
+                Q(project=project) &
                 (Q(author=self.request.user) |
                  Q(project__owner=self.request.user) |
                  Q(project__changelog_manager=self.request.user)))
@@ -470,14 +470,14 @@ class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
         :returns: A queryset which is filtered to only show approved Versions.
         :rtype: QuerySet
         """
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.project = Project.objects.get(slug=self.project_slug)
+        project_slug = self.kwargs.get('project_slug', None)
+        project = Project.objects.get(slug=project_slug)
         versions_qs = Version.objects.all()
         if self.request.user.is_staff:
             versions_qs = versions_qs
         else:
             versions_qs = versions_qs.filter(
-                Q(project=self.project) &
+                Q(project=project) &
                 (Q(author=self.request.user) |
                  Q(project__owner=self.request.user) |
                  Q(project__changelog_manager=self.request.user)))

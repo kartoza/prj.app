@@ -18,7 +18,7 @@
             Versions
             <div class="pull-right btn-group">
                 {% if user.is_authenticated and versions %}
-                    {% if user.is_staff or user == versions.0.project.owner or user in versions.0.project.changelog_manager.all %}
+                    {% if user.is_staff or user == the_project.owner or user in the_project.changelog_manager.all %}
                         <a class="btn btn-default btn-mini tooltip-toggle"
                            href='{% url "version-create" versions.0.project.slug %}'
                            data-title="Create New Version">
@@ -26,7 +26,7 @@
                         </a>
                     {% endif %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
-                       href='{% url "pending-version-list" versions.0.project.slug %}'
+                       href='{% url "pending-version-list" the_project.slug %}'
                        data-title="View Pending Versions">
                         <span class="glyphicon glyphicon-time"></span>
                     </a>

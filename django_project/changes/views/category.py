@@ -242,7 +242,7 @@ class CategoryOrderView(LoginRequiredMixin, CategoryMixin, ListView):
             return queryset
 
 
-class CategoryDetailView(LoginRequiredMixin, CategoryMixin, DetailView):
+class CategoryDetailView(CategoryMixin, DetailView):
     """Detail view for Category."""
     context_object_name = 'category'
     template_name = 'category/detail.html'
@@ -510,14 +510,14 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
         projects which user created (staff gets all projects)
         :rtype: QuerySet
         """
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.project = Project.objects.get(slug=self.project_slug)
+        project_slug = self.kwargs.get('project_slug', None)
+        project = Project.objects.get(slug=project_slug)
         qs = Category.approved_objects
         if self.request.user.is_staff:
             return qs
         else:
             return qs.filter(
-                Q(project=self.project) &
+                Q(project=project) &
                 (Q(project__owner=self.request.user) |
                  Q(project__changelog_manager=self.request.user)))
 
