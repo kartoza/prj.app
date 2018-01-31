@@ -573,7 +573,7 @@ class PendingSponsorListView(LoginRequiredMixin, SponsorMixin,
         return self.queryset
 
 
-class ApproveSponsorView(SponsorMixin, LoginRequiredMixin, RedirectView):
+class ApproveSponsorView(LoginRequiredMixin, SponsorMixin, RedirectView):
     """Redirect view for approving Sponsor."""
     permanent = False
     query_string = True
@@ -668,7 +668,7 @@ def generate_sponsor_cloud(request, **kwargs):
             'the_project': project})
 
 
-class GenerateSponsorPDFView(SponsorMixin, LoginRequiredMixin, TemplateView):
+class GenerateSponsorPDFView(LoginRequiredMixin, SponsorMixin, TemplateView):
     """Template View for invoice generation"""
     context_object_name = 'sponsors'
     template_name = 'sponsor/invoice.html'

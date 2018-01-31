@@ -22,7 +22,7 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
             Certifying Organisations
-            {% if user.is_staff or user.project.owner %}
+            {% if user.is_staff or user == the_project.owner or user in the_project.certification_manager.all %}
                 <div class="pull-right btn-group">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "certifyingorganisation-create" project_slug %}'

@@ -128,7 +128,7 @@ class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
         return qs
 
 
-class CategoryListView(CategoryMixin, LoginRequiredMixin, ListView):
+class CategoryListView(LoginRequiredMixin, CategoryMixin, ListView):
     """List view for Category."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
@@ -610,7 +610,7 @@ class PendingCategoryListView(
         return self.queryset
 
 
-class ApproveCategoryView(CategoryMixin, LoginRequiredMixin, RedirectView):
+class ApproveCategoryView(LoginRequiredMixin, CategoryMixin, RedirectView):
     """Redirect view for approving Category."""
     permanent = False
     query_string = True
