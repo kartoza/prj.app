@@ -41,10 +41,7 @@ class SpecificationAdmin(admin.ModelAdmin):
 class WorksheetAdmin(admin.ModelAdmin):
     """Worksheet admin model."""
     list_display = (
-        'section', 'sequence_number', 'module', 'title', 'summary_leader',
-        'summary_text', 'summary_image', 'exercise_goal', 'exercise_task',
-        'more_about_title', 'more_about_text', 'more_about_image',
-        'external_data', 'youtube_link', 'author_name', 'author_link'
+        'section', 'sequence_number', 'module',
     )
     fields = (
         'section', 'module', 'title', 'summary_leader',
