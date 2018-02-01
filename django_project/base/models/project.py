@@ -170,7 +170,7 @@ class Project(models.Model):
         User,
         related_name='changelog_manager',
         blank=True,
-        null=True,
+        # null=True, null has no effect on ManyToManyField.
         help_text=_(
             'Managers of the changelog in this project. '
             'They will be allowed to approve changelog entries in the '
@@ -181,7 +181,7 @@ class Project(models.Model):
         User,
         related_name='sponsorship_manager',
         blank=True,
-        null=True,
+        # null=True, null has no effect on ManyToManyField.
         help_text=_(
             'Managers of the sponsorship in this project. '
             'They will be allowed to approve sponsor entries in the '
@@ -192,7 +192,7 @@ class Project(models.Model):
         User,
         related_name='lesson_manager',
         blank=True,
-        null=True,
+        # null=True, null has no effect on ManyToManyField.
         help_text=_(
             'Managers of the lesson app in this project. '
             'They will be allowed to create or remove lessons.')
@@ -202,7 +202,7 @@ class Project(models.Model):
         User,
         related_name='certification_manager',
         blank=True,
-        null=True,
+        # null=True, null has no effect on ManyToManyField.
         help_text=_(
             'Managers of the certification app in this project. '
             'They will receive email notification about organisation and have'
