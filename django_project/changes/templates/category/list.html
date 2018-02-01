@@ -36,7 +36,7 @@
                             <span class="glyphicon glyphicon-th-list"></span>
                         </a>
                     {% endif %}
-                    {% if user.is_staff %}
+                    {% if user.is_staff or user in the_project.changelog_manager.all or user == the_project.owner %}
                         <a class="btn btn-default btn-mini tooltip-toggle"
                             href='{% url "category-order" project_slug %}'
                             data-title="Order Categories">
@@ -75,11 +75,13 @@
             </div>
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
-                    {%  if not category.approved and user.is_staff %}
-                        <a class="btn btn-default btn-mini"
-                           href='{% url "category-approve" project_slug=category.project.slug slug=category.slug %}'>
-                            <span class="glyphicon glyphicon-thumbs-up"></span>
-                        </a>
+                    {%  if not category.approved %}
+                        {% if user.is_staff or user in the_project.changelog_manager.all or user == the_project.owner %}
+                            <a class="btn btn-default btn-mini"
+                               href='{% url "category-approve" project_slug=category.project.slug slug=category.slug %}'>
+                                <span class="glyphicon glyphicon-thumbs-up"></span>
+                            </a>
+                        {% endif %}
                     {% endif %}
                     <a class="btn btn-default btn-mini"
                        href='{% url "category-delete" project_slug=category.project.slug slug=category.slug %}'>
