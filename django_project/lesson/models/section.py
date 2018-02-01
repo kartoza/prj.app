@@ -58,7 +58,10 @@ class Section(models.Model):
 
         app_label = 'lesson'
         ordering = ['project', 'sequence_number']
-        unique_together = ['project', 'sequence_number']
+        # Need to fix the transaction integrity after we submit a new order.
+        # https://stackoverflow.com/questions/40891574/how-can-i-set-a-
+        # table-constraint-deferrable-initially-deferred-in-django-model
+        # unique_together = ['project', 'sequence_number']
 
     def save(self, *args, **kwargs):
         if not self.pk:

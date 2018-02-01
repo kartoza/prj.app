@@ -29,6 +29,10 @@ db:
     - USERNAME=docker
     - PASS=docker
   restart: on-failure:5
+#  Uncomment the next line to have an access with PGAdmin using localhost and port 25432 on your computer.
+#  Only for development !
+#  ports:
+#    - "25432:5432"
 
 uwsgi:
   # Note you cannot scale if you use container_name

@@ -12,12 +12,12 @@
         {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
             <div class="btn-group pull-right">
                 <a class="btn btn-default btn-mini tooltip-toggle"
-                   data-title="Delete {{ section.name }}"
+                   data-title="Delete {{ worksheet.module }}"
                    href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'>
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
                 <a class="btn btn-default btn-mini tooltip-toggle"
-                   data-title="Update {{ section.name }}"
+                   data-title="Update {{ worksheet.module }}"
                    href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.id %}'>
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
