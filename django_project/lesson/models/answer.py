@@ -57,7 +57,10 @@ class Answer(models.Model):
         """Meta class for Answer module."""
 
         app_label = 'lesson'
-        unique_together = ['question', 'sequence_number']
+        # Need to fix the transaction integrity after we submit a new order.
+        # https://stackoverflow.com/questions/40891574/how-can-i-set-a-
+        # table-constraint-deferrable-initially-deferred-in-django-model
+        # unique_together = ['question', 'sequence_number']
         ordering = ['question', 'sequence_number']
 
     def save(self, *args, **kwargs):

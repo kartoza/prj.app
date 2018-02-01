@@ -83,6 +83,17 @@ class Worksheet(models.Model):
         max_length=1000,
     )
 
+    exercise_image = models.ImageField(
+        help_text=_('Image for the exercise part. You should normally either '
+                    'use the Requirements table or this image field. '
+                    'A landscape image, approximately 800*200. '
+                    'Most browsers support dragging the image directly on to '
+                    'the "Choose File" button above.'),
+        upload_to=os.path.join(
+            MEDIA_ROOT, 'images/lesson/worksheet/exercise'),
+        blank=True
+    )
+
     more_about_title = models.CharField(
         help_text=_('More about title.'),
         blank=False,
@@ -142,7 +153,10 @@ class Worksheet(models.Model):
 
         app_label = 'lesson'
         ordering = ['section', 'sequence_number']
-        unique_together = ['section', 'sequence_number']
+        # Need to fix the transaction integrity after we submit a new order.
+        # https://stackoverflow.com/questions/40891574/how-can-i-set-a-
+        # table-constraint-deferrable-initially-deferred-in-django-model
+        # unique_together = ['section', 'sequence_number']
 
     def save(self, *args, **kwargs):
         if not self.pk:
