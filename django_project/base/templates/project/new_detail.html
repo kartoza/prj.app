@@ -7,7 +7,7 @@
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/project-details.css' %}">
     <div class="row" style="margin-bottom: 20px">
-        {% if user.is_authenticated %}
+        {% if user.is_admin or user.is_staff or project.owner == user %}
           <div class="btn-group pull-right">
             <a href="{% url 'register-domain' %}"
                class="btn btn-default btn-m tooltip-toggle btn-edit"
