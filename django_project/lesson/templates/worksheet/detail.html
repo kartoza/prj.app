@@ -5,6 +5,11 @@
 
 {% block title %}Worksheet - {{ block.super }}{% endblock %}
 
+{% block js_head %}
+    <script src="{% static 'js/libs/html2canvas-0-4-1.js' %}"></script>
+    <script src="{% static 'js/libs/jspdf-1-3-5.js' %}"></script>
+{% endblock %}
+
 {% block css_head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/organisation_detail.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/worksheet_detail.css' %}">
@@ -18,6 +23,7 @@
 {% endblock page_title %}
 
 {% block content %}
+    <div id="pdf-content">
     <div class="row page-header" style="border-bottom: 8px solid {{ worksheet.section.project.accent_color }};">
         <div class="col-lg-12">
             <div class="pull-right">
@@ -26,6 +32,11 @@
                         href='{% url "section-list" project_slug=worksheet.section.project.slug %}#{{ worksheet.section.slug }}'
                         data-title="Back">
                         <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                    <a id="download-pdf-button" class="btn btn-default btn-mini tooltip-toggle"
+                        href='#'
+                        data-title="Download {{ worksheet.module }} as PDF">
+                        <span class="glyphicon glyphicon-download"></span>
                     </a>
                     {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                         <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
@@ -319,6 +330,7 @@
             </ul>
         </div>
     </div>
+    </div> {# End of pdf-content div #}
 
     <script>
         $('.btn-delete').hover(
@@ -377,5 +389,62 @@
                 $(this).find('.further-reading-action').hide();
             }
         );
+
+        // Download as PDF button
+        var button = document.getElementById('download-pdf-button');
+        button.addEventListener('click', downloadPDF, false);
+        button.addEventListener('touchstart', downloadPDF, false);
+
+        function downloadPDF(){
+            var pdf = new jsPDF('p', 'pt', 'a4');
+            var options = {
+                 pagesplit: true
+            };
+
+            $('#pdf-content').css('background-color', '#ffffff');
+            pdf.addHTML($("#pdf-content"), options, function()
+            {
+            pdf.save("{{ worksheet.slug }}.pdf");
+            });
+            $('#pdf-content').css('background-color', 'None');
+        }
+
+        function downloadPDF_b() {
+            {#map_view.convert_hd_map();#}
+             $(this).find('.worksheet-action').hide();
+            var pdf_content = document.getElementById('pdf-content');
+            $('#pdf-content').css('margin-left', '25px').css('margin-right', '-25px');
+            {#$(pdf_content).LoadingOverlay("show", {image: "/static/images/loading-spinner.gif"});#}
+            {#$('#fade').show();#}
+            {#$('#pop-up').show();#}
+            {#pdf_content.style.transform = pdf_content.style.webkitTransform = 'scale(2)';#}
+            pdf_content.style.transformOrigin = pdf_content.style.webkitTransformOrigin = '0 0';
+            html2canvas(pdf_content, {
+                width: pdf_content.offsetWidth * 3,
+                height: pdf_content.offsetHeight * 3,
+                onrendered: function (canvas) {
+                    var img = canvas.toDataURL("image/png");
+                    var pdf = new jsPDF({
+                        orientation: 'portrait',
+                        format: 'a4'
+                    });
+                    var width = pdf.internal.pageSize.width;
+                    var height = pdf.internal.pageSize.height;
+                    pdf.addImage(img, 'PNG', 0, 0, width, height);
+                    pdf.save('{{ worksheet.slug }}.pdf');
+                    console.log(typeof img);
+                    print(img);
+                    {#print("hi");#}
+                    {#pdf_content.style.transform = pdf_content.style.webkitTransform = 'scale(1)';#}
+                    {#pdf_content.style.transformOrigin = pdf_content.style.webkitTransformOrigin = '0 0';#}
+                    {#$('.stripe').css('margin-left', '0px').css('margin-right', '0px');#}
+                    $('#pdf-content').css('margin-left', '0px').css('margin-right', '0px');
+                    {#$('#fade').hide();#}
+                    {#$('#pop-up').hide();#}
+                    {#$(pdf_content).LoadingOverlay('hide');#}
+                     $(this).find('.worksheet-action').show();
+                }
+            });
+        }
     </script>
 {% endblock %}
