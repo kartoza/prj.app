@@ -27,10 +27,10 @@
             </div>
         </h1>
     </div>
-    {% ifequal num_specifications 0 %}
-        <h3>No questions are defined, but you can</h3>
-    {% endifequal %}
-    <ul id="sortable" data-url="{% url "question-submit-order" project.slug section.slug worksheet.slug %}">
+    {% if questions.count == 0 %}
+        <h3>No questions are defined.</h3>
+    {% endif %}
+    <ul id="sortable" data-url="{% url "question-submit-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}">
     {% for question in questions %}
         <li class="row order" style="margin-top:6px;" id="{{ question.id }}-{{ question.question }}" >
             <div class="col-lg-12">

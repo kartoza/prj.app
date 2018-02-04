@@ -8,15 +8,12 @@ from django.views.generic import (
     DeleteView,
     UpdateView,
 )
-from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 
-from base.models.project import Project
 from lesson.forms.question import QuestionForm
-from lesson.models.section import Section
 from lesson.models.worksheet_question import WorksheetQuestion
 from lesson.models.worksheet import Worksheet
 from lesson.utilities import re_order_features
@@ -144,48 +141,24 @@ class QuestionOrderView(
         :returns: Context data which will be passed to the template.
         :rtype: dict
         """
-        context = super(
-            QuestionOrderView, self).get_context_data(**kwargs)
-        context['num_question'] = context['questions'].count()
-        project_slug = self.kwargs.get('project_slug', None)
-        section_slug = self.kwargs.get('section_slug', None)
+        context = super(QuestionOrderView, self).get_context_data(**kwargs)
         worksheet_slug = self.kwargs.get('worksheet_slug', None)
-        if project_slug and section_slug and worksheet_slug:
-            context['project'] = Project.objects.get(slug=project_slug)
-            context['section'] = Section.objects.get(slug=section_slug)
-            context['worksheet'] = Worksheet.objects.get(
-                slug=worksheet_slug)
+        context['worksheet'] = (
+            get_object_or_404(Worksheet, slug=worksheet_slug))
         return context
 
-    def get_queryset(self, queryset=None):
+    def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved
-            Categories.
+        :returns: A queryset which is filtered to only questions.
 
-        :param queryset: Optional queryset.
         :rtype: QuerySet
         :raises: Http404
         """
-        if queryset is None:
-            worksheet_slug = self.kwargs.get('worksheet_slug', None)
-            if worksheet_slug:
-                try:
-                    worksheet = Worksheet.objects.get(slug=worksheet_slug)
-                except Worksheet.DoesNotExist:
-                    raise Http404(
-                        'Sorry! The worksheet you are requesting a '
-                        'question for could not be found or you do not '
-                        'have permission to view the question.')
-                queryset = WorksheetQuestion.objects.filter(
-                    worksheet=worksheet)
-                return queryset
-            else:
-                raise Http404(
-                        'Sorry! We could not find the worksheet for '
-                        'your question!')
-        else:
-            return queryset
+        worksheet_slug = self.kwargs.get('worksheet_slug', None)
+        worksheet = get_object_or_404(Worksheet, slug=worksheet_slug)
+        queryset = WorksheetQuestion.objects.filter(worksheet=worksheet)
+        return queryset
 
 
 class QuestionOrderSubmitView(
