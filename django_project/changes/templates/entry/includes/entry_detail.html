@@ -11,25 +11,25 @@
         <div class="btn-group pull-right align-bottom">
             {% if user.is_authenticated and not rst_download %}
                 {% if not entry.approved and user.is_staff %}
-                    <a class="btn-circle btn-success btn-mini tooltip-toggle"
+                    <a class="btn-success btn-mini tooltip-toggle"
                        data-title="Approve Entry"
                        href='{% url "entry-approve" pk=entry.id %}'>
                         <span class="glyphicon glyphicon-thumbs-up"></span>
                     </a>
                 {% endif %}
-                <a class="btn-circle btn-default btn-mini tooltip-toggle"
+                <a class="btn-default btn-mini tooltip-toggle"
                    data-title="Delete Entry"
                    href='{% url "entry-delete" pk=entry.id %}'>
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
-                <a class="btn-circle btn-default btn-mini tooltip-toggle"
+                <a class="btn-default btn-mini tooltip-toggle"
                    data-title="Update Entry"
                    href='{% url "entry-update" pk=entry.id %}'>
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
             {% endif %}
 
-            <a class="btn-circle btn-default btn-mini tooltip-toggle"
+            <a class="btn-default btn-mini tooltip-toggle"
                data-title="Get Permalink"
                onclick="copyToClipboard('{{ request.scheme }}://{{ request.get_host }}{{ request.path }}#{{ entry.slug }}')">
                 <span class="glyphicon glyphicon-link"></span>
