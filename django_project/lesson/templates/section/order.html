@@ -20,17 +20,17 @@
                 order not saved</span>
             <div class="pull-right btn-group" style="margin-top: 5px;">
                 <a class="btn btn-default btn-mini tooltip-toggle"
-                   href='{% url "section-list" project_slug %}'
+                   href='{% url "section-list" project.slug %}'
                    data-title="Sections List">
                     <span class="glyphicon glyphicon-th-list"></span>
                 </a>
             </div>
         </h1>
     </div>
-    {% ifequal num_sections 0 %}
-        <h3>No sections are defined, but you can</h3>
-    {% endifequal %}
-    <ul id="sortable" data-url="{% url "section-submit-order" project_slug %}">
+    {% if sections.count == 0 %}
+        <h3>No sections are defined.</h3>
+    {% endif %}
+    <ul id="sortable" data-url="{% url "section-submit-order" project.slug %}">
     {% for section in sections %}
         <li class="row order" style="margin-top:6px;" id="{{ section.id }}-{{ section.name }}" >
             <div class="col-lg-12">

@@ -190,41 +190,23 @@ class SectionOrderView(StaffuserRequiredMixin, SectionMixin, ListView):
         :rtype: dict
         """
         context = super(SectionOrderView, self).get_context_data(**kwargs)
-        context['num_sections'] = context['sections'].count()
         project_slug = self.kwargs.get('project_slug', None)
-        context['project_slug'] = project_slug
-        if project_slug:
-            context['the_project'] = Project.objects.get(slug=project_slug)
+        context['project'] = get_object_or_404(Project, slug=project_slug)
         return context
 
-    def get_queryset(self, queryset=None):
+    def get_queryset(self):
         """Get the queryset for this view.
 
         :returns: A queryset which is filtered to only show approved
             Categories.
 
-        :param queryset: Optional queryset.
         :rtype: QuerySet
         :raises: Http404
         """
-        if queryset is None:
-            project_slug = self.kwargs.get('project_slug', None)
-            if project_slug:
-                try:
-                    project = Project.objects.get(slug=project_slug)
-                except Project.DoesNotExist:
-                    raise Http404(
-                        'Sorry! The project you are requesting a section for '
-                        'could not be found or you do not have permission to '
-                        'view the section.')
-                queryset = Section.objects.filter(project=project)
-                return queryset
-            else:
-                raise Http404(
-                        'Sorry! We could not find the project for '
-                        'your section!')
-        else:
-            return queryset
+        project_slug = self.kwargs.get('project_slug', None)
+        project = get_object_or_404(Project, slug=project_slug)
+        queryset = Section.objects.filter(project=project)
+        return queryset
 
 
 class SectionOrderSubmitView(LoginRequiredMixin, SectionMixin, UpdateView):

@@ -177,7 +177,6 @@ class WorksheetOrderView(StaffuserRequiredMixin, WorksheetMixin, ListView):
         :rtype: dict
         """
         context = super(WorksheetOrderView, self).get_context_data(**kwargs)
-        context['num_items'] = context['worksheet'].count()
         section_slug = self.kwargs.get('section_slug', None)
         context['section'] = Section.objects.get(slug=section_slug)
         return context
