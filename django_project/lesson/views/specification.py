@@ -164,8 +164,7 @@ class SpecificationOrderView(
 
 class SpecificationOrderSubmitView(
     LoginRequiredMixin, SpecificationMixin, UpdateView):
-    """Update order view for Specification"""
-    context_object_name = 'specification'
+    """Update order view for Specification."""
 
     def post(self, request, *args, **kwargs):
         """Post the worksheet_slug from the URL and define the Worksheet

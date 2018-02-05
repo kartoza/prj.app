@@ -210,8 +210,7 @@ class SectionOrderView(StaffuserRequiredMixin, SectionMixin, ListView):
 
 
 class SectionOrderSubmitView(LoginRequiredMixin, SectionMixin, UpdateView):
-    """Update order view for Section"""
-    context_object_name = 'section'
+    """Update order view for Section."""
 
     def post(self, request, *args, **kwargs):
         """Post the project_slug from the URL and define the Project

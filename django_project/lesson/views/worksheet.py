@@ -164,7 +164,7 @@ class WorksheetDeleteView(
 
 class WorksheetOrderView(StaffuserRequiredMixin, WorksheetMixin, ListView):
     """List view to order worksheet."""
-    context_object_name = 'worksheet'
+    context_object_name = 'worksheets'
     template_name = 'worksheet/order.html'
 
     def get_context_data(self, **kwargs):
@@ -198,8 +198,7 @@ class WorksheetOrderView(StaffuserRequiredMixin, WorksheetMixin, ListView):
 
 
 class WorksheetOrderSubmitView(LoginRequiredMixin, WorksheetMixin, UpdateView):
-    """Update order view for Section"""
-    context_object_name = 'section'
+    """Update order view for Worksheet."""
 
     def post(self, request, *args, **kwargs):
         """Post the project_slug from the URL and define the Project
