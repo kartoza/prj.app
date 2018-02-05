@@ -517,8 +517,8 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
                 'ERROR: Sponsor by this name already exists!')
 
 
-class PendingSponsorListView(LoginRequiredMixin, SponsorMixin,
-                             PaginationMixin, ListView):  # noqa
+class PendingSponsorListView(
+    LoginRequiredMixin, SponsorMixin, PaginationMixin, ListView):  # noqa
     """List view for pending Sponsor."""
     context_object_name = 'sponsors'
     template_name = 'sponsor/pending-list.html'

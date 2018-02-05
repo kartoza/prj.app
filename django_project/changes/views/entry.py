@@ -286,8 +286,8 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
 
 
 # noinspection PyAttributeOutsideInit
-class PendingEntryListView(EntryMixin, PaginationMixin, ListView,
-                           StaffuserRequiredMixin):
+class PendingEntryListView(
+    StaffuserRequiredMixin, EntryMixin, PaginationMixin, ListView):
     """List view for pending Entry."""
     context_object_name = 'unapproved_entries'
     template_name = 'entry/pending-list.html'
@@ -445,7 +445,7 @@ class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
             })
 
 
-class EntryOrderView(StaffuserRequiredMixin, EntryMixin, ListView):
+class EntryOrderView(LoginRequiredMixin, EntryMixin, ListView):
     """List view to order entries."""
     context_object_name = 'entries'
     template_name = 'entry/order.html'
