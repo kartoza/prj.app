@@ -2,6 +2,7 @@
 """Models for changelog entries."""
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
 import os
 import logging
 from core.settings.contrib import STOP_WORDS
@@ -35,6 +36,16 @@ class UnapprovedEntryManager(models.Manager):
 
 class Entry(models.Model):
     """An entry is the basic unit of a changelog."""
+
+    sequence_number = models.IntegerField(
+        verbose_name=_('Entry number'),
+        help_text=_(
+            'The order in which this entry is listed within the category.'),
+        blank=False,
+        null=False,
+        default=0
+    )
+
     title = models.CharField(
         help_text='Feature title for this changelog entry.',
         max_length=255,
@@ -114,6 +125,7 @@ class Entry(models.Model):
             ('title', 'version', 'category'),
             ('version', 'slug'),
         )
+        ordering = ['version', 'category', 'sequence_number']
         app_label = 'changes'
 
     def save(self, *args, **kwargs):
@@ -122,6 +134,17 @@ class Entry(models.Model):
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = slugify(new_list)[:50]
+
+            # Sequence number
+            max_number = Entry.objects.all().\
+                filter(version=self.version, category=self.category).aggregate(
+                models.Max('sequence_number'))
+            max_number = max_number['sequence_number__max']
+            # We take the maximum number. If the table is empty, we let the
+            # default value defined in the field definitions.
+            if max_number is not None:
+                self.sequence_number = max_number + 1
+
         super(Entry, self).save(*args, **kwargs)
 
     def __unicode__(self):

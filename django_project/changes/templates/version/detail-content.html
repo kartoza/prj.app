@@ -83,6 +83,15 @@
 
         {% for row in version.categories %}
             {% if row.entries %}
+                <div class="btn-group btn-group pull-right">
+                {% if user.is_staff or user in project.changelog_manager.all and not rst_download %}
+                    <a class="btn-circle btn-default btn-mini tooltip-toggle"
+                       data-title="Order Entries"
+                       href='{% url "entry-order" project_pk=version.project.pk version_pk=version.pk category_pk=row.category.pk %}'>
+                        <span class="glyphicon glyphicon-sort-by-order"></span>
+                    </a>
+                {% endif %}
+                </div>
                 <a class="anchor" id="category-{{ row.category.id }}"></a>
                 <h2 class="text-muted">
                     {{ row.category.name }}

@@ -42,6 +42,9 @@ from views import (
     PendingEntryListView,
     AllPendingEntryList,
     ApproveEntryView,
+    EntryOrderView,
+    EntryOrderSubmitView,
+
     # Sponsor
     SponsorDetailView,
     SponsorDeleteView,
@@ -178,6 +181,14 @@ urlpatterns = patterns(
     url(regex='^entry/update/(?P<pk>\d+)$',
         view=EntryUpdateView.as_view(),
         name='entry-update'),
+    url(regex='^(?P<project_pk>[\w-]+)/version/(?P<version_pk>[\w.-]+)/'
+              'order/(?P<category_pk>[\w-]+)$',
+        view=EntryOrderView.as_view(),
+        name='entry-order'),
+    url(regex='^(?P<project_pk>[\w-]+)/version/(?P<version_pk>[\w.-]+)/'
+              'submit-order/(?P<category_pk>[\w-]+)$',
+        view=EntryOrderSubmitView.as_view(),
+        name='entry-submit-order'),
 
     # Feeds
     url(regex='^(?P<project_slug>[\w-]+)/rss/latest-version/$',
