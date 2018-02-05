@@ -1,0 +1,106 @@
+{% load custom_markup %}
+{% load static %}
+
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/worksheet_detail_print.css' %}">
+    <style>
+    .icon-project-color {
+        background-color: {{ worksheet.section.project.accent_color }};
+    }
+    </style>
+    <title>{{ worksheet.module }}</title>
+</head>
+<body>
+<header>
+    {% if worksheet.section.project.image_file %}
+        <img src="{{ worksheet.section.project.image_file.url }}">
+    {% endif %}
+    <div>
+        <h1>Section : {{ worksheet.section.name }}</h1>
+        <h2>Module : {{ worksheet.module }}</h2>
+    </div>
+</header>
+<hr class="icon-project-color" />
+<section>
+    <div class="icon-project-color icon-section">
+        <img class="icon-section" src="{% static "img/info.png" %}">
+    </div>
+    <h2>{{ worksheet.title }}</h2>
+    <blockquote>“{{ worksheet.summary_leader }}”</blockquote>
+    <p>{{ worksheet.summary_text | base_markdown }}</p>
+    {% if worksheet.summary_image %}
+        <img src="{{ worksheet.summary_image.url }}">
+    {% endif %}
+    <h3>You try:</h3>
+    <p class="goal">Goal: {{ worksheet.exercise_goal }}</p>
+    <p>{{ worksheet.exercise_task | base_markdown }}</p>
+    {% if requirements.count > 0 %}
+        <aside>
+            <table>
+                <tbody>
+                    <tr><th>Name</th><th>Expectation</th></tr>
+                    {% for requirement in requirements %}
+                        <tr><td style="background-color: #cdcdcd">{{ requirement.title }}</td><td>{{ requirement.value }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </aside>
+    {% endif %}
+    {% if worksheet.exercise_image %}
+        <img id="{{ worksheet.exercise_image }}"
+             src="{{ worksheet.exercise_image.url }}"
+             alt="" />
+    {% endif %}
+</section>
+<section>
+    <div class="icon-project-color icon-section">
+        <img class="icon-section" src="{% static "img/info.png" %}">
+    </div>
+    <h2>{{ worksheet.more_about_title }}</h2>
+    <p>
+        {{ worksheet.more_about_text | base_markdown }}
+    </p>
+    {% if worksheet.more_about_image %}
+        <img id="{{ worksheet.more_about_image }}"
+             src="{{ worksheet.more_about_image.url }}"
+             alt="" />
+    {% endif %}
+</section>
+<section>
+    <div class="icon-project-color icon-section">
+        <img class="icon-section" src="{% static "img/check.png" %}">
+    </div>
+    <h2>Check your knowledge:</h2>
+{#  Bullet list with type="1" or type="a" do not work well in the PDF generation. We need a custom counter.  #}
+    <ul style="list-style: none;">
+        {% for question, answers in questions.items %}
+            <li>{{ forloop.counter }}. {{ question.question }}:</li>
+            <ul style="list-style: none; margin-bottom: 10px;">
+                {% for answer in answers %}
+                    <li>{{ forloop.counter | to_char }}. {{ answer.answer }}</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </ul>
+</section>
+<section>
+    <div class="icon-project-color icon-section">
+        <img class="icon-section" src="{% static "img/book.png" %}">
+    </div>
+    <h2>Further reading:</h2>
+    <ul>
+        {% for info in further_reading %}
+            <li>
+                {{ info.text }}
+                {% if info.link %}
+                    <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+<footer>
+</footer>
+</body>
+</html>

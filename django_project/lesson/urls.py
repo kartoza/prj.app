@@ -35,6 +35,7 @@ from lesson.views.worksheet import (
     WorksheetUpdateView,
     WorksheetDeleteView,
     WorksheetDetailView,
+    WorksheetPrintView,
     WorksheetOrderView,
     WorksheetOrderSubmitView,
 )
@@ -84,6 +85,10 @@ urlpatterns = patterns(
               '(?P<section_slug>[\w-]+)/detail/(?P<pk>[\w-]+)/$',
         view=WorksheetDetailView.as_view(),
         name='worksheet-detail'),
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/print/(?P<pk>[\w-]+)/$',
+        view=WorksheetPrintView.as_view(),
+        name='worksheet-print'),
     url(regex='^(?P<project_slug>[\w-]+)/section/'
               '(?P<section_slug>[\w-]+)/order$',
         view=WorksheetOrderView.as_view(),
