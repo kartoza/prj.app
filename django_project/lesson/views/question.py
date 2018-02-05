@@ -163,8 +163,7 @@ class QuestionOrderView(
 
 class QuestionOrderSubmitView(
     LoginRequiredMixin, QuestionMixin, UpdateView):
-    """Update order view for Question"""
-    context_object_name = 'specification'
+    """Update order view for Question."""
 
     def post(self, request, *args, **kwargs):
         """Post the worksheet_slug from the URL and define the Worksheet
