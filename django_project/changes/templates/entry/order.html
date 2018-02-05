@@ -1,0 +1,48 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+
+{% block title %}Entries - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Entries</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+            <span class="glyphicon glyphicon-sort-by-order"></span> Order Entries for {{ category.name }}
+            <span id="order-saved" hidden class="alert alert-success" style="font-size: 9pt; padding: 3px;font-style: italic;">
+                order saved</span>
+            <span id="order-not-saved" hidden class="alert alert-danger" style="font-size: 9pt; padding: 3px;font-style: italic;">
+                order not saved</span>
+            <div class="pull-right btn-group" style="margin-top: 5px;">
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                   href='{% url "version-detail" project_slug=version.project.slug slug=version.slug %}'
+                   data-title="Entry List">
+                    <span class="glyphicon glyphicon-th-list"></span>
+                </a>
+            </div>
+        </h1>
+    </div>
+    {% if entry.count == 0 %}
+        <h3>No entries are defined.</h3>
+    {% endif %}
+    <ul id="sortable" data-url="{% url "entry-submit-order" project_pk=version.project.pk version_pk=version.pk category_pk=category.pk %}">
+    {% for entry in object_list %}
+        <li class="row order" style="margin-top:6px;" id="{{ entry.id }}-{{ entry.title }}" >
+            <div class="col-lg-12">
+                <p>
+                    <span class="glyphicon glyphicon-menu-hamburger" style="margin-right: 20px"></span>
+                    {{ entry.title }}
+                </p>
+            </div>
+        </li>
+    {%  endfor %}
+    </ul>
+    <hr />
+
+{% endblock %}
+

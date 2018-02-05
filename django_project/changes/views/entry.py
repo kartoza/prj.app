@@ -20,8 +20,9 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
-from ..models import Version, Entry
+from ..models import Version, Entry, Category
 from ..forms import EntryForm
+from lesson.utilities import re_order_features
 
 logger = logging.getLogger(__name__)
 
@@ -442,3 +443,70 @@ class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
                 'project_slug': entry.version.project.slug,
                 'version_slug': entry.version.slug
             })
+
+
+class EntryOrderView(StaffuserRequiredMixin, EntryMixin, ListView):
+    """List view to order entries."""
+    context_object_name = 'entries'
+    template_name = 'entry/order.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(EntryOrderView, self).get_context_data(**kwargs)
+        version_pk = self.kwargs.get('version_pk', None)
+        category_pk = self.kwargs.get('category_pk', None)
+        context['version'] = get_object_or_404(Version, pk=version_pk)
+        context['category'] = get_object_or_404(Category, pk=category_pk)
+        return context
+
+    def get_queryset(self, queryset=None):
+        """Get the queryset for this view.
+
+        :returns: A queryset which is filtered to only show entries for this
+        version and this category.
+
+        :param queryset: Optional queryset.
+        :rtype: QuerySet
+        :raises: Http404
+        """
+        version_pk = self.kwargs.get('version_pk', None)
+        category_pk = self.kwargs.get('category_pk', None)
+        version = get_object_or_404(Version, pk=version_pk)
+        category = get_object_or_404(Category, pk=category_pk)
+        queryset = Entry.objects.filter(version=version, category=category)
+        return queryset
+
+
+class EntryOrderSubmitView(LoginRequiredMixin, EntryMixin, UpdateView):
+    """Update order view for Section"""
+    context_object_name = 'entry'
+
+    def post(self, request, *args, **kwargs):
+        """Post the project_slug from the URL and define the Project
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        :raises: Http404
+        """
+        version_pk = self.kwargs.get('version_pk', None)
+        category_pk = self.kwargs.get('category_pk', None)
+        version = get_object_or_404(Version, pk=version_pk)
+        category = get_object_or_404(Category, pk=category_pk)
+        queryset = Entry.objects.filter(version=version, category=category)
+        return re_order_features(request, queryset)
