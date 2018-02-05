@@ -3,6 +3,7 @@
 
 from collections import OrderedDict
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from django.views.generic import (
     DetailView,
     CreateView,
@@ -14,6 +15,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from weasyprint import HTML
 
 from lesson.forms.worksheet import WorksheetForm
 from lesson.models.answer import Answer
@@ -76,6 +78,40 @@ class WorksheetDetailView(
         if self.request.user.is_staff:
             context['user_can_edit'] = True
         return context
+
+
+class WorksheetPrintView(WorksheetDetailView):
+    """Based on the WorkSheet Detail View, this is one is used for printing.
+
+    If you want to render as HTML for debugging, you can simply comment the
+    render_to_response method.
+    """
+
+    template_name = 'worksheet/print.html'
+
+    def get(self, request, *args, **kwargs):
+        host = request.get_host()
+        if host == '0.0.0.0:61202':
+            # We are using the dev environment with docker
+            self.base_url = 'http://0.0.0.0:8080/'
+        else:
+            # On staging, host = staging.changelog.qgis.org
+            self.base_url = request.scheme + host
+        return super(WorksheetPrintView, self).get(request, args, kwargs)
+
+    def render_to_response(self, context, **response_kwargs):
+        response = super(WorksheetPrintView, self).render_to_response(
+            context, **response_kwargs)
+        response.render()
+        pdf_response = HttpResponse(content_type='application/pdf')
+
+        # Need to improve for URL outside of the dev env.
+        html_object = HTML(
+            string=response.content,
+            base_url=self.base_url,
+        )
+        html_object.write_pdf(pdf_response)
+        return pdf_response
 
 
 class WorksheetCreateView(LoginRequiredMixin, WorksheetMixin, CreateView):

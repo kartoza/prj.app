@@ -24,6 +24,15 @@ def is_gif(value):
     return value[-4:] == '.gif'
 
 
+@register.filter
+def to_char(value):
+    """Return a letter according to the number given.
+
+    Eg 1 is returning "a".
+    """
+    return chr(96 + value)
+
+
 @register.inclusion_tag('button_span.html', takes_context=True)
 def show_button_icon(context, value):
 

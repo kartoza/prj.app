@@ -1,0 +1,95 @@
+@page {
+    size: a4 portrait;
+    margin: 10mm;
+}
+
+html {
+    font-family: 'Lato', sans-serif;
+    font-style: normal;
+	font-variant: normal;
+    text-align: justify;
+}
+
+header img {
+    height:auto;
+    width:auto;
+    max-height:80px;
+    max-width:80px;
+    float: left;
+}
+
+header h1, header h2{
+    text-align: right;
+}
+
+header h2 {
+    font-style: italic;
+}
+
+hr {
+    margin-top: 20px;
+    display: block;
+    height: 10px;
+    border: 0;
+}
+
+section h2{
+    margin-left: 40px;
+    margin-top: 0px;
+}
+
+section .icon-section{
+    height:auto;
+    width:auto;
+    max-height:30px;
+    max-width:30px;
+    float: left;
+}
+
+section blockquote {
+    font-style: italic;
+}
+
+section img{
+    height:auto;
+    width:auto;
+    max-width: 180mm;
+    /*max-height:120px;*/
+    /*max-width:800px;*/
+}
+
+.goal{
+    font-style: italic;
+    font-weight: bold;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+    padding: 1mm;
+}
+
+th {
+    font-weight: bold;
+    background-color: #a9a9a9;
+}
+
+/*section aside{*/
+    /*float: right;*/
+/*}*/
+
+section
+{
+    margin-top:0.8mm;
+}
+
+h1{
+    font-size: large;
+}
+
+h2{
+    font-size: medium;
+}

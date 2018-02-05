@@ -18,6 +18,9 @@
 {% endblock page_title %}
 
 {% block content %}
+{#    WARNING                                                                  #}
+{#    PLEASE UPDATE THE PRINT TEMPLATE AS WELL IF YOU UPDATE THIS FILE. THANKS #}
+{#    WARNING                                                                  #}
     <div class="row page-header" style="border-bottom: 8px solid {{ worksheet.section.project.accent_color }};">
         <div class="col-lg-12">
             <div class="pull-right">
@@ -26,6 +29,11 @@
                         href='{% url "section-list" project_slug=worksheet.section.project.slug %}#{{ worksheet.section.slug }}'
                         data-title="Back">
                         <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                    <a id="download-pdf-button" class="btn btn-default btn-mini tooltip-toggle" target="_blank"
+                       href='{% url "worksheet-print" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
+                       data-title="Download {{ worksheet.module }} as PDF">
+                        <span class="glyphicon glyphicon-download"></span>
                     </a>
                     {% if user_can_edit %}
                         <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
@@ -44,7 +52,13 @@
         </div>
         <div class="col-lg-4">
             {% if worksheet.section.project.image_file %}
-                <img src="{{ MEDIA_URL }}{{ worksheet.section.project.image_file }}" style="height:30%;width:80%">
+                <img src="{{ worksheet.section.project.image_file.url }}"
+                     style="
+                        display: block;
+                        height:auto;
+                        width:auto;
+                        max-height:100px;
+                        max-width:100px;">
             {% endif %}
         </div>
         <div class="col-lg-8" style="text-align:right;">
@@ -71,7 +85,7 @@
           <p><em>“{{ worksheet.summary_leader }}”</em></p>
           <p>{{ worksheet.summary_text | base_markdown }}</p>
           {% if worksheet.summary_image %}
-            <img src="{{ MEDIA_URL }}{{ worksheet.summary_image }}" class="img-responsive img-rounded pull-right" style="width:100%;max-height:300px;">
+            <img src="{{ worksheet.summary_image.url }}" class="img-responsive img-rounded pull-right" style="width:100%;max-height:300px;">
           {% endif %}
         </div>
     </div>
@@ -135,8 +149,8 @@
         </div>
         {% if worksheet.exercise_image %}
             <a href="#" class="pop-image">
-                <img id="{{ MEDIA_URL }}{{ worksheet.exercise_image }}" class="img-responsive img-rounded pull-right"
-                     src="{{ MEDIA_URL }}{{ worksheet.exercise_image }}"
+                <img id="{{ worksheet.exercise_image }}" class="img-responsive img-rounded pull-right"
+                     src="{{ worksheet.exercise_image.url }}"
                      style="max-width: 100% !important;"
                      alt="" />
             </a>
@@ -164,8 +178,8 @@
         <div class="col-lg-4">
             {% if worksheet.more_about_image %}
                 <a href="#" class="pop-image">
-                    <img id="{{ MEDIA_URL }}{{ worksheet.more_about_image }}" class="img-responsive img-rounded pull-right"
-                         src="{{ MEDIA_URL }}{{ worksheet.more_about_image }}"
+                    <img id="{{ worksheet.more_about_image }}" class="img-responsive img-rounded pull-right"
+                         src="{{ worksheet.more_about_image.url }}"
                          style="max-width: 100% !important;"
                          alt="" />
                 </a>
