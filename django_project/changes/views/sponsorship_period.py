@@ -546,8 +546,8 @@ class PendingSponsorshipPeriodListView(
 
 
 class ApproveSponsorshipPeriodView(
-        SponsorshipPeriodMixin,
         LoginRequiredMixin,
+        SponsorshipPeriodMixin,
         RedirectView):
     """Redirect view for approving Sponsorship Period."""
     permanent = False

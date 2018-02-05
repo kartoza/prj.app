@@ -535,8 +535,8 @@ class PendingSponsorshipLevelListView(
 
 
 class ApproveSponsorshipLevelView(
-        SponsorshipLevelMixin,
         LoginRequiredMixin,
+        SponsorshipLevelMixin,
         RedirectView):
     """Redirect view for approving Sponsorship Level."""
     permanent = False

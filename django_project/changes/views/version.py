@@ -595,7 +595,7 @@ class ApproveVersionView(LoginRequiredMixin, VersionMixin, RedirectView):
         })
 
 
-class VersionDownload(VersionMixin, CustomStaffuserRequiredMixin, DetailView):
+class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
     """View to allow staff users to download Version page in RST format"""
     template_name = 'version/detail-content.html'
 
@@ -768,7 +768,7 @@ class VersionDownloadGnu(VersionMixin, DetailView):
 
 
 class VersionSponsorDownload(
-    VersionMixin, CustomStaffuserRequiredMixin, DetailView):
+    CustomStaffuserRequiredMixin, VersionMixin, DetailView):
 
     """View to allow staff users to download Version page in html format"""
 
