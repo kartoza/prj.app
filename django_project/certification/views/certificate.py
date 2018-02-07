@@ -579,12 +579,23 @@ def regenerate_certificate(request, **kwargs):
     """Regenerate a pdf certificate for an attendee."""
 
     project_slug = kwargs.pop('project_slug', None)
+    organisation_slug = kwargs.pop('organisation_slug', None)
     course_slug = kwargs.pop('course_slug', None)
     pk = kwargs.pop('pk')
     course = Course.objects.get(slug=course_slug)
     attendee = Attendee.objects.get(pk=pk)
     project = Project.objects.get(slug=project_slug)
     certificate = Certificate.objects.get(course=course, attendee=attendee)
+    certifying_organisation = \
+        CertifyingOrganisation.objects.get(slug=organisation_slug)
+
+    # Checking user permissions.
+    if request.user.is_staff or request.user == project.owner or \
+            request.user in project.certification_manager.all() or \
+            request.user in certifying_organisation.organisation_owners.all():
+        pass
+    else:
+        raise Http404
 
     filename = "{}.{}".format(certificate.certificateID, "pdf")
     project_folder = (project.name.lower()).replace(' ', '_')
@@ -636,6 +647,17 @@ def regenerate_all_certificate(request, **kwargs):
     organisation_slug = kwargs.get('organisation_slug', None)
     course = Course.objects.get(slug=course_slug)
     project = Project.objects.get(slug=project_slug)
+    certifying_organisation = \
+        CertifyingOrganisation.objects.get(slug=organisation_slug)
+
+    # Checking user permissions.
+    if request.user.is_staff or request.user == project.owner or \
+            request.user in project.certification_manager.all() or \
+            request.user in certifying_organisation.organisation_owners.all():
+        pass
+    else:
+        raise Http404
+
     attendees_pk = \
         Certificate.objects.filter(
             course=course).values_list('attendee', flat=True)
