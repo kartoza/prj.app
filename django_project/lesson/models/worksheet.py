@@ -4,16 +4,13 @@
 """
 import os
 import logging
-from unidecode import unidecode
 
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.text import slugify
-
-from core.settings.contrib import STOP_WORDS
 
 from lesson.models.section import Section
+from lesson.utilities import custom_slug
 
 logger = logging.getLogger(__name__)
 
@@ -145,7 +142,9 @@ class Worksheet(models.Model):
         null=True,
     )
 
-    slug = models.SlugField()
+    slug = models.SlugField(
+        unique=True,
+    )
 
     # noinspection PyClassicStyleClass.
     class Meta:
@@ -159,13 +158,10 @@ class Worksheet(models.Model):
         # unique_together = ['section', 'sequence_number']
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            words = self.module.split()
-            filtered_words = [word for word in words if
-                              word.lower() not in STOP_WORDS]
-            # unidecode() represents special characters (unicode data) in ASCII
-            new_list = unidecode(' '.join(filtered_words))
-            self.slug = slugify(new_list)[:50]
+        is_new_record = False if self.pk else True
+        if is_new_record:
+            # Default slug
+            self.slug = custom_slug(self.module)
 
             # Section number
             max_number = Worksheet.objects.all().\
@@ -176,8 +172,15 @@ class Worksheet(models.Model):
             # default value defined in the field definitions.
             if max_number is not None:
                 self.sequence_number = max_number + 1
+        else:
+            self.slug = '{}-{}'.format(custom_slug(self.module), self.pk)
 
         super(Worksheet, self).save(*args, **kwargs)
+
+        if is_new_record:
+            # We update the slug field with its ID and we save it again.
+            self.slug = '{}-{}'.format(custom_slug(self.module), self.pk)
+            self.save()
 
     def __unicode__(self):
         return self.module

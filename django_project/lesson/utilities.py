@@ -2,8 +2,30 @@
 """Tools for the lesson app."""
 
 import json
+from unidecode import unidecode
 
 from django.http import Http404, HttpResponse
+from django.utils.text import slugify
+
+from core.settings.contrib import STOP_WORDS
+
+
+def custom_slug(name):
+    """Slugify a string with our own rules.
+
+    :param name: The name or title to slugify.
+    :type name: basestring
+
+    :return: The new slug.
+    :rtype: basestring
+    """
+    words = name.split()
+    filtered_words = [
+        word for word in words if word.lower() not in STOP_WORDS]
+    # unidecode() represents special characters (unicode data) in ASCII
+    new_list = unidecode(' '.join(filtered_words))
+    new_slug = slugify(new_list)[:50]
+    return new_slug
 
 
 def re_order_features(request, features):
