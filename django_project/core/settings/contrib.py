@@ -35,7 +35,7 @@ GRAPPELLI_ADMIN_TITLE = 'Site administration panel'
 
 STOP_WORDS = (
     'a', 'an', 'and', 'if', 'is', 'the', 'in', 'i', 'you', 'other',
-    'this', 'that'
+    'this', 'that', 'to',
 )
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

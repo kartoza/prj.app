@@ -3,13 +3,11 @@
 
 """
 import logging
-from unidecode import unidecode
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.text import slugify
 
-from core.settings.contrib import STOP_WORDS
+from lesson.utilities import custom_slug
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +48,9 @@ class Section(models.Model):
         max_length=1000,
     )
 
-    slug = models.SlugField()
+    slug = models.SlugField(
+        unique=True,
+    )
 
     # noinspection PyClassicStyleClass.
     class Meta:
@@ -64,13 +64,10 @@ class Section(models.Model):
         # unique_together = ['project', 'sequence_number']
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            words = self.name.split()
-            filtered_words = [word for word in words if
-                              word.lower() not in STOP_WORDS]
-            # unidecode() represents special characters (unicode data) in ASCII
-            new_list = unidecode(' '.join(filtered_words))
-            self.slug = slugify(new_list)[:50]
+        is_new_record = False if self.pk else True
+        if is_new_record:
+            # Default slug
+            self.slug = custom_slug(self.name)
 
             # Section number
             max_number = Section.objects.all().\
@@ -81,8 +78,15 @@ class Section(models.Model):
             # default value defined in the field definitions.
             if max_number is not None:
                 self.sequence_number = max_number + 1
+        else:
+            self.slug = '{}-{}'.format(custom_slug(self.name), self.pk)
 
         super(Section, self).save(*args, **kwargs)
+
+        if is_new_record:
+            # We update the slug field with its ID and we save it again.
+            self.slug = '{}-{}'.format(custom_slug(self.name), self.pk)
+            self.save()
 
     def __unicode__(self):
         return self.name

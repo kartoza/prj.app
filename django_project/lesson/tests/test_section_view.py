@@ -5,9 +5,11 @@ import logging
 from django.core.urlresolvers import reverse
 
 from django.test import TestCase, override_settings, Client
+from django.shortcuts import get_object_or_404
 
 from base.tests.model_factories import ProjectF
 from core.model_factories import UserF
+from lesson.models.section import Section
 from lesson.tests.model_factories import SectionF
 
 
@@ -93,18 +95,19 @@ class TestViews(TestCase):
         client = Client()
         client.login(username='timlinux', password='password')
         post_data = {
-            'name': u'New Section',
+            'name': u'New Section unique',
             'notes': 'New Notes',
             'sequence_number': 1,
             'project': self.test_project.id,
         }
         response = client.post(
             reverse('section-create', kwargs=self.kwargs_project), post_data)
+        new_section = get_object_or_404(Section, name='New Section unique')
         self.assertRedirects(
             response, reverse(
                 'section-list', kwargs={
                     'project_slug': self.test_section.project.slug}
-            ) + '#new-section')
+            ) + '#new-section-unique-{}'.format(new_section.pk))
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SectionCreate_no_login(self):
@@ -155,10 +158,12 @@ class TestViews(TestCase):
         response = client.post(
             reverse('section-update', kwargs=self.kwargs_section_full),
             post_data)
+        updated_section = get_object_or_404(Section, pk=self.test_section.pk)
+        self.assertEqual(updated_section.pk, self.test_section.pk)
         self.assertRedirects(response, reverse(
             'section-list', kwargs={
                 'project_slug': self.test_section.project.slug}) +
-                    '#' + self.test_section.slug)
+                    '#' + updated_section.slug)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SectionUpdate_no_login(self):

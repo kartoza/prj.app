@@ -4,16 +4,14 @@
 
 import logging
 import os
-from unidecode import unidecode
 
 from django.conf.global_settings import MEDIA_ROOT
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.text import slugify
 
 from base.models.project import Project
-from core.settings.contrib import STOP_WORDS
+from lesson.utilities import custom_slug
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +72,9 @@ class Curriculum(models.Model):
             'Users who are presenting this curriculum.'),
     )
 
-    slug = models.SlugField()
+    slug = models.SlugField(
+        unique=True,
+    )
 
     # noinspection PyClassicStyleClass.
     class Meta:
@@ -88,15 +88,19 @@ class Curriculum(models.Model):
         # unique_together = ['project', 'sequence_number']
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            words = self.title.split()
-            filtered_words = [word for word in words if
-                              word.lower() not in STOP_WORDS]
-            # unidecode() represents special characters (unicode data) in ASCII
-            new_list = unidecode(' '.join(filtered_words))
-            self.slug = slugify(new_list)[:50]
+        is_new_record = False if self.pk else True
+        if is_new_record:
+            # Default slug
+            self.slug = custom_slug(self.title)
+        else:
+            self.slug = '{}-{}'.format(custom_slug(self.title), self.pk)
 
         super(Curriculum, self).save(*args, **kwargs)
+
+        if is_new_record:
+            # We update the slug field with its ID and we save it again.
+            self.slug = '{}-{}'.format(custom_slug(self.title), self.pk)
+            self.save()
 
     def __unicode__(self):
         return self.title
