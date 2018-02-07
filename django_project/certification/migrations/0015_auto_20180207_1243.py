@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='coursetype',
             name='description',
-            field=models.TextField(help_text='Course type description.', max_length=1000, null=True, blank=True),
+            field=models.TextField(help_text='Course type description - 1000 characters limit.', max_length=1000, null=True, blank=True),
         ),
     ]

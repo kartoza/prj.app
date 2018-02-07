@@ -40,7 +40,7 @@ class CourseType(models.Model):
     )
 
     description = models.TextField(
-        help_text=_('Course type description.'),
+        help_text=_('Course type description - 1000 characters limit.'),
         max_length=1000,
         null=True,
         blank=True,
