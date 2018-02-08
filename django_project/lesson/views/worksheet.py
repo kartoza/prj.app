@@ -63,6 +63,18 @@ class WorksheetDetailView(
         context['further_reading'] = FurtherReading.objects.filter(
             worksheet=pk)
 
+        # Permissions
+        context['user_can_edit'] = False
+        lesson_managers = (
+            context['worksheet'].section.project.lesson_manager.all())
+        if self.request.user in lesson_managers:
+            context['user_can_edit'] = True
+
+        if self.request.user == context['worksheet'].section.project.owner:
+            context['user_can_edit'] = True
+
+        if self.request.user.is_staff:
+            context['user_can_edit'] = True
         return context
 
 
