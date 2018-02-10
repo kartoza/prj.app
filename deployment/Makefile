@@ -198,9 +198,19 @@ dbrestore:
 	@echo "Restore dump from backups/latest.dmp in production mode"
 	@echo "------------------------------------------------------------------"
 	@# - prefix causes command to continue even if it fails
-	-@docker exec -t -i $(PROJECT_ID)-db su - postgres -c "dropdb gis"
-	@docker exec -t -i $(PROJECT_ID)-db su - postgres -c "createdb -O docker -T template_postgis gis"
-	@docker exec -t -i $(PROJECT_ID)-db pg_restore /backups/latest.dmp | docker exec -i $(PROJECT_ID)-db su - postgres -c "psql gis"
+	@echo "stopping uwsgi container"
+	@docker-compose -p $(PROJECT_ID) stop uwsgi
+	@echo "dropping gis"
+	@docker exec -t $(PROJECT_ID)-db su - postgres -c "dropdb gis"
+	@echo "creating gis"
+	@docker exec -t $(PROJECT_ID)-db su - postgres -c "createdb -O docker -T template_postgis gis"
+	@echo "restoring gis"
+	@# Because we pipe from one docker command to another and we are going
+	@# to execute this Make command from a remote server at times, we need to using use interactive mode (-i)
+	@# in the first command and not use terminal (-t) in the second. Please do not change these!
+	@docker exec -t  $(PROJECT_ID)-db pg_restore /backups/latest.dmp | docker exec -i $(PROJECT_ID)-db su - postgres -c "psql gis"
+	@docker-compose -p $(PROJECT_ID) start uwsgi
+	@echo "starting uwsgi container"
 
 dbbackup:
 	@echo
@@ -257,6 +267,16 @@ dbsync:
 	@echo "------------------------------------------------------------------"
 	-@ssh changelog.qgis.org "cd /home/projecta/deployment; make dbbackup"
 	@rsync -av --progress changelog.qgis.org:/home/projecta/deployment/backups/ backups
+
+staging-sync:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Syncing database and media files from this host to staging server"
+	@echo "Then doing a dbrestore and migrate on the staging server"
+	@echo "------------------------------------------------------------------"
+	@rsync -av --progress --exclude=.sync --exclude=.DS_Store backups staging.changelog.qgis.org:/home/projecta/deployment
+	@rsync -av --progress --exclude=.sync --exclude=.DS_Store media staging.changelog.qgis.org:/home/projecta/deployment
+	-@ssh staging.changelog.qgis.org "cd /home/projecta/deployment; make dbrestore; make migrate; make collectstatic"
 
 create-machine:
 	@echo
@@ -322,6 +342,7 @@ help:
 	@echo "* **dbshell** - get a psql prompt into the db container. "
 	@echo "* **dbsnapshot** - as above but makes the backup as deployment/snapshot.smp - replacing any pre-existing snapshot."
 	@echo "* **dbsync** - use this from a development or offsite machine. It will rsync all database backups from deployment/backups to your offsite machine."
+	@echo "* **staging-sync** - sync database and media files from this host to staging server, then do a dbrestore and migrate on the staging server
 	@echo "* **default** ."
 	@echo "* **deploy** ."
 	@echo "* **devweb** - create an ssh container derived from uwsgi that can be used as a remote interpreter for PyCharm. See [development notes](README-dev.md)."

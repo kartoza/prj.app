@@ -54,6 +54,7 @@ The following key make commands are provided for production:
 * **run** - builds then runs db and uwsgi services
 * **collectstatic** - collect static in production instance
 * **migrate** - run django migrations in production instance
+* **help** - list all other management commands available (there are quite a few)
 
 Additional make commands are provided in the Makefile - please see there
 for details.
