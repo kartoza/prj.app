@@ -83,7 +83,10 @@ if 'raven.contrib.django.raven_compat' in INSTALLED_APPS:
                 'level': 'DEBUG',
                 'class': 'logging.StreamHandler',
                 'formatter': 'verbose'
-            }
+            },
+            'null': {
+                'class': 'django.utils.log.NullHandler',
+            },
         },
         'loggers': {
             'django.db.backends': {
