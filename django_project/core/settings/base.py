@@ -162,6 +162,12 @@ LOGGING = {
         }
     },
     'loggers': {
+        # Special rules to not bother logging when host is
+        # not allowed otherwise we get lots of mail spam....
+        'django.security.DisallowedHost': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
