@@ -42,6 +42,14 @@
             <td>{{ certificate.course.course_convener.user }}</td>
             {% endif %}
         </tr>
+        <tr><td class="td-title">Certification Platform </td>
+            <td class="top-vertical">&nbsp;:&nbsp;</td>
+            <td><a href="{% url 'about' certificate.course.certifying_organisation.project.slug %}"
+                class="glyphicon glyphicon-info-sign tooltip-toggle about-link"
+                style="font-size: 14pt; padding: 7px; color: #D3D3D3; display: inline-block; vertical-align: middle"
+                data-title="About the certification platform"></a>
+            </td>
+        </tr>
     </table>
     </div>
     
