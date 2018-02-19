@@ -42,9 +42,17 @@
             <td>{{ certificate.course.course_convener.user }}</td>
             {% endif %}
         </tr>
+        <tr><td class="td-title"> </td>
+            <td class="top-vertical">&nbsp;&nbsp;
+        </tr>
     </table>
+    <div class="">
+         <a href="{% url 'about' certificate.course.certifying_organisation.project.slug %}"
+            style="padding-left: 150pt; padding-bottom: 12pt;">
+            Read more about the certication system
+        </a>
+        </div>
     </div>
-    
     {% else %}
         <div class="row" style="text-align: center; margin-top: 60px">
         <span class="glyphicon glyphicon-remove" style="color: red; font-size: 40pt"></span>
