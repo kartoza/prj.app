@@ -680,7 +680,7 @@ class PendingCertifyingOrganisationListView(
                             (Q(project__owner=self.request.user) |
                              Q(organisation_owners=self.request.user) |
                              Q(project__certification_manager=self.request.user
-                               )))
+                               ))).distinct()
                 return queryset
             else:
                 raise Http404(
