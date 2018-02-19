@@ -39,7 +39,7 @@
 </div>
 <div class="row" style="margin-top:10px">
     <div class="col-lg-8">
-        {{ entry.description|base_markdown }}
+        <block>{{ entry.description|base_markdown }}</block>
     </div>
     <div class="col-lg-4 text-center">
             {% if entry.image_file %}
