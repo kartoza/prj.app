@@ -1,0 +1,63 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Domain Deleted - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+  <h1>Domain Deleted</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <style>
+        .btn-delete:hover {
+            background: #c12e2a;
+            color: white;
+            border-color: #c12e2a;
+        }
+        .btn-edit:hover {
+            background: darkblue;
+            color: white;
+            border-color: darkblue;
+        }
+    </style>
+
+  <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+    <div class="alert row">
+      <div class="col-lg-10">
+        <p class="lead">Please confirm you wish to delete the domain below!</p>
+      </div>
+      <div class="col-lg-2">
+        <div class="btn-group pull-right">
+          <a class="btn btn-default btn-sm tooltip-toggle btn-delete"
+             href="#"
+             onClick="$('#delete-confirmation').submit()"
+             data-title="{{ domain.domain }}">
+            <span class="glyphicon glyphicon-minus"></span>
+          </a>
+          <a class="btn btn-default btn-sm btn-edit tooltip-toggle"
+             href='{% url "domain-list" %}'
+             data-title="Cancel">
+            <span class="glyphicon glyphicon-arrow-left"></span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12">
+        <h3><span class="text-muted">Domain:</span> {{ domain.domain }}</h3>
+      </div>
+    </div>
+    <div>
+        <p>User: {{ domain.user.first_name }} {{ domain.user.last_name }} ({{ domain.user.username }})</p>
+        {% if domain.project %}
+            <p>Project: {{ domain.project }}</p>
+        {% endif %}
+        {% if domain.organisation %}
+            <p>Organisation: {{ domain.organisation }}</p>
+        {% endif %}
+    </div>
+  </form>
+{% endblock %}

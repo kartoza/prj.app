@@ -1,11 +1,16 @@
 # coding=utf-8
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
+from django.http import Http404
 from django.views.generic import (
     TemplateView,
     CreateView,
     ListView,
-    RedirectView)
+    RedirectView,
+    DeleteView,
+    UpdateView)
 from django.shortcuts import get_object_or_404
 from pure_pagination.mixins import PaginationMixin
 from base.models.custom_domain import Domain
@@ -155,3 +160,54 @@ class PendingDomainListView(
             return queryset
 
         return self.queryset
+
+
+class DomainDeleteView(StaffuserRequiredMixin, DomainMixin, DeleteView):
+    context_object_name = 'domain'
+    template_name = 'custom_domain/delete.html'
+
+    def get_success_url(self):
+        return reverse('domain-list')
+
+    def get_queryset(self):
+        qs = Domain.objects.all()
+        if self.request.user.is_staff:
+            return qs
+        else:
+            raise Http404
+
+
+class DomainUpdateView(LoginRequiredMixin, DomainMixin, UpdateView):
+    context_object_name = 'domain'
+    template_name = 'custom_domain/update.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(DomainUpdateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def get_queryset(self):
+        qs = Domain.objects
+        if self.request.user.is_staff:
+            return qs
+        else:
+            return qs.filter(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(DomainUpdateView, self).get_context_data(**kwargs)
+        return context
+
+    def get_success_url(self):
+        if self.object.approved:
+            return reverse('domain-list')
+        else:
+            return reverse('domain-pending-list')
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+
+        try:
+            return super(DomainUpdateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Domain by this name is already exists!')

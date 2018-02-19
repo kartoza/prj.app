@@ -19,6 +19,16 @@
             color: white;
             border-color: green;
         }
+        .btn-delete:hover {
+            background: #c12e2a;
+            color: white;
+            border-color: #c12e2a;
+        }
+        .btn-edit:hover {
+            background: darkblue;
+            color: white;
+            border-color: darkblue;
+        }
     </style>
 
     <div class="page-header">
@@ -26,19 +36,19 @@
             Organisations
             {% if user.is_authenticated %}
                 <div class="pull-right btn-group">
-                    <a class="btn btn-default btn-mini tooltip-toggle"
+                    <a class="btn btn-default btn-mini btn-edit tooltip-toggle"
                        href='{% url "create-organisation" %}'
                        data-title="Create New Organisation">
                         {% show_button_icon "add" %}
                     </a>
                     {% if not unapproved %}
-                        <a class="btn btn-default btn-mini tooltip-toggle"
+                        <a class="btn btn-default btn-mini btn-edit tooltip-toggle"
                            href='{% url "pending-list-organisation" %}'
                            data-title="View Pending Organisations">
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
                     {% else %}
-                        <a class="btn btn-default btn-mini tooltip-toggle"
+                        <a class="btn btn-default btn-mini btn-edit tooltip-toggle"
                            href='{% url "list-organisation" %}'
                            data-title="View Organisations">
                             <span class="glyphicon glyphicon-th-list"></span>
@@ -82,6 +92,16 @@
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
                     {% endif %}
+                    <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                       href='{% url "organisation-delete" organisation.pk %}'
+                        data-title="Delete {{ organisation.name }}">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini btn-edit tooltip-toggle"
+                       href='{% url "organisation-update" organisation.pk %}'
+                        data-title="Update {{ organisation.name }}">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
                 </div>
             </div>
         {% endif %}

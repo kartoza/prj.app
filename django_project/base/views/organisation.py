@@ -1,7 +1,15 @@
 # coding=utf-8
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
-from django.views.generic import CreateView, ListView, RedirectView
+from django.http import Http404
+from django.views.generic import (
+    CreateView,
+    ListView,
+    RedirectView,
+    DeleteView,
+    UpdateView)
 from django.shortcuts import get_object_or_404
 from pure_pagination.mixins import PaginationMixin
 from base.models import Organisation
@@ -74,7 +82,8 @@ class OrganisationListView(OrganisationMixin, PaginationMixin, ListView):
         return self.queryset
 
 
-class ApproveOrganisationView(OrganisationMixin, RedirectView):
+class ApproveOrganisationView(
+        StaffuserRequiredMixin, OrganisationMixin, RedirectView):
     """Redirect view for approving organisation."""
 
     permanent = False
@@ -145,3 +154,56 @@ class PendingOrganisationListView(
             return queryset
 
         return self.queryset
+
+
+class OrganisationDeleteView(
+        StaffuserRequiredMixin, OrganisationMixin, DeleteView):
+    context_object_name = 'organisation'
+    template_name = 'organisation/delete.html'
+
+    def get_success_url(self):
+        return reverse('list-organisation')
+
+    def get_queryset(self):
+        qs = Organisation.objects.all()
+        if self.request.user.is_staff:
+            return qs
+        else:
+            raise Http404
+
+
+class OrganisationUpdateView(
+        LoginRequiredMixin, OrganisationMixin, UpdateView):
+    context_object_name = 'organisation'
+    template_name = 'organisation/update.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(OrganisationUpdateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def get_queryset(self):
+        qs = Organisation.objects
+        if self.request.user.is_staff:
+            return qs
+        else:
+            return qs.filter(owner=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(OrganisationUpdateView, self).get_context_data(**kwargs)
+        return context
+
+    def get_success_url(self):
+        if self.object.approved:
+            return reverse('list-organisation')
+        else:
+            return reverse('pending-list-organisation')
+
+    def form_valid(self, form):
+        """Check that there is no referential integrity error when saving."""
+
+        try:
+            return super(OrganisationUpdateView, self).form_valid(form)
+        except IntegrityError:
+            return ValidationError(
+                'ERROR: Organisation by this name is already exists!')

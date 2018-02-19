@@ -19,26 +19,38 @@
             color: white;
             border-color: green;
         }
+
+        .btn-delete:hover {
+            background: #c12e2a;
+            color: white;
+            border-color: #c12e2a;
+        }
+
+        .btn-edit:hover {
+            background: darkblue;
+            color: white;
+            border-color: darkblue;
+        }
     </style>
 
     <div class="page-header">
         <h1 class="text-muted">
-            Organisations
+            Domains
             {% if user.is_authenticated %}
                 <div class="pull-right btn-group">
-                    <a class="btn btn-default btn-mini tooltip-toggle"
+                    <a class="btn btn-default btn-mini btn-edit tooltip-toggle"
                        href='{% url "register-domain" %}'
                        data-title="Register New Domain">
                         {% show_button_icon "add" %}
                     </a>
                     {% if not unapproved %}
-                        <a class="btn btn-default btn-mini tooltip-toggle"
+                        <a class="btn btn-default btn-mini btn-edit tooltip-toggle"
                            href='{% url "domain-pending-list" %}'
                            data-title="View Pending Domains">
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
                     {% else %}
-                        <a class="btn btn-default btn-mini tooltip-toggle"
+                        <a class="btn btn-default btn-mini btn-edit tooltip-toggle"
                            href='{% url "domain-list" %}'
                            data-title="View Domains List">
                             <span class="glyphicon glyphicon-th-list"></span>
@@ -75,10 +87,20 @@
                     {%  if not domain.approved %}
                         <a class="btn btn-default btn-mini btn-approve"
                            href='{% url "domain-approve" domain.pk %}'
-                            data-title="Approve {{ organisation.name }}">
+                            data-title="Approve {{ domain.domain }}">
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
                     {% endif %}
+                    <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                       href='{% url "domain-delete" domain.pk %}'
+                        data-title="Delete {{ domain.domain }}">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini btn-edit tooltip-toggle"
+                       href='{% url "domain-update" domain.pk %}'
+                        data-title="Update {{ domain.domain }}">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
                 </div>
             </div>
         {% endif %}
