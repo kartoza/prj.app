@@ -38,10 +38,16 @@
     </div>
 </div>
 <div class="row" style="margin-top:10px">
-    <div class="col-lg-7 center-block">
-        <block>{{ entry.description|base_markdown }}</block>
+<style>
+   code {
+       display: block;
+       padding: 1rem;
+        word-wrap: normal;
+   }
+</style>
+    <div class="col-lg-8">
+        {{ entry.description|base_markdown }}
     </div>
-<div class="col-lg-1"></div>
     <div class="col-lg-4 text-center">
             {% if entry.image_file %}
                 {% if entry.image_file|is_gif %}
