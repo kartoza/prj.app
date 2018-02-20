@@ -26,11 +26,15 @@ from views import (
     DomainListView,
     PendingDomainListView,
     ApproveDomainView,
+    DomainDeleteView,
+    DomainUpdateView,
 
     CreateOrganisationView,
     OrganisationListView,
     ApproveOrganisationView,
     PendingOrganisationListView,
+    OrganisationDeleteView,
+    OrganisationUpdateView,
 )
 
 urlpatterns = patterns(
@@ -59,6 +63,12 @@ urlpatterns = patterns(
     url(regex='^domain-approve/(?P<pk>[\w-]+)/$',
         view=ApproveDomainView.as_view(),
         name='domain-approve'),
+    url(regex='^domain/(?P<pk>[\w-]+)/delete/$',
+        view=DomainDeleteView.as_view(),
+        name='domain-delete'),
+    url(regex='^domain/(?P<pk>[\w-]+)/update/$',
+        view=DomainUpdateView.as_view(),
+        name='domain-update'),
 
     # Organisation management
     url(regex='^create-organisation/$',
@@ -73,6 +83,12 @@ urlpatterns = patterns(
     url(regex='^approve-organisation/(?P<pk>[\w-]+)/$',
         view=ApproveOrganisationView.as_view(),
         name='approve-organisation'),
+    url(regex='^organisation/(?P<pk>[\w-]+)/delete/$',
+        view=OrganisationDeleteView.as_view(),
+        name='organisation-delete'),
+    url(regex='^organisation/(?P<pk>[\w-]+)/update/$',
+        view=OrganisationUpdateView.as_view(),
+        name='organisation-update'),
 
     # Project management
     url(regex='^pending-project/list/$',

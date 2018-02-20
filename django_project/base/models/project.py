@@ -73,7 +73,7 @@ def get_default_organisation():
     # default organisation can be changed in the live site.
 
     organisation = \
-        Organisation.objects.get_or_create(name='Kartoza', approved=True)[0]
+        Organisation.objects.get_or_create(name='Public', approved=True)[0]
     return organisation.pk
 
 
