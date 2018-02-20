@@ -3,18 +3,113 @@
 
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/worksheet_detail_print.css' %}">
     <style>
-    .icon-project-color {
-        background-color: {{ worksheet.section.project.accent_color }};
-    }
+.icon-project-color {
+    background-color: {{ worksheet.section.project.accent_color }};
+}
+@page {
+    size: a4 portrait;
+    margin: 10mm;
+}
+
+html {
+    font-family: 'Lato', sans-serif;
+    font-style: normal;
+	font-variant: normal;
+    text-align: justify;
+}
+
+header img {
+    height:auto;
+    width:auto;
+    max-height:80px;
+    max-width:80px;
+    float: left;
+}
+
+header h1, header h2{
+    text-align: right;
+}
+
+header h2 {
+    font-style: italic;
+}
+
+hr {
+    margin-top: 20px;
+    display: block;
+    height: 10px;
+    border: 0;
+}
+
+section h2{
+    margin-left: 40px;
+    margin-top: 0px;
+}
+
+section .icon-section{
+    height:auto;
+    width:auto;
+    max-height:30px;
+    max-width:30px;
+    float: left;
+}
+
+section blockquote {
+    font-style: italic;
+}
+
+section img{
+    height:auto;
+    width:auto;
+    max-width: 180mm;
+    /*max-height:120px;*/
+    /*max-width:800px;*/
+}
+
+.goal{
+    font-style: italic;
+    font-weight: bold;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+    padding: 1mm;
+}
+
+th {
+    font-weight: bold;
+    background-color: #a9a9a9;
+}
+
+/*section aside{*/
+    /*float: right;*/
+/*}*/
+
+section
+{
+    margin-top:0.8mm;
+}
+
+h1{
+    font-size: large;
+}
+
+h2{
+    font-size: medium;
+}
+
     </style>
     <title>{{ worksheet.module }}</title>
 </head>
 <body>
 <header>
     {% if worksheet.section.project.image_file %}
-        <img src="{{ worksheet.section.project.image_file.url }}">
+        <img src="{{ worksheet.section.project.image_file.file }}">
     {% endif %}
     <div>
         <h1>Section : {{ worksheet.section.name }}</h1>
@@ -24,13 +119,13 @@
 <hr class="icon-project-color" />
 <section>
     <div class="icon-project-color icon-section">
-        <img class="icon-section" src="{% static "img/info.png" %}">
+        <img class="icon-section" src="{{ "img/info.png" | local_static_filepath }}">
     </div>
     <h2>{{ worksheet.title }}</h2>
-    <blockquote>“{{ worksheet.summary_leader }}”</blockquote>
+    <blockquote>&#147{{ worksheet.summary_leader }}&#148</blockquote>
     <p>{{ worksheet.summary_text | base_markdown }}</p>
     {% if worksheet.summary_image %}
-        <img src="{{ worksheet.summary_image.url }}">
+        <img src="{{ worksheet.summary_image.file }}">
     {% endif %}
     <h3>You try:</h3>
     <p class="goal">Goal: {{ worksheet.exercise_goal }}</p>
@@ -49,13 +144,13 @@
     {% endif %}
     {% if worksheet.exercise_image %}
         <img id="{{ worksheet.exercise_image }}"
-             src="{{ worksheet.exercise_image.url }}"
+             src="{{ worksheet.exercise_image.file }}"
              alt="" />
     {% endif %}
 </section>
 <section>
     <div class="icon-project-color icon-section">
-        <img class="icon-section" src="{% static "img/info.png" %}">
+        <img class="icon-section" src="{{ "img/info.png" | local_static_filepath }}">
     </div>
     <h2>{{ worksheet.more_about_title }}</h2>
     <p>
@@ -63,13 +158,13 @@
     </p>
     {% if worksheet.more_about_image %}
         <img id="{{ worksheet.more_about_image }}"
-             src="{{ worksheet.more_about_image.url }}"
+             src="{{ worksheet.more_about_image.file }}"
              alt="" />
     {% endif %}
 </section>
 <section>
     <div class="icon-project-color icon-section">
-        <img class="icon-section" src="{% static "img/check.png" %}">
+        <img class="icon-section" src="{{ "img/check.png" | local_static_filepath }}">
     </div>
     <h2>Check your knowledge:</h2>
 {#  Bullet list with type="1" or type="a" do not work well in the PDF generation. We need a custom counter.  #}
@@ -86,7 +181,7 @@
 </section>
 <section>
     <div class="icon-project-color icon-section">
-        <img class="icon-section" src="{% static "img/book.png" %}">
+        <img class="icon-section" src="{{ "img/book.png" | local_static_filepath }}">
     </div>
     <h2>Further reading:</h2>
     <ul>
