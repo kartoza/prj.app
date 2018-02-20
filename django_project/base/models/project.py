@@ -169,7 +169,7 @@ class Project(models.Model):
 
     changelog_managers = models.ManyToManyField(
         User,
-        related_name='changelog_manager',
+        related_name='changelog_managers',
         blank=True,
         # null=True, null has no effect on ManyToManyField.
         help_text=_(
@@ -180,7 +180,7 @@ class Project(models.Model):
 
     sponsorship_managers = models.ManyToManyField(
         User,
-        related_name='sponsorship_manager',
+        related_name='sponsorship_managers',
         blank=True,
         # null=True, null has no effect on ManyToManyField.
         help_text=_(
@@ -191,7 +191,7 @@ class Project(models.Model):
 
     lesson_managers = models.ManyToManyField(
         User,
-        related_name='lesson_manager',
+        related_name='lesson_managers',
         blank=True,
         # null=True, null has no effect on ManyToManyField.
         help_text=_(
@@ -201,7 +201,7 @@ class Project(models.Model):
 
     certification_managers = models.ManyToManyField(
         User,
-        related_name='certification_manager',
+        related_name='certification_managers',
         blank=True,
         # null=True, null has no effect on ManyToManyField.
         help_text=_(

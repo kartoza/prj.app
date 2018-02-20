@@ -432,7 +432,7 @@ class SponsorshipLevelUpdateView(
                 Q(project=self.project) &
                 (Q(author=self.request.user) |
                  Q(project__owner=self.request.user) |
-                 Q(project__sponsorship_manager=self.request.user)))
+                 Q(project__sponsorship_managers=self.request.user)))
 
     def get_object(self, queryset=None):
         """Get the object for this view.

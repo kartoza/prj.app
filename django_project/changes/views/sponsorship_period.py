@@ -469,7 +469,7 @@ class SponsorshipPeriodUpdateView(
                 Q(project=self.project) &
                 (Q(author=self.request.user) |
                  Q(project__owner=self.request.user) |
-                 Q(project__sponsorship_manager=self.request.user)))
+                 Q(project__sponsorship_managers=self.request.user)))
 
     def get_success_url(self):
         """Define the redirect URL
@@ -573,7 +573,7 @@ class ApproveSponsorshipPeriodView(
         else:
             sponsor_qs = SponsorshipPeriod.unapproved_objects.filter(
                 Q(project__owner=self.request.user) |
-                Q(project__sponsorship_manager=self.request.user)
+                Q(project__sponsorship_managers=self.request.user)
             )
         sponsor = get_object_or_404(sponsor_qs, slug=slug)
         sponsor.approved = True

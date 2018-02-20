@@ -383,7 +383,7 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
                 Q(project=project) &
                 (Q(author=self.request.user) |
                  Q(project__owner=self.request.user) |
-                 Q(project__changelog_manager=self.request.user)))
+                 Q(project__changelog_managers=self.request.user)))
 
 
 # noinspection PyAttributeOutsideInit
@@ -480,7 +480,7 @@ class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
                 Q(project=project) &
                 (Q(author=self.request.user) |
                  Q(project__owner=self.request.user) |
-                 Q(project__changelog_manager=self.request.user)))
+                 Q(project__changelog_managers=self.request.user)))
         return versions_qs
 
     def get_success_url(self):
@@ -560,7 +560,7 @@ class PendingVersionListView(
                 else:
                     return queryset.filter(
                         Q(author=self.request.user) |
-                        Q(project__changelog_manager=self.request.user))
+                        Q(project__changelog_managers=self.request.user))
             else:
                 raise Http404('Sorry! We could not find your version!')
         return self.queryset

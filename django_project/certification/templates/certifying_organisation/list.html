@@ -22,7 +22,7 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
             Certifying Organisations
-            {% if user.is_staff or user == the_project.owner or user in the_project.certification_manager.all %}
+            {% if user.is_staff or user == the_project.owner or user in the_project.certification_managers.all %}
                 <div class="pull-right btn-group">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "certifyingorganisation-create" project_slug %}'
@@ -66,7 +66,7 @@
             </div>
 
         {# Only staff can add/edit organisations #}
-        {% if user.is_staff or user in certifyingorganisation.organisation_owners.all or user == certifyingorganisation.project.owner or user in certifyingorganisation.project.certification_manager.all %}
+        {% if user.is_staff or user in certifyingorganisation.organisation_owners.all or user == certifyingorganisation.project.owner or user in certifyingorganisation.project.certification_managers.all %}
             <div class="col-lg-4" style="padding: 0">
                 <div class="btn-group pull-right tooltip-toggle">
                     {%  if not certifyingorganisation.approved %}
