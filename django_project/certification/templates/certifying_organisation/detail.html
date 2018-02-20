@@ -336,8 +336,7 @@
     <th style="margin-top: 0;">
         <h2 class="custom-heading">Training Centers</h2>
     </th>
-
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
+        {% if user.is_staff or user == the_project.owner or user in the_project.certification_managers.all %}
         <td>
             <div class="button1 button-action" style="display: none; margin-top: -30px; margin-bottom: 20px;">
             <div class="btn-group pull-right">
@@ -406,7 +405,7 @@
         </th>
 
         <td>
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
+        {% if user.is_staff or user == the_project.owner or user in the_project.certification_managers.all %}
         <div class="button1 button-action" style="display: none; margin-top: -30px; margin-bottom: 20px;">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
@@ -471,7 +470,7 @@
         <h2 class="custom-heading">Course Conveners</h2>
     </th>
     <td>
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
+        {% if user.is_staff or user == the_project.owner or user in the_project.certification_managers.all %}
         <div class="button1 button-action" style="display: none; margin-top: -30px; margin-bottom: 20px">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
