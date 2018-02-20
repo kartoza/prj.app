@@ -42,7 +42,7 @@
         <div class="col-lg-4">
             {% if category.image_file %}
                 <img class="img-responsive img-rounded pull-right"
-                     src="{{ MEDIA_URL }}{{ category.image_file }}" />
+                     src="{{ category.image_file.url }}" />
             {%  endif %}
         </div>
     </div>

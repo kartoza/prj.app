@@ -19,7 +19,7 @@
 
     <div style="margin: 30px auto; text-align: center">
     {% if image != 'none' %}
-        <img style="border: 2px solid #F5F5F5" src="{{ MEDIA_URL }}{{ image }}">
+        <img style="border: 2px solid #F5F5F5" src="{{ image.url }}">
     {% else %}
         <h3>No current sponsor found</h3>
     {% endif %}

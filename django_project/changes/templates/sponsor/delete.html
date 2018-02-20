@@ -44,7 +44,7 @@
             <div class="col-lg-4">
                 {% if sponsor.logo %}
                     <img class="img-responsive img-rounded"
-                         src="{{ MEDIA_URL }}{{ sponsor.logo }}" />
+                         src="{{ sponsor.logo.url }}" />
                 {%  endif %}
             </div>
         </div>

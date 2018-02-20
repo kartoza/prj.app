@@ -591,7 +591,7 @@ def regenerate_certificate(request, **kwargs):
 
     # Checking user permissions.
     if request.user.is_staff or request.user == project.owner or \
-            request.user in project.certification_manager.all() or \
+            request.user in project.certification_managers.all() or \
             request.user in certifying_organisation.organisation_owners.all():
         pass
     else:
@@ -652,7 +652,7 @@ def regenerate_all_certificate(request, **kwargs):
 
     # Checking user permissions.
     if request.user.is_staff or request.user == project.owner or \
-            request.user in project.certification_manager.all() or \
+            request.user in project.certification_managers.all() or \
             request.user in certifying_organisation.organisation_owners.all():
         pass
     else:

@@ -68,7 +68,7 @@ class WorksheetDetailView(
         # Permissions
         context['user_can_edit'] = False
         lesson_managers = (
-            context['worksheet'].section.project.lesson_manager.all())
+            context['worksheet'].section.project.lesson_managers.all())
         if self.request.user in lesson_managers:
             context['user_can_edit'] = True
 
@@ -84,31 +84,22 @@ class WorksheetPrintView(WorksheetDetailView):
     """Based on the WorkSheet Detail View, this is one is used for printing.
 
     If you want to render as HTML for debugging, you can simply comment the
-    render_to_response method.
+    render_to_response method or uncomment the first "return".
     """
 
     template_name = 'worksheet/print.html'
-
-    def get(self, request, *args, **kwargs):
-        host = request.get_host()
-        if host == '0.0.0.0:61202':
-            # We are using the dev environment with docker
-            self.base_url = 'http://0.0.0.0:8080/'
-        else:
-            # On staging, host = staging.changelog.qgis.org
-            self.base_url = request.scheme + host
-        return super(WorksheetPrintView, self).get(request, args, kwargs)
 
     def render_to_response(self, context, **response_kwargs):
         response = super(WorksheetPrintView, self).render_to_response(
             context, **response_kwargs)
         response.render()
+        # return response
         pdf_response = HttpResponse(content_type='application/pdf')
 
         # Need to improve for URL outside of the dev env.
         html_object = HTML(
             string=response.content,
-            base_url=self.base_url,
+            base_url='file://',
         )
         html_object.write_pdf(pdf_response)
         return pdf_response

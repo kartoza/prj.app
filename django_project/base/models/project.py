@@ -160,15 +160,16 @@ class Project(models.Model):
 
     sponsorship_programme = models.TextField(
         help_text=_(
-            'Sponsorship programme for this project. Markdown is supported'),
+            'Please describe the sponsorship programme for this project '
+            '(if any). Markdown is supported'),
         max_length=10000,
         blank=True,
         null=True
     )
 
-    changelog_manager = models.ManyToManyField(
+    changelog_managers = models.ManyToManyField(
         User,
-        related_name='changelog_manager',
+        related_name='changelog_managers',
         blank=True,
         # null=True, null has no effect on ManyToManyField.
         help_text=_(
@@ -177,9 +178,9 @@ class Project(models.Model):
             'moderation queue.')
     )
 
-    sponsorship_manager = models.ManyToManyField(
+    sponsorship_managers = models.ManyToManyField(
         User,
-        related_name='sponsorship_manager',
+        related_name='sponsorship_managers',
         blank=True,
         # null=True, null has no effect on ManyToManyField.
         help_text=_(
@@ -188,9 +189,9 @@ class Project(models.Model):
             'moderation queue.')
     )
 
-    lesson_manager = models.ManyToManyField(
+    lesson_managers = models.ManyToManyField(
         User,
-        related_name='lesson_manager',
+        related_name='lesson_managers',
         blank=True,
         # null=True, null has no effect on ManyToManyField.
         help_text=_(
@@ -198,9 +199,9 @@ class Project(models.Model):
             'They will be allowed to create or remove lessons.')
     )
 
-    certification_manager = models.ManyToManyField(
+    certification_managers = models.ManyToManyField(
         User,
-        related_name='certification_manager',
+        related_name='certification_managers',
         blank=True,
         # null=True, null has no effect on ManyToManyField.
         help_text=_(

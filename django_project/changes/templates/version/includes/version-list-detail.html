@@ -4,7 +4,7 @@
     <div class="col-lg-1">
         {% if version.image_file %}
             <a class="pull-left"
-               href="{{ MEDIA_URL }}{{ version.image_file }}">
+               href="{{ version.image_file.url }}">
                 <img class="img-responsive img-rounded"
                      src="{% thumbnail version.image_file 150x90 crop %}" />
             </a>

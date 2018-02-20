@@ -13,13 +13,13 @@
 {% block content %}
     <div class="row" style="margin-bottom: 15px">
     <div class="btn-group pull-right">
-                {% if user in sponsor.project.sponsorship_manager.all or user.is_staff or user == sponsor.project.owner or user == sponsor.sponsor.author %}
+                {% if user in sponsor.project.sponsorship_managers.all or user.is_staff or user == sponsor.project.owner or user == sponsor.sponsor.author %}
                 <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                    href='{% url "sponsor-delete" project_slug=sponsor.project.slug slug=sponsor.sponsor.slug %}'
                    data-title="Delete {{ certifyingorganisation.name }}">
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
-                {% if user in sponsor.project.sponsorship_manager.all or user.is_staff or user == sponsor.project.owner or user == sponsor.sponsor.author %}
+                {% if user in sponsor.project.sponsorship_managers.all or user.is_staff or user == sponsor.project.owner or user == sponsor.sponsor.author %}
                       <a class="btn btn-default btn-mini tooltip-toggle"
                              data-title="Download invoice"
                              href='{% url 'sponsor-invoice' project_slug=sponsor.project.slug slug=sponsor.slug %}'>
@@ -40,12 +40,12 @@
 
             {% if sponsor.sponsor.logo %}
                 <img class="img-responsive img-rounded pull-left" style="max-height: 75px"
-                     src="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}" />
+                     src="{{ sponsor.sponsor.logo.url }}" />
             {% endif %}
 
             {% if sponsor.sponsorship_level.logo %}
                 <img class="img-responsive img-rounded pull-right"
-                     src="{{ MEDIA_URL }}{{ sponsor.sponsorship_level.logo }}" width="60"/>
+                     src="{{ sponsor.sponsorship_level.logo.url }}" width="60"/>
             {% endif %}
         </div>
     </div>
@@ -124,7 +124,7 @@
                             Sponsor agreement
                         </div>
                         <div>
-                            <b><a href="{{ MEDIA_URL }}{{ sponsor.agreement }}"> Document agreement</a></b>
+                            <b><a href="{{ sponsor.agreement.url }}"> Document agreement</a></b>
                         </div>
                     </p>
                 {% endif %}

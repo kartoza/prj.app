@@ -35,7 +35,7 @@
         <li class="row order" style="margin-top:6px;" id="{{ category.id }}-{{ category.name }}" >
             <div class="col-lg-1" style="padding-top: 10px;">
                 {% if category.image_file %}
-                    <a href="{{ MEDIA_URL }}{{ category.image_file }}">
+                    <a href="{{ category.image_file.url }}">
                         <img class="img-responsive img-rounded pull-right"
                              src="{% thumbnail category.image_file 50x50 crop %}" />
                     </a>

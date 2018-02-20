@@ -44,7 +44,7 @@
             <div class="col-lg-4">
                 {% if version.image_file %}
                     <img class="img-responsive img-rounded"
-                         src="{{ MEDIA_URL }}{{ version.image_file }}" />
+                         src="{{ version.image_file.url }}" />
                 {%  endif %}
             </div>
         </div>

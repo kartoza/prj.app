@@ -16,7 +16,7 @@
     <div class="col-lg-10">
       <h3>{{ sponsorshiplevel.name }}</h3>
     </div>
-    {% if user.is_staff or user == project.owner or user in project.sponsorship_manager.all %}
+    {% if user.is_staff or user == project.owner or user in project.sponsorship_managers.all %}
     <div class="col-lg-2">
       <div class="btn-group pull-right">
         <a class="btn btn-default btn-sm tooltip-toggle"
@@ -43,7 +43,7 @@
     <div class="col-lg-4">
       {% if sponsorshiplevel.logo %}
         <img class="img-responsive img-rounded pull-right"
-             src="{{ MEDIA_URL }}{{ sponsorshiplevel.logo }}" />
+             src="{{ sponsorshiplevel.logo.url }}" />
       {%  endif %}
     </div>
   </div>

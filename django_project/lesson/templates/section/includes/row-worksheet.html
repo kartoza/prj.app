@@ -9,8 +9,13 @@
     </div>
 
     <div class="col-lg-3">
-        {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
-            <div class="btn-group pull-right">
+        <div class="btn-group pull-right">
+            <a id="download-pdf-button" class="btn btn-default btn-mini tooltip-toggle" target="_blank"
+               href='{% url "worksheet-print" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
+               data-title="Download {{ worksheet.module }} as PDF">
+                <span class="glyphicon glyphicon-download"></span>
+            </a>
+            {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
                 <a class="btn btn-default btn-mini tooltip-toggle"
                    data-title="Delete {{ worksheet.module }}"
                    href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'>
@@ -21,7 +26,7 @@
                    href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.id %}'>
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
-            </div>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
 </div>

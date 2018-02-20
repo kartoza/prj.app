@@ -17,7 +17,7 @@
             Sponsorship Periods
             {% if user.is_authenticated %}
                 <div class="pull-right btn-group">
-                    {% if user.is_staff or user == project.owner or user in project.changelog_manager.all %}
+                    {% if user.is_staff or user == project.owner or user in project.changelog_managers.all %}
                             <a class="btn btn-default btn-mini tooltip-toggle"
                                href='{% url "sponsorshipperiod-create" project_slug %}'
                                data-title="Create New sponsorship period">
@@ -66,7 +66,7 @@
                 <tr>
                     <td>
                         {% if sponsorshipperiod.sponsor.logo %}
-                            <a href="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsor.logo }}">
+                            <a href="{{ sponsorshipperiod.sponsor.logo.url }}">
                                 <img class="img-responsive"
                                      src="{% thumbnail sponsorshipperiod.sponsor.logo 30x30 %}"/>
                             </a>
@@ -84,7 +84,7 @@
                     <td>
 
                         {% if not sponsorshipperiod.approved %}
-                            {% if user.is_staff or user == sponsorshipperiod.project.owner or user in sponsorshipperiod.project.sponsorship_manager.all %}
+                            {% if user.is_staff or user == sponsorshipperiod.project.owner or user in sponsorshipperiod.project.sponsorship_managers.all %}
                                 <a class="btn btn-default btn-mini"
                                    href='{% url "sponsorshipperiod-approve" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'>
                                     <span class="glyphicon glyphicon-thumbs-up"></span>

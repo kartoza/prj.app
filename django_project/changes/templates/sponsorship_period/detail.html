@@ -44,13 +44,13 @@
             {% endifnotequal %}
         {% if sponsorshipperiod.sponsorshiplevel.logo %}
         <img class="img-responsive img-rounded"
-             src="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsorshiplevel.logo }}" width="100" />
+             src="{{ sponsorshipperiod.sponsorshiplevel.logo.url }}" width="100" />
       {%  endif %}
     </div>
   <div class="col-lg-4">
       {% if sponsorshipperiod.sponsor.logo %}
         <img class="img-responsive img-rounded pull-right"
-             src="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsor.logo }}" />
+             src="{{ sponsorshipperiod.sponsor.logo.url }}" />
       {%  endif %}
     </div>
   </div>
