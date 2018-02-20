@@ -20,7 +20,7 @@
         <h1 class="text-muted">
             {{ project.name }} Worksheet Sections
             <div class="pull-right btn-group">
-                {% if user in project.lesson_manager.all or user.is_staff or user == project.owner %}
+                {% if user in project.lesson_managers.all or user.is_staff or user == project.owner %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "section-create" project_slug=project.slug %}'
                        data-title="Create New Section">
