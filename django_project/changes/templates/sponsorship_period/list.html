@@ -66,7 +66,7 @@
                 <tr>
                     <td>
                         {% if sponsorshipperiod.sponsor.logo %}
-                            <a href="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsor.logo }}">
+                            <a href="{{ sponsorshipperiod.sponsor.logo.url }}">
                                 <img class="img-responsive"
                                      src="{% thumbnail sponsorshipperiod.sponsor.logo 30x30 %}"/>
                             </a>

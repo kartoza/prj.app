@@ -52,7 +52,7 @@
                     <tr style="padding-bottom: 25px;">
                         <td colspan="1" style="vertical-align:top">
                             {% if project.image_file %}
-                                <img src="{{ MEDIA_URL }}{{ project.image_file }}" />
+                                <img src="{{ project.image_file.url }}" />
                             {% endif %}
                         </td>
                         <td colspan="2" style="vertical-align:top">

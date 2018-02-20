@@ -45,22 +45,22 @@
             {% if entry.image_file %}
                 {% if entry.image_file|is_gif %}
                     {% if not rst_download %}
-                        <img id="{{ MEDIA_URL }}{{ entry.image_file }}" class="img-responsive img-rounded pull-right"
-                             data-gifffer="{{ MEDIA_URL }}{{ entry.image_file }}"
+                        <img id="{{ entry.image_file.url }}" class="img-responsive img-rounded pull-right"
+                             data-gifffer="{{ entry.image_file.url }}"
                              gifffer-alt=""/>{# see core/settings/contrib.py for large-entry #}
                         <a href="#" class="pop-gif">
                             Click here for bigger size animation.
                         </a>
                     {% else %}
-                        <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+                        <a href="{{ entry.image_file.url }}">
                         <img class="img-responsive img-rounded pull-right"
-                             src="{{ MEDIA_URL }}{{ entry.image_file }}"
+                             src="{{ entry.image_file.url }}"
                              alt=""/>{# see core/settings/contrib.py for large-entry #}
                         </a>
                     {% endif %}
                 {% else %}
                     <a href="#" class="pop-image">
-                    <img id="{{ MEDIA_URL }}{{ entry.image_file }}" class="img-responsive img-rounded pull-right"
+                    <img id="{{ entry.image_file.url }}" class="img-responsive img-rounded pull-right"
                          src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
                          alt=""/>{# see core/settings/contrib.py for large-entry #}
                     </a>

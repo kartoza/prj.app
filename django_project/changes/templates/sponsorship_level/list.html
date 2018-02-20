@@ -50,7 +50,7 @@
         <div class="row" style="margin-top:10px;">
             <div class="col-lg-1">
                 {% if sponsorshiplevel.logo %}
-                    <a href="{{ MEDIA_URL }}{{ sponsorshiplevel.logo }}">
+                    <a href="{{ sponsorshiplevel.logo.url }}">
                         <img class="img-responsive img-rounded pull-right"
                              src="{% thumbnail sponsorshiplevel.logo 50x50 crop %}"/>
                     </a>
