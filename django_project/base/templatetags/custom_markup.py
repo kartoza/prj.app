@@ -1,5 +1,6 @@
 import markdown
 from django import template
+from django.contrib.staticfiles import finders
 from django.template.defaultfilters import stringfilter
 from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
@@ -22,6 +23,21 @@ def base_markdown(value):
 @stringfilter
 def is_gif(value):
     return value[-4:] == '.gif'
+
+
+@register.filter
+def local_static_filepath(value):
+    """It gives the local filepath of a static file.
+
+    Inspired by:
+    https://stackoverflow.com/questions/9391167/django-how-to-get-a-static-
+    files-filepath-in-a-development-environment
+
+    :param value: The name of the static file to look for.
+
+    :return: The local file path.
+    """
+    return finders.find(value)
 
 
 @register.filter
