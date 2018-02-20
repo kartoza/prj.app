@@ -27,9 +27,10 @@ class ProjectAdmin(reversion.VersionAdmin):
     """Admin for the project model."""
 
     filter_horizontal = (
-        'certification_manager',
-        'changelog_manager',
-        'sponsorship_manager')
+        'certification_managers',
+        'changelog_managers',
+        'sponsorship_managers',
+        'lesson_managers',)
 
     # Screenshot input in admin project panel.
     inlines = [ProjectScreenshotAdmin, ]
