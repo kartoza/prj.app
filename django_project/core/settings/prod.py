@@ -39,7 +39,12 @@ if 'raven.contrib.django.raven_compat' in INSTALLED_APPS:
 
     RAVEN_CONFIG = {
         # Self hosted sentry
-        SENTRY_KEY
+        'dsn': SENTRY_KEY,
+        # If you are using git, you can also automatically configure the
+        # release based on the git info.
+        # Note from Tim: This won't work since we don't mount the root
+        # of the git project into the docker container...
+        # 'release': raven.fetch_git_sha(os.path.dirname(__file__)),
     }
 
     MIDDLEWARE_CLASSES = (
