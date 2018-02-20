@@ -101,7 +101,7 @@
             </div>
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
-                    {% if not certifyingorganisation.approved and user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
+                    {% if not certifyingorganisation.approved and user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all %}
                         <a class="btn btn-default btn-mini btn-approved tooltip-toggle"
                            href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                             data-title="Approve {{ certifyingorganisation.name }}">

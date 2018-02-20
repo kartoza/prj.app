@@ -43,7 +43,7 @@ class ProjectScreenshotForm(forms.ModelForm):
 class ProjectForm(forms.ModelForm):
     """Form for creating projects."""
 
-    certification_manager = forms.ModelMultipleChoiceField(
+    certification_managers = forms.ModelMultipleChoiceField(
         queryset=User.objects.order_by('username'),
         widget=CustomSelectMultipleWidget("user", is_stacked=False),
         required=False,
@@ -53,7 +53,7 @@ class ProjectForm(forms.ModelForm):
             ' the same permissions as project owner in the certification app.')
     )
 
-    changelog_manager = forms.ModelMultipleChoiceField(
+    changelog_managers = forms.ModelMultipleChoiceField(
         queryset=User.objects.order_by('username'),
         widget=CustomSelectMultipleWidget("user", is_stacked=False),
         required=False,
@@ -63,7 +63,7 @@ class ProjectForm(forms.ModelForm):
             'moderation queue.')
     )
 
-    sponsorship_manager = forms.ModelMultipleChoiceField(
+    sponsorship_managers = forms.ModelMultipleChoiceField(
         queryset=User.objects.order_by('username'),
         widget=CustomSelectMultipleWidget("user", is_stacked=False),
         required=False,
@@ -73,7 +73,7 @@ class ProjectForm(forms.ModelForm):
             'moderation queue.')
     )
 
-    lesson_manager = forms.ModelMultipleChoiceField(
+    lesson_managers = forms.ModelMultipleChoiceField(
         queryset=User.objects.order_by('username'),
         widget=CustomSelectMultipleWidget("user", is_stacked=False),
         required=False,
@@ -96,10 +96,10 @@ class ProjectForm(forms.ModelForm):
             'precis',
             'gitter_room',
             'signature',
-            'changelog_manager',
-            'sponsorship_manager',
-            'lesson_manager',
-            'certification_manager',
+            'changelog_managers',
+            'sponsorship_managers',
+            'lesson_managers',
+            'certification_managers',
             'credit_cost',
             'certificate_credit',
             'sponsorship_programme',
@@ -120,10 +120,10 @@ class ProjectForm(forms.ModelForm):
                 Field('project_url', css_class="form-control"),
                 Field('precis', css_class="form-control"),
                 Field('signature', css_class="form-control"),
-                Field('changelog_manager', css_class="form-control"),
-                Field('sponsorship_manager', css_class="form-control"),
-                Field('lesson_manager', css_class="form-control"),
-                Field('certification_manager', css_class="form-control"),
+                Field('changelog_managers', css_class="form-control"),
+                Field('sponsorship_managers', css_class="form-control"),
+                Field('lesson_managers', css_class="form-control"),
+                Field('certification_managers', css_class="form-control"),
                 Field('credit_cost', css_class="form-control"),
                 Field('certificate_credit', css_class="form-control"),
                 Field('sponsorship_programme', css_class="form-control"),
@@ -133,13 +133,13 @@ class ProjectForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(ProjectForm, self).__init__(*args, **kwargs)
-        self.fields['changelog_manager'].label_from_instance = \
+        self.fields['changelog_managers'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
-        self.fields['sponsorship_manager'].label_from_instance = \
+        self.fields['sponsorship_managers'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
-        self.fields['certification_manager'].label_from_instance = \
+        self.fields['certification_managers'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
-        self.fields['lesson_manager'].label_from_instance = \
+        self.fields['lesson_managers'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
         # self.helper.add_input(Submit('submit', 'Submit'))
 

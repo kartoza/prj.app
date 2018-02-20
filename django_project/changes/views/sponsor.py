@@ -466,7 +466,7 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
                 Q(project=self.project) &
                 (Q(author=self.request.user) |
                  Q(project__owner=self.request.user) |
-                 Q(project__sponsorship_manager=self.request.user)))
+                 Q(project__sponsorship_managers=self.request.user)))
         return queryset
 
     def get_object(self, queryset=None):
@@ -596,7 +596,7 @@ class ApproveSponsorView(LoginRequiredMixin, SponsorMixin, RedirectView):
         else:
             sponsor_qs = Sponsor.unapproved_objects.filter(
                 Q(project__owner=self.request.user) |
-                Q(project__sponsorship_manager=self.request.user))
+                Q(project__sponsorship_managers=self.request.user))
         sponsor = get_object_or_404(sponsor_qs, slug=slug)
         sponsor.approved = True
         sponsor.save()

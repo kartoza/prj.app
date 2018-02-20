@@ -16,7 +16,7 @@
             {% if unapproved %}Unapproved {% endif %}
             Sponsors
             {% if user.is_authenticated %}
-                {% if user.is_staff or user == project.owner or user in project.sponsorship_manager.all %}
+                {% if user.is_staff or user == project.owner or user in project.sponsorship_managers.all %}
                     <div class="pull-right btn-group">
                         <a class="btn btn-default btn-mini tooltip-toggle"
                            href='{% url "sponsor-create" project_slug %}'

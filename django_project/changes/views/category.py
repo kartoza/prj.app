@@ -231,7 +231,7 @@ class CategoryOrderView(LoginRequiredMixin, CategoryMixin, ListView):
                 queryset = Category.approved_objects.filter(
                     Q(project=project) &
                     (Q(project__owner=self.request.user) |
-                     Q(project__changelog_manager=self.request.user))
+                     Q(project__changelog_managers=self.request.user))
                 ).order_by('sort_number')
                 return queryset
             else:
@@ -519,7 +519,7 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
             return qs.filter(
                 Q(project=project) &
                 (Q(project__owner=self.request.user) |
-                 Q(project__changelog_manager=self.request.user)))
+                 Q(project__changelog_managers=self.request.user)))
 
     def get_success_url(self):
         """Define the redirect URL
@@ -601,7 +601,7 @@ class PendingCategoryListView(
                 self.queryset = Category.unapproved_objects.filter(
                     Q(project=self.project) &
                     (Q(project__owner=self.request.user) |
-                     Q(project__changelog_manager=self.request.user)))
+                     Q(project__changelog_managers=self.request.user)))
                 return self.queryset
             else:
                 raise Http404(

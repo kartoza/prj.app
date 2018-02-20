@@ -428,7 +428,7 @@ class CertifyingOrganisationCreateView(
             super(CertifyingOrganisationCreateView, self).form_valid(form)
             site = self.request.get_host()
             recipients = [self.project.owner, ]
-            for manager in self.project.certification_manager.all():
+            for manager in self.project.certification_managers.all():
                 recipients.append(manager)
 
             for recipient in recipients:
@@ -470,7 +470,7 @@ class CertifyingOrganisationCreateView(
                     self.project.owner.last_name,
                     self.project.owner.email)
 
-            for manager in self.project.certification_manager.all():
+            for manager in self.project.certification_managers.all():
                 contact_person += \
                     '{} {}: {}\n'.format(
                         manager.first_name, manager.last_name, manager.email)
@@ -582,7 +582,8 @@ class CertifyingOrganisationUpdateView(
                 Q(project=self.project) &
                 (Q(project__owner=self.request.user) |
                  Q(organisation_owners=self.request.user) |
-                 Q(project__certification_manager=self.request.user)))
+                 Q(project__certification_managers=self.request.user))
+            ).distinct()
         return queryset
 
     def get_success_url(self):
@@ -679,8 +680,8 @@ class PendingCertifyingOrganisationListView(
                             Q(project=self.project) &
                             (Q(project__owner=self.request.user) |
                              Q(organisation_owners=self.request.user) |
-                             Q(project__certification_manager=self.request.user
-                               ))).distinct()
+                             Q(project__certification_managers=
+                               self.request.user))).distinct()
                 return queryset
             else:
                 raise Http404(

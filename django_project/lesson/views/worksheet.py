@@ -68,7 +68,7 @@ class WorksheetDetailView(
         # Permissions
         context['user_can_edit'] = False
         lesson_managers = (
-            context['worksheet'].section.project.lesson_manager.all())
+            context['worksheet'].section.project.lesson_managers.all())
         if self.request.user in lesson_managers:
             context['user_can_edit'] = True
 

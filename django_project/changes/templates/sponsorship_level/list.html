@@ -16,7 +16,7 @@
             {% if unapproved %}Unapproved {% endif %}
             Sponsorship Levels
             {% if user.is_authenticated %}
-                {% if user.is_staff or user == project.owner or user in project.sponsorship_manager.all %}
+                {% if user.is_staff or user == project.owner or user in project.sponsorship_managers.all %}
                     <div class="pull-right btn-group">
                         <a class="btn btn-default btn-mini tooltip-toggle"
                            href='{% url "sponsorshiplevel-create" project_slug %}'
@@ -64,7 +64,7 @@
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
                     {% if not sponsorshiplevel.approved %}
-                        {% if user.is_staff or user == project.owner or user in project.sponsorship_manager.all %}
+                        {% if user.is_staff or user == project.owner or user in project.sponsorship_managers.all %}
                             <a class="btn btn-default btn-mini"
                                href='{% url "sponsorshiplevel-approve" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'>
                                 <span class="glyphicon glyphicon-thumbs-up"></span>
