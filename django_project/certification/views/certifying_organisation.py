@@ -582,7 +582,8 @@ class CertifyingOrganisationUpdateView(
                 Q(project=self.project) &
                 (Q(project__owner=self.request.user) |
                  Q(organisation_owners=self.request.user) |
-                 Q(project__certification_managers=self.request.user)))
+                 Q(project__certification_managers=self.request.user))
+            ).distinct()
         return queryset
 
     def get_success_url(self):
@@ -679,8 +680,8 @@ class PendingCertifyingOrganisationListView(
                             Q(project=self.project) &
                             (Q(project__owner=self.request.user) |
                              Q(organisation_owners=self.request.user) |
-                             Q(project__certification_managers=self.request.user
-                               ))).distinct()
+                             Q(project__certification_managers=
+                               self.request.user))).distinct()
                 return queryset
             else:
                 raise Http404(
