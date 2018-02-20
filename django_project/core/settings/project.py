@@ -78,7 +78,7 @@ PIPELINE_CSS['project'] = {
 }
 
 VALID_DOMAIN = [
-    # 'localhost',
+    'localhost',
     '0.0.0.0',
     'staging.projecta.kartoza.com',
     'changelog.linfiniti.com',

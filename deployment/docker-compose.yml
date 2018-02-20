@@ -16,7 +16,7 @@ smtp:
     # You could change this to something more suitable
     - maildomain=kartoza.com
     - smtp_user=noreply:docker
-  restart: on-failure:5
+  restart: unless-stopped
 
 db:
   # Note you cannot scale if you use container_name
@@ -28,7 +28,7 @@ db:
   environment:
     - USERNAME=docker
     - PASS=docker
-  restart: on-failure:5
+  restart: unless-stopped
 #  Uncomment the next line to have an access with PGAdmin using localhost and port 25432 on your computer.
 #  Only for development !
 #  ports:
@@ -56,7 +56,7 @@ uwsgi:
   links:
     - smtp:smtp
     - db:db
-  restart: on-failure:5
+  restart: unless-stopped
   user: root
 
 dbbackups:
@@ -79,7 +79,7 @@ dbbackups:
     - PGPORT=5432
     - PGHOST=db
     - PGDATABASE=gis
-  restart: on-failure:5
+  restart: unless-stopped
 
 # This is normally the main entry point for a production server
 web:
@@ -98,7 +98,7 @@ web:
   ports:
     - "80:8080"
     - "4430:443"
-  restart: on-failure:5
+  restart: unless-stopped
 
 # This is the entry point for a development server.
 # Run with --no-deps to run attached to the services
