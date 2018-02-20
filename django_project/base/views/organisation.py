@@ -190,7 +190,8 @@ class OrganisationUpdateView(
             return qs.filter(owner=self.request.user)
 
     def get_context_data(self, **kwargs):
-        context = super(OrganisationUpdateView, self).get_context_data(**kwargs)
+        context = super(
+            OrganisationUpdateView, self).get_context_data(**kwargs)
         return context
 
     def get_success_url(self):

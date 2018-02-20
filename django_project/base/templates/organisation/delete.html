@@ -35,11 +35,11 @@
           <a class="btn btn-default btn-delete btn-sm tooltip-toggle"
              href="#"
              onClick="$('#delete-confirmation').submit()"
-             data-title="{{ domain.domain }}">
+             data-title="{{ organisation.name }}">
             <span class="glyphicon glyphicon-minus"></span>
           </a>
           <a class="btn btn-default btn-sm btn-edit tooltip-toggle"
-             href='{% url "domain-list" %}'
+             href='{% url "list-organisation" %}'
              data-title="Cancel">
             <span class="glyphicon glyphicon-arrow-left"></span>
           </a>

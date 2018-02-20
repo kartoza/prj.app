@@ -66,7 +66,7 @@ urlpatterns = patterns(
     url(regex='^domain/(?P<pk>[\w-]+)/delete/$',
         view=DomainDeleteView.as_view(),
         name='domain-delete'),
-    url(regex='^project/(?P<pk>[\w-]+)/update/$',
+    url(regex='^domain/(?P<pk>[\w-]+)/update/$',
         view=DomainUpdateView.as_view(),
         name='domain-update'),
 
