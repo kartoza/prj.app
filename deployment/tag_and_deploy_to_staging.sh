@@ -14,21 +14,24 @@ read -p "Are you sure you want to continue? " -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-	VERSION=$1
+    VERSION=$1
     # Get the latest backups and media from production
-	make dbbackup
-	make mediasync
+    make dbbackup
+    make mediasync
     # Sync the latest backups and media to staging from production
     rsync -L  backups/latest.dmp staging.changelog.qgis.org:/home/projecta/deployment/backups/
     rsync -r -v media/ staging.changelog.qgis.org:/home/projecta/deployment/media
     # Tag the release and push to main repo
-	git tag $VERSION
-	# .version is used by Raven/Sentry
-	echo $VERSION >> ../django_project/.version
-	git push --tags upstream 
+    # .version is used by Raven/Sentry
+    echo $VERSION > ../django_project/.version
+    git reset HEAD *
+    git add .version
+    git commit -m "bump to version ${VERSION}"
+    git tag $VERSION
+    git push --tags upstream develop
     # Check it out on the server
     # No migrations are run - you should do that manually for now
-	ssh staging.changelog.qgis.org "cd /home/projecta/deployment && git fetch --tags && git checkout $VERSION && make collectstatic && make reload"
+    ssh staging.changelog.qgis.org "cd /home/projecta/deployment && git fetch --tags && git checkout $VERSION && make collectstatic && make reload"
 else
-	echo "Tag and deploy to staging aborted."
+    echo "Tag and deploy to staging aborted."
 fi
