@@ -158,6 +158,13 @@ class Project(models.Model):
         null=True
     )
 
+    project_repository_url = models.URLField(
+        help_text=u'A repository url for this project '
+                  u'i.e github repository url',
+        blank=True,
+        null=True
+    )
+
     sponsorship_programme = models.TextField(
         help_text=_(
             'Please describe the sponsorship programme for this project '
