@@ -34,6 +34,11 @@
                     <img src="{{ project.image_file.url }}" height="150px" />
                 {% endif %}
                 <div>
+                    {% if project.project_repository_url %}
+                        <p><a href="{{ project.project_repository_url }}">
+                            <i class="fa fa-github" style="font-size:24px; color: #2e6da4"></i>
+                        </a></p>
+                    {% endif %}
                     {% if project.project_url %}
                         <p><a href="{{ project.project_url }}">Project home page</a></p>
                     {% endif %}
