@@ -159,8 +159,8 @@ class Project(models.Model):
     )
 
     project_repository_url = models.URLField(
-        help_text=u'A repository URL for this project. '
-                  u'For instance a path to the project\'s GitHub repository.',
+        help_text=_('A repository URL for this project. '
+                    'For instance a path to the project\'s GitHub repository.'),
         blank=True,
         null=True
     )
