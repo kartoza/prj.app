@@ -23,6 +23,8 @@ then
     rsync -r -v media/ staging.changelog.qgis.org:/home/projecta/deployment/media
     # Tag the release and push to main repo
 	git tag $VERSION
+	# .version is used by Raven/Sentry
+	echo $VERSION >> ../django_project/.version
 	git push --tags upstream 
     # Check it out on the server
     # No migrations are run - you should do that manually for now

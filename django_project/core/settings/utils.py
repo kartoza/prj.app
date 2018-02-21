@@ -37,6 +37,8 @@ def ensure_secret_key_file():
             f.write("SECRET_KEY = " + repr(secret_key) + "\n")
             f.write(
                 "DISQUS_WEBSITE_SHORTNAME = " + repr(disqus_shortname) + "\n")
+            f.write(
+                "SENTRY_KEY = ''\n")
 
 
 # Import the secret key
