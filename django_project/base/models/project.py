@@ -105,7 +105,8 @@ class Project(models.Model):
     image_file = models.ImageField(
         help_text=_('A logo image for this project. '
                     'Most browsers support dragging the image directly on to '
-                    'the "Choose File" button above.'),
+                    'the "Choose File" button above. '
+                    'The ideal size for your image should be 512 x 512 pixels.'),
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),
         blank=True
     )
