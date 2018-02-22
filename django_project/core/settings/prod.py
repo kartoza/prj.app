@@ -5,7 +5,10 @@
 from os.path import exists, dirname, join
 
 from .project import *  # noqa
-from .secret import SENTRY_KEY
+try:
+    from .secret import SENTRY_KEY
+except ImportError:
+    SENTRY_KEY = None
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
