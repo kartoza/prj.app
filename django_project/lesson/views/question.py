@@ -107,7 +107,7 @@ class QuestionUpdateView(
         """
         kwargs = super(QuestionUpdateView, self).get_form_kwargs()
         worksheet_slug = self.kwargs.get('worksheet_slug', None)
-        kwargs['workheet'] = get_object_or_404(Worksheet, slug=worksheet_slug)
+        kwargs['worksheet'] = get_object_or_404(Worksheet, slug=worksheet_slug)
         return kwargs
 
     def get_success_url(self):
