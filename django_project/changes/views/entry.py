@@ -6,7 +6,7 @@ from base.models import Project
 import logging
 from django.core.urlresolvers import reverse
 from django.http import Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import (
     ListView,
     CreateView,
@@ -292,6 +292,13 @@ class PendingEntryListView(
     context_object_name = 'unapproved_entries'
     template_name = 'entry/pending-list.html'
     paginate_by = 1000
+
+    def no_permissions_fail(self, request=None):
+        """Redirection if not enough permissions to view the page."""
+        return redirect(reverse('version-detail', kwargs={
+            'project_slug': self.kwargs.get('project_slug', None),
+            'slug': self.kwargs.get('version_slug', None),
+        }))
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
