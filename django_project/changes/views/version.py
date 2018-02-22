@@ -144,11 +144,31 @@ class VersionDetailView(VersionMixin, DetailView):
 
                 sponsors[sponsor.sponsorship_level].append(sponsor.sponsor)
 
+        # Lets set some defaults here for context variables so that
+        # we can check for permissions in templates.
+        context['user_can_edit'] = False
+        context['user_can_delete'] = False
         context['sponsors'] = sponsors
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
             context['project'] = Project.objects.get(slug=project_slug)
+
+        # lets check if the current user is a staff member.
+        if self.request.user.is_staff:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        # lets check if the current user is a changelog manager.
+        if self.request.user in Project.changelog_managers.all():
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        # lets check if the current user is a project owner.
+        if self.request.user is Project.owner:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
         return context
 
     def get_queryset(self):
