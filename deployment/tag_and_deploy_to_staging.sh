@@ -25,7 +25,7 @@ then
     # .version is used by Raven/Sentry
     echo $VERSION > ../django_project/.version
     git reset HEAD *
-    git add .version
+    git add ../django_project/.version
     git commit -m "bump to version ${VERSION}"
     git tag $VERSION
     git push --tags upstream develop
