@@ -77,6 +77,12 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         :rtype: dict
         """
         context = super(VersionListView, self).get_context_data(**kwargs)
+
+        # lets set the the flags to a default
+        # for running checks in templates
+        context['user_can_edit'] = False
+        context['user_can_delete'] = False
+
         context['num_versions'] = self.get_queryset().count()
         context['unapproved'] = False
         context['rst_download'] = False
@@ -85,6 +91,17 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
             context['project'] = context['the_project']
+
+
+        # lets check for specific user permissions here.
+        if self.request.user.is_staff:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user.is_superuser:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
         return context
 
     def get_queryset(self):
@@ -144,30 +161,11 @@ class VersionDetailView(VersionMixin, DetailView):
 
                 sponsors[sponsor.sponsorship_level].append(sponsor.sponsor)
 
-        # Lets set some defaults here for context permission flags
-        # so that we can check for permissions in templates.
-        context['user_can_edit'] = False
-        context['user_can_delete'] = False
         context['sponsors'] = sponsors
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
             context['project'] = Project.objects.get(slug=project_slug)
-
-        # lets check if the current user is a staff member.
-        if self.request.user.is_staff:
-            context['user_can_edit'] = True
-            context['user_can_delete'] = True
-
-        # lets check if the current user is a changelog manager.
-        if self.request.user in Project.changelog_managers.all():
-            context['user_can_edit'] = True
-            context['user_can_delete'] = True
-
-        # lets check if the current user is a project owner.
-        if self.request.user is Project.owner:
-            context['user_can_edit'] = True
-            context['user_can_delete'] = True
 
         return context
 
