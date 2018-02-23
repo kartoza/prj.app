@@ -144,8 +144,8 @@ class VersionDetailView(VersionMixin, DetailView):
 
                 sponsors[sponsor.sponsorship_level].append(sponsor.sponsor)
 
-        # Lets set some defaults here for context variables so that
-        # we can check for permissions in templates.
+        # Lets set some defaults here for context permission flags
+        # so that we can check for permissions in templates.
         context['user_can_edit'] = False
         context['user_can_delete'] = False
         context['sponsors'] = sponsors
