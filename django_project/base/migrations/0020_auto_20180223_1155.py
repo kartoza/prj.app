@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='image_file',
-            field=models.ImageField(help_text='A logo image for this project. The ideal size for your image should be 512 x 512 pixels.', upload_to=b'images/projects', blank=True),
+            field=models.ImageField(help_text='A logo image for this project. Most browsers support dragging the image directly on to the "Choose File" button above. The ideal size for your image is 512 x 512 pixels.', upload_to=b'images/projects', blank=True),
         ),
     ]
