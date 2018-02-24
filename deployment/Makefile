@@ -107,6 +107,9 @@ reload:
 	# no -it flag so we can run over remote shell
 	@docker exec $(PROJECT_ID)-uwsgi uwsgi --reload  /tmp/django.pid
 
+status:
+	@docker-compose -p $(PROJECT_ID) ps
+
 kill:
 	@echo
 	@echo "------------------------------------------------------------------"
