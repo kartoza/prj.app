@@ -92,14 +92,12 @@ class Curriculum(models.Model):
         if is_new_record:
             # Default slug
             self.slug = custom_slug(self.title)
-        else:
-            self.slug = '{}-{}'.format(custom_slug(self.title), self.pk)
 
         super(Curriculum, self).save(*args, **kwargs)
 
         if is_new_record:
             # We update the slug field with its ID and we save it again.
-            self.slug = '{}-{}'.format(custom_slug(self.title), self.pk)
+            self.slug = '{}-{}'.format(custom_slug(self.title), self.pk)[:50]
             self.save()
 
     def __unicode__(self):
