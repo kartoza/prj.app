@@ -15,8 +15,6 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
 )
-from django.db import IntegrityError
-from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from ..models import Version, Entry, Category
@@ -43,74 +41,12 @@ class EntryDetailView(EntryMixin, DetailView):
     context_object_name = 'entry'
     template_name = 'entry/detail.html'
 
-    def get_object(self, queryset=None):
-        """Get the object for this view.
-
-        :param queryset
-        :type queryset: QuerySet
-
-        :returns: Queryset which is filtered to only show an Entry
-        :rtype QuerySet
-        :raises: Http404
-        """
-        if queryset is None:
-            queryset = self.get_queryset()
-        pk = self.kwargs.get('pk', None)
-        try:
-            obj = queryset.get(id=pk)
-        except Entry.DoesNotExist:
-            raise Http404(
-                    'Requested changelog entry does not exist.')
-        return obj
-
 
 # noinspection PyAttributeOutsideInit
 class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
     """Delete view for Entry."""
     context_object_name = 'entry'
     template_name = 'entry/delete.html'
-
-    def get(self, request, *args, **kwargs):
-        """Access URL parameters
-
-        We need to define self.project and self.version
-
-        :param request: HTTP request object
-        :type request: HttpRequest
-
-        :param args: Positional arguments
-        :type args: tuple
-
-        :param kwargs: Keyword arguments
-        :type kwargs: dict
-
-        :returns: Unaltered request object
-        :rtype: HttpResponse
-        """
-        self.entry_id = self.kwargs.get('pk', None)
-        self.entry = Entry.objects.get(id=self.entry_id)
-        return super(EntryDeleteView, self).get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        """Access URL parameters
-
-        We need to define self.project and self.version
-
-        :param request: HTTP request object
-        :type request: HttpRequest
-
-        :param args: Positional arguments
-        :type args: tuple
-
-        :param kwargs: Keyword arguments
-        :type kwargs: dict
-
-        :returns: Unaltered request object
-        :rtype: HttpResponse
-        """
-        self.entry_id = self.kwargs.get('pk', None)
-        self.entry = Entry.objects.get(id=self.entry_id)
-        return super(EntryDeleteView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
         """Define the redirect URL
@@ -137,8 +73,6 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
         :rtype: QuerySet
         :raises: Http404
         """
-        if not self.request.user.is_authenticated():
-            raise Http404
         qs = Entry.objects
         # In future we should further filter to only allow deletion for
         # staff members when they are owners of the project...
@@ -194,19 +128,6 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
     context_object_name = 'entry'
     template_name = 'entry/update.html'
 
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(EntryUpdateView, self).get_context_data(**kwargs)
-        context['entries'] = Entry.objects.filter(version=self.version)
-        return context
-
     def get_form_kwargs(self):
         """Get keyword arguments from form.
 
@@ -244,14 +165,6 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
             'project_slug': self.object.version.project.slug,
             'version_slug': self.object.version.slug}
         )
-
-    def form_valid(self, form):
-        """Check that there is no referential integrity error when saving."""
-        try:
-            return super(EntryUpdateView, self).form_valid(form)
-        except IntegrityError:
-            return ValidationError(
-                'ERROR: Entry by this name already exists!')
 
 
 # noinspection PyAttributeOutsideInit
@@ -381,7 +294,6 @@ class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
     """View for approving Entry."""
     permanent = False
     query_string = True
-    pattern_name = 'pending-entry-list'
 
     def get_redirect_url(self, pk):
         """Save Entry as approved and redirect.
@@ -405,8 +317,7 @@ class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
             # Using Entry.version.project.slug instead of project_slug
             # to ensure that we redirect to the correct URL instead of
             # relying on inputs from URL.
-            pattern_name = 'version-detail'
-            return reverse(pattern_name, kwargs={
+            return reverse('version-detail', kwargs={
                 'project_slug': entry.version.project.slug,
                 'slug': entry.version.slug
             })
@@ -415,7 +326,7 @@ class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
             # Using Entry.version.project.slug instead of project_slug
             # to ensure that we redirect to the correct URL instead of
             # relying on inputs from URL.
-            return reverse(self.pattern_name, kwargs={
+            return reverse('pending-entry-list', kwargs={
                 'project_slug': entry.version.project.slug,
                 'version_slug': entry.version.slug
             })
@@ -423,7 +334,6 @@ class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
 
 class EntryOrderView(LoginRequiredMixin, EntryMixin, ListView):
     """List view to order entries."""
-    context_object_name = 'entries'
     template_name = 'entry/order.html'
 
     def get_context_data(self, **kwargs):
@@ -462,7 +372,6 @@ class EntryOrderView(LoginRequiredMixin, EntryMixin, ListView):
 
 class EntryOrderSubmitView(LoginRequiredMixin, EntryMixin, UpdateView):
     """Update order view for Section"""
-    context_object_name = 'entry'
 
     def post(self, request, *args, **kwargs):
         """Post the project_slug from the URL and define the Project
