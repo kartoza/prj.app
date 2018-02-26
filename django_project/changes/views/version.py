@@ -456,28 +456,24 @@ class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
         :rtype dict
         """
         kwargs = super(VersionUpdateView, self).get_form_kwargs()
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.project = Project.objects.get(slug=self.project_slug)
-        kwargs.update({
-            'user': self.request.user,
-            'project': self.project
-        })
+        project_slug = self.kwargs.get('project_slug', None)
+        kwargs['user'] = self.request.user
+        kwargs['project'] = get_object_or_404(Project, slug=project_slug)
         return kwargs
 
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved Versions.
+        :returns: A queryset which is filtered to only show versions that the
+        current user can potentially edit.
         :rtype: QuerySet
         """
         project_slug = self.kwargs.get('project_slug', None)
-        project = Project.objects.get(slug=project_slug)
-        versions_qs = Version.objects.all()
-        if self.request.user.is_staff:
-            versions_qs = versions_qs
-        else:
+        project = get_object_or_404(Project, slug=project_slug)
+        # Versions are uniques only within the same project.
+        versions_qs = Version.objects.filter(project=project)
+        if not self.request.user.is_staff:
             versions_qs = versions_qs.filter(
-                Q(project=project) &
                 (Q(author=self.request.user) |
                  Q(project__owner=self.request.user) |
                  Q(project__changelog_managers=self.request.user)))
