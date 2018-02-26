@@ -37,6 +37,17 @@ make build-devweb
 make devweb
 ```
 
+In case you don't get some not installed packages, you can run this 
+repeatable steps:
+
+1. Close PyCharm
+2. `make kill` or `docker-compose -p projecta kill`
+3. `make rm` or `docker-compose -p projecta rm`
+4. `make build`
+5. `make build-devweb`
+6. `make devweb`
+7. start PyCharm
+
 Windows:
 
 ```
@@ -135,5 +146,3 @@ have permissions to read it as the user you are running ``runserver`` as. A
 common cause of this is if you are running the server in both production
 mode and developer mode on the same host. Simply remove the file or change
 ownership permissions so that you can read/write it.
-
-
