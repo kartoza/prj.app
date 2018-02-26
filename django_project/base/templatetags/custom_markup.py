@@ -12,11 +12,14 @@ register = template.Library()
 @stringfilter
 def base_markdown(value):
     extensions = ["nl2br", "markdown.extensions.tables", ]
-
-    return mark_safe(markdown.markdown(force_unicode(value),
-                                       extensions,
-                                       safe_mode=True,
-                                       enable_attributes=False))
+    html_output = markdown.markdown(
+        force_unicode(value),
+        extensions,
+        safe_mode=True,
+        enable_attributes=False)
+    html_output = html_output.replace(
+        '<table>', '<table class="markdown-table"')
+    return mark_safe(html_output)
 
 
 @register.filter(name='is_gif', is_safe=True)

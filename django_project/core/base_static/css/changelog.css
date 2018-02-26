@@ -139,6 +139,15 @@ ul.ui-sortable-disabled .order{
     max-width: 100%;
 }
 
+.markdown-table {
+    border-collapse: collapse;
+}
+
+.markdown-table, .markdown-table th, .markdown-table td {
+    border: 1px solid black;
+    padding: 1px;
+}
+
 @media (min-width: 1200px) {
     #imagemodal .modal-dialog {
         width:1000px ;
