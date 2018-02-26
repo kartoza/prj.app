@@ -193,21 +193,8 @@ class DomainUpdateView(LoginRequiredMixin, DomainMixin, UpdateView):
         else:
             return qs.filter(user=self.request.user)
 
-    def get_context_data(self, **kwargs):
-        context = super(DomainUpdateView, self).get_context_data(**kwargs)
-        return context
-
     def get_success_url(self):
         if self.object.approved:
             return reverse('domain-list')
         else:
             return reverse('domain-pending-list')
-
-    def form_valid(self, form):
-        """Check that there is no referential integrity error when saving."""
-
-        try:
-            return super(DomainUpdateView, self).form_valid(form)
-        except IntegrityError:
-            return ValidationError(
-                'ERROR: Domain by this name is already exists!')

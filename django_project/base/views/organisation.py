@@ -189,22 +189,8 @@ class OrganisationUpdateView(
         else:
             return qs.filter(owner=self.request.user)
 
-    def get_context_data(self, **kwargs):
-        context = super(
-            OrganisationUpdateView, self).get_context_data(**kwargs)
-        return context
-
     def get_success_url(self):
         if self.object.approved:
             return reverse('list-organisation')
         else:
             return reverse('pending-list-organisation')
-
-    def form_valid(self, form):
-        """Check that there is no referential integrity error when saving."""
-
-        try:
-            return super(OrganisationUpdateView, self).form_valid(form)
-        except IntegrityError:
-            return ValidationError(
-                'ERROR: Organisation by this name is already exists!')
