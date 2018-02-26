@@ -1,7 +1,5 @@
 # coding=utf-8
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
-from django.db import IntegrityError
-from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.views.generic import (
