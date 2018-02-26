@@ -17,7 +17,6 @@ from django.views.generic import (
 )
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
-from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from ..models import Version, Entry, Category
@@ -155,22 +154,8 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
     context_object_name = 'entry'
     template_name = 'entry/create.html'
 
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(EntryCreateView, self).get_context_data(**kwargs)
-        context['entries'] = self.get_queryset()\
-            .filter(version=self.version)
-        return context
-
     def get_success_url(self):
-        """Define the redirect URL
+        """Define the redirect URL.
 
         After successful creation of the object, the User will be redirected
         to the Entry list page for the object's parent Version and Project
@@ -183,38 +168,22 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
             'version_slug': self.object.version.slug
         })
 
-    def form_valid(self, form):
-        """Save new created Entry
-
-        :param form
-        :type form
-
-        :returns HttpResponseRedirect object to success_url
-        :rtype: HttpResponseRedirect
-
-        Check that there is no referential integrity error when saving."""
-        try:
-            super(EntryCreateView, self).form_valid(form)
-            return HttpResponseRedirect(self.get_success_url())
-        except IntegrityError:
-            return ValidationError(
-                'ERROR: Entry by this name already exists!')
-
     def get_form_kwargs(self):
         """Get keyword arguments from form.
 
-        :returns keyword argument from the form
+        :returns keyword argument from the form.
         :rtype: dict
         """
         kwargs = super(EntryCreateView, self).get_form_kwargs()
-        self.version_slug = self.kwargs.get('version_slug', None)
-        self.version = Version.objects.get(slug=self.version_slug)
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.project = Project.objects.get(slug=self.project_slug)
+        version_slug = self.kwargs.get('version_slug', None)
+        project_slug = self.kwargs.get('project_slug', None)
+        project = get_object_or_404(Project, slug=project_slug)
+        version = get_object_or_404(
+            Version, slug=version_slug, project=project)
         kwargs.update({
             'user': self.request.user,
-            'version': self.version,
-            'project': self.project
+            'version': version,
+            'project': project,
         })
         return kwargs
 
