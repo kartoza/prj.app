@@ -172,14 +172,12 @@ class Worksheet(models.Model):
             # default value defined in the field definitions.
             if max_number is not None:
                 self.sequence_number = max_number + 1
-        else:
-            self.slug = '{}-{}'.format(custom_slug(self.module), self.pk)
 
         super(Worksheet, self).save(*args, **kwargs)
 
         if is_new_record:
             # We update the slug field with its ID and we save it again.
-            self.slug = '{}-{}'.format(custom_slug(self.module), self.pk)
+            self.slug = '{}-{}'.format(custom_slug(self.module), self.pk)[:50]
             self.save()
 
     def __unicode__(self):
