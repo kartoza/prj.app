@@ -12,18 +12,64 @@
         <div class="page-header">
             <h3>Upload Attendee Csv File.</h3>
         </div>
-        <form action="" method="post" name="file" enctype="multipart/form-data" class="form-horizontal">
-            {% csrf_token %}
-            <div class="form-group">
-                <div class="col-md-8">
-                    {{ form.as_p }}
+        <div class="row">
+            <div class="col-lg-6">
+                <form action="" method="post" name="file" enctype="multipart/form-data" class="form-horizontal" style="margin-top: 10%">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="col-md-8">
+                            {{ form.as_p }}
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-right: 1500pt; margin-top: 30pt">
+                        <div class="col-md-3 col-sm-3 col-xs-12 col-md-offset-3" style="margin-bottom:10px;">
+                            <button class="btn btn-primary"> <span class="glyphicon glyphicon-upload" style="margin-right:5px;" type="file"></span>Upload </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-6">
+                <div class="header">
+                    <h3>Format for the file to be uploaded:</h3>
+                    <blockquote>
+                            <p>Please note that you need to upload a CSV (with a .csv extension) file
+                                with the following fields only and the fields needs to be seperated by a comma.
+                                The header row is not needed.
+                            </p>
+                    </blockquote>
+                  <div class="row">
+                      <div class="col-md-12">
+                          <table class="table table-bordered">
+                              <thead class="thead-inverse">
+                                <tr>
+                                  <th>First Name</th>
+                                  <th>Surname</th>
+                                  <th>Email</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>first name<span id="comma">,</span></td>
+                            <td>surname<span id="comma">,</span></td>
+                                  <td>attendee@bar.com</td>
+                                </tr>
+                              <tr>
+                                  <td>foo<span id="comma">,</span></td>
+                            <td>last name<span id="comma">,</span></td>
+                                  <td>attendee2@bar.com</td>
+                                </tr>
+                              </tbody>
+                        </table>
+                      </div>
+                        <style>
+                            #comma {
+                                padding-left: 50pt;
+                            }
+
+                        </style>
+                  </div>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="col-md-3 col-sm-3 col-xs-12 col-md-offset-3" style="margin-bottom:10px;">
-                    <button class="btn btn-primary"> <span class="glyphicon glyphicon-upload" style="margin-right:5px;"></span>Upload </button>
-                </div>
-            </div>
-        </form>
+        </div>
     </div>
 {% endblock %}
