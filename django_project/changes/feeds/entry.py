@@ -10,7 +10,7 @@ __copyright__ = ''
 
 from django.contrib.syndication.views import Feed
 from django.utils.feedgenerator import Atom1Feed
-from django.shortcuts import get_list_or_404
+from django.shortcuts import get_list_or_404, get_object_or_404
 from django.http import Http404
 from base.models.project import Project
 from changes.models.version import Version
@@ -41,7 +41,7 @@ class RssEntryFeed(Feed):
         """
         try:
             project_slug = kwargs.get('project_slug', None)
-            project = Project.objects.get(slug=project_slug)
+            project = get_object_or_404(Project, slug=project_slug)
             version_slug = kwargs.get('version_slug', None)
             # Check if version is given, give atom for the that version,
             # otherwise give the latest version.
@@ -49,7 +49,8 @@ class RssEntryFeed(Feed):
                 version = get_list_or_404(Version.objects.order_by(
                     '-name'), project=project, approved=True)[0]
             else:
-                version = Version.objects.get(slug=version_slug)
+                version = get_object_or_404(
+                    Version, slug=version_slug, project=project)
             return version
         except Http404:
             raise Http404('Sorry! We could not find your project!')
