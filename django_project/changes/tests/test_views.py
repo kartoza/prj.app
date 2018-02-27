@@ -794,7 +794,6 @@ class TestVersionViewsWithAnonymouseUserForCRUD(TestCase):
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionListView_with_anonymouse_user(self):
-
         """
         Test if anonymous user can view version entry list.
         """
@@ -826,7 +825,6 @@ class TestVersionViewsWithAnonymouseUserForCRUD(TestCase):
 
     @override_settings(VALID_DOMAIN=['testserver'])
     def test_VersionUpdateView_with_anonymous_user(self):
-
         """
         Test if anonymous user can update a version entry.
         """
