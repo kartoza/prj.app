@@ -4,7 +4,8 @@
 
 def check_slug(queryset, slug):
     """
-    This function checks slug within a model and return a new incremented slug.
+    This function checks slug within a model queryset
+    and return a new incremented slug when there are duplicates.
 
     """
 
