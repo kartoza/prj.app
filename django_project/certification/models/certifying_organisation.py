@@ -166,7 +166,7 @@ class CertifyingOrganisation(models.Model):
             # unidecode() represents special characters (unicode data) in ASCII
             new_list = unidecode(' '.join(filtered_words))
             new_slug = slugify(new_list)[:50]
-            new_slug = check_slug(CertifyingOrganisation, new_slug)
+            new_slug = check_slug(CertifyingOrganisation.objects.all(), new_slug)
             self.slug = slugify(new_slug)[:50]
         super(CertifyingOrganisation, self).save(*args, **kwargs)
 

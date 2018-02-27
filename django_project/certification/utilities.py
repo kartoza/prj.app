@@ -2,13 +2,13 @@
 """Tools for Certification app."""
 
 
-def check_slug(model, slug):
+def check_slug(queryset, slug):
     """
     This function checks slug within a model and return a new incremented slug.
 
     """
 
-    registered_slug = model.objects.all().values_list('slug', flat=True)
+    registered_slug = queryset.values_list('slug', flat=True)
     new_slug = slug
     if slug in registered_slug:
         match_slug = [s for s in registered_slug if slug in s]

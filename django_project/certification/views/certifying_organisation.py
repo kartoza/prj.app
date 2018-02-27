@@ -722,7 +722,8 @@ class ApproveCertifyingOrganisationView(
 
         # Check if slug have duplicates in approved objects.
         # If there is duplicate slug, assign new slug.
-        slug = check_slug(CertifyingOrganisation, certifyingorganisation.slug)
+        approved_objects = CertifyingOrganisation.approved_objects.all()
+        slug = check_slug(approved_objects, certifyingorganisation.slug)
         certifyingorganisation.slug = slug
 
         certifyingorganisation.save()
