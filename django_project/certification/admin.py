@@ -122,6 +122,7 @@ class CertifyingOrganisationAdmin(admin.ModelAdmin):
     """Certifying organisation admin model."""
 
     filter_horizontal = ('organisation_owners',)
+    search_fields = ['name']
 
     def queryset(self, request):
         """Ensure we use the correct manager.
