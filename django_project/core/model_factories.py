@@ -30,7 +30,6 @@ class UserF(factory.DjangoModelFactory):
     is_staff = False
     is_active = True
     is_superuser = False
-    is_changelog_manager = False
     if DJANGO_VERSION[:2] >= (1, 4) and settings.USE_TZ:
         last_login = timezone.datetime(2000, 1, 1).replace(tzinfo=timezone.utc)
         date_joined = timezone.datetime(1999, 1, 1).replace(
