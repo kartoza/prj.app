@@ -752,6 +752,236 @@ class TestVersionViews(TestCase):
         self.assertEqual(response.status_code, 302)
 
 
+class TestVersionViewsWithAnonymouseUserForCRUD(TestCase):
+    """
+    Check if anonymous user can perform CRUD operations on version entries
+    just in case they have the URL to the views.
+    """
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def setUp(self):
+        """
+        Setup before each test
+        We force the locale to en otherwise it will use
+        the locale of the host running the tests and we
+        will get unpredictable results / 404s
+        """
+
+        self.client = Client()
+        self.client.post(
+            '/set_language/', data={'language': 'en'})
+        logging.disable(logging.CRITICAL)
+        self.project = ProjectF.create(name='testproject')
+        self.version = VersionF.create(
+            project=self.project,
+            name='1.0.1')
+        self.category = CategoryF.create(
+            project=self.project,
+            name='testcategory')
+
+        self.user = None
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def tearDown(self):
+        """
+        Teardown after each test.
+
+        :return:
+        """
+        self.project.delete()
+        self.version.delete()
+        self.category.delete()
+        # self.user.delete()
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_VersionListView_with_anonymouse_user(self):
+
+        """
+        Test if anonymous user can view version entry list.
+        """
+        response = self.client.get(reverse('version-list', kwargs={
+            'project_slug': self.project.slug
+        }))
+
+        expected_templates = [
+            'version/list.html', u'changes/version_list.html'
+        ]
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.template_name, expected_templates)
+        self.assertEqual(response.context_data['object_list'][0],
+                         self.version)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_VersionCreateView_with_anonymous_user(self):
+
+        """
+        Test if anonymous user can create a version entry.
+        """
+        response = self.client.get(reverse('version-create', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver'])
+    def test_VersionUpdateView_with_anonymous_user(self):
+
+        """
+        Test if anonymous user can update a version entry.
+        """
+        response = self.client.get(reverse('version-create', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver'])
+    def test_VersionDeleteView_with_anonymous_user(self):
+
+        """
+        Test if anonymous user can delete a version entry.
+        """
+
+        response = self.client.get(reverse('version-delete', kwargs={
+            'slug': self.version.slug,
+            'project_slug': self.version.project.slug
+        }))
+        self.assertEqual(response.status_code, 302)
+
+
+class TestVersionViewsWithStaffUserForCRUD(TestCase):
+    """
+    Test if staff user can perform CRUD operations on a version entry.
+    """
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def setUp(self):
+        """
+        Setup before each test
+        We force the locale to en otherwise it will use
+        the locale of the host running the tests and we
+        will get unpredictable results / 404s
+        """
+
+        self.client = Client()
+        self.client.post(
+            '/set_language/', data={'language': 'en'})
+        logging.disable(logging.CRITICAL)
+        self.project = ProjectF.create(name='testproject')
+        self.version = VersionF.create(
+            project=self.project,
+            name='1.0.1')
+        self.category = CategoryF.create(
+            project=self.project,
+            name='testcategory')
+
+        self.user = UserF.create(**{
+            'username': 'sonlinux',
+            'password': 'password',
+            'is_staff': True
+        })
+        # Something changed in the way factoryboy works with django 1.8
+        # I think - we need to explicitly set the users password
+        # because the core.model_factories.UserF._prepare method
+        # which sets the password is never called. Next two lines are
+        # a work around for that - sett #581
+        self.user.set_password('password')
+        self.user.save()
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def tearDown(self):
+        """
+        Teardown after each test.
+
+        :return:
+        """
+        self.project.delete()
+        self.version.delete()
+        self.category.delete()
+        self.user.delete()
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_VersionListView_with_staff_user(self):
+
+        """
+        Test if staff user can view a list of version entries.
+        """
+        response = self.client.get(reverse('version-list', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+
+        expected_template = [
+            'version/list.html', u'changes/version_list.html'
+        ]
+
+        self.assertEqual(response.template_name, expected_template)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_VersionCreateView_with_staff_user(self):
+
+        """
+        Test if staff user can view a list of version entries.
+        """
+
+        self.client.login(username='sonlinux', password='password')
+
+        post_data = {
+            'project': self.project.id,
+            'name': u'2.0.3',
+            'description': u'Test create with staff user',
+            'author': self.user.id
+        }
+
+        response = self.client.get(reverse('version-create', kwargs={
+            'project_slug': self.project.slug
+        }), post_data)
+
+        self.assertEqual(response.status_code, 200)
+
+        expected_template = [
+            'version/create.html'
+        ]
+        self.assertEqual(response.template_name, expected_template)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_VersionUpdateView_with_staff_user(self):
+
+        """
+        Test if staff user can update a version entry.
+        """
+        self.client.login(username='sonlinux', password='password')
+
+        response = self.client.get(reverse('version-update', kwargs={
+            'project_slug': self.version.project.slug,
+            'slug': self.version.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+
+        expected_templates = [
+            'version/update.html'
+        ]
+        self.assertEqual(response.template_name, expected_templates)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_VersionDeleteView_with_staff_user(self):
+
+        """
+        Test if staff user can delete a version entry.
+        """
+        self.client.login(username='sonlinux', password='password')
+
+        response = self.client.get(reverse('category-delete', kwargs={
+            'slug': self.category.slug,
+            'project_slug': self.category.project.slug
+        }))
+
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
+            'category/delete.html'
+        ]
+
+        self.assertEqual(response.template_name, expected_templates)
+
+
 class TestSponsorshipLevelViews(TestCase):
     """Tests that SponsorshipLevel views work."""
 
