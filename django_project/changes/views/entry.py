@@ -5,8 +5,7 @@ from base.models import Project
 # noinspection PyUnresolvedReferences
 import logging
 from django.core.urlresolvers import reverse
-from django.http import Http404
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, get_list_or_404, redirect
 from django.views.generic import (
     ListView,
     CreateView,
@@ -114,11 +113,10 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
         project = get_object_or_404(Project, slug=project_slug)
         version = get_object_or_404(
             Version, slug=version_slug, project=project)
-        kwargs.update({
-            'user': self.request.user,
-            'version': version,
-            'project': project,
-        })
+
+        kwargs['user'] = self.request.user
+        kwargs['version'] = version
+        kwargs['project'] = project
         return kwargs
 
 
@@ -140,16 +138,14 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
         """
         kwargs = super(EntryUpdateView, self).get_form_kwargs()
         entry_id = int(self.kwargs.get('pk', None))
-        self.entry = Entry.objects.get(id=entry_id)
-        self.version = self.entry.version
-        self.project = self.version.project
+        entry = Entry.objects.get(id=entry_id)
+        version = entry.version
+        project = version.project
 
-        kwargs.update({
-            'user': self.request.user,
-            'instance': self.entry,
-            'version': self.version,
-            'project': self.project
-        })
+        kwargs['user'] = self.request.user
+        kwargs['instance'] = entry
+        kwargs['version'] = version
+        kwargs['project'] = project
         return kwargs
 
     def get_success_url(self):
@@ -205,33 +201,22 @@ class PendingEntryListView(
          :rtype: QuerySet
          :raises: Http404
          """
-        if self.queryset is None:
-            project_slug = self.kwargs.get('project_slug', None)
-            version_slug = self.kwargs.get('version_slug', None)
-            if project_slug and version_slug:
-                try:
-                    project = Project.objects.get(slug=project_slug)
-                except:
-                    raise Http404('Project not found')
-                try:
-                    self.version = Version.objects.get(
-                        slug=version_slug, project=project)
-                except:
-                    raise Http404('Version not found')
-                queryset = Entry.unapproved_objects.filter(
-                    version=self.version)
-                if self.request.user.is_staff:
-                    return queryset
-                else:
-                    try:
-                        return queryset.filter(author=self.request.user)
-                    except:
-                        raise Http404('Sorry! We could not find your entry!')
-            else:
-                raise Http404('Sorry! We could not find your entry!')
-        return self.queryset
+        if self.queryset is not None:
+            return self.queryset
+
+        project_slug = self.kwargs.get('project_slug', None)
+        version_slug = self.kwargs.get('version_slug', None)
+        project = get_object_or_404(Project, slug=project_slug)
+        self.version = get_object_or_404(
+            Version, slug=version_slug, project=project)
+        queryset = Entry.unapproved_objects.filter(version=self.version)
+        if self.request.user.is_staff:
+            return queryset
+        else:
+            return queryset.filter(author=self.request.user)
 
 
+# noinspection PyAttributeOutsideInit
 class AllPendingEntryList(
         StaffuserRequiredMixin,
         EntryMixin,
@@ -265,29 +250,18 @@ class AllPendingEntryList(
          :rtype: QuerySet
          :raises: Http404
          """
-        if self.queryset is None:
-            project_slug = self.kwargs.get('project_slug', None)
-            if project_slug:
-                try:
-                    project = Project.objects.get(slug=project_slug)
-                except:
-                    raise Http404('Project not found')
-                try:
-                    self.version = Version.objects.filter(project=project)
-                except:
-                    raise Http404('Version not found')
-                queryset = Entry.unapproved_objects.filter(
-                    version__in=self.version)
-                if self.request.user.is_staff:
-                    return queryset
-                else:
-                    try:
-                        return queryset.filter(author=self.request.user)
-                    except:
-                        raise Http404('Sorry! We could not find your entry!')
-            else:
-                raise Http404('Sorry! We could not find your entry!')
-        return self.queryset
+        if self.queryset is not None:
+            return self.queryset
+
+        project_slug = self.kwargs.get('project_slug', None)
+        project = get_object_or_404(Project, slug=project_slug)
+        self.version = get_list_or_404(Version, project=project)
+
+        queryset = Entry.unapproved_objects.filter(version__in=self.version)
+        if self.request.user.is_staff:
+            return queryset
+        else:
+            return queryset.filter(author=self.request.user)
 
 
 class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
