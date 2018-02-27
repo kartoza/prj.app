@@ -106,6 +106,12 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
             context['user_can_edit'] = True
             context['user_can_delete'] = True
 
+        version_managers = (
+            context['project'].changelog_managers.all())
+        if self.request.user in version_managers:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
         return context
 
     def get_queryset(self):
