@@ -3,7 +3,7 @@ from base.models import Project
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_list_or_404
 from django.db.models import Q
 from django.http import HttpResponse
 from django.views.generic import (
@@ -27,6 +27,7 @@ from ..models import (
     Course,
     Attendee)
 from ..forms import CertifyingOrganisationForm
+from certification.utilities import check_slug
 
 
 class JSONResponseMixin(object):
@@ -714,9 +715,16 @@ class ApproveCertifyingOrganisationView(
 
         certifyingorganisation_qs = \
             CertifyingOrganisation.unapproved_objects.all()
+        # Get the object, when there is slug duplicate, get the first object
         certifyingorganisation = \
-            get_object_or_404(certifyingorganisation_qs, slug=slug)
+            get_list_or_404(certifyingorganisation_qs, slug=slug)[0]
         certifyingorganisation.approved = True
+
+        # Check if slug have duplicates in approved objects.
+        # If there is duplicate slug, assign new slug.
+        slug = check_slug(CertifyingOrganisation, certifyingorganisation.slug)
+        certifyingorganisation.slug = slug
+
         certifyingorganisation.save()
 
         site = self.request.get_host()

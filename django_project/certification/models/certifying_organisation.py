@@ -16,6 +16,7 @@ from unidecode import unidecode
 from django.contrib.auth.models import User
 from django_countries.fields import CountryField
 import logging
+from certification.utilities import check_slug
 
 logger = logging.getLogger(__name__)
 
@@ -163,10 +164,10 @@ class CertifyingOrganisation(models.Model):
             filtered_words = [word for word in words if
                               word.lower() not in STOP_WORDS]
             # unidecode() represents special characters (unicode data) in ASCII
-            new_list = \
-                self.project.slug + ' ' + \
-                unidecode(' '.join(filtered_words))
-            self.slug = slugify(new_list)[:50]
+            new_list = unidecode(' '.join(filtered_words))
+            new_slug = slugify(new_list)[:50]
+            new_slug = check_slug(CertifyingOrganisation, new_slug)
+            self.slug = slugify(new_slug)[:50]
         super(CertifyingOrganisation, self).save(*args, **kwargs)
 
     def __unicode__(self):
