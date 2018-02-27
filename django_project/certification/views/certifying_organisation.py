@@ -62,15 +62,15 @@ class JSONResponseMixin(object):
         :rtype: str
         """
 
-        result = '{\n'
+        result = u'{\n'
         first_flag = True
         for certifyingorganisation in context['certifyingorganisations']:
             if not first_flag:
-                result += ',\n'
-            result += '    "%s" : "%s"' % (certifyingorganisation.id,
-                                           certifyingorganisation.name)
+                result += u',\n'
+            result += u'    "%s" : "%s"' % (
+                certifyingorganisation.id, certifyingorganisation.name)
             first_flag = False
-        result += '\n}'
+        result += u'\n}'
         return result
 
 
@@ -446,34 +446,34 @@ class CertifyingOrganisationCreateView(
                 # Send email notification to project owner and
                 # certification managers
                 send_mail(
-                    'Projecta - New Pending Organisation Approval',
-                    'Dear {recipient_firstname} {recipient_lastname},\n\n'
-                    'You have a new organisation registered to your project: '
-                    '{project_name}.\n'
-                    'Organisation name: {organisation_name}\n'
-                    'Country: {organisation_country}\n'
-                    'You may review and approve the organisation by following '
-                    'this link:\n'
-                    '{site}/en/{project_slug}/pending-certifyingorganisation/'
-                    'list/\n\n'
-                    'Sincerely,\n\n\n\n\n'
-                    '-------------------------------------------------------\n'
-                    'This is an auto-generated email from the system.'
-                    ' Please do not reply to this email.'.format(**data),
+                    u'Projecta - New Pending Organisation Approval',
+                    u'Dear {recipient_firstname} {recipient_lastname},\n\n'
+                    u'You have a new organisation registered to your '
+                    u'project: {project_name}.\n'
+                    u'Organisation name: {organisation_name}\n'
+                    u'Country: {organisation_country}\n'
+                    u'You may review and approve the organisation by '
+                    u'following this link:\n'
+                    u'{site}/en/{project_slug}/pending-certifyingorganisation/'
+                    u'list/\n\n'
+                    u'Sincerely,\n\n\n\n\n'
+                    u'------------------------------------------------------\n'
+                    u'This is an auto-generated email from the system.'
+                    u' Please do not reply to this email.'.format(**data),
                     self.project.owner.email,
                     [recipient.email],
                     fail_silently=False,
                 )
 
             contact_person = \
-                '{} {}: {}\n'.format(
+                u'{} {}: {}\n'.format(
                     self.project.owner.first_name,
                     self.project.owner.last_name,
                     self.project.owner.email)
 
             for manager in self.project.certification_managers.all():
                 contact_person += \
-                    '{} {}: {}\n'.format(
+                    u'{} {}: {}\n'.format(
                         manager.first_name, manager.last_name, manager.email)
 
             # Email the applicant notify that the organisation is successfully
@@ -486,15 +486,15 @@ class CertifyingOrganisationCreateView(
                 }
 
                 send_mail(
-                    'Projecta - Your Organisation is Successfully Submitted',
-                    'Dear {applicant_firstname} {applicant_lastname},\n\n'
-                    'Your organisation is successfully submitted.\n'
-                    'It is now waiting for an approval from the project\'s '
-                    'owner and certification managers.\n'
-                    'If you have not heard from us in few weeks you may '
-                    'contact us:\n'
-                    '{contact_person}'
-                    '\n\nSincerely,\n'.format(**email_data),
+                    u'Projecta - Your Organisation is Successfully Submitted',
+                    u'Dear {applicant_firstname} {applicant_lastname},\n\n'
+                    u'Your organisation is successfully submitted.\n'
+                    u'It is now waiting for an approval from the project\'s '
+                    u'owner and certification managers.\n'
+                    u'If you have not heard from us in few weeks you may '
+                    u'contact us:\n'
+                    u'{contact_person}'
+                    u'\n\nSincerely,\n'.format(**email_data),
                     self.project.owner.email,
                     [applicant.email]
                 )
@@ -744,19 +744,20 @@ class ApproveCertifyingOrganisationView(
                 'project_slug': project_slug,
             }
             send_mail(
-                'Projecta - Your organisation is approved',
-                'Dear {owner_firstname} {owner_lastname},\n\n'
-                'Congratulations!\n'
-                'Your certifying organisation has been approved. The following'
-                ' is the details of the newly approved organisation:\n'
-                'Name of organisation: {organisation_name}\n'
-                'Project: {project_name}\n'
-                'You may now start creating your training center, '
-                'course type, course convener and course.\n'
-                'For further information please visit: '
-                '{site}/en/{project_slug}/about/\n\n'
-                'Sincerely,\n'
-                '{project_owner_firstname} {project_owner_lastname}'
+                u'Projecta - Your organisation is approved',
+                u'Dear {owner_firstname} {owner_lastname},\n\n'
+                u'Congratulations!\n'
+                u'Your certifying organisation has been approved. The '
+                u'following is the details of the newly approved organisation:'
+                u'\n'
+                u'Name of organisation: {organisation_name}\n'
+                u'Project: {project_name}\n'
+                u'You may now start creating your training center, '
+                u'course type, course convener and course.\n'
+                u'For further information please visit: '
+                u'{site}/en/{project_slug}/about/\n\n'
+                u'Sincerely,\n'
+                u'{project_owner_firstname} {project_owner_lastname}'
                 .format(**data),
                 certifyingorganisation.project.owner.email,
                 [organisation_owner.email],
