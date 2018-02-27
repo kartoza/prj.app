@@ -791,7 +791,6 @@ class TestVersionViewsWithAnonymouseUserForCRUD(TestCase):
         self.project.delete()
         self.version.delete()
         self.category.delete()
-        # self.user.delete()
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionListView_with_anonymouse_user(self):
