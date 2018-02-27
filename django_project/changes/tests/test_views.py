@@ -851,8 +851,8 @@ class TestVersionViewsWithAnonymouseUserForCRUD(TestCase):
 
 class TestVersionViewsWithNormalUserForCRUD(TestCase):
     """
-    Check if normal(a regular logged in user) user can perform CRUD operations on version entries
-    just in case they have the URL to the views.
+    Check if normal(a regular logged in user) user can perform CRUD
+    operations on version entries just in case they have the URL to the views.
     """
 
     @override_settings(VALID_DOMAIN=['testserver', ])
@@ -1032,7 +1032,7 @@ class TestVersionViewsWithStaffUserForCRUD(TestCase):
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionCreateView_with_staff_user(self):
         """
-        Test if staff user can view a list of version entries.
+        Test if staff user can create a version entry.
         """
         self.client.login(username='sonlinux', password='password')
 
