@@ -752,7 +752,7 @@ class TestVersionViews(TestCase):
         self.assertEqual(response.status_code, 302)
 
 
-class TestVersionViewsWithAnonymouseUserForCRUD(TestCase):
+class TestVersionViewsWithAnonymousUserForCRUD(TestCase):
     """
     Check if anonymous user can perform CRUD operations on version entries
     just in case they have the URL to the views.
@@ -761,10 +761,10 @@ class TestVersionViewsWithAnonymouseUserForCRUD(TestCase):
     @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """
-        Setup before each test
+        Setup before each test.
         We force the locale to en otherwise it will use
         the locale of the host running the tests and we
-        will get unpredictable results / 404s
+        will get unpredictable results / 404s.
         """
 
         self.client = Client()
@@ -785,15 +785,13 @@ class TestVersionViewsWithAnonymouseUserForCRUD(TestCase):
     def tearDown(self):
         """
         Teardown after each test.
-
-        :return:
         """
         self.project.delete()
         self.version.delete()
         self.category.delete()
 
     @override_settings(VALID_DOMAIN=['testserver', ])
-    def test_VersionListView_with_anonymouse_user(self):
+    def test_VersionListView_with_anonymous_user(self):
         """
         Test if anonymous user can view version entry list.
         """
@@ -849,17 +847,16 @@ class TestVersionViewsWithAnonymouseUserForCRUD(TestCase):
 
 class TestVersionViewsWithNormalUserForCRUD(TestCase):
     """
-    Check if normal(a regular logged in user) user can perform CRUD
-    operations on version entries just in case they have the URL to the views.
+    Check if normal(a regular logged in user) user can perform CRUD.
     """
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """
-        Setup before each test
+        Setup before each test.
         We force the locale to en otherwise it will use
         the locale of the host running the tests and we
-        will get unpredictable results / 404s
+        will get unpredictable results / 404s.
         """
 
         self.client = Client()
@@ -880,6 +877,7 @@ class TestVersionViewsWithNormalUserForCRUD(TestCase):
             'password': 'password',
             'is_staff': True
         })
+
         # Something changed in the way factoryboy works with django 1.8
         # I think - we need to explicitly set the users password
         # because the core.model_factories.UserF._prepare method
@@ -892,8 +890,6 @@ class TestVersionViewsWithNormalUserForCRUD(TestCase):
     def tearDown(self):
         """
         Teardown after each test.
-
-        :return:
         """
         self.project.delete()
         self.version.delete()
@@ -988,10 +984,10 @@ class TestVersionViewsWithStaffUserForCRUD(TestCase):
     @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """
-        Setup before each test
+        Setup before each test.
         We force the locale to en otherwise it will use
         the locale of the host running the tests and we
-        will get unpredictable results / 404s
+        will get unpredictable results / 404s.
         """
 
         self.client = Client()
@@ -1011,6 +1007,7 @@ class TestVersionViewsWithStaffUserForCRUD(TestCase):
             'password': 'password',
             'is_staff': True
         })
+
         # Something changed in the way factoryboy works with django 1.8
         # I think - we need to explicitly set the users password
         # because the core.model_factories.UserF._prepare method
@@ -1023,8 +1020,6 @@ class TestVersionViewsWithStaffUserForCRUD(TestCase):
     def tearDown(self):
         """
         Teardown after each test.
-
-        :return:
         """
         self.project.delete()
         self.version.delete()
@@ -1116,7 +1111,9 @@ class TestVersionViewsWithStaffUserForCRUD(TestCase):
 
 
 class TestSponsorshipLevelViews(TestCase):
-    """Tests that SponsorshipLevel views work."""
+    """
+    Tests that SponsorshipLevel views work.
+    """
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):

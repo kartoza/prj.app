@@ -83,7 +83,6 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         context['user_can_edit'] = False
         context['user_can_delete'] = False
         context['user_can_view'] = False
-        context['version_owner'] = False
 
         context['num_versions'] = self.get_queryset().count()
         context['unapproved'] = False
@@ -113,7 +112,8 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
             context['user_can_delete'] = True
 
         if self.request.user == context['project'].owner:
-            context['version_owner'] = True
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
 
         return context
 
