@@ -1,3 +1,5 @@
+{% load i18n %}
+{% load staticfiles %}
 {% if user.is_authenticated %}
     <li>
         <i class="icon-wrench"></i>
@@ -6,6 +8,34 @@
         </a>
     </li>
 {% endif %}
+ <li>
+    <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Select Language <span class="caret" style="visibility: hidden"></span></a>
+          <ul class="dropdown-menu" role="menu">
+              {% get_current_language as LANGUAGE_CODE %}
+              {% get_available_languages as languages %}
+              {% for lang_code, lang_name in languages %}
+                {% language lang_code %}
+                    <li><i class="icon-wrench" class="active"></i>
+                        <a href="/{{ lang_code }}/" {% if lang_code == LANGUAGE_CODE %}{% endif %}>
+                            {% if lang_code == 'en' %}
+                             <img src="{% static "img/language_flags/en.png" %}" alt="Eng" style="height: 13pt; margin-bottom: 3pt;">
+                                {{ lang_name|upper }}
+                            {% endif %}
+                             {% if lang_code == 'id' %}
+                                 <img src="{% static "img/language_flags/id.png" %}" alt="Ind"style="height: 13pt;margin-bottom: 3pt;">
+                                    {{ lang_name|upper }}
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endlanguage %}
+            {% endfor %}
+          </ul>
+        </li>
+      </ul>
+    </li>
+
 {% if user.is_authenticated and has_pending_versions or has_pending_categories or has_pending_sponsor_lvl or has_pending_sponsor_period or has_pending_entries or has_pending_organisations %}
 <li>
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
