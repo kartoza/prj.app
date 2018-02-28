@@ -17,6 +17,7 @@
                         <span class="glyphicon glyphicon-thumbs-up"></span>
                     </a>
                 {% endif %}
+                {% if user_can_cud %}
                 <a class="btn-default btn-mini tooltip-toggle"
                    data-title="Delete Entry"
                    href='{% url "entry-delete" pk=entry.id %}'>
@@ -27,6 +28,7 @@
                    href='{% url "entry-update" pk=entry.id %}'>
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
+                {% endif %}
             {% endif %}
 
             <a class="btn-default btn-mini tooltip-toggle"

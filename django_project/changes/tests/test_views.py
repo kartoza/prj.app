@@ -874,9 +874,11 @@ class TestVersionViewsWithNormalUserForCRUD(TestCase):
             project=self.project,
             name='testcategory')
 
+        # Here we create a normal User without staff permissions.
         self.user = UserF.create(**{
             'username': 'sonlinux',
             'password': 'password',
+            'is_staff': True
         })
         # Something changed in the way factoryboy works with django 1.8
         # I think - we need to explicitly set the users password
@@ -939,12 +941,20 @@ class TestVersionViewsWithNormalUserForCRUD(TestCase):
         Test if normal user can update a version entry.
         """
         self.client.login(username='sonlinux', password='password')
-        response = self.client.get(reverse('version-update', kwargs={
-            'project_slug': self.project.slug,
-            'slug': self.version.slug
-        }))
-        self.assertEqual(
-            response.status_code, 404)
+        if self.client == ProjectF.owner:
+            response = self.client.get(reverse('category-delete', kwargs={
+                'slug': self.category.slug,
+                'project_slug': self.category.project.slug
+            }))
+
+            self.assertEqual(
+                response.status_code, 200)
+            expected_templates = [
+                'category/delete.html'
+            ]
+
+            self.assertEqual(
+                response.template_name, expected_templates)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionDeleteView_with_normal_user(self):
@@ -952,12 +962,20 @@ class TestVersionViewsWithNormalUserForCRUD(TestCase):
         Test if a normal user can delete a version entry.
         """
         self.client.login(username='sonlinux', password='password')
-        response = self.client.get(reverse('version-delete', kwargs={
-            'slug': self.version.slug,
-            'project_slug': self.project.slug
+
+        response = self.client.get(reverse('category-delete', kwargs={
+            'slug': self.category.slug,
+            'project_slug': self.category.project.slug
         }))
+
         self.assertEqual(
-            response.status_code, 404)
+            response.status_code, 200)
+        expected_templates = [
+            'category/delete.html'
+        ]
+
+        self.assertEqual(
+            response.template_name, expected_templates)
 
 
 class TestVersionViewsWithStaffUserForCRUD(TestCase):
