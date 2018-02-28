@@ -941,6 +941,8 @@ class TestVersionViewsWithNormalUserForCRUD(TestCase):
         Test if normal user can update a version entry.
         """
         self.client.login(username='sonlinux', password='password')
+
+        # lets ensure the user updating owns the project.
         if self.client == ProjectF.owner:
             response = self.client.get(reverse('category-delete', kwargs={
                 'slug': self.category.slug,
