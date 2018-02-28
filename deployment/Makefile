@@ -108,6 +108,10 @@ reload:
 	@docker exec $(PROJECT_ID)-uwsgi uwsgi --reload  /tmp/django.pid
 
 status:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Show status for all containers"
+	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) ps
 
 kill:
@@ -345,7 +349,7 @@ help:
 	@echo "* **dbshell** - get a psql prompt into the db container. "
 	@echo "* **dbsnapshot** - as above but makes the backup as deployment/snapshot.smp - replacing any pre-existing snapshot."
 	@echo "* **dbsync** - use this from a development or offsite machine. It will rsync all database backups from deployment/backups to your offsite machine."
-	@echo "* **staging-sync** - sync database and media files from this host to staging server, then do a dbrestore and migrate on the staging server
+	@echo "* **staging-sync** - sync database and media files from this host to staging server, then do a dbrestore and migrate on the staging server"
 	@echo "* **default** ."
 	@echo "* **deploy** ."
 	@echo "* **devweb** - create an ssh container derived from uwsgi that can be used as a remote interpreter for PyCharm. See [development notes](README-dev.md)."
@@ -365,6 +369,7 @@ help:
 	@echo "* **run** - builds and runs the complete orchestrated set of containers."
 	@echo "* **sentry** - **currently not working I think.** The idea is to spin up a sentry instance together with your app for fault reporting."
 	@echo "* **shell** - open a bash shell in the uwsgi (where django runs) container."
+	@echo "* **status** - show status for all containers."
 	@echo "* **superuser** - create a django superuser account."
 	@echo "* **update-migrations** - freshen all migration definitions to match the current code base."
 	@echo "* **web** - same as **run** - runs the production site."
