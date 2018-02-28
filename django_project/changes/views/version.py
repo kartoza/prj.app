@@ -77,6 +77,12 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         :rtype: dict
         """
         context = super(VersionListView, self).get_context_data(**kwargs)
+
+        # lets set the the flags to a default
+        # for running checks in templates
+        context['user_can_edit'] = False
+        context['user_can_delete'] = False
+
         context['num_versions'] = self.get_queryset().count()
         context['unapproved'] = False
         context['rst_download'] = False
@@ -85,6 +91,26 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
             context['project'] = context['the_project']
+
+        # lets check for specific user permissions here.
+        if self.request.user.is_staff:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user.is_superuser:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        version_managers = (
+            context['project'].changelog_managers.all())
+        if self.request.user in version_managers:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user == context['project'].owner:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
         return context
 
     def get_queryset(self):
@@ -149,6 +175,7 @@ class VersionDetailView(VersionMixin, DetailView):
         context['project_slug'] = project_slug
         if project_slug:
             context['project'] = Project.objects.get(slug=project_slug)
+
         return context
 
     def get_queryset(self):

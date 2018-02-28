@@ -21,7 +21,7 @@
     <div class="row" style="margin-top:15px;margin-bottom:15px;">
         <div class="col-lg-12">
             <div class="btn-group btn-group pull-left">
-                {% if user.is_authenticated and user.is_staff %}
+                {% if user_can_edit %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        data-title="Download sponsor list as html"
                        href='{% url 'version-sponsor-download' project_slug=version.project.slug slug=version.slug %}'>
@@ -40,12 +40,14 @@
                    href='{% url 'version-download-gnu' project_slug=version.project.slug slug=version.slug %}'>
                     <span class="glyphicon glyphicon-list-alt"></span>
                 </a>
-                {% if user.is_authenticated %}
+                {% if user_can_delete %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        data-title="Delete Version"
                        href='{% url "version-delete" project_slug=version.project.slug slug=version.slug %}'>
                         {% show_button_icon "delete" %}
                     </a>
+                {% endif %}
+                {% if user_can_edit %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        data-title="Update Version"
                        href='{% url "version-update" project_slug=version.project.slug slug=version.slug %}'>
@@ -54,7 +56,7 @@
                 {% endif %}
             </div>
             <div class="pull-right">
-                {% if user.is_authenticated %}
+                {% if user_can_edit %}
                     <a href="{% url 'entry-create' project_slug=version.project.slug version_slug=version.slug %}"
                        class="btn btn-default tooltip-toggle"
                        data-title="Add New Entry">
