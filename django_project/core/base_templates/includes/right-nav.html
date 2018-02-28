@@ -23,11 +23,11 @@
                    lang="{{ language.code }}">
                 {% if language.code == 'en' %}
                      <img src="{% static "img//language_flags/en.png" %}" alt="Eng" style="height: 13pt; margin-bottom: 3pt;">
-                    {{ language.name_local|upper }}
+                    {{ language.name|upper }}
                 {% endif %}
                 {% if language.code == 'id' %}
                      <img src="{% static "img//language_flags/id.png" %}" alt="Eng" style="height: 13pt; margin-bottom: 3pt;">
-                    {{ language.name_local|upper }}
+                    {{ language.name|upper }}
                 {% endif %}
                 </a>
             </li>
