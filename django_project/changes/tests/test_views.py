@@ -802,12 +802,9 @@ class TestVersionViewsWithAnonymousUserForCRUD(TestCase):
         expected_templates = [
             'version/list.html', u'changes/version_list.html'
         ]
-        self.assertEqual(
-            response.status_code, 200)
-        self.assertEqual(
-            response.template_name, expected_templates)
-        self.assertEqual(
-            response.context_data['object_list'][0],
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.template_name, expected_templates)
+        self.assertEqual(response.context_data['object_list'][0],
                          self.version)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
@@ -818,8 +815,7 @@ class TestVersionViewsWithAnonymousUserForCRUD(TestCase):
         response = self.client.get(reverse('version-create', kwargs={
             'project_slug': self.project.slug
         }))
-        self.assertEqual(
-            response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     @override_settings(VALID_DOMAIN=['testserver'])
     def test_VersionUpdateView_with_anonymous_user(self):
@@ -829,8 +825,7 @@ class TestVersionViewsWithAnonymousUserForCRUD(TestCase):
         response = self.client.get(reverse('version-create', kwargs={
             'project_slug': self.project.slug
         }))
-        self.assertEqual(
-            response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     @override_settings(VALID_DOMAIN=['testserver'])
     def test_VersionDeleteView_with_anonymous_user(self):
@@ -841,8 +836,7 @@ class TestVersionViewsWithAnonymousUserForCRUD(TestCase):
             'slug': self.version.slug,
             'project_slug': self.version.project.slug
         }))
-        self.assertEqual(
-            response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
 
 class TestVersionViewsWithNormalUserForCRUD(TestCase):
@@ -875,7 +869,7 @@ class TestVersionViewsWithNormalUserForCRUD(TestCase):
         self.user = UserF.create(**{
             'username': 'sonlinux',
             'password': 'password',
-            'is_staff': True
+            'is_staff': False
         })
 
         # Something changed in the way factoryboy works with django 1.8
@@ -910,12 +904,9 @@ class TestVersionViewsWithNormalUserForCRUD(TestCase):
             'version/list.html', u'changes/version_list.html'
         ]
 
-        self.assertEqual(
-            response.status_code, 200)
-        self.assertEqual(
-            response.template_name, expected_templates)
-        self.assertEqual(
-            response.context_data['object_list'][0],
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.template_name, expected_templates)
+        self.assertEqual(response.context_data['object_list'][0],
                          self.version)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
@@ -928,8 +919,7 @@ class TestVersionViewsWithNormalUserForCRUD(TestCase):
             'project_slug': self.project.slug
         }))
 
-        self.assertEqual(
-            response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionUpdateView_with_normal_user(self):
@@ -939,20 +929,17 @@ class TestVersionViewsWithNormalUserForCRUD(TestCase):
         self.client.login(username='sonlinux', password='password')
 
         # lets ensure the user updating owns the project.
-        if self.client == ProjectF.owner:
-            response = self.client.get(reverse('category-delete', kwargs={
-                'slug': self.category.slug,
-                'project_slug': self.category.project.slug
-            }))
+        response = self.client.get(reverse('category-delete', kwargs={
+            'slug': self.category.slug,
+            'project_slug': self.category.project.slug
+        }))
 
-            self.assertEqual(
-                response.status_code, 200)
-            expected_templates = [
-                'category/delete.html'
-            ]
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
+            'category/delete.html'
+        ]
 
-            self.assertEqual(
-                response.template_name, expected_templates)
+        self.assertEqual(response.template_name, expected_templates)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionDeleteView_with_normal_user(self):
@@ -966,14 +953,12 @@ class TestVersionViewsWithNormalUserForCRUD(TestCase):
             'project_slug': self.category.project.slug
         }))
 
-        self.assertEqual(
-            response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         expected_templates = [
             'category/delete.html'
         ]
 
-        self.assertEqual(
-            response.template_name, expected_templates)
+        self.assertEqual(response.template_name, expected_templates)
 
 
 class TestVersionViewsWithStaffUserForCRUD(TestCase):
@@ -1065,8 +1050,7 @@ class TestVersionViewsWithStaffUserForCRUD(TestCase):
         expected_template = [
             'version/create.html'
         ]
-        self.assertEqual(
-            response.template_name, expected_template)
+        self.assertEqual(response.template_name, expected_template)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionUpdateView_with_staff_user(self):
@@ -1079,14 +1063,12 @@ class TestVersionViewsWithStaffUserForCRUD(TestCase):
             'project_slug': self.version.project.slug,
             'slug': self.version.slug
         }))
-        self.assertEqual(
-            response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         expected_templates = [
             'version/update.html'
         ]
-        self.assertEqual(
-            response.template_name, expected_templates)
+        self.assertEqual(response.template_name, expected_templates)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_VersionDeleteView_with_staff_user(self):
@@ -1100,14 +1082,12 @@ class TestVersionViewsWithStaffUserForCRUD(TestCase):
             'project_slug': self.category.project.slug
         }))
 
-        self.assertEqual(
-            response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         expected_templates = [
             'category/delete.html'
         ]
 
-        self.assertEqual(
-            response.template_name, expected_templates)
+        self.assertEqual(response.template_name, expected_templates)
 
 
 class TestSponsorshipLevelViews(TestCase):

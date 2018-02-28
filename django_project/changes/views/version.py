@@ -82,7 +82,6 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         # for running checks in templates
         context['user_can_edit'] = False
         context['user_can_delete'] = False
-        context['user_can_view'] = False
 
         context['num_versions'] = self.get_queryset().count()
         context['unapproved'] = False
@@ -94,9 +93,6 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
             context['project'] = context['the_project']
 
         # lets check for specific user permissions here.
-        if self.request.user.is_authenticated:
-            context['user_can_view'] = True
-
         if self.request.user.is_staff:
             context['user_can_edit'] = True
             context['user_can_delete'] = True
