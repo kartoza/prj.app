@@ -601,7 +601,8 @@ class PendingCategoryListView(
                 self.queryset = Category.unapproved_objects.filter(
                     Q(project=self.project) &
                     (Q(project__owner=self.request.user) |
-                     Q(project__changelog_managers=self.request.user)))
+                     Q(project__changelog_managers=self.request.user))
+                ).distinct()
                 return self.queryset
             else:
                 raise Http404(
