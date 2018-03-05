@@ -47,7 +47,8 @@ class WorksheetAdmin(admin.ModelAdmin):
         'section', 'module', 'title', 'summary_leader',
         'summary_text', 'summary_image', 'exercise_goal', 'exercise_task',
         'more_about_title', 'more_about_text', 'more_about_image',
-        'external_data', 'youtube_link', 'author_name', 'author_link'
+        'external_data', 'youtube_link', 'author_name', 'author_link',
+        'last_update'
     )
 
 

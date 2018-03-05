@@ -9,6 +9,8 @@ from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from model_utils import FieldTracker
+
 from lesson.models.section import Section
 from lesson.utilities import custom_slug
 
@@ -17,6 +19,8 @@ logger = logging.getLogger(__name__)
 
 class Worksheet(models.Model):
     """Worksheet lesson model."""
+
+    tracker = FieldTracker()
 
     section = models.ForeignKey(Section)
 
@@ -146,6 +150,12 @@ class Worksheet(models.Model):
         unique=True,
     )
 
+    last_update = models.DateTimeField(
+        help_text=_('Time stamp when the last worksheet updated.'),
+        blank=True,
+        null=True
+    )
+
     # noinspection PyClassicStyleClass.
     class Meta:
         """Meta class for Worksheet model."""
@@ -182,3 +192,5 @@ class Worksheet(models.Model):
 
     def __unicode__(self):
         return self.module
+
+from lesson.signals.worksheet import *  # noqa
