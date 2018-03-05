@@ -242,11 +242,11 @@
 
     <table class="course" style="width: 100%;">
     <tr>
-        <th style="width: 43%">Course Name</th>
-        <th style="width: 25%">Training Center</th>
-            <th style="width: 25%">Course Language</th>
-        <th>Course Convener</th>
-        <th class="button-action" style="display: none; text-align: right; padding-right: 0">Actions</th>
+        <th style="width: 35%">Course Name</th>
+        <th style="width: 20%">Training Center</th>
+        <th style="width: 15%;">Course Language</th>
+        <th style="width: 20%;">Course Convener</th>
+        <th class="button-action" style="width: 30%; display: none; text-align: right; padding-right: 0">Actions</th>
 
     </tr>
 
@@ -255,10 +255,10 @@
         <td id="{{ course.id }}-{{ course.name }}">
                 {{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})
         </td>
-        <td id="{{ course.id }}-{{ course.training_center.name }}">
+        <td id="{{ course.id }}-{{ course.training_center.name }}" style="float: left">
                 {{ course.training_center.name }}
         </td>
-        <td id="{{ course.id }}-{{ course.course_language }}">
+        <td>
                 {{ course.course_language }}
         </td>
         <td id="{{ course.id }}-{{ course.course_convener.user }}">
