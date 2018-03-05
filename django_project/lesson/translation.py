@@ -35,7 +35,8 @@ class WorksheetTranslation(TranslationOptions):
         'summary_text',
         'exercise_goal',
         'exercise_task',
-        'more_about_text'
+        'more_about_text',
+        'last_update',
     )
 
 
