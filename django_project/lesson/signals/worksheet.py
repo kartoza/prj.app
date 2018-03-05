@@ -13,6 +13,10 @@ from lesson.models.worksheet import Worksheet
 
 @receiver(pre_save, sender=Worksheet)
 def worksheet_pre_save(sender, instance, **kwargs):
+    # New instance, always set the last_update
+    if instance.pk is None:
+        instance.last_update = datetime.datetime.now()
+        return
     need_update_timestamp = False
     translated_fields = translator.get_options_for_model(
         Worksheet).get_field_names()
