@@ -5,6 +5,11 @@
             <a href="{% url "worksheet-detail" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}">
                 {{ worksheet.module }}
             </a>
+            {% if worksheet.is_translation_up_to_date != True %}
+                <span title="Translation is outdated">
+                    <sup>&#x2757;</sup>
+                </span>
+            {% endif %}
         </h4>
     </div>
 
