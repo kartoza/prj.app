@@ -16,7 +16,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
     VERSION=$1
     # Get the latest backups and media from production
-    make dbbackup
+    make dbsync
     make mediasync
     # Sync the latest backups and media to staging from production
     rsync -L  backups/latest.dmp staging.changelog.qgis.org:/home/projecta/deployment/backups/
