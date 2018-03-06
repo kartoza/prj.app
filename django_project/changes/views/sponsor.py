@@ -266,8 +266,11 @@ class SponsorDetailView(SponsorMixin, DetailView):
             project_slug = self.kwargs.get('project_slug', None)
             if slug and project_slug:
                 project = Project.objects.get(slug=project_slug)
-                obj = queryset.get(project=project, slug=slug)
-                return obj
+                try:
+                    obj = queryset.get(project=project, slug=slug)
+                    return obj
+                except:
+                    return Http404('Sorry! we could not find your sponsor.')
             else:
                 raise Http404('Sorry! We could not find your sponsor!')
 
