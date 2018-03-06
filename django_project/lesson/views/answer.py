@@ -104,7 +104,7 @@ class AnswerUpdateView(
         :rtype: dict
         """
         kwargs = super(AnswerUpdateView, self).get_form_kwargs()
-        answer = get_object_or_404(Answer, self.pk_url_kwarg)
+        answer = get_object_or_404(Answer, pk=kwargs['instance'].pk)
         kwargs['question'] = answer.question
         return kwargs
 
