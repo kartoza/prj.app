@@ -28,7 +28,8 @@ class CertificateAdmin(admin.ModelAdmin):
 
 class AttendeeAdmin(admin.ModelAdmin):
     """Attendee admin model."""
-    list_display = ('firstname', 'surname', 'email')
+    list_display = ('firstname', 'surname', 'email', 'certifying_organisation')
+    search_fields = ['firstname', 'surname']
 
     def queryset(self, request):
         """Ensure we use the correct manager.

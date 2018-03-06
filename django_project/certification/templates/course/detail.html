@@ -139,7 +139,7 @@
            href='{% url 'courseattendee-create' project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
             data-title="Add Course Attendees">
             {% show_button_icon "add" %}</a>
-         <a id='upload-attendee' class="btn btn-default btn-sm tooltip-toggle"
+         <a id='upload-attendee' class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
            href='{% url "upload-attendee" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
             data-title="Import Attendees from CSV file.">
             <span class="glyphicon glyphicon-import"></span>
@@ -204,7 +204,7 @@
                                     <a class="btn btn-default btn-xs tooltip-toggle btn-issue"
                                        href='{% url "paid-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
                                         data-title="Pay this certificate using credits">
-                                        <i class="glyphicon glyphicon-import"></i></a>
+                                        <i class="fa fa-usd"></i></a>
                                 {% else %}
                                     <a class="btn btn-default btn-xs tooltip-toggle btn-top-up"
                                        href='{% url "top-up" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug %}'
