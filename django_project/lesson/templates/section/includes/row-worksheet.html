@@ -1,15 +1,12 @@
 {% load thumbnail %}
+{% load lesson_tags %}
 <div class="row section-list" style="margin-top:5px; margin-left: 20px;">
     <div class="col-lg-9" id="{{ worksheet.module }}">
         <h4>
             <a href="{% url "worksheet-detail" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}">
                 {{ worksheet.module }}
             </a>
-            {% if worksheet.is_translation_up_to_date != True %}
-                <span title="Translation is outdated">
-                    <sup>&#x2757;</sup>
-                </span>
-            {% endif %}
+            {{ worksheet|is_translation_up_to_date }}
         </h4>
     </div>
 
