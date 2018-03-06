@@ -13,7 +13,7 @@ echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 	VERSION=$1
-	make dbbackup
+	make dbsync
 	make mediasync
 	ssh changelog.qgis.org "cd /home/projecta/deployment && git fetch --tags && git checkout $VERSION && make collectstatic && make reload"
 else
