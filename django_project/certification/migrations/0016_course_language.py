@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='course',
-            name='course_language',
-            field=models.CharField(default='English', max_length=200, null=True, help_text='A language that the Course will be conducted in,  e.g. English.', blank=True),
+            name='language',
+            field=models.CharField(default='English', max_length=200, null=True, help_text='A language that the Course will be conducted in, e.g. English.', blank=True),
         ),
     ]

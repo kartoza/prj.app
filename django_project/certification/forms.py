@@ -272,7 +272,7 @@ class CourseForm(forms.ModelForm):
             'course_type',
             'course_convener',
             'training_center',
-            'course_language',
+            "language",
             'start_date',
             'end_date',
             'template_certificate',

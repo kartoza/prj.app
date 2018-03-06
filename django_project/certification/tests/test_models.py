@@ -187,7 +187,7 @@ class TestCourse(TestCase):
 
         # check if model attributes exists.
         self.assertTrue(model.name is not None)
-        self.assertTrue(model.course_language is not None)
+        self.assertTrue(model.language is not None)
         self.assertTrue(model.course_convener is not None)
         self.assertTrue(model.certifying_organisation is not None)
         self.assertTrue(model.course_type is not None)

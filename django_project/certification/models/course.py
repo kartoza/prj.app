@@ -32,9 +32,9 @@ class Course(models.Model):
         blank=True,
     )
 
-    course_language = models.CharField(
+    language = models.CharField(
         help_text=_(
-            'A language that the Course will be conducted in,  e.g. English.'),
+            'A language that the Course will be conducted in, e.g. English.'),
         max_length=200,
         default=_('English'),
         null=True,
