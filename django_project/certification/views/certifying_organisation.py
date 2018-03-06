@@ -196,6 +196,10 @@ class CertifyingOrganisationDetailView(
         context = super(
             CertifyingOrganisationDetailView, self).get_context_data(**kwargs)
 
+        # lets set some default permission flags for checks in template.
+        context['user_can_create'] = False
+        context['user_can_delete'] = False
+
         certifying_organisation = context['certifyingorganisation']
         context['trainingcenters'] = TrainingCenter.objects.filter(
             certifying_organisation=certifying_organisation)
@@ -217,6 +221,25 @@ class CertifyingOrganisationDetailView(
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
             context['project'] = context['the_project']
+
+        if self.request.user.is_staff:
+            context['user_can_create'] = True
+            context['user_can_delete'] = True
+
+        certification_managers = (
+            context['the_project'].certification_managers.all())
+        if self.request.user in certification_managers:
+            context['user_can_create'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user == context['project'].owner:
+            context['user_can_create'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user in \
+                certifying_organisation.organisation_owners.all():
+            context['user_can_create'] = True
+            context['user_can_delete'] = True
         return context
 
     def get_queryset(self):
