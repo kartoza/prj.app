@@ -394,7 +394,6 @@ class AttendeeForm(forms.ModelForm):
         self.fields['certifying_organisation'].initial = \
             self.certifying_organisation
         self.fields['certifying_organisation'].widget = forms.HiddenInput()
-        kwargs.update({'add_to_course': self.fields['add_to_course']})
         self.helper.add_input(Submit('submit', 'Add'))
 
     def save(self, commit=True):
