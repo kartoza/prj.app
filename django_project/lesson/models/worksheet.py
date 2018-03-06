@@ -8,17 +8,17 @@ import logging
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import override, get_language
 
 from model_utils import FieldTracker
 
+from lesson.models.mixins import TranslationMixin
 from lesson.models.section import Section
 from lesson.utilities import custom_slug
 
 logger = logging.getLogger(__name__)
 
 
-class Worksheet(models.Model):
+class Worksheet(TranslationMixin):
     """Worksheet lesson model."""
 
     tracker = FieldTracker()
@@ -150,28 +150,6 @@ class Worksheet(models.Model):
     slug = models.SlugField(
         unique=True,
     )
-
-    last_update = models.DateTimeField(
-        help_text=_('Time stamp when the last worksheet updated.'),
-        blank=True,
-        null=True
-    )
-
-    @property
-    def is_translation_up_to_date(self):
-        """Property to show if the translated version is up to date or not."""
-        # Always up to date if the language is en.
-        if get_language() == 'en':
-            return True
-        with override('en'):
-            last_update_en = self.last_update
-        # One of the last update is None, then translation is not up to date.
-        if last_update_en is None or self.last_update is None:
-            return False
-        # Last update is older than English one --> no up to date.
-        if self.last_update <= last_update_en:
-            return False
-        return True
 
     # noinspection PyClassicStyleClass.
     class Meta:
