@@ -98,7 +98,7 @@ class AttendeeCreateView(LoginRequiredMixin, AttendeeMixin, CreateView):
                     author=self.request.user
                 )
                 course_attendee.save()
-        return HttpResponseRedirect(self.get_success_url())
+        return super(AttendeeCreateView, self).form_valid(form)
 
 
 class CsvUploadView(FormMessagesMixin, LoginRequiredMixin, FormView):
