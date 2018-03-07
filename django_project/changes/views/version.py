@@ -102,7 +102,7 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
             context['user_can_delete'] = True
 
         if context['project'].changelog_managers.filter(
-                project__owner=self.request.user).exists():
+                project__owner=self.request.user.id).exists():
             context['user_can_edit'] = True
             context['user_can_delete'] = True
 
