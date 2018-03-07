@@ -1,9 +1,10 @@
 {% load thumbnail %}
 {% load custom_markup %}
+{% load lesson_tags %}
 <div class="row section-list" style="margin-top:5px;">
     <div class="col-lg-9" id="{{ section.slug }}">
         <h3>
-            {{ section.name }}
+            {{ section.name }} {{ section|is_translation_up_to_date }}
         </h3>
          {{ section.notes | base_markdown }}
     </div>

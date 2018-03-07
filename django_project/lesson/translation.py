@@ -12,25 +12,31 @@ from lesson.models.specification import Specification
 from lesson.models.worksheet import Worksheet
 from lesson.models.worksheet_question import WorksheetQuestion
 
+
 @register(TranslationMixin)
 class TranslationMixinTranslation(TranslationOptions):
     fields = ('last_update',)
+
 
 @register(Answer)
 class AnswerTranslation(TranslationOptions):
     fields = ('answer', 'answer_explanation')
 
+
 @register(FurtherReading)
 class FurtherReadingTranslation(TranslationOptions):
     fields = ('text', )
 
+
 @register(Section)
-class SectionTranslation(TranslationOptions):
+class SectionTranslation(TranslationMixinTranslation):
     fields = ('name', 'notes')
+
 
 @register(Specification)
 class SpecificationTranslation(TranslationOptions):
     fields = ('title', 'value', 'notes')
+
 
 @register(Worksheet)
 class WorksheetTranslation(TranslationMixinTranslation):
@@ -43,6 +49,7 @@ class WorksheetTranslation(TranslationMixinTranslation):
         'exercise_task',
         'more_about_text',
     )
+
 
 @register(WorksheetQuestion)
 class WorksheetQuestionTranslation(TranslationOptions):
