@@ -226,9 +226,8 @@ class CertifyingOrganisationDetailView(
             context['user_can_create'] = True
             context['user_can_delete'] = True
 
-        certification_managers = (
-            context['the_project'].certification_managers.all())
-        if self.request.user in certification_managers:
+        if context['the_project'].certification_managers.filter(
+                project__owner=self.request.user).exists():
             context['user_can_create'] = True
             context['user_can_delete'] = True
 
@@ -236,8 +235,8 @@ class CertifyingOrganisationDetailView(
             context['user_can_create'] = True
             context['user_can_delete'] = True
 
-        if self.request.user in \
-                certifying_organisation.organisation_owners.all():
+        if certifying_organisation.organisation_owners.filter(
+                project__owner=self.request.user).exists():
             context['user_can_create'] = True
             context['user_can_delete'] = True
         return context
