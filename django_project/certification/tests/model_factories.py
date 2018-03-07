@@ -76,6 +76,8 @@ class CourseF(factory.django.DjangoModelFactory):
         model = Course
 
     name = factory.sequence(lambda n: u'Test course name %s' % n)
+    language = factory.sequence(
+        lambda n: u'Test course language %s' % n)
     course_convener = factory.SubFactory(CourseConvenerF)
     certifying_organisation = factory.SubFactory(CertifyingOrganisationF)
     course_type = factory.SubFactory(CourseTypeF)

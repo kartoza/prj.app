@@ -32,6 +32,15 @@ class Course(models.Model):
         blank=True,
     )
 
+    language = models.CharField(
+        help_text=_(
+            'A language that the Course will be conducted in, e.g. English.'),
+        max_length=200,
+        default=_('English'),
+        null=True,
+        blank=True,
+    )
+
     start_date = models.DateField(
         _('Start date'),
         help_text=_('Course start date'),
