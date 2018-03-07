@@ -7,12 +7,13 @@ import logging
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from lesson.models.mixins import TranslationMixin
 from lesson.models.worksheet_question import WorksheetQuestion
 
 logger = logging.getLogger(__name__)
 
 
-class Answer(models.Model):
+class Answer(TranslationMixin):
     """Answer lesson model.
 
     Each lesson can have zero or more questions associated with it. The
