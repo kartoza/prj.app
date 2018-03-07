@@ -23,9 +23,13 @@ class TranslationMixin(models.Model):
             return True
         with override('en'):
             last_update_en = self.last_update
-        # One of the last update is None, then translation is not up to date.
-        if last_update_en is None or self.last_update is None:
-            return False
+        # English last update None means it was created before the
+        # "last_updated" added.
+        if last_update_en is None:
+            if self.last_update is None:
+                return False
+            else:
+                return True
         # Last update is older than English one --> no up to date.
         if self.last_update <= last_update_en:
             return False

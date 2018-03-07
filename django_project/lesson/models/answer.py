@@ -7,6 +7,8 @@ import logging
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from model_utils import FieldTracker
+
 from lesson.models.mixins import TranslationMixin
 from lesson.models.worksheet_question import WorksheetQuestion
 
@@ -21,6 +23,8 @@ class Answer(TranslationMixin):
     indication if it is a correct answer or not. One question could have
     more than one correct answers (or no correct answers).
     """
+
+    tracker = FieldTracker()
 
     question = models.ForeignKey(WorksheetQuestion)
 
@@ -80,3 +84,6 @@ class Answer(TranslationMixin):
 
     def __unicode__(self):
         return self.answer
+
+
+from lesson.signals.answer import *  # noqa
