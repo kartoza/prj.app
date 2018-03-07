@@ -229,7 +229,7 @@
                     <div class="row">
                         <li style="margin-bottom: 20px">
                             <div class="col-lg-10">
-                              <strong>{{ question.question }}:</strong>
+                              <strong>{{ question.question }}:</strong>{{ question|is_translation_up_to_date }}
                             </div>
                             <div class="col-lg-2">
                                 {% if user_can_edit %}

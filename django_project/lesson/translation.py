@@ -52,5 +52,5 @@ class WorksheetTranslation(TranslationMixinTranslation):
 
 
 @register(WorksheetQuestion)
-class WorksheetQuestionTranslation(TranslationOptions):
+class WorksheetQuestionTranslation(TranslationMixinTranslation):
     fields = ('question', )
