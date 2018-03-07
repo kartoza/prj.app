@@ -1,7 +1,9 @@
 # coding=utf-8
 """Translation for lesson app."""
 
-from modeltranslation.translator import translator, TranslationOptions
+from modeltranslation.translator import TranslationOptions, register
+
+from lesson.models.mixins import TranslationMixin
 
 from lesson.models.answer import Answer
 from lesson.models.further_reading import FurtherReading
@@ -10,24 +12,28 @@ from lesson.models.specification import Specification
 from lesson.models.worksheet import Worksheet
 from lesson.models.worksheet_question import WorksheetQuestion
 
+@register(TranslationMixin)
+class TranslationMixinTranslation(TranslationOptions):
+    fields = ('last_update',)
 
+@register(Answer)
 class AnswerTranslation(TranslationOptions):
     fields = ('answer', 'answer_explanation')
 
-
+@register(FurtherReading)
 class FurtherReadingTranslation(TranslationOptions):
     fields = ('text', )
 
-
+@register(Section)
 class SectionTranslation(TranslationOptions):
     fields = ('name', 'notes')
 
-
+@register(Specification)
 class SpecificationTranslation(TranslationOptions):
     fields = ('title', 'value', 'notes')
 
-
-class WorksheetTranslation(TranslationOptions):
+@register(Worksheet)
+class WorksheetTranslation(TranslationMixinTranslation):
     fields = (
         'module',
         'title',
@@ -36,17 +42,8 @@ class WorksheetTranslation(TranslationOptions):
         'exercise_goal',
         'exercise_task',
         'more_about_text',
-        'last_update',
     )
 
-
+@register(WorksheetQuestion)
 class WorksheetQuestionTranslation(TranslationOptions):
     fields = ('question', )
-
-
-translator.register(Answer, AnswerTranslation)
-translator.register(FurtherReading, FurtherReadingTranslation)
-translator.register(Section, SectionTranslation)
-translator.register(Specification, SpecificationTranslation)
-translator.register(Worksheet, WorksheetTranslation)
-translator.register(WorksheetQuestion, WorksheetQuestionTranslation)
