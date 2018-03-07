@@ -9,6 +9,8 @@ from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from model_utils import FieldTracker
+
 from lesson.models.mixins import TranslationMixin
 from lesson.models.worksheet import Worksheet
 
@@ -20,6 +22,8 @@ class WorksheetQuestion(TranslationMixin):
 
     Question for checking participant's knowledge for each worksheet/module.
     """
+
+    tracker = FieldTracker()
 
     worksheet = models.ForeignKey(Worksheet)
 
@@ -74,3 +78,6 @@ class WorksheetQuestion(TranslationMixin):
 
     def __unicode__(self):
         return self.question
+
+
+from lesson.signals.worksheet_question import *  # noqa

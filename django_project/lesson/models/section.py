@@ -7,6 +7,8 @@ import logging
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from model_utils import FieldTracker
+
 from lesson.models.mixins import TranslationMixin
 from lesson.utilities import custom_slug
 
@@ -21,6 +23,8 @@ class Section(TranslationMixin):
     the sections in the correct sequence.
 
     """
+
+    tracker = FieldTracker()
 
     project = models.ForeignKey('base.Project', verbose_name=_('Project name'))
 
@@ -89,3 +93,6 @@ class Section(TranslationMixin):
 
     def __unicode__(self):
         return self.name
+
+
+from lesson.signals.section import *  # noqa
