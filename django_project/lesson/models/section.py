@@ -7,12 +7,13 @@ import logging
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from lesson.models.mixins import TranslationMixin
 from lesson.utilities import custom_slug
 
 logger = logging.getLogger(__name__)
 
 
-class Section(models.Model):
+class Section(TranslationMixin):
     """Section lesson model.
 
     A section is a grouping for one or more lessons on a common theme

@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load custom_markup %}
 {% load staticfiles %}
+{% load lesson_tags %}
 
 {% block title %}Worksheet - {{ block.super }}{% endblock %}
 
@@ -62,8 +63,14 @@
             {% endif %}
         </div>
         <div class="col-lg-8" style="text-align:right;">
-            <h2><strong>Section : {{ worksheet.section.name }}</strong></h2>
-            <h3 style="margin-top:-10px;margin-bottom:20px;"><i>Module : {{ worksheet.module }}</i></h3>
+            <h2>
+                <strong>Section : {{ worksheet.section.name }}</strong>
+                {{ worksheet.section|is_translation_up_to_date }}
+            </h2>
+            <h3 style="margin-top:-10px;margin-bottom:20px;">
+                <i>Module : {{ worksheet.module }}</i>
+                {{ worksheet|is_translation_up_to_date }}
+            </h3>
         </div>
     </div>
 
