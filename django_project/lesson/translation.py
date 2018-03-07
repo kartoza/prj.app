@@ -19,7 +19,7 @@ class TranslationMixinTranslation(TranslationOptions):
 
 
 @register(Answer)
-class AnswerTranslation(TranslationOptions):
+class AnswerTranslation(TranslationMixinTranslation):
     fields = ('answer', 'answer_explanation')
 
 

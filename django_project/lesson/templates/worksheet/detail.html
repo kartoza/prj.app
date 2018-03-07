@@ -262,7 +262,7 @@
                                     {% if answer.is_correct %}
                                         <span class="question-answer-action" style="display:none;">&#10004;</span>
                                     {%  endif %}
-                                    {{ answer.answer }}
+                                    {{ answer.answer }}{{ answer|is_translation_up_to_date }}
                                     {% if answer.answer_explanation %}
                                         <span class="question-answer-action" style="display:none;">: <em>{{ answer.answer_explanation | base_markdown }}</em></span>
                                     {% endif %}
