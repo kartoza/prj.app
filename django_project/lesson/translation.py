@@ -24,7 +24,7 @@ class AnswerTranslation(TranslationMixinTranslation):
 
 
 @register(FurtherReading)
-class FurtherReadingTranslation(TranslationOptions):
+class FurtherReadingTranslation(TranslationMixinTranslation):
     fields = ('text', )
 
 

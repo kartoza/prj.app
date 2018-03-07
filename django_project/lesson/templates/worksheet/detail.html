@@ -321,6 +321,7 @@
                         {% if info.link %}
                             <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
                         {% endif %}
+                        {{ info|is_translation_up_to_date }}
                         {% if user_can_edit %}
                             <div class="pull-right btn-group">
                                 <a class="btn btn-default btn-mini btn-delete tooltip-toggle further-reading-action" style="display:none;"
