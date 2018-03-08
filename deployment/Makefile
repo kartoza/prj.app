@@ -78,15 +78,15 @@ migrate:
 	@# We add the '-' prefix to the next line as the migration may fail
 	@# but we want to continue anyway.
 	@#We need to migrate accounts first as it has a reference to user model
-	-@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py migrate auth
-	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py migrate
+	-@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py migrate auth
+	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py migrate
 
 update-migrations:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Running update migrations in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py makemigrations
+	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py makemigrations
 
 collectstatic:
 	@echo
@@ -138,35 +138,35 @@ logs:
 	@echo "------------------------------------------------------------------"
 	@echo "Showing uwsgi logs in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) logs uwsgi
+	@docker-compose -p $(PROJECT_ID) logs -f --tail=50 uwsgi
 
 dblogs:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Showing db logs in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) logs db
+	@docker-compose -p $(PROJECT_ID) logs -f --tail=50 db
 
 nginxlogs:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Showing nginx logs in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) logs web
+	@docker-compose -p $(PROJECT_ID) logs -f --tail=50 web
 
 shell:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Shelling in in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) run uwsgi /bin/bash
+	@docker-compose -p $(PROJECT_ID) exec uwsgi /bin/bash
 
 superuser:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Creating a superuser in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py createsuperuser
+	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py createsuperuser
 
 dbbash:
 	@echo
@@ -241,7 +241,7 @@ sentry:
 	@echo "--------------------------"
 	@echo "Running sentry production mode"
 	@echo "--------------------------"
-	@docker-compose  -p $(PROJECT_ID) up -d sentry
+	@docker-compose -p $(PROJECT_ID) up -d sentry
 
 maillogs:
 	@echo
