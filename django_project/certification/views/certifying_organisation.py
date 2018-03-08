@@ -218,9 +218,8 @@ class CertifyingOrganisationDetailView(
             certifying_organisation=certifying_organisation)
         context['num_attendees'] = context['attendee'].count()
         context['project_slug'] = project_slug
-        if project_slug:
-            context['the_project'] = Project.objects.get(slug=project_slug)
-            context['project'] = context['the_project']
+        context['the_project'] = Project.objects.get(slug=project_slug)
+        context['project'] = context['the_project']
 
         if self.request.user.is_staff:
             context['user_can_create'] = True
