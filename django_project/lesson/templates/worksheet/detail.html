@@ -130,7 +130,7 @@
                         </tr>
                         {% for requirement in requirements %}
                             <tr>
-                                <td style="background-color:#f3f9fe;padding:5px;">{{ requirement.title }}</td>
+                                <td style="background-color:#f3f9fe;padding:5px;">{{ requirement.title }}{{ requirement|is_translation_up_to_date }}</td>
                                 <td style="padding:5px;">{{ requirement.value }}</td>
                                 {% if user_can_edit %}
                                 <td style="padding-right: 0">
