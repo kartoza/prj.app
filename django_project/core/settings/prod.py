@@ -125,4 +125,3 @@ if 'raven.contrib.django.raven_compat' in INSTALLED_APPS and SENTRY_KEY:
             },
         },
     }
-

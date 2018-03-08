@@ -32,8 +32,9 @@ before_script:
   - psql -c 'CREATE EXTENSION postgis;' -U postgres -d test_db
 
 script:
-  - flake8 --config .flake8 django_project
-  - cd django_project
+  - cd deployment
+  - make flake8
+  - cd ../django_project
   - python manage.py makemigrations
   - python manage.py migrate
   - python manage.py collectstatic --noinput --verbosity 0
