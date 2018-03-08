@@ -34,7 +34,7 @@ class SectionTranslation(TranslationMixinTranslation):
 
 
 @register(Specification)
-class SpecificationTranslation(TranslationOptions):
+class SpecificationTranslation(TranslationMixinTranslation):
     fields = ('title', 'value', 'notes')
 
 

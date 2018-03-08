@@ -7,18 +7,23 @@ import logging
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from model_utils import FieldTracker
+
+from lesson.models.mixins import TranslationMixin
 from lesson.models.worksheet import Worksheet
 
 
 logger = logging.getLogger(__name__)
 
 
-class Specification(models.Model):
+class Specification(TranslationMixin):
     """Specification lesson model.
 
     A specification is a particular requirement for a task that the learner
     is required to do in the lesson.
     """
+
+    tracker = FieldTracker()
 
     worksheet = models.ForeignKey(Worksheet)
 
@@ -79,3 +84,6 @@ class Specification(models.Model):
 
     def __unicode__(self):
         return self.title
+
+
+from lesson.signals.specification import *  # noqa
