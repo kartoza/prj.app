@@ -33,12 +33,20 @@ class AttendeeCreateView(LoginRequiredMixin, AttendeeMixin, CreateView):
        :returns: URL
        :rtype: HttpResponse
        """
-
-        return reverse('courseattendee-create', kwargs={
-            'project_slug': self.project_slug,
-            'organisation_slug': self.organisation_slug,
-            'slug': self.course_slug,
-        })
+        add_to_course = self.request.POST.get('add_to_course')
+        if add_to_course is None:
+            success_url = reverse('courseattendee-create', kwargs={
+                'project_slug': self.project_slug,
+                'organisation_slug': self.organisation_slug,
+                'slug': self.course_slug,
+            })
+        else:
+            success_url = reverse('course-detail', kwargs={
+                'project_slug': self.project_slug,
+                'organisation_slug': self.organisation_slug,
+                'slug': self.course_slug,
+            })
+        return success_url
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -72,6 +80,24 @@ class AttendeeCreateView(LoginRequiredMixin, AttendeeMixin, CreateView):
             'certifying_organisation': self.certifying_organisation
         })
         return kwargs
+
+    def form_valid(self, form):
+        add_to_course = self.request.POST.get('add_to_course')
+        if add_to_course is None:
+            if form.is_valid():
+                form.save()
+        else:
+            if form.is_valid():
+                object = form.save()
+                course_slug = self.kwargs.get('slug', None)
+                course = Course.objects.get(slug=course_slug)
+                course_attendee = CourseAttendee(
+                    attendee=object,
+                    course=course,
+                    author=self.request.user
+                )
+                course_attendee.save()
+        return super(AttendeeCreateView, self).form_valid(form)
 
 
 class CsvUploadView(FormMessagesMixin, LoginRequiredMixin, FormView):

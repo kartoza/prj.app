@@ -7,6 +7,15 @@
 {% endblock page_title %}
 
 {% block content %}
+    <style>
+        label[for=id_add_to_course] {
+            padding-left: 0 !important;
+            font-weight: bold !important;
+        }
+        label[for=id_add_to_course] p {
+            font-weight: normal !important;
+        }
+    </style>
     <section id="forms">
         <div class='container'>
             {% csrf_token %}

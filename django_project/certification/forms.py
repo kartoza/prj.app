@@ -361,6 +361,12 @@ class CourseAttendeeForm(forms.ModelForm):
 
 class AttendeeForm(forms.ModelForm):
 
+    add_to_course = forms.BooleanField(
+        initial=True,
+        help_text='Add this attendee to course.',
+        required=False
+    )
+
     class Meta:
         model = Attendee
         fields = (
@@ -381,6 +387,7 @@ class AttendeeForm(forms.ModelForm):
                 Field('firstname', css_class='form-control'),
                 Field('surname', css_class='form-control'),
                 Field('email', css_class='form-control'),
+                Field('add_to_course', css_class='form-control')
             )
         )
         self.helper.layout = layout
