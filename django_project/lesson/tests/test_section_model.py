@@ -2,10 +2,9 @@
 """Test for lesson models."""
 
 from django.test import TestCase
+from django.utils import translation
 
-from lesson.tests.model_factories import (
-    SectionF
-)
+from lesson.tests.model_factories import SectionF
 
 
 class TestSection(TestCase):
@@ -59,3 +58,36 @@ class TestSection(TestCase):
         # check if updated.
         for key, val in new_model_data.items():
             self.assertEqual(model.__dict__.get(key), val)
+
+    def test_Section_update_last_update(self):
+        """Test section on translation update."""
+        indonesian_name = 'Name Baru.'
+
+        model = SectionF.create()
+        last_update = model.last_update
+        model.name = 'New name please'
+        model.save()
+        self.assertTrue(last_update < model.last_update)
+
+        with translation.override('id'):
+            # At first it's not up to date
+            self.assertFalse(model.is_translation_up_to_date)
+            # Update the name in Bahasa Indonesia
+            model.name = indonesian_name
+            model.save()
+            # It should be up to date.
+            self.assertTrue(model.is_translation_up_to_date)
+
+        # Update the English one
+        model.name = 'New name 2'
+        model.save()
+
+        with translation.override('id'):
+            # It becomes not up to date again.
+            self.assertFalse(model.is_translation_up_to_date)
+            self.assertEqual(indonesian_name, model.name)
+            # Update the name in Bahasa Indonesia
+            model.name = 'Nama Baru 2.'
+            model.save()
+            # It should be up to date.
+            self.assertTrue(model.is_translation_up_to_date)

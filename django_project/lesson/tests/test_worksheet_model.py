@@ -68,7 +68,7 @@ class TestSection(TestCase):
             self.assertEqual(model.__dict__.get(key), val)
 
     def test_Worksheet_update_last_update(self):
-        """Test worksheet on update."""
+        """Test worksheet on translation update."""
         indonesian_title = 'Judul Baru.'
 
         model = WorksheetF.create()
