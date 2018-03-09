@@ -170,11 +170,30 @@ class VersionDetailView(VersionMixin, DetailView):
                 sponsors[sponsor.sponsorship_level].append(sponsor.sponsor)
 
         context['sponsors'] = sponsors
+        context['user_can_edit'] = False
+        context['user_can_delete'] = False
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
             context['project'] = Project.objects.get(slug=project_slug)
 
+        # lets check for specific user permissions here.
+        if self.request.user.is_staff:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user.is_superuser:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        if context['project'].changelog_managers.filter(
+                project__owner=self.request.user.id).exists():
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user == context['project'].owner:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
         return context
 
     def get_queryset(self):
