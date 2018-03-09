@@ -16,18 +16,18 @@ site has been deployed under docker. These deployment modes are supported:
 
 ## Production
 
-You can simply run the provided script and it will build and deploy the docker
+You can simply run the provided make command and it will build and deploy the docker
 images for you in **production mode**.
 
 ```
 cd deployment
-make deploy
-sudo chmod -R a+rwX static
+make web
+make migrate
+make collect static
 ```
 
-Now point your browser at the ip of the web container on port 8080 or to the
+Now point your browser at the ip of the web container on port 80 or to the
 host port mapping as defined in the docker-compose.yml file.
-
 
 To make a superuser account do:
 
@@ -65,6 +65,10 @@ Running arbitrary management commands is easy
 
 
 ## Setup nginx reverse proxy
+
+**Note:** Normally you would not need to do this if you are running on a 
+dedicated host. On a dedicated host you can just run the services in the 
+docker-compose scripts straight out of port 80.
 
 You should create a new nginx virtual host - please see
 ``*-nginx.conf`` in the deployment directory for examples. There is
