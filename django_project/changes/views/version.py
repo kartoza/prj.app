@@ -101,9 +101,8 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
             context['user_can_edit'] = True
             context['user_can_delete'] = True
 
-        version_managers = (
-            context['project'].changelog_managers.all())
-        if self.request.user in version_managers:
+        if context['project'].changelog_managers.filter(
+                project__owner=self.request.user.id).exists():
             context['user_can_edit'] = True
             context['user_can_delete'] = True
 
