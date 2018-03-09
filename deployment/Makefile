@@ -8,13 +8,6 @@ SHELL := /bin/bash
 default: web
 run: build permissions web migrate collectstatic
 
-deploy: run
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Bringing up fresh instance "
-	@echo "You can access it on http://localhost:61200"
-	@echo "------------------------------------------------------------------"
-
 build:
 	@echo
 	@echo "------------------------------------------------------------------"
