@@ -170,6 +170,8 @@ class VersionDetailView(VersionMixin, DetailView):
                 sponsors[sponsor.sponsorship_level].append(sponsor.sponsor)
 
         context['sponsors'] = sponsors
+        context['user_can_edit'] =False
+        context['user_can_delete'] = False
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
