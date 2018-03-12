@@ -9,6 +9,7 @@ from crispy_forms.layout import (
     Fieldset,
     Field,
     Submit,
+    HTML,
 )
 
 from modeltranslation.forms import TranslationModelForm
@@ -32,7 +33,11 @@ class QuestionForm(TranslationModelForm):
             Fieldset(
                 _('Worksheet {}: question details').format(self.worksheet),
                 Field('question', css_class='form_control'),
-                Field('question_image', css_class='form_control'),
+                HTML(
+                    '{% if form.question_image.value %}'
+                    '<img class="img-responsive" '
+                    'src="{{ MEDIA_URL }}{{ form.question_image.value }}">'
+                    '{% endif %}', ),
                 css_id='project-form'
             )
         )

@@ -241,6 +241,12 @@
                         <li style="margin-bottom: 20px">
                             <div class="col-lg-10">
                               <strong>{{ question.question }}:</strong>{{ question|is_translation_up_to_date }}
+                                {% if question.question_image %}
+                                    <img id="{{ question.question_image }}"
+                                         class="img-responsive img-rounded pull-left"
+                                            src="{{ question.question_image.url }}"
+                                            style="max-width: 300px !important;"/>
+                                {% endif %}
                             </div>
                             <div class="col-lg-2">
                                 {% if user_can_edit %}
