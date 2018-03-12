@@ -92,18 +92,25 @@
           <p><em>“{{ worksheet.summary_leader }}”</em></p>
           <p>{{ worksheet.summary_text | base_markdown }}</p>
           {% if worksheet.summary_image %}
-            <img src="{{ worksheet.summary_image.url }}" class="img-responsive img-rounded pull-right" style="width:100%;max-height:300px;">
+            <img src="{{ worksheet.summary_image.url }}"
+                 class="img-responsive img-rounded center-block"
+                 style="
+                    width:auto;
+                    height:auto;
+                    max-height:300px;
+                    max-width: 300px;"
+            >
           {% endif %}
         </div>
     </div>
 
     <div class="row details-worksheet" style="margin-top:10px;">
-        <div class="col-lg-7">
+        <div class="col-lg-12">
             <h4><strong>You try: </strong></h4>
             <p><strong><i>Goal: {{ worksheet.exercise_goal }}</i></strong></p>
             <p>{{ worksheet.exercise_task | base_markdown }}</p>
         </div>
-        <div style="margin-bottom: 20px" class="details-worksheet col-lg-5 requirement-table">
+        <div style="margin-bottom: 20px" class="details-worksheet col-lg-12 requirement-table">
             {% if user_can_edit %}
                 <div class="pull-right btn-group requirement-action" style="margin-bottom:5px;display:none;">
                     <a class="btn btn-default btn-mini tooltip-toggle"
@@ -179,19 +186,23 @@
     </div>
 
     <div class="row details-worksheet" style="margin-top:10px;">
-        <div class="col-lg-8">
+        {% if worksheet.more_about_image %}
+            <div class="col-lg-8">
+        {% else %}
+            <div class="col-lg-12">
+        {% endif %}
           <p>{{ worksheet.more_about_text | base_markdown }}</p>
         </div>
-        <div class="col-lg-4">
-            {% if worksheet.more_about_image %}
+        {% if worksheet.more_about_image %}
+            <div class="col-lg-4">
                 <a href="#" class="pop-image">
                     <img id="{{ worksheet.more_about_image }}" class="img-responsive img-rounded pull-right"
                          src="{{ worksheet.more_about_image.url }}"
                          style="max-width: 100% !important;"
                          alt="" />
                 </a>
-            {% endif %}
-          </div>
+            </div>
+        {% endif %}
     </div>
 
     {# Check your knowledge #}
