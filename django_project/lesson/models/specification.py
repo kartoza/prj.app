@@ -37,14 +37,14 @@ class Specification(TranslationMixin):
     )
 
     title = models.CharField(
-        help_text=_('Title of specification.'),
+        help_text=_('Title of specification. Markdown is supported'),
         blank=False,
         null=False,
         max_length=200,
     )
 
     value = models.CharField(
-        help_text=_('Value of specification.'),
+        help_text=_('Value of specification. Markdown is supported'),
         blank=False,
         null=False,
         max_length=200,

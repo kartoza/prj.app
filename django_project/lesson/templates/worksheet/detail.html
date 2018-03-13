@@ -137,8 +137,8 @@
                         </tr>
                         {% for requirement in requirements %}
                             <tr>
-                                <td style="background-color:#f3f9fe;padding:5px;">{{ requirement.title }}{{ requirement|is_translation_up_to_date }}</td>
-                                <td style="padding:5px;">{{ requirement.value }}</td>
+                                <td style="background-color:#f3f9fe;padding:5px;">{{ requirement.title|base_markdown }}{{ requirement|is_translation_up_to_date }}</td>
+                                <td style="padding:5px;">{{ requirement.value|base_markdown }}</td>
                                 {% if user_can_edit %}
                                 <td style="padding-right: 0">
                                     <div class="btn-group pull-right requirement-action" style="display:none;">
