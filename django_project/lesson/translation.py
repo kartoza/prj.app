@@ -47,6 +47,7 @@ class WorksheetTranslation(TranslationMixinTranslation):
         'summary_text',
         'exercise_goal',
         'exercise_task',
+        'more_about_title',
         'more_about_text',
     )
 
