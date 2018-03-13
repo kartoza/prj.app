@@ -67,8 +67,8 @@ class WorksheetDetailView(
 
         # Permissions
         context['user_can_edit'] = False
-        if context['worksheet'].section.project.lesson_managers.filter(
-                project__owner=self.request.user.id).exists():
+        if self.request.user in context[
+            'worksheet'].section.project.lesson_managers.all():
             context['user_can_edit'] = True
 
         if self.request.user == context['worksheet'].section.project.owner:
