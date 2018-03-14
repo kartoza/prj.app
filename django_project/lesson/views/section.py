@@ -15,7 +15,6 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
-from pure_pagination.mixins import PaginationMixin
 
 from base.models.project import Project
 from lesson.models.section import Section
@@ -67,12 +66,11 @@ class SectionCreateView(LoginRequiredMixin, SectionMixin, CreateView):
         return kwargs
 
 
-class SectionListView(SectionMixin, PaginationMixin, ListView):
+class SectionListView(SectionMixin, ListView):
     """List view for Section."""
 
     context_object_name = 'sections'
     template_name = 'section/list.html'
-    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
