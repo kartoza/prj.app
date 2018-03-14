@@ -11,7 +11,7 @@ from django.views.generic import (
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin
 
 from lesson.forms.question import QuestionForm
 from lesson.models.worksheet_question import WorksheetQuestion
@@ -26,8 +26,7 @@ class QuestionMixin(object):
     form_class = QuestionForm
 
 
-class QuestionCreateView(
-    LoginRequiredMixin, QuestionMixin, CreateView):
+class QuestionCreateView(LoginRequiredMixin, QuestionMixin, CreateView):
     """Create view for Question."""
 
     context_object_name = 'question'
@@ -127,7 +126,7 @@ class QuestionUpdateView(
 
 
 class QuestionOrderView(
-    StaffuserRequiredMixin, QuestionMixin, ListView):
+    LoginRequiredMixin, QuestionMixin, ListView):
     """List view to order questions."""
     context_object_name = 'questions'
     template_name = 'question/order.html'

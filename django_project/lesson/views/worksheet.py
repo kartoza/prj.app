@@ -14,7 +14,7 @@ from django.views.generic import (
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin
 from weasyprint import HTML
 
 from lesson.forms.worksheet import WorksheetForm
@@ -200,7 +200,7 @@ class WorksheetDeleteView(
         return url
 
 
-class WorksheetOrderView(StaffuserRequiredMixin, WorksheetMixin, ListView):
+class WorksheetOrderView(LoginRequiredMixin, WorksheetMixin, ListView):
     """List view to order worksheet."""
     context_object_name = 'worksheets'
     template_name = 'worksheet/order.html'
