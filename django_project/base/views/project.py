@@ -34,7 +34,7 @@ class ProjectMixin(object):
 
 
 class ProjectBallotListView(ProjectMixin, PaginationMixin, DetailView):
-    """List all ballots within in a project"""
+    """List all ballots within in a project."""
     context_object_name = 'project'
     template_name = 'project/ballot-list.html'
     paginate_by = 1000
@@ -66,7 +66,7 @@ class ProjectBallotListView(ProjectMixin, PaginationMixin, DetailView):
 
 
 class ProjectListView(ProjectMixin, PaginationMixin, ListView):
-    """List all approved projects"""
+    """List all approved projects."""
     context_object_name = 'projects'
     template_name = 'project/list.html'
     paginate_by = 1000

@@ -15,7 +15,7 @@ class ApprovedCategoryManager(models.Manager):
     """Custom category manager that shows only approved records."""
 
     def get_queryset(self):
-        """Query set generator"""
+        """Query set generator."""
         return super(
             ApprovedCategoryManager, self).get_queryset().filter(
                 approved=True)
@@ -25,7 +25,7 @@ class UnapprovedCategoryManager(models.Manager):
     """Custom version manager that shows only unapproved records."""
 
     def get_queryset(self):
-        """Query set generator"""
+        """Query set generator."""
         return super(
             UnapprovedCategoryManager, self).get_queryset().filter(
                 approved=False)

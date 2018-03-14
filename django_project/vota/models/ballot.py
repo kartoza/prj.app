@@ -27,7 +27,7 @@ class ApprovedCategoryManager(models.Manager):
     """Custom category manager that shows only approved ballots."""
 
     def get_query_set(self):
-        """Query set generator"""
+        """Query set generator."""
         return super(
             ApprovedCategoryManager, self).get_query_set().filter(
                 approved=True)
@@ -37,7 +37,7 @@ class DeniedCategoryManager(models.Manager):
     """Custom version manager that shows only denied ballots."""
 
     def get_query_set(self):
-        """Query set generator"""
+        """Query set generator."""
         return super(
             DeniedCategoryManager, self).get_query_set().filter(
                 denied=True)
@@ -47,7 +47,7 @@ class OpenBallotManager(models.Manager):
     """Custom version manager that shows only open ballots."""
 
     def get_query_set(self):
-        """Query set generator"""
+        """Query set generator."""
         return super(
             OpenBallotManager, self).get_query_set().filter(
                 open_from__lt=timezone.now()).filter(closes__gt=timezone.now())
@@ -57,7 +57,7 @@ class ClosedBallotManager(models.Manager):
     """Custom version manager that shows only closed ballots."""
 
     def get_query_set(self):
-        """Query set generator"""
+        """Query set generator."""
         return super(
             ClosedBallotManager, self).get_query_set().filter(
                 closes__gt=timezone.now())

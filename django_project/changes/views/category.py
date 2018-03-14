@@ -185,7 +185,7 @@ class CategoryListView(LoginRequiredMixin, CategoryMixin, ListView):
 
 
 class CategoryOrderView(LoginRequiredMixin, CategoryMixin, ListView):
-    """List view to order category"""
+    """List view to order category."""
     context_object_name = 'categories'
     template_name = 'category/order.html'
 
@@ -365,7 +365,7 @@ class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
 
 
 class CategoryOrderSubmitView(LoginRequiredMixin, CategoryMixin, UpdateView):
-    """Update order view for Category"""
+    """Update order view for Category."""
     context_object_name = 'category'
 
     def post(self, request, *args, **kwargs):

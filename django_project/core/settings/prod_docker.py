@@ -1,5 +1,5 @@
 
-"""Configuration for production server"""
+"""Configuration for production server."""
 # noinspection PyUnresolvedReferences
 from .prod import *  # noqa
 import os

@@ -672,7 +672,7 @@ def generate_sponsor_cloud(request, **kwargs):
 
 
 class GenerateSponsorPDFView(LoginRequiredMixin, SponsorMixin, TemplateView):
-    """Template View for invoice generation"""
+    """Template View for invoice generation."""
     context_object_name = 'sponsors'
     template_name = 'sponsor/invoice.html'
 

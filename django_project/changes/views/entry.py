@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""View classes for Entry"""
+"""View classes for Entry."""
 
 from base.models import Project
 # noinspection PyUnresolvedReferences
@@ -345,7 +345,7 @@ class EntryOrderView(LoginRequiredMixin, EntryMixin, ListView):
 
 
 class EntryOrderSubmitView(LoginRequiredMixin, EntryMixin, UpdateView):
-    """Update order view for Section"""
+    """Update order view for Section."""
 
     def post(self, request, *args, **kwargs):
         """Post the project_slug from the URL and define the Project

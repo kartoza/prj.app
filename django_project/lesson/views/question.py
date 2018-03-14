@@ -128,7 +128,7 @@ class QuestionUpdateView(
 
 class QuestionOrderView(
     StaffuserRequiredMixin, QuestionMixin, ListView):
-    """List view to order questions"""
+    """List view to order questions."""
     context_object_name = 'questions'
     template_name = 'question/order.html'
 

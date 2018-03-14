@@ -17,7 +17,7 @@ from lesson.models.worksheet_question import WorksheetQuestion
 
 
 class QuestionForm(TranslationModelForm):
-    """Form for creating Question"""
+    """Form for creating Question."""
 
     class Meta:
         model = WorksheetQuestion

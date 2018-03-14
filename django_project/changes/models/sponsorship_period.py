@@ -20,7 +20,7 @@ class ApprovedSponsorshipPeriodManager(models.Manager):
     """Custom sponsor manager that shows only approved records."""
 
     def get_queryset(self):
-        """Query set generator"""
+        """Query set generator."""
         return super(
             ApprovedSponsorshipPeriodManager, self).get_queryset().filter(
                 approved=True)
@@ -30,7 +30,7 @@ class UnapprovedSponsorshipPeriodManager(models.Manager):
     """Custom sponsor manager that shows only unapproved records."""
 
     def get_queryset(self):
-        """Query set generator"""
+        """Query set generator."""
         return super(
             UnapprovedSponsorshipPeriodManager, self).get_queryset().filter(
                 approved=False)
