@@ -358,6 +358,16 @@
             </ul>
         </div>
     </div>
+    <div class="row">
+        <div class="col-lg-12 text-center" style="margin-bottom: 10px;">
+            {% if worksheet.external_data %}
+            <p>Click
+                <a target="_blank" href="{{ worksheet.external_data.url }}">here</a> to
+                download the sample data for
+                the lesson.</p>
+            {% endif %}
+        </div>
+    </div>
 
     <script>
         $('.btn-delete').hover(

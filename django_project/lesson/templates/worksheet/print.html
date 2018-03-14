@@ -204,6 +204,13 @@ h2{
     </ul>
 </section>
 <footer>
+        <div style="margin-bottom: 10px;padding-left: 100pt; padding-top: 10pt;">
+            {% if worksheet.external_data %}
+                <p>Click
+                    <a target="_blank" href="{{ request.META.HTTP_HOST }}{{ worksheet.external_data.url }}">here</a>
+                    to download the sample data for the lesson.</p>
+            {% endif %}
+        </div>
 </footer>
 </body>
 </html>
