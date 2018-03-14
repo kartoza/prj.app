@@ -136,7 +136,7 @@ h2{
                 <tbody>
                     <tr><th>Name</th><th>Expectation</th></tr>
                     {% for requirement in requirements %}
-                        <tr><td style="background-color: #cdcdcd">{{ requirement.title }}</td><td>{{ requirement.value }}</td></tr>
+                        <tr><td style="background-color: #cdcdcd">{{ requirement.title | base_markdown }}</td><td>{{ requirement.value | base_markdown }}</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
