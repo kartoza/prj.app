@@ -50,7 +50,6 @@ class Section(TranslationMixin):
         help_text=_('Section notes.'),
         blank=False,
         null=False,
-        max_length=1000,
     )
 
     slug = models.SlugField(
