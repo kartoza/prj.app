@@ -152,7 +152,7 @@ shell:
 	@echo "------------------------------------------------------------------"
 	@echo "Shelling in in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) exec uwsgi /bin/bash
+	@docker-compose -p $(PROJECT_ID) exec devweb /bin/bash
 
 superuser:
 	@echo
@@ -329,6 +329,19 @@ flake8:
 	@echo "Check flake 8"
 	@flake8 ../django_project
 
+update-translation-strings:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Update string for translation (Bahasa Indonesia only)"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py makemessages -l id
+
+compile-translation-strings:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Compile string for translation (Bahasa Indonesia only)"
+	@echo "------------------------------------------------------------------"
+	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py compilemessages -l id
 
 # --------------- help --------------------------------
 
