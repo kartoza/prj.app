@@ -14,7 +14,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from base.models.project import Project
@@ -90,6 +90,18 @@ class SectionListView(SectionMixin, PaginationMixin, ListView):
         for section in context['sections']:
             query_set = Worksheet.objects.filter(section=section)
             context['worksheets'][section] = query_set
+
+        # Permissions
+        context['user_can_edit'] = False
+        if self.request.user in context['project'].lesson_managers.all():
+            context['user_can_edit'] = True
+
+        if self.request.user == context['project'].owner:
+            context['user_can_edit'] = True
+
+        if self.request.user.is_staff:
+            context['user_can_edit'] = True
+
         return context
 
     def get_queryset(self):
@@ -175,7 +187,7 @@ class SectionUpdateView(
         return url
 
 
-class SectionOrderView(StaffuserRequiredMixin, SectionMixin, ListView):
+class SectionOrderView(LoginRequiredMixin, SectionMixin, ListView):
     """List view to order section."""
     context_object_name = 'sections'
     template_name = 'section/order.html'

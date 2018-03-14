@@ -227,6 +227,12 @@ class AllPendingEntryList(
     template_name = 'entry/all-pending-list.html'
     paginate_by = 1000
 
+    def no_permissions_fail(self, request=None):
+        """Redirection if not enough permissions to view the page."""
+        return redirect(reverse('version-list', kwargs={
+            'project_slug': self.kwargs.get('project_slug', None),
+        }))
+
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
 
@@ -268,6 +274,12 @@ class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
     """View for approving Entry."""
     permanent = False
     query_string = True
+
+    def no_permissions_fail(self, request=None):
+        """Redirection if not enough permissions to view the page."""
+        return redirect(reverse('version-list', kwargs={
+            'project_slug': self.kwargs.get('project_slug', None),
+        }))
 
     def get_redirect_url(self, pk):
         """Save Entry as approved and redirect.

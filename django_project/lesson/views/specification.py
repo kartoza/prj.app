@@ -11,7 +11,7 @@ from django.views.generic import (
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin
 
 from lesson.models.specification import Specification
 from lesson.models.worksheet import Worksheet
@@ -127,7 +127,7 @@ class SpecificationUpdateView(
 
 
 class SpecificationOrderView(
-    StaffuserRequiredMixin, SpecificationMixin, ListView):
+    LoginRequiredMixin, SpecificationMixin, ListView):
     """List view to order specifications."""
     context_object_name = 'specifications'
     template_name = 'specification/order.html'
