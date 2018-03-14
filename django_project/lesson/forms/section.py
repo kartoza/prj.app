@@ -17,7 +17,7 @@ from lesson.models.section import Section
 
 
 class SectionForm(TranslationModelForm):
-    """Form for creating section"""
+    """Form for creating section."""
 
     class Meta:
         model = Section

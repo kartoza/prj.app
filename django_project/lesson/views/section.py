@@ -176,7 +176,7 @@ class SectionUpdateView(
 
 
 class SectionOrderView(StaffuserRequiredMixin, SectionMixin, ListView):
-    """List view to order section"""
+    """List view to order section."""
     context_object_name = 'sections'
     template_name = 'section/order.html'
 

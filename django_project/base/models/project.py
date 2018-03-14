@@ -25,7 +25,7 @@ class ApprovedProjectManager(models.Manager):
     """Custom project manager that shows only approved records."""
 
     def get_queryset(self):
-        """Query set generator"""
+        """Query set generator."""
         return super(
             ApprovedProjectManager, self).get_queryset().filter(
                 approved=True)
@@ -35,7 +35,7 @@ class UnapprovedProjectManager(models.Manager):
     """Custom project manager that shows only unapproved records."""
 
     def get_queryset(self):
-        """Query set generator"""
+        """Query set generator."""
         return super(
             UnapprovedProjectManager, self).get_queryset().filter(
                 approved=False)
@@ -45,7 +45,7 @@ class PublicProjectManager(models.Manager):
     """Custom project manager that shows only public and approved projects."""
 
     def get_queryset(self):
-        """Query set generator"""
+        """Query set generator."""
         return super(
             PublicProjectManager, self).get_queryset().filter(
                 private=False).filter(approved=True)

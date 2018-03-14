@@ -245,7 +245,7 @@ class GithubListView(ProjectMixin, ListView):
 
 class GithubSubmitView(LoginRequiredMixin, ProjectMixin, UpdateView):
 
-    """Add github project"""
+    """Add github project."""
 
     context_object_name = 'project'
 

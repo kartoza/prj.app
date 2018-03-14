@@ -47,7 +47,7 @@ class VersionMixin(object):
 
 class CustomStaffuserRequiredMixin(StaffuserRequiredMixin):
 
-    """Fix redirect loop when user is already authenticated but non staff"""
+    """Fix redirect loop when user is already authenticated but non staff."""
 
     def no_permissions_fail(self, request=None):
         """
@@ -636,7 +636,7 @@ class ApproveVersionView(LoginRequiredMixin, VersionMixin, RedirectView):
 
 
 class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
-    """View to allow staff users to download Version page in RST format"""
+    """View to allow staff users to download Version page in RST format."""
     template_name = 'version/detail-content.html'
 
     def get_context_data(self, **kwargs):
@@ -810,7 +810,7 @@ class VersionDownloadGnu(VersionMixin, DetailView):
 class VersionSponsorDownload(
     CustomStaffuserRequiredMixin, VersionMixin, DetailView):
 
-    """View to allow staff users to download Version page in html format"""
+    """View to allow staff users to download Version page in html format."""
 
     template_name = 'version/includes/version-sponsors.html'
 

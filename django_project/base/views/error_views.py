@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Our custom error views"""
+"""Our custom error views."""
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from base.models.project import Project

@@ -128,7 +128,7 @@ class SpecificationUpdateView(
 
 class SpecificationOrderView(
     StaffuserRequiredMixin, SpecificationMixin, ListView):
-    """List view to order specifications"""
+    """List view to order specifications."""
     context_object_name = 'specifications'
     template_name = 'specification/order.html'
 

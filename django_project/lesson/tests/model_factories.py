@@ -13,7 +13,7 @@ from lesson.models import (
 
 
 class SectionF(factory.django.DjangoModelFactory):
-    """Section model factory"""
+    """Section model factory."""
 
     class Meta:
         model = Section
@@ -26,7 +26,7 @@ class SectionF(factory.django.DjangoModelFactory):
 
 
 class WorksheetF(factory.django.DjangoModelFactory):
-    """Worksheet model factory"""
+    """Worksheet model factory."""
 
     class Meta:
         model = Worksheet
@@ -51,7 +51,7 @@ class WorksheetF(factory.django.DjangoModelFactory):
 
 
 class SpecificationF(factory.django.DjangoModelFactory):
-    """Specification model factory"""
+    """Specification model factory."""
 
     class Meta:
         model = Specification

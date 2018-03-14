@@ -16,7 +16,7 @@ from lesson.models.specification import Specification
 
 
 class SpecificationForm(TranslationModelForm):
-    """Form for creating specification"""
+    """Form for creating specification."""
 
     class Meta:
         model = Specification
