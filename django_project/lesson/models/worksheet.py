@@ -59,7 +59,6 @@ class Worksheet(TranslationMixin):
         help_text=_('Content of the summary. Markdown is supported.'),
         blank=False,
         null=False,
-        # max_length=1000, Not enough for now
     )
 
     summary_image = models.ImageField(
@@ -82,7 +81,6 @@ class Worksheet(TranslationMixin):
         help_text=_('Task in the exercise. Markdown is supported.'),
         blank=False,
         null=False,
-        max_length=1000,
     )
 
     exercise_image = models.ImageField(
@@ -110,7 +108,6 @@ class Worksheet(TranslationMixin):
             'Markdown is supported.'),
         blank=False,
         null=False,
-        # max_length=2000, Not enough for now
     )
 
     more_about_image = models.ImageField(

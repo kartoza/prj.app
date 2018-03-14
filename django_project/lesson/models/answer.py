@@ -54,7 +54,6 @@ class Answer(TranslationMixin):
         help_text=_('Answer explanation. Markdown is supported.'),
         blank=True,
         null=False,
-        max_length=1000,
     )
 
     # noinspection PyClassicStyleClass.
