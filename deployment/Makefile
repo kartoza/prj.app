@@ -332,16 +332,16 @@ flake8:
 update-translation-strings:
 	@echo
 	@echo "------------------------------------------------------------------"
-	@echo "Update string for translation (Bahasa Indonesia only)"
+	@echo "Update string for translation"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py makemessages -l id
+	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py makemessages
 
 compile-translation-strings:
 	@echo
 	@echo "------------------------------------------------------------------"
-	@echo "Compile string for translation (Bahasa Indonesia only)"
+	@echo "Compile string for translation"
 	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py compilemessages -l id
+	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py compilemessages
 
 # --------------- help --------------------------------
 
