@@ -332,16 +332,32 @@ flake8:
 update-translation-strings:
 	@echo
 	@echo "------------------------------------------------------------------"
-	@echo "Update string for translation"
+	@echo "Update string for translation."
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py makemessages
 
 compile-translation-strings:
 	@echo
 	@echo "------------------------------------------------------------------"
-	@echo "Compile string for translation"
+	@echo "Compile string for translation."
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) exec uwsgi python manage.py compilemessages
+
+push-translation-source:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Push translation source and translation to transifex."
+	@echo "You need to set up your transifex client first."
+	@echo "------------------------------------------------------------------"
+	@tx push -s -t
+
+pull-translation-source:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Pull all translation source and translation from transifex."
+	@echo "You need to set up your transifex client first."
+	@echo "------------------------------------------------------------------"
+	@tx pull -a -f
 
 # --------------- help --------------------------------
 
@@ -384,4 +400,7 @@ help:
 	@echo "* **update-migrations** - freshen all migration definitions to match the current code base."
 	@echo "* **web** - same as **run** - runs the production site."
 	@echo "* **pep8** - Run Python PEP8 check."
-
+	@echo "* **update-translation-strings** - Update string for translation."
+	@echo "* **compile-translation-strings** - Compile string for translation."
+	@echo "* **push-translation-source** - Push translation source and translation to transifex."
+	@echo "* **pull-translation-source** - Pull all translation source and translation from transifex."
