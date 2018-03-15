@@ -5,7 +5,7 @@
 {% load staticfiles %}
 {% load lesson_tags %}
 
-{% block title %}Worksheet - {{ block.super }}{% endblock %}
+{% block title %}{% trans 'Worksheet' %} - {{ block.super }}{% endblock %}
 
 {% block css_head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/organisation_detail.css' %}">
@@ -29,7 +29,7 @@
                 <div class="btn-group worksheet-action" style="display:none;">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                         href='{% url "section-list" project_slug=worksheet.section.project.slug %}#{{ worksheet.section.slug }}'
-                        data-title="Back">
+                        data-title="{% trans 'Back' %}">
                         <span class="glyphicon glyphicon-arrow-left"></span>
                     </a>
                     <a id="download-pdf-button" class="btn btn-default btn-mini tooltip-toggle" target="_blank"
@@ -40,12 +40,12 @@
                     {% if user_can_edit %}
                         <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                            href='{% url "worksheet-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
-                           data-title="Delete {{ worksheet.module }}">
+                           data-title="{% blocktrans %}Delete {{ worksheet.module }}{% endblocktrans %}">
                             <span class="glyphicon glyphicon-minus"></span>
                         </a>
                         <a class="btn btn-default btn-mini tooltip-toggle"
                            href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
-                           data-title="Edit {{ worksheet.module }}">
+                           data-title="{% blocktrans %}Edit {{ worksheet.module }}{% endblocktrans %}">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>
                     {% endif %}
@@ -65,11 +65,11 @@
         </div>
         <div class="col-lg-8" style="text-align:right;">
             <h2>
-                <strong>Section : {{ worksheet.section.name }}</strong>
+                <strong>{% blocktrans %}Section : {{ worksheet.section.name }}{% endblocktrans %}</strong>
                 {{ worksheet.section|is_translation_up_to_date }}
             </h2>
             <h3 style="margin-top:-10px;margin-bottom:20px;">
-                <i>Module : {{ worksheet.module }}</i>
+                <i>{% blocktrans %}Module : {{ worksheet.module }}{% endblocktrans %}</i>
                 {{ worksheet|is_translation_up_to_date }}
             </h3>
         </div>
@@ -78,7 +78,7 @@
     <div class="row details-worksheet" style="margin-top:10px;">
         <div class="col-lg-1">
           <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
-              <img src="{% static "img/info.png" %}" style="height:50px;width:50px"">
+              <img src="{% static "img/info.png" %}" style="height:50px;width:50px">
           </div>
         </div>
         <div class="col-lg-8">
@@ -107,8 +107,8 @@
 
     <div class="row details-worksheet" style="margin-top:10px;">
         <div class="col-lg-12">
-            <h4><strong>You try: </strong></h4>
-            <p><strong><i>Goal: {{ worksheet.exercise_goal }}</i></strong></p>
+            <h4><strong>{% trans 'You try:' %} </strong></h4>
+            <p><strong><i>{% blocktrans %}Goal: {{ worksheet.exercise_goal }}{% endblocktrans %}</i></strong></p>
             <p>{{ worksheet.exercise_task | base_markdown }}</p>
         </div>
         <div style="margin-bottom: 20px" class="details-worksheet col-lg-12 requirement-table">
@@ -116,12 +116,12 @@
                 <div class="pull-right btn-group requirement-action" style="margin-bottom:5px;display:none;">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "specification-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
-                       data-title="Create New Requirement">
+                       data-title="{% trans 'Create New Requirement' %}">
                         {% show_button_icon "add" %}
                     </a>
                     <a class="btn btn-default btn-mini tooltip-toggle"
                         href='{% url "specification-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
-                        data-title="Specification Order">
+                        data-title="{% trans 'Specification Order' %}">
                         <span class="glyphicon glyphicon-sort-by-order"></span>
                     </a>
                 </div>
@@ -130,8 +130,8 @@
                 <table style="margin-top: 30px;" >
                     <tbody>
                         <tr style="background-color:#d6e6fb;">
-                            <th style="padding:5px;">Name</th>
-                            <th style="padding:5px;">Expectation</th>
+                            <th style="padding:5px;">{% trans 'Name' %}</th>
+                            <th style="padding:5px;">{% trans 'Expectation' %}</th>
                          {% if user_can_edit %}
                             <th class="requirement-action" style="text-align:right;padding-right:0px;display:none;background-color:#FFFFFF">Actions</th>
                          {% endif %}
@@ -145,12 +145,16 @@
                                     <div class="btn-group pull-right requirement-action" style="display:none;">
                                         <a class="btn btn-default btn-mini tooltip-toggle"
                                            href='{% url "specification-delete" worksheet.section.project.slug worksheet.section.slug worksheet.slug requirement.pk %}'
-                                           data-title="Delete {{ requirement.title }}" data-original-title="" title="">
+                                           data-title="{% blocktrans %}Delete {{ requirement.title }}{% endblocktrans %}"
+                                           data-original-title=""
+                                           title="">
                                             <span class="glyphicon glyphicon-minus"></span>
                                         </a>
                                         <a class="btn btn-default btn-mini tooltip-toggle"
                                            href='{% url "specification-update" worksheet.section.project.slug worksheet.section.slug worksheet.slug requirement.pk %}'
-                                           data-title="Edit {{ requirement.title }}" data-original-title="" title="">
+                                           data-title="{% blocktrans %}Edit {{ requirement.title }}{% endblocktrans %}"
+                                           data-original-title=""
+                                           title="">
                                             <span class="glyphicon glyphicon-pencil"></span>
                                         </a>
                                     </div>
@@ -214,19 +218,19 @@
           </div>
         </div>
         <div class="col-lg-8">
-          <h3 class="custom-heading" style="margin-left:-40px"><strong>{% trans "Check your knowledge:" %}</strong></h3>
+          <h3 class="custom-heading" style="margin-left:-40px"><strong>{% trans 'Check your knowledge:' %}</strong></h3>
         </div>
         <div class="col-lg-3 pull-right">
             {% if user_can_edit %}
                 <div class="pull-right btn-group question-answer-action" style="display:none;">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                   href='{% url "question-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
-                       data-title="Create New Question">
+                       data-title="{% trans 'Create New Question' %}">
                     {% show_button_icon "add" %}
                     </a>
                     <a class="btn btn-default btn-mini tooltip-toggle"
                         href='{% url "question-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
-                        data-title="Question Order">
+                        data-title="{% trans 'Question Order' %}">
                         <span class="glyphicon glyphicon-sort-by-order"></span>
                     </a>
                 </div>
@@ -254,17 +258,17 @@
                                     <div class="pull-right btn-group question-answer-action" style="display:none;">
                                         <a class="btn btn-default btn-mini tooltip-toggle"
                                       href='{% url "answer-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug question.pk %}'
-                                           data-title="Create New Answer">
+                                           data-title="{% trans 'Create New Answer' %}">
                                         {% show_button_icon "add" %}
                                         </a>
                                         <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                                             href='{% url "question-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=question.pk %}'
-                                            data-title="Delete {{ question.question }}">
+                                            data-title="{% blocktrans %}Delete {{ question.question }}{% endblocktrans %}">
                                             <span class="glyphicon glyphicon-minus"></span>
                                         </a>
                                         <a class="btn btn-default btn-mini tooltip-toggle"
                                             href='{% url "question-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=question.pk %}'
-                                            data-title="Edit {{ question.question }}">
+                                            data-title="{% blocktrans %}Edit {{ question.question }}{% endblocktrans %}">
                                             <span class="glyphicon glyphicon-pencil"></span>
                                         </a>
                                     </div>
@@ -287,12 +291,12 @@
                                     <div class="pull-right btn-group question-answer-action" style="display:none;">
                                         <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                                             href='{% url "answer-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
-                                            data-title="Delete {{ answer.answer }}">
+                                            data-title="{% blocktrans %}Delete {{ answer.answer }}{% endblocktrans %}">
                                             <span class="glyphicon glyphicon-minus"></span>
                                         </a>
                                         <a class="btn btn-default btn-mini tooltip-toggle"
                                             href='{% url "answer-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
-                                            data-title="Edit {{ answer.answer }}">
+                                            data-title="{% blocktrans %}Edit {{ answer.answer }}{% endblocktrans %}">
                                             <span class="glyphicon glyphicon-pencil"></span>
                                         </a>
                                     </div>
@@ -315,14 +319,18 @@
           </div>
         </div>
         <div class="col-lg-8">
-          <h3 class="custom-heading" style="margin-left:-40px"><strong>Further reading: </strong></h3>
+          <h3 class="custom-heading" style="margin-left:-40px">
+              <strong>
+                  {% trans 'Further reading:'%}
+              </strong>
+          </h3>
         </div>
         <div class="col-lg-3 pull-right">
             {% if user_can_edit %}
                 <div class="pull-right btn-group further-reading-action" style="display:none;">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "further-reading-create" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug %}'
-                       data-title="Create New Further Reading Item">
+                       data-title="{% trans 'Create New Further Reading Item' %}">
                         {% show_button_icon "add" %}
                     </a>
                 </div>
@@ -344,12 +352,12 @@
                             <div class="pull-right btn-group">
                                 <a class="btn btn-default btn-mini btn-delete tooltip-toggle further-reading-action" style="display:none;"
                                    href='{% url "further-reading-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
-                                   data-title="Delete {{ info.text }}">
+                                   data-title="{% blocktrans %}Delete {{ info.text }}{% endblocktrans %}">
                                     <span class="glyphicon glyphicon-minus"></span>
                                 </a>
                                 <a class="btn btn-default btn-mini tooltip-toggle further-reading-action" style="display:none;"
                                    href='{% url "further-reading-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
-                                   data-title="Edit {{ info.text }}">
+                                   data-title="{% blocktrans %}Edit {{ info.text }}{% endblocktrans %}">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
                             </div>
@@ -362,10 +370,12 @@
     <div class="row">
         <div class="col-lg-12 text-center" style="margin-bottom: 10px;">
             {% if worksheet.external_data %}
-            <p>Click
-                <a target="_blank" href="{{ worksheet.external_data.url }}">here</a> to
-                download the sample data for
-                the lesson.</p>
+            <p>
+                {% blocktrans %}
+                    Click <a target="_blank" href="{{ worksheet.external_data.url }}">here</a>
+                    to download the sample data for the lesson.
+                {% endblocktrans %}
+            </p>
             {% endif %}
         </div>
     </div>
