@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-15 16:37+0200\n"
+"POT-Creation-Date: 2018-03-15 17:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ismail Sunni, 2018\n"
 "Language-Team: Indonesian (https://www.transifex.com/timlinux/teams/84450/id/)\n"
@@ -798,6 +798,15 @@ msgid ""
 "Image for the question. Most browsers support dragging the image directly on"
 " to the \"Choose File\" button above."
 msgstr ""
+
+#: lesson/templates/worksheet/detail.html:19
+msgid "Worksheet"
+msgstr ""
+
+#: lesson/templates/worksheet/detail.html:37
+#, python-format
+msgid "Download %(worksheet.module)s as PDF"
+msgstr "Unduh %(worksheet.module)s sebagai PDF"
 
 #: lesson/templates/worksheet/detail.html:217
 msgid "Check your knowledge:"

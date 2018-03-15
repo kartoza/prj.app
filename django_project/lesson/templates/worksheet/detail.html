@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block page_title %}
-    <h2>Worksheet</h2>
+    <h2>{% trans 'Worksheet' %}</h2>
 {% endblock page_title %}
 
 {% block content %}
@@ -34,7 +34,7 @@
                     </a>
                     <a id="download-pdf-button" class="btn btn-default btn-mini tooltip-toggle" target="_blank"
                        href='{% url "worksheet-print" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
-                       data-title="Download {{ worksheet.module }} as PDF">
+                       data-title="{% blocktrans %}Download {{ worksheet.module }} as PDF{% endblocktrans %}">
                         <span class="glyphicon glyphicon-download"></span>
                     </a>
                     {% if user_can_edit %}
