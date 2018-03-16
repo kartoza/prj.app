@@ -2,21 +2,20 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-15 17:35+0200\n"
+"POT-Creation-Date: 2018-03-18 11:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ismail Sunni, 2018\n"
-"Language-Team: Indonesian (https://www.transifex.com/timlinux/teams/84450/"
-"id/)\n"
-"Language: id\n"
+"Language-Team: Indonesian (https://www.transifex.com/timlinux/teams/84450/id/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: id\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: base/forms.py:51 base/models/project.py:217
@@ -34,8 +33,8 @@ msgstr ""
 
 #: base/forms.py:71
 msgid ""
-"Managers of the sponsorship in this project. They will be allowed to approve "
-"sponsorship entries in the moderation queue."
+"Managers of the sponsorship in this project. They will be allowed to approve"
+" sponsorship entries in the moderation queue."
 msgstr ""
 
 #: base/forms.py:81 base/models/project.py:207
@@ -142,8 +141,8 @@ msgstr ""
 
 #: base/models/project.py:196
 msgid ""
-"Managers of the sponsorship in this project. They will be allowed to approve "
-"sponsor entries in the moderation queue."
+"Managers of the sponsorship in this project. They will be allowed to approve"
+" sponsor entries in the moderation queue."
 msgstr ""
 
 #: base/models/project.py:239
@@ -413,10 +412,8 @@ msgstr ""
 #: core/base_templates/account/email.html:79
 msgid ""
 "\n"
-"                                You currently do not have any e-mail address "
-"set up. You should really add an e-mail\n"
-"                                address so you can receive notifications, "
-"reset your password, etc.\n"
+"                                You currently do not have any e-mail address set up. You should really add an e-mail\n"
+"                                address so you can receive notifications, reset your password, etc.\n"
 "                            "
 msgstr ""
 
@@ -436,8 +433,7 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"                            Please confirm that <a href=\"mailto:%(email)s\">"
-"%(email)s</a>\n"
+"                            Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a>\n"
 "                            is an e-mail address for user %(user_display)s."
 msgstr ""
 
@@ -449,10 +445,8 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"                            This e-mail confirmation link expired or is "
-"invalid.\n"
-"                            Please <a href=\"%(email_url)s\">issue a new e-"
-"mail confirmation request</a>.\n"
+"                            This e-mail confirmation link expired or is invalid.\n"
+"                            Please <a href=\"%(email_url)s\">issue a new e-mail confirmation request</a>.\n"
 "                        "
 msgstr ""
 
@@ -472,8 +466,7 @@ msgstr ""
 #, python-format
 msgid ""
 "Or, <a href=\"%(signup_url)s\">sign up</a>\n"
-"                                for a %(site_name)s account and sign in "
-"below:"
+"                                for a %(site_name)s account and sign in below:"
 msgstr ""
 
 #: core/base_templates/account/login.html:57
@@ -509,8 +502,8 @@ msgstr ""
 
 #: core/base_templates/account/password_reset.html:21
 msgid ""
-"Forgotten your password? Enter your e-mail address below, and we'll send you "
-"an e-mail allowing you to reset it."
+"Forgotten your password? Enter your e-mail address below, and we'll send you"
+" an e-mail allowing you to reset it."
 msgstr ""
 
 #: core/base_templates/account/password_reset.html:25
@@ -540,10 +533,8 @@ msgstr ""
 #: core/base_templates/account/password_reset_from_key.html:19
 #, python-format
 msgid ""
-"The password reset link was invalid, possibly because it has already been "
-"used.\n"
-"                            Please request a <a href=\"%(passwd_reset_url)s"
-"\">new password reset</a>."
+"The password reset link was invalid, possibly because it has already been used.\n"
+"                            Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
 msgstr ""
 
 #: core/base_templates/account/password_reset_from_key.html:29
@@ -558,8 +549,7 @@ msgstr ""
 #: core/base_templates/socialaccount/connections.html:31
 msgid ""
 "\n"
-"                                You can sign in to your account using any of "
-"the following third party accounts:\n"
+"                                You can sign in to your account using any of the following third party accounts:\n"
 "                            "
 msgstr ""
 
@@ -753,8 +743,8 @@ msgstr ""
 
 #: lesson/models/worksheet.py:87
 msgid ""
-"Image for the exercise part. You should normally either use the Requirements "
-"table or this image field. A landscape image, approximately 800*200. Most "
+"Image for the exercise part. You should normally either use the Requirements"
+" table or this image field. A landscape image, approximately 800*200. Most "
 "browsers support dragging the image directly on to the \"Choose File\" "
 "button above."
 msgstr ""
@@ -805,145 +795,121 @@ msgstr ""
 
 #: lesson/models/worksheet_question.py:47
 msgid ""
-"Image for the question. Most browsers support dragging the image directly on "
-"to the \"Choose File\" button above."
+"Image for the question. Most browsers support dragging the image directly on"
+" to the \"Choose File\" button above."
 msgstr ""
 
 #: lesson/templates/worksheet/detail.html:8
 #: lesson/templates/worksheet/detail.html:19
 msgid "Worksheet"
-msgstr ""
+msgstr "Lembar Latihan"
 
 #: lesson/templates/worksheet/detail.html:32
 msgid "Back"
-msgstr ""
+msgstr "Kembali"
 
 #: lesson/templates/worksheet/detail.html:37
 #, python-format
-msgid "Download %(worksheet.module)s as PDF"
-msgstr "Unduh %(worksheet.module)s sebagai PDF"
+msgid "Download %(module)s as PDF"
+msgstr "Unduh %(module)s sebagai PDF"
 
 #: lesson/templates/worksheet/detail.html:43
-#, fuzzy, python-format
-#| msgid "Download %(worksheet.module)s as PDF"
-msgid "Delete %(worksheet.module)s"
-msgstr "Unduh %(worksheet.module)s sebagai PDF"
+#: lesson/templates/worksheet/detail.html:160
+#: lesson/templates/worksheet/detail.html:282
+#: lesson/templates/worksheet/detail.html:310
+#: lesson/templates/worksheet/detail.html:371
+msgid "Delete"
+msgstr "Hapus"
 
 #: lesson/templates/worksheet/detail.html:48
-#, fuzzy, python-format
-#| msgid "Download %(worksheet.module)s as PDF"
-msgid "Edit %(worksheet.module)s"
-msgstr "Unduh %(worksheet.module)s sebagai PDF"
+#: lesson/templates/worksheet/detail.html:167
+#: lesson/templates/worksheet/detail.html:287
+#: lesson/templates/worksheet/detail.html:315
+#: lesson/templates/worksheet/detail.html:376
+msgid "Edit"
+msgstr "Ubah"
 
-#: lesson/templates/worksheet/detail.html:68
-#, python-format
-msgid "Section : %(worksheet.section.name)s"
-msgstr ""
+#: lesson/templates/worksheet/detail.html:69
+#: lesson/templates/worksheet/print.html:116
+msgid "Section"
+msgstr "Bagian"
 
-#: lesson/templates/worksheet/detail.html:72
-#, fuzzy, python-format
-#| msgid "Download %(worksheet.module)s as PDF"
-msgid "Module : %(worksheet.module)s"
-msgstr "Unduh %(worksheet.module)s sebagai PDF"
+#: lesson/templates/worksheet/detail.html:75
+#: lesson/templates/worksheet/print.html:117
+msgid "Module"
+msgstr "Modul"
 
-#: lesson/templates/worksheet/detail.html:110
+#: lesson/templates/worksheet/detail.html:115
+#: lesson/templates/worksheet/print.html:131
 msgid "You try:"
-msgstr ""
+msgstr "Silakan dicoba:"
 
-#: lesson/templates/worksheet/detail.html:111
-#, python-format
-msgid "Goal: %(worksheet.exercise_goal)s"
-msgstr ""
+#: lesson/templates/worksheet/detail.html:120
+#: lesson/templates/worksheet/print.html:133
+msgid "Goal:"
+msgstr "Tujuan"
 
-#: lesson/templates/worksheet/detail.html:119
+#: lesson/templates/worksheet/detail.html:131
 msgid "Create New Requirement"
-msgstr ""
+msgstr "Buat Persayaratan Baru"
 
-#: lesson/templates/worksheet/detail.html:124
+#: lesson/templates/worksheet/detail.html:136
 msgid "Specification Order"
-msgstr ""
+msgstr "Urutan Spesifikasi"
 
-#: lesson/templates/worksheet/detail.html:133
+#: lesson/templates/worksheet/detail.html:145
+#: lesson/templates/worksheet/print.html:141
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
-#: lesson/templates/worksheet/detail.html:134
+#: lesson/templates/worksheet/detail.html:146
+#: lesson/templates/worksheet/print.html:142
 msgid "Expectation"
-msgstr ""
+msgstr "Ekspektasi"
 
-#: lesson/templates/worksheet/detail.html:148
-#, python-format
-msgid "Delete %(requirement.title)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:155
-#, python-format
-msgid "Edit %(requirement.title)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:221
+#: lesson/templates/worksheet/detail.html:235
+#: lesson/templates/worksheet/print.html:178
 msgid "Check your knowledge:"
 msgstr "Periksa pemahamanmu:"
 
-#: lesson/templates/worksheet/detail.html:228
+#: lesson/templates/worksheet/detail.html:244
 msgid "Create New Question"
-msgstr ""
+msgstr "Buat Pertanyaan Baru"
 
-#: lesson/templates/worksheet/detail.html:233
+#: lesson/templates/worksheet/detail.html:249
 msgid "Question Order"
-msgstr ""
+msgstr "Urutan Pertanyaan"
 
-#: lesson/templates/worksheet/detail.html:261
+#: lesson/templates/worksheet/detail.html:277
 msgid "Create New Answer"
-msgstr ""
+msgstr "Buat Jawaban Baru"
 
-#: lesson/templates/worksheet/detail.html:266
-#, python-format
-msgid "Delete %(question.question)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:271
-#, python-format
-msgid "Edit %(question.question)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:294
-#, python-format
-msgid "Delete %(answer.answer)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:299
-#, python-format
-msgid "Edit %(answer.answer)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:324
+#: lesson/templates/worksheet/detail.html:340
+#: lesson/templates/worksheet/print.html:203
 msgid "Further reading:"
-msgstr ""
+msgstr "Bacaan lebih lanjut:"
 
-#: lesson/templates/worksheet/detail.html:333
+#: lesson/templates/worksheet/detail.html:349
 msgid "Create New Further Reading Item"
-msgstr ""
+msgstr "Buat Item Bacaan Lanjutan Baru"
 
-#: lesson/templates/worksheet/detail.html:355
-#, python-format
-msgid "Delete %(info.text)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:360
-#, python-format
-msgid "Edit %(info.text)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:374
+#: lesson/templates/worksheet/detail.html:390
 #, python-format
 msgid ""
-"\n"
-"                    Click <a target=\"_blank\" href="
-"\"%(worksheet.external_data.url)s\">here</a>\n"
-"                    to download the sample data for the lesson.\n"
-"                "
+"Click <a target=\"_blank\" href=\"%(url)s\">here</a> to download the sample "
+"data for the lesson."
 msgstr ""
+"Klik <a target=\"_blank\" href=\"%(url)s\">disini</a> untuk mengunduh data "
+"contoh untuk pelajaran"
+
+#: lesson/templates/worksheet/print.html:219
+#, python-format
+msgid ""
+"Click <a target=\"_blank\" href=\"%(href_value)s%(url)s\">here</a> to "
+"download the sample data for the lesson."
+msgstr ""
+"Klik <a target=\"_blank\" href=\"%(href_value)s%(url)s\">disini</a> untuk "
+"mengunduh data contoh untuk pelajaran"
 
 #: lesson/views/answer.py:33
 msgid "Add answer"
