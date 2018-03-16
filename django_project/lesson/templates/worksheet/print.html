@@ -1,4 +1,5 @@
 {% load custom_markup %}
+{% load i18n %}
 {% load static %}
 
 <html>
@@ -112,8 +113,8 @@ h2{
         <img src="{{ worksheet.section.project.image_file.file }}">
     {% endif %}
     <div>
-        <h1>Section : {{ worksheet.section.name }}</h1>
-        <h2>Module : {{ worksheet.module }}</h2>
+        <h1>{% trans 'Section' %} : {{ worksheet.section.name }}</h1>
+        <h2>{% trans 'Module' %} : {{ worksheet.module }}</h2>
     </div>
 </header>
 <hr class="icon-project-color" />
@@ -127,16 +128,24 @@ h2{
     {% if worksheet.summary_image %}
         <img src="{{ worksheet.summary_image.file }}">
     {% endif %}
-    <h3>You try:</h3>
-    <p class="goal">Goal: {{ worksheet.exercise_goal }}</p>
+    <h3>{% trans 'You try:' %}</h3>
+    <p class="goal">
+        {% trans 'Goal:' %} {{ worksheet.exercise_goal }}
+    </p>
     <p>{{ worksheet.exercise_task | base_markdown }}</p>
     {% if requirements.count > 0 %}
         <aside>
             <table>
                 <tbody>
-                    <tr><th>Name</th><th>Expectation</th></tr>
+                    <tr>
+                        <th>{% trans 'Name' %}</th>
+                        <th>{% trans 'Expectation' %}</th>
+                    </tr>
                     {% for requirement in requirements %}
-                        <tr><td style="background-color: #cdcdcd">{{ requirement.title | base_markdown }}</td><td>{{ requirement.value | base_markdown }}</td></tr>
+                        <tr>
+                            <td style="background-color: #cdcdcd">{{ requirement.title | base_markdown }}</td>
+                            <td>{{ requirement.value | base_markdown }}</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -166,7 +175,7 @@ h2{
     <div class="icon-project-color icon-section">
         <img class="icon-section" src="{{ "img/check.png" | local_static_filepath }}">
     </div>
-    <h2>Check your knowledge:</h2>
+    <h2>{% trans 'Check your knowledge:' %}</h2>
 {#  Bullet list with type="1" or type="a" do not work well in the PDF generation. We need a custom counter.  #}
     <ul style="list-style: none;">
         {% for question, answers in questions.items %}
@@ -191,7 +200,7 @@ h2{
     <div class="icon-project-color icon-section">
         <img class="icon-section" src="{{ "img/book.png" | local_static_filepath }}">
     </div>
-    <h2>Further reading:</h2>
+    <h2>{% trans 'Further reading:'%}</h2>
     <ul>
         {% for info in further_reading %}
             <li>
@@ -206,9 +215,9 @@ h2{
 <footer>
         <div style="margin-bottom: 10px;padding-left: 100pt; padding-top: 10pt;">
             {% if worksheet.external_data %}
-                <p>Click
-                    <a target="_blank" href="{{ request.META.HTTP_HOST }}{{ worksheet.external_data.url }}">here</a>
-                    to download the sample data for the lesson.</p>
+                <p>
+                    {% blocktrans with url=worksheet.external_data.url href_value=request.META.HTTP_HOST %}Click <a target="_blank" href="{{ href_value }}{{ url }}">here</a> to download the sample data for the lesson.{% endblocktrans %}
+                </p>
             {% endif %}
         </div>
 </footer>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-15 17:35+0200\n"
+"POT-Creation-Date: 2018-03-18 11:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -818,126 +818,101 @@ msgstr ""
 
 #: lesson/templates/worksheet/detail.html:37
 #, python-format
-msgid "Download %(worksheet.module)s as PDF"
+msgid "Download %(module)s as PDF"
 msgstr ""
 
 #: lesson/templates/worksheet/detail.html:43
-#, python-format
-msgid "Delete %(worksheet.module)s"
+#: lesson/templates/worksheet/detail.html:160
+#: lesson/templates/worksheet/detail.html:282
+#: lesson/templates/worksheet/detail.html:310
+#: lesson/templates/worksheet/detail.html:371
+msgid "Delete"
 msgstr ""
 
 #: lesson/templates/worksheet/detail.html:48
-#, python-format
-msgid "Edit %(worksheet.module)s"
+#: lesson/templates/worksheet/detail.html:167
+#: lesson/templates/worksheet/detail.html:287
+#: lesson/templates/worksheet/detail.html:315
+#: lesson/templates/worksheet/detail.html:376
+msgid "Edit"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:68
-#, python-format
-msgid "Section : %(worksheet.section.name)s"
+#: lesson/templates/worksheet/detail.html:69
+#: lesson/templates/worksheet/print.html:116
+msgid "Section"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:72
-#, python-format
-msgid "Module : %(worksheet.module)s"
+#: lesson/templates/worksheet/detail.html:75
+#: lesson/templates/worksheet/print.html:117
+msgid "Module"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:110
+#: lesson/templates/worksheet/detail.html:115
+#: lesson/templates/worksheet/print.html:131
 msgid "You try:"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:111
-#, python-format
-msgid "Goal: %(worksheet.exercise_goal)s"
+#: lesson/templates/worksheet/detail.html:120
+#: lesson/templates/worksheet/print.html:133
+msgid "Goal:"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:119
+#: lesson/templates/worksheet/detail.html:131
 msgid "Create New Requirement"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:124
+#: lesson/templates/worksheet/detail.html:136
 msgid "Specification Order"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:133
+#: lesson/templates/worksheet/detail.html:145
+#: lesson/templates/worksheet/print.html:141
 msgid "Name"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:134
+#: lesson/templates/worksheet/detail.html:146
+#: lesson/templates/worksheet/print.html:142
 msgid "Expectation"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:148
-#, python-format
-msgid "Delete %(requirement.title)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:155
-#, python-format
-msgid "Edit %(requirement.title)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:221
+#: lesson/templates/worksheet/detail.html:235
+#: lesson/templates/worksheet/print.html:178
 msgid "Check your knowledge:"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:228
+#: lesson/templates/worksheet/detail.html:244
 msgid "Create New Question"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:233
+#: lesson/templates/worksheet/detail.html:249
 msgid "Question Order"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:261
+#: lesson/templates/worksheet/detail.html:277
 msgid "Create New Answer"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:266
-#, python-format
-msgid "Delete %(question.question)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:271
-#, python-format
-msgid "Edit %(question.question)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:294
-#, python-format
-msgid "Delete %(answer.answer)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:299
-#, python-format
-msgid "Edit %(answer.answer)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:324
+#: lesson/templates/worksheet/detail.html:340
+#: lesson/templates/worksheet/print.html:203
 msgid "Further reading:"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:333
+#: lesson/templates/worksheet/detail.html:349
 msgid "Create New Further Reading Item"
 msgstr ""
 
-#: lesson/templates/worksheet/detail.html:355
-#, python-format
-msgid "Delete %(info.text)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:360
-#, python-format
-msgid "Edit %(info.text)s"
-msgstr ""
-
-#: lesson/templates/worksheet/detail.html:374
+#: lesson/templates/worksheet/detail.html:390
 #, python-format
 msgid ""
-"\n"
-"                    Click <a target=\"_blank\" href="
-"\"%(worksheet.external_data.url)s\">here</a>\n"
-"                    to download the sample data for the lesson.\n"
-"                "
+"Click <a target=\"_blank\" href=\"%(url)s\">here</a> to download the sample "
+"data for the lesson."
+msgstr ""
+
+#: lesson/templates/worksheet/print.html:219
+#, python-format
+msgid ""
+"Click <a target=\"_blank\" href=\"%(href_value)s%(url)s\">here</a> to "
+"download the sample data for the lesson."
 msgstr ""
 
 #: lesson/views/answer.py:33
