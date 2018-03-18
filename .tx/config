@@ -1,7 +1,7 @@
 [main]
 host = https://www.transifex.com
 
-[projecta-1.django-po]
+[projecta.django-po]
 file_filter = django_project/locale/<lang>/LC_MESSAGES/django.po
 minimum_perc = 0
 source_file = django_project/locale/en/LC_MESSAGES/django.po
