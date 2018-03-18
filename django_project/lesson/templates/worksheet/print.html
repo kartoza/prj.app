@@ -216,7 +216,7 @@ h2{
         <div style="margin-bottom: 10px;padding-left: 100pt; padding-top: 10pt;">
             {% if worksheet.external_data %}
                 <p>
-                    {% blocktrans with url=worksheet.external_data.url href_value=request.META.HTTP_HOST %}Click <a target="_blank" href="{{ href_value }}{{ url }}">here</a> to download the sample data for the lesson.{% endblocktrans %}
+                    {% blocktrans with url=worksheet.external_data.url href_value=request.META.HTTP_HOST %}Click <a target="_blank" href="http://{{ href_value }}{{ url }}">here</a> to download the sample data for the lesson.{% endblocktrans %}
                 </p>
             {% endif %}
         </div>
