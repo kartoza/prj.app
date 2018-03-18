@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-18 11:54+0200\n"
+"POT-Creation-Date: 2018-03-18 14:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -911,7 +911,7 @@ msgstr ""
 #: lesson/templates/worksheet/print.html:219
 #, python-format
 msgid ""
-"Click <a target=\"_blank\" href=\"%(href_value)s%(url)s\">here</a> to "
+"Click <a target=\"_blank\" href=\"http://%(href_value)s%(url)s\">here</a> to "
 "download the sample data for the lesson."
 msgstr ""
 
@@ -931,11 +931,11 @@ msgstr ""
 msgid "Update further reading item"
 msgstr ""
 
-#: lesson/views/question.py:35 lesson/views/worksheet.py:112
+#: lesson/views/question.py:34 lesson/views/worksheet.py:112
 msgid "Add worksheet"
 msgstr ""
 
-#: lesson/views/question.py:100
+#: lesson/views/question.py:99
 msgid "Update question"
 msgstr ""
 
@@ -943,7 +943,7 @@ msgstr ""
 msgid "Add section"
 msgstr ""
 
-#: lesson/views/section.py:147
+#: lesson/views/section.py:159
 msgid "Update section"
 msgstr ""
 
