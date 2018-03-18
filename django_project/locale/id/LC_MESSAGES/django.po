@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-18 11:54+0200\n"
+"POT-Creation-Date: 2018-03-18 14:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ismail Sunni, 2018\n"
 "Language-Team: Indonesian (https://www.transifex.com/timlinux/teams/84450/id/)\n"
@@ -905,11 +905,11 @@ msgstr ""
 #: lesson/templates/worksheet/print.html:219
 #, python-format
 msgid ""
-"Click <a target=\"_blank\" href=\"%(href_value)s%(url)s\">here</a> to "
-"download the sample data for the lesson."
+"Click <a target=\"_blank\" href=\"http://%(href_value)s%(url)s\">here</a> to"
+" download the sample data for the lesson."
 msgstr ""
-"Klik <a target=\"_blank\" href=\"%(href_value)s%(url)s\">disini</a> untuk "
-"mengunduh data contoh untuk pelajaran"
+"Klik <a target=\"_blank\" href=\"http://%(href_value)s%(url)s\">disini</a> "
+"untuk mengunduh data contoh untuk pelajaran."
 
 #: lesson/views/answer.py:33
 msgid "Add answer"
@@ -927,11 +927,11 @@ msgstr ""
 msgid "Update further reading item"
 msgstr ""
 
-#: lesson/views/question.py:35 lesson/views/worksheet.py:112
+#: lesson/views/question.py:34 lesson/views/worksheet.py:112
 msgid "Add worksheet"
 msgstr ""
 
-#: lesson/views/question.py:100
+#: lesson/views/question.py:99
 msgid "Update question"
 msgstr ""
 
@@ -939,7 +939,7 @@ msgstr ""
 msgid "Add section"
 msgstr ""
 
-#: lesson/views/section.py:147
+#: lesson/views/section.py:159
 msgid "Update section"
 msgstr ""
 
