@@ -180,7 +180,7 @@
         </div>
         {% if worksheet.exercise_image %}
             <a href="#" class="pop-image">
-                <img id="/media/{{ worksheet.exercise_image }}" class="img-responsive img-rounded pull-right"
+                <img id="{{ worksheet.more_about_image.url }}" class="img-responsive img-rounded pull-right"
                      src="{{ worksheet.exercise_image.url }}"
                      style="max-width: 100% !important;"
                      alt="" />
@@ -213,7 +213,7 @@
         {% if worksheet.more_about_image %}
             <div class="col-lg-4">
                 <a href="#" class="pop-image">
-                    <img id="/media/{{ worksheet.more_about_image }}" class="img-responsive img-rounded pull-right"
+                    <img id="{{ worksheet.more_about_image.url }}" class="img-responsive img-rounded pull-right"
                          src="{{ worksheet.more_about_image.url }}"
                          style="max-width: 100% !important;"
                          alt="" />
