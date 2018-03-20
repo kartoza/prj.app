@@ -353,31 +353,32 @@
             {% endif %}
         </div>
     </div>
-
     <div class="row details-worksheet further-reading" style="margin-top:10px;">
         <div class="details-worksheet col-lg-12" style="margin-bottom: 20px">
             <ul>
                 {% for info in further_reading %}
-                    <li>
-                        {{ info.text }}
-                        {% if info.link %}
-                            <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
-                        {% endif %}
-                        {{ info|is_translation_up_to_date }}
-                        {% if user_can_edit %}
-                            <div class="pull-right btn-group">
-                                <a class="btn btn-default btn-mini btn-delete tooltip-toggle further-reading-action" style="display:none;"
-                                   href='{% url "further-reading-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
-                                   data-title="{% trans 'Delete' %} {{ info.text }}">
-                                    <span class="glyphicon glyphicon-minus"></span>
-                                </a>
-                                <a class="btn btn-default btn-mini tooltip-toggle further-reading-action" style="display:none;"
-                                   href='{% url "further-reading-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
-                                   data-title="{% trans 'Edit' %} {{ info.text }}">
-                                    <span class="glyphicon glyphicon-pencil"></span>
-                                </a>
-                            </div>
-                        {% endif %}
+                    <li style="list-style: none;">
+                        <div class="row">
+                            {{ info.text }}
+                            {% if info.link %}
+                                <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
+                            {% endif %}
+                            {{ info|is_translation_up_to_date }}
+                            {% if user_can_edit %}
+                                <div class="pull-right btn-group">
+                                    <a class="btn btn-default btn-mini btn-delete tooltip-toggle further-reading-action" style="display:none;"
+                                       href='{% url "further-reading-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
+                                       data-title="{% trans 'Delete' %} {{ info.text }}">
+                                        <span class="glyphicon glyphicon-minus"></span>
+                                    </a>
+                                    <a class="btn btn-default btn-mini tooltip-toggle further-reading-action" style="display:none;"
+                                       href='{% url "further-reading-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
+                                       data-title="{% trans 'Edit' %} {{ info.text }}">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
                     </li>
                 {% endfor %}
             </ul>
