@@ -139,13 +139,8 @@ ul.ui-sortable-disabled .order{
     max-width: 100%;
 }
 
-.markdown-table {
-    border-collapse: collapse;
-}
-
-.markdown-table, .markdown-table th, .markdown-table td {
-    border: 1px solid black;
-    padding: 1px;
+.table tbody:first-of-type tr {
+    background-color: #d6e6fb;
 }
 
 @media (min-width: 1200px) {
