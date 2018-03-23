@@ -222,14 +222,14 @@ class TestViews(TestCase):
 
 class TestOrganisationCreate(TestCase):
     """Test organisation creation."""
-    @override_settings(VALID_DOMAIN=['testserver', ])
+    @override_settings(VALID_DOMAIN=['testserver',])
     def setUp(self):
         """Setting up before each test."""
         self.client = Client()
         self.client.post(
-                '/set_language/', data = { 'language': 'en' })
+                '/set_language/', data = {'language': 'en'})
         logging.disable(logging.CRITICAL)
-        self.user = UserF.create( **{
+        self.user = UserF.create(**{
             'username': 'sonlinux',
             'is_staff': True,
         })
@@ -242,7 +242,7 @@ class TestOrganisationCreate(TestCase):
         self.unapproved_project = ProjectF.create(approved=False)
         self.test_organisation = OrganisationF.create()
 
-    @override_settings(VALID_DOMAIN=[ 'testserver' ])
+    @override_settings(VALID_DOMAIN=['testserver' ])
     def test_oroganisation_create_with_login(self):
         """
         Test that a single logged in user can create multiple organisations.
@@ -257,12 +257,12 @@ class TestOrganisationCreate(TestCase):
             'organisation/create.html'
         ]
         response = client.post(reverse( 'create-organisation' ))
-        self.assertEqual(response.status_code , 200)
+        self.assertEqual(response.status_code, 200)
 
         # Test if get the correct template view after creation.
-        self.assertEqual(response.template_name , expected_templates)
+        self.assertEqual(response.template_name, expected_templates)
 
-    @override_settings(VALID_DOMAIN = [ 'testserver', ])
+    @override_settings(VALID_DOMAIN = ['testserver',])
     def test_multiple_organisation_create_with_single_login(self):
         """
         Test that a single logged in user can create multiple
@@ -282,20 +282,19 @@ class TestOrganisationCreate(TestCase):
             'name': u'Test organisation creation two'
         }
         post_data_3 = {
-            'name' : u'Test organisation creation three'
+            'name': u'Test organisation creation three'
         }
 
-        response = client.post(reverse('create-organisation') , post_data)
-        self.assertEqual(response.status_code , 302)
+        response = client.post(reverse('create-organisation'), post_data)
+        self.assertEqual(response.status_code, 302)
 
-        response = client.post(reverse('create-organisation') ,
-                                post_data_2)
-        self.assertEqual(response.status_code , 302)
+        response = client.post(reverse('create-organisation'), post_data_2)
+        self.assertEqual(response.status_code, 302)
 
         response = client.post(reverse('create-organisation'), post_data_3)
-        self.assertEqual(response.status_code , 302)
+        self.assertEqual(response.status_code, 302)
 
-    @override_settings(VALID_DOMAIN = [ 'testserver' , ])
+    @override_settings(VALID_DOMAIN = ['testserver',])
     def test_organisation_create_with_no_login(self):
         """Test that no non-authenticated user can create an organisation."""
         client = Client()
@@ -303,5 +302,5 @@ class TestOrganisationCreate(TestCase):
             'name': u'A new test organisation',
         }
         # response = client.post( reverse( 'account_login') , post_data )
-        response = client.post(reverse('create-organisation') , post_data)
-        self.assertEqual(response.status_code , 302)
+        response = client.post(reverse('create-organisation'), post_data)
+        self.assertEqual(response.status_code, 302)
