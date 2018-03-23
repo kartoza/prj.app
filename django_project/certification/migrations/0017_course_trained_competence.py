@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='course',
             name='trained_competence',
-            field=models.CharField(help_text='Trained competence e.g. Plugin development.', max_length=200, null=True, blank=True),
+            field=models.CharField(help_text='Trained competence e.g. Plugin development.', max_length=255, null=True, verbose_name='Trained competence', blank=True),
         ),
     ]

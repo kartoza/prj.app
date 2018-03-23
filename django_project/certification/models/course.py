@@ -38,15 +38,15 @@ class Course(models.Model):
         max_length=200,
         default=_('English'),
         null=True,
-        blank=True
+        blank=True,
     )
 
     trained_competence = models.CharField(
-        help_text=_(
-            'Trained competence e.g. Plugin development.'),
-            max_length=200,
-            null=True,
-            blank=True
+        _('Trained competence'),
+        help_text=_('Trained competence e.g. Plugin development.'),
+        max_length=255,
+        null=True,
+        blank=True
     )
 
     start_date = models.DateField(
