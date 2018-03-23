@@ -42,7 +42,7 @@ class Course(models.Model):
     )
 
     trained_competence = models.CharField(
-        _('Trained competence'),
+        _('Trained competence(s)'),
         help_text=_('Trained competence e.g. Plugin development.'),
         max_length=255,
         null=True,
