@@ -256,7 +256,7 @@ class TestOrganisationCreate(TestCase):
         expected_templates = [
             'organisation/create.html'
         ]
-        response = client.post(reverse( 'create-organisation' ))
+        response = client.post(reverse('create-organisation'))
         self.assertEqual(response.status_code, 200)
 
         # Test if get the correct template view after creation.
