@@ -229,22 +229,22 @@ class TestOrganisationCreate(TestCase):
         """Setting up before each test."""
         self.client = Client()
         self.client.post(
-                '/set_language/', data = { 'language': 'en' } )
-        logging.disable( logging.CRITICAL )
+                '/set_language/', data = { 'language': 'en' })
+        logging.disable(logging.CRITICAL)
         self.user = UserF.create( **{
             'username': 'sonlinux',
             'is_staff': True,
-        } )
+        })
 
-        self.user.set_password( 'password' )
+        self.user.set_password('password')
         self.user.save()
 
         # lets set up a testing project to create organisations from.
         self.test_project = ProjectF.create()
-        self.unapproved_project = ProjectF.create( approved=False )
+        self.unapproved_project = ProjectF.create(approved=False)
         self.test_organisation = OrganisationF.create()
 
-    @override_settings(VALID_DOMAIN=[ 'testserver' ] )
+    @override_settings(VALID_DOMAIN=[ 'testserver' ])
     def test_oroganisation_create_with_login(self):
         """
         Test creation of more than one organisation from a single logged
@@ -260,13 +260,13 @@ class TestOrganisationCreate(TestCase):
         expected_templates = [
             'organisation/create.html'
         ]
-        response = client.post( reverse( 'create-organisation' ) )
-        self.assertEqual( response.status_code , 200 )
+        response = client.post(reverse( 'create-organisation' ))
+        self.assertEqual(response.status_code , 200)
 
         # Test if get the correct template view after creation.
-        self.assertEqual( response.template_name , expected_templates )
+        self.assertEqual(response.template_name , expected_templates)
 
-    @override_settings( VALID_DOMAIN = [ 'testserver', ] )
+    @override_settings(VALID_DOMAIN = [ 'testserver', ])
     def test_multiple_organisation_create_with_single_login(self):
         """
         Test that a single logged in user can create multiple
@@ -289,17 +289,17 @@ class TestOrganisationCreate(TestCase):
             'name' : u'Test organisation creation three'
         }
 
-        response = client.post( reverse( 'create-organisation' ) , post_data )
-        self.assertEqual( response.status_code , 302 )
+        response = client.post(reverse('create-organisation') , post_data)
+        self.assertEqual(response.status_code , 302)
 
-        response = client.post( reverse( 'create-organisation' ) ,
-                                post_data_2 )
-        self.assertEqual( response.status_code , 302 )
+        response = client.post(reverse('create-organisation') ,
+                                post_data_2)
+        self.assertEqual(response.status_code , 302)
 
-        response = client.post( reverse( 'create-organisation' ), post_data_3 )
-        self.assertEqual( response.status_code , 302 )
+        response = client.post(reverse('create-organisation'), post_data_3)
+        self.assertEqual(response.status_code , 302)
 
-    @override_settings( VALID_DOMAIN = [ 'testserver' , ] )
+    @override_settings(VALID_DOMAIN = [ 'testserver' , ])
     def test_organisation_create_with_no_login(self):
         """Test that no non-authenticated user can create an organisation."""
         client = Client()
@@ -307,6 +307,5 @@ class TestOrganisationCreate(TestCase):
             'name': u'A new test organisation',
         }
         # response = client.post( reverse( 'account_login') , post_data )
-        response = client.post( reverse( 'create-organisation' ) , post_data )
-        self.assertEqual( response.status_code , 302 )
-
+        response = client.post(reverse('create-organisation') , post_data)
+        self.assertEqual(response.status_code , 302)
