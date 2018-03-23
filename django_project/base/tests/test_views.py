@@ -221,9 +221,7 @@ class TestViews(TestCase):
 
 
 class TestOrganisationCreate(TestCase):
-    """
-    Test Multiple organisation creation from a single login account.
-    """
+    """Test organisation creation."""
     @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         """Setting up before each test."""
@@ -247,9 +245,7 @@ class TestOrganisationCreate(TestCase):
     @override_settings(VALID_DOMAIN=[ 'testserver' ])
     def test_oroganisation_create_with_login(self):
         """
-        Test creation of more than one organisation from a single logged
-        in account.
-
+        Test that a single logged in user can create multiple organisations.
         """
         client = Client()
         loged_in = client.login(username='sonlinux', password='password')
