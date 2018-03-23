@@ -279,30 +279,25 @@ class TestOrganisationCreate(TestCase):
         self.assertTrue(loged_in)
 
         post_data = {
-            'name': u'Test organisation creation',
+            'name': u'Test organisation creation'
         }
-        response = client.post( reverse( 'create-organisation' ), post_data )
-        self.assertEqual( response.status_code , 302 )
-
         post_data_2 = {
 
-            'name2': u'Test organisation creation two',
+            'name': u'Test organisation creation two'
         }
+        post_data_3 = {
+            'name' : u'Test organisation creation three'
+        }
+
+        response = client.post( reverse( 'create-organisation' ) , post_data )
+        self.assertEqual( response.status_code , 302 )
+
         response = client.post( reverse( 'create-organisation' ) ,
                                 post_data_2 )
-        self.assertEqual( response.status_code, 200 )
-
-        post_data_3 = {
-            'name3' : u'Test organisation creation three',
-        }
+        self.assertEqual( response.status_code , 302 )
 
         response = client.post( reverse( 'create-organisation' ), post_data_3 )
-        self.assertEqual( response.status_code , 200 )
-
-        expected_templates = [
-            'organisation/create', u'base/organisation_create.html'
-        ]
-        # self.assertEqual(response.template_name, expected_templates)
+        self.assertEqual( response.status_code , 302 )
 
     @override_settings( VALID_DOMAIN = [ 'testserver' , ] )
     def test_organisation_create_with_no_login(self):
