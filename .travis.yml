@@ -23,7 +23,7 @@ addons:
     - postgresql-9.3-postgis-2.3
 
 install:
-  - pip install coveralls
+  - pip install codecov
   - pip install -r REQUIREMENTS-dev.txt
 
 
@@ -41,8 +41,8 @@ script:
   - coverage run manage.py test
 
 after_success:
-  - coveralls
+  - codecov
 
 email:
  - tim@kartoza.com
- - rischan@kartoza.com
+ - ismail@kartoza.com
