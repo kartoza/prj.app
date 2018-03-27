@@ -21,7 +21,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^', include('base.urls')),
-    url(r'^', include('fish.urls')),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^api-auth/', include('rest_framework.urls')),
 ]

@@ -48,5 +48,3 @@ LOGGING = {
         'handlers': ['nullhandler'],
     }
 }
-
-ROLEPERMISSIONS_MODULE = 'roles.settings.roles_test'

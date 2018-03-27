@@ -13,8 +13,6 @@ from .contrib import *  # noqa
 # Project apps
 INSTALLED_APPS += (
     'base',
-    'roles',
-    'fish',
 )
 
 # Set debug to false for production

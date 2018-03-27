@@ -258,13 +258,6 @@ enable-machine:
 	@echo "------------------------------------------------------------------"
 	@echo "eval \"$(docker-machine env freshwater)\""
 
-sync-roles:
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Running update migrations in production mode"
-	@echo "------------------------------------------------------------------"
-	@docker-compose -p $(PROJECT_ID) run uwsgi python manage.py sync_roles
-
 # ----------------------------------------------------------------------------
 #    DEVELOPMENT C O M M A N D S
 # --no-deps will attach to prod deps if running
