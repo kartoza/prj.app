@@ -24,7 +24,7 @@ INSTALLED_APPS = (
 ) + INSTALLED_APPS
 
 # Grapelli settings
-GRAPPELLI_ADMIN_TITLE = 'HealthyRivers Admin Page'
+GRAPPELLI_ADMIN_TITLE = 'GeoContext Admin Page'
 
 INSTALLED_APPS += (
     'allauth',
