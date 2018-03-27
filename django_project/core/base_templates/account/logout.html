@@ -1,0 +1,49 @@
+{% load staticfiles %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block css_head %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css" rel="stylesheet" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Chosen library -->
+    <link rel="stylesheet" href="{% static 'chosen/chosen.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <link rel="stylesheet" href="{% static 'css/account.css' %}">
+{% endblock %}
+
+{% block js_head %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdn.rawgit.com/leafo/sticky-kit/v1.1.2/jquery.sticky-kit.min.js"></script>
+
+    <script src="{% static 'chosen/chosen.jquery.min.js' %}"></script>
+    <script src="{% static 'js/account.js' %}"></script>
+    <script src="{% static 'js/form.js' %}"></script>
+
+{% endblock %}
+
+{% block container %}
+    <div class="content">
+        {% block content %}
+
+            {% csrf_token %}
+            <div class="container">
+
+                <div class="custom-form-container">
+                    <p>{% trans 'Are you sure you want to log out?' %}</p>
+                    <form class="logout" method="POST" action="{% url 'account_logout' %}">{% csrf_token %}
+                        {% if redirect_field_value %}
+                            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                        {% endif %}
+                        <button class="login custom-form-submit" type="submit">{% trans "Log Out" %}</button>
+                    </form>
+                </div>
+            </div> <!-- /container -->
+            </div>
+        {% endblock %}
+{% endblock %}

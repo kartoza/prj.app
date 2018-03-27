@@ -1,0 +1,80 @@
+{% extends 'main_base.html' %}
+{% load static from staticfiles %}
+
+{% block title %}
+    CSV Uploader
+{% endblock %}
+
+{% block head %}
+
+    <!-- Custom styles for this template -->
+    <link href="{% static "csv_uploader.css" %}" rel="stylesheet">
+
+{% endblock %}
+
+{% block body_content %}
+
+    <div class="container">
+        <div class="jumbotron csv-uploader-wrapper">
+            <h3>CSV Uploader</h3>
+            <div id="csv-alert" class="alert alert-warning" role="alert" style="display: none;">
+            </div>
+            <form onchange="Validate(this)" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <label for="file"><b>Upload csv here</b></label>
+                    <input type="file" name="csv_file">
+                    <p class="help-block">Upload a .csv file you want to read.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="upload-file-btn" class="btn btn-primary" data-dismiss="modal" value="Upload">Upload</button>
+                </div>
+            </form>
+
+            {% if data.uploaded %}
+                <p> {{ data.uploaded }} </p>
+            {% endif %}
+
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block foot %}
+
+    <script type="text/javascript">
+        var _validFileExtensions = [".csv"];
+        function Validate(oForm) {
+            var arrInputs = oForm.getElementsByTagName("input");
+            for (var i = 0; i < arrInputs.length; i++) {
+                var oInput = arrInputs[i];
+                if (oInput.type == "file") {
+                    var sFileName = oInput.value;
+                    if (sFileName.length > 0) {
+                        var blnValid = false;
+                        for (var j = 0; j < _validFileExtensions.length; j++) {
+                            var sCurExtension = _validFileExtensions[j];
+                            if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() == sCurExtension.toLowerCase()) {
+                                blnValid = true;
+                                break;
+                            }
+                        }
+
+                        if (!blnValid) {
+                            var alertDiv = $('#csv-alert');
+                            alertDiv.html("Sorry, " + sFileName + " is invalid, allowed extensions are: " + _validFileExtensions.join(", "));
+                            alertDiv.show();
+                            oInput.value = '';
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+    </script>
+
+{% endblock %}

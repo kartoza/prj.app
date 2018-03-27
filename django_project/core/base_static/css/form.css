@@ -1,0 +1,211 @@
+
+.custom-form-container {
+    padding: 30px;
+    max-width: 450px;
+    width: 100% !important;
+    background-color: #F7F7F7;
+    margin: 0 auto;
+    border-radius: 2px;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    font-family: 'Open Sans', 'Lucida Grande', sans-serif;
+}
+
+.custom-form-container h1 {
+    text-align: center;
+    font-size: 1.8em;
+    font-family: 'Open Sans', 'Lucida Grande', sans-serif;
+    padding-bottom: 20px;
+}
+
+.custom-form-container button[type=submit] {
+    width: 100%;
+    display: block;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.custom-form-container input[type=text], input[type=password], input[type=email]{
+    height: 44px;
+    font-size: 16px;
+    width: 100%;
+    margin-bottom: 10px;
+    -webkit-appearance: none;
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    border-top: 1px solid #c0c0c0;
+    /* border-radius: 2px; */
+    padding: 0 8px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.custom-form-container input[type=text]:hover, input[type=password]:hover, input[type=email]:hover {
+    border: 1px solid #b9b9b9;
+    border-top: 1px solid #a0a0a0;
+    -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.custom-form {
+    text-align: center;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    font-weight: 700;
+    height: 36px;
+    padding: 0 8px;
+}
+
+.custom-form-submit {
+    border: 0px;
+    color: #fff;
+    text-shadow: 0 1px rgba(0,0,0,0.1);
+    background-color: #4d90fe;
+    padding: 17px 0px;
+    font-family: 'Open Sans', 'Lucida Grande', sans-serif;
+    font-size: 14px;
+}
+
+.custom-form-submit:hover {
+    border: 0px;
+    text-shadow: 0 1px rgba(0,0,0,0.3);
+    background-color: #357ae8;
+}
+
+.custom-form-container a {
+    text-decoration: none;
+    color: #666;
+    font-weight: 400;
+    text-align: center;
+    display: inline-block;
+    opacity: 0.6;
+    transition: opacity ease 0.5s;
+}
+
+.login-help{
+    font-size: 12px;
+}
+
+.remember {
+    padding: 2px;
+}
+
+.errorlist {
+    background-color: #ff6666;
+    color: white;
+    padding: 10px;
+}
+
+.errorlist li {
+    list-style-type: none;
+}
+
+.socialaccount_ballot li {
+    list-style-type: none;
+}
+
+.socialaccount_providers {
+    list-style-type: none;
+    padding: 0;
+}
+
+.socialaccount_provider {
+    width: 100%;
+    opacity: 0.9 !important;
+    margin-bottom: 10px;
+}
+
+/* GitHub Sign In Button */
+
+.github-button {
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    padding: 9px 20px;
+    border: 1px solid #272727;
+    border-radius: 0;
+    background: #373737;
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+.github-button .text-button {
+    display: inline-block;
+    float: left !important;
+}
+.github-button:hover,
+.github-button:focus {
+    border: 1px solid #2b2b2b;
+    background: #2f2f2f;
+    color: #ffffff;
+    text-decoration: none;
+}
+.github-button img{
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    float: left;
+    margin: -2px 14px -6px -4px;
+}
+
+/* Google Sign In Button */
+
+.google-button {
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    padding: 9px 20px;
+    border: 1px solid #000099;
+    border-radius: 0;
+    color: #000099 !important;
+    opacity: 1 !important;
+}
+
+.google-button .text-button {
+    display: inline-block;
+    float: left !important;
+}
+.google-button:hover,
+.google-button:focus {
+    border: 1px solid #000099;
+    text-decoration: none;
+    background: #E7E9E9;
+}
+.google-button img{
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    float: left;
+    margin: -2px 14px -6px -4px;
+}
+
+.buttonHolder {
+    margin-top: 10px;
+}
+
+.email-action {
+    height: 50px;
+    background-color: #4d90fe;
+    text-shadow: 0 1px rgba(0,0,0,0.1);
+    border: 0;
+    color: white;
+}
+
+.email-action:hover {
+    border: 0;
+    text-shadow: 0 1px rgba(0,0,0,0.3);
+    background-color: #357ae8;
+}
+
+.bottom-dropdown + .chosen-container .chosen-drop{
+    margin-bottom: 75px !important;
+}
+
+.form-control.clearablefileinput {
+    padding: 0 !important;
+    border: None;
+    box-shadow: None;
+}

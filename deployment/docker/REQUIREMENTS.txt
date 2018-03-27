@@ -1,0 +1,26 @@
+psycopg2-binary
+Django>=2.0.2
+django-braces==1.9.0
+django-model-utils==1.4.0
+django-pipeline==1.6.14
+django-role-permissions==2.2.0
+markdown==2.6.11
+
+# Raven pinned to 3.3.7 - see
+# https://github.com/getsentry/raven-python/issues/337
+raven==5.8.1
+django-sentry==1.13.5
+requests==2.18.4
+pytz
+# support special characters
+
+django-allauth==0.35.0
+
+# Django Easy Audit
+# https://github.com/soynatan/django-easy-audit
+django-easy-audit==1.0
+django-grappelli==2.11.1
+
+djangorestframework==3.7.7
+django-filter==1.1.0
+coreapi==2.3.3

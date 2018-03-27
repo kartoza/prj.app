@@ -1,7 +1,29 @@
+venv
+.idea
+*.pyc
+*.*~
+vagrant-fabric-lxc
+django_project/media/images
+visual_changelog.db
+.vagrant
+
+node_modules
+id_dsa.pub
+id_rsa.pub
+docs/build
+fabgis_resources
+private.py
+
+# Vim leftovers
+*.*~
+
+# project specifc
+django_project/core/settings/secret.py
+xmlrunner
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-*$py.class
 
 # C extensions
 *.so
@@ -14,20 +36,19 @@ develop-eggs/
 dist/
 downloads/
 eggs/
-.eggs/
 lib/
 lib64/
 parts/
 sdist/
 var/
-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 
 # PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+# Usually these files are written by a python script from a template
+# before PyInstaller builds the exe, so as to inject date/other infos
+# into it.
 *.manifest
 *.spec
 
@@ -39,12 +60,9 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .coverage
-.coverage.*
 .cache
 nosetests.xml
 coverage.xml
-*.cover
-.hypothesis/
 
 # Translations
 *.mo
@@ -52,14 +70,6 @@ coverage.xml
 
 # Django stuff:
 *.log
-local_settings.py
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
 
 # Sphinx documentation
 docs/_build/
@@ -67,35 +77,51 @@ docs/_build/
 # PyBuilder
 target/
 
-# Jupyter Notebook
-.ipynb_checkpoints
+#PyCharm
+.idea
 
-# pyenv
-.python-version
+# Virtual env
+venv
 
-# celery beat schedule file
-celerybeat-schedule
+# Node
+django_project/static
+node_modules
 
-# SageMath parsed files
-*.sage.py
+# Working data not intended to be versioned
+data_for_import
+scrap.html
+.pycharm_helpers
+.sudo_as_admin_successful
 
-# dotenv
-.env
+# Pg cluster for docker
+deployment/pg/postgres_data/9.3
+deployment/pg/postgres_staging_data/9.3
+deployment/pg/postgres_dev_data/9.3
+# Template for apt-cacher
+# static and media dirs
+deployment/static
+deployment/media
+deployment/docker/71-apt-cacher-ng
+django_project/static
+django_project/core/settings/secret.py
 
-# virtualenv
-.venv
-venv/
-ENV/
+# local media
+django_project/media
 
-# Spyder project settings
-.spyderproject
-.spyproject
+# OSX Crap
+.DS_Store
 
-# Rope project settings
-.ropeproject
+# Backups
+*.dmp
+deployment/backups
 
-# mkdocs documentation
-/site
+# We should never version the btsync keys
+deployment/btsync-media.env
+deployment/btsync-db.env
+deployment/btsync-db.env.PRODUCTION
+deployment/btsync-media.env.PRODUCTION
+.sync/
+# These don't get versioned since they are generated on the fly 
+deployment/docker/Dockerfile-prod
+deployment/docker/projecta.tar.gz
 
-# mypy
-.mypy_cache/
