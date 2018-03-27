@@ -218,3 +218,203 @@ class TestViews(TestCase):
             'github/populate-github.html'
         ]
         self.assertEqual(response.template_name, expected_templates)
+
+
+class TestOrganisationCreate(TestCase):
+    """Test organisation creation."""
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def setUp(self):
+        """Setting up before each test."""
+        self.client = Client()
+        self.client.post(
+                '/set_language/', data = {'language': 'en'})
+        logging.disable(logging.CRITICAL)
+        self.user = UserF.create(**{
+            'username': 'sonlinux',
+            'is_staff': True,
+        })
+
+        self.user.set_password('password')
+        self.user.save()
+
+        # lets set up a testing project to create organisations from.
+        self.test_project = ProjectF.create()
+        self.unapproved_project = ProjectF.create(approved=False)
+        self.test_organisation = OrganisationF.create()
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_oroganisation_create_with_login(self):
+        """
+        Test that a single logged in user can create multiple organisations.
+        """
+        client = Client()
+        loged_in = client.login(username='sonlinux', password='password')
+
+        # Test client log in.
+        self.assertTrue(loged_in)
+
+        expected_templates = [
+            'organisation/create.html'
+        ]
+        response = client.post(reverse('create-organisation'))
+        self.assertEqual(response.status_code, 200)
+
+        # Test if get the correct template view after creation.
+        self.assertEqual(response.template_name, expected_templates)
+
+    @override_settings(VALID_DOMAIN = ['testserver', ])
+    def test_multiple_organisation_create_with_single_login(self):
+        """
+        Test that a single logged in user can create multiple
+        organisations.
+        """
+        client = Client()
+        loged_in = client.login(username='sonlinux', password='password')
+
+        # Test that user is actually loged in.
+        self.assertTrue(loged_in)
+        post_data_list = [
+            'Test organisation creation',
+            'Test organisation creation two',
+            'Test organisation creation three']
+
+        for post_data in post_data_list:
+            response = client.post(reverse('create-organisation'),
+                                   {'name': post_data})
+            self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN = ['testserver', ])
+    def test_organisation_create_with_no_login(self):
+        """Test that no non-authenticated user can create an organisation."""
+        client = Client()
+        post_data = {
+            'name': u'A new test organisation',
+        }
+        # response = client.post( reverse( 'account_login') , post_data )
+        response = client.post(reverse('create-organisation'), post_data)
+        self.assertEqual(response.status_code, 302)
+
+
+class TestOrganisationCreateWithSuperuserPermissions(TestCase):
+    """Test organisation creation with a superuser login."""
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def setUp(self):
+        """Setting up before each test."""
+        self.client = Client()
+        self.client.post(
+                '/set_language/', data = {'language': 'en'})
+        logging.disable(logging.CRITICAL)
+        self.user = UserF.create(**{
+            'username': 'sonlinux',
+            'is_superuser': True,
+        })
+
+        self.user.set_password('password')
+        self.user.save()
+
+        # lets set up a testing project to create organisations from.
+        self.test_project = ProjectF.create()
+        self.unapproved_project = ProjectF.create(approved=False)
+        self.test_organisation = OrganisationF.create()
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_oroganisation_create_with_superuser(self):
+        """
+        Test that a superuser login can create multiple organisations.
+        """
+        client = Client()
+        loged_in = client.login(username='sonlinux', password='password')
+
+        # Test client log in.
+        self.assertTrue(loged_in)
+
+        expected_templates = [
+            'organisation/create.html'
+        ]
+        response = client.post(reverse('create-organisation'))
+        self.assertEqual(response.status_code, 200)
+
+        # Test if get the correct template view after creation.
+        self.assertEqual(response.template_name, expected_templates)
+
+    @override_settings(VALID_DOMAIN = ['testserver', ])
+    def test_multiple_organisation_create_with_superuser(self):
+        """
+        Test that a superuser login can create multiple organisations.
+        """
+        client = Client()
+        loged_in = client.login(username='sonlinux', password='password')
+
+        # Test that user is actually loged in.
+        self.assertTrue(loged_in)
+        post_data_list = [
+            'Test organisation creation',
+            'Test organisation creation two',
+            'Test organisation creation three']
+
+        for post_data in post_data_list:
+            response = client.post(reverse('create-organisation'),
+                                   {'name': post_data})
+            self.assertEqual(response.status_code, 302)
+
+
+class TestOrganisationCreateWithNoneStaffPermissions(TestCase):
+    """Test organisation creation with a none staff user."""
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def setUp(self):
+        """Setting up before each test."""
+        self.client = Client()
+        self.client.post(
+                '/set_language/', data = {'language': 'en'})
+        logging.disable(logging.CRITICAL)
+        self.user = UserF.create(**{
+            'username': 'sonlinux',
+            'is_staff': False,
+        })
+
+        self.user.set_password('password')
+        self.user.save()
+
+        # lets set up a testing project to create organisations from.
+        self.test_project = ProjectF.create()
+        self.unapproved_project = ProjectF.create(approved=False)
+        self.test_organisation = OrganisationF.create()
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_oroganisation_create_with_none_staff_login(self):
+        """Test that a none staff user can create an organisations."""
+
+        client = Client()
+        loged_in = client.login(username='sonlinux', password='password')
+
+        # Test client log in.
+        self.assertTrue(loged_in)
+
+        expected_templates = [
+            'organisation/create.html'
+        ]
+        response = client.post(reverse('create-organisation'))
+        self.assertEqual(response.status_code, 200)
+
+        # Test if get the correct template view after creation.
+        self.assertEqual(response.template_name, expected_templates)
+
+    @override_settings(VALID_DOMAIN = ['testserver', ])
+    def test_multiple_organisation_create_with_none_staff_user(self):
+        """
+        Test that a none staff user can create multiple organisations.
+        """
+        client = Client()
+        loged_in = client.login(username='sonlinux', password='password')
+
+        # Test that user is actually loged in.
+        self.assertTrue(loged_in)
+        post_data_list = [
+            'Test organisation creation',
+            'Test organisation creation two',
+            'Test organisation creation three']
+
+        for post_data in post_data_list:
+            response = client.post(reverse('create-organisation'),
+                                   {'name': post_data})
+            self.assertEqual(response.status_code, 302)
