@@ -274,24 +274,20 @@ class TestOrganisationCreate(TestCase):
         # Test that user is actually loged in.
         self.assertTrue(loged_in)
 
-        post_data = {
-            'name': u'Test organisation creation'
-        }
-        post_data_2 = {
-            'name': u'Test organisation creation two'
-        }
-        post_data_3 = {
-            'name': u'Test organisation creation three'
-        }
+        post_data_list = [
+            'Test organisation creation',
+            'Test organisation creation two',
+            'Test organisation creation three']
 
-        response = client.post(reverse('create-organisation'), post_data)
-        self.assertEqual(response.status_code, 302)
+        for post_data in post_data_list:
+            response = client.post(reverse('create-organisation'),
+                                   {'name': post_data})
+            self.assertEqual(response.status_code, 302)
 
-        response = client.post(reverse('create-organisation'), post_data_2)
-        self.assertEqual(response.status_code, 302)
+            response = client.post(reverse('create-organisation'),
+                                   {'name': post_data})
+            self.assertEqual(response.status_code, 302)
 
-        response = client.post(reverse('create-organisation'), post_data_3)
-        self.assertEqual(response.status_code, 302)
 
     @override_settings(VALID_DOMAIN = ['testserver', ])
     def test_organisation_create_with_no_login(self):
