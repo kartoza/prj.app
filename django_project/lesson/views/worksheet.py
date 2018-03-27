@@ -20,7 +20,6 @@ from weasyprint import HTML
 from lesson.forms.worksheet import WorksheetForm
 from lesson.models.answer import Answer
 from lesson.models.further_reading import FurtherReading
-from lesson.models.section import Section
 from lesson.models.specification import Specification
 from lesson.models.worksheet import Worksheet
 from lesson.models.worksheet_question import WorksheetQuestion
@@ -257,3 +256,48 @@ class WorksheetOrderSubmitView(LoginRequiredMixin, WorksheetMixin, UpdateView):
         section = Section.objects.get(slug=kwargs.get('section_slug'))
         worksheets = Worksheet.objects.filter(section=section)
         return re_order_features(request, worksheets)
+
+from ..models.section import Section
+from ..views.section import SectionMixin
+class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
+    """Show correct answers to module questions.
+
+    :param request: HttpRequest object
+    :type request: HttpRequest
+    """
+    # headline = _(u'Worksheet answers to module questions')
+    context_object_name = 'worksheets'
+    template_name = 'worksheet/question_answers.html'
+
+    def get_context_data(self, **kwargs):
+        """bla
+		"""
+        context = super(WorksheetModuleQuestionAnswers, self).get_context_data(**kwargs)
+        pk = self.kwargs.get('pk', None)
+        questions = WorksheetQuestion.objects.filter(worksheet = pk)
+        context['questions'] = OrderedDict()
+        for question in questions:
+            context['questions'][question] = Answer.objects.filter(
+                    question = question)
+
+        context['worksheets'] = OrderedDict()
+        context['sections'] = Section.objects.all()
+        for section in context['sections']:
+            query_set = Worksheet.objects.filter(section=section)
+            context['worksheets'][section] = query_set
+        return context
+
+    def get_success_url(self):
+        """Define the redirect URL.
+
+        After successful update of the object, the User will be redirected to
+        the section detail (worksheet list) page.
+
+        :returns: URL
+        :rtype: HttpResponse
+        """
+        return reverse('worksheet-detail', kwargs={
+            'pk': self.object.pk,
+            'project_slug': self.object.section.project.slug,
+            'section_slug': self.object.section.slug,
+        })
