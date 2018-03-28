@@ -221,7 +221,6 @@
             </div>
         {% endif %}
     </div>
-
     {# Check your knowledge #}
     <div class="row details-worksheet question-answer" style="margin-top:10px;">
         <div class="col-lg-1">
@@ -253,7 +252,6 @@
             {% endif %}
         </div>
     </div>
-
     <div class="row details-worksheet question-answer" style="margin-top:10px;">
         <div style="margin-bottom: 20px" class="col-lg-12">
             <ol type="1">
@@ -294,32 +292,38 @@
                     </div>
                     <ol type="a">
                         {% for answer in answers %}
+                         <div class="row">
                             <li style="margin-bottom: 10px">
                                 {% if user_can_edit %}
                                     {# We insert a tick for the correct answer and if the user is allowed and we display explanations. #}
-                                    {% if answer.is_correct %}
-                                        <span class="question-answer-action" style="display:none;">&#10004;</span>
-                                    {%  endif %}
-                                    {{ answer.answer }}{{ answer|is_translation_up_to_date }}
-                                    {% if answer.answer_explanation %}
-                                        <span class="question-answer-action" style="display:none;">: <em>{{ answer.answer_explanation | base_markdown }}</em></span>
-                                    {% endif %}
-                                    <div class="pull-right btn-group question-answer-action" style="display:none;">
-                                        <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                                            href='{% url "answer-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
-                                            data-title="{% trans 'Delete' %} {{ answer.answer }}">
-                                            <span class="glyphicon glyphicon-minus"></span>
-                                        </a>
-                                        <a class="btn btn-default btn-mini tooltip-toggle"
-                                            href='{% url "answer-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
-                                            data-title="{% trans 'Edit' %} {{ answer.answer }}">
-                                            <span class="glyphicon glyphicon-pencil"></span>
-                                        </a>
+                                    <div class="col-lg-10">
+                                        {% if answer.is_correct %}
+                                            <span class="question-answer-action" style="display:none;">&#10004;</span>
+                                        {%  endif %}
+                                        {{ answer.answer }}{{ answer|is_translation_up_to_date }}
+                                        {% if answer.answer_explanation %}
+                                            <span class="question-answer-action" style="display:none;">: <em>{{ answer.answer_explanation | base_markdown }}</em></span>
+                                        {% endif %}
                                     </div>
-                                {% else %}
-                                    {{ answer.answer }}
-                                {% endif %}
-                            </li>
+                                    <div class="col-lg-2">
+                                            <div class="pull-right btn-group question-answer-action" style="display:none;">
+                                                <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                                                    href='{% url "answer-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
+                                                    data-title="{% trans 'Delete' %} {{ answer.answer }}">
+                                                    <span class="glyphicon glyphicon-minus"></span>
+                                                </a>
+                                                <a class="btn btn-default btn-mini tooltip-toggle"
+                                                    href='{% url "answer-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
+                                                    data-title="{% trans 'Edit' %} {{ answer.answer }}">
+                                                    <span class="glyphicon glyphicon-pencil"></span>
+                                                </a>
+                                            </div>
+                                        {% else %}
+                                            {{ answer.answer }}
+                                        {% endif %}
+                                    </div>
+                                </li>
+                           </div>
                         {% endfor %}
                     </ol>
                 {% endfor %}
