@@ -9,6 +9,7 @@ from django.utils.feedgenerator import Atom1Feed
 from django.shortcuts import get_object_or_404
 from base.models.project import Project
 from changes.models.sponsorship_period import SponsorshipPeriod
+from changes.feeds.json_rss_feed import JSONFeed
 
 
 # noinspection PyMethodMayBeStatic
@@ -119,9 +120,19 @@ class RssSponsorFeed(Feed):
             .format(**data)
         return descriptions
 
+    def item_extra_kwargs(self, item):
+        return {'image_url': item.sponsor.logo.url}
+
+
 
 class AtomSponsorFeed(RssSponsorFeed):
     """Atom Feed class for sponsor."""
 
     feed_type = Atom1Feed
     subtitle = RssSponsorFeed.description
+
+
+class JSONSponsorFeed(RssSponsorFeed):
+    """JSON Feed class for sponsor."""
+
+    feed_type = JSONFeed

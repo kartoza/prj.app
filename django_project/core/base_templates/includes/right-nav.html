@@ -50,8 +50,8 @@
         {% static "img/language_flags/" as img_path %}
         {% for language_header in languages %}
              {% if language_header.code == LANGUAGE_CODE %}
-                     <p><b class="caret"></b> <img src="{{ img_path }}{{ language_header.code }}.png" style="height: 13pt; margin-bottom: 3pt;">
-                         <span>  {{ language_header.name|capfirst }}</span></p>
+                     <span><b class="caret"></b> <img src="{{ img_path }}{{ language_header.code }}.png" style="height: 13pt; margin-bottom: 3pt;">
+                         <span>  {{ language_header.name|capfirst }}</span></span>
              {% endif %}
         {% endfor %}
     </a>
@@ -71,9 +71,9 @@
 <li class="dropdown">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
         {% if user.is_authenticated %}
-            <p><b class="caret"></b> {{ user.get_full_name|default:user.username }}</p>
+            <span><b class="caret"></b> {{ user.get_full_name|default:user.username }}</span>
         {% else %}
-            <p><b class="caret"></b> Account</p>
+            <span><b class="caret"></b> Account</span>
         {% endif %}
 
     </a>
