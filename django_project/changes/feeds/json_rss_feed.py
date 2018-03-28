@@ -30,8 +30,8 @@ class JSONFeed(SyndicationFeed):
             item_elements['description'] = item['description']
 
         if item['author_name'] and item['author_email']:
-            item_elements['author'] = "%s (%s)" % (
-            item['author_name'], item['author_email'])
+            item_elements['author'] = \
+                '%s (%s)' % (item['author_name'], item['author_email'])
         elif item['author_email']:
             item_elements['author'] = item['author_email']
         elif item['author_name']:
