@@ -299,6 +299,49 @@ def generate_pdf(
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
         center, 270, '{}'.format(course_duration))
+
+
+    #----------------------------------
+    page.setFont('Times-Bold', 26)
+    page.drawCentredString(center, 480, 'Certificate of Completion')
+    page.drawCentredString(
+            center, 400, '%s %s' % (attendee.firstname, attendee.surname))
+    page.setFont('Times-Roman', 16)
+    page.drawCentredString(
+            center, 360, 'Has attended and completed the course:')
+    page.setFont('Times-Bold', 20)
+    page.drawCentredString(center, 300, course.course_type.name)
+    page.setFont('Times-Roman', 16)
+    page.drawCentredString(
+            center, 270, '{}'.format(course_duration))
+    if convener_signature is not None:
+        page.drawImage(
+            convener_signature, (margin_right - 200), (margin_bottom + 70),
+            width=100, height=70, preserveAspectRatio=True, anchor='s',
+            mask='auto')
+
+    page.setFont('Times-Italic', 12)
+    page.drawCentredString(
+        (margin_left + 150), (margin_bottom + 60),
+        '{} {}'.format(project.owner.first_name, project.owner.last_name))
+    page.drawCentredString(
+        (margin_right - 150), (margin_bottom + 60),
+        '{}'.format(convener_name))
+    page.line(
+        (margin_left + 70), (margin_bottom + 55),
+        (margin_left + 230), (margin_bottom + 55))
+    page.line(
+        (margin_right - 70), (margin_bottom + 55),
+        (margin_right - 230), (margin_bottom + 55))
+    page.setFont('Times-Roman', 13)
+    page.drawCentredString(
+        (margin_left + 150),
+        (margin_bottom + 40),
+        'Project Representative')
+    page.drawCentredString(
+        (margin_right - 150), (margin_bottom + 40), 'Course Convener')
+    #----------------------------------
+
     page.setFillColorRGB(0.1, 0.1, 0.1)
     page.drawCentredString(
         center, 220, 'Convened by {} at {}'.format(
