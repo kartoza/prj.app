@@ -115,5 +115,8 @@ class ContextServiceRegistry(models.Model):
     def parse_request_content(self, request_content):
         if self.query_type == self.WFS:
             xmldoc = minidom.parseString(request_content)
-            provname_dom = xmldoc.getElementsByTagName(self.result_regex)[0]
-            return provname_dom.childNodes[0].nodeValue
+            try:
+                value_dom = xmldoc.getElementsByTagName(self.result_regex)[0]
+                return value_dom.childNodes[0].nodeValue
+            except IndexError:
+                return None

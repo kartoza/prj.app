@@ -40,3 +40,22 @@ class TestContextServiceRegistry(TestCase):
 
         value = model.retrieve_context_value(x, y)
         self.assertEqual('Eastern Cape', value)
+
+        x = 31.72
+        y = -27.88
+
+        model_2 = ContextServiceRegistryF.create()
+        model_2.url = (
+            'http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs')
+        model_2.query_type = ContextServiceRegistry.WFS
+        model_2.query_url = (
+            'http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs&'
+            'SERVICE=WFS&REQUEST=GetFeature&VERSION=1.0.0&'
+            'TYPENAME=water_management_area&'
+            'SRSNAME=EPSG:4326&OUTPUTFORMAT=GML3&')
+        model_2.result_regex = 'qgs:name'
+
+        model_2.save()
+
+        value = model_2.retrieve_context_value(x, y)
+        self.assertEqual('6 - Usutu to Mhlathuze', value)
