@@ -1,6 +1,9 @@
 # coding=utf-8
 """Context Service Registry Model."""
 
+import requests
+from xml.dom import minidom
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -96,5 +99,21 @@ class ContextServiceRegistry(models.Model):
     time_to_live = models.IntegerField(
         help_text=_('Time to live of Context Service to be used in caching.'),
         blank=True,
-        null=False,
+        null=True,
     )
+
+    def retrieve_context_value(self, x, y):
+        # construct bbox
+        bbox = [x, y, x * (1.0001), y * (1.0001)]
+        bbox_string = ','.join([str(i) for i in bbox])
+        url = self.query_url + '&BBOX=' + bbox_string
+        print(url)
+        request = requests.get(url)
+        content = request.content
+        return self.parse_request_content(content)
+
+    def parse_request_content(self, request_content):
+        if self.query_type == self.WFS:
+            xmldoc = minidom.parseString(request_content)
+            provname_dom = xmldoc.getElementsByTagName(self.result_regex)[0]
+            return provname_dom.childNodes[0].nodeValue
