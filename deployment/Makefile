@@ -288,15 +288,9 @@ status:
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) ps
 
-# Run pep8 style checking
-#http://pypi.python.org/pypi/pep8
-pep8:
-	@echo
-	@echo "-----------"
-	@echo "PEP8 issues"
-	@echo "-----------"
-	@pep8 --version
-	@pep8 --repeat --ignore=E203,E121,E122,E123,E124,E125,E126,E127,E128,E402  --exclude='../django_project/.pycharm_helpers','../django_project/*/migrations/','../django_project/*/urls.py','../django_project/core/settings/secret.py' ../django_project || true
+flake8:
+	@echo "Check flake 8"
+	@flake8 ../django_project
 
 
 # --------------- help --------------------------------
@@ -337,5 +331,4 @@ help:
 	@echo "* **superuser** - create a django superuser account."
 	@echo "* **update-migrations** - freshen all migration definitions to match the current code base."
 	@echo "* **web** - same as **run** - runs the production site."
-	@echo "* **pep8** - Run Python PEP8 check."
-
+	@echo "* **flake8** - Check flake 8"

@@ -23,7 +23,7 @@ addons:
     - postgresql-9.3-postgis-2.3
 
 install:
-  - pip install coveralls
+  - pip install codecov
   - pip install -r REQUIREMENTS-dev.txt
 
 
@@ -32,15 +32,16 @@ before_script:
   - psql -c 'CREATE EXTENSION postgis;' -U postgres -d test_db
 
 script:
-  - flake8 --config .flake8 django_project
-  - cd django_project
+  - cd deployment
+  - make flake8
+  - cd ../django_project
   - python manage.py makemigrations
   - python manage.py migrate
   - python manage.py collectstatic --noinput --verbosity 0
   - coverage run manage.py test
 
 after_success:
-  - coveralls
+  - codecov
 
 email:
  - tim@kartoza.com
