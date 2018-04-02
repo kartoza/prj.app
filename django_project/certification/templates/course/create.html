@@ -18,6 +18,11 @@
 {% endblock page_title %}
 
 {% block content %}
+    <style>
+        #preview {
+            margin-top: 20px;
+        }
+    </style>
 
     <script>
     $(function() {
@@ -61,5 +66,50 @@
             {% endfor %}
         </div>
     </section>
+
+    <section id="preview">
+        <div class="container">
+            <form method="post" id="preview-form" action="/en/{{ project_slug }}/certifyingorganisation/{{ organisation_slug }}/preview-certificate/" target="_blank" onsubmit="return previewSubmit()">
+                {% csrf_token %}
+                <input type="hidden" name="course_type" value="">
+                <input type="hidden" name="course_convener" value="">
+                <input type="hidden" name="training_center" value="">
+                <input type="hidden" name="start_date" value="">
+                <input type="hidden" name="end_date" value="">
+                <input type="hidden" name="template_certificate" value="">
+                <input id="submit-bookmark" type="submit" class="btn btn-default" value="Preview Certificate">
+            </form>
+            <p id="error-submit" style="color: darkred; font-weight: bold"></p>
+        </div>
+    </section>
+
+    <script>
+        function previewSubmit() {
+            $('#error-submit').html('');
+
+            if($('select[name=course_type]').val() === ''){
+                $('#error-submit').html('Please choose a course type.');
+                return false
+            }else if($('select[name=course_convener]').val() === ''){
+                $('#error-submit').html('Please choose a course convener.');
+                return false
+            }else if($('select[name=training_center]').val() === ''){
+                $('#error-submit').html('Please choose a training center.');
+                return false
+            }else if($('input[id=id_start_date]').val() === ''){
+                $('#error-submit').html('Please choose start date.');
+                return false
+            }else if($('input[id=id_end_date]').val() === ''){
+                $('#error-submit').html('Please choose end date.');
+                return false
+            }
+
+            $('#preview-form input[name=course_convener]').val($('select[name=course_convener]').val());
+            $('#preview-form input[name=course_type]').val($('select[name=course_type]').val());
+            $('#preview-form input[name=training_center]').val($('select[name=training_center]').val());
+            $('#preview-form input[name=start_date]').val($('input[id=id_start_date]').val());
+            $('#preview-form input[name=end_date]').val($('input[id=id_end_date]').val());
+        }
+    </script>
 
 {% endblock %}

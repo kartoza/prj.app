@@ -60,6 +60,8 @@ class CourseCreateView(LoginRequiredMixin, CourseMixin, CreateView):
             CourseCreateView, self).get_context_data(**kwargs)
         context['courses'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
+        context['organisation_slug'] = self.kwargs.pop('organisation_slug')
+        context['project_slug'] = self.kwargs.pop('project_slug')
         return context
 
     def get_form_kwargs(self):

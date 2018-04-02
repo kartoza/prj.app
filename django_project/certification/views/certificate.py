@@ -1,4 +1,5 @@
 # coding=utf-8
+import datetime
 import StringIO
 import os
 import zipfile
@@ -14,9 +15,22 @@ from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.utils import ImageReader
-from ..models import Certificate, Course, Attendee, CertifyingOrganisation
+from ..models import (
+    Certificate,
+    Course,
+    Attendee,
+    CertifyingOrganisation,
+    CourseConvener,
+    TrainingCenter,
+    CourseType
+)
 from ..forms import CertificateForm
 from base.models.project import Project
+from certification.tests.model_factories import (
+    CourseF,
+    AttendeeF,
+    CertificateF
+)
 
 
 class CertificateMixin(object):
@@ -724,3 +738,83 @@ def regenerate_all_certificate(request, **kwargs):
             'has_pending_organisations': has_pending,
             'certificates': certificates_dict,
             'course': course})
+
+
+def preview_certificate(request, **kwargs):
+    """Generate pdf for preview upon creating new course."""
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="preview.pdf"'
+
+    project_slug = kwargs.pop('project_slug')
+    project = Project.objects.get(slug=project_slug)
+    organisation_slug = kwargs.pop('organisation_slug')
+
+    convener_id = request.POST.get('course_convener', None)
+    if convener_id is not None:
+        course_convener = CourseConvener.objects.get(id=convener_id)
+        training_center_id = request.POST.get('training_center', None)
+        training_center = TrainingCenter.objects.get(id=training_center_id)
+        course_type_id = request.POST.get('course_type', None)
+        course_type = CourseType.objects.get(id=course_type_id)
+        start_date = request.POST.get('start_date', None)
+        course_start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+        end_date = request.POST.get('end_date', None)
+        course_end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+        certifying_organisation = \
+            CertifyingOrganisation.objects.get(slug=organisation_slug)
+
+        # Create dummy objects
+        attendee = AttendeeF.create(
+            firstname='Jane',
+            surname='Doe',
+            email='janedoe@test.com',
+            slug='test-slug',
+            certifying_organisation=certifying_organisation,
+            author=request.user,
+        )
+        course = CourseF.create(
+            course_convener=course_convener,
+            course_type=course_type,
+            training_center=training_center,
+            start_date=course_start_date,
+            end_date=course_end_date,
+            certifying_organisation=certifying_organisation
+        )
+
+        certificate = CertificateF.create(
+            course=course,
+            attendee=attendee
+        )
+
+        current_site = request.META['HTTP_HOST']
+
+        generate_pdf(
+            response, project, course, attendee, certificate, current_site)
+
+        # Delete dummy objects
+        attendee.delete()
+        course.delete()
+        certificate.delete()
+
+    else:
+        # When preview page is refreshed, the data is gone so user needs to
+        # go back to create page.
+
+        page = canvas.Canvas(response, pagesize=landscape(A4))
+        width, height = A4
+        center = height * 0.5
+        page.setFillColorRGB(0.1, 0.1, 0.1)
+        page.setFont('Times-Bold', 26)
+        page.drawCentredString(center, 480, 'Certificate of Completion')
+        page.setFont('Times-Roman', 16)
+        page.drawCentredString(
+            center, 360,
+            'To preview your certificate template, '
+            'please go to create new course page')
+        page.drawCentredString(
+            center, 335, 'and click on Preview Certificate button.')
+        page.showPage()
+        page.save()
+
+    return response
