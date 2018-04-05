@@ -222,6 +222,7 @@
         {% endif %}
     </div>
     {# Check your knowledge #}
+    <div class="container">
     <div class="row details-worksheet question-answer" style="margin-top:10px;">
         <div class="col-lg-1">
           <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
@@ -267,8 +268,9 @@
                                             style="max-width: 300px !important;"/>
                                 {% endif %}
                             </div>
+                            {% if user_can_edit %}
+
                             <div class="col-lg-2">
-                                {% if user_can_edit %}
                                     <div class="pull-right btn-group question-answer-action" style="display:none;">
                                         <a class="btn btn-default btn-mini tooltip-toggle"
                                       href='{% url "answer-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug question.pk %}'
@@ -286,8 +288,9 @@
                                             <span class="glyphicon glyphicon-pencil"></span>
                                         </a>
                                     </div>
-                                {% endif %}
                             </div>
+                            {% endif %}
+
                         </li>
                     </div>
                     <ol type="a">
@@ -318,10 +321,11 @@
                                                     <span class="glyphicon glyphicon-pencil"></span>
                                                 </a>
                                             </div>
+                                    </div>
+                                            
                                         {% else %}
                                             {{ answer.answer }}
                                         {% endif %}
-                                    </div>
                                 </li>
                            </div>
                         {% endfor %}
@@ -330,7 +334,8 @@
             </ol>
         </div>
     </div>
-
+</div>
+    <div class="container">
     {# Further reading #}
     <div class="row details-worksheet further-reading" style="margin-top:10px;">
         <div class="col-lg-1">
@@ -397,6 +402,8 @@
             {% endif %}
         </div>
     </div>
+    </div>
+
 
     <script>
         $('.btn-delete').hover(
