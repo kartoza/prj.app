@@ -54,6 +54,6 @@ class TestCheckDomainMiddleware(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(
             response,
-            expected_url='http://changelog.qgis.org/en/domain-not-found/',
+            expected_url='http://changelog.kartoza.com/en/domain-not-found/',
             fetch_redirect_response=False,
         )
