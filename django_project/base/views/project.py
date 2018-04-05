@@ -186,7 +186,7 @@ class ProjectCreateView(LoginRequiredMixin, ProjectMixin, CreateView):
     template_name = 'project/create.html'
 
     def get_success_url(self):
-        return reverse('pending-project-list')
+        return reverse('home')
 
     def get_form_kwargs(self):
         kwargs = super(ProjectCreateView, self).get_form_kwargs()
