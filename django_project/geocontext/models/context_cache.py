@@ -22,31 +22,20 @@ class ContextCache(models.Model):
         help_text=_('Source URI of the Context.'),
         blank=False,
         null=False,
-        max_length=200,
+        max_length=1000,
     )
 
-    geometry_line = models.LineStringField(
-        help_text=_('The line geometry of the context.'),
+    geometry = models.GeometryField(
+        help_text=_('The 2D geometry of the context.'),
         blank=True,
         null=True,
     )
 
-    geometry_multi_line = models.MultiLineStringField(
-        help_text=_('The multi line geometry of the field.'),
+    geometry_3d = models.GeometryField(
+        help_text=_('The 3D geometry of the context.'),
         blank=True,
         null=True,
-    )
-
-    geometry_polygon = models.PolygonField(
-        help_text=_('The polygon geometry of the context.'),
-        blank=True,
-        null=True,
-    )
-
-    geometry_multi_polygon = models.MultiPolygonField(
-        help_text=_('The multi polygon geometry of the field.'),
-        blank=True,
-        null=True,
+        dim=3
     )
 
     service_registry = models.ForeignKey(

@@ -2,6 +2,8 @@
 """Context Service Registry Model."""
 
 import requests
+from datetime import datetime, timedelta
+import pytz
 from xml.dom import minidom
 
 from django.db import models
@@ -100,9 +102,12 @@ class ContextServiceRegistry(models.Model):
     )
 
     time_to_live = models.IntegerField(
-        help_text=_('Time to live of Context Service to be used in caching.'),
+        help_text=_(
+            'Time to live of Context Service to be used in caching in '
+            'seconds unit.'),
         blank=True,
         null=True,
+        default=604800  # 7 days
     )
 
     crs = models.IntegerField(
@@ -145,6 +150,24 @@ class ContextServiceRegistry(models.Model):
         value = self.parse_request_value(content)
 
         # Create cache here.
+        from geocontext.models.context_cache import ContextCache
+        expired_time = datetime.utcnow() + timedelta(seconds=self.time_to_live)
+        # Set timezone to UTC
+        expired_time = expired_time.replace(tzinfo=pytz.UTC)
+        context_cache = ContextCache(
+            service_registry=self,
+            name=self.name,
+            source_uri=url,
+            value=value,
+            expired_time=expired_time
+        )
+
+        if geometry.hasz:
+            context_cache.geometry_3d = geometry
+        else:
+            context_cache.geometry = geometry
+
+        context_cache.save()
 
         return geometry, value
 
