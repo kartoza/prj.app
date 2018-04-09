@@ -40,7 +40,10 @@ class TestContextServiceRegistry(TestCase):
         model_a.save()
 
         value = model_a.retrieve_context_value(x, y)
-        self.assertEqual('12 - Mzimvubu to Keiskamma', value)
+        self.assertEqual('12 - Mzimvubu to Keiskamma', value[1])
+        self.assertIsNotNone(value[0])
+        self.assertEqual(value[0].geom_type, 'Polygon')
+        self.assertTrue(value[0].valid)
 
         # Case 1, the CRS is different 4326 (query), 3857 (service)
         model_b = ContextServiceRegistryF.create()
@@ -56,4 +59,7 @@ class TestContextServiceRegistry(TestCase):
         model_b.save()
 
         value = model_b.retrieve_context_value(x, y)
-        self.assertEqual('Eastern Cape', value)
+        self.assertEqual('Eastern Cape', value[1])
+        self.assertIsNotNone(value[0])
+        self.assertEqual(value[0].geom_type, 'MultiPolygon')
+        self.assertTrue(value[0].valid)

@@ -8,7 +8,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.http import QueryDict
 
-from geocontext.utilities import convert_coordinate
+from geocontext.utilities import convert_coordinate, parse_gml_geometry
 
 
 class ContextServiceRegistry(models.Model):
@@ -127,13 +127,36 @@ class ContextServiceRegistry(models.Model):
     )
 
     def retrieve_context_value(self, x, y, crs=4326):
-        # construct bbox
+        """Retrieve context from a location.
+
+        :param x: The value of x coordinate.
+        :type x: float
+
+        :param y: The value of y coordinate.
+        :type y: float
+
+        :param crs: The crs of the coordinate.
+        :type crs: int
+        """
         url = self.build_query_url(x, y, crs)
         request = requests.get(url)
         content = request.content
-        return self.parse_request_content(content)
+        geometry = parse_gml_geometry(content)
+        value = self.parse_request_value(content)
 
-    def parse_request_content(self, request_content):
+        # Create cache here.
+
+        return geometry, value
+
+    def parse_request_value(self, request_content):
+        """Parse request value from request content.
+
+        :param request_content: String that represent content of a request.
+        :type request_content: unicode
+
+        :returns: The value of the result_regex in the request_content.
+        :rtype: unicode
+        """
         if self.query_type == ContextServiceRegistry.WFS:
             xmldoc = minidom.parseString(request_content)
             try:
@@ -143,7 +166,20 @@ class ContextServiceRegistry(models.Model):
                 return None
 
     def build_query_url(self, x, y, crs=4326):
-        """"""
+        """Build query based on the model and the parameter.
+
+        :param x: The value of x coordinate.
+        :type x: float
+
+        :param y: The value of y coordinate.
+        :type y: float
+
+        :param crs: The crs of the coordinate.
+        :type crs: int
+
+        :return: URL to do query.
+        :rtype: unicode
+        """
         if self.query_type == ContextServiceRegistry.WFS:
             # construct bbox
             if crs != self.crs:
