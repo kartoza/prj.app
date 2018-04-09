@@ -4,11 +4,18 @@
 from django.contrib import admin
 
 from geocontext.models.context_service_registry import ContextServiceRegistry
+from geocontext.models.context_cache import ContextCache
 
 
 class ContextServiceRegistryAdmin(admin.ModelAdmin):
-    """Answer admin model."""
+    """Context Service Registry admin model."""
     list_display = ('name', 'display_name', 'query_type', 'url')
 
 
+class ContextCacheAdmin(admin.ModelAdmin):
+    """Context Cache admin model."""
+    list_display = ('name', 'service_registry', 'value', 'expired_time')
+
+
 admin.site.register(ContextServiceRegistry, ContextServiceRegistryAdmin)
+admin.site.register(ContextCache, ContextCacheAdmin)
