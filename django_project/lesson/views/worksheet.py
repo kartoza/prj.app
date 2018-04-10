@@ -66,10 +66,6 @@ class WorksheetDetailView(
             worksheet=pk)
 
         # Permissions
-        # context['more_about'] = False
-        # context['check_your_knowledge'] = False
-        # context['further_reading'] = False
-
         context['user_can_edit'] = False
         if self.request.user in context[
             'worksheet'].section.project.lesson_managers.all():
