@@ -5,7 +5,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.contrib.gis.db import models
 
+from geocontext.utilities import convert_2d_to_3d
 from geocontext.models.context_service_registry import ContextServiceRegistry
+
 
 
 class ContextCache(models.Model):
@@ -25,14 +27,29 @@ class ContextCache(models.Model):
         max_length=1000,
     )
 
-    geometry = models.GeometryField(
-        help_text=_('The 2D geometry of the context.'),
+    geometry_linestring = models.LineStringField(
+        help_text=_('The line geometry of the context.'),
         blank=True,
         null=True,
+        dim=3
     )
 
-    geometry_3d = models.GeometryField(
-        help_text=_('The 3D geometry of the context.'),
+    geometry_multi_linestring = models.MultiLineStringField(
+        help_text=_('The multi line geometry of the context.'),
+        blank=True,
+        null=True,
+        dim=3
+    )
+
+    geometry_polygon = models.PolygonField(
+        help_text=_('The polygon geometry of the context.'),
+        blank=True,
+        null=True,
+        dim=3
+    )
+
+    geometry_multi_polygon = models.MultiPolygonField(
+        help_text=_('The multi polygon geometry of the context.'),
         blank=True,
         null=True,
         dim=3
@@ -56,3 +73,39 @@ class ContextCache(models.Model):
         blank=False,
         null=False
     )
+
+    def set_geometry_field(self, geometry):
+        """Set geometry field based on the type
+
+        :param geometry: The geometry.
+        :type geometry: GEOSGeometry
+        """
+        if not geometry.hasz:
+            geometry = convert_2d_to_3d(geometry)
+
+        if geometry.geom_type in ['LineString', 'LinearRing']:
+            self.geometry_linestring = geometry
+        elif geometry.geom_type == 'Polygon':
+            self.geometry_polygon = geometry
+        elif geometry.geom_type == 'MultiLineString':
+            self.geometry_multi_linestring = geometry
+        elif geometry.geom_type == 'MultiPolygon':
+            self.geometry_multi_polygon = geometry
+
+    @property
+    def geometry(self):
+        """Attribute for geometry
+
+        :return: The geometry of the cache
+        :rtype: GEOSGeometry
+        """
+        if self.geometry_linestring:
+            return self.geometry_linestring
+        elif self.geometry_polygon:
+            return self.geometry_polygon
+        elif self.geometry_multi_linestring:
+            return self.geometry_linestring
+        elif self.geometry_multi_polygon:
+            return self.geometry_multi_polygon
+        else:
+            return None

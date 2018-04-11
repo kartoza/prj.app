@@ -4,6 +4,7 @@
 from django.test import TestCase
 
 from geocontext.models.context_service_registry import ContextServiceRegistry
+from geocontext.models.context_cache import ContextCache
 from geocontext.tests.models.model_factories import ContextServiceRegistryF
 
 
@@ -21,45 +22,73 @@ class TestContextServiceRegistry(TestCase):
         # check if model name exists.
         self.assertTrue(model.name is not None)
 
-    def test_retrieve_context_value(self):
-        """Test retrieving context value from a point."""
+    def test_retrieve_context_value1(self):
+        """Test retrieving context value from a point with same CRS.
+
+        The CRS is 4326 (query, service)
+        """
         x = 27.8
         y = -32.1
 
-        # Case 1, the CRS is same 4326 (query, service)
-        model_a = ContextServiceRegistryF.create()
-        model_a.url = (
+        service_registry = ContextServiceRegistryF.create()
+        service_registry.url = (
             'http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs')
-        model_a.crs = 4326
-        model_a.query_type = ContextServiceRegistry.WFS
-        model_a.layer_typename = 'water_management_area'
-        model_a.service_version = '1.0.0'
+        service_registry.crs = 4326
+        service_registry.query_type = ContextServiceRegistry.WFS
+        service_registry.layer_typename = 'water_management_area'
+        service_registry.service_version = '1.0.0'
 
-        model_a.result_regex = 'qgs:name'
+        service_registry.result_regex = 'qgs:name'
 
-        model_a.save()
+        service_registry.save()
 
-        value = model_a.retrieve_context_value(x, y)
-        self.assertEqual('12 - Mzimvubu to Keiskamma', value[1])
+        value = service_registry.retrieve_context_value(x, y)
+        expected_value = '12 - Mzimvubu to Keiskamma'
+        self.assertEqual(value[1], expected_value)
         self.assertIsNotNone(value[0])
         self.assertEqual(value[0].geom_type, 'Polygon')
         self.assertTrue(value[0].valid)
 
-        # Case 1, the CRS is different 4326 (query), 3857 (service)
-        model_b = ContextServiceRegistryF.create()
-        model_b.url = (
+        context_caches = ContextCache.objects.filter(
+            service_registry=service_registry)
+        self.assertIsNotNone(context_caches)
+        context_cache = context_caches[0]
+        self.assertEqual(context_cache.value, expected_value)
+        self.assertEqual(context_cache.geometry.geom_type, 'Polygon')
+        self.assertEqual(context_cache.geometry.srid, 4326)
+
+    def test_retrieve_context_value2(self):
+        """Test retrieving context value from a point with different CRS.
+
+        The CRS is 4326 (query), 3857 (service)
+        """
+        x = 27.8
+        y = -32.1
+
+        service_registry = ContextServiceRegistryF.create()
+        service_registry.url = (
             'http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs')
-        model_b.crs = 3857
-        model_b.query_type = ContextServiceRegistry.WFS
-        model_b.layer_typename = 'sa_provinces'
-        model_b.service_version = '1.0.0'
+        service_registry.crs = 3857
+        service_registry.query_type = ContextServiceRegistry.WFS
+        service_registry.layer_typename = 'sa_provinces'
+        service_registry.service_version = '1.0.0'
 
-        model_b.result_regex = 'qgs:provname'
+        service_registry.result_regex = 'qgs:provname'
 
-        model_b.save()
+        service_registry.save()
 
-        value = model_b.retrieve_context_value(x, y)
-        self.assertEqual('Eastern Cape', value[1])
+        value = service_registry.retrieve_context_value(x, y)
+        expected_value = 'Eastern Cape'
+        self.assertEqual(value[1], expected_value)
         self.assertIsNotNone(value[0])
         self.assertEqual(value[0].geom_type, 'MultiPolygon')
         self.assertTrue(value[0].valid)
+
+        context_caches = ContextCache.objects.filter(
+            service_registry=service_registry)
+        self.assertIsNotNone(context_caches)
+        context_cache = context_caches[0]
+        self.assertEqual(context_cache.value, expected_value)
+        self.assertEqual(context_cache.geometry.geom_type, 'MultiPolygon')
+        # Automatically projected to 4326
+        self.assertEqual(context_cache.geometry.srid, 4326)

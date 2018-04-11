@@ -147,6 +147,8 @@ class ContextServiceRegistry(models.Model):
         request = requests.get(url)
         content = request.content
         geometry = parse_gml_geometry(content)
+        if not geometry.srid:
+            geometry.srid = self.crs
         value = self.parse_request_value(content)
 
         # Create cache here.
@@ -162,10 +164,7 @@ class ContextServiceRegistry(models.Model):
             expired_time=expired_time
         )
 
-        if geometry.hasz:
-            context_cache.geometry_3d = geometry
-        else:
-            context_cache.geometry = geometry
+        context_cache.set_geometry_field(geometry)
 
         context_cache.save()
 
