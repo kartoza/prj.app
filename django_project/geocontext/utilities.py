@@ -4,7 +4,9 @@
 import logging
 from xml.dom import minidom
 
-from django.contrib.gis.geos import Point, GEOSGeometry
+from django.contrib.gis.geos import (
+    GEOSGeometry, Point, LineString, LinearRing, Polygon, MultiPoint,
+    MultiLineString, MultiPolygon)
 from django.contrib.gis.gdal.error import GDALException
 
 logger = logging.getLogger(__name__)
@@ -57,3 +59,38 @@ def parse_gml_geometry(gml_string):
     except GDALException:
         logger.error('GDAL error')
         return None
+
+
+def convert_2d_to_3d(geometry_2d):
+    """Convert 2d geometry to 3d with adding z = 0.
+
+    :param geometry_2d: 2D geometry.
+    :type geometry
+
+    :returns: 3D geometry with z = 0.
+    :rtype: geometry
+    """
+    if geometry_2d.geom_type == 'Point':
+        geometry_3d = Point(geometry_2d.x, geometry_2d.y, 0, geometry_2d.srid)
+    elif geometry_2d.geom_type == 'LineString':
+        points = [convert_2d_to_3d(Point(p)) for p in geometry_2d]
+        geometry_3d = LineString(points, srid=geometry_2d.srid)
+    elif geometry_2d.geom_type == 'LinearRing':
+        points = [convert_2d_to_3d(Point(p)) for p in geometry_2d]
+        geometry_3d = LinearRing(points, srid=geometry_2d.srid)
+    elif geometry_2d.geom_type == 'Polygon':
+        linear_rings = [convert_2d_to_3d(p) for p in geometry_2d]
+        geometry_3d = Polygon(*linear_rings, srid=geometry_2d.srid)
+    elif geometry_2d.geom_type == 'MultiPoint':
+        points = [convert_2d_to_3d(p) for p in geometry_2d]
+        geometry_3d = MultiPoint(*points, srid=geometry_2d.srid)
+    elif geometry_2d.geom_type == 'MultiLineString':
+        lines = [convert_2d_to_3d(p) for p in geometry_2d]
+        geometry_3d = MultiLineString(*lines, srid=geometry_2d.srid)
+    elif geometry_2d.geom_type == 'MultiPolygon':
+        polygons = [convert_2d_to_3d(p) for p in geometry_2d]
+        geometry_3d = MultiPolygon(*polygons, srid=geometry_2d.srid)
+    else:
+        raise Exception('Not supported geometry')
+
+    return geometry_3d
