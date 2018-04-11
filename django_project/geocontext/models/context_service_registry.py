@@ -110,8 +110,8 @@ class ContextServiceRegistry(models.Model):
         default=604800  # 7 days
     )
 
-    crs = models.IntegerField(
-        help_text=_('The CRS of the context service registry in EPSG code.'),
+    srid = models.IntegerField(
+        help_text=_('The Spatial Reference ID of the service registry.'),
         blank=True,
         null=True,
         default=4326
@@ -131,7 +131,7 @@ class ContextServiceRegistry(models.Model):
         max_length=200,
     )
 
-    def retrieve_context_value(self, x, y, crs=4326):
+    def retrieve_context_value(self, x, y, srid=4326):
         """Retrieve context from a location.
 
         :param x: The value of x coordinate.
@@ -140,15 +140,15 @@ class ContextServiceRegistry(models.Model):
         :param y: The value of y coordinate.
         :type y: float
 
-        :param crs: The crs of the coordinate.
-        :type crs: int
+        :param srid: The srid of the coordinate.
+        :type srid: int
         """
-        url = self.build_query_url(x, y, crs)
+        url = self.build_query_url(x, y, srid)
         request = requests.get(url)
         content = request.content
         geometry = parse_gml_geometry(content)
         if not geometry.srid:
-            geometry.srid = self.crs
+            geometry.srid = self.srid
         value = self.parse_request_value(content)
 
         # Create cache here.
@@ -187,7 +187,7 @@ class ContextServiceRegistry(models.Model):
             except IndexError:
                 return None
 
-    def build_query_url(self, x, y, crs=4326):
+    def build_query_url(self, x, y, srid=4326):
         """Build query based on the model and the parameter.
 
         :param x: The value of x coordinate.
@@ -196,16 +196,16 @@ class ContextServiceRegistry(models.Model):
         :param y: The value of y coordinate.
         :type y: float
 
-        :param crs: The crs of the coordinate.
-        :type crs: int
+        :param srid: The srid of the coordinate.
+        :type srid: int
 
         :return: URL to do query.
         :rtype: unicode
         """
         if self.query_type == ContextServiceRegistry.WFS:
             # construct bbox
-            if crs != self.crs:
-                x, y = convert_coordinate(x, y, crs, self.crs)
+            if srid != self.srid:
+                x, y = convert_coordinate(x, y, srid, self.srid)
             x_pair = x * 1.0001
             y_pair = y * 1.0001
             if x < x_pair:
@@ -226,7 +226,7 @@ class ContextServiceRegistry(models.Model):
                 'REQUEST': 'GetFeature',
                 'VERSION': self.service_version,
                 'TYPENAME': self.layer_typename,
-                # 'SRSNAME': 'EPSG:%s' % self.crs,  # added manually
+                # 'SRSNAME': 'EPSG:%s' % self.srid,  # added manually
                 'OUTPUTFORMAT': 'GML3',
                 # 'BBOX': bbox_string  # added manually
             }
@@ -237,7 +237,7 @@ class ContextServiceRegistry(models.Model):
                 url = self.url + '&' + query_dict.urlencode()
             else:
                 url = self.url + '?' + query_dict.urlencode()
-            url += '&SRSNAME=%s' % self.crs
+            url += '&SRSNAME=%s' % self.srid
             url += '&BBOX=' + bbox_string
 
             return url

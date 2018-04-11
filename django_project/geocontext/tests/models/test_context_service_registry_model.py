@@ -33,7 +33,7 @@ class TestContextServiceRegistry(TestCase):
         service_registry = ContextServiceRegistryF.create()
         service_registry.url = (
             'http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs')
-        service_registry.crs = 4326
+        service_registry.srid = 4326
         service_registry.query_type = ContextServiceRegistry.WFS
         service_registry.layer_typename = 'water_management_area'
         service_registry.service_version = '1.0.0'
@@ -68,7 +68,7 @@ class TestContextServiceRegistry(TestCase):
         service_registry = ContextServiceRegistryF.create()
         service_registry.url = (
             'http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs')
-        service_registry.crs = 3857
+        service_registry.srid = 3857
         service_registry.query_type = ContextServiceRegistry.WFS
         service_registry.layer_typename = 'sa_provinces'
         service_registry.service_version = '1.0.0'

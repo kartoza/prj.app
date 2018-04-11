@@ -12,8 +12,8 @@ from django.contrib.gis.gdal.error import GDALException
 logger = logging.getLogger(__name__)
 
 
-def convert_coordinate(x, y, epsg_source, epsg_target):
-    """Convert coordinate x y from crs_source to crs_target.
+def convert_coordinate(x, y, srid_source, srid_target):
+    """Convert coordinate x y from srid_source to srid_target.
 
     :param x: The value of x coordinate.
     :type x: float
@@ -21,19 +21,19 @@ def convert_coordinate(x, y, epsg_source, epsg_target):
     :param y: The value of y coordinate.
     :type y: float
 
-    :param epsg_source: The source EPSG coordinate reference.
-    :type epsg_source: int
+    :param srid_source: The source SRID.
+    :type srid_source: int
 
-    :param epsg_target: The target EPSG coordinate reference.
-    :type epsg_target: int
+    :param srid_target: The target SRID.
+    :type srid_target: int
 
     :return: tuple of converted x and y in float.
     :rtype: tuple(float, float)
     """
     # create a geometry from coordinates
-    point = Point(x, y, srid=epsg_source)
+    point = Point(x, y, srid=srid_source)
 
-    point.transform(epsg_target)
+    point.transform(srid_target)
 
     return point.x, point.y
 
