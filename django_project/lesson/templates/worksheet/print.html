@@ -157,61 +157,68 @@ h2{
              alt="" />
     {% endif %}
 </section>
-<section>
-    <div class="icon-project-color icon-section">
-        <img class="icon-section" src="{{ "img/info.png" | local_static_filepath }}">
-    </div>
-    <h2>{{ worksheet.more_about_title }}</h2>
-    <p>
-        {{ worksheet.more_about_text | base_markdown }}
-    </p>
-    {% if worksheet.more_about_image %}
-        <img id="{{ worksheet.more_about_image }}"
-             src="{{ worksheet.more_about_image.file }}"
-             alt="" />
-    {% endif %}
-</section>
-<section>
-    <div class="icon-project-color icon-section">
-        <img class="icon-section" src="{{ "img/check.png" | local_static_filepath }}">
-    </div>
-    <h2>{% trans 'Check your knowledge:' %}</h2>
-{#  Bullet list with type="1" or type="a" do not work well in the PDF generation. We need a custom counter.  #}
-    <ul style="list-style: none;">
-        {% for question, answers in questions.items %}
-            <li>{{ forloop.counter }}. {{ question.question }}:
-                {% if question.question_image %}
-                    <div>
-                    <img id="{{ question.question_image }}"
-                         class="img-responsive img-rounded pull-left"
-                         src="{{ question.question_image.file }}"
-                         style="max-width: 300px !important;"/>
-                    </div>
-                {% endif %}
-            <ul style="list-style: none; margin-bottom: 10px;">
-                {% for answer in answers %}
-                    <li>{{ forloop.counter | to_char }}. {{ answer.answer }}</li>
-                {% endfor %}
-            </ul>
-        {% endfor %}
-    </ul>
-</section>
-<section>
-    <div class="icon-project-color icon-section">
-        <img class="icon-section" src="{{ "img/book.png" | local_static_filepath }}">
-    </div>
-    <h2>{% trans 'Further reading:'%}</h2>
-    <ul>
-        {% for info in further_reading %}
-            <li>
-                {{ info.text }}
-                {% if info.link %}
-                    <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-</section>
+{% if worksheet.more_about_text or worksheet.more_about_image %}
+    <section>
+        <div class="icon-project-color icon-section">
+            <img class="icon-section" src="{{ "img/info.png" | local_static_filepath }}">
+        </div>
+        <h2>{{ worksheet.more_about_title }}</h2>
+        <p>
+            {{ worksheet.more_about_text | base_markdown }}
+        </p>
+        {% if worksheet.more_about_image %}
+            <img id="{{ worksheet.more_about_image }}"
+                 src="{{ worksheet.more_about_image.file }}"
+                 alt="" />
+        {% endif %}
+    </section>
+{% endif %}
+{% if questions %}
+    <section>
+        <div class="icon-project-color icon-section">
+            <img class="icon-section" src="{{ "img/check.png" | local_static_filepath }}">
+        </div>
+        <h2>{% trans 'Check your knowledge:' %}</h2>
+    {#  Bullet list with type="1" or type="a" do not work well in the PDF generation. We need a custom counter.  #}
+        <ul style="list-style: none;">
+            {% for question, answers in questions.items %}
+                <li>{{ forloop.counter }}. {{ question.question }}:
+                    {% if question.question_image %}
+                        <div>
+                        <img id="{{ question.question_image }}"
+                             class="img-responsive img-rounded pull-left"
+                             src="{{ question.question_image.file }}"
+                             style="max-width: 300px !important;"/>
+                        </div>
+                    {% endif %}
+                <ul style="list-style: none; margin-bottom: 10px;">
+                    {% for answer in answers %}
+                        <li>{{ forloop.counter | to_char }}. {{ answer.answer }}</li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        </ul>
+    </section>
+{% endif %}
+{% if further_reading %}
+    <section>
+        <div class="icon-project-color icon-section">
+            <img class="icon-section" src="{{ "img/book.png" | local_static_filepath }}">
+        </div>
+        <h2>{% trans 'Further reading:'%}</h2>
+        <ul>
+            {% for info in further_reading %}
+                <li>
+                    {{ info.text }}
+                    {% if info.link %}
+                        <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endif %}
+
 <footer>
         <div style="margin-bottom: 10px;padding-left: 100pt; padding-top: 10pt;">
             {% if worksheet.external_data %}
