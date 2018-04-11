@@ -16,11 +16,11 @@ from geocontext.utilities import convert_coordinate, parse_gml_geometry
 class ContextServiceRegistry(models.Model):
     """Context Service Registry"""
 
-    WFS = 'wfs'
-    WCS = 'wcs'
-    WMS = 'wms'
-    REST = 'rest'
-    WIKIPEDIA = 'wikipedia'
+    WFS = 'WFS'
+    WCS = 'WCS'
+    WMS = 'WMS'
+    REST = 'REST'
+    WIKIPEDIA = 'Wikipedia'
     QUERY_TYPES = (
         (WFS, 'WFS'),
         (WCS, 'WCS'),
@@ -34,6 +34,7 @@ class ContextServiceRegistry(models.Model):
         blank=False,
         null=False,
         max_length=200,
+        unique=True,
     )
 
     display_name = models.CharField(
@@ -45,8 +46,8 @@ class ContextServiceRegistry(models.Model):
 
     description = models.CharField(
         help_text=_('Description of Context Service.'),
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         max_length=1000,
     )
 
@@ -60,34 +61,34 @@ class ContextServiceRegistry(models.Model):
     user = models.CharField(
         help_text=_('User name for accessing Context Service.'),
         blank=True,
-        null=False,
+        null=True,
         max_length=200,
     )
 
     password = models.CharField(
         help_text=_('Password for accessing Context Service.'),
         blank=True,
-        null=False,
+        null=True,
         max_length=200,
     )
 
     api_key = models.CharField(
         help_text=_('API key for accessing Context Service.'),
         blank=True,
-        null=False,
+        null=True,
         max_length=200,
     )
 
     query_url = models.CharField(
         help_text=_('Query URL for accessing Context Service.'),
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         max_length=1000,
     )
 
     query_type = models.CharField(
         help_text=_('Query type of the Context Service.'),
-        blank=True,
+        blank=False,
         null=False,
         max_length=200,
         choices=QUERY_TYPES
@@ -96,7 +97,7 @@ class ContextServiceRegistry(models.Model):
     # I will try to use CharField first, if not I will use django-regex-field
     result_regex = models.CharField(
         help_text=_('Regex to retrieve the desired value.'),
-        blank=True,
+        blank=False,
         null=False,
         max_length=200,
     )
@@ -130,6 +131,9 @@ class ContextServiceRegistry(models.Model):
         null=False,
         max_length=200,
     )
+
+    def __unicode__(self):
+        return '%s (%s)' % (self.name, self.query_type)
 
     def retrieve_context_value(self, x, y, srid=4326):
         """Retrieve context from a location.

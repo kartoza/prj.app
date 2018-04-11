@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Provinces",
+    "display_name": "Provinces",
+    "url": "http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs",
+    "layer_typename": "sa_provinces",
+    "query_type": "WFS",
+    "srid": 3857,
+    "result_regex": "qgs:provname",
+    "service_version": "1.0.0"
+  },
+  {
+    "name": "Water Management Area",
+    "display_name": "Water Management Area",
+    "url": "http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs",
+    "layer_typename": "water_management_area",
+    "query_type": "WFS",
+    "srid": 4326,
+    "result_regex": "qgs:name",
+    "service_version": "1.0.0"
+  },
+  {
+    "name": "Primary Catchment",
+    "url": "http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs",
+    "layer_typename": "Primary_catchment_area"
+  },
+  {
+    "name": "Secondary Catchment",
+    "url": "http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs",
+    "layer_typename": "Secondary_catchment_area"
+  },
+  {
+    "name": "Tertiary Catchment",
+    "url": "http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs",
+    "layer_typename": "Tertiary_catchment_area"
+  },
+  {
+    "name": "Quaternary Catchment",
+    "url": "http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs",
+    "layer_typename": "Quaternary_catchment_area"
+  },
+  {
+    "name": "Ecoregion Level I",
+    "url": "http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs",
+    "layer_typename": "Ecoregion1"
+  },
+  {
+    "name": "Ecoregion Level II",
+    "url": "http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs",
+    "layer_typename": "Ecoregion2"
+  },
+  {
+    "name": "Rivers 500k",
+    "url": "http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs",
+    "layer_typename": "rivers500k"
+  },
+  {
+    "name": "Rivers Nfepa attributes",
+    "url": "http://maps.kartoza.com/web/?map=/web/kartoza/kartoza.qgs",
+    "layer_typename": "rivers-nfepa-2011"
+  }
+]
