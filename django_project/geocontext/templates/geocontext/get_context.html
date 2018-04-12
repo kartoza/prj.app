@@ -1,0 +1,24 @@
+{% extends 'main_base.html' %}
+{% load static from staticfiles %}
+{% load i18n %}
+
+{% block title %}
+    GeoContext Retrieve Value
+{% endblock title %}
+
+{% block body_content %}
+    <div class="content">
+        {% block content %}
+            <div class="container">
+                <div class="custom-form-container">
+                    <h1>{% trans "GeoContext" %}</h1>
+                    <form action="{% url 'geocontext-retrieve' %}" method="POST">
+                        {% csrf_token %}
+                        {{form.as_p}}
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        {% endblock content %}
+    </div>
+{% endblock body_content %}

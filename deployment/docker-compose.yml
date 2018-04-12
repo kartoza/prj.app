@@ -63,7 +63,7 @@ uwsgi:
 dbbackups:
   # Note you cannot scale if you use container_name
   container_name: geocontext-db-backups
-  image: kartoza/pg-backup:9.4
+  image: kartoza/pg-backup:9.6
   hostname: pg-backups
   volumes:
     - ./backups:/backups

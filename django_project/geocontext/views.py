@@ -1,13 +1,17 @@
 # coding=utf-8
 """View definitions."""
 
-from django.contrib.gis.geos import Point
-from datetime import datetime
 import pytz
+from datetime import datetime
 
+from django.contrib.gis.geos import Point
+from django.shortcuts import render
+from django.http import JsonResponse
+
+from geocontext.utilities import convert_coordinate
 from geocontext.models.context_service_registry import ContextServiceRegistry
 from geocontext.models.context_cache import ContextCache
-from geocontext.utilities import convert_coordinate
+from geocontext.forms import GeoContextForm
 
 
 def retrieve_context(x, y, service_registry_name, srid=4326):
@@ -54,3 +58,27 @@ def retrieve_context(x, y, service_registry_name, srid=4326):
 
     # Can not find in caches, request from context service.
     return service_registry.retrieve_context_value(x, y, srid)
+
+
+def get_context(request):
+    """Get context view."""
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = GeoContextForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+            x = cleaned_data['x']
+            y = cleaned_data['y']
+            srid = cleaned_data.get('srid', 4326)
+            service_registry_name = cleaned_data['service_registry_name']
+            geometry, value = retrieve_context(
+                x, y, service_registry_name, srid)
+            return JsonResponse({'value': value})
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = GeoContextForm(initial={'srid': 4326})
+
+    return render(request, 'geocontext/get_context.html', {'form': form})
