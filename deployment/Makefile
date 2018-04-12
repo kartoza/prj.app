@@ -1,4 +1,5 @@
 PROJECT_ID := geocontext
+PROD_SERVER := geocontext.kartoza.com
 
 SHELL := /bin/bash
 
@@ -53,6 +54,16 @@ db:
 	@echo "Running db in production mode"
 	@echo "------------------------------------------------------------------"
 	@docker-compose -p $(PROJECT_ID) up -d db
+
+mediasync:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Syncing media files and secret.py from live server"
+	@echo "------------------------------------------------------------------"
+	@rsync -av --progress $(PROD_SERVER):/home/$(PROJECT_ID)/deployment/media/ media
+	@rsync -av --progress $(PROD_SERVER):/home/$(PROJECT_ID)/django_project/core/settings/secret.py ../django_project/core/settings/
+#	@rsync -av --progress $(PROD_SERVER):/home/$(PROJECT_ID)/deployment/btsync-db.env btsync-db.env.PRODUCTION
+#	@rsync -av --progress $(PROD_SERVER):/home/$(PROJECT_ID)/deployment/btsync-media.env btsync-media.env.PRODUCTION
 
 nginx:
 	@echo
