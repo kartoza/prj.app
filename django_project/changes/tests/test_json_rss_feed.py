@@ -9,7 +9,6 @@ from changes.tests.model_factories import (
     SponsorshipPeriodF)
 from core.model_factories import UserF
 import logging
-import urllib2
 
 
 class JSONFeedTest(TestCase):
