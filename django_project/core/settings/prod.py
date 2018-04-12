@@ -11,6 +11,7 @@ from .project import *  # noqa
 
 ALLOWED_HOSTS = [
     'localhost:9000',
+    'geocontext.kartoza.com'
 ]
 
 INSTALLED_APPS += (
