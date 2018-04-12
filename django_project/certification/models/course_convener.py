@@ -13,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 from core.settings.contrib import STOP_WORDS
 from unidecode import unidecode
 from certifying_organisation import CertifyingOrganisation
+from certification.utilities import check_slug
 
 
 class CourseConvener(models.Model):
@@ -60,7 +61,9 @@ class CourseConvener(models.Model):
         # unidecode() represents special characters (unicode data) in ASCII
         new_list = '%s-%s' % \
                    (self.user.username, unidecode(' '.join(filtered_words)))
-        self.slug = slugify(new_list)[:50]
+        new_slug = slugify(new_list)[:50]
+        new_slug = check_slug(CourseConvener.objects.all(), new_slug)
+        self.slug = slugify(new_slug)[:50]
         super(CourseConvener, self).save(*args, **kwargs)
 
     def __unicode__(self):
