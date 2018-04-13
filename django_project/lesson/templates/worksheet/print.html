@@ -128,11 +128,13 @@ h2{
     {% if worksheet.summary_image %}
         <img src="{{ worksheet.summary_image.file }}">
     {% endif %}
-    <h3>{% trans 'You try:' %}</h3>
-    <p class="goal">
-        {% trans 'Goal:' %} {{ worksheet.exercise_goal }}
-    </p>
-    <p>{{ worksheet.exercise_task | base_markdown }}</p>
+    {% if worksheet.exercise_goal or worksheet.exercise_task %}
+        <h3>{% trans 'You try:' %}</h3>
+        <p class="goal">
+            {% trans 'Goal:' %} {{ worksheet.exercise_goal }}
+        </p>
+        <p>{{ worksheet.exercise_task | base_markdown }}</p>
+    {% endif %}
     {% if requirements.count > 0 %}
         <aside>
             <table>

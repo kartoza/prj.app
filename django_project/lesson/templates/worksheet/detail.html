@@ -110,19 +110,21 @@
     </div>
 
     <div class="row details-worksheet" style="margin-top:10px;">
-        <div class="col-lg-12">
-            <h4><strong>
-                {% trans 'You try:' %}
-            </strong></h4>
-            <p>
-                <strong>
-                    <i>
-                        {% trans 'Goal:' %} {{ worksheet.exercise_goal }}
-                    </i>
-                </strong>
-            </p>
-            <p>{{ worksheet.exercise_task | base_markdown }}</p>
-        </div>
+       {% if worksheet.exercise_goal or worksheet.exercise_task %}
+            <div class="col-lg-12">
+                <h4><strong>
+                    {% trans 'You try:' %}
+                </strong></h4>
+                <p>
+                    <strong>
+                        <i>
+                            {% trans 'Goal:' %} {{ worksheet.exercise_goal }}
+                        </i>
+                    </strong>
+                </p>
+                <p>{{ worksheet.exercise_task | base_markdown }}</p>
+            </div>
+        {% endif %}
         <div style="margin-bottom: 20px" class="details-worksheet col-lg-12 requirement-table">
             {% if user_can_edit %}
                 <div class="pull-right btn-group requirement-action" style="margin-bottom:5px;display:none;">
