@@ -29,11 +29,6 @@ from ..models import (
 )
 from ..forms import CertificateForm
 from base.models.project import Project
-from certification.tests.model_factories import (
-    CourseF,
-    AttendeeF,
-    CertificateF
-)
 
 
 class CertificateMixin(object):
