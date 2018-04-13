@@ -97,7 +97,7 @@ web:
   links:
     - uwsgi:uwsgi
   ports:
-    - "65300:8080"
+    - "80:8080"
   restart: unless-stopped
 
 # This is the entry point for a development server.
