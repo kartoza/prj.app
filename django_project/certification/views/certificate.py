@@ -3,6 +3,9 @@ import datetime
 import StringIO
 import os
 import zipfile
+import cStringIO
+from PIL import Image
+import re
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -740,6 +743,38 @@ def regenerate_all_certificate(request, **kwargs):
             'course': course})
 
 
+class DummyAttendee(object):
+    """Dummy object for preview certificate."""
+
+    def __init__(self):
+        self.firstname = 'Jane'
+        self.surname = 'Doe'
+
+
+class DummyCourse(object):
+    """Dummy object for preview certificate."""
+
+    def __init__(
+            self, course_convener, course_type, training_center, start_date,
+            end_date, certifying_organisation, template_certificate):
+        self.course_convener = course_convener
+        self.course_type = course_type
+        self.training_center = training_center
+        self.start_date = start_date
+        self.end_date = end_date
+        self.certifying_organisation = certifying_organisation
+        self.template_certificate = template_certificate
+
+
+class DummyCertificate(object):
+    """Dummy object for preview certificate."""
+
+    def __init__(self, course, attendee, project):
+        self.certificateID = '{}-1'.format(project.name)
+        self.course = course
+        self.attendee = attendee
+
+
 def preview_certificate(request, **kwargs):
     """Generate pdf for preview upon creating new course."""
 
@@ -752,6 +787,7 @@ def preview_certificate(request, **kwargs):
 
     convener_id = request.POST.get('course_convener', None)
     if convener_id is not None:
+        # Get all posted data.
         course_convener = CourseConvener.objects.get(id=convener_id)
         training_center_id = request.POST.get('training_center', None)
         training_center = TrainingCenter.objects.get(id=training_center_id)
@@ -763,39 +799,27 @@ def preview_certificate(request, **kwargs):
         course_end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
         certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=organisation_slug)
+        raw_image = request.POST.get('template_certificate', None)
+        if 'base64' in raw_image:
+            image_data = re.sub('^data:image/.+;base64,', '',
+                                raw_image).decode('base64')
+            template_certificate = Image.open(cStringIO.StringIO(image_data))
+        else:
+            template_certificate = None
 
         # Create dummy objects
-        attendee = AttendeeF.create(
-            firstname='Jane',
-            surname='Doe',
-            email='janedoe@test.com',
-            slug='test-slug',
-            certifying_organisation=certifying_organisation,
-            author=request.user,
-        )
-        course = CourseF.create(
-            course_convener=course_convener,
-            course_type=course_type,
-            training_center=training_center,
-            start_date=course_start_date,
-            end_date=course_end_date,
-            certifying_organisation=certifying_organisation
-        )
-
-        certificate = CertificateF.create(
-            course=course,
-            attendee=attendee
-        )
+        attendee = DummyAttendee()
+        course = \
+            DummyCourse(
+                course_convener, course_type, training_center,
+                course_start_date, course_end_date, certifying_organisation,
+                template_certificate)
+        certificate = DummyCertificate(course, attendee, project)
 
         current_site = request.META['HTTP_HOST']
 
         generate_pdf(
             response, project, course, attendee, certificate, current_site)
-
-        # Delete dummy objects
-        attendee.delete()
-        course.delete()
-        certificate.delete()
 
     else:
         # When preview page is refreshed, the data is gone so user needs to
