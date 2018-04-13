@@ -130,9 +130,13 @@ h2{
     {% endif %}
     {% if worksheet.exercise_goal or worksheet.exercise_task %}
         <h3>{% trans 'You try:' %}</h3>
+    {% endif %}
+    {% if worksheet.exercise_goal %}
         <p class="goal">
             {% trans 'Goal:' %} {{ worksheet.exercise_goal }}
         </p>
+    {% endif %}
+    {% if worksheet.exercise_task %}
         <p>{{ worksheet.exercise_task | base_markdown }}</p>
     {% endif %}
     {% if requirements.count > 0 %}
