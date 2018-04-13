@@ -147,6 +147,7 @@ class ProjectForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super(ProjectForm, self).save(commit=False)
+        instance.approved = True
         instance.owner = self.user
         instance.save()
         self.save_m2m()
