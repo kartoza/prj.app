@@ -1,6 +1,7 @@
 # coding=utf-8
 
 """Project level settings."""
+from os.path import join, dirname, exists
 from .project import *  # noqa
 
 try:
@@ -49,10 +50,17 @@ if 'raven.contrib.django.raven_compat' in INSTALLED_APPS and SENTRY_KEY:
     # noinspection PyUnresolvedReferences
     import raven  # noqa
 
+    version_file = join(dirname(dirname(dirname(__file__))), '.version')
+    if exists(version_file):
+        with open(version_file, 'r') as version:
+            release = version.read()
+    else:
+        release = 'unknown'
+
     RAVEN_CONFIG = {
         # Self hosted sentry
         'dsn': SENTRY_KEY,
-        'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
+        'release': release,
     }
 
     MIDDLEWARE = (

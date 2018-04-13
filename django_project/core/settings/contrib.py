@@ -20,6 +20,7 @@ AUTHENTICATION_BACKENDS = (
 
 # Django grappelli need to be added before django.contrib.admin
 INSTALLED_APPS = (
+    'raven.contrib.django.raven_compat',  # enable Raven plugin
     'grappelli',
 ) + INSTALLED_APPS
 

@@ -8,7 +8,7 @@ markdown==2.6.11
 
 # Raven pinned to 3.3.7 - see
 # https://github.com/getsentry/raven-python/issues/337
-raven==5.8.1
+raven==6.6.0
 django-sentry==1.13.5
 requests==2.18.4
 pytz
