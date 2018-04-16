@@ -80,8 +80,9 @@ class TestCertificateView(TestCase):
     @patch('os.path.exists')
     @patch('os.makedirs')
     @patch('__builtin__.open')
-    def test_generate_certificate(self, mock_open, mock_make_dirs, mock_exists):
-        mock_open.return_value = MagicMock(spec=file)
+    def test_generate_certificate(
+            self, mock_open, mock_make_dirs, mock_exists):
+        mock_open.return_value = MagicMock()
         mock_exists.return_value = True
         client = Client(HTTP_HOST='testserver')
         client.login(username='anita', password='password')
