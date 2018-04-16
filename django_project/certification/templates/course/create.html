@@ -18,6 +18,11 @@
 {% endblock page_title %}
 
 {% block content %}
+    <style>
+        #preview {
+            margin-top: 20px;
+        }
+    </style>
 
     <script>
     $(function() {
@@ -61,5 +66,116 @@
             {% endfor %}
         </div>
     </section>
+
+    <div class="container" id="preview-template-load" style="margin-bottom: 25px">
+            <div class="row" >
+            <!-- the photo demo-->
+                <div>
+                    <div id="preview-photo" class="col-lg-3"></div>
+                    <div id="data" class="col-lg-5">
+                        <p>
+                            <span id="size"></span><br/>
+                            <span id="type"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <section id="preview">
+        <div class="container">
+            <form method="post" id="preview-form" action="/en/{{ project_slug }}/certifyingorganisation/{{ organisation_slug }}/preview-certificate/" target="_blank" onsubmit="return previewSubmit()">
+                {% csrf_token %}
+                <input type="hidden" name="course_type" value="">
+                <input type="hidden" name="course_convener" value="">
+                <input type="hidden" name="training_center" value="">
+                <input type="hidden" name="start_date" value="">
+                <input type="hidden" name="end_date" value="">
+                <input type="hidden" name="template_certificate" value="">
+                <input id="preview-certificate" type="submit" class="btn btn-default" value="Preview Certificate" form="preview-form">
+            </form>
+            <p id="error-submit" style="color: darkred; font-weight: bold"></p>
+        </div>
+    </section>
+
+    <script>
+        $(document).ready(function () {
+            $('#preview-certificate').appendTo($('#div_id_template_certificate'));
+            $('#error-submit').appendTo($('#div_id_template_certificate'));
+            $('#preview-template-load').appendTo($('#div_id_template_certificate'));
+        });
+
+        function previewSubmit() {
+            $('#error-submit').html('');
+
+            if($('select[name=course_type]').val() === ''){
+                $('#error-submit').html('Please choose a course type.');
+                return false
+            }else if($('select[name=course_convener]').val() === ''){
+                $('#error-submit').html('Please choose a course convener.');
+                return false
+            }else if($('select[name=training_center]').val() === ''){
+                $('#error-submit').html('Please choose a training center.');
+                return false
+            }else if($('input[id=id_start_date]').val() === ''){
+                $('#error-submit').html('Please choose start date.');
+                return false
+            }else if($('input[id=id_end_date]').val() === ''){
+                $('#error-submit').html('Please choose end date.');
+                return false
+            }
+
+            $('#preview-form input[name=course_convener]').val($('select[name=course_convener]').val());
+            $('#preview-form input[name=course_type]').val($('select[name=course_type]').val());
+            $('#preview-form input[name=training_center]').val($('select[name=training_center]').val());
+            $('#preview-form input[name=start_date]').val($('input[id=id_start_date]').val());
+            $('#preview-form input[name=end_date]').val($('input[id=id_end_date]').val());
+        }
+
+        //check if browser supports file api and filereader features
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            function humanFileSize(bytes, si) {
+                var thresh = si ? 1000 : 1024;
+                if(bytes < thresh) return bytes + ' B';
+                var units = si ? ['kB','MB','GB','TB','PB','EB','ZB','YB'] : ['KiB','MiB','GiB','TiB','PiB','EiB','ZiB','YiB'];
+                var u = -1;
+                do {
+                    bytes /= thresh;
+                    ++u;
+                } while(bytes >= thresh);
+                return bytes.toFixed(1)+' '+units[u];
+            }
+
+            //this function is called when the input loads an image
+            function renderImage(file){
+                var reader = new FileReader();
+                reader.onload = function(event){
+                    the_url = event.target.result;
+                    $('#preview-photo').html("<img src='"+the_url+"' / height='150px'>");
+                    $('#preview-form input[name=template_certificate]').val(the_url);
+                    console.log(the_url)
+                    $('#name').html(file.name);
+                    $('#size').html(humanFileSize(file.size, "MB"));
+                    $('#type').html(file.type)
+                };
+
+                //when the file is read it triggers the onload event above.
+                reader.readAsDataURL(file);
+            }
+
+
+          //watch for change on the
+            $( "#id_template_certificate" ).change(function() {
+                renderImage(this.files[0])
+            });
+
+
+        } else {
+
+          alert('The File APIs are not fully supported in this browser.');
+
+        }
+
+    </script>
 
 {% endblock %}
