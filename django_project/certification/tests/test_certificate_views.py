@@ -1,6 +1,5 @@
 # coding=utf-8
 import logging
-import os
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.test.client import Client
@@ -75,37 +74,6 @@ class TestCertificateView(TestCase):
         self.certifying_organisation.delete()
         self.project.delete()
         self.user.delete()
-
-    @override_settings(VALID_DOMAIN=['testserver', ])
-    def test_generate_certificate(self):
-        client = Client(HTTP_HOST='testserver')
-        client.login(username='anita', password='password')
-        response = client.get(reverse('print-certificate', kwargs={
-            'project_slug': self.project.slug,
-            'organisation_slug': self.certifying_organisation.slug,
-            'course_slug': self.course.slug,
-            'pk': self.attendee.pk
-        }))
-
-        # Check view is working
-        self.assertEqual(response.status_code, 200)
-
-        project_folder = (self.project.name.lower()).replace(' ', '_')
-        filename = "{}.{}".format(self.certificate.certificateID, "pdf")
-        pathname = \
-            os.path.join(
-                '/home/web/media',
-                'pdf/{}/{}'.format(project_folder, filename))
-        folderpath = \
-            os.path.join(
-                '/home/web/media', 'pdf/{}'.format(project_folder))
-
-        # Check certificate is created
-        self.assertEqual(os.path.exists(pathname), True)
-
-        # Remove test certificate and its test folder
-        os.remove(pathname)
-        os.rmdir(folderpath)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_detail_certificate(self):
