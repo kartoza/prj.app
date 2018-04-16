@@ -1,5 +1,6 @@
 # coding=utf-8
 import datetime
+import requests
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.test.client import Client
@@ -82,16 +83,17 @@ class TestCertificatePreview(TestCase):
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_preview_certificate_with_posted_data(self):
-        client = Client()
+        client = Client(HTTP_HOST='testserver')
         client.login(username='anita', password='password')
         post_data = {
             'course_convener': self.convener.pk,
             'training_center': self.training_center.pk,
             'course_type': self.course_type.pk,
-            'start_date': datetime.datetime.strptime('2018-01-01', '%Y-%m-%d'),
-            'end_date': datetime.datetime.strptime('2018-02-01', '%Y-%m-%d')
+            'start_date': '2018-01-01',
+            'end_date': '2018-02-01',
+            'template_certificate': None
         }
-        response = client.get(reverse('preview-certificate', kwargs={
+        response = client.post(reverse('preview-certificate', kwargs={
             'project_slug': self.test_project.slug,
             'organisation_slug': self.test_certifying_organisation.slug
         }), post_data)
