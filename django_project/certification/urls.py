@@ -231,7 +231,7 @@ urlpatterns = patterns(
         regenerate_all_certificate, name='regenerate-all-certificate'),
     url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
         '(?P<organisation_slug>[\w-]+)/preview-certificate/$',
-        preview_certificate, name='print-certificate'),
+        preview_certificate, name='preview-certificate'),
 
     # Course.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
