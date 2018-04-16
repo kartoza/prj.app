@@ -145,8 +145,10 @@ class CertificateDetailView(DetailView):
             certificate = context['certificate']
             convener_name = \
                 '{} {}'.format(
-                    certificate.course.course_convener.user.first_name,
-                    certificate.course.course_convener.user.last_name)
+                    certificate.course.course_convener.user.first_name.encode(
+                        'utf-8'),
+                    certificate.course.course_convener.user.last_name.encode(
+                        'utf-8'))
 
             if certificate.course.course_convener.title:
                 convener_name = \
@@ -211,8 +213,8 @@ def generate_pdf(
     center = height * 0.5
     convener_name = \
         '{} {}'.format(
-            course.course_convener.user.first_name,
-            course.course_convener.user.last_name)
+            course.course_convener.user.first_name.encode('utf-8'),
+            course.course_convener.user.last_name.encode('utf-8'))
 
     if course.course_convener.title:
         convener_name = \
@@ -295,12 +297,15 @@ def generate_pdf(
     page.setFont('Times-Bold', 26)
     page.drawCentredString(center, 480, 'Certificate of Completion')
     page.drawCentredString(
-        center, 400, '%s %s' % (attendee.firstname, attendee.surname))
+        center, 400, '%s %s' % (
+            attendee.firstname.encode('utf-8'),
+            attendee.surname.encode('utf-8')))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
         center, 360, 'Has attended and completed the course:')
     page.setFont('Times-Bold', 20)
-    page.drawCentredString(center, 300, course.course_type.name)
+    page.drawCentredString(
+        center, 300, course.course_type.name.encode('utf-8'))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
         center, 270, '{}'.format(course_duration))
@@ -330,7 +335,9 @@ def generate_pdf(
     page.setFont('Times-Italic', 12)
     page.drawCentredString(
         (margin_left + 150), (margin_bottom + 60),
-        '{} {}'.format(project.owner.first_name, project.owner.last_name))
+        '{} {}'.format(
+            project.owner.first_name.encode('utf-8'),
+            project.owner.last_name.encode('utf-8')))
     page.drawCentredString(
         (margin_right - 150), (margin_bottom + 60),
         '{}'.format(convener_name))
