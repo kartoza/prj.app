@@ -79,11 +79,11 @@ class TestCertificateView(TestCase):
     @override_settings(VALID_DOMAIN=['testserver', ])
     @patch('os.path.exists')
     @patch('os.makedirs')
-    @patch('__builtin__.open')
+    @patch('__builtin__.open', create=True)
     def test_generate_certificate(
             self, mock_open, mock_make_dirs, mock_exists):
         mock_open.return_value = MagicMock()
-        mock_exists.return_value = True
+        mock_exists.return_value = False
         client = Client(HTTP_HOST='testserver')
         client.login(username='anita', password='password')
         response = client.get(reverse('print-certificate', kwargs={
