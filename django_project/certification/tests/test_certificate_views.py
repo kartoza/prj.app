@@ -9,7 +9,6 @@ from core.model_factories import UserF
 from certification.tests.model_factories import (
     CourseF,
     CertifyingOrganisationF,
-    CourseAttendeeF,
     CourseConvenerF,
     CertificateF,
     TrainingCenterF,
@@ -99,7 +98,7 @@ class TestCertificateView(TestCase):
                 'pdf/{}/{}'.format(project_folder, filename))
         folderpath = \
             os.path.join(
-                '/home/web/media','pdf/{}'.format(project_folder))
+                '/home/web/media', 'pdf/{}'.format(project_folder))
 
         # Check certificate is created
         self.assertEqual(os.path.exists(pathname), True)
