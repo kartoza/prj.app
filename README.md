@@ -49,6 +49,7 @@ Story queue on Waffle:
 * Current test status develop: [![Build Status](https://travis-ci.org/inasafe/inasafe.svg?branch=develop)](https://travis-ci.org/inasafe/inasafe) and
 [![Code Health](https://landscape.io/github/kartoza/projecta/develop/landscape.svg?style=flat)](https://landscape.io/github/kartoza/projecta/develop)
 
+* Test coverage [![codecov](https://codecov.io/gh/kartoza/projecta/branch/develop/graph/badge.svg)](https://codecov.io/gh/kartoza/projecta)
 
 
 

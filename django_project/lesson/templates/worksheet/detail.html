@@ -110,19 +110,25 @@
     </div>
 
     <div class="row details-worksheet" style="margin-top:10px;">
-        <div class="col-lg-12">
-            <h4><strong>
-                {% trans 'You try:' %}
-            </strong></h4>
-            <p>
-                <strong>
-                    <i>
-                        {% trans 'Goal:' %} {{ worksheet.exercise_goal }}
-                    </i>
-                </strong>
-            </p>
-            <p>{{ worksheet.exercise_task | base_markdown }}</p>
-        </div>
+            <div class="col-lg-12">
+                {% if worksheet.exercise_goal or worksheet.exercise_task %}
+                    <h4><strong>
+                        {% trans 'You try:' %}
+                    </strong></h4>
+                {% endif %}
+                {% if worksheet.exercise_goal %}
+                    <p>
+                        <strong>
+                            <i>
+                                {% trans 'Goal:' %} {{ worksheet.exercise_goal }}
+                            </i>
+                        </strong>
+                    </p>
+                {% endif %}
+                {% if worksheet.exercise_task %}
+                    <p>{{ worksheet.exercise_task | base_markdown }}</p>
+                {% endif %}
+            </div>
         <div style="margin-bottom: 20px" class="details-worksheet col-lg-12 requirement-table">
             {% if user_can_edit %}
                 <div class="pull-right btn-group requirement-action" style="margin-bottom:5px;display:none;">
@@ -180,7 +186,7 @@
         </div>
         {% if worksheet.exercise_image %}
             <a href="#" class="pop-image">
-                <img id="{{ worksheet.more_about_image.url }}" class="img-responsive img-rounded pull-right"
+                <img id="{{ worksheet.exercise_image.url }}" class="img-responsive img-rounded pull-right"
                      src="{{ worksheet.exercise_image.url }}"
                      style="max-width: 100% !important;"
                      alt="" />
@@ -189,7 +195,9 @@
     </div>
 
     {# More about #}
+
     <div class="row details-worksheet" style="margin-top:10px;">
+    {% if worksheet.more_about_text or workesheet.more_about_image %}
         <div class="col-lg-1">
           <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
             <img src="{% static "img/info.png" %}" style="height:50px;width:50px">
@@ -201,202 +209,217 @@
         <div class="col-lg-3">
         </div>
     </div>
-
+    {% endif %}
     <div class="row details-worksheet" style="margin-top:10px;">
         {% if worksheet.more_about_image %}
             <div class="col-lg-8">
-        {% else %}
-            <div class="col-lg-12">
-        {% endif %}
-          <p>{{ worksheet.more_about_text | base_markdown }}</p>
-        </div>
-        {% if worksheet.more_about_image %}
-            <div class="col-lg-4">
-                <a href="#" class="pop-image">
-                    <img id="{{ worksheet.more_about_image.url }}" class="img-responsive img-rounded pull-right"
-                         src="{{ worksheet.more_about_image.url }}"
-                         style="max-width: 100% !important;"
-                         alt="" />
-                </a>
+                {% else %}
+                    <div class="col-lg-12">
+                {% endif %}
+                  <p>{{ worksheet.more_about_text | base_markdown }}</p>
+                </div>
+                {% if worksheet.more_about_image %}
+                    <div class="col-lg-4">
+                        <a href="#" class="pop-image">
+                            <img id="{{ worksheet.more_about_image.url }}" class="img-responsive img-rounded pull-right"
+                                 src="{{ worksheet.more_about_image.url }}"
+                                 style="max-width: 100% !important;"
+                                 alt="" />
+                        </a>
+                    </div>
+                {% endif %}
             </div>
-        {% endif %}
     </div>
+
     {# Check your knowledge #}
-    <div class="row details-worksheet question-answer" style="margin-top:10px;">
-        <div class="col-lg-1">
-          <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
-              <img src="{% static "img/check.png" %}" style="height:50px;width:50px">
-          </div>
-        </div>
-        <div class="col-lg-8">
-          <h3 class="custom-heading" style="margin-left:-40px">
-              <strong>
-                  {% trans 'Check your knowledge:' %}
-              </strong>
-          </h3>
-        </div>
-        <div class="col-lg-3 pull-right">
-            {% if user_can_edit %}
-                <div class="pull-right btn-group question-answer-action" style="display:none;">
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                  href='{% url "question-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
-                       data-title="{% trans 'Create New Question' %}">
-                    {% show_button_icon "add" %}
-                    </a>
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                        href='{% url "question-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
-                        data-title="{% trans 'Question Order' %}">
-                        <span class="glyphicon glyphicon-sort-by-order"></span>
-                    </a>
+    <div class="container">
+        <div class="row details-worksheet question-answer" style="margin-top:10px;">
+            {% if questions %}
+                <div class="col-lg-1">
+                  <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+                      <img src="{% static "img/check.png" %}" style="height:50px;width:50px">
+                  </div>
+                </div>
+                <div class="col-lg-8">
+                  <h3 class="custom-heading" style="margin-left:-40px">
+                      <strong>
+                          {% trans 'Check your knowledge:' %}
+                      </strong>
+                  </h3>
+                </div>
+            {% else %}
+                <div class="col-lg-3 pull-right">
+                    {% if user_can_edit %}
+                        <div class="pull-right btn-group question-answer-action" style="display:none;">
+                            <a class="btn btn-default btn-mini tooltip-toggle"
+                          href='{% url "question-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
+                               data-title="{% trans 'Create New Question' %}">
+                            {% show_button_icon "add" %}
+                            </a>
+                            <a class="btn btn-default btn-mini tooltip-toggle"
+                                href='{% url "question-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}'
+                                data-title="{% trans 'Question Order' %}">
+                                <span class="glyphicon glyphicon-sort-by-order"></span>
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
             {% endif %}
         </div>
-    </div>
-    <div class="row details-worksheet question-answer" style="margin-top:10px;">
-        <div style="margin-bottom: 20px" class="col-lg-12">
-            <ol type="1">
-                {% for question, answers in questions.items %}
-                    <div class="row">
-                        <li style="margin-bottom: 20px">
-                            <div class="col-lg-10">
-                              <strong>{{ question.question }}:</strong>{{ question|is_translation_up_to_date }}
-                                {% if question.question_image %}
-                                    <img id="{{ question.question_image }}"
-                                         class="img-responsive img-rounded pull-left"
-                                            src="{{ question.question_image.url }}"
-                                            style="max-width: 300px !important;"/>
-                                {% endif %}
-                            </div>
-                            <div class="col-lg-2">
+        <div class="row details-worksheet question-answer" style="margin-top:10px;">
+            <div style="margin-bottom: 20px" class="col-lg-12">
+                <ol type="1">
+                    {% for question, answers in questions.items %}
+                        <div class="row">
+                            <li style="margin-bottom: 20px">
+                                <div class="col-lg-10">
+                                  <strong>{{ question.question }}:</strong>{{ question|is_translation_up_to_date }}
+                                    {% if question.question_image %}
+                                        <img id="{{ question.question_image }}"
+                                             class="img-responsive img-rounded pull-left"
+                                                src="{{ question.question_image.url }}"
+                                                style="max-width: 300px !important;"/>
+                                    {% endif %}
+                                </div>
                                 {% if user_can_edit %}
-                                    <div class="pull-right btn-group question-answer-action" style="display:none;">
-                                        <a class="btn btn-default btn-mini tooltip-toggle"
-                                      href='{% url "answer-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug question.pk %}'
-                                           data-title="{% trans 'Create New Answer' %}">
-                                        {% show_button_icon "add" %}
-                                        </a>
-                                        <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                                            href='{% url "question-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=question.pk %}'
-                                            data-title="{% trans 'Delete' %} {{ question.question }}">
+                                <div class="col-lg-2">
+                                        <div class="pull-right btn-group question-answer-action" style="display:none;">
+                                            <a class="btn btn-default btn-mini tooltip-toggle"
+                                          href='{% url "answer-create" worksheet.section.project.slug worksheet.section.slug worksheet.slug question.pk %}'
+                                               data-title="{% trans 'Create New Answer' %}">
+                                            {% show_button_icon "add" %}
+                                            </a>
+                                            <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                                                href='{% url "question-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=question.pk %}'
+                                                data-title="{% trans 'Delete' %} {{ question.question }}">
+                                                <span class="glyphicon glyphicon-minus"></span>
+                                            </a>
+                                            <a class="btn btn-default btn-mini tooltip-toggle"
+                                                href='{% url "question-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=question.pk %}'
+                                                data-title="{% trans 'Edit' %} {{ question.question }}">
+                                                <span class="glyphicon glyphicon-pencil"></span>
+                                            </a>
+                                        </div>
+                                </div>
+                                {% endif %}
+
+                            </li>
+                        </div>
+                        <ol type="a">
+                            {% for answer in answers %}
+                             <div class="row">
+                                <li style="margin-bottom: 10px">
+                                    {% if user_can_edit %}
+                                        {# We insert a tick for the correct answer and if the user is allowed and we display explanations. #}
+                                        <div class="col-lg-10">
+                                            {% if answer.is_correct %}
+                                                <span class="question-answer-action" style="display:none;">&#10004;</span>
+                                            {%  endif %}
+                                            {{ answer.answer }}{{ answer|is_translation_up_to_date }}
+                                            {% if answer.answer_explanation %}
+                                                <span class="question-answer-action" style="display:none;">: <em>{{ answer.answer_explanation | base_markdown }}</em></span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-lg-2">
+                                                <div class="pull-right btn-group question-answer-action" style="display:none;">
+                                                    <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                                                        href='{% url "answer-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
+                                                        data-title="{% trans 'Delete' %} {{ answer.answer }}">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </a>
+                                                    <a class="btn btn-default btn-mini tooltip-toggle"
+                                                        href='{% url "answer-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
+                                                        data-title="{% trans 'Edit' %} {{ answer.answer }}">
+                                                        <span class="glyphicon glyphicon-pencil"></span>
+                                                    </a>
+                                                </div>
+                                        </div>
+                                        {% else %}
+                                            {{ answer.answer }}
+                                        {% endif %}
+                                    </li>
+                               </div>
+                            {% endfor %}
+                        </ol>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    {# Further reading #}
+    <div class="container">
+        <div class="row details-worksheet further-reading" style="margin-top:10px;">
+           {% if further_reading %}
+                <div class="col-lg-1">
+                  <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }}; height:50px;width:50px; margin-left:-15px;">
+                      <span class="glyphicon glyphicon-list-alt fa-3x" style="color:white"></span>
+                  </div>
+                </div>
+                    <div class="col-lg-8">
+                      <h3 class="custom-heading" style="margin-left:-40px">
+                          <strong>
+                              {% trans 'Further reading:'%}
+                          </strong>
+                      </h3>
+                    </div>
+           {% else %}
+                <div class="col-lg-3 pull-right">
+                    {% if user_can_edit %}
+                        <div class="pull-right btn-group further-reading-action" style="display:none;">
+                            <a class="btn btn-default btn-mini tooltip-toggle"
+                               href='{% url "further-reading-create" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug %}'
+                               data-title="{% trans 'Create New Further Reading Item' %}">
+                                {% show_button_icon "add" %}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+           {% endif %}
+        </div>
+        <div class="row details-worksheet further-reading" style="margin-top:10px;">
+            <div class="details-worksheet col-lg-12" style="margin-bottom: 20px">
+                <ul>
+                    {% for info in further_reading %}
+                        <li style="list-style: none;">
+                            <div class="row">
+                                {{ info.text }}
+                                {% if info.link %}
+                                    <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
+                                {% endif %}
+                                {{ info|is_translation_up_to_date }}
+                                {% if user_can_edit %}
+                                    <div class="pull-right btn-group">
+                                        <a class="btn btn-default btn-mini btn-delete tooltip-toggle further-reading-action" style="display:none;"
+                                           href='{% url "further-reading-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
+                                           data-title="{% trans 'Delete' %} {{ info.text }}">
                                             <span class="glyphicon glyphicon-minus"></span>
                                         </a>
-                                        <a class="btn btn-default btn-mini tooltip-toggle"
-                                            href='{% url "question-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=question.pk %}'
-                                            data-title="{% trans 'Edit' %} {{ question.question }}">
+                                        <a class="btn btn-default btn-mini tooltip-toggle further-reading-action" style="display:none;"
+                                           href='{% url "further-reading-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
+                                           data-title="{% trans 'Edit' %} {{ info.text }}">
                                             <span class="glyphicon glyphicon-pencil"></span>
                                         </a>
                                     </div>
                                 {% endif %}
                             </div>
                         </li>
-                    </div>
-                    <ol type="a">
-                        {% for answer in answers %}
-                         <div class="row">
-                            <li style="margin-bottom: 10px">
-                                {% if user_can_edit %}
-                                    {# We insert a tick for the correct answer and if the user is allowed and we display explanations. #}
-                                    <div class="col-lg-10">
-                                        {% if answer.is_correct %}
-                                            <span class="question-answer-action" style="display:none;">&#10004;</span>
-                                        {%  endif %}
-                                        {{ answer.answer }}{{ answer|is_translation_up_to_date }}
-                                        {% if answer.answer_explanation %}
-                                            <span class="question-answer-action" style="display:none;">: <em>{{ answer.answer_explanation | base_markdown }}</em></span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-lg-2">
-                                            <div class="pull-right btn-group question-answer-action" style="display:none;">
-                                                <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                                                    href='{% url "answer-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
-                                                    data-title="{% trans 'Delete' %} {{ answer.answer }}">
-                                                    <span class="glyphicon glyphicon-minus"></span>
-                                                </a>
-                                                <a class="btn btn-default btn-mini tooltip-toggle"
-                                                    href='{% url "answer-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
-                                                    data-title="{% trans 'Edit' %} {{ answer.answer }}">
-                                                    <span class="glyphicon glyphicon-pencil"></span>
-                                                </a>
-                                            </div>
-                                        {% else %}
-                                            {{ answer.answer }}
-                                        {% endif %}
-                                    </div>
-                                </li>
-                           </div>
-                        {% endfor %}
-                    </ol>
-                {% endfor %}
-            </ol>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 text-center" style="margin-bottom: 10px;">
+                {% if worksheet.external_data %}
+                <p>
+                    {% blocktrans with url=worksheet.external_data.url %}Click <a target="_blank" href="{{ url }}">here</a> to download the sample data for the lesson.{% endblocktrans %}
+                </p>
+                {% endif %}
+            </div>
         </div>
     </div>
 
-    {# Further reading #}
-    <div class="row details-worksheet further-reading" style="margin-top:10px;">
-        <div class="col-lg-1">
-          <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }}; height:50px;width:50px; margin-left:-15px;">
-              <span class="glyphicon glyphicon-list-alt fa-3x" style="color:white"></span>
-          </div>
-        </div>
-        <div class="col-lg-8">
-          <h3 class="custom-heading" style="margin-left:-40px">
-              <strong>
-                  {% trans 'Further reading:'%}
-              </strong>
-          </h3>
-        </div>
-        <div class="col-lg-3 pull-right">
-            {% if user_can_edit %}
-                <div class="pull-right btn-group further-reading-action" style="display:none;">
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                       href='{% url "further-reading-create" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug %}'
-                       data-title="{% trans 'Create New Further Reading Item' %}">
-                        {% show_button_icon "add" %}
-                    </a>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-    <div class="row details-worksheet further-reading" style="margin-top:10px;">
-        <div class="details-worksheet col-lg-12" style="margin-bottom: 20px">
-            <ul>
-                {% for info in further_reading %}
-                    <li style="list-style: none;">
-                        <div class="row">
-                            {{ info.text }}
-                            {% if info.link %}
-                                <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
-                            {% endif %}
-                            {{ info|is_translation_up_to_date }}
-                            {% if user_can_edit %}
-                                <div class="pull-right btn-group">
-                                    <a class="btn btn-default btn-mini btn-delete tooltip-toggle further-reading-action" style="display:none;"
-                                       href='{% url "further-reading-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
-                                       data-title="{% trans 'Delete' %} {{ info.text }}">
-                                        <span class="glyphicon glyphicon-minus"></span>
-                                    </a>
-                                    <a class="btn btn-default btn-mini tooltip-toggle further-reading-action" style="display:none;"
-                                       href='{% url "further-reading-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=info.pk%}'
-                                       data-title="{% trans 'Edit' %} {{ info.text }}">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </a>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 text-center" style="margin-bottom: 10px;">
-            {% if worksheet.external_data %}
-            <p>
-                {% blocktrans with url=worksheet.external_data.url %}Click <a target="_blank" href="{{ url }}">here</a> to download the sample data for the lesson.{% endblocktrans %}
-            </p>
-            {% endif %}
-        </div>
-    </div>
+
 
     <script>
         $('.btn-delete').hover(
