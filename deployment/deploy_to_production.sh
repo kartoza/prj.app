@@ -15,7 +15,7 @@ then
 	VERSION=$1
 	make dbsync
 	make mediasync
-	ssh changelog.qgis.org "cd /home/projecta/deployment && git fetch --tags && git checkout $VERSION && make collectstatic && make reload"
+	ssh changelog.kartoza.com "cd /home/projecta/deployment && git fetch --tags && git checkout $VERSION && make collectstatic && make reload"
 else
 	echo "Deploy to production aborted."
 fi
