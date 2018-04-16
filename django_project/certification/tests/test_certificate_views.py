@@ -1,5 +1,6 @@
 # coding=utf-8
 import logging
+from mock import patch, MagicMock
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.test.client import Client
@@ -76,6 +77,23 @@ class TestCertificateView(TestCase):
         self.user.delete()
 
     @override_settings(VALID_DOMAIN=['testserver', ])
+    @patch('os.path.exists')
+    @patch('os.makedirs')
+    @patch('__builtin__.open')
+    def test_generate_certificate(self, mock_open, mock_make_dirs, mock_exists):
+        mock_open.return_value = MagicMock(spec=file)
+        mock_exists.return_value = True
+        client = Client(HTTP_HOST='testserver')
+        client.login(username='anita', password='password')
+        response = client.get(reverse('print-certificate', kwargs={
+            'project_slug': self.project.slug,
+            'organisation_slug': self.certifying_organisation.slug,
+            'course_slug': self.course.slug,
+            'pk': self.attendee.pk
+        }))
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_detail_certificate(self):
         client = Client()
         response = client.get(reverse('certificate-details', kwargs={
@@ -83,3 +101,7 @@ class TestCertificateView(TestCase):
             'id': self.certificate.certificateID
         }))
         self.assertEqual(response.status_code, 200)
+        expected_templates = [
+            'certificate/detail.html'
+        ]
+        self.assertEqual(response.template_name, expected_templates)
