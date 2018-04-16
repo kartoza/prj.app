@@ -1,6 +1,4 @@
 # coding=utf-8
-import datetime
-import requests
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.test.client import Client
