@@ -96,7 +96,7 @@ Create and oath2 credential with these options:
 
 Authorized redirect URIs
 
-http://changelog.qgis.org<your domain>/en/complete/google-oauth2/
+http://<your domain>/en/complete/google-oauth2/
 
 Use the projecta admin panel to set up the google account with your id and
 secret

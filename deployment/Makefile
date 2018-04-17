@@ -255,18 +255,18 @@ mediasync:
 	@echo "------------------------------------------------------------------"
 	@echo "Syncing media files and secret.py from live server"
 	@echo "------------------------------------------------------------------"
-	@rsync -av --progress changelog.qgis.org:/home/projecta/deployment/media/ media
-	@rsync -av --progress changelog.qgis.org:/home/projecta/django_project/core/settings/secret.py ../django_project/core/settings/
-	@rsync -av --progress changelog.qgis.org:/home/projecta/deployment/btsync-db.env btsync-db.env.PRODUCTION
-	@rsync -av --progress changelog.qgis.org:/home/projecta/deployment/btsync-media.env btsync-media.env.PRODUCTION
+	@rsync -av --progress changelog.kartoza.com:/home/projecta/deployment/media/ media
+	@rsync -av --progress changelog.kartoza.com:/home/projecta/django_project/core/settings/secret.py ../django_project/core/settings/
+	@rsync -av --progress changelog.kartoza.com:/home/projecta/deployment/btsync-db.env btsync-db.env.PRODUCTION
+	@rsync -av --progress changelog.kartoza.com:/home/projecta/deployment/btsync-media.env btsync-media.env.PRODUCTION
 
 dbsync:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Syncing database files from live server"
 	@echo "------------------------------------------------------------------"
-	-@ssh changelog.qgis.org "cd /home/projecta/deployment; make dbbackup"
-	@rsync -av --progress changelog.qgis.org:/home/projecta/deployment/backups/ backups
+	-@ssh changelog.kartoza.com "cd /home/projecta/deployment; make dbbackup"
+	@rsync -av --progress changelog.kartoza.com:/home/projecta/deployment/backups/ backups
 
 staging-sync:
 	@echo
@@ -274,9 +274,9 @@ staging-sync:
 	@echo "Syncing database and media files from this host to staging server"
 	@echo "Then doing a dbrestore and migrate on the staging server"
 	@echo "------------------------------------------------------------------"
-	@rsync -av --progress --exclude=.sync --exclude=.DS_Store backups staging.changelog.qgis.org:/home/projecta/deployment
-	@rsync -av --progress --exclude=.sync --exclude=.DS_Store media staging.changelog.qgis.org:/home/projecta/deployment
-	-@ssh staging.changelog.qgis.org "cd /home/projecta/deployment; make dbrestore; make migrate; make collectstatic"
+	@rsync -av --progress --exclude=.sync --exclude=.DS_Store backups staging.changelog.kartoza.com:/home/projecta/deployment
+	@rsync -av --progress --exclude=.sync --exclude=.DS_Store media staging.changelog.kartoza.com:/home/projecta/deployment
+	-@ssh staging.changelog.kartoza.com "cd /home/projecta/deployment; make dbrestore; make migrate; make collectstatic"
 
 create-machine:
 	@echo
