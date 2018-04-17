@@ -258,6 +258,7 @@ class WorksheetOrderSubmitView(LoginRequiredMixin, WorksheetMixin, UpdateView):
         return re_order_features(request, worksheets)
 
 from ..models.section import Section
+from base.models.project import Project
 from ..views.section import SectionMixin
 class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
     """Show correct answers to module questions.
@@ -274,6 +275,9 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
 		"""
         context = super(WorksheetModuleQuestionAnswers, self).get_context_data(**kwargs)
         pk = self.kwargs.get('pk', None)
+        project_slug = self.kwargs.get('project_slug', None)
+        project = get_object_or_404(Project, slug = project_slug)
+
         questions = WorksheetQuestion.objects.filter(worksheet = pk)
         context['questions'] = OrderedDict()
         for question in questions:
@@ -281,10 +285,14 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
                     question = question)
 
         context['worksheets'] = OrderedDict()
-        context['sections'] = Section.objects.all()
+        context['sections'] = Section.objects.filter(project = project)
         for section in context['sections']:
+            print(section)
             query_set = Worksheet.objects.filter(section=section)
             context['worksheets'][section] = query_set
+            for question in questions:
+                context['questions'][question] = Answer.objects.filter(
+                        question = question)
         return context
 
     def get_success_url(self):
