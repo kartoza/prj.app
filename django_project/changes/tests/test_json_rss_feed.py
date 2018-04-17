@@ -28,6 +28,13 @@ class JSONFeedTest(TestCase):
         self.client.post(
             '/set_language/', data={'language': 'en'})
         logging.disable(logging.CRITICAL)
+        self.user = UserF.create(**{
+            'username': 'anita',
+            'password': 'password',
+            'is_staff': True
+        })
+        self.user.set_password('password')
+        self.user.save()
         self.project = ProjectF.create(
             name='testproject')
         self.sponsor = SponsorF.create(
@@ -39,19 +46,8 @@ class JSONFeedTest(TestCase):
         self.sponsorship_period = SponsorshipPeriodF.create(
             sponsor=self.sponsor,
             sponsorship_level=self.sponsorship_level,
+            project=self.project,
             approved=True)
-        self.user = UserF.create(**{
-            'username': 'anita',
-            'password': 'password',
-            'is_staff': True
-        })
-        # Something changed in the way factoryboy works with django 1.8
-        # I think - we need to explicitly set the users password
-        # because the core.model_factories.UserF._prepare method
-        # which sets the password is never called. Next two lines are
-        # a work around for that - sett #581
-        self.user.set_password('password')
-        self.user.save()
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
