@@ -271,8 +271,16 @@ class CertifyingOrganisationDetailView(
             slug = self.kwargs.get('slug', None)
             project_slug = self.kwargs.get('project_slug', None)
             if slug and project_slug:
-                project = Project.objects.get(slug=project_slug)
-                obj = queryset.get(project=project, slug=slug)
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                except Project.DoesNotExist:
+                    raise Http404('Sorry! We could not find '
+                                  'your Project!')
+                try:
+                    obj = queryset.get(project=project, slug=slug)
+                except CertifyingOrganisation.DoesNotExist:
+                    raise Http404('Sorry! We could not find '
+                                  'your Certifying Organisation!')
                 return obj
             else:
                 raise Http404('Sorry! We could not find '
