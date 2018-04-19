@@ -19,8 +19,7 @@ class TestGenerateCertificate(TestCase):
         """Set up before test is run."""
 
         self.client = Client()
-        self.client.post(
-				'/set_language/', data={'language': 'en'})
+        self.client.post('/set_language/', data={'language': 'en'})
         self.user = UserF.create(**{
             'username': 'Alison',
             'password': 'password',
