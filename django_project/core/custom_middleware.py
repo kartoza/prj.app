@@ -163,5 +163,5 @@ class CheckDomainMiddleware(object):
             else:
                 # for production the domain is hardcoded for consistency
                 return HttpResponseRedirect(
-                    'http://changelog.qgis.org/en/domain-not-found/'
+                    'http://changelog.kartoza.com/en/domain-not-found/'
                 )
