@@ -301,7 +301,8 @@ def generate_pdf(
     page.drawCentredString(
         center, 370, 'Has attended and completed the course:')
     page.setFont('Times-Bold', 20)
-    page.drawCentredString(center, 350, course.course_type.name)
+    page.drawCentredString(center, 350, course.course_type.name.encode(
+            'utf-8'))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
         center, 300, 'With a trained competence in:')
