@@ -1,4 +1,5 @@
 # coding=utf-8
+
 import datetime
 import StringIO
 import os
@@ -314,13 +315,20 @@ def generate_pdf(
             attendee.surname.encode('utf-8')))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
-        center, 360, 'Has attended and completed the course:')
+        center, 370, 'Has attended and completed the course:')
     page.setFont('Times-Bold', 20)
     page.drawCentredString(
-        center, 300, course.course_type.name.encode('utf-8'))
+            center, 350, course.course_type.name.encode('utf-8'))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
-        center, 270, '{}'.format(course_duration))
+        center, 300, 'With a trained competence in:')
+    page.setFont('Times-Bold', 14)
+    page.drawCentredString(
+        center, 280, '%s' % (course.trained_competence))
+    page.setFont('Times-Roman', 16)
+    page.drawCentredString(
+        center, 250, '{}'.format(course_duration))
+
     page.setFillColorRGB(0.1, 0.1, 0.1)
     page.drawCentredString(
         center, 220, 'Convened by {} at {}'.format(
@@ -764,7 +772,8 @@ class DummyCourse(object):
 
     def __init__(
             self, course_convener, course_type, training_center, start_date,
-            end_date, certifying_organisation, template_certificate):
+            end_date, certifying_organisation, template_certificate,
+            trained_competence):
         self.course_convener = course_convener
         self.course_type = course_type
         self.training_center = training_center
@@ -772,6 +781,7 @@ class DummyCourse(object):
         self.end_date = end_date
         self.certifying_organisation = certifying_organisation
         self.template_certificate = template_certificate
+        self.trained_competence = trained_competence
 
 
 class DummyCertificate(object):
@@ -808,6 +818,7 @@ def preview_certificate(request, **kwargs):
         certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=organisation_slug)
         raw_image = request.POST.get('template_certificate', None)
+        trained_competence = ''
         if 'base64' in raw_image:
             image_data = re.sub('^data:image/.+;base64,', '',
                                 raw_image).decode('base64')
@@ -821,7 +832,7 @@ def preview_certificate(request, **kwargs):
             DummyCourse(
                 course_convener, course_type, training_center,
                 course_start_date, course_end_date, certifying_organisation,
-                template_certificate)
+                template_certificate, trained_competence)
         certificate = DummyCertificate(course, attendee, project)
 
         current_site = request.META['HTTP_HOST']
