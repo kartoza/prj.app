@@ -772,7 +772,8 @@ class DummyCourse(object):
 
     def __init__(
             self, course_convener, course_type, training_center, start_date,
-            end_date, certifying_organisation, template_certificate):
+            end_date, certifying_organisation, template_certificate,
+            trained_competence):
         self.course_convener = course_convener
         self.course_type = course_type
         self.training_center = training_center
@@ -780,6 +781,7 @@ class DummyCourse(object):
         self.end_date = end_date
         self.certifying_organisation = certifying_organisation
         self.template_certificate = template_certificate
+        self.trained_competence = trained_competence
 
 
 class DummyCertificate(object):
@@ -816,6 +818,7 @@ def preview_certificate(request, **kwargs):
         certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=organisation_slug)
         raw_image = request.POST.get('template_certificate', None)
+        trained_competence = ''
         if 'base64' in raw_image:
             image_data = re.sub('^data:image/.+;base64,', '',
                                 raw_image).decode('base64')
@@ -829,7 +832,7 @@ def preview_certificate(request, **kwargs):
             DummyCourse(
                 course_convener, course_type, training_center,
                 course_start_date, course_end_date, certifying_organisation,
-                template_certificate)
+                template_certificate, trained_competence)
         certificate = DummyCertificate(course, attendee, project)
 
         current_site = request.META['HTTP_HOST']
