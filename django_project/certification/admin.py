@@ -14,6 +14,10 @@ from certification.models.certifying_organisation import CertifyingOrganisation
 
 class CertificateAdmin(admin.ModelAdmin):
     """Certificate admin model."""
+
+    list_display = ('__unicode__', 'course')
+    search_fields = ('certificateID', 'course__name',)
+
     def queryset(self, request):
         """Ensure we use the correct manager.
 
