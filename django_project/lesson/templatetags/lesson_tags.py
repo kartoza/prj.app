@@ -25,6 +25,6 @@ def version_tag(context):
         with open(version_file, 'r') as file:
             version = file.read()
             context['version'] = version
-    except IOError as e:
+    except IOError:
         context['version'] = 'Unknown'
     return context['version']
