@@ -1,9 +1,9 @@
 # coding=utf-8
 """Custom tags for lesson app."""
-
 from django import template
 from django.utils.safestring import mark_safe
 from core.settings.utils import absolute_path
+
 
 register = template.Library()
 
@@ -17,7 +17,6 @@ def is_translation_up_to_date(value):
         return mark_safe('')
 
 
-
 @register.simple_tag(takes_context=True)
 def version_tag(context):
     """Reads current project release from the .version file."""
@@ -26,6 +25,6 @@ def version_tag(context):
         with open(version_file, 'r') as file:
             version = file.read()
             context['version'] = version
-    except:
+    except IOError as e:
         context['version'] = 'Unknown'
     return context['version']
