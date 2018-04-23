@@ -41,6 +41,14 @@ class Course(models.Model):
         blank=True,
     )
 
+    trained_competence = models.CharField(
+        _('Trained competence(s)'),
+        help_text=_('Trained competence e.g. Plugin development.'),
+        max_length=255,
+        null=True,
+        blank=True
+    )
+
     start_date = models.DateField(
         _('Start date'),
         help_text=_('Course start date'),

@@ -19,6 +19,9 @@
         .icon:hover {
             color: #2a62bc;
         }
+        .json-feed:hover {
+            color: limegreen;
+        }
     </style>
     <div class="page-header">
         <h1 class="text-muted">
@@ -58,6 +61,11 @@
                        href='{% url "sponsor-atom-feed" project_slug %}'
                        data-title="Atom Feed for Sponsors">
                         <i class="fa fa-rss"></i>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle json-feed"
+                       href='{% url "sponsor-json-feed" project_slug %}'
+                       data-title="JSON Feed for Sponsors">
+                        <i class="fa fa-rss-square"></i>
                     </a>
                 </div>
         </h1>

@@ -172,7 +172,8 @@ class SponsorForm(forms.ModelForm):
             'sponsor_email',
             'agreement',
             'logo',
-            'invoice_number'
+            'invoice_number',
+            'project',
         )
 
     def __init__(self, *args, **kwargs):
@@ -198,12 +199,13 @@ class SponsorForm(forms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(SponsorForm, self).__init__(*args, **kwargs)
+        self.fields['project'].initial = self.project
+        self.fields['project'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
         instance = super(SponsorForm, self).save(commit=False)
         instance.author = self.user
-        instance.project = self.project
         instance.approved = False
         instance.save()
         return instance
