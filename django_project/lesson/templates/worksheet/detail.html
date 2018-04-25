@@ -94,24 +94,25 @@
 
     <div class="row details-worksheet" style="margin-top:10px;">
         <div class="container">
-        <div class="row">
-        <div class="col-lg-12">
-          <p><em>“{{ worksheet.summary_leader }}”</em></p>
-          <p>{{ worksheet.summary_text | base_markdown }}</p>
-        </div>
-        </div>
-        <div class="row">
-              {% if worksheet.summary_image %}
-                    <img src="{{ worksheet.summary_image.url }}"
-                         class="img-responsive img-rounded center-block"
-                         style="
-                            width:auto;
-                            height:auto;
-                            max-height:300px;
-                            max-width: fit-content;">
-              {% endif %}
-        </div>
-        </div>
+            <div class="row">
+                <div class="col-lg-12">
+                  <p><em>“{{ worksheet.summary_leader }}”</em></p>
+                  <p>{{ worksheet.summary_text | base_markdown }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                      {% if worksheet.summary_image %}
+                            <img src="{{ worksheet.summary_image.url }}"
+                                 class="img-responsive img-rounded center-block"
+                                 style="
+                                    width:auto;
+                                    height:auto;
+                                    max-height:300px;
+                                    max-width: 300px;">
+                      {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 
@@ -202,41 +203,41 @@
 
     {# More about #}
 
-    <div class="row details-worksheet" style="margin-top:10px;">
     {% if worksheet.more_about_text or workesheet.more_about_image %}
-        <div class="col-lg-1">
-          <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
-            <img src="{% static "img/info.png" %}" style="height:50px;width:50px">
-          </div>
+        <div class="row details-worksheet" style="margin-top:10px;">
+                <div class="col-lg-1">
+                  <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+                    <img src="{% static "img/info.png" %}" style="height:50px;width:50px">
+                  </div>
+                </div>
+                <div class="col-lg-8">
+                  <h3 class="custom-heading" style="margin-left:-40px"><strong>{{ worksheet.more_about_title }}</strong></h3>
+                </div>
         </div>
-        <div class="col-lg-8">
-          <h3 class="custom-heading" style="margin-left:-40px"><strong>{{ worksheet.more_about_title }}</strong></h3>
+        <div class="row details-worksheet" style="margin-top:10px;">
+            {% if worksheet.more_about_text %}
+                <div class="row">
+                    <div class="col-lg-12">
+                      <p>{{ worksheet.more_about_text | base_markdown }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-lg-12"></div>
+            {% endif %}
+            {% if worksheet.more_about_image %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <a href="#" class="pop-image">
+                        <img id="{{ worksheet.more_about_image.url }}" class="img-responsive img-rounded pull-right"
+                             src="{{ worksheet.more_about_image.url }}"
+                             style="max-width: 100% !important;"
+                             alt="" />
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
         </div>
-        <div class="col-lg-3">
-        </div>
-    </div>
     {% endif %}
-    <div class="row details-worksheet" style="margin-top:10px;">
-        {% if worksheet.more_about_image %}
-            <div class="row">
-                <div class="col-lg-12">
-                  <p>{{ worksheet.more_about_text | base_markdown }}</p>
-                </div>
-            </div>
-        {% endif %}
-        {% if worksheet.more_about_image %}
-            <div class="row">
-                <div class="col-lg-12">
-                    <a href="#" class="pop-image">
-                    <img id="{{ worksheet.more_about_image.url }}" class="img-responsive img-rounded pull-right"
-                         src="{{ worksheet.more_about_image.url }}"
-                         style="max-width: 100% !important;"
-                         alt="" />
-                    </a>
-                </div>
-            </div>
-        {% endif %}
-    </div>
 
     {# Check your knowledge #}
     <div class="container">
