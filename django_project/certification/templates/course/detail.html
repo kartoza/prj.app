@@ -146,6 +146,11 @@
             data-title="Import Attendees from CSV file.">
             <span class="glyphicon glyphicon-import"></span>
             </a>
+        <a id='' class="btn btn-default btn-sm tooltip-toggle"
+           href='{% url "regenerate-all-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
+            data-title="Issue all certificates for this course.">
+            <span class="glyphicon glyphicon-education"></span>
+            </a>
         <a id='download-zip' class="btn btn-default btn-sm tooltip-toggle"
            href='{% url "download_zip_all" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
             data-title="Download all issued certificates from this course">
