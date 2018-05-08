@@ -3,6 +3,7 @@
 __author__ = 'Anita Hapsari <anita@kartoza.com>'
 __date__ = '23/10/2017'
 
+import datetime
 from django.contrib.syndication.views import Feed
 from django.core.urlresolvers import reverse
 from django.utils.feedgenerator import Atom1Feed
@@ -79,8 +80,10 @@ class RssSponsorFeed(Feed):
         :returns: List of latest sponsor of a project
         :rtype: list
         """
+        today = datetime.datetime.now().date()
         return SponsorshipPeriod.objects.filter(
-            project=obj).order_by('-sponsorship_level__value', '-end_date')
+            project=obj, end_date__gte=today
+        ).order_by('-sponsorship_level__value', '-end_date')
 
     def item_title(self, item):
         """Return the title of the sponsor.
