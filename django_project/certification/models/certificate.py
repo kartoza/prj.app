@@ -24,7 +24,7 @@ def increment_id(project):
     # get the latest certificate ID within a project
     latest_certificate = Certificate.objects.filter(
         course__certifying_organisation__project=project).latest('int_id')
-    words = '{}-'.format(project.name)
+    words = '{}-'.format(str(project.name).replace(' ', ''))
     latest_certificate_number = str(latest_certificate.certificateID).replace(
         words, "")
     latest_certificate_number = int(latest_certificate_number)
