@@ -17,10 +17,19 @@ def increment_id(project):
     last_certificate = Certificate.objects.filter(
         course__certifying_organisation__project=project
     ).count()
+
     if last_certificate == 0:
         return '1'
-    last_int_id = last_certificate
-    new_int_id = last_int_id + 1
+
+    # get the latest certificate ID within a project
+    latest_certificate = Certificate.objects.filter(
+        course__certifying_organisation__project=project).latest('int_id')
+    words = '{}-'.format(str(project.name).replace(' ', ''))
+    latest_certificate_number = str(latest_certificate.certificateID).replace(
+        words, "")
+    latest_certificate_number = int(latest_certificate_number)
+    new_int_id = latest_certificate_number + 1
+
     return new_int_id
 
 
