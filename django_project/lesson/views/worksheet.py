@@ -25,6 +25,10 @@ from lesson.models.worksheet import Worksheet
 from lesson.models.worksheet_question import WorksheetQuestion
 from lesson.utilities import re_order_features
 
+from base.models.project import Project
+from ..models.section import Section
+from ..views.section import SectionMixin
+
 
 class WorksheetMixin(object):
     """Mixin class to provide standard settings for Worksheet."""
@@ -257,9 +261,8 @@ class WorksheetOrderSubmitView(LoginRequiredMixin, WorksheetMixin, UpdateView):
         worksheets = Worksheet.objects.filter(section=section)
         return re_order_features(request, worksheets)
 
-from ..models.section import Section
-from base.models.project import Project
-from ..views.section import SectionMixin
+
+
 class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
     """Show correct answers to module questions.
 
@@ -279,35 +282,26 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
         section_slug = self.kwargs.get('section_slug', None)
         project = get_object_or_404(Project, slug = project_slug)
 
-        questions = WorksheetQuestion.objects.filter(worksheet = pk)
-        context['questions'] = OrderedDict()
-        for question in questions:
-            context['questions'][question] = Answer.objects.filter(
-                    question = question)
+        # questions = WorksheetQuestion.objects.filter(worksheet = pk)
+        # context['questions'] = OrderedDict()
+        # for question in questions:
+        #     context['questions'][question] = Answer.objects.filter(
+        #             question = question)
 
         context['worksheets'] = OrderedDict()
+
         context['sections'] = Section.objects.filter(project = project,
                                                      slug=section_slug)
         for section in context['sections']:
             query_set = Worksheet.objects.filter(section=section)
             context['worksheets'][section] = query_set
-            worksheet_questions = WorksheetQuestion.objects.filter(id=pk)
-            for question in worksheet_questions:
-                context['questions'][question] = Answer.objects.filter(
-                        question = question)
-        return context
+            for worksheet in query_set:
+                wq = WorksheetQuestion.objects.filter(worksheet = worksheet)
+                context['questions'] = wq
+                context['questions'] = OrderedDict()
 
-    # def get_success_url(self):
-    #     """Define the redirect URL.
-    #
-    #     After successful update of the object, the User will be redirected to
-    #     the section detail (worksheet list) page.
-    #
-    #     :returns: URL
-    #     :rtype: HttpResponse
-    #     """
-    #     return reverse('worksheet-detail', kwargs={
-    #         'pk': self.object.pk,
-    #         'project_slug': self.object.section.project.slug,
-    #         'section_slug': self.object.section.slug,
-    #     })
+                # for question in wq:
+                for question in wq:
+                    context['questions'][question] = Answer.objects.filter(
+                            question = question)
+        return context
