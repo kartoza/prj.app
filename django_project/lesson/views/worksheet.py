@@ -274,10 +274,10 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
     template_name = 'worksheet/question_answers.html'
 
     def get_context_data(self, **kwargs):
-        """bla
-		"""
-        context = super(WorksheetModuleQuestionAnswers, self).get_context_data(**kwargs)
-        pk = self.kwargs.get('pk', None)
+        """Create context for use in the templates."""
+
+        context = super(WorksheetModuleQuestionAnswers, self).get_context_data(
+         **kwargs)
         project_slug = self.kwargs.get('project_slug', None)
         section_slug = self.kwargs.get('section_slug', None)
         project = get_object_or_404(Project, slug = project_slug)
