@@ -22,13 +22,16 @@ def increment_id(project):
         return '1'
 
     # get the latest certificate ID within a project
-    latest_certificate = Certificate.objects.filter(
-        course__certifying_organisation__project=project).latest('int_id')
-    words = '{}-'.format(str(project.name).replace(' ', ''))
-    latest_certificate_number = str(latest_certificate.certificateID).replace(
-        words, "")
-    latest_certificate_number = int(latest_certificate_number)
-    new_int_id = latest_certificate_number + 1
+    list_certificates = Certificate.objects.filter(
+        course__certifying_organisation__project=project
+    ).values_list('certificateID', flat=True)
+    certificate_array = []
+    for certificate in list_certificates:
+        number = '{}-'.format(str(project.name).replace(' ', ''))
+        certificate_number = str(certificate).replace(number, '')
+        certificate_array.append(int(certificate_number))
+
+    new_int_id = max(certificate_array) + 1
 
     return new_int_id
 
