@@ -54,6 +54,7 @@ from views import (
     regenerate_certificate,
     regenerate_all_certificate,
     preview_certificate,
+    issue_all_certificates,
 
     # Validate Certificate.
     ValidateCertificate,
@@ -227,6 +228,10 @@ urlpatterns = patterns(
     url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
         '(?P<organisation_slug>[\w-]+)/preview-certificate/$',
         preview_certificate, name='preview-certificate'),
+    url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+        '(?P<organisation_slug>[\w-]+)/course/'
+        '(?P<course_slug>[\w-]+)/issue-certificates/$',
+        issue_all_certificates, name = 'issue_certificates'),
 
     # Course.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
