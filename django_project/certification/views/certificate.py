@@ -865,7 +865,17 @@ def preview_certificate(request, **kwargs):
 
 
 def issue_all_certificates(request, **kwargs):
-    """Issue all certificates to attendees in that course."""
+    """Issue all certificates to attendees in that course.
+
+     Kwargs:
+        project_slug (str): defines which project the attendee belongs.
+        course_slug (str): defines which course the attendee attended.
+        organisation_slug (str): defines which certifying organisation
+        conducted the course.
+
+    Returns:
+        String: Course attendees that are not yet certified.
+    """
 
     project_slug = kwargs.pop('project_slug', None)
     course_slug = kwargs.pop('course_slug', None)

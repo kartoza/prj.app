@@ -108,23 +108,18 @@
                 <th>Issue</th>
                 </tr>
                         {% for attendee in all_attendees %}
-{#                        {% for key, value in certificates.items %}#}
-{#                            {% if attendee.attendee.pk in attendees %}#}
-{#                            {% if attendee.attendee.pk in certificates %}#}
                             <tr><td>{{ attendee }} </td>
                                 <td>
-                                    <label class="container-checkmark">
-{#                                        {% if value.is_paid == False %}#}
-                                        <input type="checkbox" checked="checked">
-{#                                        {% else %}#}
-{#                                            <input type="checkbox">#}
-{#                                        {% endif %}#}
-                                        <span class="checkmark"></span>
-                                    </label>
+                                    <form id="issue-certificate" action="." method="POST">
+                                        {% csrf_token %}
+                                        <label class="container-checkmark">
+                                            <input type="checkbox"
+                                                    checked="checked" value="">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </form>
                                 </td>
                             </tr>
-{#                            {% endif %}#}
-{#                            {% endif %}#}
                          {% endfor %}
                 </table>
                 </div>
