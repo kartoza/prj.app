@@ -8,7 +8,6 @@
 
 {% block content %}
     <style>
-        /* Customize the label (the container) */
         .container-checkmark {
           display: block;
           position: relative;
@@ -22,20 +21,21 @@
           user-select: none;
         }
 
-            /* Hide the browser's default checkbox */
+            /* remove the browser's default checkbox */
         .container-checkmark input {
           position: absolute;
           opacity: 0;
           cursor: pointer;
         }
 
-        /* checkbox */
+        /* add a nice looking checkbox */
         .checkmark {
           position: absolute;
           top: 0;
           left: 0;
           height: 20px;
-          width: 25px;
+          width: 20px;
+            margin-left: 12px;
           background-color: #eee;
         }
 
@@ -84,7 +84,7 @@
             margin-left: 25%;
         }
         #issue-all {
-            margin-left: 30%;
+            margin-left: 46.6%;
             margin-top: 4px;
             position: absolute;
 
@@ -98,26 +98,34 @@
 
     <div>
         <div class="container">
-            <h4 style="font-size: 16pt; margin-left: 20%">Are you sure you want to issue all certificates in this course</h4>
+            <h4 style="font-size: 16pt; margin-left: 20%">Are you sure you want to issue all certificates in this course?</h4>
             <div class="row">
                 <div class="col-lg-12">
                 <h4>Course: {{ course.certifying_organisation.project }} - {{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})</h4>
                 <table>
                 <tr>
-                <th>Certificate ID</th>
                 <th>Attendee</th>
                 <th>Issue</th>
                 </tr>
-                {% for key, value in certificates.items %}
-                    <tr><td>{{ value.certificateID }}</td>
-                        <td>{{ key.firstname }} {{ key.surname }}</td>
-                        <td>
-                            <label class="container-checkmark">
-                                <input type="checkbox" checked="checked">
-                                <span class="checkmark"></span>
-                            </label>
-                        </td></tr>
-                {% endfor %}
+                        {% for attendee in all_attendees %}
+{#                        {% for key, value in certificates.items %}#}
+{#                            {% if attendee.attendee.pk in attendees %}#}
+{#                            {% if attendee.attendee.pk in certificates %}#}
+                            <tr><td>{{ attendee }} </td>
+                                <td>
+                                    <label class="container-checkmark">
+{#                                        {% if value.is_paid == False %}#}
+                                        <input type="checkbox" checked="checked">
+{#                                        {% else %}#}
+{#                                            <input type="checkbox">#}
+{#                                        {% endif %}#}
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </td>
+                            </tr>
+{#                            {% endif %}#}
+{#                            {% endif %}#}
+                         {% endfor %}
                 </table>
                 </div>
             </div>
@@ -129,5 +137,4 @@
              </form>
         </div>
     </div>
-
 {% endblock %}

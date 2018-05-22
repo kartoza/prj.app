@@ -28,6 +28,7 @@ from ..models import (
     TrainingCenter,
     CourseType
 )
+from ..models.course_attendee import CourseAttendee
 from ..forms import CertificateForm
 from base.models.project import Project
 
@@ -863,7 +864,6 @@ def preview_certificate(request, **kwargs):
     return response
 
 
-
 def issue_all_certificates(request, **kwargs):
     """Issue all certificates to attendees in that course."""
 
@@ -883,12 +883,26 @@ def issue_all_certificates(request, **kwargs):
     else:
         raise Http404
 
-    attendees_pk = \
-        Certificate.objects.filter(
-            course=course).values_list('attendee', flat=True)
+    # filename = "{}.{}".format(attendee.pk, "pdf")
+    project_folder = (project.name.lower()).replace(' ', '_')
+
+    certified_attendees_pk = list(Certificate.objects.filter(
+            course=course).values_list('attendee', flat=True))
+
+    all_attendees_pk = list(CourseAttendee.objects.filter(
+            course=course).values_list(
+            'attendee', flat=True))
+
+    all_clean_attendee = []
+    for attendee in certified_attendees_pk:
+        if attendee in all_attendees_pk:
+            all_attendees_pk.remove(attendee)
+
+    for clean_attendee in all_attendees_pk:
+        all_clean_attendee.append(clean_attendee)
 
     attendees = []
-    for pk in attendees_pk:
+    for pk in all_clean_attendee:
         attendees.append(Attendee.objects.get(pk=pk))
 
     pending_organisation = \
@@ -903,12 +917,7 @@ def issue_all_certificates(request, **kwargs):
         'slug': course_slug
     })
 
-    # Attendee and her certificate
     certificates_dict = {}
-    for attendee in attendees:
-        certificates_dict[attendee] = \
-            Certificate.objects.get(
-                course=course, attendee=attendee)
 
     project_folder = (project.name.lower()).replace(' ', '_')
     if request.method == 'POST':
@@ -918,8 +927,8 @@ def issue_all_certificates(request, **kwargs):
             filename = "{}.{}".format(value.certificateID, "pdf")
             pathname = \
                 os.path.join(
-                    '/home/web/media',
-                    'pdf/{}/{}'.format(project_folder, filename))
+                        '/home/web/media',
+                        'pdf/{}/{}'.format(project_folder, filename))
             found = os.path.exists(pathname)
             if found:
                 os.remove(pathname)
@@ -934,10 +943,10 @@ def issue_all_certificates(request, **kwargs):
             filename = "{}.{}".format(value.certificateID, "pdf")
             pathname = \
                 os.path.join(
-                    '/home/web/media',
-                    'pdf/{}/{}'.format(project_folder, filename))
+                        '/home/web/media',
+                        'pdf/{}/{}'.format(project_folder, filename))
             generate_pdf(
-                pathname, project, course, key, value, current_site)
+                    pathname, project, course, key, value, current_site)
 
         messages.success(request, 'All certificates are updated', 'regenerate')
         return HttpResponseRedirect(url)
@@ -947,5 +956,6 @@ def issue_all_certificates(request, **kwargs):
         context={
             'the_project': project,
             'has_pending_organisations': has_pending,
-            'certificates': certificates_dict,
-            'course': course})
+            'all_attendees': attendees,
+            'course': course,
+    })
