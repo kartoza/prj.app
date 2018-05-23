@@ -926,7 +926,6 @@ def issue_all_certificates(request, **kwargs):
 
     project_folder = (project.name.lower()).replace(' ', '_')
     if request.method == 'POST':
-        site = request.get_host()
         filename = "{}.{}".format('site_12', "pdf")
         pathname = \
             os.path.join(
