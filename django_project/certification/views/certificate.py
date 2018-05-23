@@ -893,9 +893,6 @@ def issue_all_certificates(request, **kwargs):
     else:
         raise Http404
 
-    # filename = "{}.{}".format(attendee.pk, "pdf")
-    project_folder = (project.name.lower()).replace(' ', '_')
-
     certified_attendees_pk = list(Certificate.objects.filter(
             course=course).values_list('attendee', flat=True))
 
@@ -903,16 +900,16 @@ def issue_all_certificates(request, **kwargs):
             course=course).values_list(
             'attendee', flat=True))
 
-    all_clean_attendee = []
+    uncertified_attendees = []
     for attendee in certified_attendees_pk:
         if attendee in all_attendees_pk:
             all_attendees_pk.remove(attendee)
 
-    for clean_attendee in all_attendees_pk:
-        all_clean_attendee.append(clean_attendee)
+    for uncertified_attendee in all_attendees_pk:
+        uncertified_attendees.append(uncertified_attendee)
 
     attendees = []
-    for pk in all_clean_attendee:
+    for pk in uncertified_attendees:
         attendees.append(Attendee.objects.get(pk=pk))
 
     pending_organisation = \
@@ -927,38 +924,9 @@ def issue_all_certificates(request, **kwargs):
         'slug': course_slug
     })
 
-    certificates_dict = {}
-
-    project_folder = (project.name.lower()).replace(' ', '_')
     if request.method == 'POST':
-
-        # Delete all existing certificate in a course.
-        for key, value in certificates_dict.items():
-            filename = "{}.{}".format(value.certificateID, "pdf")
-            pathname = \
-                os.path.join(
-                        '/home/web/media',
-                        'pdf/{}/{}'.format(project_folder, filename))
-            found = os.path.exists(pathname)
-            if found:
-                os.remove(pathname)
-
-        # Generate all certificates in a course
-        current_site = request.META['HTTP_HOST']
-        makepath = '/home/web/media/pdf/{}/'.format(project_folder)
-        if not os.path.exists(makepath):
-            os.makedirs(makepath)
-
-        for key, value in certificates_dict.items():
-            filename = "{}.{}".format(value.certificateID, "pdf")
-            pathname = \
-                os.path.join(
-                        '/home/web/media',
-                        'pdf/{}/{}'.format(project_folder, filename))
-            generate_pdf(
-                    pathname, project, course, key, value, current_site)
-
-        messages.success(request, 'All certificates are updated', 'regenerate')
+        messages.success(request, 'All certificates have been issued',
+                         'issue all')
         return HttpResponseRedirect(url)
 
     return render(
@@ -966,6 +934,6 @@ def issue_all_certificates(request, **kwargs):
         context={
             'the_project': project,
             'has_pending_organisations': has_pending,
-            'all_attendees': attendees,
+            'uncertified_attendees': attendees,
             'course': course,
     })

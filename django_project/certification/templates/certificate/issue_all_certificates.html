@@ -107,14 +107,17 @@
                 <th>Attendee</th>
                 <th>Issue</th>
                 </tr>
-                        {% for attendee in all_attendees %}
+                        {% for attendee in uncertified_attendees %}
                             <tr><td>{{ attendee }} </td>
                                 <td>
-                                    <form id="issue-certificate" action="." method="POST">
+                                    <form id="{{ attendee.pk }}"
+                                            action="."
+                                            name="directive" method="POST">
                                         {% csrf_token %}
                                         <label class="container-checkmark">
                                             <input type="checkbox"
-                                                    checked="checked" value="">
+                                                    checked="checked"
+                                                    value="">
                                             <span class="checkmark"></span>
                                         </label>
                                     </form>
