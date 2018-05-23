@@ -1,7 +1,12 @@
 # coding=utf-8
+
+import datetime
 import StringIO
 import os
 import zipfile
+import cStringIO
+from PIL import Image
+import re
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -14,7 +19,15 @@ from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.utils import ImageReader
-from ..models import Certificate, Course, Attendee, CertifyingOrganisation
+from ..models import (
+    Certificate,
+    Course,
+    Attendee,
+    CertifyingOrganisation,
+    CourseConvener,
+    TrainingCenter,
+    CourseType
+)
 from ..forms import CertificateForm
 from base.models.project import Project
 
@@ -145,8 +158,10 @@ class CertificateDetailView(DetailView):
             certificate = context['certificate']
             convener_name = \
                 '{} {}'.format(
-                    certificate.course.course_convener.user.first_name,
-                    certificate.course.course_convener.user.last_name)
+                    certificate.course.course_convener.user.first_name.encode(
+                        'utf-8'),
+                    certificate.course.course_convener.user.last_name.encode(
+                        'utf-8'))
 
             if certificate.course.course_convener.title:
                 convener_name = \
@@ -211,8 +226,8 @@ def generate_pdf(
     center = height * 0.5
     convener_name = \
         '{} {}'.format(
-            course.course_convener.user.first_name,
-            course.course_convener.user.last_name)
+            course.course_convener.user.first_name.encode('utf-8'),
+            course.course_convener.user.last_name.encode('utf-8'))
 
     if course.course_convener.title:
         convener_name = \
@@ -295,15 +310,25 @@ def generate_pdf(
     page.setFont('Times-Bold', 26)
     page.drawCentredString(center, 480, 'Certificate of Completion')
     page.drawCentredString(
-        center, 400, '%s %s' % (attendee.firstname, attendee.surname))
+        center, 400, '%s %s' % (
+            attendee.firstname.encode('utf-8'),
+            attendee.surname.encode('utf-8')))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
-        center, 360, 'Has attended and completed the course:')
+        center, 370, 'Has attended and completed the course:')
     page.setFont('Times-Bold', 20)
-    page.drawCentredString(center, 300, course.course_type.name)
+    page.drawCentredString(
+            center, 350, course.course_type.name.encode('utf-8'))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
-        center, 270, '{}'.format(course_duration))
+        center, 300, 'With a trained competence in:')
+    page.setFont('Times-Bold', 14)
+    page.drawCentredString(
+        center, 280, '%s' % (course.trained_competence))
+    page.setFont('Times-Roman', 16)
+    page.drawCentredString(
+        center, 250, '{}'.format(course_duration))
+
     page.setFillColorRGB(0.1, 0.1, 0.1)
     page.drawCentredString(
         center, 220, 'Convened by {} at {}'.format(
@@ -330,7 +355,9 @@ def generate_pdf(
     page.setFont('Times-Italic', 12)
     page.drawCentredString(
         (margin_left + 150), (margin_bottom + 60),
-        '{} {}'.format(project.owner.first_name, project.owner.last_name))
+        '{} {}'.format(
+            project.owner.first_name.encode('utf-8'),
+            project.owner.last_name.encode('utf-8')))
     page.drawCentredString(
         (margin_right - 150), (margin_bottom + 60),
         '{}'.format(convener_name))
@@ -731,92 +758,105 @@ def regenerate_all_certificate(request, **kwargs):
             'certificates': certificates_dict,
             'course': course})
 
+class DummyAttendee(object):
+    """Dummy object for preview certificate."""
 
-class IssueAllCerts(
-        LoginRequiredMixin, CertificateMixin, CreateView):
-    """View to issue all Certificates."""
+    def __init__(self):
+        self.firstname = 'Jane'
+        self.surname = 'Doe'
 
-    context_object_name = 'certificate'
-    template_name = 'certificate/create.html'
 
-    def get_success_url(self):
-        """Define the redirect URL.
+class DummyCourse(object):
+    """Dummy object for preview certificate."""
 
-        After successful creation of the object, the User will be redirected
-        to the Course detail page.
+    def __init__(
+            self, course_convener, course_type, training_center, start_date,
+            end_date, certifying_organisation, template_certificate,
+            trained_competence):
+        self.course_convener = course_convener
+        self.course_type = course_type
+        self.training_center = training_center
+        self.start_date = start_date
+        self.end_date = end_date
+        self.certifying_organisation = certifying_organisation
+        self.template_certificate = template_certificate
+        self.trained_competence = trained_competence
 
-       :returns: URL
-       :rtype: HttpResponse
-       """
 
-        return reverse('course-detail', kwargs={
-            'project_slug': self.project_slug,
-            'organisation_slug': self.organisation_slug,
-            'slug': self.course_slug
-        })
+class DummyCertificate(object):
+    """Dummy object for preview certificate."""
 
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
+    def __init__(self, course, attendee, project):
+        self.certificateID = '{}-1'.format(project.name)
+        self.course = course
+        self.attendee = attendee
 
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
 
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
+def preview_certificate(request, **kwargs):
+    """Generate pdf for preview upon creating new course."""
 
-        context = super(
-            IssueAllCerts, self).get_context_data(**kwargs)
-        context['course'] = Course.objects.get(slug=self.course_slug)
-        context['attendee'] = Attendee.objects.get(pk=self.pk)
-        return context
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="preview.pdf"'
 
-    def get_form_kwargs(self):
-        """Get keyword arguments from form.
+    project_slug = kwargs.pop('project_slug')
+    project = Project.objects.get(slug=project_slug)
+    organisation_slug = kwargs.pop('organisation_slug')
 
-        :returns keyword argument from the form
-        :rtype: dict
-        """
+    convener_id = request.POST.get('course_convener', None)
+    if convener_id is not None:
+        # Get all posted data.
+        course_convener = CourseConvener.objects.get(id=convener_id)
+        training_center_id = request.POST.get('training_center', None)
+        training_center = TrainingCenter.objects.get(id=training_center_id)
+        course_type_id = request.POST.get('course_type', None)
+        course_type = CourseType.objects.get(id=course_type_id)
+        start_date = request.POST.get('start_date', None)
+        course_start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+        end_date = request.POST.get('end_date', None)
+        course_end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+        certifying_organisation = \
+            CertifyingOrganisation.objects.get(slug=organisation_slug)
+        raw_image = request.POST.get('template_certificate', None)
+        trained_competence = ''
+        if 'base64' in raw_image:
+            image_data = re.sub('^data:image/.+;base64,', '',
+                                raw_image).decode('base64')
+            template_certificate = Image.open(cStringIO.StringIO(image_data))
+        else:
+            template_certificate = None
 
-        kwargs = super(IssueAllCerts, self).get_form_kwargs()
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.organisation_slug = self.kwargs.get('organisation_slug', None)
-        self.course_slug = self.kwargs.get('course_slug', None)
-        self.pk = self.kwargs.get('pk', None)
-        self.course = Course.objects.get(slug=self.course_slug)
-        self.attendee = Attendee.objects.get(pk=self.pk)
-        kwargs.update({
-            'user': self.request.user,
-            'course': self.course,
-            'attendee': self.attendee,
-        })
-        return kwargs
+        # Create dummy objects
+        attendee = DummyAttendee()
+        course = \
+            DummyCourse(
+                course_convener, course_type, training_center,
+                course_start_date, course_end_date, certifying_organisation,
+                template_certificate, trained_competence)
+        certificate = DummyCertificate(course, attendee, project)
 
-    def form_valid(self, form):
-        """Save new created certificate
+        current_site = request.META['HTTP_HOST']
 
-        :param form
-        :type form
+        generate_pdf(
+            response, project, course, attendee, certificate, current_site)
 
-        :returns HttpResponseRedirect object to success_url
-        :rtype: HttpResponseRedirect
+    else:
+        # When preview page is refreshed, the data is gone so user needs to
+        # go back to create page.
 
-        We check that there is no referential integrity error when saving."""
+        page = canvas.Canvas(response, pagesize=landscape(A4))
+        width, height = A4
+        center = height * 0.5
+        page.setFillColorRGB(0.1, 0.1, 0.1)
+        page.setFont('Times-Bold', 26)
+        page.drawCentredString(center, 480, 'Certificate of Completion')
+        page.setFont('Times-Roman', 16)
+        page.drawCentredString(
+            center, 360,
+            'To preview your certificate template, '
+            'please go to create new course page')
+        page.drawCentredString(
+            center, 335, 'and click on Preview Certificate button.')
+        page.showPage()
+        page.save()
 
-        try:
-            super(IssueAllCerts, self).form_valid(form)
-
-            # Update organisation credits every time a certificate is issued.
-            organisation = \
-                CertifyingOrganisation.objects.get(
-                    slug=self.organisation_slug)
-            remaining_credits = \
-                organisation.organisation_credits - \
-                organisation.project.certificate_credit
-            organisation.organisation_credits = remaining_credits
-            organisation.save()
-
-            return HttpResponseRedirect(self.get_success_url())
-        except IntegrityError:
-            return ValidationError(
-                'ERROR: Certificate already exists!')
+    return response

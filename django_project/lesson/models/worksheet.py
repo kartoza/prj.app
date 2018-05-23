@@ -72,15 +72,15 @@ class Worksheet(TranslationMixin):
 
     exercise_goal = models.CharField(
         help_text=_('The goal of the exercise.'),
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         max_length=200,
     )
 
     exercise_task = models.TextField(
         help_text=_('Task in the exercise. Markdown is supported.'),
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
 
     exercise_image = models.ImageField(
@@ -96,8 +96,8 @@ class Worksheet(TranslationMixin):
 
     more_about_title = models.CharField(
         help_text=_('More about title.'),
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         max_length=200,
         default=_('More about'),
     )
@@ -106,8 +106,8 @@ class Worksheet(TranslationMixin):
         help_text=_(
             'More detail about the content of the worksheet. '
             'Markdown is supported.'),
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
 
     more_about_image = models.ImageField(

@@ -60,6 +60,8 @@ class CourseCreateView(LoginRequiredMixin, CourseMixin, CreateView):
             CourseCreateView, self).get_context_data(**kwargs)
         context['courses'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
+        context['organisation_slug'] = self.kwargs.pop('organisation_slug')
+        context['project_slug'] = self.kwargs.pop('project_slug')
         return context
 
     def get_form_kwargs(self):
@@ -116,6 +118,8 @@ class CourseUpdateView(LoginRequiredMixin, CourseMixin, UpdateView):
         context = super(CourseUpdateView, self).get_context_data(**kwargs)
         context['courses'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
+        context['organisation_slug'] = self.kwargs.pop('organisation_slug')
+        context['project_slug'] = self.kwargs.pop('project_slug')
         return context
 
     def get_queryset(self):
@@ -236,8 +240,7 @@ class CourseDeleteView(LoginRequiredMixin, CourseMixin, DeleteView):
         return qs
 
 
-class CourseDetailView(
-        CourseMixin, DetailView):
+class CourseDetailView(CourseMixin, DetailView):
     """Detail view for Course."""
 
     context_object_name = 'course'
@@ -304,10 +307,20 @@ class CourseDetailView(
             slug = self.kwargs.get('slug', None)
             organisation_slug = self.kwargs.get('organisation_slug', None)
             if slug and organisation_slug:
-                certifying_organisation = \
-                    CertifyingOrganisation.objects.get(slug=organisation_slug)
-                obj = queryset.get(
-                    certifying_organisation=certifying_organisation, slug=slug)
+                try:
+                    certifying_organisation = \
+                        CertifyingOrganisation.objects.get(
+                            slug=organisation_slug)
+                except CertifyingOrganisation.DoesNotExist:
+                    raise Http404(
+                        'Sorry! We could not find your '
+                        'certifying organisation!')
+                try:
+                    obj = queryset.get(
+                        certifying_organisation=certifying_organisation,
+                        slug=slug)
+                except Course.DoesNotExist:
+                    raise Http404('Sorry! We could not find your course!')
                 return obj
             else:
                 raise Http404('Sorry! We could not find your course!')

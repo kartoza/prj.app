@@ -19,8 +19,8 @@ then
     make dbsync
     make mediasync
     # Sync the latest backups and media to staging from production
-    rsync -L  backups/latest.dmp staging.changelog.qgis.org:/home/projecta/deployment/backups/
-    rsync -r -v media/ staging.changelog.qgis.org:/home/projecta/deployment/media
+    rsync -L  backups/latest.dmp staging.changelog.kartoza.com:/home/projecta/deployment/backups/
+    rsync -r -v media/ staging.changelog.kartoza.com:/home/projecta/deployment/media
     # Tag the release and push to main repo
     # .version is used by Raven/Sentry
     echo $VERSION > ../django_project/.version
@@ -31,7 +31,7 @@ then
     git push --tags upstream develop
     # Check it out on the server
     # No migrations are run - you should do that manually for now
-    ssh staging.changelog.qgis.org "cd /home/projecta/deployment && git fetch --tags && git checkout $VERSION && make collectstatic && make reload"
+    ssh staging.changelog.kartoza.com "cd /home/projecta/deployment && git fetch --tags && git checkout $VERSION && make collectstatic && make reload"
 else
     echo "Tag and deploy to staging aborted."
 fi
