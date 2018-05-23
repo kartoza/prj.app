@@ -942,7 +942,8 @@ def issue_all_certificates(request, **kwargs):
             generate_pdf(pathname, project, course, attendee, certificate,
                          current_site)
 
-        messages.success(request, 'All certificates have been issued',
+        messages.success(request, '{count} certificates have been '
+                                  'issued'.format(count=len(attendees)),
                          'issue all')
         return HttpResponseRedirect(url)
 

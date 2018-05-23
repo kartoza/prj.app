@@ -8,92 +8,38 @@
 
 {% block content %}
     <style>
-        .container-checkmark {
-          display: block;
-          position: relative;
-          padding-left: 35px;
-          margin-bottom: 12px;
-          cursor: pointer;
-          font-size: 22px;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
+            .container {
+                margin-left: 45pt;
+            }
 
-            /* remove the browser's default checkbox */
-        .container-checkmark input {
-          position: absolute;
-          opacity: 0;
-          cursor: pointer;
-        }
+            table {
+                border: none;
+                font-size: 12pt;
+                margin-left: 28%;
+                counter-reset: rowNumber;
+            }
 
-        /* add a nice looking checkbox */
-        .checkmark {
-          position: absolute;
-          top: 0;
-          left: 0;
-          height: 20px;
-          width: 20px;
-            margin-left: 12px;
-          background-color: #eee;
-        }
+            #issue-all {
+                margin-left: 30%;
+                margin-top: 5px;
+                position: absolute;
+                background-color: #2196F3;
+            }
 
-        /* On mouse-hover over checkbox, grey background */
-        .container-checkmark:hover input ~ .checkmark {
-          background-color: #ccc;
-        }
+             table tr {
+                counter-increment: rowNumber;
+            }
 
-        /* When the checkbox is checked, add a blue background */
-        .container-checkmark input:checked ~ .checkmark {
-          background-color: #2196F3;
-        }
+              table tr td:first-child::before {
+                content: counter(rowNumber);
+                min-width: 2em;
+                margin-right: 1em;
+            }
 
-        /* Create the checkmark/indicator (hidden when not checked) */
-        .checkmark:after {
-          content: "";
-          position: absolute;
-          display: none;
-        }
-
-        /* Show the checkmark when checked */
-        .container-checkmark input:checked ~ .checkmark:after {
-          display: block;
-        }
-
-        /* Style the checkmark/indicator */
-        .container .checkmark:after {
-          left: 9px;
-          top: 5px;
-          width: 5px;
-          height: 8px;
-          border: solid white;
-          border-width: 0 3px 3px 0;
-          -webkit-transform: rotate(45deg);
-          -ms-transform: rotate(45deg);
-          transform: rotate(45deg);
-        }
-
-        .container {
-            margin-left: 45pt;
-        }
-
-        table {
-            border: 1px solid #f5f5f5;
-            font-size: 12pt;
-            margin-left: 25%;
-        }
-        #issue-all {
-            margin-left: 46.6%;
-            margin-top: 4px;
-            position: absolute;
-
-         background-color: #2196F3;
-        }
-        table, tr, td, th {
-            padding: 5px 25px;
-            text-align: center;
-        }
+            table, tr, td, th {
+                padding: 5px 25px;
+                text-align: center;
+            }
     </style>
 
     <div>
@@ -104,24 +50,12 @@
                 <h4>Course: {{ course.certifying_organisation.project }} - {{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})</h4>
                 <table>
                 <tr>
-                <th>Attendee</th>
-                <th>Issue</th>
-                </tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                </tr></table><table>
                         {% for attendee in uncertified_attendees %}
-                            <tr><td>{{ attendee }} </td>
-                                <td>
-                                    <form id="{{ attendee.pk }}"
-                                            action="."
-                                            name="directive" method="POST">
-                                        {% csrf_token %}
-                                        <label class="container-checkmark">
-                                            <input type="checkbox"
-                                                    checked="checked"
-                                                    value="">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </form>
-                                </td>
+                            <tr id="tr"><td>{{ attendee.firstname }}</td>
+                                <td>{{ attendee.surname }}</td>
                             </tr>
                          {% endfor %}
                 </table>
@@ -129,7 +63,7 @@
             </div>
              <form id="issue-all" action="." method="POST">
                  {% csrf_token %}
-                 <input type="submit" value="Confirm issue all checked"
+                 <input type="submit" value="Confirm issue all"
                          class="btn
                  btn-primary">
              </form>
