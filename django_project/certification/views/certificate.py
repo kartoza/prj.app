@@ -924,7 +924,24 @@ def issue_all_certificates(request, **kwargs):
         'slug': course_slug
     })
 
+    project_folder = (project.name.lower()).replace(' ', '_')
     if request.method == 'POST':
+        site = request.get_host()
+        filename = "{}.{}".format('site_12', "pdf")
+        pathname = \
+            os.path.join(
+                    '/home/web/media',
+                    'pdf/{}/{}'.format(project_folder, filename))
+
+        current_site = request.META['HTTP_HOST']
+
+        # for every attendee, generate a certificate and issue it.
+        for attendee in attendees:
+            certificate = DummyCertificate(course, attendee, project)
+
+            generate_pdf(pathname, project, course, attendee, certificate,
+                         current_site)
+
         messages.success(request, 'All certificates have been issued',
                          'issue all')
         return HttpResponseRedirect(url)
