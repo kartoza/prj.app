@@ -228,6 +228,13 @@ urlpatterns = patterns(
         '(?P<organisation_slug>[\w-]+)/preview-certificate/$',
         preview_certificate, name='preview-certificate'),
 
+    url(regex = '^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+                '(?P<organisation_slug>[\w-]+)/course/'
+                '(?P<course_slug>[\w-]+)/courseattendee/'
+                '(?P<pk>[\w-]+)/issue_certificates/$',
+        view = IssueAllCerts.as_view(),
+        name = 'issue_all_certificates'),
+
     # Course.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/create-course/',

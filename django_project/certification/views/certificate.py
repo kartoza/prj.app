@@ -758,7 +758,6 @@ def regenerate_all_certificate(request, **kwargs):
             'certificates': certificates_dict,
             'course': course})
 
-
 class DummyAttendee(object):
     """Dummy object for preview certificate."""
 
