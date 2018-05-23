@@ -49,6 +49,11 @@ urlpatterns += i18n_patterns(
     url(r'^accounts/', include('allauth.urls')),
 )
 
+urlpatterns += patterns(
+    '',
+    url(r'^payment/', include('stripe_payment.urls'))
+)
+
 if 'rosetta' in settings.INSTALLED_APPS:
     urlpatterns += patterns(
         '',

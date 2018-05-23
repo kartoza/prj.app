@@ -1,0 +1,145 @@
+<script src="https://js.stripe.com/v3/"></script>
+
+<style>
+    .payment-panel {
+        position: relative;
+    }
+
+    #card-element, #amount-element {
+        background-color: white;
+        height: 40px;
+        padding: 10px 12px;
+        width: 100%;
+    }
+
+    #email-element, #amount-element {
+        border: none;
+    }
+
+    #amount-element {
+        font-size: 16px;
+    }
+
+    #email-element:focus, #email-element:hover,
+    #amount-element:focus, #amount-element:hover {
+        outline: none;
+    }
+
+    textarea:focus, input:focus {
+        outline: none;
+    }
+
+    .input-group-addon {
+        background: none;
+        border: none;
+        border-radius: 0;
+    }
+
+    button:disabled {
+        color: graytext;
+    }
+
+    #thank-you-message {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background: dodgerblue;
+        color: white;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 10px;
+        padding-top: 56px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        text-align: center;
+    }
+</style>
+<form method="post" id="payment-form" style="padding: 10px">
+    <div id="form-element" class="form-row" style="margin-bottom: 20px">
+        <div id="card-element" style="margin-bottom: 10px;">
+            <!-- A Stripe Element will be inserted here. -->
+        </div>
+
+        <!-- Used to display form errors. -->
+        <div id="card-errors" role="alert" style="color: red; font-style: italic; opacity: 0.5">
+
+        </div>
+        <div class="input-group prefix">
+            <span id="amount-currency" class="input-group-addon">$</span>
+            <input id="amount-element" type="number" placeholder="Amount" required>
+        </div>
+    </div>
+    <button id="submit-element" style="width: 100%">Pay</button>
+</form>
+
+<div id="thank-you-message" onclick="hideThankYou()" hidden>
+</div>
+
+<script>
+    var stripe = Stripe('{{ stripe_publishable_key }}');
+    var elements = stripe.elements();
+    // Custom styling can be passed to options when creating an Element.
+    var style = {
+        base: {
+            // Add your base input styles here. For example:
+            fontSize: '16px',
+            color: "#32325d",
+        }
+    };
+
+    // Create an instance of the card Element.
+    var card = elements.create('card', {style: style});
+
+    // Add an instance of the card Element into the `card-element` <div>.
+    card.mount('#card-element');
+
+    card.addEventListener('change', function (event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    $('#submit-element').click(function () {
+        if (!$('#form-element').is(":visible")) {
+            $('#form-element').slideToggle("fast", function () {
+            });
+            return false;
+        } else {
+
+        }
+    });
+    // Create a token or display an error when the form is submitted.
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        $("#submit-element").prop("disabled", true);
+
+        stripe.createToken(card).then(function (result) {
+            if (result.error) {
+                // Inform the customer that there was an error.
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+
+                $("#submit-element").prop("disabled", false);
+            } else {
+                // Send the token to your server.
+                stripeTokenHandler(result.token);
+            }
+        });
+    });
+
+    function showThankYou() {
+        $('#thank-you-message').slideToggle("fast", function () {
+        });
+    }
+
+    function hideThankYou() {
+        $('#thank-you-message').slideToggle("fast", function () {
+        });
+    }
+</script>

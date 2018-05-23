@@ -1,0 +1,52 @@
+<script>
+    var creditPrice = '{{ credit_price }}';
+    var amount = 0;
+    $(document).ready(function () {
+        $('#thank-you-message').html('Thank you for the topup.<br> ' +
+            'We will check your topup and add credit.<br>');
+        $('#submit-element').html('Pay $0');
+        $('#amount-currency').text('Credit');
+        $('#amount-element').change(function () {
+            setSubmitText(this);
+        });
+        $('#amount-element').keyup(function () {
+            setSubmitText(this);
+        });
+    });
+    function setSubmitText(amountElement) {
+        var value = 0;
+        if ($(amountElement).val()) {
+            value = parseFloat(creditPrice) * $(amountElement).val();
+        }
+        $('#submit-element').html('Pay $' + value)
+        amount = value;
+    }
+    function stripeTokenHandler(token) {
+        token['model_id'] = '{{ model_id }}';
+        token['model_name'] = '{{ model_name }}';
+        token['model_app_label'] = '{{ model_app_label }}';
+        token['currency'] = '{{ currency }}';
+        token['amount'] = amount;
+        token['description'] = '{{ description }}';
+
+        {# send payment information to backend to be charged #}
+        $.ajax({
+            url: '/payment/payment/',
+            type: 'POST',
+            data: token,
+            success: function (data) {
+                $("#submit-element").prop("disabled", false);
+                showThankYou();
+            },
+            error: function (data) {
+                // Inform the customer that there was an error.
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = 'There is error when making payment. ' +
+                    'Please try it again';
+
+                $("#submit-element").prop("disabled", false);
+            }
+        })
+    }
+
+</script>

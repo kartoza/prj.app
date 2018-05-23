@@ -7,6 +7,7 @@ import zipfile
 import cStringIO
 from PIL import Image
 import re
+from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -525,6 +526,31 @@ def top_up_unavailable(request, **kwargs):
         context={
             'the_project': project,
             'has_pending_organisations': has_pending})
+
+
+def top_up(request, **kwargs):
+    project_slug = kwargs.get('project_slug', None)
+    project = Project.objects.get(slug=project_slug)
+    organisation_slug = kwargs.get('organisation_slug', None)
+    organisation = CertifyingOrganisation.objects.get(slug=organisation_slug)
+    has_pending = False
+    if organisation:
+        has_pending = True
+    return render(
+        request, 'certificate/top_up.html',
+        context={
+            'the_project': project,
+            'has_pending_organisations': has_pending,
+
+            # context for payment
+            'credit_price': project.credit_cost,
+            'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
+            'model_id': organisation.id,
+            'model_name': CertifyingOrganisation.__name__,
+            'model_app_label': CertifyingOrganisation._meta.app_label,
+            'currency': 'usd',
+            'description': '[%s] Topup credit' % organisation.slug,
+        })
 
 
 def email_all_attendees(request, **kwargs):

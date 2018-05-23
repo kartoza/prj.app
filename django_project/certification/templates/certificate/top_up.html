@@ -1,0 +1,23 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    <h1>Top Up Unavailable</h1>
+{% endblock page_title %}
+
+{% block content %}
+    {% if stripe_publishable_key %}
+        <div class="panel panel-default custom-panel payment-panel"
+             style="background-color: #f7f8f9; padding: 0px">
+            {% include 'includes/stripe-payment.html' %}
+            {% include 'includes/topup-credit.html' %}
+        </div>
+    {% else %}
+        <div>
+            <div class="container" style="border: 2px solid #f5f5f5; margin: 0 auto; text-align: center; width: 70%;">
+                <h4>Please contact your administrator to top up your credits.</h4>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

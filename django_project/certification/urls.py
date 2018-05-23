@@ -49,7 +49,7 @@ from views import (
     certificate_pdf_view,
     download_certificates_zip,
     update_paid_status,
-    top_up_unavailable,
+    top_up,
     email_all_attendees,
     regenerate_certificate,
     regenerate_all_certificate,
@@ -198,7 +198,7 @@ urlpatterns = patterns(
         name='paid-certificate'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/top-up/$',
-        view=top_up_unavailable,
+        view=top_up,
         name='top-up'),
     url(regex='^(?P<project_slug>[\w-]+)/certificate/'
               '(?P<id>[\w-]+)/$',

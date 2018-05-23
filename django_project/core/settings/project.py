@@ -19,6 +19,7 @@ INSTALLED_APPS += (
     'vota',
     'certification',
     'lesson',
+    'stripe_payment'
 )
 
 # Due to profile page does not available,
@@ -82,3 +83,10 @@ VALID_DOMAIN = [
     '0.0.0.0',
     'changelog.kartoza.com',
 ]
+
+try:
+    from .secret import STRIPE_SECRET_KEY
+    from .secret import STRIPE_PUBLISHABLE_KEY
+except ImportError:
+    STRIPE_SECRET_KEY = None
+    STRIPE_PUBLISHABLE_KEY = None
