@@ -935,5 +935,5 @@ def issue_all_certificates(request, **kwargs):
             'the_project': project,
             'has_pending_organisations': has_pending,
             'uncertified_attendees': attendees,
-            'course': course,
-    })
+            'course': course
+        })
