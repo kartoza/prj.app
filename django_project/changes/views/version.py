@@ -741,6 +741,11 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
         return temp_path
 
 
+class VersionDownloadRST(VersionDownload):
+    """View to allow staff users to download Version page in RST format."""
+    template_name = 'version/detail-content-rst.html'
+
+
 class VersionDownloadGnu(VersionMixin, DetailView):
     """A tabular list style view for a Version."""
     context_object_name = 'version'

@@ -1,0 +1,34 @@
+{% load custom_markup %}
+{% load thumbnail %}
+
+{% if version.project.image_file %}
+    <img src="{{ version.project.image_file.url }}"/>
+{% endif %}
+
+<h1>
+    Changelog for {{ version.project }} {{ version.name }}
+</h1>
+
+{% if version.image_file %}
+    <img class="img-responsive img-rounded center-block"
+         src="{{ version.image_file.url }}"/>
+{% endif %}
+
+{% if version.description %}
+        {{ version.description|base_markdown }}
+{% endif %}
+
+{% for row in version.categories %}
+    {% if row.entries %}
+        <h2 class="text-muted">
+            {{ row.category.name }}
+        </h2>
+        {% for entry in row.entries %}
+            {% if entry.approved %}
+                {% include "entry/includes/entry_detail_rst.html" %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}{# row loop #}
+
+{% include "version/includes/version-sponsors-rst.html" %}
