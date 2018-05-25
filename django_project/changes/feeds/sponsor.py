@@ -134,6 +134,28 @@ class RssSponsorFeed(Feed):
         return {'image_url': item.sponsor.logo.url}
 
 
+class RssPastSponsorFeed(RssSponsorFeed):
+    """RSS Feed class for past sponsors."""
+
+    def items(self, obj):
+        """Return past (former) sponsors of the project.
+
+        :param obj: A project
+        :type obj: Project
+
+        :returns: List of past sponsor of a project
+        :rtype: list
+        """
+        today = datetime.datetime.now().date()
+        # order by end sponsorship_level?
+        # return SponsorshipPeriod.objects.filter(
+        #     project=obj, end_date__lt=today
+        # ).order_by('-sponsorship_level__value', '-end_date')
+        # or by end_date?
+        return SponsorshipPeriod.objects.filter(
+            project=obj, end_date__lt=today
+        ).order_by('-end_date')
+
 
 class AtomSponsorFeed(RssSponsorFeed):
     """Atom Feed class for sponsor."""
