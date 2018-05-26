@@ -170,6 +170,11 @@ class AtomSponsorFeed(RssSponsorFeed):
     feed_type = Atom1Feed
     subtitle = RssSponsorFeed.description
 
+class AtomPastSponsorFeed(RssPastSponsorFeed):
+    """Atom Feed class for past sponsor."""
+
+    feed_type = Atom1Feed
+    subtitle = RssPastSponsorFeed.description
 
 class AtomPastSponsorFeed(RssPastSponsorFeed):
     """Atom Feed class for past sponsor."""
