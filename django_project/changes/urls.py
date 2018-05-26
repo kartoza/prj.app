@@ -32,6 +32,7 @@ from views import (
     PendingVersionListView,
     ApproveVersionView,
     VersionDownload,
+    VersionDownloadRST,
     VersionDownloadGnu,
     VersionSponsorDownload,
     # Entry
@@ -149,6 +150,9 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/download/$',
         view=VersionDownload.as_view(),
         name='version-download'),
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/downloadrst/$',
+        view=VersionDownloadRST.as_view(),
+        name='version-download-rst'),
     url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/gnu/$',
         view=VersionDownloadGnu.as_view(),
         name='version-download-gnu'),
