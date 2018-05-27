@@ -47,7 +47,7 @@ class RssSponsorFeed(Feed):
          :returns: Title of the RSS Feed.
          :rtype: str
          """
-        return 'RSS Sponsor of %s Project' % obj.name
+        return 'RSS Sponsors of %s Project' % obj.name
 
     def description(self, obj):
         """Return a description for the RSS.
@@ -58,7 +58,7 @@ class RssSponsorFeed(Feed):
          :returns: Description of the RSS Feed.
          :rtype: str
          """
-        return 'These are the latest sponsor of %s project.' % obj.name
+        return 'These are the latest sponsors of %s project.' % obj.name
 
     def link(self, obj):
         """Return the url of the latest sponsor.
@@ -137,6 +137,17 @@ class RssSponsorFeed(Feed):
 class RssPastSponsorFeed(RssSponsorFeed):
     """RSS Feed class for past sponsors."""
 
+    def description(self, obj):
+        """Return a description for the RSS.
+
+         :param obj: A project
+         :type obj: Project
+
+         :returns: Description of the RSS Feed.
+         :rtype: str
+         """
+        return 'These are the past sponsors of %s project.' % obj.name
+
     def items(self, obj):
         """Return past (former) sponsors of the project.
 
@@ -147,11 +158,7 @@ class RssPastSponsorFeed(RssSponsorFeed):
         :rtype: list
         """
         today = datetime.datetime.now().date()
-        # order by end sponsorship_level?
-        # return SponsorshipPeriod.objects.filter(
-        #     project=obj, end_date__lt=today
-        # ).order_by('-sponsorship_level__value', '-end_date')
-        # or by end_date?
+
         return SponsorshipPeriod.objects.filter(
             project=obj, end_date__lt=today
         ).order_by('-end_date')
@@ -162,6 +169,13 @@ class AtomSponsorFeed(RssSponsorFeed):
 
     feed_type = Atom1Feed
     subtitle = RssSponsorFeed.description
+
+
+class AtomPastSponsorFeed(RssPastSponsorFeed):
+    """Atom Feed class for past sponsor."""
+
+    feed_type = Atom1Feed
+    subtitle = RssPastSponsorFeed.description
 
 
 class JSONSponsorFeed(RssSponsorFeed):
