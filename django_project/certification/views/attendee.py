@@ -182,19 +182,26 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin, FormView):
                     # We should have logic here to first see if the attendee
                     # already exists and if they do, just add them to the
                     # course
-                    attendee = Attendee(
-                        firstname=row[0],
-                        surname=row[1],
-                        email=row[2],
-                        certifying_organisation=self.certifying_organisation,
-                        author=self.request.user,
-                    )
                     try:
-                        attendee.save()
-                        attendee_count += 1
-                    except:
-                        #  Could not save - probably they exist already
+                        attendee = Attendee.objects.get(email=row[2])
+                    except Attendee.DoesNotExist:
                         attendee = None
+
+                    if not attendee:
+                        attendee = Attendee(
+                            firstname=row[0],
+                            surname=row[1],
+                            email=row[2],
+                            certifying_organisation=
+                            self.certifying_organisation,
+                            author=self.request.user,
+                        )
+                        try:
+                            attendee.save()
+                            attendee_count += 1
+                        except:
+                            #  Could not save - probably they exist already
+                            attendee = None
 
                     if not attendee:
                         # put more checks in case attendee
