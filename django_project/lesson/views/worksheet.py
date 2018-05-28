@@ -269,7 +269,6 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
     :param request: HttpRequest object
     :type request: HttpRequest
     """
-    # headline = _(u'Worksheet answers to module questions')
     context_object_name = 'worksheets'
     template_name = 'worksheet/question_answers.html'
 
@@ -280,10 +279,9 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
          **kwargs)
         project_slug = self.kwargs.get('project_slug', None)
         section_slug = self.kwargs.get('section_slug', None)
-        project = get_object_or_404(Project, slug = project_slug)
+        project = get_object_or_404(Project, slug=project_slug)
 
-        # context['worksheets'] = OrderedDict()
-        context['sections'] = Section.objects.filter(project = project,
+        context['sections'] = Section.objects.filter(project=project,
                                                      slug=section_slug)
         for section in context['sections']:
             query_set = Worksheet.objects.filter(section=section)
@@ -294,14 +292,16 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
                                    'question_answers':[]
                                   }
 
-                wq = WorksheetQuestion.objects.filter(worksheet = worksheet.pk)
+                worksheet_questions = WorksheetQuestion.objects.filter(
+                        worksheet=worksheet.pk)
 
-                for question in wq:
+                for question in worksheet_questions:
                     question_json = {'question':
-                                         question, 'answer':[]
+                                         question,
+                                     'answer': []
                                      }
-                    answers = Answer.objects.filter(
-                            question = question)
+                    answers = Answer.objects.filter(question=question)
+
                     for answer in answers:
                         question_json['answer'].append(answer)
                     worksheet_json['question_answers'].append(question_json)
