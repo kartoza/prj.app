@@ -1,9 +1,5 @@
 {% extends "project_base.html" %}
 {% load i18n %}
-{% load staticfiles %}
-{% load custom_markup %}
-{% load staticfiles %}
-{% load lesson_tags %}
 
 {% block title %}{% trans 'Worksheet' %} - {{ block.super }}{% endblock %}
 
@@ -21,11 +17,12 @@
 {% block content %}
     <div class="row pull-right">
          <a class="btn btn-default btn-mini tooltip-toggle"
-{#                        href='{% url "section-list" project_slug=worksheet.section.project.slug, section_slug=section.slug %}#}
-                        data-title="{% trans 'Worksheet list' %}">
-                        <span class="glyphicon glyphicon-arrow-left"></span>
-                    </a>
+{#            href='{% url "section-list" project_slug=worksheet.section.project.slug, section_slug=section.slug %}'#}
+            data-title="{% trans 'Worksheet list' %}">
+            <span class="glyphicon glyphicon-arrow-left"></span>
+        </a>
     </div>
+    
     <div class="container">
         <div class="row">
            <h3 style="padding-left:30%; padding-bottom: 10pt; padding-top:10pt">
@@ -33,41 +30,37 @@
             <small class="text-muted">questions with corresponding correct answer</small>
            </h3>
         </div>
-            <div class="row">
-    {% for key, value in section_worksheets %}
-{#        {% for worksheet in worksheets %}#}
-            <div class="col-lg-6" style="background-color: whitesmoke;">
-                <div class="jumbotron" style="height: 5%;background-blend-mode: screen;">
-                    <ul class="nav nav-pills" role="tablist">
-                      <li role="presentation">Module Name <span
-                              class="badge">{{ value }}</span></li>
-                      <li class="pull-right" role="presentation">Number of Questions <span class="badge">3</span></li>
-                    </ul>
-                </div>
-                {% for question, answers in questions.items %}
-                    <div class="d-none d-print-block">
-                    <span><strong>Question:</strong> {{ question.question }}</span><br/>
-                    {% if answers %}
-                        {% for answer in answers %}
-                            <span class="d-none d-print-block">
-                                {% if answer.is_correct %}
-                                    <span
-                                            class="grey-italic">Answer(s):
-                                        <i>{{ answer.answer }}</i></span>
-                               {% endif %}
-                            </span>
-                        {% endfor %}
-                    {% else %}
-                      <span class="grey-italic">Answer(s): <span style="color:
-                       #5cc4ef">None</span></span>
-                    {% endif %}
-                        <hr/>
-                    </div>
-                {% endfor %}
 
-                 </div>
-{#           {% endfor %}#}
-        {% endfor %}
+        <div class="row">
+            {% for items in worksheets %}
+                <div class="col-lg-6" style="background-color: whitesmoke;">
+                    <div class="jumbotron" style="height: 5%;background-blend-mode: screen;">
+                        <ul class="nav nav-pills" role="tablist">
+                          <li role="presentation">Module Name <span
+                                  class="badge">{{ items.worksheet }}</span></li>
+                          <li class="pull-right" role="presentation">Number of
+                              Questions <span class="badge">2</span></li>
+                        </ul>
+                    </div>
+
+                    {% for item in items.question_answers %}
+                        <div class="d-none d-print-block">
+                            <span><strong>Question:</strong> {{ item.question }}</span><br/>
+                            {% for answer in item.answer %}
+                                <span class="d-none d-print-block">
+                                    {% if answer.is_correct %}
+                                        <span class="grey-italic"><u
+                                                style="color: #5cc4ef;">Answer</u>:
+                                            <i>{{ answer }}</i></span><br/>
+                                   {% endif %}
+                                </span>
+                            {% endfor %}
+                            <hr>
+                            <br/>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
         </div>
     </div>
 

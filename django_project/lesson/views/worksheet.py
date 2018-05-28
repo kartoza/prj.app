@@ -282,17 +282,18 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
         section_slug = self.kwargs.get('section_slug', None)
         project = get_object_or_404(Project, slug = project_slug)
 
-        context['worksheets'] = OrderedDict()
+        # context['worksheets'] = OrderedDict()
         context['sections'] = Section.objects.filter(project = project,
                                                      slug=section_slug)
         for section in context['sections']:
             query_set = Worksheet.objects.filter(section=section)
-            context['worksheets'][section] = []
+            context['worksheets'] = []
 
             for worksheet in query_set:
                 worksheet_json = {'worksheet': worksheet,
                                    'question_answers':[]
                                   }
+
                 wq = WorksheetQuestion.objects.filter(worksheet = worksheet.pk)
 
                 for question in wq:
@@ -304,7 +305,7 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
                     for answer in answers:
                         question_json['answer'].append(answer)
                     worksheet_json['question_answers'].append(question_json)
-                context['worksheets'][section].append(worksheet_json)
-                print(context['worksheets'][section])
+                context['worksheets'].append(worksheet_json)
+                print(context['worksheets'])
 
         return context
