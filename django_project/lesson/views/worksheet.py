@@ -263,7 +263,8 @@ class WorksheetOrderSubmitView(LoginRequiredMixin, WorksheetMixin, UpdateView):
 
 
 
-class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
+class WorksheetModuleQuestionAnswers(LoginRequiredMixin, WorksheetMixin,
+                                     DetailView):
     """Show correct answers to module questions.
 
     :param request: HttpRequest object

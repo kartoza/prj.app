@@ -1,19 +1,6 @@
 {% extends "project_base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans 'Worksheet' %} - {{ block.super }}{% endblock %}
-
-{% block css_head %}
-
-{% endblock css_head %}
-
-{% block extra_head %}
-{% endblock %}
-
-{% block page_title %}
-    <h2>{% trans 'Worksheet' %}</h2>
-{% endblock page_title %}
-
 {% block content %}
     <div class="container">
         <div class="row">
@@ -27,39 +14,39 @@
             </div>
             </div>
         </div>
-        </div>
+    </div>
 
-        <div class="container">
-            <div class="row">
-                {% for worksheet_set in worksheets %}
-                    <div class="col-lg-6">
-                        <div class="jumbotron" style="height: 5%;background-blend-mode: screen;">
-                            <ul class="nav nav-pills" role="tablist">
-                              <li role="presentation">Module Name
-                                  <span  class="badge" style="font-size: 14px;">
-                                      {{ worksheet_set.worksheet }}</span></li>
-                            </ul>
-                        </div>
-
-                        {% for question_answer in worksheet_set.question_answers %}
-                            <div class="d-none d-print-block">
-                                <span><strong>Question:</strong> {{ question_answer.question }}</span><br/>
-                                {% for answer in question_answer.answer %}
-                                    <span class="d-none d-print-block">
-                                        {% if answer.is_correct %}
-                                            <span class="grey-italic"><u
-                                                    style="color: #5cc4ef;">Answer</u>:
-                                                <i>{{ answer }}</i></span><br/>
-                                       {% endif %}
-                                    </span>
-                                {% endfor %}
-                                <hr>
-                                <br/>
-                            </div>
-                        {% endfor %}
+    <div class="container">
+        <div class="row">
+            {% for worksheet_set in worksheets %}
+                <div class="col-lg-6">
+                    <div class="jumbotron" style="height: 5%;background-blend-mode: screen;">
+                        <ul class="nav nav-pills" role="tablist">
+                          <li role="presentation">Module Name
+                              <span  class="badge" style="font-size: 14px;">
+                                  {{ worksheet_set.worksheet }}</span></li>
+                        </ul>
                     </div>
-                {% endfor %}
-            </div>
+
+                    {% for question_answer in worksheet_set.question_answers %}
+                        <div class="d-none d-print-block">
+                            <span><strong>Question:</strong> {{ question_answer.question }}</span><br/>
+                            {% for answer in question_answer.answer %}
+                                <span class="d-none d-print-block">
+                                    {% if answer.is_correct %}
+                                        <span class="grey-italic"><u
+                                                style="color: #5cc4ef;">Answer</u>:
+                                            <i>{{ answer }}</i></span><br/>
+                                   {% endif %}
+                                </span>
+                            {% endfor %}
+                            <hr>
+                            <br/>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
         </div>
+    </div>
 
 {% endblock %}
