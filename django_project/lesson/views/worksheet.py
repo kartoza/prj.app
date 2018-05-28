@@ -306,6 +306,4 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
                         question_json['answer'].append(answer)
                     worksheet_json['question_answers'].append(question_json)
                 context['worksheets'].append(worksheet_json)
-                print(context['worksheets'])
-
         return context
