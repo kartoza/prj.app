@@ -282,26 +282,29 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
         section_slug = self.kwargs.get('section_slug', None)
         project = get_object_or_404(Project, slug = project_slug)
 
-        # questions = WorksheetQuestion.objects.filter(worksheet = pk)
-        # context['questions'] = OrderedDict()
-        # for question in questions:
-        #     context['questions'][question] = Answer.objects.filter(
-        #             question = question)
-
         context['worksheets'] = OrderedDict()
-
         context['sections'] = Section.objects.filter(project = project,
                                                      slug=section_slug)
         for section in context['sections']:
             query_set = Worksheet.objects.filter(section=section)
-            context['worksheets'][section] = query_set
-            for worksheet in query_set:
-                wq = WorksheetQuestion.objects.filter(worksheet = worksheet)
-                context['questions'] = wq
-                context['questions'] = OrderedDict()
+            context['worksheets'][section] = []
 
-                # for question in wq:
+            for worksheet in query_set:
+                worksheet_json = {'worksheet': worksheet,
+                                   'question_answers':[]
+                                  }
+                wq = WorksheetQuestion.objects.filter(worksheet = worksheet.pk)
+
                 for question in wq:
-                    context['questions'][question] = Answer.objects.filter(
+                    question_json = {'question':
+                                         question, 'answer':[]
+                                     }
+                    answers = Answer.objects.filter(
                             question = question)
+                    for answer in answers:
+                        question_json['answer'].append(answer)
+                    worksheet_json['question_answers'].append(question_json)
+                context['worksheets'][section].append(worksheet_json)
+                print(context['worksheets'][section])
+
         return context

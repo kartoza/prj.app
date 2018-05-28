@@ -34,13 +34,13 @@
            </h3>
         </div>
             <div class="row">
-    {% for section, worksheets in worksheets.items %}
-        {% for worksheet in worksheets %}
+    {% for key, value in section_worksheets %}
+{#        {% for worksheet in worksheets %}#}
             <div class="col-lg-6" style="background-color: whitesmoke;">
                 <div class="jumbotron" style="height: 5%;background-blend-mode: screen;">
                     <ul class="nav nav-pills" role="tablist">
                       <li role="presentation">Module Name <span
-                              class="badge">{{ worksheet.module }}</span></li>
+                              class="badge">{{ value }}</span></li>
                       <li class="pull-right" role="presentation">Number of Questions <span class="badge">3</span></li>
                     </ul>
                 </div>
@@ -66,7 +66,7 @@
                 {% endfor %}
 
                  </div>
-           {% endfor %}
+{#           {% endfor %}#}
         {% endfor %}
         </div>
     </div>
