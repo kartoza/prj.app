@@ -275,8 +275,8 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
     def get_context_data(self, **kwargs):
         """Create context for use in the templates."""
 
-        context = super(WorksheetModuleQuestionAnswers, self).get_context_data(
-         **kwargs)
+        context = super(WorksheetModuleQuestionAnswers,
+                        self).get_context_data(**kwargs)
         project_slug = self.kwargs.get('project_slug', None)
         section_slug = self.kwargs.get('section_slug', None)
         project = get_object_or_404(Project, slug=project_slug)
@@ -289,15 +289,14 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin, SectionMixin, DetailView):
 
             for worksheet in query_set:
                 worksheet_json = {'worksheet': worksheet,
-                                   'question_answers':[]
+                                  'question_answers': []
                                   }
 
                 worksheet_questions = WorksheetQuestion.objects.filter(
                         worksheet=worksheet.pk)
 
                 for question in worksheet_questions:
-                    question_json = {'question':
-                                         question,
+                    question_json = {'question': question,
                                      'answer': []
                                      }
                     answers = Answer.objects.filter(question=question)
