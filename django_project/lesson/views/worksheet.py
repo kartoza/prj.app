@@ -27,7 +27,6 @@ from lesson.utilities import re_order_features
 
 from base.models.project import Project
 from ..models.section import Section
-from ..views.section import SectionMixin
 
 
 class WorksheetMixin(object):
