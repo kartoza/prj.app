@@ -29,7 +29,7 @@ class TestViews(TestCase):
         self.client.post(
                 '/set_language/', data={'language': 'en'})
         logging.disable(logging.CRITICAL)
-        self.user = UserF.create(**{'username': 'sonlinux', 'is_staff': False})
+        self.user = UserF.create(**{'username': 'sonlinux', 'is_staff': True})
         # Something changed in the way factoryboy works with django 1.8
         # I think - we need to explicitly set the users password
         # because the core.model_factories.UserF._prepare method
@@ -62,6 +62,19 @@ class TestViews(TestCase):
         client = Client()
 
         response = client.get('worksheet-module-answers', kwargs={
+            'project_slug': self.kwargs_project,
+            'section_slug': self.kwargs_section,
+            'pk': self.kwargs_pk})
+        self.assertEqual(response.status_code, 404)
+
+    @override_settings(VALID_DOMAIN = ['testserver', ])
+    def test_WorksheetModuleQuestionAnswers_with_login(self):
+
+        client = Client()
+        status = client.login(username = 'sonlinux', password = 'password')
+        self.assertTrue(status)
+
+        response = client.get('worksheet-module-answers', kwargs = {
             'project_slug': self.kwargs_project,
             'section_slug': self.kwargs_section,
             'pk': self.kwargs_pk})
