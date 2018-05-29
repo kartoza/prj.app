@@ -77,5 +77,5 @@ class TestViews(TestCase):
         response = client.get('worksheet-module-answers', kwargs = {
             'project_slug': self.kwargs_project,
             'section_slug': self.kwargs_section,
-            'pk': self.kwargs_pk})
+            'pk': int(2)})
         self.assertEqual(response.status_code, 404)
