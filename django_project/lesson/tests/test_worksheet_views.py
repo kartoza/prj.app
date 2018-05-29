@@ -54,8 +54,7 @@ class TestViews(TestCase):
         self.kwargs_worksheet_full = {
             'pk': self.test_section.pk,
             'project_slug': self.test_section.project.slug,
-            'section_slug': self.test_section.slug
-        }
+            'section_slug': self.test_section.slug}
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_WorksheetModuleQuestionAnswers_with_no_login(self):
