@@ -510,7 +510,7 @@ class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
 
 class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
     """View to allow staff users to download Version page in RST format."""
-    template_name = 'version/detail-content.html'
+    template_name = 'version/detail-content-rst.html'
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -612,11 +612,6 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
                 document)
 
         return temp_path
-
-
-class VersionDownloadRST(VersionDownload):
-    """View to allow staff users to download Version page in RST format."""
-    template_name = 'version/detail-content-rst.html'
 
 
 class VersionDownloadGnu(VersionMixin, DetailView):
