@@ -742,7 +742,7 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
 
     def get_queryset(self):
         """Get the queryset for download.
-        
+
         This will search a specific version within a project.
         Thus it will not raise duplicates when there is
         another same version name from another project.
