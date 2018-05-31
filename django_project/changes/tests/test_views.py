@@ -751,6 +751,27 @@ class TestVersionViews(TestCase):
         }))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_VersionDownload(self):
+        self.client.login(username='timlinux', password='password')
+        response = self.client.get(reverse('version-download', kwargs={
+            'project_slug': self.project.slug,
+            'slug': self.version.slug
+        }), stream=True)
+        self.assertEqual(response.status_code, 200)
+
+        # Test version with the same name from another project.
+        test_project2 = ProjectF.create(name='testproject2')
+        test_version = VersionF.create(
+            project=test_project2,
+            name='1.0.1'
+        )
+        response2 = self.client.get(reverse('version-download', kwargs={
+            'project_slug': test_project2.slug,
+            'slug': test_version.slug
+        }), stream=True)
+        self.assertEqual(response2.status_code, 200)
+
 
 class TestVersionViewsWithAnonymousUserForCRUD(TestCase):
     """
