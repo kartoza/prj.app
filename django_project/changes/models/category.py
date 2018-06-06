@@ -11,26 +11,6 @@ from changes.models.entry import Entry
 logger = logging.getLogger(__name__)
 
 
-class ApprovedCategoryManager(models.Manager):
-    """Custom category manager that shows only approved records."""
-
-    def get_queryset(self):
-        """Query set generator."""
-        return super(
-            ApprovedCategoryManager, self).get_queryset().filter(
-                approved=True)
-
-
-class UnapprovedCategoryManager(models.Manager):
-    """Custom version manager that shows only unapproved records."""
-
-    def get_queryset(self):
-        """Query set generator."""
-        return super(
-            UnapprovedCategoryManager, self).get_queryset().filter(
-                approved=False)
-
-
 # noinspection PyUnresolvedReferences
 class Category(models.Model):
     """A category model e.g. gui, backend, web site etc."""
@@ -57,8 +37,6 @@ class Category(models.Model):
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')
     objects = models.Manager()
-    approved_objects = ApprovedCategoryManager()
-    unapproved_objects = UnapprovedCategoryManager()
 
     # noinspection PyClassicStyleClass
     class Meta:

@@ -98,13 +98,6 @@
                 <li>
                     <a href="{% url 'category-create' the_project.slug %}">Create Category</a>
                 </li>
-                {% if unapproved_categories %}
-                    <li>
-                        <a href="{% url 'pending-category-list' the_project.slug %}">
-                            Categories Pending Approval
-                        </a>
-                    </li>
-                {% endif %}
             </ul>
         </li>
     </ul>
