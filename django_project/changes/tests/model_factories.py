@@ -51,7 +51,6 @@ class VersionF(factory.django.DjangoModelFactory):
         model = Version
 
     padded_version = factory.Sequence(lambda n: u'100001100 %s' % n)
-    approved = True
     image_file = factory.django.ImageField(color='green')
     author = factory.SubFactory(UserF)
     description = u'This description is really only here for testing'
