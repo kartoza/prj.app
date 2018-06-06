@@ -52,10 +52,6 @@ class NavContextMiddleware(object):
             context['has_pending_organisations'] = (
                 CertifyingOrganisation.unapproved_objects.filter(
                     project=context.get('project')).exists())
-            if versions:
-                context['has_pending_entries'] = (
-                    Entry.unapproved_objects.filter(
-                        version__in=versions).exists())
 
         else:
             if request.user.is_staff:

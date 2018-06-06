@@ -358,9 +358,9 @@ class TestEntryViews(TestCase):
             'version_slug': self.version.slug
         }), post_data)
         self.assertRedirects(
-            response, reverse('pending-entry-list', kwargs={
+            response, reverse('version-detail', kwargs={
                 'project_slug': self.project.slug,
-                'version_slug': self.version.slug}))
+                'slug': self.version.slug}))
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryCreate_no_login(self):
@@ -411,9 +411,9 @@ class TestEntryViews(TestCase):
             'pk': self.entry.id
         }), post_data)
         self.assertRedirects(
-            response, reverse('pending-entry-list', kwargs={
+            response, reverse('version-detail', kwargs={
                 'project_slug': self.project.slug,
-                'version_slug': self.version.slug}))
+                'slug': self.version.slug}))
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryUpdate_no_login(self):
@@ -493,22 +493,6 @@ class TestEntryViews(TestCase):
             'pk': entry_to_delete.id
         }))
         self.assertEqual(response.status_code, 302)
-
-    @override_settings(VALID_DOMAIN=['testserver', ])
-    def test_AllEntryPendingView(self):
-        """Test the all pending entry view."""
-        # Verify our pending entry exists
-        self.assertFalse(self.pending_entry.approved)
-        self.client.login(username='timlinux', password='password')
-        url = reverse('all-pending-entry-list', kwargs={
-            'project_slug': self.project.slug,
-        })
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        expected_templates = [
-            'entry/all-pending-list.html', u'changes/entry_list.html'
-        ]
-        self.assertEqual(response.template_name, expected_templates)
 
 
 class TestVersionViews(TestCase):

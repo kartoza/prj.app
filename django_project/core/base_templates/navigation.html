@@ -195,13 +195,6 @@
                     <a href="{% url 'version-detail' project_slug=the_project.slug slug=the_version.slug %}">All Entries</a>
                     <a href="{% url 'entry-create' project_slug=the_project.slug version_slug=the_version.slug %}">Create Entry</a>
                 </li>
-                {% if unapproved_entries %}
-                    <li>
-                        <a href="{% url 'pending-entry-list' project_slug=the_project.slug version_slug=the_version.slug %}">
-                            Entries Pending Approval
-                        </a>
-                    </li>
-                {% endif %}
             </ul>
         </li>
     </ul>
