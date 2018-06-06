@@ -36,9 +36,6 @@ from views import (
     EntryDeleteView,
     EntryCreateView,
     EntryUpdateView,
-    PendingEntryListView,
-    AllPendingEntryList,
-    ApproveEntryView,
     EntryOrderView,
     EntryOrderSubmitView,
 
@@ -145,17 +142,6 @@ urlpatterns = patterns(
         name='version-sponsor-download'),
 
     # Changelog entry management
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/'
-              'pending-entry/list/$',
-        view=PendingEntryListView.as_view(),
-        name='pending-entry-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/'
-              'all-pending-entry/list/$',
-        view=AllPendingEntryList.as_view(),
-        name='all-pending-entry-list'),
-    url(regex='^entry/approve/(?P<pk>\d+)$',
-        view=ApproveEntryView.as_view(),
-        name='entry-approve'),
     url(regex='^entry/(?P<pk>\d+)$',
         view=EntryDetailView.as_view(),
         name='entry-detail'),
