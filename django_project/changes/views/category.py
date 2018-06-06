@@ -206,8 +206,7 @@ class CategoryOrderView(LoginRequiredMixin, CategoryMixin, ListView):
     def get_queryset(self, queryset=None):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved
-            Categories.
+        :returns: A queryset to show Categories.
 
         :param queryset: Optional queryset.
         :rtype: QuerySet
@@ -222,9 +221,8 @@ class CategoryOrderView(LoginRequiredMixin, CategoryMixin, ListView):
                     raise Http404(
                         'Sorry! The project you are requesting a category for '
                         'could not be found or you do not have permission to '
-                        'view the category. Also the version may not be '
-                        'approved yet. Try logging in as a staff member if '
-                        'you wish to view it.')
+                        'view the category. Try logging in as a staff member '
+                        'if you wish to view it.')
                 queryset = Category.objects.all().filter(
                     Q(project=project) &
                     (Q(project__owner=self.request.user) |
