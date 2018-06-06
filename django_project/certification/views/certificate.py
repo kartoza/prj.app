@@ -560,20 +560,23 @@ def email_all_attendees(request, **kwargs):
         for attendee in attendee_list_object:
             # Send email to each attendee with the link to his certificate.
             data = {
-                'firstname': attendee.firstname,
-                'lastname': attendee.surname,
+                'firstname': attendee.firstname.encode('utf-8'),
+                'lastname': attendee.surname.encode('utf-8'),
                 'coursetype': course.course_type,
                 'start_date': course.start_date.strftime('%d %B %Y'),
                 'end_date': course.end_date.strftime('%d %B %Y'),
                 'training_center': course.training_center,
-                'organisation': course.certifying_organisation.name,
+                'organisation': course.certifying_organisation.name.encode(
+                    'utf-8'),
                 'domain': site,
                 'project_slug': course.certifying_organisation.project.slug,
                 'organisation_slug': course.certifying_organisation.slug,
                 'course_slug': course.slug,
                 'pk': attendee.pk,
-                'convener_firstname': course.course_convener.user.first_name,
-                'convener_lastname': course.course_convener.user.last_name}
+                'convener_firstname':
+                    course.course_convener.user.first_name.encode('utf-8'),
+                'convener_lastname':
+                    course.course_convener.user.last_name.encode('utf-8')}
 
             send_mail(
                 'Certificate from {} Course'.format(course.course_type),
