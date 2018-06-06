@@ -84,7 +84,6 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         context['user_can_delete'] = False
 
         context['num_versions'] = self.get_queryset().count()
-        context['unapproved'] = False
         context['rst_download'] = False
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
@@ -299,8 +298,7 @@ class VersionThumbnailView(VersionMixin, DetailView):
                 raise Http404(
                     'Sorry! The version you are requesting '
                     'could not be found or you do not have permission to '
-                    'view the version. Also the version may not be '
-                    'approved yet. Try logging in as a staff member if '
+                    'view the version. Try logging in as a staff member if '
                     'you wish to view it.')
         else:
             raise Http404('Sorry! We could not find your version!')
@@ -416,7 +414,7 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
         """Define the redirect URL
 
         After successful creation of the object, the User will be redirected
-        to the unapproved Version list page for the object's parent Project
+        to the Version list page for the object's parent Project
 
         :returns: URL
         :rtype: HttpResponse
