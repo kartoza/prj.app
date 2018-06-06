@@ -15,26 +15,6 @@ from django.db import models
 logger = logging.getLogger(__name__)
 
 
-class ApprovedVersionManager(models.Manager):
-    """Custom version manager that shows only approved records."""
-
-    def get_queryset(self):
-        """Query set generator."""
-        return super(
-            ApprovedVersionManager, self).get_queryset().filter(
-                approved=True)
-
-
-class UnapprovedVersionManager(models.Manager):
-    """Custom version manager that shows only unapproved records."""
-
-    def get_queryset(self):
-        """Query set generator."""
-        return super(
-            UnapprovedVersionManager, self).get_queryset().filter(
-                approved=False)
-
-
 # noinspection PyUnresolvedReferences
 class Version(models.Model):
     """A version model that the changelog is associated with.."""
@@ -55,12 +35,6 @@ class Version(models.Model):
         null=False,
         blank=True,
         unique=False)
-
-    approved = models.BooleanField(
-        help_text=(
-            'Whether this version has been approved for use by the '
-            'project owner.'),
-        default=False)
 
     image_file = models.ImageField(
         help_text=(
@@ -85,8 +59,6 @@ class Version(models.Model):
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')
     objects = models.Manager()
-    approved_objects = ApprovedVersionManager()
-    unapproved_objects = UnapprovedVersionManager()
 
     # noinspection PyClassicStyleClass
     class Meta:
@@ -151,13 +123,8 @@ class Version(models.Model):
 
         :param category: Category to filter by.
         :type category: Category
-
-        .. note:: only approved entries returned.
         """
-        qs = Entry.objects.filter(
-                version=self,
-                category=category,
-                approved=True)
+        qs = Entry.objects.filter(version=self, category=category)
         return qs
 
     def categories(self):

@@ -25,11 +25,6 @@
                             {% show_button_icon "add" %}
                         </a>
                     {% endif %}
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                       href='{% url "pending-version-list" the_project.slug %}'
-                       data-title="View Pending Versions">
-                        <span class="glyphicon glyphicon-time"></span>
-                    </a>
                 {% endif %}
                 {% if versions %}
                     <a class="btn btn-default btn-mini tooltip-toggle"

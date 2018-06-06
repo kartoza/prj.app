@@ -21,7 +21,6 @@ class CategoryF(factory.django.DjangoModelFactory):
         model = Category
 
     name = factory.Sequence(lambda n: u'Test Category %s' % n)
-    approved = True
     sort_number = factory.Sequence(lambda n: n)
     project = factory.SubFactory('base.tests.model_factories.ProjectF')
 
@@ -38,7 +37,6 @@ class EntryF(factory.django.DjangoModelFactory):
     image_file = factory.django.ImageField(color='blue')
     image_credits = u'The credits go to dodobas'
     author = factory.SubFactory(UserF)
-    approved = True
     version = factory.SubFactory('changes.tests.model_factories.VersionF')
     category = factory.SubFactory('changes.tests.model_factories.CategoryF')
 
@@ -51,7 +49,6 @@ class VersionF(factory.django.DjangoModelFactory):
         model = Version
 
     padded_version = factory.Sequence(lambda n: u'100001100 %s' % n)
-    approved = True
     image_file = factory.django.ImageField(color='green')
     author = factory.SubFactory(UserF)
     description = u'This description is really only here for testing'

@@ -180,7 +180,6 @@ class TestVersionCRUD(TestCase):
         new_model_data = {
             '10002001': u'10002001',
             'description': u'New description',
-            'approved': True
         }
         model.__dict__.update(new_model_data)
         model.save()
@@ -193,8 +192,8 @@ class TestVersionCRUD(TestCase):
         """Tests we can get, set and present the release date nicely."""
         model = VersionF.create(
             description=u'New description',
-            release_date=datetime(2016, 06, 06),
-            approved=True)
+            release_date=datetime(2016, 6, 6),
+        )
         self.assertEquals(model.formatted_release_date(), '6 June, 2016')
 
     def test_Version_delete(self):

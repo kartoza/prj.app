@@ -14,26 +14,6 @@ from django.contrib.auth.models import User
 logger = logging.getLogger(__name__)
 
 
-class ApprovedEntryManager(models.Manager):
-    """Custom entry manager that shows only approved records."""
-
-    def get_queryset(self):
-        """Query set generator."""
-        return super(
-            ApprovedEntryManager, self).get_queryset().filter(
-                approved=True)
-
-
-class UnapprovedEntryManager(models.Manager):
-    """Custom entry manager that shows only unapproved records."""
-
-    def get_queryset(self):
-        """Query set generator."""
-        return super(
-            UnapprovedEntryManager, self).get_queryset().filter(
-                approved=False)
-
-
 class Entry(models.Model):
     """An entry is the basic unit of a changelog."""
 
@@ -102,12 +82,6 @@ class Entry(models.Model):
         null=True,
         blank=True)
 
-    approved = models.BooleanField(
-        help_text=(
-            'Whether this entry has been approved for use by the '
-            'project owner.'),
-        default=False
-    )
     author = models.ForeignKey(User)
     slug = models.SlugField()
     # noinspection PyUnresolvedReferences
@@ -115,8 +89,6 @@ class Entry(models.Model):
     # noinspection PyUnresolvedReferences
     category = models.ForeignKey('Category')
     objects = models.Manager()
-    approved_objects = ApprovedEntryManager()
-    unapproved_objects = UnapprovedEntryManager()
 
     # noinspection PyClassicStyleClass
     class Meta:

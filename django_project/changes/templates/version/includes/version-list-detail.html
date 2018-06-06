@@ -23,14 +23,6 @@
 
     <div class="col-lg-3">
         <div class="btn-group pull-right">
-            {%  if not version.approved %}
-                {% if user.is_staff or user in version.project.changelog_manager.all %}
-                <a class="btn btn-default btn-mini"
-                   href='{% url "version-approve" project_slug=version.project.slug slug=version.slug %}'>
-                    <span class="glyphicon glyphicon-thumbs-up"></span>
-                </a>
-                {% endif %}
-            {% endif %}
             {% if user_can_delete %}
                 <a class="btn btn-default btn-mini"
                    href='{% url "version-delete" project_slug=version.project.slug slug=version.slug %}'>

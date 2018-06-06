@@ -11,26 +11,6 @@ from changes.models.entry import Entry
 logger = logging.getLogger(__name__)
 
 
-class ApprovedCategoryManager(models.Manager):
-    """Custom category manager that shows only approved records."""
-
-    def get_queryset(self):
-        """Query set generator."""
-        return super(
-            ApprovedCategoryManager, self).get_queryset().filter(
-                approved=True)
-
-
-class UnapprovedCategoryManager(models.Manager):
-    """Custom version manager that shows only unapproved records."""
-
-    def get_queryset(self):
-        """Query set generator."""
-        return super(
-            UnapprovedCategoryManager, self).get_queryset().filter(
-                approved=False)
-
-
 # noinspection PyUnresolvedReferences
 class Category(models.Model):
     """A category model e.g. gui, backend, web site etc."""
@@ -41,13 +21,6 @@ class Category(models.Model):
         blank=False,
         unique=False)  # there is a unique together rule in meta class below
 
-    approved = models.BooleanField(
-        help_text=_(
-            'Whether this version has been approved for use by the '
-            'project owner.'),
-        default=False
-    )
-
     sort_number = models.SmallIntegerField(
         help_text=(
             'The order in which this category is listed within a '
@@ -57,8 +30,6 @@ class Category(models.Model):
     slug = models.SlugField()
     project = models.ForeignKey('base.Project')
     objects = models.Manager()
-    approved_objects = ApprovedCategoryManager()
-    unapproved_objects = UnapprovedCategoryManager()
 
     # noinspection PyClassicStyleClass
     class Meta:

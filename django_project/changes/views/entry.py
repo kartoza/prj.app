@@ -5,17 +5,15 @@ from base.models import Project
 # noinspection PyUnresolvedReferences
 import logging
 from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404, get_list_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.views.generic import (
     ListView,
     CreateView,
     DeleteView,
     DetailView,
     UpdateView,
-    RedirectView,
 )
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
-from pure_pagination.mixins import PaginationMixin
+from braces.views import LoginRequiredMixin
 from ..models import Version, Entry, Category
 from ..forms import EntryForm
 from lesson.utilities import re_order_features
@@ -96,9 +94,9 @@ class EntryCreateView(LoginRequiredMixin, EntryMixin, CreateView):
         :returns: URL
         :rtype: HttpResponse
         """
-        return reverse('pending-entry-list', kwargs={
+        return reverse('version-detail', kwargs={
             'project_slug': self.object.version.project.slug,
-            'version_slug': self.object.version.slug
+            'slug': self.object.version.slug
         })
 
     def get_form_kwargs(self):
@@ -157,165 +155,10 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
         :return: URL
         :rtype: HttpResponse
         """
-        return reverse('pending-entry-list', kwargs={
+        return reverse('version-detail', kwargs={
             'project_slug': self.object.version.project.slug,
-            'version_slug': self.object.version.slug}
+            'slug': self.object.version.slug}
         )
-
-
-# noinspection PyAttributeOutsideInit
-class PendingEntryListView(
-    StaffuserRequiredMixin, EntryMixin, PaginationMixin, ListView):
-    """List view for pending Entry."""
-    context_object_name = 'unapproved_entries'
-    template_name = 'entry/pending-list.html'
-    paginate_by = 1000
-
-    def no_permissions_fail(self, request=None):
-        """Redirection if not enough permissions to view the page."""
-        return redirect(reverse('version-detail', kwargs={
-            'project_slug': self.kwargs.get('project_slug', None),
-            'slug': self.kwargs.get('version_slug', None),
-        }))
-
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(PendingEntryListView, self).get_context_data(**kwargs)
-        context['num_entries'] = self.get_queryset().count()
-        context['unapproved'] = True
-        context['entries'] = Entry.objects.filter(version=self.version)
-        return context
-
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-         :returns: A queryset which is filtered to only show unapproved
-            Entry.
-         :rtype: QuerySet
-         :raises: Http404
-         """
-        if self.queryset is not None:
-            return self.queryset
-
-        project_slug = self.kwargs.get('project_slug', None)
-        version_slug = self.kwargs.get('version_slug', None)
-        project = get_object_or_404(Project, slug=project_slug)
-        self.version = get_object_or_404(
-            Version, slug=version_slug, project=project)
-        queryset = Entry.unapproved_objects.filter(version=self.version)
-        if self.request.user.is_staff:
-            return queryset
-        else:
-            return queryset.filter(author=self.request.user)
-
-
-# noinspection PyAttributeOutsideInit
-class AllPendingEntryList(
-        StaffuserRequiredMixin,
-        EntryMixin,
-        PaginationMixin,
-        ListView):
-    """List view for pending Entry."""
-    context_object_name = 'unapproved_entries'
-    template_name = 'entry/all-pending-list.html'
-    paginate_by = 1000
-
-    def no_permissions_fail(self, request=None):
-        """Redirection if not enough permissions to view the page."""
-        return redirect(reverse('version-list', kwargs={
-            'project_slug': self.kwargs.get('project_slug', None),
-        }))
-
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(AllPendingEntryList, self).get_context_data(**kwargs)
-        context['num_entries'] = self.get_queryset().count()
-        context['unapproved'] = True
-        context['entries'] = Entry.objects.filter(version__in=self.version)
-        return context
-
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-         :returns: A queryset which is filtered to only show unapproved
-            Entry.
-         :rtype: QuerySet
-         :raises: Http404
-         """
-        if self.queryset is not None:
-            return self.queryset
-
-        project_slug = self.kwargs.get('project_slug', None)
-        project = get_object_or_404(Project, slug=project_slug)
-        self.version = get_list_or_404(Version, project=project)
-
-        queryset = Entry.unapproved_objects.filter(version__in=self.version)
-        if self.request.user.is_staff:
-            return queryset
-        else:
-            return queryset.filter(author=self.request.user)
-
-
-class ApproveEntryView(StaffuserRequiredMixin, EntryMixin, RedirectView):
-    """View for approving Entry."""
-    permanent = False
-    query_string = True
-
-    def no_permissions_fail(self, request=None):
-        """Redirection if not enough permissions to view the page."""
-        return redirect(reverse('version-list', kwargs={
-            'project_slug': self.kwargs.get('project_slug', None),
-        }))
-
-    def get_redirect_url(self, pk):
-        """Save Entry as approved and redirect.
-
-        If there are no more pending entries, we redirect to the version
-        detail view. Otherwise we place you in the pending entries queue.
-
-        :param pk: The primary key of the Entry
-        :type pk: str
-
-        :returns: URL
-        :rtype: str
-        """
-        entry_qs = Entry.unapproved_objects
-        entry = get_object_or_404(entry_qs, id=pk)
-        entry.approved = True
-        entry.save()
-        entry_qs = entry_qs.filter(version_id=entry.version)
-        if entry_qs.count() == 0:
-            # Redirect to the version detail page if there are no other entries
-            # Using Entry.version.project.slug instead of project_slug
-            # to ensure that we redirect to the correct URL instead of
-            # relying on inputs from URL.
-            return reverse('version-detail', kwargs={
-                'project_slug': entry.version.project.slug,
-                'slug': entry.version.slug
-            })
-        else:
-            # Redirect to the pending entry list for this version
-            # Using Entry.version.project.slug instead of project_slug
-            # to ensure that we redirect to the correct URL instead of
-            # relying on inputs from URL.
-            return reverse('pending-entry-list', kwargs={
-                'project_slug': entry.version.project.slug,
-                'version_slug': entry.version.slug
-            })
 
 
 class EntryOrderView(LoginRequiredMixin, EntryMixin, ListView):
