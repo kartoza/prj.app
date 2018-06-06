@@ -107,7 +107,7 @@ class TestCategoryViews(TestCase):
         self.assertRedirects(
             response,
             reverse(
-                'pending-category-list',
+                'category-list',
                 kwargs={'project_slug': self.project.slug}))
 
     @override_settings(VALID_DOMAIN=['testserver', ])
