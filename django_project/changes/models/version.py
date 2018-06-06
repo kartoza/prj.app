@@ -123,13 +123,8 @@ class Version(models.Model):
 
         :param category: Category to filter by.
         :type category: Category
-
-        .. note:: only approved entries returned.
         """
-        qs = Entry.objects.filter(
-                version=self,
-                category=category,
-                approved=True)
+        qs = Entry.objects.filter(version=self, category=category)
         return qs
 
     def categories(self):

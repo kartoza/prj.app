@@ -117,8 +117,7 @@ class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved versions
-        of project.
+        :returns: A queryset which to show all versions of project.
         :rtype: QuerySet
         :raises: Http404
         """
@@ -154,8 +153,7 @@ class CategoryListView(LoginRequiredMixin, CategoryMixin, ListView):
     def get_queryset(self, queryset=None):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved
-            Categories.
+        :returns: A queryset to show all Categories.
 
         :param queryset: Optional queryset.
         :rtype: QuerySet
@@ -170,9 +168,8 @@ class CategoryListView(LoginRequiredMixin, CategoryMixin, ListView):
                     raise Http404(
                         'Sorry! The project you are requesting a category for '
                         'could not be found or you do not have permission to '
-                        'view the category. Also the version may not be '
-                        'approved yet. Try logging in as a staff member if '
-                        'you wish to view it.')
+                        'view the category. Try logging in as a staff member '
+                        'if you wish to view it.')
                 queryset = Category.objects.all().filter(
                     project=project).order_by('sort_number')
                 return queryset
@@ -497,8 +494,8 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show all approved
-        projects which user created (staff gets all projects)
+        :returns: A queryset which is filtered to show all projects which
+        user created (staff gets all projects)
         :rtype: QuerySet
         """
         project_slug = self.kwargs.get('project_slug', None)

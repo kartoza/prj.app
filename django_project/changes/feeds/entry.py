@@ -92,16 +92,13 @@ class RssEntryFeed(Feed):
     def items(self, obj):
         """Return all entries form the latest version of a project.
 
-        Only for approved version and entry.
-
         :param obj: Latest version of a project
         :type obj: Version
 
-        :returns: List of approved entry from the latest version of a project
+        :returns: List of entry from the latest version of a project
         :rtype: list
         """
-        return Entry.objects.filter(version=obj, approved=True).order_by(
-            '-title')
+        return Entry.objects.filter(version=obj).order_by('-title')
 
     def item_title(self, item):
         """Return the title of the entry.

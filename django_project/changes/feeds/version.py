@@ -78,7 +78,7 @@ class RssVersionFeed(Feed):
         :param obj: A project
         :type obj: Project
 
-        :returns: List of approved version of a project
+        :returns: List of all version of a project
         :rtype: list
         """
         return Version.objects.filter(project=obj, approved=True).order_by(
