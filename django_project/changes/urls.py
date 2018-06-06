@@ -29,8 +29,6 @@ from views import (
     VersionCreateView,
     VersionListView,
     VersionUpdateView,
-    PendingVersionListView,
-    ApproveVersionView,
     VersionDownload,
     VersionDownloadRST,
     VersionDownloadGnu,
@@ -120,12 +118,6 @@ urlpatterns = patterns(
         name='category-update'),
 
     # Version management
-    url(regex='^(?P<project_slug>[\w-]+)/pending-versions/list/$',
-        view=PendingVersionListView.as_view(),
-        name='pending-version-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/approve/$',
-        view=ApproveVersionView.as_view(),
-        name='version-approve'),
     url(regex='^(?P<project_slug>[\w-]+)/version/list/$',
         view=VersionListView.as_view(),
         name='version-list'),

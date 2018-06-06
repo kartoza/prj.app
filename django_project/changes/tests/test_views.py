@@ -610,7 +610,7 @@ class TestVersionViews(TestCase):
             'project_slug': self.project.slug
         }), post_data)
         self.assertRedirects(
-            response, reverse('pending-version-list', kwargs={
+            response, reverse('version-list', kwargs={
                 'project_slug': self.project.slug})
         )
 

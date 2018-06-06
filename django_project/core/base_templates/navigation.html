@@ -69,12 +69,6 @@
                 <li>
                     <a href="{% url 'version-create' the_project.slug %}">Create Version</a>
                 </li>
-                {% if unapproved_versions %}
-                    <li>
-                        <a href="{% url 'pending-version-list' the_project.slug %}">Versions
-                            Pending Approval</a>
-                    </li>
-                {% endif %}
             </ul>
         </li>
     </ul>
