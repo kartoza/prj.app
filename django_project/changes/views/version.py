@@ -221,8 +221,7 @@ class VersionDetailView(VersionMixin, DetailView):
                 raise Http404(
                     'Sorry! The project you are requesting a version for '
                     'could not be found or you do not have permission to '
-                    'view the version. Also the version may not be '
-                    'approved yet. Try logging in as a staff member if '
+                    'view the version. Try logging in as a staff member if '
                     'you wish to view it.')
         else:
             raise Http404('Sorry! We could not find your version!')
@@ -291,8 +290,7 @@ class VersionThumbnailView(VersionMixin, DetailView):
                 raise Http404(
                     'Sorry! The project you are requesting a version for '
                     'could not be found or you do not have permission to '
-                    'view the version. Also the version may not be '
-                    'approved yet. Try logging in as a staff member if '
+                    'view the version. Try logging in as a staff member if '
                     'you wish to view it.')
             try:
                 obj = queryset.filter(project=project).get(slug=slug)
@@ -656,8 +654,7 @@ class VersionDownloadGnu(VersionMixin, DetailView):
                 raise Http404(
                     'Sorry! The project you are requesting a version for '
                     'could not be found or you do not have permission to '
-                    'view the version. Also the version may not be '
-                    'approved yet. Try logging in as a staff member if '
+                    'view the version. Try logging in as a staff member if '
                     'you wish to view it.')
         else:
             raise Http404('Sorry! We could not find your version!')
