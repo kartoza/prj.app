@@ -287,13 +287,11 @@ class TestEntryViews(TestCase):
         self.entry = EntryF.create(
             category=self.category,
             version=self.version,
-            title='testentry',
-            approved=True)
+            title='testentry')
         self.pending_entry = EntryF.create(
             category=self.category,
             version=self.version,
-            title='testentry2',
-            approved=False)
+            title='testentry2')
         self.user = UserF.create(**{
             'username': 'timlinux',
             'password': 'password',
@@ -431,9 +429,6 @@ class TestEntryViews(TestCase):
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryDetailView(self):
         """Test the entry detail view."""
-        # Verify our entry exists
-        self.assertTrue(self.entry.approved)
-
         url = reverse('entry-detail', kwargs={
             'pk': self.entry.id
         })

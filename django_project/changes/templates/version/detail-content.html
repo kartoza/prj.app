@@ -100,9 +100,7 @@
                     <hr />
                 {% endif %}
                 {% for entry in row.entries %}
-                    {% if entry.approved %}
-                        {% include "entry/includes/entry_detail.html" %}
-                    {% endif %}
+                    {% include "entry/includes/entry_detail.html" %}
                 {% endfor %}
             {% endif %}
         {% endfor %}{# row loop #}

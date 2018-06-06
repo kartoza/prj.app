@@ -37,7 +37,6 @@ class EntryF(factory.django.DjangoModelFactory):
     image_file = factory.django.ImageField(color='blue')
     image_credits = u'The credits go to dodobas'
     author = factory.SubFactory(UserF)
-    approved = True
     version = factory.SubFactory('changes.tests.model_factories.VersionF')
     category = factory.SubFactory('changes.tests.model_factories.CategoryF')
 

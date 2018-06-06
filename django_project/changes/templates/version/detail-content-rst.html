@@ -24,9 +24,7 @@
             {{ row.category.name }}
         </h2>
         {% for entry in row.entries %}
-            {% if entry.approved %}
-                {% include "entry/includes/entry_detail_rst.html" %}
-            {% endif %}
+            {% include "entry/includes/entry_detail_rst.html" %}
         {% endfor %}
     {% endif %}
 {% endfor %}{# row loop #}
