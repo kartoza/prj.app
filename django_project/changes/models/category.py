@@ -21,13 +21,6 @@ class Category(models.Model):
         blank=False,
         unique=False)  # there is a unique together rule in meta class below
 
-    approved = models.BooleanField(
-        help_text=_(
-            'Whether this version has been approved for use by the '
-            'project owner.'),
-        default=False
-    )
-
     sort_number = models.SmallIntegerField(
         help_text=(
             'The order in which this category is listed within a '

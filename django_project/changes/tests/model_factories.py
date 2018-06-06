@@ -21,7 +21,6 @@ class CategoryF(factory.django.DjangoModelFactory):
         model = Category
 
     name = factory.Sequence(lambda n: u'Test Category %s' % n)
-    approved = True
     sort_number = factory.Sequence(lambda n: n)
     project = factory.SubFactory('base.tests.model_factories.ProjectF')
 
