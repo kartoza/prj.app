@@ -36,12 +36,6 @@ class Version(models.Model):
         blank=True,
         unique=False)
 
-    approved = models.BooleanField(
-        help_text=(
-            'Whether this version has been approved for use by the '
-            'project owner.'),
-        default=False)
-
     image_file = models.ImageField(
         help_text=(
             'An optional image for this version e.g. a splashscreen. '
