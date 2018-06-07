@@ -81,8 +81,7 @@ class RssVersionFeed(Feed):
         :returns: List of all version of a project
         :rtype: list
         """
-        return Version.objects.filter(project=obj, approved=True).order_by(
-            '-name')[:5]
+        return Version.objects.filter(project=obj).order_by('-name')[:5]
 
     def item_title(self, item):
         """Return the title of the version.
