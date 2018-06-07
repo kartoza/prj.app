@@ -143,7 +143,6 @@ class CategoryListView(LoginRequiredMixin, CategoryMixin, ListView):
         """
         context = super(CategoryListView, self).get_context_data(**kwargs)
         context['num_categories'] = context['categories'].count()
-        context['unapproved'] = False
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:

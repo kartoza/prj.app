@@ -54,7 +54,6 @@ class TestCategoryCRUD(TestCase):
         new_model_data = {
             'name': u'New Category Name',
             'description': u'New description',
-            'approved': False,
             'private': True,
         }
         model.__dict__.update(new_model_data)
