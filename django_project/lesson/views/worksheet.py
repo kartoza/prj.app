@@ -20,11 +20,13 @@ from weasyprint import HTML
 from lesson.forms.worksheet import WorksheetForm
 from lesson.models.answer import Answer
 from lesson.models.further_reading import FurtherReading
-from lesson.models.section import Section
 from lesson.models.specification import Specification
 from lesson.models.worksheet import Worksheet
 from lesson.models.worksheet_question import WorksheetQuestion
 from lesson.utilities import re_order_features
+
+from base.models.project import Project
+from ..models.section import Section
 
 
 class WorksheetMixin(object):
@@ -257,3 +259,50 @@ class WorksheetOrderSubmitView(LoginRequiredMixin, WorksheetMixin, UpdateView):
         section = Section.objects.get(slug=kwargs.get('section_slug'))
         worksheets = Worksheet.objects.filter(section=section)
         return re_order_features(request, worksheets)
+
+
+
+class WorksheetModuleQuestionAnswers(LoginRequiredMixin, WorksheetMixin,
+                                     DetailView):
+    """Show correct answers to module questions.
+
+    :param request: HttpRequest object
+    :type request: HttpRequest
+    """
+    context_object_name = 'worksheets'
+    template_name = 'worksheet/question_answers.html'
+
+    def get_context_data(self, **kwargs):
+        """Create context for use in the templates."""
+
+        context = super(WorksheetModuleQuestionAnswers,
+                        self).get_context_data(**kwargs)
+        project_slug = self.kwargs.get('project_slug', None)
+        section_slug = self.kwargs.get('section_slug', None)
+        project = get_object_or_404(Project, slug=project_slug)
+
+        context['sections'] = Section.objects.filter(project=project,
+                                                     slug=section_slug)
+        for section in context['sections']:
+            query_set = Worksheet.objects.filter(section=section)
+            context['worksheets'] = []
+
+            for worksheet in query_set:
+                worksheet_json = {'worksheet': worksheet,
+                                  'question_answers': []
+                                  }
+
+                worksheet_questions = WorksheetQuestion.objects.filter(
+                        worksheet=worksheet.pk)
+
+                for question in worksheet_questions:
+                    question_json = {'question': question,
+                                     'answer': []
+                                     }
+                    answers = Answer.objects.filter(question=question)
+
+                    for answer in answers:
+                        question_json['answer'].append(answer)
+                    worksheet_json['question_answers'].append(question_json)
+                context['worksheets'].append(worksheet_json)
+        return context

@@ -38,6 +38,7 @@ from lesson.views.worksheet import (
     WorksheetPrintView,
     WorksheetOrderView,
     WorksheetOrderSubmitView,
+    WorksheetModuleQuestionAnswers,
 )
 from lesson.views.specification import (
     SpecificationCreateView,
@@ -85,6 +86,12 @@ urlpatterns = patterns(
               '(?P<section_slug>[\w-]+)/detail/(?P<pk>[\w-]+)/$',
         view=WorksheetDetailView.as_view(),
         name='worksheet-detail'),
+
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/answers/(?P<pk>[\w-]+)/$',
+        view=WorksheetModuleQuestionAnswers.as_view(),
+        name='worksheet-module-answers'),
+
     url(regex='^(?P<project_slug>[\w-]+)/section/'
               '(?P<section_slug>[\w-]+)/print/(?P<pk>[\w-]+)/$',
         view=WorksheetPrintView.as_view(),
