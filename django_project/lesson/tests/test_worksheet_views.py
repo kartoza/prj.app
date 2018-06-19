@@ -7,16 +7,18 @@ __copyright__ = 'kartoza.com'
 
 import logging
 from django.test import TestCase, override_settings, Client
-
+from django.core.urlresolvers import reverse
 from base.tests.model_factories import ProjectF
 from core.model_factories import UserF
+from lesson.tests.model_factories import WorksheetF
+
 from lesson.tests.model_factories import SectionF
 
 
 class TestViews(TestCase):
     """Tests that Lesson Section views work."""
 
-    @override_settings(VALID_DOMAIN=['testserver', ])
+    @override_settings(VALID_DOMAIN = ['testserver', ])
     def setUp(self):
         """
         Setup before each test
@@ -27,9 +29,10 @@ class TestViews(TestCase):
 
         self.client = Client()
         self.client.post(
-                '/set_language/', data={'language': 'en'})
+                '/set_language/', data = {'language': 'en'})
         logging.disable(logging.CRITICAL)
-        self.user = UserF.create(**{'username': 'sonlinux', 'is_staff': True})
+        self.user = UserF.create(
+            **{'username': 'sonlinux', 'is_staff': True})
         # Something changed in the way factoryboy works with django 1.8
         # I think - we need to explicitly set the users password
         # because the core.model_factories.UserF._prepare method
@@ -42,39 +45,65 @@ class TestViews(TestCase):
         self.test_project = ProjectF.create()
 
         # Create section
-        self.test_section = SectionF.create()
-        self.kwargs_pk = {'pk': self.test_section.pk}
-        self.kwargs_section = {'section_slug': self.test_section.slug}
+        self.test_section = SectionF.create(project=self.test_project)
+        self.test_worksheet = WorksheetF.create(section=self.test_section)
         self.kwargs_project = {'project_slug': self.test_section.project.slug}
-        self.kwargs_ = {'section_slug': self.test_section.slug}
+        self.kwargs_section = {'slug': self.test_section.slug}
         self.kwargs_section_full = {
             'project_slug': self.test_section.project.slug,
             'slug': self.test_section.slug
         }
         self.kwargs_worksheet_full = {
-            'pk': self.test_section.pk,
             'project_slug': self.test_section.project.slug,
-            'section_slug': self.test_section.slug}
+            'section_slug': self.test_section.slug,
+            'pk': self.test_worksheet.pk
+        }
+
+    @override_settings(VALID_DOMAIN = ['testserver', ])
+    def test_WorksheetCreateView(self):
+        """Test accessing worksheet create view with no login."""
+
+        response = self.client.get(reverse(
+                'worksheet-create', kwargs = {
+                    'project_slug': self.test_section.project.slug,
+                    'section_slug': self.test_section.slug}))
+        self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN = ['testserver', ])
+    def test_WorksheetCreateView_with_login(self):
+        """Test accessing worksheet create view with login."""
+
+        status = self.client.login(username = 'sonlinux', password =
+        'password')
+        self.assertTrue(status)
+        response = self.client.get(reverse(
+                'worksheet-create', kwargs = {
+                    'project_slug': self.test_section.project.slug,
+                    'section_slug': self.test_section.slug}))
+        self.assertEqual(response.status_code, 200)
+
+    # @override_settings(VALID_DOMAIN = ['testserver', ])
+    # def test_WorksheetDetailView(self):
+    #     """Tests accessing worksheet detail view."""
+    #
+    #     response = self.client.get(
+    #             'worksheet-detail', kwargs = self.kwargs_worksheet_full)
+    #     self.assertEqual(response.status_code, 303)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_WorksheetModuleQuestionAnswers_with_no_login(self):
-        client = Client()
 
-        response = client.get('worksheet-module-answers', kwargs={
-            'project_slug': self.kwargs_project,
-            'section_slug': self.kwargs_section,
-            'pk': self.kwargs_pk})
-        self.assertEqual(response.status_code, 404)
+        response = self.client.get(reverse('worksheet-module-answers',
+                                           kwargs=self.kwargs_worksheet_full))
+        self.assertEqual(response.status_code, 302)
 
     @override_settings(VALID_DOMAIN = ['testserver', ])
     def test_WorksheetModuleQuestionAnswers_with_login(self):
 
-        client = Client()
-        status = client.login(username = 'sonlinux', password = 'password')
+        status = self.client.login(username = 'sonlinux', password =
+        'password')
         self.assertTrue(status)
 
-        response = client.get('worksheet-module-answers', kwargs = {
-            'project_slug': self.kwargs_project,
-            'section_slug': self.kwargs_section,
-            'pk': int(2)})
-        self.assertEqual(response.status_code, 404)
+        response = self.client.get(reverse('worksheet-module-answers', kwargs =
+        self.kwargs_worksheet_full))
+        self.assertEqual(response.status_code, 200)
