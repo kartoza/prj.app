@@ -6,13 +6,14 @@ __copyright__ = 'kartoza.com'
 
 
 import logging
+
 from django.test import TestCase, override_settings, Client
 from django.core.urlresolvers import reverse
+
+from lesson.tests.model_factories import WorksheetF
+from lesson.tests.model_factories import SectionF
 from base.tests.model_factories import ProjectF
 from core.model_factories import UserF
-from lesson.tests.model_factories import WorksheetF
-
-from lesson.tests.model_factories import SectionF
 
 
 class TestViews(TestCase):
@@ -79,8 +80,7 @@ class TestViews(TestCase):
     def test_WorksheetCreateView_with_login(self):
         """Test accessing worksheet create view with login."""
 
-        status = self.client.login(username = 'sonlinux', password =
-        'password')
+        status = self.client.login(username='sonlinux', password='password')
         self.assertTrue(status)
         post_data = {
             'module': u'Demo worksheet name',
@@ -135,10 +135,10 @@ class TestViews(TestCase):
     @override_settings(VALID_DOMAIN = ['testserver', ])
     def test_WorksheetModuleQuestionAnswers_with_login(self):
 
-        status = self.client.login(username = 'sonlinux',
-                                   password = 'password')
+        status = self.client.login(username='sonlinux', password='password')
         self.assertTrue(status)
 
-        response = self.client.get(reverse('worksheet-module-answers', kwargs =
-        self.kwargs_worksheet_full))
+        response = self.client.get(
+                reverse('worksheet-module-answers',
+                        kwargs = self.kwargs_worksheet_full))
         self.assertEqual(response.status_code, 200)
