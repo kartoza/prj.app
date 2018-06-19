@@ -63,10 +63,16 @@ class TestViews(TestCase):
     def test_WorksheetCreateView(self):
         """Test accessing worksheet create view with no login."""
 
-        response = self.client.get(reverse(
-                'worksheet-create', kwargs = {
+        post_data = {
+            'module': u'Demo worksheet name',
+            'title': u'Demo worksheet title',
+            'section': self.test_section.id,
+        }
+        response = self.client.post(
+                reverse('worksheet-create', kwargs = {
                     'project_slug': self.test_section.project.slug,
-                    'section_slug': self.test_section.slug}))
+                    'section_slug': self.test_section.slug}),
+                post_data)
         self.assertEqual(response.status_code, 302)
 
     @override_settings(VALID_DOMAIN = ['testserver', ])
@@ -76,22 +82,51 @@ class TestViews(TestCase):
         status = self.client.login(username = 'sonlinux', password =
         'password')
         self.assertTrue(status)
-        response = self.client.get(reverse(
-                'worksheet-create', kwargs = {
+        post_data = {
+            'module': u'Demo worksheet name',
+            'title': u'Demo worksheet title',
+            'section': self.test_section.id,
+        }
+        response = self.client.post(
+                reverse('worksheet-create', kwargs = {
                     'project_slug': self.test_section.project.slug,
-                    'section_slug': self.test_section.slug}))
+                    'section_slug': self.test_section.slug}),
+                post_data)
+
         self.assertEqual(response.status_code, 200)
 
-    # @override_settings(VALID_DOMAIN = ['testserver', ])
-    # def test_WorksheetDetailView(self):
-    #     """Tests accessing worksheet detail view."""
-    #
-    #     response = self.client.get(
-    #             'worksheet-detail', kwargs = self.kwargs_worksheet_full)
-    #     self.assertEqual(response.status_code, 303)
+    @override_settings(VALID_DOMAIN = ['testserver', ])
+    def test_WorksheetDetailView(self):
+        """Tests accessing worksheet detail view."""
+
+        response = self.client.get(reverse(
+                'worksheet-detail', kwargs = self.kwargs_worksheet_full))
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN = ['testserver', ])
+    def test_WorksheetUpdateView(self):
+        """Tests updating worksheet without login."""
+
+        response = self.client.get(reverse(
+                'worksheet-update', kwargs = self.kwargs_worksheet_full))
+        self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN = ['testserver', ])
+    def test_WorksheetUpdateView_with_login(self):
+        """Tests updating worksheet with login."""
+
+        status = self.client.login(username='sonlinux', password='password')
+        self.assertTrue(status)
+        response = self.client.get(reverse(
+            'worksheet-update', kwargs=self.kwargs_worksheet_full))
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
+            'update.html'
+        ]
+        self.assertEqual(response.template_name, expected_templates)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
-    def test_WorksheetModuleQuestionAnswers_with_no_login(self):
+    def test_WorksheetModuleQuestionAnswers(self):
 
         response = self.client.get(reverse('worksheet-module-answers',
                                            kwargs=self.kwargs_worksheet_full))
@@ -100,8 +135,8 @@ class TestViews(TestCase):
     @override_settings(VALID_DOMAIN = ['testserver', ])
     def test_WorksheetModuleQuestionAnswers_with_login(self):
 
-        status = self.client.login(username = 'sonlinux', password =
-        'password')
+        status = self.client.login(username = 'sonlinux',
+                                   password = 'password')
         self.assertTrue(status)
 
         response = self.client.get(reverse('worksheet-module-answers', kwargs =
