@@ -118,7 +118,7 @@ class CourseUpdateView(LoginRequiredMixin, CourseMixin, UpdateView):
         try:
             self.object = self.get_object()
         except PermissionDenied:
-            # Return to organisation details page when permission to delete
+            # Return to organisation details page when permission to edit
             # is denied.
             return HttpResponseRedirect(
                 reverse('certifyingorganisation-detail', kwargs={
@@ -422,7 +422,7 @@ class CourseDetailView(CourseMixin, DetailView):
         try:
             self.object = self.get_object()
         except PermissionDenied:
-            # Return to organisation details page when permission to delete
+            # Return to organisation details page when permission to view
             # is denied.
             return HttpResponseRedirect(
                 reverse('certifyingorganisation-detail', kwargs={

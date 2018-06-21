@@ -66,6 +66,28 @@ class TestCourseView(TestCase):
         self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_detail_with_duplicates(self):
+        self.client.login(username='anita', password='password')
+        course2 = CourseF.create(
+            certifying_organisation=self.certifying_organisation
+        )
+        course2.slug = self.course.slug
+        course2.save()
+
+        response = self.client.get(reverse('course-detail', kwargs={
+            'project_slug': self.project.slug,
+            'organisation_slug': self.certifying_organisation.slug,
+            'slug': course2.slug
+        }))
+        self.assertEqual(response.status_code, 302)
+
+        expected_url = reverse('certifyingorganisation-detail', kwargs={
+            'project_slug': self.project.slug,
+            'slug': self.certifying_organisation.slug,
+        })
+        self.assertRedirects(response, expected_url)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_detail_view_object_does_not_exist(self):
         client = Client()
         response = client.get(reverse('course-detail', kwargs={
@@ -80,3 +102,63 @@ class TestCourseView(TestCase):
             'slug': 'random'
         }))
         self.assertEqual(response.status_code, 404)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_update_view(self):
+        self.client.login(username='anita', password='password')
+        post_data = {
+            'name': 'new name',
+            'language': 'Japanese',
+        }
+        response = self.client.post(
+            reverse('course-update', kwargs={
+                'project_slug': self.project.slug,
+                'organisation_slug': self.certifying_organisation.slug,
+                'slug': self.course.slug
+            }), post_data)
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_update_with_duplicates(self):
+        self.client.login(username='anita', password='password')
+        course2 = CourseF.create(
+            certifying_organisation=self.certifying_organisation
+        )
+        course2.slug = self.course.slug
+        course2.save()
+        post_data = {
+            'name': 'new course name',
+            'language': 'Indonesian',
+        }
+        response = self.client.get(reverse('course-update', kwargs={
+            'project_slug': self.project.slug,
+            'organisation_slug': self.certifying_organisation.slug,
+            'slug': course2.slug
+        }), post_data)
+        self.assertEqual(response.status_code, 302)
+
+        expected_url = reverse('certifyingorganisation-detail', kwargs={
+            'project_slug': self.project.slug,
+            'slug': self.certifying_organisation.slug,
+        })
+        self.assertRedirects(response, expected_url)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_delete_with_duplicates(self):
+        self.client.login(username='anita', password='password')
+        course2 = CourseF.create(
+            certifying_organisation=self.certifying_organisation
+        )
+        course2.slug = self.course.slug
+        course2.save()
+        response = self.client.get(reverse('course-delete', kwargs={
+            'project_slug': self.project.slug,
+            'organisation_slug': self.certifying_organisation.slug,
+            'slug': course2.slug
+        }))
+        self.assertEqual(response.status_code, 302)
+        expected_url = reverse('certifyingorganisation-detail', kwargs={
+            'project_slug': self.project.slug,
+            'slug': self.certifying_organisation.slug,
+        })
+        self.assertRedirects(response, expected_url)
