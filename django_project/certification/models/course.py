@@ -16,7 +16,8 @@ from unidecode import unidecode
 from core.settings.contrib import STOP_WORDS
 from course_convener import CourseConvener
 from certifying_organisation import CertifyingOrganisation
-from course_type import CourseType, increment_name
+from course_type import CourseType
+from certification.utilities import check_slug
 from training_center import TrainingCenter
 
 logger = logging.getLogger(__name__)
@@ -90,19 +91,22 @@ class Course(models.Model):
             'end_date', 'certifying_organisation']
 
     def save(self, *args, **kwargs):
-        project_name = self.certifying_organisation.project.name
-        course_type_name = self.course_type.name
-        self.name = \
-            project_name + '_' + course_type_name + '_' + \
-            str(self.start_date) + '-' + str(self.end_date)
-        registered_course = Course.objects.all()
-        name = increment_name(self.name, registered_course)
-        words = name.split()
-        filtered_words = [word for word in words if
-                          word.lower() not in STOP_WORDS]
-        # unidecode() represents special characters (unicode data) in ASCII
-        new_list = unidecode(' '.join(filtered_words))
-        self.slug = slugify(new_list)[:100]
+        if not self.pk:
+            project_name = self.certifying_organisation.project.name
+            course_type_name = self.course_type.name
+            self.name = \
+                project_name + '_' + course_type_name + '_' + \
+                str(self.start_date) + '-' + str(self.end_date)
+            registered_course = Course.objects.all()
+            words = self.name.split()
+            filtered_words = [word for word in words if
+                              word.lower() not in STOP_WORDS]
+            # unidecode() represents special characters (unicode data) in ASCII
+            new_list = unidecode(' '.join(filtered_words))
+            new_slug = slugify(new_list)[:100]
+            # increment slug when there is duplicate.
+            new_slug = check_slug(registered_course, new_slug)
+            self.slug = new_slug
         super(Course, self).save(*args, **kwargs)
 
     def __unicode__(self):
