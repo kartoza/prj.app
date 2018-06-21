@@ -108,8 +108,12 @@ class CourseUpdateView(LoginRequiredMixin, CourseMixin, UpdateView):
         """
 
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
-        self.certifying_organisation = \
-            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        try:
+            self.certifying_organisation = \
+                CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        except CertifyingOrganisation.DoesNotExist:
+            raise Http404(
+                'Sorry! We could not find your certifying organisation!')
 
         try:
             self.object = self.get_object()
@@ -266,8 +270,12 @@ class CourseDeleteView(LoginRequiredMixin, CourseMixin, DeleteView):
         """
 
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
-        self.certifying_organisation = \
-            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        try:
+            self.certifying_organisation = \
+                CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        except CertifyingOrganisation.DoesNotExist:
+            raise Http404(
+                'Sorry! We could not find your certifying organisation!')
 
         try:
             self.object = self.get_object()
@@ -280,8 +288,7 @@ class CourseDeleteView(LoginRequiredMixin, CourseMixin, DeleteView):
                     'slug': self.certifying_organisation.slug
                 }))
 
-        return super(
-            CourseDeleteView, self).get(request, *args, **kwargs)
+        return super(CourseDeleteView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         """Post the organisation_slug from the URL.
@@ -302,8 +309,7 @@ class CourseDeleteView(LoginRequiredMixin, CourseMixin, DeleteView):
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
-        return super(
-            CourseDeleteView, self).post(request, *args, **kwargs)
+        return super(CourseDeleteView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
         """Define the redirect URL.
@@ -406,8 +412,12 @@ class CourseDetailView(CourseMixin, DetailView):
         """
 
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
-        self.certifying_organisation = \
-            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        try:
+            self.certifying_organisation = \
+                CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        except CertifyingOrganisation.DoesNotExist:
+            raise Http404(
+                'Sorry! We could not find your certifying organisation!')
 
         try:
             self.object = self.get_object()
