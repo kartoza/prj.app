@@ -234,7 +234,7 @@ class CourseUpdateView(LoginRequiredMixin, CourseMixin, UpdateView):
                     objects = queryset.filter(
                         certifying_organisation=certifying_organisation,
                         slug=slug)
-                    latest_obj = len(objects)-1
+                    latest_obj = len(objects) - 1
                     objects[latest_obj].slug = new_slug
                     objects[latest_obj].save()
                     raise PermissionDenied
@@ -374,7 +374,7 @@ class CourseDeleteView(LoginRequiredMixin, CourseMixin, DeleteView):
                     objects = queryset.filter(
                         certifying_organisation=certifying_organisation,
                         slug=slug)
-                    latest_obj = len(objects)-1
+                    latest_obj = len(objects) - 1
                     objects[latest_obj].slug = new_slug
                     objects[latest_obj].save()
                     raise PermissionDenied
@@ -506,7 +506,7 @@ class CourseDetailView(CourseMixin, DetailView):
                     objects = queryset.filter(
                         certifying_organisation=certifying_organisation,
                         slug=slug)
-                    latest_obj = len(objects)-1
+                    latest_obj = len(objects) - 1
                     objects[latest_obj].slug = new_slug
                     objects[latest_obj].save()
                     raise PermissionDenied
