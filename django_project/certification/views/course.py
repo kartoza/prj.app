@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.core.urlresolvers import reverse
-from django.http import Http404
+from django.core.exceptions import PermissionDenied
+from django.http import Http404, HttpResponseRedirect
 from django.views.generic import (
     CreateView,
     UpdateView,
@@ -16,6 +17,7 @@ from ..models import (
     CourseAttendee,
     Certificate)
 from ..forms import CourseForm
+from certification.utilities import check_slug
 
 
 class CourseMixin(object):
@@ -88,6 +90,40 @@ class CourseUpdateView(LoginRequiredMixin, CourseMixin, UpdateView):
     context_object_name = 'course'
     template_name = 'course/update.html'
 
+    def get(self, request, *args, **kwargs):
+        """Get the organisation_slug from the URL
+        and define the Organisation.
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        """
+
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+        self.certifying_organisation = \
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+
+        try:
+            self.object = self.get_object()
+        except PermissionDenied:
+            # Return to organisation details page when permission to delete
+            # is denied.
+            return HttpResponseRedirect(
+                reverse('certifyingorganisation-detail', kwargs={
+                    'project_slug': self.certifying_organisation.project.slug,
+                    'slug': self.certifying_organisation.slug
+                }))
+
+        return super(CourseUpdateView, self).get(request, *args, **kwargs)
+
     def get_form_kwargs(self):
         """Get keyword arguments from form.
 
@@ -158,6 +194,53 @@ class CourseUpdateView(LoginRequiredMixin, CourseMixin, UpdateView):
             return ValidationError(
                 'ERROR: Course Convener is already exists!')
 
+    def get_object(self, queryset=None):
+        """Get the object for this view.
+
+        :param queryset: A query set
+        :type queryset: QuerySet
+
+        :returns: Queryset which is filtered to only show a course
+            within the organisation.
+        :rtype: QuerySet
+        :raises: Http404
+        """
+
+        if queryset is None:
+            queryset = self.get_queryset()
+            slug = self.kwargs.get('slug', None)
+            organisation_slug = self.kwargs.get('organisation_slug', None)
+            if slug and organisation_slug:
+                try:
+                    certifying_organisation = \
+                        CertifyingOrganisation.objects.get(
+                            slug=organisation_slug)
+                except CertifyingOrganisation.DoesNotExist:
+                    raise Http404(
+                        'Sorry! We could not find your '
+                        'certifying organisation!')
+                try:
+                    obj = queryset.get(
+                        certifying_organisation=certifying_organisation,
+                        slug=slug)
+                    return obj
+                except Course.DoesNotExist:
+                    raise Http404('Sorry! We could not find your course!')
+                except Course.MultipleObjectsReturned:
+                    # Update the slug for the latest object when multiple
+                    # objects with the same slug are found and raise
+                    # Permission Denied
+                    new_slug = check_slug(queryset, slug)
+                    objects = queryset.filter(
+                        certifying_organisation=certifying_organisation,
+                        slug=slug)
+                    latest_obj = len(objects)-1
+                    objects[latest_obj].slug = new_slug
+                    objects[latest_obj].save()
+                    raise PermissionDenied
+            else:
+                raise Http404('Sorry! We could not find your course!')
+
 
 class CourseDeleteView(LoginRequiredMixin, CourseMixin, DeleteView):
     """Delete view for Course."""
@@ -185,6 +268,18 @@ class CourseDeleteView(LoginRequiredMixin, CourseMixin, DeleteView):
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+
+        try:
+            self.object = self.get_object()
+        except PermissionDenied:
+            # Return to organisation details page when permission to delete
+            # is denied.
+            return HttpResponseRedirect(
+                reverse('certifyingorganisation-detail', kwargs={
+                    'project_slug': self.certifying_organisation.project.slug,
+                    'slug': self.certifying_organisation.slug
+                }))
+
         return super(
             CourseDeleteView, self).get(request, *args, **kwargs)
 
@@ -239,12 +334,93 @@ class CourseDeleteView(LoginRequiredMixin, CourseMixin, DeleteView):
             certifying_organisation=self.certifying_organisation)
         return qs
 
+    def get_object(self, queryset=None):
+        """Get the object for this view.
+
+        :param queryset: A query set
+        :type queryset: QuerySet
+
+        :returns: Queryset which is filtered to only show a course
+            within the organisation.
+        :rtype: QuerySet
+        :raises: Http404
+        """
+
+        if queryset is None:
+            queryset = self.get_queryset()
+            slug = self.kwargs.get('slug', None)
+            organisation_slug = self.kwargs.get('organisation_slug', None)
+            if slug and organisation_slug:
+                try:
+                    certifying_organisation = \
+                        CertifyingOrganisation.objects.get(
+                            slug=organisation_slug)
+                except CertifyingOrganisation.DoesNotExist:
+                    raise Http404(
+                        'Sorry! We could not find your '
+                        'certifying organisation!')
+                try:
+                    obj = queryset.get(
+                        certifying_organisation=certifying_organisation,
+                        slug=slug)
+                    return obj
+                except Course.DoesNotExist:
+                    raise Http404('Sorry! We could not find your course!')
+                except Course.MultipleObjectsReturned:
+                    # Update the slug for the latest object when multiple
+                    # objects with the same slug are found and raise
+                    # Permission Denied
+                    new_slug = check_slug(queryset, slug)
+                    objects = queryset.filter(
+                        certifying_organisation=certifying_organisation,
+                        slug=slug)
+                    latest_obj = len(objects)-1
+                    objects[latest_obj].slug = new_slug
+                    objects[latest_obj].save()
+                    raise PermissionDenied
+            else:
+                raise Http404('Sorry! We could not find your course!')
+
 
 class CourseDetailView(CourseMixin, DetailView):
     """Detail view for Course."""
 
     context_object_name = 'course'
     template_name = 'course/detail.html'
+
+    def get(self, request, *args, **kwargs):
+        """Get the organisation_slug from the URL
+        and define the Organisation.
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        """
+
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+        self.certifying_organisation = \
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+
+        try:
+            self.object = self.get_object()
+        except PermissionDenied:
+            # Return to organisation details page when permission to delete
+            # is denied.
+            return HttpResponseRedirect(
+                reverse('certifyingorganisation-detail', kwargs={
+                    'project_slug': self.certifying_organisation.project.slug,
+                    'slug': self.certifying_organisation.slug
+                }))
+
+        return super(CourseDetailView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -319,8 +495,20 @@ class CourseDetailView(CourseMixin, DetailView):
                     obj = queryset.get(
                         certifying_organisation=certifying_organisation,
                         slug=slug)
+                    return obj
                 except Course.DoesNotExist:
                     raise Http404('Sorry! We could not find your course!')
-                return obj
+                except Course.MultipleObjectsReturned:
+                    # Update the slug for the latest object when multiple
+                    # objects with the same slug are found and raise
+                    # Permission Denied
+                    new_slug = check_slug(queryset, slug)
+                    objects = queryset.filter(
+                        certifying_organisation=certifying_organisation,
+                        slug=slug)
+                    latest_obj = len(objects)-1
+                    objects[latest_obj].slug = new_slug
+                    objects[latest_obj].save()
+                    raise PermissionDenied
             else:
                 raise Http404('Sorry! We could not find your course!')
