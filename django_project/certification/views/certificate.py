@@ -225,9 +225,12 @@ def generate_pdf(
     """Create the PDF object, using the response object as its file."""
 
     # Register new font
-    font_folder = os.path.join(settings.STATIC_ROOT, 'fonts/NotoSans-hinted')
-    ttf_file = os.path.join(font_folder, 'NotoSans-Bold.ttf')
-    pdfmetrics.registerFont(TTFont('Noto-bold', ttf_file))
+    try:
+        font_folder = os.path.join(settings.STATIC_ROOT, 'fonts/NotoSans-hinted')
+        ttf_file = os.path.join(font_folder, 'NotoSans-Bold.ttf')
+        pdfmetrics.registerFont(TTFont('Noto-bold', ttf_file))
+    except:
+        pdfmetrics.registerFont(TTFont('Noto-bold', 'Vera.ttf'))
 
     page = canvas.Canvas(pathname, pagesize=landscape(A4))
     width, height = A4
