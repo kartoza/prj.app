@@ -19,4 +19,3 @@ DATABASES = {
 }
 
 MEDIA_ROOT = '/tmp/media'
-STATIC_ROOT = '/tmp/static'
