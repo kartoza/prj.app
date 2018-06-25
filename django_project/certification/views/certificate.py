@@ -21,7 +21,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase.ttfonts import TTFont, TTFError
 from ..models import (
     Certificate,
     Course,
@@ -226,11 +226,12 @@ def generate_pdf(
 
     # Register new font
     try:
-        font_folder = os.path.join(settings.STATIC_ROOT, 'fonts/NotoSans-hinted')
+        font_folder = os.path.join(
+            settings.STATIC_ROOT, 'fonts/NotoSans-hinted')
         ttf_file = os.path.join(font_folder, 'NotoSans-Bold.ttf')
         pdfmetrics.registerFont(TTFont('Noto-bold', ttf_file))
-    except:
-        pdfmetrics.registerFont(TTFont('Noto-bold', 'Vera.ttf'))
+    except TTFError:
+        pass
 
     page = canvas.Canvas(pathname, pagesize=landscape(A4))
     width, height = A4
@@ -320,7 +321,12 @@ def generate_pdf(
 
     page.setFont('Times-Bold', 26)
     page.drawCentredString(center, 480, 'Certificate of Completion')
-    page.setFont('Noto-bold', 26)
+
+    try:
+        page.setFont('Noto-bold', 26)
+    except KeyError:
+        page.setFont('Times-Bold', 26)
+
     page.drawCentredString(
         center, 400, '%s %s' % (
             attendee.firstname.encode('utf-8'),
