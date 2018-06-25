@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.views.generic import CreateView, DetailView
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
@@ -19,6 +20,8 @@ from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from ..models import (
     Certificate,
     Course,
@@ -221,6 +224,11 @@ def generate_pdf(
         pathname, project, course, attendee, certificate, current_site):
     """Create the PDF object, using the response object as its file."""
 
+    # Register new font
+    font_folder = os.path.join(settings.STATIC_ROOT, 'fonts/NotoSans-hinted')
+    ttf_file = os.path.join(font_folder, 'NotoSans-Bold.ttf')
+    pdfmetrics.registerFont(TTFont('Noto-bold', ttf_file))
+
     page = canvas.Canvas(pathname, pagesize=landscape(A4))
     width, height = A4
     center = height * 0.5
@@ -309,6 +317,7 @@ def generate_pdf(
 
     page.setFont('Times-Bold', 26)
     page.drawCentredString(center, 480, 'Certificate of Completion')
+    page.setFont('Noto-bold', 26)
     page.drawCentredString(
         center, 400, '%s %s' % (
             attendee.firstname.encode('utf-8'),
