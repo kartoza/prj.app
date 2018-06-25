@@ -37,7 +37,7 @@ script:
   - cd ../django_project
   - python manage.py makemigrations
   - python manage.py migrate
-  - python manage.py collectstatic --noinput --verbosity 0
+  - python manage.py collectstatic --noinput --verbosity 0 --settings=core.settings.test_travis
   - coverage run manage.py test
 
 after_success:
