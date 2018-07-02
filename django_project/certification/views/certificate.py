@@ -354,11 +354,12 @@ def generate_pdf(
             mask='auto')
 
     page.setFont('Times-Italic', 12)
-    page.drawCentredString(
-        (margin_left + 150), (margin_bottom + 60),
-        '{} {}'.format(
-            project.project_representative.first_name.encode('utf-8'),
-            project.project_representative.last_name.encode('utf-8')))
+    if project.project_representative:
+        page.drawCentredString(
+            (margin_left + 150), (margin_bottom + 60),
+            '{} {}'.format(
+                project.project_representative.first_name.encode('utf-8'),
+                project.project_representative.last_name.encode('utf-8')))
     page.drawCentredString(
         (margin_right - 150), (margin_bottom + 60),
         '{}'.format(convener_name))

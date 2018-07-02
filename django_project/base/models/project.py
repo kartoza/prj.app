@@ -236,7 +236,7 @@ class Project(models.Model):
             'Project representative. '
             'This name will be used on invoices and certificates. '),
         blank=True,
-        null=True # This is needed to populate existing database.
+        null=True  # This is needed to populate existing database.
     )
 
     owner = models.ForeignKey(User)
