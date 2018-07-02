@@ -117,9 +117,10 @@ class Project(models.Model):
         null=True,
         default='#FF0000')
 
-    signature = models.ImageField(
+    project_representative_signature = models.ImageField(
         help_text=_(
-            'Signature of the project owner. Most browsers support dragging '
+            'This signature will be used on invoices and certificates. '
+            'Most browsers support dragging '
             'the image directly on to the "Choose File" button above.'),
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects/signatures'),
         blank=True
@@ -226,6 +227,16 @@ class Project(models.Model):
         default=get_default_organisation,
         null=True,
         on_delete=models.SET_DEFAULT,
+    )
+
+    project_representative = models.ForeignKey(
+        User,
+        related_name='project_representative',
+        help_text=_(
+            'Project representative. '
+            'This name will be used on invoices and certificates. '),
+        blank=True,
+        null=True # This is needed to populate existing database.
     )
 
     owner = models.ForeignKey(User)
