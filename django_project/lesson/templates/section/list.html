@@ -20,6 +20,11 @@
         <h1 class="text-muted">
             {{ project.name }} Worksheet Sections
             <div class="pull-right btn-group">
+            <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "about-lesson-app" project_slug=project.slug %}'
+                       data-title="About Lessons App">
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                    </a>
                 {% if user_can_edit %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "section-create" project_slug=project.slug %}'

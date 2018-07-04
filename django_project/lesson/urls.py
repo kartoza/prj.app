@@ -28,6 +28,7 @@ from lesson.views.section import (
     SectionDeleteView,
     SectionUpdateView,
     SectionOrderView,
+    AboutLessonsApp,
     SectionOrderSubmitView,
 )
 from lesson.views.worksheet import (
@@ -50,6 +51,9 @@ from lesson.views.specification import (
 
 urlpatterns = patterns(
     '',
+    url(regex='^(?P<project_slug>[\w-]+)/section/about/$',
+        view=AboutLessonsApp.as_view(),
+        name='about-lesson-app'),
     # Section
     url(regex='^(?P<project_slug>[\w-]+)/section/create/$',
         view=SectionCreateView.as_view(),
