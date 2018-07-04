@@ -232,3 +232,35 @@ class TestViews(TestCase):
 
         }))
         self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_AboutLessonsApp_no_login(self):
+        """
+        Test accessing Lesson about page without login.
+        Access is granted to anonymous users.
+        """
+
+        client = Client()
+        response = client.get(
+                reverse('about-lesson-app', kwargs = self.kwargs_project))
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
+            'about_lesson_app.html'
+        ]
+        self.assertEqual(response.template_name, expected_templates)
+
+    @override_settings(VALID_DOMAIN = ['testserver', ])
+    def test_AboutLessonsApp_with_login(self):
+        """Test accessing Lesson about page with login."""
+
+        client = Client()
+        status = client.login(username='timlinux', password='password')
+        self.assertTrue(status)
+
+        response = client.get(
+                reverse('about-lesson-app', kwargs = self.kwargs_project))
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
+            'about_lesson_app.html'
+        ]
+        self.assertEqual(response.template_name, expected_templates)

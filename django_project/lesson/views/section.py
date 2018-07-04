@@ -252,9 +252,9 @@ class AboutLessonsApp(TemplateView):
     template_name = 'about_lesson_app.html'
 
     def get_form_kwargs(self):
-        """Get keyword arguments from form.
+        """Get keyword arguments.
 
-        :returns keyword argument from the form
+        :returns keyword argument
         :rtype dict
         """
         kwargs = super(AboutLessonsApp, self).get_form_kwargs()
