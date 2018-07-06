@@ -254,6 +254,15 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_SectionOrderSubmitView_no_login(self):
+        """Test section order submit view with no login."""
+
+        client = Client()
+        response = client.get(
+                reverse('section-submit-order', kwargs = self.kwargs_project))
+        self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_AboutLessonsApp_no_login(self):
         """
         Test accessing Lesson about page without login.
