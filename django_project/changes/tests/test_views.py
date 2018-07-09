@@ -782,6 +782,16 @@ class TestVersionViews(TestCase):
         }))
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    @mock.patch('pypandoc.convert', side_effect=mocked_convert)
+    def test_VersionDownload_login_notfound(self, mocked_convert):
+        self.client.login(username='timlinux', password='password')
+        response = self.client.get(reverse('version-download', kwargs={
+            'slug': 'not-found',
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 404)
+
 
 class TestVersionViewsWithAnonymousUserForCRUD(TestCase):
     """
