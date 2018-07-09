@@ -2,10 +2,9 @@
 # flake8: noqa
 
 import json
-from django.utils.datastructures import MultiValueDict
-from django.utils.http import urlencode
-
+from mock import mock
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from base.tests.model_factories import ProjectF
@@ -511,6 +510,10 @@ class TestEntryViews(TestCase):
         self.assertEqual(response.template_name, expected_templates)
 
 
+def mocked_download(*args, **kwargs):
+    return HttpResponse('{"message": "ok!"}')
+
+
 class TestVersionViews(TestCase):
 
     """Tests that Version views work."""
@@ -750,6 +753,36 @@ class TestVersionViews(TestCase):
             'project_slug': self.version.project.slug
         }))
         self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_VersionDownload_no_login(self):
+        other_project = ProjectF.create(name='testproject2')
+        version_same_name_from_other_project = VersionF.create(
+            project=other_project,
+            name='1.0.1'
+        )
+        response = self.client.get(reverse('version-download', kwargs={
+            'slug': version_same_name_from_other_project.slug,
+            'project_slug': other_project.slug
+        }))
+        self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    @mock.patch(
+        'changes.views.version.VersionDownload.render_to_response',
+        side_effect=mocked_download)
+    def test_VersionDownload_login(self, mocked_download):
+        self.client.login(username='timlinux', password='password')
+        other_project = ProjectF.create(name='testproject2')
+        version_same_name_from_other_project = VersionF.create(
+            project=other_project,
+            name='1.0.1'
+        )
+        response = self.client.get(reverse('version-download', kwargs={
+            'slug': version_same_name_from_other_project.slug,
+            'project_slug': other_project.slug
+        }))
+        self.assertEqual(response.status_code, 200)
 
 
 class TestVersionViewsWithAnonymousUserForCRUD(TestCase):
