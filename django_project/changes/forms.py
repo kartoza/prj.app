@@ -146,9 +146,9 @@ class EntryForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Submit'))
         self.fields['title'].label = 'Feature Title'
         self.fields['funder_url'] = forms.URLField(
-                initial="https://", widget=TextInput)
+                initial="http://", widget=TextInput)
         self.fields['developer_url'] = forms.URLField(
-                initial="https://", widget=TextInput)
+                initial="http://", widget=TextInput)
         # Filter the category list when editing so it shows only relevant ones
         self.fields['category'].queryset = Category.objects.filter(
             project=self.project).order_by('name')
