@@ -1,5 +1,6 @@
 # coding=utf-8
 from django import forms
+from django.forms.widgets import TextInput
 from django.core.validators import ValidationError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
@@ -144,6 +145,10 @@ class EntryForm(forms.ModelForm):
         super(EntryForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
         self.fields['title'].label = 'Feature Title'
+        self.fields['funder_url'] = forms.URLField(
+                initial="https://", widget=TextInput)
+        self.fields['developer_url'] = forms.URLField(
+                initial="https://", widget=TextInput)
         # Filter the category list when editing so it shows only relevant ones
         self.fields['category'].queryset = Category.objects.filter(
             project=self.project).order_by('name')
