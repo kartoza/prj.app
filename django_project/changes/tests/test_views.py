@@ -510,8 +510,8 @@ class TestEntryViews(TestCase):
         self.assertEqual(response.template_name, expected_templates)
 
 
-def mocked_download(*args, **kwargs):
-    return HttpResponse('{"message": "ok!"}')
+def mocked_convert(*args, **kwargs):
+    return 'Mock document'
 
 
 class TestVersionViews(TestCase):
@@ -768,10 +768,8 @@ class TestVersionViews(TestCase):
         self.assertEqual(response.status_code, 302)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
-    @mock.patch(
-        'changes.views.version.VersionDownload.render_to_response',
-        side_effect=mocked_download)
-    def test_VersionDownload_login(self, mocked_download):
+    @mock.patch('pypandoc.convert', side_effect=mocked_convert)
+    def test_VersionDownload_login(self, mocked_convert):
         self.client.login(username='timlinux', password='password')
         other_project = ProjectF.create(name='testproject2')
         version_same_name_from_other_project = VersionF.create(
