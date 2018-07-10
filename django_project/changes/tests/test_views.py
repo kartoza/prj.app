@@ -773,6 +773,11 @@ class TestVersionViews(TestCase):
             'project_slug': self.project.slug
         }))
         self.assertEqual(response.status_code, 404)
+        response = self.client.get(reverse('version-download', kwargs={
+            'slug': 'not-found',
+            'project_slug': None
+        }))
+        self.assertEqual(response.status_code, 404)
 
 
 class TestVersionViewsWithAnonymousUserForCRUD(TestCase):
