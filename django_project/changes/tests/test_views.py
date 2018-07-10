@@ -780,6 +780,9 @@ class TestVersionViews(TestCase):
             'slug': version_same_name_from_other_project.slug,
             'project_slug': other_project.slug
         }))
+        self.assertEqual(
+            response.context[0].get('version'),
+            version_same_name_from_other_project)
         self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
