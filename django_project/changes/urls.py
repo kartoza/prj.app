@@ -19,8 +19,6 @@ from views import (
     CategoryOrderSubmitView,
     JSONCategoryListView,
     CategoryUpdateView,
-    PendingCategoryListView,
-    ApproveCategoryView,
     # Version
     VersionMarkdownView,
     VersionDetailView,
@@ -29,10 +27,7 @@ from views import (
     VersionCreateView,
     VersionListView,
     VersionUpdateView,
-    PendingVersionListView,
-    ApproveVersionView,
     VersionDownload,
-    VersionDownloadRST,
     VersionDownloadGnu,
     VersionSponsorDownload,
     # Entry
@@ -40,9 +35,6 @@ from views import (
     EntryDeleteView,
     EntryCreateView,
     EntryUpdateView,
-    PendingEntryListView,
-    AllPendingEntryList,
-    ApproveEntryView,
     EntryOrderView,
     EntryOrderSubmitView,
 
@@ -91,12 +83,6 @@ urlpatterns = patterns(
     url(regex='^json-category/list/(?P<version>\d+)/$',
         view=JSONCategoryListView.as_view(),
         name='json-category-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/pending-category/list/$',
-        view=PendingCategoryListView.as_view(),
-        name='pending-category-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/approve-category/(?P<slug>[\w-]+)/$',
-        view=ApproveCategoryView.as_view(),
-        name='category-approve'),
     url(regex='^(?P<project_slug>[\w-]+)/category/list/$',
         view=CategoryListView.as_view(),
         name='category-list'),
@@ -120,12 +106,6 @@ urlpatterns = patterns(
         name='category-update'),
 
     # Version management
-    url(regex='^(?P<project_slug>[\w-]+)/pending-versions/list/$',
-        view=PendingVersionListView.as_view(),
-        name='pending-version-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/approve/$',
-        view=ApproveVersionView.as_view(),
-        name='version-approve'),
     url(regex='^(?P<project_slug>[\w-]+)/version/list/$',
         view=VersionListView.as_view(),
         name='version-list'),
@@ -150,9 +130,6 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/download/$',
         view=VersionDownload.as_view(),
         name='version-download'),
-    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/downloadrst/$',
-        view=VersionDownloadRST.as_view(),
-        name='version-download-rst'),
     url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/gnu/$',
         view=VersionDownloadGnu.as_view(),
         name='version-download-gnu'),
@@ -161,17 +138,6 @@ urlpatterns = patterns(
         name='version-sponsor-download'),
 
     # Changelog entry management
-    url(regex='^(?P<project_slug>[\w-]+)/(?P<version_slug>[\w.-]+)/'
-              'pending-entry/list/$',
-        view=PendingEntryListView.as_view(),
-        name='pending-entry-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/'
-              'all-pending-entry/list/$',
-        view=AllPendingEntryList.as_view(),
-        name='all-pending-entry-list'),
-    url(regex='^entry/approve/(?P<pk>\d+)$',
-        view=ApproveEntryView.as_view(),
-        name='entry-approve'),
     url(regex='^entry/(?P<pk>\d+)$',
         view=EntryDetailView.as_view(),
         name='entry-detail'),

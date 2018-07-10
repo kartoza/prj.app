@@ -14,7 +14,6 @@
 {% block content %}
     <div class="page-header">
         <h1 class="text-muted">
-            {% if unapproved %}Unapproved {% endif %}
             Categories
             {% if user.is_authenticated %}
                 <div class="pull-right btn-group">
@@ -23,19 +22,6 @@
                        data-title="Create New Category">
                         {% show_button_icon "add" %}
                     </a>
-                    {% if not unapproved %}
-                        <a class="btn btn-default btn-mini tooltip-toggle"
-                           href='{% url "pending-category-list" project_slug %}'
-                           data-title="View Pending Categories">
-                            <span class="glyphicon glyphicon-time"></span>
-                        </a>
-                    {% else %}
-                        <a class="btn btn-default btn-mini tooltip-toggle"
-                           href='{% url "category-list" project_slug %}'
-                           data-title="View Categories">
-                            <span class="glyphicon glyphicon-th-list"></span>
-                        </a>
-                    {% endif %}
                     {% if user.is_staff or user in the_project.changelog_managers.all or user == the_project.owner %}
                         <a class="btn btn-default btn-mini tooltip-toggle"
                             href='{% url "category-order" project_slug %}'
@@ -53,13 +39,11 @@
     </div>
 
     {% ifequal num_categories 0 %}
-        {% if unapproved %}
-            <h3>All categories are approved.</h3>
-        {% else %}
-            <h3>No categories are defined, but you can <a
-                    class="btn btn-default btn-mini"
-                    href='{% url "category-create" project_slug %}'>create one</a>.</h3>
-        {% endif %}
+        <h3>No categories are defined, but you can <a
+                class="btn btn-default btn-mini"
+                href='{% url "category-create" project_slug %}'>
+            create one</a>.
+        </h3>
     {% endifequal %}
 
     {% if user.is_authenticated and user.is_staff %}
@@ -75,19 +59,10 @@
             </div>
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
-                    {%  if not category.approved %}
-                        {% if user.is_staff or user in the_project.changelog_managers.all or user == the_project.owner %}
-                            <a class="btn btn-default btn-mini"
-                               href='{% url "category-approve" project_slug=category.project.slug slug=category.slug %}'>
-                                <span class="glyphicon glyphicon-thumbs-up"></span>
-                            </a>
-                        {% endif %}
-                    {% endif %}
                     <a class="btn btn-default btn-mini"
                        href='{% url "category-delete" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-minus"></span>
                     </a>
-                    {% if category.approved %}
                     <a class="btn btn-default btn-mini"
                        href='{% url "category-update" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-pencil"></span>
@@ -96,7 +71,6 @@
                        href='{% url "category-detail" project_slug=category.project.slug slug=category.slug %}'>
                         <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
-                    {% endif %}
                 </div>
             </div>
         </li>

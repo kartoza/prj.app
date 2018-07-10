@@ -43,12 +43,6 @@ class NavContextMiddleware(object):
         if context.get('project', None):
             context['the_project'] = context.get('project')
             versions = Version.objects.filter(project=context.get('project'))
-            context['has_pending_versions'] = (
-                Version.unapproved_objects.filter(
-                    project=context.get('project')).exists())
-            context['has_pending_categories'] = (
-                Category.unapproved_objects.filter(
-                    project=context.get('project')).exists())
             context['has_pending_sponsor_lvl'] = (
                 SponsorshipLevel.unapproved_objects.filter(
                     project=context.get('project')).exists())
@@ -58,10 +52,6 @@ class NavContextMiddleware(object):
             context['has_pending_organisations'] = (
                 CertifyingOrganisation.unapproved_objects.filter(
                     project=context.get('project')).exists())
-            if versions:
-                context['has_pending_entries'] = (
-                    Entry.unapproved_objects.filter(
-                        version__in=versions).exists())
 
         else:
             if request.user.is_staff:
