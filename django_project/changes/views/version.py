@@ -627,7 +627,7 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
         if self.queryset is None:
             project_slug = self.kwargs.get('project_slug', None)
             slug = self.kwargs.get('slug', None)
-            if project_slug:
+            if project_slug and slug:
                 project = Project.objects.get(slug=project_slug)
                 queryset = Version.objects.filter(
                     project=project, slug=slug)
