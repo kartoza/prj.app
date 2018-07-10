@@ -633,7 +633,7 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
                     queryset = Version.objects.filter(
                         project=project, slug=slug)
                     return queryset
-                except (Project.DoesNotExist, Version.DoesNotExist) as error:
+                except (Project.DoesNotExist, Version.DoesNotExist):
                     raise Http404('Sorry! We could not find your version!')
             else:
                 raise Http404('Sorry! We could not find your version!')
