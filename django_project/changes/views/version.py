@@ -628,10 +628,13 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
             project_slug = self.kwargs.get('project_slug', None)
             slug = self.kwargs.get('slug', None)
             if project_slug and slug:
-                project = Project.objects.get(slug=project_slug)
-                queryset = Version.objects.filter(
-                    project=project, slug=slug)
-                return queryset
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                    queryset = Version.objects.filter(
+                        project=project, slug=slug)
+                    return queryset
+                except (Project.DoesNotExist, Version.DoesNotExist) as error:
+                    raise Http404('Sorry! We could not find your version!')
             else:
                 raise Http404('Sorry! We could not find your version!')
         return self.queryset
