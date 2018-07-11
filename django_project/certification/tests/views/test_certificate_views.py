@@ -40,7 +40,9 @@ class TestCertificateView(TestCase):
         self.user = UserF.create(**{
             'username': 'anita',
             'password': 'password',
-            'is_staff': True
+            'is_staff': True,
+            'first_name': 'Anita',
+            'last_name': 'Hapsari',
         })
         self.user.set_password('password')
         self.user.save()
@@ -101,6 +103,28 @@ class TestCertificateView(TestCase):
             'pk': self.attendee.pk
         }))
         self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    @patch('os.path.exists')
+    @patch('os.makedirs')
+    @patch('__builtin__.open', create=True)
+    @patch('reportlab.lib.utils.ImageReader')
+    def test_generate_certificate_with_signature(
+            self, mock_open, mock_make_dirs, mock_exists, mock_image_reader):
+        mock_open.return_value = MagicMock()
+        mock_exists.return_value = False
+        mock_image_reader.return_value = MagicMock()
+        self.project.project_representative_signature = MagicMock()
+        client = Client(HTTP_HOST='testserver')
+        client.login(username='anita', password='password')
+        response = client.get(reverse('print-certificate', kwargs={
+            'project_slug': self.project.slug,
+            'organisation_slug': self.certifying_organisation.slug,
+            'course_slug': self.course.slug,
+            'pk': self.attendee.pk
+        }))
+        self.assertEqual(response.status_code, 200)
+        self.project.project_representative_signature = None
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     @patch('os.path.exists')
