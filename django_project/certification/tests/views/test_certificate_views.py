@@ -2,6 +2,8 @@
 import logging
 from mock import patch, MagicMock
 from django.core.urlresolvers import reverse
+from django.http import Http404
+from django.test.client import RequestFactory
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from base.tests.model_factories import ProjectF
@@ -14,6 +16,10 @@ from certification.tests.model_factories import (
     TrainingCenterF,
     CourseTypeF,
     AttendeeF
+)
+from certification.views.certificate import (
+    regenerate_certificate,
+    regenerate_all_certificate
 )
 
 
@@ -32,7 +38,6 @@ class TestCertificateView(TestCase):
         self.client.post(
             '/set_language/', data={'language': 'en'})
         logging.disable(logging.CRITICAL)
-        self.project = ProjectF.create()
         self.user = UserF.create(**{
             'username': 'anita',
             'password': 'password',
@@ -41,6 +46,10 @@ class TestCertificateView(TestCase):
         self.user.set_password('password')
         self.user.save()
 
+        self.project = ProjectF.create(
+            owner=self.user,
+            project_representative=self.user
+        )
         self.certifying_organisation = \
             CertifyingOrganisationF.create()
         self.course_convener = CourseConvenerF.create()
@@ -93,6 +102,54 @@ class TestCertificateView(TestCase):
             'pk': self.attendee.pk
         }))
         self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    @patch('os.path.exists')
+    @patch('os.makedirs')
+    @patch('__builtin__.open', create=True)
+    def test_regenerate_certificate_allowed_user(
+            self, mock_open, mock_make_dirs, mock_exists):
+        mock_open.return_value = MagicMock()
+        mock_exists.return_value = False
+        request = RequestFactory(HTTP_HOST='testserver')
+        request.user = self.user
+        request.method = 'POST'
+        request.META = {'HTTP_HOST': 'testserver'}
+        response = regenerate_certificate(
+            request,
+            project_slug=self.project.slug,
+            organisation_slug=self.certifying_organisation.slug,
+            course_slug=self.course.slug,
+            pk=self.attendee.pk
+        )
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    @patch('os.path.exists')
+    @patch('os.makedirs')
+    @patch('__builtin__.open', create=True)
+    @patch('django.contrib.messages.success')
+    @patch('os.remove')
+    @patch('certification.views.certificate.generate_pdf')
+    def test_regenerate_all_certificate_allowed_user(
+            self, mock_open, mock_make_dirs,
+            mock_exists, mock_message, mock_remove, mock_generate_pdf):
+        mock_message.return_value = MagicMock()
+        mock_open.return_value = MagicMock()
+        mock_remove.return_value = MagicMock()
+        mock_generate_pdf.return_value = MagicMock()
+        mock_exists.return_value = False
+        request = RequestFactory(HTTP_HOST='testserver')
+        request.user = self.user
+        request.method = 'POST'
+        request.META = {'HTTP_HOST': 'testserver'}
+        response = regenerate_all_certificate(
+            request,
+            project_slug=self.project.slug,
+            organisation_slug=self.certifying_organisation.slug,
+            course_slug=self.course.slug,
+        )
+        self.assertEqual(response.status_code, 302)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_detail_certificate(self):
