@@ -2,7 +2,6 @@
 import logging
 from mock import patch, MagicMock
 from django.core.urlresolvers import reverse
-from django.http import Http404
 from django.test.client import RequestFactory
 from django.test import TestCase, override_settings
 from django.test.client import Client
