@@ -1,7 +1,10 @@
 # coding=utf-8
+from io import BytesIO
 import logging
 from mock import patch, MagicMock
+from PIL import Image
 from django.core.urlresolvers import reverse
+from django.core.files.images import ImageFile
 from django.test.client import RequestFactory
 from django.test import TestCase, override_settings
 from django.test.client import Client
@@ -114,7 +117,14 @@ class TestCertificateView(TestCase):
         mock_open.return_value = MagicMock()
         mock_exists.return_value = False
         mock_image_reader.return_value = MagicMock()
-        self.project.project_representative_signature = MagicMock()
+
+        image = Image.new('RGBA', size=(50, 50), color=(256, 0, 0))
+        image_file = BytesIO()
+        image.save(image_file, 'PNG')
+        signature = ImageFile(image_file)
+        self.project.project_representative_signature = signature
+        self.project.save()
+
         client = Client(HTTP_HOST='testserver')
         client.login(username='anita', password='password')
         response = client.get(reverse('print-certificate', kwargs={
@@ -125,6 +135,7 @@ class TestCertificateView(TestCase):
         }))
         self.assertEqual(response.status_code, 200)
         self.project.project_representative_signature = None
+        self.project.save()
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     @patch('os.path.exists')
