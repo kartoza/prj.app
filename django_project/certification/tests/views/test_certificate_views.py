@@ -44,6 +44,14 @@ class TestCertificateView(TestCase):
             'username': 'anita',
             'password': 'password',
             'is_staff': True,
+        })
+        self.user.set_password('password')
+        self.user.save()
+
+        self.user2 = UserF.create(**{
+            'username': 'anita2',
+            'password': 'password',
+            'is_staff': True,
             'first_name': 'Anita',
             'last_name': 'Hapsari',
         })
@@ -52,7 +60,7 @@ class TestCertificateView(TestCase):
 
         self.project = ProjectF.create(
             owner=self.user,
-            project_representative=self.user
+            project_representative=self.user2
         )
         self.certifying_organisation = \
             CertifyingOrganisationF.create()
