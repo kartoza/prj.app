@@ -1,10 +1,8 @@
 # coding=utf-8
 import tempfile
-from StringIO import StringIO
 import logging
 from mock import patch, MagicMock
 from PIL import Image
-from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse
 from django.test.client import RequestFactory
 from django.test import TestCase, override_settings
