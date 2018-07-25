@@ -1,4 +1,5 @@
 # coding=utf-8
+import tempfile
 from StringIO import StringIO
 import logging
 from mock import patch, MagicMock
@@ -115,6 +116,14 @@ class TestCertificateView(TestCase):
         }))
         self.assertEqual(response.status_code, 200)
 
+    def get_temporary_image(self, temp_file):
+        size = (200, 200)
+        color = (255, 0, 0, 0)
+        image = Image.new("RGBA", size, color)
+        image.save(temp_file, 'png')
+        return temp_file
+
+    @override_settings(MEDIA_ROOT=tempfile.gettempdir())
     @override_settings(VALID_DOMAIN=['testserver', ])
     @patch('os.path.exists')
     @patch('os.makedirs')
@@ -126,12 +135,10 @@ class TestCertificateView(TestCase):
         mock_exists.return_value = False
         mock_image.return_value = MagicMock()
 
-        image_file = StringIO()
-        image = Image.new('RGBA', size=(50, 50), color=(256, 0, 0))
-        image.save(image_file, 'png')
-        image_file.seek(0)
+        temp_file = tempfile.NamedTemporaryFile()
+        test_image = self.get_temporary_image(temp_file)
 
-        signature = ContentFile(image_file.read(), 'test.png')
+        signature = test_image.name
         self.project.project_representative_signature = signature
         self.project.save()
 
