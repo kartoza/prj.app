@@ -1,12 +1,10 @@
 # coding=utf-8
-from io import BytesIO
 from StringIO import StringIO
 import logging
 from mock import patch, MagicMock
 from PIL import Image
 from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse
-from django.core.files.images import ImageFile
 from django.test.client import RequestFactory
 from django.test import TestCase, override_settings
 from django.test.client import Client
