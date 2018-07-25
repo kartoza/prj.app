@@ -279,10 +279,11 @@ def generate_pdf(
     else:
         organisation_logo = None
 
-    if project.signature:
-        project_owner_signature = ImageReader(project.signature)
+    if project.project_representative_signature:
+        project_representative_signature = \
+            ImageReader(project.project_representative_signature)
     else:
-        project_owner_signature = None
+        project_representative_signature = None
 
     if course.course_convener.signature:
         convener_signature = ImageReader(course.course_convener.signature)
@@ -353,9 +354,9 @@ def generate_pdf(
             convener_name,
             course.training_center))
 
-    if project_owner_signature is not None:
+    if project_representative_signature is not None:
         page.drawImage(
-            project_owner_signature,
+            project_representative_signature,
             (margin_left + 100),
             (margin_bottom + 70),
             width=100,
@@ -371,11 +372,12 @@ def generate_pdf(
             mask='auto')
 
     page.setFont('Times-Italic', 12)
-    page.drawCentredString(
-        (margin_left + 150), (margin_bottom + 60),
-        '{} {}'.format(
-            project.owner.first_name.encode('utf-8'),
-            project.owner.last_name.encode('utf-8')))
+    if project.project_representative:
+        page.drawCentredString(
+            (margin_left + 150), (margin_bottom + 60),
+            '{} {}'.format(
+                project.project_representative.first_name.encode('utf-8'),
+                project.project_representative.last_name.encode('utf-8')))
     page.drawCentredString(
         (margin_right - 150), (margin_bottom + 60),
         '{}'.format(convener_name))
@@ -646,7 +648,8 @@ def regenerate_certificate(request, **kwargs):
     # Checking user permissions.
     if request.user.is_staff or request.user == project.owner or \
             request.user in project.certification_managers.all() or \
-            request.user in certifying_organisation.organisation_owners.all():
+            request.user in certifying_organisation.organisation_owners.all() \
+            or request.user == project.project_representative:
         pass
     else:
         raise Http404
@@ -707,7 +710,8 @@ def regenerate_all_certificate(request, **kwargs):
     # Checking user permissions.
     if request.user.is_staff or request.user == project.owner or \
             request.user in project.certification_managers.all() or \
-            request.user in certifying_organisation.organisation_owners.all():
+            request.user in certifying_organisation.organisation_owners.all() \
+            or request.user == project.project_representative:
         pass
     else:
         raise Http404
