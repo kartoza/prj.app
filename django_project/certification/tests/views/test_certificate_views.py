@@ -1,8 +1,10 @@
 # coding=utf-8
 from io import BytesIO
+from StringIO import StringIO
 import logging
 from mock import patch, MagicMock
 from PIL import Image
+from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse
 from django.core.files.images import ImageFile
 from django.test.client import RequestFactory
@@ -119,16 +121,19 @@ class TestCertificateView(TestCase):
     @patch('os.path.exists')
     @patch('os.makedirs')
     @patch('__builtin__.open', create=True)
+    @patch('reportlab.lib.utils.ImageReader')
     def test_generate_certificate_with_signature(
-            self, mock_open, mock_make_dirs, mock_exists):
+            self, mock_open, mock_make_dirs, mock_exists, mock_image):
         mock_open.return_value = MagicMock()
         mock_exists.return_value = False
+        mock_image.return_value = MagicMock()
 
-        # Add mock signature for test.
+        image_file = StringIO()
         image = Image.new('RGBA', size=(50, 50), color=(256, 0, 0))
-        image_file = BytesIO()
-        image.save(image_file, 'PNG')
-        signature = ImageFile(image_file)
+        image.save(image_file, 'png')
+        image_file.seek(0)
+
+        signature = ContentFile(image_file.read(), 'test.png')
         self.project.project_representative_signature = signature
         self.project.save()
 
