@@ -2,10 +2,9 @@
 # flake8: noqa
 
 import json
-from django.utils.datastructures import MultiValueDict
-from django.utils.http import urlencode
-
+from mock import mock
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from base.tests.model_factories import ProjectF
@@ -355,10 +354,7 @@ class TestEntryViews(TestCase):
             'project_slug': self.project.slug,
             'version_slug': self.version.slug
         }), post_data)
-        self.assertRedirects(
-            response, reverse('version-detail', kwargs={
-                'project_slug': self.project.slug,
-                'slug': self.version.slug}))
+        self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryCreate_no_login(self):
@@ -408,10 +404,7 @@ class TestEntryViews(TestCase):
         response = self.client.post(reverse('entry-update', kwargs={
             'pk': self.entry.id
         }), post_data)
-        self.assertRedirects(
-            response, reverse('version-detail', kwargs={
-                'project_slug': self.project.slug,
-                'slug': self.version.slug}))
+        self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryUpdate_no_login(self):
@@ -488,6 +481,10 @@ class TestEntryViews(TestCase):
             'pk': entry_to_delete.id
         }))
         self.assertEqual(response.status_code, 302)
+
+
+def mocked_convert(*args, **kwargs):
+    return 'Mock document'
 
 
 class TestVersionViews(TestCase):
@@ -729,6 +726,52 @@ class TestVersionViews(TestCase):
             'project_slug': self.version.project.slug
         }))
         self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_VersionDownload_no_login(self):
+        other_project = ProjectF.create(name='testproject2')
+        version_same_name_from_other_project = VersionF.create(
+            project=other_project,
+            name='1.0.1'
+        )
+        response = self.client.get(reverse('version-download', kwargs={
+            'slug': version_same_name_from_other_project.slug,
+            'project_slug': other_project.slug
+        }))
+        self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    @mock.patch('pypandoc.convert', side_effect=mocked_convert)
+    def test_VersionDownload_login(self, mocked_convert):
+        self.client.login(username='timlinux', password='password')
+        other_project = ProjectF.create(name='testproject2')
+        version_same_name_from_other_project = VersionF.create(
+            project=other_project,
+            name='1.0.1'
+        )
+        response = self.client.get(reverse('version-download', kwargs={
+            'slug': version_same_name_from_other_project.slug,
+            'project_slug': other_project.slug
+        }))
+        self.assertEqual(
+            response.context[0].get('version'),
+            version_same_name_from_other_project)
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    @mock.patch('pypandoc.convert', side_effect=mocked_convert)
+    def test_VersionDownload_login_notfound(self, mocked_convert):
+        self.client.login(username='timlinux', password='password')
+        response = self.client.get(reverse('version-download', kwargs={
+            'slug': 'not-found',
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get(reverse('version-download', kwargs={
+            'slug': 'not-found',
+            'project_slug': None
+        }))
+        self.assertEqual(response.status_code, 404)
 
 
 class TestVersionViewsWithAnonymousUserForCRUD(TestCase):

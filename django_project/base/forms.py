@@ -96,7 +96,8 @@ class ProjectForm(forms.ModelForm):
             'project_repository_url',
             'precis',
             'gitter_room',
-            'signature',
+            'project_representative',
+            'project_representative_signature',
             'changelog_managers',
             'sponsorship_managers',
             'lesson_managers',
@@ -121,7 +122,12 @@ class ProjectForm(forms.ModelForm):
                 Field('project_url', css_class="form-control"),
                 Field('project_repository_url', css_class="form-control"),
                 Field('precis', css_class="form-control"),
-                Field('signature', css_class="form-control"),
+                Field(
+                    'project_representative',
+                    css_class="chosen-select"),
+                Field(
+                    'project_representative_signature',
+                    css_class="form-control"),
                 Field('changelog_managers', css_class="form-control"),
                 Field('sponsorship_managers', css_class="form-control"),
                 Field('lesson_managers', css_class="form-control"),
@@ -142,6 +148,8 @@ class ProjectForm(forms.ModelForm):
         self.fields['certification_managers'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
         self.fields['lesson_managers'].label_from_instance = \
+            lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
+        self.fields['project_representative'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
         # self.helper.add_input(Submit('submit', 'Submit'))
 

@@ -611,6 +611,34 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
 
         return temp_path
 
+    def get_queryset(self):
+        """Get the queryset for download.
+
+        This will search a specific version within a project.
+        Thus it will not raise duplicates when there is
+        another same version name from another project.
+
+        :returns: A queryset which is filtered to only show Version
+        from specific project.
+        :rtype: QuerySet
+        :raises: Http404
+        """
+
+        if self.queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            slug = self.kwargs.get('slug', None)
+            if project_slug and slug:
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                    queryset = Version.objects.filter(
+                        project=project, slug=slug)
+                    return queryset
+                except (Project.DoesNotExist, Version.DoesNotExist):
+                    raise Http404('Sorry! We could not find your version!')
+            else:
+                raise Http404('Sorry! We could not find your version!')
+        return self.queryset
+
 
 class VersionDownloadGnu(VersionMixin, DetailView):
     """A tabular list style view for a Version."""
