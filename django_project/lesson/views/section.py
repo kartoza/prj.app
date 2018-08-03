@@ -6,6 +6,7 @@ from collections import OrderedDict
 from django.core.urlresolvers import reverse
 from django.views.generic import (
     ListView,
+    TemplateView,
     CreateView,
     DeleteView,
     UpdateView,
@@ -243,3 +244,20 @@ class SectionOrderSubmitView(LoginRequiredMixin, SectionMixin, UpdateView):
         project = Project.objects.get(slug=kwargs.get('project_slug'))
         sections = Section.objects.filter(project=project)
         return re_order_features(request, sections)
+
+
+class AboutLessonsApp(TemplateView):
+    """About page for the lessons app."""
+
+    template_name = 'about_lesson_app.html'
+
+    def get_form_kwargs(self):
+        """Get keyword arguments.
+
+        :returns keyword argument
+        :rtype dict
+        """
+        kwargs = super(AboutLessonsApp, self).get_form_kwargs()
+        project_slug = self.kwargs['project_slug']
+        kwargs['project'] = get_object_or_404(Project, slug=project_slug)
+        return kwargs
