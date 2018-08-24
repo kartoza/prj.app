@@ -145,10 +145,18 @@ class EntryForm(forms.ModelForm):
         super(EntryForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
         self.fields['title'].label = 'Feature Title'
+        # Need to add required=False explicitly for these because
+        # even though they are declared as not required in the model,
+        # crispy is rendering them as required.
+        self.fields['video'].label = 'Video URL'
+        self.fields['video'] = forms.URLField(
+                initial="http://", widget=TextInput, required=False)
+        self.fields['funder_url'].label = 'Funder URL'
         self.fields['funder_url'] = forms.URLField(
-                initial="http://", widget=TextInput)
+                initial="http://", widget=TextInput, required=False)
         self.fields['developer_url'] = forms.URLField(
-                initial="http://", widget=TextInput)
+                initial="http://", widget=TextInput, required=False)
+        self.fields['developer_url'].label = 'Developer URL'
         # Filter the category list when editing so it shows only relevant ones
         self.fields['category'].queryset = Category.objects.filter(
             project=self.project).order_by('name')
