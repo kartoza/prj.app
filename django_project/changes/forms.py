@@ -150,12 +150,12 @@ class EntryForm(forms.ModelForm):
         # crispy is rendering them as required.
         self.fields['video'].label = 'Video URL'
         self.fields['video'] = forms.URLField(
-                initial="http://", widget=TextInput, required=False)
+                widget=TextInput, required=False)
         self.fields['funder_url'].label = 'Funder URL'
         self.fields['funder_url'] = forms.URLField(
-                initial="http://", widget=TextInput, required=False)
+                widget=TextInput, required=False)
         self.fields['developer_url'] = forms.URLField(
-                initial="http://", widget=TextInput, required=False)
+                widget=TextInput, required=False)
         self.fields['developer_url'].label = 'Developer URL'
         # Filter the category list when editing so it shows only relevant ones
         self.fields['category'].queryset = Category.objects.filter(

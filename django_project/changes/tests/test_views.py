@@ -354,7 +354,13 @@ class TestEntryViews(TestCase):
             'project_slug': self.project.slug,
             'version_slug': self.version.slug
         }), post_data)
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(
+            response,
+            reverse(
+                'version-detail',
+                kwargs={
+                    'project_slug': self.project.slug,
+                    'slug': self.version.slug}))
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryCreate_no_login(self):
@@ -404,7 +410,13 @@ class TestEntryViews(TestCase):
         response = self.client.post(reverse('entry-update', kwargs={
             'pk': self.entry.id
         }), post_data)
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(
+            response,
+            reverse(
+                'version-detail',
+                kwargs={
+                    'project_slug': self.project.slug,
+                    'slug': self.version.slug}))
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_EntryUpdate_no_login(self):
