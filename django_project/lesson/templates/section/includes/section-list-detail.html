@@ -9,8 +9,8 @@
          {{ section.notes | base_markdown }}
     </div>
     <div class="col-lg-3">
-        {% if user_can_edit %}
             <div class="btn-group pull-right">
+                {% if user_can_edit %}
                 <a class="btn btn-default btn-mini tooltip-toggle"
                    href='{% url "worksheet-create" project.slug section.slug %}'
                    data-title="Create New Worksheet">
@@ -31,13 +31,13 @@
                    href='{% url "section-update" project_slug=section.project.slug slug=section.slug %}'>
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
+                {% endif %}
                 <a class="btn btn-default btn-mini tooltip-toggle"
                    href='{% url "worksheet-module-answers" project_slug=section.project.slug section_slug=section.slug pk=section.pk %}'
                    data-title="View question answers for {{ section.name }} modules" >
                     <span class="glyphicon glyphicon-ok-circle"></span>
                 </a>
             </div>
-        {% endif %}
     </div>
 </div>
 
