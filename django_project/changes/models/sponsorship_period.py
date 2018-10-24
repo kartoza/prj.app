@@ -130,7 +130,17 @@ class SponsorshipPeriod(models.Model):
     def current_sponsor(self):
         today = datetime.datetime.now().date()
         end = self.end_date
-        if end < today:
+        start = self.start_date
+        if end < today or start > today:
+            return False
+        else:
+            return True
+
+    def future_sponsor(self):
+        today = datetime.datetime.now().date()
+        end = self.end_date
+        start = self.start_date
+        if end < today or start < today:
             return False
         else:
             return True

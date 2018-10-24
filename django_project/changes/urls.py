@@ -49,6 +49,7 @@ from views import (
     PendingSponsorListView,
     ApproveSponsorView,
     GenerateSponsorPDFView,
+    FutureSponsorListView,
 
     # Sponsorship Level
 
@@ -223,6 +224,9 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/sponsors/list/$',
         view=SponsorListView.as_view(),
         name='sponsor-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/future-sponsors/list/$',
+        view=FutureSponsorListView.as_view(),
+        name='future-sponsor-list'),
     url(regex='^(?P<project_slug>[\w-]+)/sponsors/world-map/$',
         view=SponsorWorldMapView.as_view(),
         name='sponsor-world-map'),
