@@ -799,7 +799,7 @@ class ApproveCertifyingOrganisationView(
 
 
 class AboutView(TemplateView):
-    template_name = 'about_lesson_app.html'
+    template_name = 'about.html'
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
