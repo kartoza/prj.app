@@ -262,7 +262,7 @@ class WorksheetOrderSubmitView(LoginRequiredMixin, WorksheetMixin, UpdateView):
 
 
 
-class WorksheetModuleQuestionAnswers(LoginRequiredMixin, WorksheetMixin,
+class WorksheetModuleQuestionAnswers(WorksheetMixin,
                                      DetailView):
     """Show correct answers to module questions.
 
