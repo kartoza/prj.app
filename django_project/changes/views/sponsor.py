@@ -170,7 +170,8 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
         return self.queryset
 
 
-class FutureSponsorListView(LoginRequiredMixin, SponsorMixin, PaginationMixin, ListView):
+class FutureSponsorListView(
+    LoginRequiredMixin, SponsorMixin, PaginationMixin, ListView):
     """List view for Sponsor."""
     context_object_name = 'sponsors'
     template_name = 'sponsor/future-list.html'
