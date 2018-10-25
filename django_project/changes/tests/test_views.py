@@ -1321,6 +1321,14 @@ class TestSponsorViews(TestCase):
         self.user.set_password('password')
         self.user.save()
 
+        self.non_staff_user = UserF.create(**{
+            'username': 'non-staff',
+            'password': 'password',
+            'is_staff': False
+        })
+        self.non_staff_user.set_password('password')
+        self.non_staff_user.save()
+
     @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
         """
@@ -1339,6 +1347,29 @@ class TestSponsorViews(TestCase):
             'project_slug': self.project.slug
         }))
         self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_FutureSponsorListView_no_login(self):
+        response = self.client.get(reverse('future-sponsor-list', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_FutureSponsorListView_with_staff_login(self):
+        self.client.login(username='timlinux', password='password')
+        response = self.client.get(reverse('future-sponsor-list', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_FutureSponsorListView_with_non_staff_login(self):
+        self.client.login(username='non-staff', password='password')
+        response = self.client.get(reverse('future-sponsor-list', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 404)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorWorldMapView(self):
