@@ -1338,18 +1338,21 @@ class TestSponsorViews(TestCase):
             name='Gold')
         self.today = datetime.date.today()
         self.past_sponsorship_period = SponsorshipPeriodF.create(
+            project=self.project,
             sponsor=self.sponsor,
             sponsorship_level=self.sponsorship_level,
             start_date=self.today - timedelta(days=200),
             end_date=self.today - timedelta(days=100),
             approved=True)
         self.current_sponsorship_period = SponsorshipPeriodF.create(
+            project=self.project,
             sponsor=self.current_sponsor,
             sponsorship_level=self.sponsorship_level,
             start_date=self.today,
             end_date=self.today + timedelta(days=700),
             approved=True)
         self.future_sponsorship_period = SponsorshipPeriodF.create(
+            project=self.project,
             sponsor=self.future_sponsor,
             sponsorship_level=self.sponsorship_level,
             start_date=self.today + timedelta(days=200),
