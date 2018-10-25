@@ -1,7 +1,9 @@
 # coding=utf-8
 # flake8: noqa
 
+import datetime
 import json
+from datetime import timedelta
 from mock import mock
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
@@ -1308,6 +1310,8 @@ class TestSponsorViews(TestCase):
         logging.disable(logging.CRITICAL)
         self.project = ProjectF.create()
         self.sponsor = SponsorF.create(project=self.project)
+        self.current_sponsor = SponsorF.create(project=self.project)
+        self.future_sponsor = SponsorF.create(project=self.project)
         self.user = UserF.create(**{
             'username': 'timlinux',
             'password': 'password',
@@ -1328,6 +1332,29 @@ class TestSponsorViews(TestCase):
         })
         self.non_staff_user.set_password('password')
         self.non_staff_user.save()
+
+        self.sponsorship_level = SponsorshipLevelF.create(
+            project=self.project,
+            name='Gold')
+        self.today = datetime.date.today()
+        self.past_sponsorship_period = SponsorshipPeriodF.create(
+            sponsor=self.sponsor,
+            sponsorship_level=self.sponsorship_level,
+            start_date=self.today - timedelta(days=200),
+            end_date=self.today - timedelta(days=100),
+            approved=True)
+        self.current_sponsorship_period = SponsorshipPeriodF.create(
+            sponsor=self.current_sponsor,
+            sponsorship_level=self.sponsorship_level,
+            start_date=self.today,
+            end_date=self.today + timedelta(days=700),
+            approved=True)
+        self.future_sponsorship_period = SponsorshipPeriodF.create(
+            sponsor=self.future_sponsor,
+            sponsorship_level=self.sponsorship_level,
+            start_date=self.today + timedelta(days=200),
+            end_date=self.today + timedelta(days=700),
+            approved=True)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
