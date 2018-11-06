@@ -140,6 +140,13 @@ class Project(models.Model):
         default=0
     )
 
+    certification_notes = models.TextField(
+        help_text=_(
+            'Notes about the certification programme for this project'),
+        blank=True,
+        null=True
+    )
+
     # Credit that will be spent to issue a certificate
     certificate_credit = models.IntegerField(
         help_text=_(
