@@ -180,8 +180,7 @@ class VersionDetailView(VersionMixin, DetailView):
             context['user_can_edit'] = True
             context['user_can_delete'] = True
 
-        if context['project'].changelog_managers.filter(
-                project__owner=self.request.user.id).exists():
+        if self.request.user in context['project'].changelog_managers.all():
             context['user_can_edit'] = True
             context['user_can_delete'] = True
 
@@ -388,7 +387,7 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
                 Q(project=project) &
                 (Q(author=self.request.user) |
                  Q(project__owner=self.request.user) |
-                 Q(project__changelog_managers=self.request.user)))
+                 Q(project__changelog_managers=self.request.user))).distinct()
 
 
 # noinspection PyAttributeOutsideInit
@@ -481,7 +480,7 @@ class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
             versions_qs = versions_qs.filter(
                 (Q(author=self.request.user) |
                  Q(project__owner=self.request.user) |
-                 Q(project__changelog_managers=self.request.user)))
+                 Q(project__changelog_managers=self.request.user))).distinct()
         return versions_qs
 
     def get_success_url(self):
