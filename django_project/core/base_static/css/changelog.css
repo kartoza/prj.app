@@ -1,4 +1,5 @@
 body {
+  padding-right: 0 !important;
   padding-top: 70px;
   padding-bottom : 140px;
 }
@@ -221,4 +222,16 @@ a.anchor-entry {
     position: relative;
     top: -80px;
     visibility: hidden;
+}
+
+.btn-icon-only {
+    background: none;
+    border: none;
+    box-shadow: none;
+    font-size: 18pt;
+}
+
+.btn-icon-only:hover {
+    color: orange;
+    background: none;
 }

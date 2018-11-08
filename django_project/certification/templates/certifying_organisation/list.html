@@ -21,6 +21,12 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
             Certifying Organisations
+
+            <button id="requirement-button" type="button" class="btn btn-default btn-icon-only tooltip-toggle" data-toggle="modal"
+                    data-target="#about" data-title="View requirements for new certifying organisations">
+                <i class="fas fa-file-signature"></i>
+            </button>
+
             {% if user.is_staff or user == the_project.owner or user in the_project.certification_managers.all %}
                 <div class="pull-right btn-group">
                     <a class="btn btn-default btn-mini tooltip-toggle"
@@ -46,15 +52,6 @@
             {% endif %}
         </h1>
     </div>
-    <div>
-        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#about" aria-expanded="false" aria-controls="collapseExample">
-            View requirements for new certifying organisations
-        </button>
-        <div class="collapse" id="about">
-            {{ the_project.certification_notes|base_markdown }}
-        </div>
-    </div>
-
 
     {% ifequal num_certifyingorganisations 0 %}
         {% if unapproved %}
@@ -100,6 +97,23 @@
         </li>
     {%  endfor %}
 
+    <!-- Modal -->
+    <div class="modal fade" id="about" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title" id="modalLabel">Requirements for new certifying organisations</h4>
+          </div>
+          <div class="modal-body">
+            {{ the_project.certification_notes|base_markdown }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <hr />
 
     <script>
@@ -110,7 +124,14 @@
             function (){
                 $(this).removeClass('btn-danger').addClass('btn-default')
             }
-        )
+        );
+        $(document).ready(function() {
+            $('#requirement-button').tooltip('show');
+            setTimeout(function(){ $('#requirement-button').tooltip('hide'); }, 2000);
+            $('#requirement-button').click(function () {
+                $('#requirement-button').tooltip('hide')
+            })
+        });
     </script>
 
 {% endblock %}
