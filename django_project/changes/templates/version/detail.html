@@ -21,7 +21,7 @@
     <div class="row" style="margin-top:15px;margin-bottom:15px;">
         <div class="col-lg-12">
             <div class="btn-group btn-group pull-left">
-                {% if user_can_edit %}
+                {% if user_can_edit and not version.locked %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        data-title="Download sponsor list as html"
                        href='{% url 'version-sponsor-download' project_slug=version.project.slug slug=version.slug %}'>
@@ -40,19 +40,41 @@
                    href='{% url 'version-download-gnu' project_slug=version.project.slug slug=version.slug %}'>
                     <span class="glyphicon glyphicon-list-alt"></span>
                 </a>
-                {% if user_can_delete %}
+                {% if user_can_delete and not version.locked %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        data-title="Delete Version"
                        href='{% url "version-delete" project_slug=version.project.slug slug=version.slug %}'>
                         {% show_button_icon "delete" %}
                     </a>
                 {% endif %}
-                {% if user_can_edit %}
+                {% if user_can_edit and not version.locked %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        data-title="Update Version"
                        href='{% url "version-update" project_slug=version.project.slug slug=version.slug %}'>
                         {% show_button_icon "update" %}
                     </a>
+                {% endif %}
+                {% if version.locked %}
+                    {% if user.is_staff %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           data-title="Unlock this version."
+                           data-toggle="modal" data-target="#unlockModal">
+                            <i class="fa fa-unlock" aria-hidden="true"></i>
+                        </a>
+                    {% else %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           data-title="This version is locked." disabled="disabled">
+                            <i class="fa fa-lock" aria-hidden="true"></i>
+                        </a>
+                    {% endif %}
+                {% else %}
+                    {% if user.is_staff %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           data-title="Lock this version."
+                            data-toggle="modal" data-target="#lockModal">
+                            <i class="fa fa-lock" aria-hidden="true"></i>
+                        </a>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="pull-right">
@@ -72,8 +94,64 @@
         </div>
     </div>
 
+    <div class="modal fade" id="unlockModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Unlock Version</h4>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to unlock this version for editing?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="unlockVersion()">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="lockModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Lock Version</h4>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to lock this version for editing?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="lockVersion()">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     {% include "version/detail-content.html" %}
     <h5 id="comments">Comments</h5>
     {% disqus_show_comments %}
+    <script>
+        function unlockVersion() {
+            $.ajax({
+                type: 'GET',
+                url: '{% url "version-unlocked" project_slug=version.project.slug slug=version.slug %}',
+                success: function () {
+                    $('#unlockModal').modal('hide');
+                    location.reload()
+                }
+            })
+        }
+        function lockVersion() {
+            $.ajax({
+                type: 'GET',
+                url: '{% url "version-locked" project_slug=version.project.slug slug=version.slug %}',
+                success: function () {
+                    $('#lockModal').modal('hide');
+                    location.reload()
+                }
+            })
+        }
+    </script>
 
 {% endblock %}

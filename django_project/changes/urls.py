@@ -9,6 +9,7 @@ from django.conf import settings
 from feeds.version import RssVersionFeed, AtomVersionFeed
 from feeds.entry import RssEntryFeed, AtomEntryFeed
 from feeds.sponsor import RssSponsorFeed, RssPastSponsorFeed, AtomSponsorFeed, AtomPastSponsorFeed, JSONSponsorFeed
+from api_views.lock_version import LockVersion, UnlockVersion
 from views import (
     # Category
     CategoryDetailView,
@@ -19,6 +20,7 @@ from views import (
     CategoryOrderSubmitView,
     JSONCategoryListView,
     CategoryUpdateView,
+
     # Version
     VersionMarkdownView,
     VersionDetailView,
@@ -30,6 +32,7 @@ from views import (
     VersionDownload,
     VersionDownloadGnu,
     VersionSponsorDownload,
+
     # Entry
     EntryDetailView,
     EntryDeleteView,
@@ -136,6 +139,12 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/downloadsponsor/$',
         view=VersionSponsorDownload.as_view(),
         name='version-sponsor-download'),
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/locked/$',
+        view=LockVersion.as_view(),
+        name='version-locked'),
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/unlocked/$',
+        view=UnlockVersion.as_view(),
+        name='version-unlocked'),
 
     # Changelog entry management
     url(regex='^entry/(?P<pk>\d+)$',
