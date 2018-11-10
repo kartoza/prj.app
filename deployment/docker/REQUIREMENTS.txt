@@ -34,5 +34,5 @@ reportlab==3.4.0
 xhtml2pdf==0.2b1
 django-modeltranslation
 django-colorfield
-WeasyPrint
+WeasyPrint>=0.42,<0.43
 djangorestframework>=3.2,<3.7
