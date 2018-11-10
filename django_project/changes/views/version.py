@@ -380,7 +380,7 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
         project = Project.objects.get(slug=project_slug)
         if not self.request.user.is_authenticated():
             raise Http404
-        qs = Version.objects.filter(project=project)
+        qs = Version.objects.filter(project=project, locked=False)
         if self.request.user.is_staff:
             return qs
         else:
@@ -476,7 +476,7 @@ class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
         project_slug = self.kwargs.get('project_slug', None)
         project = get_object_or_404(Project, slug=project_slug)
         # Versions are uniques only within the same project.
-        versions_qs = Version.objects.filter(project=project)
+        versions_qs = Version.objects.filter(project=project, locked=False)
         if not self.request.user.is_staff:
             versions_qs = versions_qs.filter(
                 (Q(author=self.request.user) |
