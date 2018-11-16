@@ -21,12 +21,6 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
             Certifying Organisations
-
-            <button id="requirement-button" type="button" class="btn btn-default btn-icon-only tooltip-toggle" data-toggle="modal"
-                    data-target="#about" data-title="View requirements for new certifying organisations">
-                <i class="fas fa-file-signature"></i>
-            </button>
-
             {% if user.is_staff or user == the_project.owner or user in the_project.certification_managers.all %}
                 <div class="pull-right btn-group">
                     <a class="btn btn-default btn-mini tooltip-toggle"
@@ -51,6 +45,12 @@
                 </div>
             {% endif %}
         </h1>
+    </div>
+    <div style="margin-top: -15px">
+        <button id="requirement-button" class="btn-icon-only tooltip-toggle" data-toggle="modal"
+                    data-target="#about" >
+                View requirements for new certifying organisations
+            </button>
     </div>
 
     {% ifequal num_certifyingorganisations 0 %}
@@ -125,13 +125,6 @@
                 $(this).removeClass('btn-danger').addClass('btn-default')
             }
         );
-        $(document).ready(function() {
-            $('#requirement-button').tooltip('show');
-            setTimeout(function(){ $('#requirement-button').tooltip('hide'); }, 2000);
-            $('#requirement-button').click(function () {
-                $('#requirement-button').tooltip('hide')
-            })
-        });
     </script>
 
 {% endblock %}
