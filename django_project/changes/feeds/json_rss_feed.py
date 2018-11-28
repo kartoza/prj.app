@@ -12,6 +12,7 @@ class JSONFeed(SyndicationFeed):
         data['rss']['channel'] = self.add_root_elements()
 
         if self.items:
+
             item_element = []
 
             for item in self.items:
@@ -43,7 +44,21 @@ class JSONFeed(SyndicationFeed):
             domain_url = self.feed['link']
             head, sep, tail = domain_url.partition('/en/')
             item_elements['image_url'] = head + item['image_url']
-
+        # Add sponsor_level
+        if item['sponsor_level'] is not None:
+            item_elements['sponsor_level'] = item['sponsor_level']
+        # Country
+        if item['sponsor_country'] is not None:
+            item_elements['sponsor_country'] = unicode(item['sponsor_country'])
+        # Start date
+        if item['start_date'] is not None:
+            item_elements['start_date'] = item['start_date']
+        # End date
+        if item['end_date'] is not None:
+            item_elements['end_date'] = item['end_date']
+        # Sponsor url
+        if item['sponsor_url'] is not None:
+            item_elements['sponsor_url'] = item['sponsor_url']
         return item_elements
 
     def add_root_elements(self):
