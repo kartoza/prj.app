@@ -46,15 +46,12 @@
             {% endif %}
         </h1>
     </div>
-    <div>
-        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#about" aria-expanded="false" aria-controls="collapseExample">
-            View requirements for new certifying organisations
-        </button>
-        <div class="collapse" id="about">
-            {{ the_project.certification_notes|base_markdown }}
-        </div>
+    <div style="margin-top: -15px">
+        <button id="requirement-button" class="btn-icon-only tooltip-toggle" data-toggle="modal"
+                    data-target="#about" >
+                Read more about the certification organisation requirements
+            </button>
     </div>
-
 
     {% ifequal num_certifyingorganisations 0 %}
         {% if unapproved %}
@@ -100,6 +97,23 @@
         </li>
     {%  endfor %}
 
+    <!-- Modal -->
+    <div class="modal fade" id="about" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title" id="modalLabel">Requirements for new certifying organisations</h4>
+          </div>
+          <div class="modal-body">
+            {{ the_project.certification_notes|base_markdown }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <hr />
 
     <script>
@@ -110,7 +124,7 @@
             function (){
                 $(this).removeClass('btn-danger').addClass('btn-default')
             }
-        )
+        );
     </script>
 
 {% endblock %}
