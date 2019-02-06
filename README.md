@@ -13,7 +13,7 @@ Note that whilst usable, Projecta is under continual development and not
 yet feature complete.
 
 The latest source code is available at 
-[https://github.com/kartoza/projecta](https://github.com/kartoza/projecta).
+[https://github.com/kartoza/prj.app](https://github.com/kartoza/prj.app).
 
 * **Developers:** See our [developer guide](README-dev.md)
 * **For production:** See our [deployment guide](README-docker.md)
@@ -38,18 +38,18 @@ The latest source code is available at
 
 Story queue on Waffle:
 
-* [![Stories in Ready](https://badge.waffle.io/kartoza/projecta.svg?label=ready&title=Ready)](http://waffle.io/kartoza/projecta) 
-* [![Stories in In Progress](https://badge.waffle.io/kartoza/projecta.svg?label=in%20progress&title=In%20Progress)](http://waffle.io/kartoza/projecta)
+* [![Stories in Ready](https://badge.waffle.io/kartoza/prj.app.svg?label=ready&title=Ready)](http://waffle.io/kartoza/prj.app) 
+* [![Stories in In Progress](https://badge.waffle.io/kartoza/prj.app.svg?label=in%20progress&title=In%20Progress)](http://waffle.io/kartoza/prj.app)
 
-[![Throughput Graph](https://graphs.waffle.io/kartoza/projecta/throughput.svg)](https://waffle.io/kartoza/projecta/metrics)
+[![Throughput Graph](https://graphs.waffle.io/kartoza/prj.app/throughput.svg)](https://waffle.io/kartoza/prj.app/metrics)
 
-* Current test status master: [![Build Status](https://travis-ci.org/inasafe/inasafe.svg?branch=master)](https://travis-ci.org/inasafe/inasafe) and
-[![Code Health](https://landscape.io/github/kartoza/projecta/master/landscape.svg?style=flat)](https://landscape.io/github/kartoza/projecta/master)
+* Current test status master: [![Build Status](https://travis-ci.org/kartoza/prj.app.svg?branch=master)](https://travis-ci.org/kartoza/prj.app) and
+[![Code Health](https://landscape.io/github/kartoza/prj.app/master/landscape.svg?style=flat)](https://landscape.io/github/kartoza/prj.app/master)
 
-* Current test status develop: [![Build Status](https://travis-ci.org/inasafe/inasafe.svg?branch=develop)](https://travis-ci.org/inasafe/inasafe) and
-[![Code Health](https://landscape.io/github/kartoza/projecta/develop/landscape.svg?style=flat)](https://landscape.io/github/kartoza/projecta/develop)
+* Current test status develop: [![Build Status](https://travis-ci.org/kartoza/prj.app.svg?branch=develop)](https://travis-ci.org/kartoza/prj.app) and
+[![Code Health](https://landscape.io/github/kartoza/prj.app/develop/landscape.svg?style=flat)](https://landscape.io/github/kartoza/prj.app/develop)
 
-* Test coverage [![codecov](https://codecov.io/gh/kartoza/projecta/branch/develop/graph/badge.svg)](https://codecov.io/gh/kartoza/projecta)
+* Test coverage [![codecov](https://codecov.io/gh/kartoza/prj.app/branch/develop/graph/badge.svg)](https://codecov.io/gh/kartoza/prj.app)
 
 
 
@@ -178,7 +178,7 @@ Thank you to the individual contributors who have helped to build projecta:
 * Tim Sutton (Lead developer): tim@kartoza.com
 * Dražen Odobašić : dodobas@geoinfo.geof.hr
 * George Irwin : github@grvhi.com
-* Ismail Sunni : ismail@kartoza.com
+* Ismail Sunni : imajimatika@gmail.com
 * Richard Duivenvoorde : richard@duif.net
 * Rischan Mafrur
 
