@@ -49,7 +49,7 @@ class PastSponsorRSSFeed(TestCase):
             sponsorship_level=self.sponsorship_level,
             project=self.project,
             approved=True,
-            end_date=datetime.date(2019, 1, 1),
+            end_date=datetime.datetime.now() + datetime.timedelta(days=365),
         )
         self.past_sponsor = SponsorF.create(
             project=self.project,
