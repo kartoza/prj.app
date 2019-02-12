@@ -1,7 +1,11 @@
 # coding=utf-8
 """Worksheet views."""
 
+import StringIO
+import os
+import zipfile
 from collections import OrderedDict
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.views.generic import (
@@ -78,14 +82,17 @@ class WorksheetDetailView(
 
         if self.request.user.is_staff:
             context['user_can_edit'] = True
+
+        context['file_title'] = \
+            context['worksheet'].section.name \
+            + '_' + context['worksheet'].title
+        context['file_title'] = context['file_title'].encode("utf8")
         return context
 
 
 class WorksheetPrintView(WorksheetDetailView):
-    """Based on the WorkSheet Detail View, this is one is used for printing.
-
-    If you want to render as HTML for debugging, you can simply comment the
-    render_to_response method or uncomment the first "return".
+    """Based on the WorkSheet Detail View, this is one is used for
+    downloading PDF module and sample test file.
     """
 
     template_name = 'worksheet/print.html'
@@ -96,7 +103,8 @@ class WorksheetPrintView(WorksheetDetailView):
         response.render()
         # return response
         pdf_response = HttpResponse(content_type='application/pdf')
-
+        pdf_response['Content-Disposition'] = \
+            'filename={}'.format(context['file_title'])
         # Need to improve for URL outside of the dev env.
         html_object = HTML(
             string=response.content,
@@ -104,6 +112,62 @@ class WorksheetPrintView(WorksheetDetailView):
         )
         html_object.write_pdf(pdf_response)
         return pdf_response
+
+
+class WorksheetPDFZipView(WorksheetDetailView):
+    """Based on the WorkSheet Detail View, this is one is used for printing.
+
+    If you want to render as HTML for debugging, you can simply comment the
+    render_to_response method or uncomment the first "return".
+    """
+
+    template_name = 'worksheet/print.html'
+
+    def render_to_response(self, context, **response_kwargs):
+        response = super(WorksheetPDFZipView, self).render_to_response(
+            context, **response_kwargs)
+        response.render()
+        # return response
+        pdf_response = HttpResponse(content_type='application/pdf')
+        pdf_response['Content-Disposition'] = \
+            'attachment; filename={}'.format(context['file_title'])
+        # Need to improve for URL outside of the dev env.
+        html_object = HTML(
+            string=response.content,
+            base_url='file://',
+        )
+        html_object.write_pdf(pdf_response)
+
+        filenames = []
+        with open('/tmp/{}.pdf'.format(context['file_title']), 'wb') as pdf:
+            pdf.write(pdf_response.content)
+
+        filenames.append('/tmp/{}.pdf'.format(context['file_title']))
+
+        zip_subdir = '{}'.format(context['file_title'])
+
+        s = StringIO.StringIO()
+        zf = zipfile.ZipFile(s, "w")
+
+        for fpath in filenames:
+            fdir, fname = os.path.split(fpath)
+            zip_path = os.path.join(zip_subdir, fname)
+
+            zf.write(fpath, zip_path)
+
+        if context['worksheet'].external_data:
+            data_path = context['worksheet'].external_data.url
+            zip_data_path = settings.MEDIA_ROOT + data_path[6:]
+            zip_path = os.path.join(zip_subdir, context['file_title'] + '.zip')
+            zf.write(zip_data_path, zip_path)
+
+        zf.close()
+
+        zip_response = HttpResponse(
+            s.getvalue(), content_type="application/x-zip-compressed")
+        zip_response['Content-Disposition'] = \
+            'attachment; filename={}.zip'.format(context['file_title'])
+        return zip_response
 
 
 class WorksheetCreateView(LoginRequiredMixin, WorksheetMixin, CreateView):
