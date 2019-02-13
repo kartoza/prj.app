@@ -6,7 +6,15 @@
 {% block title %} {{ project.name }} Lessons {% endblock %}
 
 {% block js_head %}
+    <script>
+    var worksheets_download_url = '{% url "download-multiple-worksheets" project_slug=project.slug %}'
+    </script>
+    <script src="{% static 'js/download_multiple_files.js' %}"></script>
 {% endblock js_head %}
+
+{% block css_head %}
+    <link rel="stylesheet" href="{% static 'css/section-list.css' %}">
+{% endblock css_head %}
 
 {% block extra_head %}
 {% endblock %}
@@ -20,7 +28,17 @@
         <h1 class="text-muted">
             {{ project.name }} Worksheet Sections
             <div class="pull-right btn-group">
-            <a class="btn btn-default btn-mini tooltip-toggle"
+                    <a class="btn btn-default btn-mini tooltip-toggle" id="download-multiple-submit"
+                       onclick="downloadCheckedFiles()"
+                       data-title="Download Checked Files as Zip" style="display: none">
+                        <span>Download as Zip</span>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle" id="toggle-checklist-btn"
+                       onclick="toggleCheckList(this)"
+                       data-title="Download Multiple Module & Sample Files">
+                        <span class="fa fa-download"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "about-lesson-app" project_slug=project.slug %}'
                        data-title="About Lessons App">
                         <span class="glyphicon glyphicon-info-sign"></span>

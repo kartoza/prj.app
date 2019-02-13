@@ -3,8 +3,9 @@
 {% load lesson_tags %}
 <div class="row section-list" style="margin-top:5px;">
     <div class="col-lg-9" id="{{ section.slug }}">
+        <input class="section-checkbox" type="checkbox" onchange="toggleCheckAllWorksheet(this)" hidden>
         <h3>
-            {{ section.name }} {{ section|is_translation_up_to_date }}
+            {{ forloop.counter }}. {{ section.name }} {{ section|is_translation_up_to_date }}
         </h3>
          {{ section.notes | base_markdown }}
     </div>
@@ -42,6 +43,8 @@
 </div>
 
 {% for worksheet in worksheets %}
-   {% include 'section/includes/row-worksheet.html' %}
+    {% if worksheet.title != '' %}
+       {% include 'section/includes/row-worksheet.html' %}
+    {% endif %}
 {% endfor %}
 <hr>
