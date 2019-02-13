@@ -87,6 +87,7 @@ TEMPLATES = [
             absolute_path('vota', 'templates'),
             absolute_path('changes', 'templates'),
             absolute_path('certification', 'templates'),
+            absolute_path('lesson', 'templates'),
         ],
         'APP_DIRS': False,
         'OPTIONS': {

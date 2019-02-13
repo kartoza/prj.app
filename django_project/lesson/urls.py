@@ -40,7 +40,8 @@ from lesson.views.worksheet import (
     WorksheetOrderView,
     WorksheetOrderSubmitView,
     WorksheetModuleQuestionAnswers,
-    WorksheetPDFZipView
+    WorksheetPDFZipView,
+    download_multiple_worksheet
 )
 from lesson.views.specification import (
     SpecificationCreateView,
@@ -74,7 +75,12 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/section/(?P<slug>[\w-]+)/delete/$',
         view=SectionDeleteView.as_view(),
         name='section-delete'),
+
     # Worksheet
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              'download-multiple-worksheet/$',
+        view=download_multiple_worksheet,
+        name='download-multiple-worksheets'),
     url(regex='^(?P<project_slug>[\w-]+)/section/'
               '(?P<section_slug>[\w-]+)/worksheet/create/$',
         view=WorksheetCreateView.as_view(),

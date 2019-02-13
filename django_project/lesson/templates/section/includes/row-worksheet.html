@@ -2,6 +2,7 @@
 {% load lesson_tags %}
 <div class="row section-list" style="margin-top:5px; margin-left: 20px;">
     <div class="col-lg-9" id="{{ worksheet.module }}">
+        <input class="worksheet-checkbox {{ worksheet.section.slug }}-checkbox" worksheet-pk="{{ worksheet.pk }}" type="checkbox" hidden>
         <h4>
             <a href="{% url "worksheet-detail" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}">
                 {{ forloop.parentloop.counter }}.{{ forloop.counter }}. {{ worksheet.module }}
