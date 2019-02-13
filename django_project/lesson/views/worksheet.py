@@ -449,6 +449,6 @@ def download_multiple_worksheet(request, **kwargs):
     zip_response = HttpResponse(
         s.getvalue(), content_type="application/x-zip-compressed")
     zip_response['Content-Disposition'] = \
-        'attachment; filename={}-worksheet.zip'.format(project.name.encode('utf8'))
+        'attachment; filename={}-worksheet.zip'.format(
+            project.name.encode('utf8'))
     return zip_response
-
