@@ -7,9 +7,7 @@ import zipfile
 from collections import OrderedDict
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, JsonResponse
-from django.template import Template, Context
-from django.template.loader import get_template
+from django.http import HttpResponse
 from django.views.generic import (
     DetailView,
     CreateView,
