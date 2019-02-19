@@ -24,12 +24,14 @@ function toggleCheckAllWorksheet(that) {
 
 function downloadCheckedFiles() {
     var $checkedElements = $('.worksheet-checkbox:checked');
-    var worksheets = [];
+    var worksheets = {};
     $.each($checkedElements, function (index, element) {
-        worksheets.push($(element).attr('worksheet-pk'))
+        var pk = $(element).attr('worksheet-pk');
+        var numbering = $(element).attr('worksheet-number');
+        worksheets[pk] = numbering
     });
 
-    window.open(worksheets_download_url + '?worksheet=' + worksheets)
+    window.open(worksheets_download_url + '?worksheet=' + JSON.stringify(worksheets))
 
     $('input[type="checkbox"]').prop('checked', false).hide();
     $('#toggle-checklist-btn').removeClass('btn-success').addClass('btn-default');

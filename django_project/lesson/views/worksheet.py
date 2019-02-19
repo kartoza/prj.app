@@ -1,6 +1,7 @@
 # coding=utf-8
 """Worksheet views."""
 
+import json
 import StringIO
 import os
 import zipfile
@@ -85,7 +86,7 @@ class WorksheetDetailView(
 
         context['file_title'] = \
             context['worksheet'].section.name \
-            + '_' + context['worksheet'].title
+            + '-' + context['worksheet'].module
         context['file_title'] = context['file_title'].encode("utf8")
         return context
 
@@ -98,13 +99,14 @@ class WorksheetPrintView(WorksheetDetailView):
     template_name = 'worksheet/print.html'
 
     def render_to_response(self, context, **response_kwargs):
+        numbering = self.request.GET.get('q', '')
         response = super(WorksheetPrintView, self).render_to_response(
             context, **response_kwargs)
         response.render()
         # return response
         pdf_response = HttpResponse(content_type='application/pdf')
         pdf_response['Content-Disposition'] = \
-            'filename={}'.format(context['file_title'])
+            'filename={}. {}'.format(numbering, context['file_title'])
         # Need to improve for URL outside of the dev env.
         html_object = HTML(
             string=response.content,
@@ -124,6 +126,7 @@ class WorksheetPDFZipView(WorksheetDetailView):
     template_name = 'worksheet/print.html'
 
     def render_to_response(self, context, **response_kwargs):
+        numbering = self.request.GET.get('q', '')
         response = super(WorksheetPDFZipView, self).render_to_response(
             context, **response_kwargs)
         response.render()
@@ -139,12 +142,14 @@ class WorksheetPDFZipView(WorksheetDetailView):
         html_object.write_pdf(pdf_response)
 
         filenames = []
-        with open('/tmp/{}.pdf'.format(context['file_title']), 'wb') as pdf:
+        with open('/tmp/{}. {}.pdf'.format(
+                numbering, context['file_title']), 'wb') as pdf:
             pdf.write(pdf_response.content)
 
-        filenames.append('/tmp/{}.pdf'.format(context['file_title']))
+        filenames.append(
+            '/tmp/{}. {}.pdf'.format(numbering, context['file_title']))
 
-        zip_subdir = '{}'.format(context['file_title'])
+        zip_subdir = '{}. {}'.format(numbering, context['file_title'])
 
         s = StringIO.StringIO()
         zf = zipfile.ZipFile(s, "w")
@@ -158,7 +163,9 @@ class WorksheetPDFZipView(WorksheetDetailView):
         if context['worksheet'].external_data:
             data_path = context['worksheet'].external_data.url
             zip_data_path = settings.MEDIA_ROOT + data_path[6:]
-            zip_path = os.path.join(zip_subdir, context['file_title'] + '.zip')
+            zip_path = os.path.join(
+                zip_subdir,
+                '{}. {}.zip'.format(numbering, context['file_title']))
             zf.write(zip_data_path, zip_path)
 
         zf.close()
@@ -166,7 +173,8 @@ class WorksheetPDFZipView(WorksheetDetailView):
         zip_response = HttpResponse(
             s.getvalue(), content_type="application/x-zip-compressed")
         zip_response['Content-Disposition'] = \
-            'attachment; filename={}.zip'.format(context['file_title'])
+            'attachment; filename={}. {}.zip'.format(
+                numbering, context['file_title'])
         return zip_response
 
 
@@ -376,8 +384,8 @@ def download_multiple_worksheet(request, **kwargs):
 
     project_slug = kwargs.pop('project_slug')
     project = Project.objects.get(slug=project_slug)
-    worksheets_pk = request.GET.get('worksheet')
-    worksheets = worksheets_pk.split(",")
+    worksheets_obj = request.GET.get('worksheet')
+    worksheets = json.loads(worksheets_obj)
 
     def get_context_data(pk):
         """Get the context data which is passed to a template.
@@ -411,9 +419,11 @@ def download_multiple_worksheet(request, **kwargs):
     zf = zipfile.ZipFile(s, "w")
 
     for pk in worksheets:
+        numbering = worksheets[pk]
+        pk = int(pk)
         worksheet = Worksheet.objects.get(pk=pk)
-        pdf_title = worksheet.title.encode("utf8")
-        context = get_context_data(int(pk))
+        pdf_title = '{}. {}'.format(numbering, worksheet.module.encode("utf8"))
+        context = get_context_data(pk)
         response = render_to_response('worksheet/print.html', context=context)
 
         pdf_response = HttpResponse(content_type='application/pdf')
@@ -431,7 +441,8 @@ def download_multiple_worksheet(request, **kwargs):
 
         fpath = '/tmp/{}.pdf'.format(pdf_title)
 
-        zip_subdir = '{}'.format(worksheet.section.name)
+        dir_number = numbering.split('.')[0]
+        zip_subdir = '{}. {}'.format(dir_number, worksheet.section.name)
 
         fdir, fname = os.path.split(fpath)
         zip_path = os.path.join(zip_subdir, fname)
