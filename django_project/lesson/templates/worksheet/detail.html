@@ -66,13 +66,13 @@
         <div class="col-lg-8" style="text-align:right;">
             <h2>
                 <strong>
-                    {% trans 'Section' %} : {{ worksheet.section.name }}
+                    {% trans 'Section' %} : {{ section_number }}. {{ worksheet.section.name }}
                 </strong>
                 {{ worksheet.section|is_translation_up_to_date }}
             </h2>
             <h3 style="margin-top:-10px;margin-bottom:20px;">
                 <i>
-                    {% trans 'Module' %} : {{ worksheet.module }}
+                    {% trans 'Module' %} : {{ module_number }}. {{ worksheet.module }}
                 </i>
                 {{ worksheet|is_translation_up_to_date }}
             </h3>

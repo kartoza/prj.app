@@ -113,8 +113,8 @@ h2{
         <img src="{{ worksheet.section.project.image_file.file }}">
     {% endif %}
     <div>
-        <h1>{% trans 'Section' %} : {{ worksheet.section.name }}</h1>
-        <h2>{% trans 'Module' %} : {{ worksheet.module }}</h2>
+        <h1>{% trans 'Section' %} : {{ section_number }}. {{ worksheet.section.name }}</h1>
+        <h2>{% trans 'Module' %} : {{ module_number }}. {{ worksheet.module }}</h2>
     </div>
 </header>
 <hr class="icon-project-color" />
