@@ -39,15 +39,16 @@ class PastSponsorRSSFeed(TestCase):
         self.project = ProjectF.create(
             name='testproject')
 
-        # Current sponsor
-        self.sponsor = SponsorF.create(
-            project=self.project,
-            name='Current Sponsor')
         self.sponsorship_level = SponsorshipLevelF.create(
             project=self.project,
             name='Gold')
-        self.sponsorship_period = SponsorshipPeriodF.create(
-            sponsor=self.sponsor,
+
+        # Current sponsor
+        self.current_sponsor = SponsorF.create(
+            project=self.project,
+            name='Current Sponsor')
+        self.current_sponsorship_period = SponsorshipPeriodF.create(
+            sponsor=self.current_sponsor,
             sponsorship_level=self.sponsorship_level,
             project=self.project,
             approved=True,
@@ -89,11 +90,13 @@ class PastSponsorRSSFeed(TestCase):
         :return:
         """
         self.project.delete()
-        self.sponsor.delete()
+        self.current_sponsor.delete()
         self.sponsorship_level.delete()
-        self.sponsorship_period.delete()
+        self.current_sponsorship_period.delete()
         self.past_sponsor.delete()
         self.past_sponsorship_period.delete()
+        self.one_decade_ago_sponsor.delete()
+        self.one_decade_ago_sponsorship_period.delete()
         self.user.delete()
 
     @override_settings(VALID_DOMAIN=['testserver', ])
@@ -102,8 +105,8 @@ class PastSponsorRSSFeed(TestCase):
             'project_slug': self.project.slug
         }))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual('Past Sponsor' in response.content, True)
-        self.assertEqual('New Sponsor' in response.content, False)
+        self.assertEqual(self.past_sponsor.name in response.content, True)
+        self.assertEqual(self.current_sponsor.name in response.content, False)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_current_sponsor_rss_feed_view(self):
@@ -111,5 +114,5 @@ class PastSponsorRSSFeed(TestCase):
             'project_slug': self.project.slug
         }))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual('Past Sponsor' in response.content, False)
-        self.assertEqual('Current Sponsor' in response.content, True)
+        self.assertEqual(self.past_sponsor.name in response.content, False)
+        self.assertEqual(self.current_sponsor.name in response.content, True)
