@@ -38,6 +38,8 @@ class PastSponsorRSSFeed(TestCase):
         self.user.save()
         self.project = ProjectF.create(
             name='testproject')
+
+        # Current sponsor
         self.sponsor = SponsorF.create(
             project=self.project,
             name='Current Sponsor')
@@ -49,8 +51,11 @@ class PastSponsorRSSFeed(TestCase):
             sponsorship_level=self.sponsorship_level,
             project=self.project,
             approved=True,
+            start_date=datetime.datetime.now() - datetime.timedelta(days=180),
             end_date=datetime.datetime.now() + datetime.timedelta(days=365),
         )
+
+        # Past sponsor under a certain time limit, in this case 1 year
         self.past_sponsor = SponsorF.create(
             project=self.project,
             name='Past Sponsor')
@@ -59,8 +64,21 @@ class PastSponsorRSSFeed(TestCase):
             sponsorship_level=self.sponsorship_level,
             project=self.project,
             approved=True,
-            start_date=datetime.datetime(2010, 1, 1),
-            end_date=datetime.datetime(2011, 1, 1)
+            start_date=datetime.datetime.now() - datetime.timedelta(days=180),
+            end_date=datetime.datetime.now() - datetime.timedelta(days=30)
+        )
+
+        # It's a very old sponsor that will not be shown
+        self.one_decade_ago_sponsor = SponsorF.create(
+            project=self.project,
+            name='One Decade Ago Sponsor')
+        self.one_decade_ago_sponsorship_period = SponsorshipPeriodF.create(
+            sponsor=self.one_decade_ago_sponsor,
+            sponsorship_level=self.sponsorship_level,
+            project=self.project,
+            approved=True,
+            start_date=datetime.datetime.now() - datetime.timedelta(days=4000),
+            end_date=datetime.datetime.now() - datetime.timedelta(days=3650)
         )
 
     @override_settings(VALID_DOMAIN=['testserver', ])
