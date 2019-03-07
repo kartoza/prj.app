@@ -3,7 +3,7 @@
 
 import factory
 import factory.fuzzy
-import datetime
+from datetime import datetime, timedelta, date
 from changes.models.category import Category
 from changes.models.entry import Entry
 from changes.models.version import Version
@@ -98,8 +98,11 @@ class SponsorshipPeriodF(factory.django.DjangoModelFactory):
     class Meta:
         model = SponsorshipPeriod
 
-    start_date = factory.fuzzy.FuzzyDate(datetime.date(2014, 1, 1))
-    end_date = factory.fuzzy.FuzzyDate(datetime.date(2015, 1, 1))
+    start_date = factory.fuzzy.FuzzyDate(date(2014, 1, 1))
+    end_date = factory.fuzzy.FuzzyDate(
+        start_date=datetime.date(datetime.now()) + timedelta(days=365),
+        end_date=datetime.date(datetime.now()) + timedelta(days=750),
+    )
     approved = True
     author = factory.SubFactory(UserF)
     project = factory.SubFactory('base.tests.model_factories.ProjectF')

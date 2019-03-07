@@ -1,4 +1,7 @@
 # coding=utf-8
+
+import json
+
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.test.client import Client
@@ -68,6 +71,9 @@ class JSONFeedTest(TestCase):
             'project_slug': self.project.slug
         }))
         self.assertEqual(response.status_code, 200)
+        items = json.loads(response._container[1])['rss']['channel']['item']
+        self.assertGreater(
+            len(items), 0, 'There should be non empty list of sponsor')
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_is_JSON_feed(self):
