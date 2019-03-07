@@ -130,15 +130,17 @@ class RssSponsorFeed(Feed):
             .format(**data)
         return descriptions
 
-    #def item_extra_kwargs(self, item):
+    # def item_extra_kwargs(self, item):
     #    return {'image_url': item.sponsor.logo.url}
     def item_extra_kwargs(self, item):
         return {
             'image_url': item.sponsor.logo.url,
             'sponsor_level': item.sponsorship_level.name,
             'sponsor_country': item.sponsor.country.name,
-            'start_date': item.start_date.strftime('%Y%m%d'),  # '%d %B %Y' => "16 March 2019"
-            'end_date': item.end_date.strftime('%d %B %Y')     # '%Y%m%d'   => "20181012"
+            # '%d %B %Y' => "16 March 2019"
+            # '%Y%m%d'   => "20181012"
+            'start_date': item.start_date.strftime('%Y%m%d'),
+            'end_date': item.end_date.strftime('%d %B %Y')
         }
 
 
@@ -288,7 +290,8 @@ class JSONSponsorFeed(Feed):
             'sponsor_level': item.sponsorship_level.name,
             'sponsor_country': item.sponsor.country.name,
             'sponsor_url': item.sponsor.sponsor_url,
-            'start_date': item.start_date.strftime('%d %B %Y'),  # '%d %B %Y' => "16 March 2019"
-            'end_date': item.end_date.strftime('%d %B %Y')     # '%Y%m%d'   => "20181012"
+            # '%d %B %Y' => "16 March 2019"
+            # '%Y%m%d'   => "20181012"
+            'start_date': item.start_date.strftime('%d %B %Y'),
+            'end_date': item.end_date.strftime('%d %B %Y')
         }
-
