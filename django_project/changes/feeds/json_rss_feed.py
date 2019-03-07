@@ -5,14 +5,16 @@ from django.utils.encoding import force_unicode
 from django.utils.feedgenerator import SyndicationFeed, rfc2822_date
 
 
-
 class JSONFeed(SyndicationFeed):
     mime_type = 'application/json; charset=utf-8'
 
     def write(self, outfile, encoding):
-        data = {}
-        data['rss'] = {'version': '2.0'}
-        data['rss']['channel'] = self.add_root_elements()
+        data = {
+            'rss': {
+                'version': '2.0',
+                'channel': self.add_root_elements()
+            }
+        }
 
         if self.items:
 
@@ -26,10 +28,11 @@ class JSONFeed(SyndicationFeed):
         outfile.write(json.dumps(data, encoding=encoding))
 
     def add_item_elements(self, item):
-        item_elements = {}
+        item_elements = {
+            'title': item['title'],
+            'link': item['link']
+        }
 
-        item_elements['title'] = item['title']
-        item_elements['link'] = item['link']
         if item['description'] is not None:
             item_elements['description'] = item['description']
 
@@ -66,11 +69,11 @@ class JSONFeed(SyndicationFeed):
         return item_elements
 
     def add_root_elements(self):
-        root_elements = {}
-
-        root_elements['title'] = self.feed['title']
-        root_elements['link'] = self.feed['link']
-        root_elements['description'] = self.feed['description']
-        root_elements['lastBuildDate'] = rfc2822_date(self.latest_post_date())
+        root_elements = {
+            'title': self.feed['title'],
+            'link': self.feed['link'],
+            'description': self.feed['description'],
+            'lastBuildDate': rfc2822_date(self.latest_post_date())
+        }
 
         return root_elements
