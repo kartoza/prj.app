@@ -1,5 +1,6 @@
 # coding=utf-8
 import datetime
+import urllib
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.test.client import Client
@@ -123,9 +124,11 @@ class PastSponsorRSSFeed(TestCase):
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_past_sponsor_rss_feed_view_with_years_limit(self):
-        response = self.client.get(reverse('past-sponsor-rss-feed', kwargs={
+        url_with_limit = reverse('past-sponsor-rss-feed', kwargs={
             'project_slug': self.project.slug
-        }))
+        })
+        url_with_limit += '?' + urllib.urlencode({'years_limit': 2})
+        response = self.client.get(url_with_limit)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.current_sponsor.name in response.content, False)
         self.assertEqual(self.past_sponsor.name in response.content, True)
