@@ -20,7 +20,7 @@ beautifulsoup4==4.6.0
 # disqus
 django-disqus==0.5
 # custom slugify
-awesome-slugify==1.4
+awesome-slugify==1.6.5
 #translation management tool
 django-rosetta==0.7.0
 # youtube embed
