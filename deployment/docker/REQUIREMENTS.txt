@@ -32,6 +32,6 @@ django-allauth==0.25.2
 Unidecode==0.4.20
 reportlab==3.4.0
 xhtml2pdf==0.2b1
-django-modeltranslation
+django-modeltranslation==0.12.2
 django-colorfield
 WeasyPrint==0.42.3
