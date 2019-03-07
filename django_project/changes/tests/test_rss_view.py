@@ -59,6 +59,8 @@ class PastSponsorRSSFeed(TestCase):
             sponsorship_level=self.sponsorship_level,
             project=self.project,
             approved=True,
+            start_date=datetime.datetime(2010, 1, 1),
+            end_date=datetime.datetime(2011, 1, 1)
         )
 
     @override_settings(VALID_DOMAIN=['testserver', ])
