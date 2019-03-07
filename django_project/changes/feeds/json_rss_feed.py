@@ -1,6 +1,9 @@
 # coding=utf-8
 import json
+
+from django.utils.encoding import force_unicode
 from django.utils.feedgenerator import SyndicationFeed, rfc2822_date
+
 
 
 class JSONFeed(SyndicationFeed):
@@ -49,7 +52,8 @@ class JSONFeed(SyndicationFeed):
             item_elements['sponsor_level'] = item['sponsor_level']
         # Country
         if item['sponsor_country'] is not None:
-            item_elements['sponsor_country'] = unicode(item['sponsor_country'])
+            item_elements['sponsor_country'] = force_unicode(
+                item['sponsor_country'])
         # Start date
         if item['start_date'] is not None:
             item_elements['start_date'] = item['start_date']
