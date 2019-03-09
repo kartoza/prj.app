@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import urllib
+import json
 import datetime
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
@@ -40,7 +41,6 @@ class JSONFeedTest(TestCase):
         self.user.save()
         self.project = ProjectF.create(
             name='testproject')
-
 
         self.sponsorship_level = SponsorshipLevelF.create(
             project=self.project,
@@ -101,6 +101,27 @@ class JSONFeedTest(TestCase):
         self.one_decade_ago_sponsor.delete()
         self.one_decade_ago_sponsorship_period.delete()
         self.user.delete()
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_JSON_feed_view(self):
+        response = self.client.get(reverse('sponsor-json-feed', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+        items = json.loads(response._container[1])['rss']['channel']['item']
+        self.assertGreater(
+            len(items), 0, 'There should be non empty list of sponsor')
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_current_sponsor_json_feed_view(self):
+        response = self.client.get(reverse('sponsor-json-feed', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.current_sponsor.name in response.content, True)
+        self.assertEqual(self.past_sponsor.name in response.content, False)
+        self.assertEqual(
+            self.one_decade_ago_sponsor.name in response.content, False)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_past_sponsor_json_feed_view_without_years_limit(self):

@@ -222,6 +222,7 @@ class JSONSponsorFeed(Feed):
 
         :raises: Http404
         """
+        self.years_limit = request.GET.get('years_limit', '')
         project_slug = kwargs.get('project_slug', None)
         self.domain_path_url = request.build_absolute_uri(reverse('home'))
         return get_object_or_404(Project, slug=project_slug)
@@ -307,3 +308,44 @@ class JSONSponsorFeed(Feed):
             'start_date': item.start_date.strftime('%d %B %Y'),
             'end_date': item.end_date.strftime('%d %B %Y')
         }
+
+
+class JSONPastSponsorFeed(JSONSponsorFeed):
+    """JSON Feed class for past sponsor."""
+
+    def description(self, obj):
+        """Return a description for the RSS.
+
+         :param obj: A project
+         :type obj: Project
+
+         :returns: Description of the RSS Feed.
+         :rtype: str
+         """
+        return 'These are the past sponsors of %s project.' % obj.name
+
+    def items(self, obj):
+        """Return past (former) sponsors of the project.
+
+        :param obj: A project
+        :type obj: Project
+
+        :returns: List of past sponsor of a project
+        :rtype: list
+        """
+        today = datetime.datetime.now().date()
+        try:
+            self.years_limit = int(self.years_limit)
+            if self.years_limit > 0:
+                date_limit = today - datetime.timedelta(365 * self.years_limit)
+                return SponsorshipPeriod.objects.filter(
+                    project=obj, end_date__lt=today, end_date__gt=date_limit
+                ).order_by('-end_date')
+            else:
+                return SponsorshipPeriod.objects.filter(
+                    project=obj, end_date__lt=today
+                ).order_by('-end_date')
+        except ValueError:
+            return SponsorshipPeriod.objects.filter(
+                project=obj, end_date__lt=today
+            ).order_by('-end_date')
