@@ -1,8 +1,6 @@
 # coding=utf-8
-
-import urllib
-import json
 import datetime
+import urllib
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.test.client import Client
@@ -15,8 +13,8 @@ from core.model_factories import UserF
 import logging
 
 
-class JSONFeedTest(TestCase):
-    """JSON Feed unittest."""
+class PastSponsorRSSFeed(TestCase):
+    """RSS feed for past sponsor test."""
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
@@ -103,14 +101,67 @@ class JSONFeedTest(TestCase):
         self.user.delete()
 
     @override_settings(VALID_DOMAIN=['testserver', ])
-    def test_JSON_feed_view(self):
-        response = self.client.get(reverse('sponsor-json-feed', kwargs={
+    def test_current_sponsor_rss_feed_view(self):
+        response = self.client.get(reverse('sponsor-rss-feed', kwargs={
             'project_slug': self.project.slug
         }))
         self.assertEqual(response.status_code, 200)
-        items = json.loads(response._container[1])['rss']['channel']['item']
-        self.assertGreater(
-            len(items), 0, 'There should be non empty list of sponsor')
+        self.assertEqual(self.current_sponsor.name in response.content, True)
+        self.assertEqual(self.past_sponsor.name in response.content, False)
+        self.assertEqual(
+            self.one_decade_ago_sponsor.name in response.content, False)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_past_sponsor_rss_feed_view_without_years_limit(self):
+        response = self.client.get(reverse('past-sponsor-rss-feed', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.current_sponsor.name in response.content, False)
+        self.assertEqual(self.past_sponsor.name in response.content, True)
+        self.assertEqual(
+            self.one_decade_ago_sponsor.name in response.content, True)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_past_sponsor_rss_feed_view_with_years_limit(self):
+        url_with_limit = reverse('past-sponsor-rss-feed', kwargs={
+            'project_slug': self.project.slug
+        })
+        url_with_limit += '?' + urllib.urlencode({'years_limit': 2})
+        response = self.client.get(url_with_limit)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.current_sponsor.name in response.content, False)
+        self.assertEqual(self.past_sponsor.name in response.content, True)
+        self.assertEqual(
+            self.one_decade_ago_sponsor.name in response.content, False)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_past_sponsor_rss_feed_view_with_invalid_years_limit(self):
+        """test_past_sponsor_rss_feed_view_with_invalid_years_limit
+
+        It will return all past sponsors.
+        """
+        url_with_limit = reverse('past-sponsor-rss-feed', kwargs={
+            'project_slug': self.project.slug
+        })
+        url_with_limit += '?' + urllib.urlencode({'years_limit': 'a'})
+        response = self.client.get(url_with_limit)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.current_sponsor.name in response.content, False)
+        self.assertEqual(self.past_sponsor.name in response.content, True)
+        self.assertEqual(
+            self.one_decade_ago_sponsor.name in response.content, True)
+
+        url_with_limit = reverse('past-sponsor-rss-feed', kwargs={
+            'project_slug': self.project.slug
+        })
+        url_with_limit += '?' + urllib.urlencode({'years_limit': -1})
+        response = self.client.get(url_with_limit)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.current_sponsor.name in response.content, False)
+        self.assertEqual(self.past_sponsor.name in response.content, True)
+        self.assertEqual(
+            self.one_decade_ago_sponsor.name in response.content, True)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_current_sponsor_json_feed_view(self):
