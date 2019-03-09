@@ -1,6 +1,9 @@
 # coding=utf-8
+"""Test for RSS and JSON feed for Sponsor and Past Sponsor"""
 import datetime
 import urllib
+import logging
+
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.test.client import Client
@@ -10,11 +13,10 @@ from changes.tests.model_factories import (
     SponsorF,
     SponsorshipPeriodF)
 from core.model_factories import UserF
-import logging
 
 
-class PastSponsorRSSFeed(TestCase):
-    """RSS feed for past sponsor test."""
+class TestSponsorFeeds(TestCase):
+    """Test for sponsor feed in RSS and JSON."""
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
@@ -85,11 +87,6 @@ class PastSponsorRSSFeed(TestCase):
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
-        """
-        Teardown after each test.
-
-        :return:
-        """
         self.project.delete()
         self.current_sponsor.delete()
         self.sponsorship_level.delete()
