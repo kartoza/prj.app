@@ -60,6 +60,9 @@ class WorksheetDetailView(
         """
         context = super(WorksheetDetailView, self).get_context_data(**kwargs)
         pk = self.kwargs.get('pk', None)
+        numbering = self.request.GET.get('q', '')
+        context['section_number'] = numbering.split('.')[0]
+        context['module_number'] = numbering
 
         context['requirements'] = Specification.objects.filter(worksheet=pk)
 
@@ -424,6 +427,8 @@ def download_multiple_worksheet(request, **kwargs):
         worksheet = Worksheet.objects.get(pk=pk)
         pdf_title = '{}. {}'.format(numbering, worksheet.module.encode("utf8"))
         context = get_context_data(pk)
+        context['section_number'] = numbering.split('.')[0]
+        context['module_number'] = numbering
         response = render_to_response('worksheet/print.html', context=context)
 
         pdf_response = HttpResponse(content_type='application/pdf')
