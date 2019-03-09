@@ -10,7 +10,7 @@ from django.utils.feedgenerator import Atom1Feed
 from django.shortcuts import get_object_or_404
 from base.models.project import Project
 from changes.models.sponsorship_period import SponsorshipPeriod
-from changes.feeds.json_rss_feed import JSONFeed
+from changes.feeds.json_feed import JSONFeed
 
 
 # noinspection PyMethodMayBeStatic
