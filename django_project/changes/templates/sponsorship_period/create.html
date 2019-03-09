@@ -25,9 +25,6 @@
 {% block content %}
     <script>
     $(function() {
-        var start_date = $("#id_start_date").val();
-        var end_date = $("#id_end_date").val();
-
         $("#id_start_date").attr('data-language', 'en');
         $("#id_end_date").attr('data-language', 'en');
 
@@ -38,7 +35,7 @@
             onSelect: function (date) {
                 $("#id_end_date").val(date);
                 $("#id_end_date").datepicker({minDate: new Date(date)})
-            }
+            },
         });
 
         $("#id_end_date").datepicker({
@@ -48,11 +45,14 @@
             onSelect: function (date) {
                 $("#id_start_date").val(date);
                 $("#id_start_date").datepicker({maxDate: new Date(date)})
-            }
+            },
         });
 
-        $('#id_start_date').datepicker().data('datepicker').selectDate(new Date(start_date.toString()));
-        $('#id_end_date').datepicker().data('datepicker').selectDate(new Date(end_date.toString()));
+        // Set default date for start and end
+        let today = new Date();
+        let oneYearLater = new Date().setFullYear(today.getFullYear() + 1);
+        $('#id_start_date').datepicker().data('datepicker').selectDate(today);
+        $('#id_end_date').datepicker().data('datepicker').selectDate(new Date(oneYearLater));
     });
     </script>
 
