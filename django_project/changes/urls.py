@@ -204,6 +204,9 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/sponsors/json/$',
         view=JSONSponsorFeed(),
         name='sponsor-json-feed'),
+    url(regex='^(?P<project_slug>[\w-]+)/past-sponsors/json/$',
+        view=JSONSponsorFeed(),
+        name='past-sponsor-json-feed'),
 
     # User map
     # url(r'^user-map/', include('user_map.urls')),
