@@ -766,7 +766,7 @@ class TestVersionViews(TestCase):
             'project_slug': other_project.slug
         }))
         self.assertEqual(
-            response.context[0].get('version'),
+            response.context.get('version'),
             version_same_name_from_other_project)
         self.assertEqual(response.status_code, 200)
 
