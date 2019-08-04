@@ -1,0 +1,68 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+{% load custom_markup %}
+
+{% block title %}Certifying Organisation - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Certifying Organisation (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <style>
+        .order:hover {
+            background-color: #F9F9F9;
+        }
+    </style>
+
+    <div class="page-header">
+        <h1 class="text-muted">
+            Rejected Certifying Organisations
+
+                <div class="pull-right btn-group">
+                    <a class="btn btn-primary btn-mini tooltip-toggle"
+                       href='{% url "certifyingorganisation-create" project_slug %}'
+                       data-title="Sign Up for Certification!">
+                        Sign Up
+                    </a>
+                    {% if user.is_staff or user == the_project.owner or user in the_project.certification_managers.all %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "certifyingorganisation-create" project_slug %}'
+                           data-title="Create New Certifying Organisation">
+                            {% show_button_icon "add" %}
+                        </a>
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "pending-certifyingorganisation-list" project_slug %}'
+                           data-title="View Pending Certifying Organisations">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </a>
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "certifyingorganisation-list" project_slug %}'
+                           data-title="View Certifying Organisations">
+                            <span class="glyphicon glyphicon-th-list"></span>
+                        </a>
+                    {% endif %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url 'about' the_project.slug %}'
+                       data-title="About Certification">
+                        <i class="glyphicon glyphicon-info-sign"></i>
+                    </a>
+                </div>
+        </h1>
+    </div>
+
+    {% ifequal num_certifyingorganisations 0 %}
+        <h3>No certifying organisations are rejected.</h3>
+    {% endifequal %}
+
+    {% for certifyingorganisation in certifyingorganisations %}
+        <div class="col-lg-10">
+            <h3>{{ certifyingorganisation.name }}</h3>
+            <p style="color: grey;">Status: {{ certifyingorganisation.status }}</p>
+        </div>
+    {%  endfor %}
+
+{% endblock %}

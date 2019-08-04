@@ -44,6 +44,11 @@
                        data-title="Create New Certifying Organisation">
                         {% show_button_icon "add" %}</a>
                     <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "certifyingorganisation-rejected-list" project_slug %}'
+                           data-title="View Rejected Certifying Organisations">
+                            <span class="glyphicon glyphicon-ban-circle"></span>
+                        </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "certifyingorganisation-list" project_slug %}'
                        data-title="Back">
                         <span class="glyphicon glyphicon-arrow-left"></span>
@@ -107,6 +112,14 @@
                             data-title="Approve {{ certifyingorganisation.name }}">
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
+                        <a class="btn btn-default btn-delete btn-mini tooltip-toggle btn-reject"
+                           organisation_name="{{ certifyingorganisation.name }}"
+                           organisation_country="{{ certifyingorganisation.country.name }}"
+                           organisation_slug="{{ certifyingorganisation.slug }}"
+                           organisation_project_slug="{{ certifyingorganisation.project.slug }}"
+                            data-title="Reject {{ certifyingorganisation.name }}">
+                            <span class="glyphicon glyphicon-thumbs-down"></span>
+                        </a>
                         <a class="btn btn-default btn-mini tooltip-toggle"
                             href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                             data-title="Edit {{ certifyingorganisation.name }}">
@@ -124,6 +137,38 @@
     {% endfor %}
     <hr/>
     {% include "_pagination.html" %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="rejectionModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><b>Rejection Form</b></h4>
+                </div>
+                <div class="modal-body">
+                    <p>You are going to reject this organisation below:</p>
+                    <ul>
+                        <li><span>Organisation: </span><span class="rejection-form-info" id="rejected-organisation-name"></span></li>
+                        <li><span>Country: </span><span class="rejection-form-info" id="rejected-organisation-country"></span></li>
+                    </ul>
+                    <form id="rejectionForm" role="form">
+                        <label>Please indicate your reason of this rejection.</label><br>
+                        <input name="status" class="form-control" value="Rejected, because ">
+                        <input name="rejected-organisation-slug" hidden>
+                        <input name="rejected-organisation-project-slug" hidden>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" onclick="closeRejectionForm()">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitRejectionForm()">Submit</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <script>
         $(document).click(function () {
@@ -144,6 +189,35 @@
             function (){
                 $(this).removeClass('btn-success').addClass('btn-default')
             }
-        )
+        );
+
+        $('.btn-reject').click(function () {
+            $('#rejected-organisation-name').html($(this).attr('organisation_name'));
+            $('#rejected-organisation-country').html($(this).attr('organisation_country'));
+            $('[name=rejected-organisation-slug]').val($(this).attr('organisation_slug'));
+            $('[name=rejected-organisation-project-slug]').val($(this).attr('organisation_project_slug'));
+            $('#rejectionModal').modal('show')
+        });
+
+        function closeRejectionForm() {
+            $('.rejection-form-info').html('');
+            document.forms['rejectionForm'].reset();
+        }
+        
+        function submitRejectionForm() {
+            var organisation_slug = $('[name=rejected-organisation-slug]').val();
+            var organisation_project_slug = $('[name=rejected-organisation-project-slug]').val();
+            $.ajax({
+                url: '/' + organisation_project_slug + '/reject-certifyingorganisation/' + organisation_slug + '/',
+                type: 'GET',
+                data: {
+                    'status': $('[name=status]').val()
+                },
+                success: function(){
+                     location.reload()
+                }
+            });
+        }
+
     </script>
 {% endblock %}

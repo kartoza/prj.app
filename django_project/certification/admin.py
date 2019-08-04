@@ -128,6 +128,8 @@ class CertifyingOrganisationAdmin(admin.ModelAdmin):
 
     filter_horizontal = ('organisation_owners',)
     search_fields = ['name']
+    list_display = ('name', 'country', 'approved', 'rejected')
+    list_filter = ('country', 'approved', 'rejected')
 
     def queryset(self, request):
         """Ensure we use the correct manager.
