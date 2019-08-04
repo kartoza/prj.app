@@ -37,6 +37,11 @@ class TestCertifyingOrganisationView(TestCase):
         self.certifying_organisation = CertifyingOrganisationF.create(
             project=self.project
         )
+        self.pending_certifying_organisation = CertifyingOrganisationF.create(
+            name='test organisation rejected',
+            project=self.project,
+            approved=False,
+        )
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
@@ -72,3 +77,44 @@ class TestCertifyingOrganisationView(TestCase):
             'slug': self.certifying_organisation.slug
         }))
         self.assertEqual(response.status_code, 404)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_rejected_organisation_view_with_login(self):
+        status = self.client.login(username='anita', password='password')
+        self.assertTrue(status)
+        response = self.client.get(
+            reverse('certifyingorganisation-rejected-list', kwargs={
+                'project_slug': self.project.slug,
+            })
+        )
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_rejected_organisation_view_with_login(self):
+        response = self.client.get(
+            reverse('certifyingorganisation-rejected-list', kwargs={
+                'project_slug': self.project.slug,
+            })
+        )
+        self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_reject_organisation(self):
+        status = self.client.login(username='anita', password='password')
+        self.assertTrue(status)
+        post_data = {
+            'status': 'test rejection'
+        }
+        self.assertEqual(self.pending_certifying_organisation.approved, False)
+        response = self.client.get(
+            reverse('certifyingorganisation-reject', kwargs={
+                'project_slug': self.project.slug,
+                'slug': self.pending_certifying_organisation.slug
+            }), post_data
+        )
+        self.assertEqual(response.status_code, 302)
+        self.pending_certifying_organisation.refresh_from_db()
+        self.assertEqual(self.pending_certifying_organisation.rejected, True)
+        self.assertEqual(
+            self.pending_certifying_organisation.status, 'test rejection')
+        self.assertEqual(self.pending_certifying_organisation.approved, False)

@@ -827,7 +827,7 @@ def reject_certifying_organisation(request, **kwargs):
         slug = kwargs.pop('slug')
 
         certifyingorganisation_qs = \
-            CertifyingOrganisation.unapproved_objects.all()
+            CertifyingOrganisation.objects.all()
 
         # Get the object, when there is slug duplicate, get the first object
         certifyingorganisation = \
@@ -888,6 +888,8 @@ def reject_certifying_organisation(request, **kwargs):
             'project_slug': project_slug
         })
         return HttpResponseRedirect(url)
+    else:
+        return HttpResponse('Please use GET method.')
 
 
 class RejectedCertifyingOrganisationListView(
