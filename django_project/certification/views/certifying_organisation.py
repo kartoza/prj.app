@@ -965,4 +965,3 @@ class RejectedCertifyingOrganisationListView(
                 raise Http404(
                     'Sorry! We could not find your Certifying Organisation!')
         return self.queryset
-

@@ -86,7 +86,8 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/$',
         view=reject_certifying_organisation,
         name='certifyingorganisation-reject'),
-    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/rejected-list/$',
+    url(regex='^(?P<project_slug>[\w-]+)/'
+              'certifyingorganisation/rejected-list/$',
         view=RejectedCertifyingOrganisationListView.as_view(),
         name='certifyingorganisation-rejected-list'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/list/$',
