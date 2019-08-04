@@ -90,7 +90,7 @@ class TestCertifyingOrganisationView(TestCase):
         self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
-    def test_rejected_organisation_view_with_login(self):
+    def test_rejected_organisation_view_without_login(self):
         response = self.client.get(
             reverse('certifyingorganisation-rejected-list', kwargs={
                 'project_slug': self.project.slug,
