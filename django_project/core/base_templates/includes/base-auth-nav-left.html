@@ -154,7 +154,9 @@
                 Certification <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-                <li><a href="{% url 'certifyingorganisation-list' the_project.slug %}">Organisations</a></li>
+                <li><a href="{% url 'certifyingorganisation-list' the_project.slug %}">Approved Organisations</a></li>
+                <li><a href="{% url 'pending-certifyingorganisation-list' the_project.slug %}">Pending Organisations</a></li>
+                <li><a href="{% url 'certifyingorganisation-rejected-list' the_project.slug %}">Rejected Organisations</a></li>
                 <li><a href="{% url 'validate-certificate' the_project.slug %}">Verify certificate</a></li>
             </ul>
         </li>
