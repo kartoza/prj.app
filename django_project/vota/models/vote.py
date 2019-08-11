@@ -37,3 +37,6 @@ class Vote(models.Model):
 
     def __unicode__(self):
         return u'%s : %s' % (self.ballot.name, self.user.username)
+
+    def get_choice(self):
+        return dict(VOTE_CHOICES).get(self.choice)

@@ -3,7 +3,8 @@
         <div class="alert alert-info col-md-3">
             Closes in {{ ballot.closes|timeuntil }}
         </div>
-        <div class="alert alert-info col-md-2 col-md-offset-1">
+        <div class="alert alert-info col-md-2 col-md-offset-1 modal-btn"
+             data-toggle="modal" data-target="#myModal" style="cursor: pointer">
             {{ ballot.get_total_vote_count }}
             vote{{ ballot.get_total_vote_count|pluralize }} so far
         </div>
@@ -46,3 +47,36 @@
         <div class="alert alert-danger lead">Denied</div>
     {% endif %}
 </div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Votes</h4>
+      </div>
+      <div class="modal-body">
+          {% for voted in all_votes %}
+              {% if voted.user.first_name or voted.user.last_name %}
+                  <p><b>{{ voted.user.first_name }} {{ voted.user.last_name }}</b> voted <b>{{ voted.get_choice }}</b></p>
+              {% else %}
+                  <p><b>{{ voted.user.username }}</b> voted <b>{{ voted.get_choice }}</b></p>
+              {% endif %}
+          {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+    .modal-btn:hover {
+        opacity: 0.7;
+    }
+</style>
