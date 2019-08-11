@@ -14,7 +14,7 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from base.models import Project
 from vota.forms import BallotCreateForm
-from vota.models import Ballot, Committee
+from vota.models import Ballot, Committee, Vote, VOTE_CHOICES
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +32,12 @@ class BallotDetailView(LoginRequiredMixin, BallotMixin, DetailView):
         context = super(BallotDetailView, self).get_context_data(**kwargs)
         context['committee'] = Committee.objects.get(
             id=self.object.committee.id)
+        try:
+            vote = Vote.objects.get(user=self.request.user, ballot=self.object)
+            context['vote'] = dict(VOTE_CHOICES).get(vote.choice)
+        except Vote.DoesNotExist:
+            pass
+
         return context
 
     def get_queryset(self):

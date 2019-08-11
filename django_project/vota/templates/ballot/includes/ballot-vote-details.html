@@ -1,8 +1,14 @@
 <div class="col-md-10 col-md-offset-1 text-center">
     {% if not ballot.denied or ballot.approved %}
-        <div class="alert alert-info col-md-3">
-            Closes in {{ ballot.closes|timeuntil }}
-        </div>
+        {% if not ballot.is_open %}
+            <div class="alert alert-danger col-md-3">
+                Ballot closed
+            </div>
+        {% else %}
+            <div class="alert alert-info col-md-3">
+                Closes in {{ ballot.closes|timeuntil }}
+            </div>
+        {% endif %}
         <div class="alert alert-info col-md-2 col-md-offset-1">
             {{ ballot.get_total_vote_count }}
             vote{{ ballot.get_total_vote_count|pluralize }} so far
