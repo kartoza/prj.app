@@ -14,7 +14,7 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from base.models import Project
 from vota.forms import BallotCreateForm
-from vota.models import Ballot, Committee, Vote, VOTE_CHOICES
+from vota.models import Ballot, Committee, Vote
 
 logger = logging.getLogger(__name__)
 
