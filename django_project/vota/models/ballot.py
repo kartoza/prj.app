@@ -19,6 +19,7 @@ from django.utils import timezone
 from vota.models.vote import Vote
 import datetime
 from django.contrib.auth.models import User
+from certification.utilities import check_slug
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +151,9 @@ class Ballot(models.Model):
             words = self.name.split()
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
-            self.slug = slugify(new_list)[:50]
+            new_slug = slugify(new_list)[:50]
+            new_slug = check_slug(Ballot.objects.all(), new_slug)
+            self.slug = slugify(new_slug)[:50]
         super(Ballot, self).save(*args, **kwargs)
 
     def __unicode__(self):
