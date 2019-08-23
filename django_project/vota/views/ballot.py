@@ -32,12 +32,12 @@ class BallotDetailView(LoginRequiredMixin, BallotMixin, DetailView):
         context = super(BallotDetailView, self).get_context_data(**kwargs)
         context['committee'] = Committee.objects.get(
             id=self.object.committee.id)
+        context['all_votes'] = Vote.objects.filter(ballot=self.object)
         try:
             vote = Vote.objects.get(user=self.request.user, ballot=self.object)
             context['vote'] = dict(VOTE_CHOICES).get(vote.choice)
         except Vote.DoesNotExist:
             pass
-
         return context
 
     def get_queryset(self):
