@@ -118,3 +118,23 @@ class TestCertifyingOrganisationView(TestCase):
         self.assertEqual(
             self.pending_certifying_organisation.status, 'test rejection')
         self.assertEqual(self.pending_certifying_organisation.approved, False)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_update_status_organisation(self):
+        status = self.client.login(username='anita', password='password')
+        self.assertTrue(status)
+        post_data = {
+            'status': 'test update status'
+        }
+        self.assertEqual(self.pending_certifying_organisation.approved, False)
+        response = self.client.get(
+            reverse('certifyingorganisation-update-status', kwargs={
+                'project_slug': self.project.slug,
+                'slug': self.pending_certifying_organisation.slug
+            }), post_data
+        )
+        self.assertEqual(response.status_code, 302)
+        self.pending_certifying_organisation.refresh_from_db()
+        self.assertEqual(
+            self.pending_certifying_organisation.status, 'test update status')
+        self.assertEqual(self.pending_certifying_organisation.approved, False)
