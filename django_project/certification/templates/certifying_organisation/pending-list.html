@@ -144,6 +144,7 @@
                         </a>
                     {% endif %}
                 </div>
+                {% if not certifyingorganisation.approved and user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all %}
                 <div class="status-wrapper tooltip-toggle"
                      organisation_name="{{ certifyingorganisation.name }}"
                      organisation_country="{{ certifyingorganisation.country.name }}"
@@ -153,6 +154,7 @@
                      data-title="Click to edit">
                     <b>Status</b>: <span class="status-info">{{ certifyingorganisation.status }}</span>
                 </div>
+                {% endif %}
             </div>
         </div>
     {% endfor %}
