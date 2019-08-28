@@ -21,6 +21,18 @@
             border-radius: 5px;
             border: 1px solid #96ffc5;
         }
+        .status-wrapper {
+            border: 1px solid lightgrey;
+            float: right;
+            width: 100%;
+            margin-top: 5px;
+            padding: 5px;
+            box-shadow: 2px 2px grey;
+            cursor: pointer;
+        }
+        .status-wrapper:hover {
+            background-color: lightgray;
+        }
     </style>
 
     {% if messages %}
@@ -132,6 +144,15 @@
                         </a>
                     {% endif %}
                 </div>
+                <div class="status-wrapper tooltip-toggle"
+                     organisation_name="{{ certifyingorganisation.name }}"
+                     organisation_country="{{ certifyingorganisation.country.name }}"
+                     organisation_slug="{{ certifyingorganisation.slug }}"
+                     organisation_project_slug="{{ certifyingorganisation.project.slug }}"
+                     organisation_status="{{ certifyingorganisation.status }}"
+                     data-title="Click to edit">
+                    <b>Status</b>: <span class="status-info">{{ certifyingorganisation.status }}</span>
+                </div>
             </div>
         </div>
     {% endfor %}
@@ -170,6 +191,38 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="updateStatusModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><b>Update Status Form</b></h4>
+                </div>
+                <div class="modal-body">
+                    <p>You are going to update the status of this organisation below:</p>
+                    <ul>
+                        <li><span>Organisation: </span><span class="status-form-info" id="status-organisation-name"></span></li>
+                        <li><span>Country: </span><span class="status-form-info" id="status-organisation-country"></span></li>
+                    </ul>
+                    <form id="updateStatusForm" role="form">
+                        <label>Status:</label><br>
+                        <input name="update-status" class="form-control">
+                        <input name="status-organisation-slug" hidden>
+                        <input name="status-organisation-project-slug" hidden>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" onclick="closeUpdateStatusForm()">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitUpdateStatusForm()">Submit</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <script>
         $(document).click(function () {
             $('.messages').fadeOut('fast')
@@ -199,9 +252,25 @@
             $('#rejectionModal').modal('show')
         });
 
+        $('.status-wrapper').click(function () {
+            $('#status-organisation-name').html($(this).attr('organisation_name'));
+            $('#status-organisation-country').html($(this).attr('organisation_country'));
+            $('[name=status-organisation-slug]').val($(this).attr('organisation_slug'));
+            $('[name=status-organisation-project-slug]').val($(this).attr('organisation_project_slug'));
+            $('[name=update-status]').val($(this).attr('organisation_status'));
+            $('#updateStatusModal').modal('show')
+        });
+
         function closeRejectionForm() {
             $('.rejection-form-info').html('');
             document.forms['rejectionForm'].reset();
+            $('#rejectionModal').modal('hide')
+        }
+
+        function closeUpdateStatusForm() {
+            $('.status-form-info').html('');
+            document.forms['updateStatusForm'].reset();
+            $('#updateStatusModal').modal('hide')
         }
         
         function submitRejectionForm() {
@@ -212,6 +281,21 @@
                 type: 'GET',
                 data: {
                     'status': $('[name=status]').val()
+                },
+                success: function(){
+                     location.reload()
+                }
+            });
+        }
+
+        function submitUpdateStatusForm() {
+            var organisation_slug = $('[name=status-organisation-slug]').val();
+            var organisation_project_slug = $('[name=status-organisation-project-slug]').val();
+            $.ajax({
+                url: '/' + organisation_project_slug + '/update-status-certifyingorganisation/' + organisation_slug + '/',
+                type: 'GET',
+                data: {
+                    'status': $('[name=update-status]').val()
                 },
                 success: function(){
                      location.reload()
