@@ -62,7 +62,7 @@ class UnapprovedCertifyingOrganisationManager(models.Manager):
 
         return super(
             UnapprovedCertifyingOrganisationManager, self).get_queryset(
-        ).filter(approved=False)
+        ).filter(approved=False, rejected=False)
 
 
 def validate_email_address(value):
@@ -141,6 +141,20 @@ class CertifyingOrganisation(models.Model):
     enabled = models.BooleanField(
         help_text=_('Project enabled'),
         default=True
+    )
+
+    rejected = models.BooleanField(
+        help_text=_('Rejection from project admin'),
+        default=False
+    )
+
+    status = models.CharField(
+        help_text=_(
+            'Status of this organisation, '
+            'i.e. Rejected, because lacks of information'),
+        max_length=500,
+        null=True,
+        blank=True
     )
 
     slug = models.SlugField()

@@ -48,6 +48,11 @@
                                 <span class="glyphicon glyphicon-th-list"></span>
                             </a>
                         {% endif %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "certifyingorganisation-rejected-list" project_slug %}'
+                           data-title="View Rejected Certifying Organisations">
+                            <span class="glyphicon glyphicon-ban-circle"></span>
+                        </a>
                     {% endif %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url 'about' the_project.slug %}'

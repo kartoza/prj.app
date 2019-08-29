@@ -815,3 +815,182 @@ class AboutView(TemplateView):
         project_slug = self.kwargs.get('project_slug')
         context['the_project'] = Project.objects.get(slug=project_slug)
         return context
+
+
+def reject_certifying_organisation(request, **kwargs):
+    """Function to reject a pending certifying organisation."""
+
+    pattern_name = 'pending-certifyingorganisation-list'
+
+    if request.method == 'GET':
+        project_slug = kwargs.pop('project_slug')
+        slug = kwargs.pop('slug')
+
+        certifyingorganisation_qs = \
+            CertifyingOrganisation.objects.all()
+
+        # Get the object, when there is slug duplicate, get the first object
+        certifyingorganisation = \
+            get_list_or_404(certifyingorganisation_qs, slug=slug)[0]
+        certifyingorganisation.rejected = True
+        certifyingorganisation.approved = False
+
+        status = request.GET.get('status', '')
+        certifyingorganisation.status = status
+
+        # Check if slug have duplicates in rejected objects.
+        # If there is duplicate slug, assign new slug.
+        rejected_objects = CertifyingOrganisation.objects.filter(rejected=True)
+        slug = check_slug(rejected_objects, certifyingorganisation.slug)
+        certifyingorganisation.slug = slug
+
+        certifyingorganisation.save()
+
+        schema = request.is_secure() and "https" or "http"
+        site = request.get_host()
+        for organisation_owner in \
+                certifyingorganisation.organisation_owners.all():
+            data = {
+                'owner_firstname': organisation_owner.first_name,
+                'owner_lastname': organisation_owner.last_name,
+                'organisation_name': certifyingorganisation.name,
+                'project_name': certifyingorganisation.project.name,
+                'project_owner_firstname':
+                    certifyingorganisation.project.owner.first_name,
+                'project_owner_lastname':
+                    certifyingorganisation.project.owner.last_name,
+                'site': site,
+                'project_slug': project_slug,
+                'status': certifyingorganisation.status,
+                'schema': schema
+            }
+            send_mail(
+                u'Projecta - Your organisation is not approved',
+                u'Dear {owner_firstname} {owner_lastname},\n\n'
+                u'We are sorry that your certifying organisation '
+                u'has not been approved. \nThe '
+                u'following is the details of your organisation:'
+                u'\n\n'
+                u'Name of organisation: {organisation_name}\n'
+                u'Project: {project_name}\n'
+                u'Status: {status}\n\n'
+                u'For further information please visit: '
+                u'{schema}://{site}/en/{project_slug}/about/\n\n'
+                u'Sincerely,\n'
+                u'{project_owner_firstname} {project_owner_lastname}'
+                .format(**data),
+                certifyingorganisation.project.owner.email,
+                [organisation_owner.email],
+                fail_silently=False,
+            )
+
+        url = reverse(pattern_name, kwargs={
+            'project_slug': project_slug
+        })
+        return HttpResponseRedirect(url)
+    else:
+        return HttpResponse('Please use GET method.')
+
+
+def update_status_certifying_organisation(request, **kwargs):
+    """Function to update status of a certifying organisation."""
+
+    pattern_name = 'pending-certifyingorganisation-list'
+
+    if request.method == 'GET':
+        project_slug = kwargs.pop('project_slug')
+        slug = kwargs.pop('slug')
+
+        try:
+            certifyingorganisation = \
+                CertifyingOrganisation.objects.get(slug=slug)
+            status = request.GET.get('status', '')
+            certifyingorganisation.status = status
+
+            certifyingorganisation.save()
+        except:   # noqa
+            HttpResponse('Certifying organisation is not found.')
+
+        url = reverse(pattern_name, kwargs={
+            'project_slug': project_slug
+        })
+        return HttpResponseRedirect(url)
+    else:
+        return HttpResponse('Please use GET method.')
+
+
+class RejectedCertifyingOrganisationListView(
+        LoginRequiredMixin,
+        CertifyingOrganisationMixin,
+        PaginationMixin,
+        ListView):
+    """List view for pending certifying organisation."""
+
+    context_object_name = 'certifyingorganisations'
+    template_name = 'certifying_organisation/rejected-list.html'
+    paginate_by = 10
+
+    def __init__(self):
+        """
+        We overload __init__ in order to declare self.project and
+        self.project_slug. Both are then defined in self.get_queryset
+        which is the first method called. This means we can then reuse the
+        values in self.get_context_data.
+        """
+
+        super(RejectedCertifyingOrganisationListView, self).__init__()
+        self.project = None
+        self.project_slug = None
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+
+        context = super(RejectedCertifyingOrganisationListView, self)\
+            .get_context_data(**kwargs)
+        context['project_slug'] = self.project_slug
+        if self.project_slug:
+            context['the_project'] = \
+                Project.objects.get(slug=self.project_slug)
+            context['project'] = context['the_project']
+        context['num_certifyingorganisations'] = \
+            context['certifyingorganisations'].count()
+        return context
+
+    # noinspection PyAttributeOutsideInit
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        :returns: A queryset which is filtered to only show unapproved
+        Certifying Organisation.
+        :rtype: QuerySet
+        :raises: Http404
+        """
+
+        if self.queryset is None:
+            self.project_slug = self.kwargs.get('project_slug', None)
+            if self.project_slug:
+                self.project = Project.objects.get(slug=self.project_slug)
+                if self.request.user.is_staff:
+                    queryset = \
+                        CertifyingOrganisation.objects.filter(
+                            project=self.project, rejected=True)
+                else:
+                    queryset = \
+                        CertifyingOrganisation.unapproved_objects.filter(
+                            Q(rejected=True) & Q(project=self.project) &
+                            (Q(project__owner=self.request.user) |
+                             Q(organisation_owners=self.request.user) |
+                             Q(project__certification_managers=
+                               self.request.user))).distinct()
+                return queryset
+            else:
+                raise Http404(
+                    'Sorry! We could not find your Certifying Organisation!')
+        return self.queryset
