@@ -147,7 +147,7 @@ class CertifyingOrganisationAdmin(admin.ModelAdmin):
 
 
 class StatusAdmin(admin.ModelAdmin):
-    list_display = ('name', 'project','order')
+    list_display = ('name', 'project', 'order')
 
 
 admin.site.register(Certificate, CertificateAdmin)

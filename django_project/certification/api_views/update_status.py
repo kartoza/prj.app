@@ -21,7 +21,7 @@ class UpdateStatusOrganisation(LoginRequiredMixin, APIView):
             if status_id:
                 try:
                     status_qs = Status.objects.get(id=status_id)
-                    certifyingorganisation.status=status_qs
+                    certifyingorganisation.status = status_qs
 
                     if status_qs.name.lower() == 'approved':
                         certifyingorganisation.approved = True
