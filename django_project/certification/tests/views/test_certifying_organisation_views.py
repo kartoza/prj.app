@@ -124,7 +124,7 @@ class TestCertifyingOrganisationView(TestCase):
         status = self.client.login(username='anita', password='password')
         self.assertTrue(status)
         post_data = {
-            'status': 'test update status'
+            'remarks': 'test update status'
         }
         self.assertEqual(self.pending_certifying_organisation.approved, False)
         response = self.client.get(
@@ -136,5 +136,5 @@ class TestCertifyingOrganisationView(TestCase):
         self.assertEqual(response.status_code, 302)
         self.pending_certifying_organisation.refresh_from_db()
         self.assertEqual(
-            self.pending_certifying_organisation.status, 'test update status')
+            self.pending_certifying_organisation.remarks, 'test update status')
         self.assertEqual(self.pending_certifying_organisation.approved, False)

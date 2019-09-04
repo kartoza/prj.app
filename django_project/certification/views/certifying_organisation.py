@@ -892,33 +892,6 @@ def reject_certifying_organisation(request, **kwargs):
         return HttpResponse('Please use GET method.')
 
 
-def update_status_certifying_organisation(request, **kwargs):
-    """Function to update status of a certifying organisation."""
-
-    pattern_name = 'pending-certifyingorganisation-list'
-
-    if request.method == 'GET':
-        project_slug = kwargs.pop('project_slug')
-        slug = kwargs.pop('slug')
-
-        try:
-            certifyingorganisation = \
-                CertifyingOrganisation.objects.get(slug=slug)
-            status = request.GET.get('status', '')
-            certifyingorganisation.status = status
-
-            certifyingorganisation.save()
-        except:   # noqa
-            HttpResponse('Certifying organisation is not found.')
-
-        url = reverse(pattern_name, kwargs={
-            'project_slug': project_slug
-        })
-        return HttpResponseRedirect(url)
-    else:
-        return HttpResponse('Please use GET method.')
-
-
 class RejectedCertifyingOrganisationListView(
         LoginRequiredMixin,
         CertifyingOrganisationMixin,

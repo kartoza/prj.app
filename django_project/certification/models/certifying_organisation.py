@@ -17,6 +17,7 @@ from django.contrib.auth.models import User
 from django_countries.fields import CountryField
 import logging
 from certification.utilities import check_slug
+from certification.models.status import Status
 
 logger = logging.getLogger(__name__)
 
@@ -148,9 +149,14 @@ class CertifyingOrganisation(models.Model):
         default=False
     )
 
-    status = models.CharField(
+    status = models.ForeignKey(
+        Status,
+        null=True
+    )
+
+    remarks = models.CharField(
         help_text=_(
-            'Status of this organisation, '
+            'Remarks regarding status of this organisation, '
             'i.e. Rejected, because lacks of information'),
         max_length=500,
         null=True,
