@@ -6,7 +6,8 @@ from django.core.urlresolvers import reverse
 from certification.tests.model_factories import (
     ProjectF,
     UserF,
-    CertifyingOrganisationF
+    CertifyingOrganisationF,
+    StatusF
 )
 
 
@@ -103,7 +104,7 @@ class TestCertifyingOrganisationView(TestCase):
         status = self.client.login(username='anita', password='password')
         self.assertTrue(status)
         post_data = {
-            'status': 'test rejection'
+            'remarks': 'test rejection'
         }
         self.assertEqual(self.pending_certifying_organisation.approved, False)
         response = self.client.get(
@@ -116,25 +117,29 @@ class TestCertifyingOrganisationView(TestCase):
         self.pending_certifying_organisation.refresh_from_db()
         self.assertEqual(self.pending_certifying_organisation.rejected, True)
         self.assertEqual(
-            self.pending_certifying_organisation.status, 'test rejection')
+            self.pending_certifying_organisation.remarks, 'test rejection')
         self.assertEqual(self.pending_certifying_organisation.approved, False)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_update_status_organisation(self):
         status = self.client.login(username='anita', password='password')
         self.assertTrue(status)
+        status_object = StatusF.create()
         post_data = {
-            'remarks': 'test update status'
+            'remarks': 'test update status',
+            'status': status_object.id
         }
         self.assertEqual(self.pending_certifying_organisation.approved, False)
-        response = self.client.get(
+        response = self.client.post(
             reverse('certifyingorganisation-update-status', kwargs={
                 'project_slug': self.project.slug,
                 'slug': self.pending_certifying_organisation.slug
             }), post_data
         )
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         self.pending_certifying_organisation.refresh_from_db()
         self.assertEqual(
             self.pending_certifying_organisation.remarks, 'test update status')
+        self.assertEqual(
+            self.pending_certifying_organisation.status, status_object)
         self.assertEqual(self.pending_certifying_organisation.approved, False)

@@ -151,7 +151,8 @@ class CertifyingOrganisation(models.Model):
 
     status = models.ForeignKey(
         Status,
-        null=True
+        null=True,
+        blank=True
     )
 
     remarks = models.CharField(

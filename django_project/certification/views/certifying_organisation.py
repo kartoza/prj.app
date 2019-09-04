@@ -835,8 +835,8 @@ def reject_certifying_organisation(request, **kwargs):
         certifyingorganisation.rejected = True
         certifyingorganisation.approved = False
 
-        status = request.GET.get('status', '')
-        certifyingorganisation.status = status
+        remarks = request.GET.get('remarks', '')
+        certifyingorganisation.remarks = remarks
 
         # Check if slug have duplicates in rejected objects.
         # If there is duplicate slug, assign new slug.
