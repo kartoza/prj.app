@@ -130,7 +130,7 @@ class CertifyingOrganisationAdmin(admin.ModelAdmin):
     filter_horizontal = ('organisation_owners',)
     search_fields = ['name']
     list_display = (
-        'name', 'country', 'approved', 'rejected', 'status', 'remarks'
+        'name', 'country', 'project', 'approved', 'rejected', 'status', 'remarks'
     )
     list_filter = ('country', 'approved', 'rejected', 'status')
 
