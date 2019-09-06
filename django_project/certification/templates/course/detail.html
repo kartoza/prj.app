@@ -215,11 +215,18 @@
                                 {% endif %}
                             {% endif %}
                         {% else %}
-                            <a class="btn btn-default btn-xs btn-issue tooltip-toggle"
-                                href='{% url "certificate-create" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
-                                data-title="Issue Certificate">
-                                <span class="glyphicon glyphicon-check"></span>
-                            </a>
+                            {% if course.certifying_organisation.organisation_credits >= course.certifying_organisation.project.certificate_credit %}
+                                <a class="btn btn-default btn-xs btn-issue tooltip-toggle"
+                                    href='{% url "certificate-create" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
+                                    data-title="Issue Certificate using credits">
+                                    <span class="glyphicon glyphicon-check"></span>
+                                </a>
+                            {% else %}
+                                <a class="btn btn-default btn-xs tooltip-toggle btn-top-up"
+                                   href='{% url "top-up" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug %}'
+                                    data-title="Top up credits to issue the certificate">
+                                    <i class="glyphicon glyphicon-shopping-cart"></i></a>
+                            {% endif %}
                         {% endif %}
                     <a class="btn btn-default btn-xs btn-delete tooltip-toggle"
                         href='{% url "courseattendee-delete" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.pk %}'
