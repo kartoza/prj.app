@@ -10,7 +10,9 @@ from certification.tests.model_factories import (
     CourseConvenerF,
     CertifyingOrganisationF,
     TrainingCenterF,
-    CourseAttendeeF)
+    CourseAttendeeF,
+    StatusF
+)
 
 
 class TestCertifyingOrganisation(TestCase):
@@ -360,3 +362,44 @@ class TestCourseAttendee(TestCase):
 
         # check if deleted.
         self.assertTrue(model.pk is None)
+
+
+class TestStatus(TestCase):
+    """Test status model."""
+
+    def setUp(self):
+        """Set up before test."""
+
+        pass
+
+    def test_Status_create(self):
+        """Test status model creation."""
+
+        model = StatusF.create()
+
+        # check if PK exists.
+        self.assertTrue(model.pk is not None)
+
+    def test_Status_delete(self):
+        """Test status model deletion."""
+
+        model = StatusF.create()
+        model.delete()
+
+        # check if deleted.
+        self.assertTrue(model.pk is None)
+
+    def test_Status_update(self):
+        """Test status model update."""
+
+        model = StatusF.create()
+        new_model_data = {
+            'name': 'new Status name',
+        }
+        model.__dict__.update(new_model_data)
+        model.save()
+
+        # check if updated.
+        for key, val in new_model_data.items():
+            self.assertEqual(model.__dict__.get(key), val)
+            self.assertTrue(model.name == 'new Status name')
