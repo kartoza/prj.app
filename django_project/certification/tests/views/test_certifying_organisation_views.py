@@ -1,5 +1,7 @@
 # coding=utf-8
 import logging
+from StringIO import StringIO
+from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from django.core.urlresolvers import reverse
@@ -167,3 +169,13 @@ class TestCertifyingOrganisationView(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data[0]['name'], status_object.name)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_update_status_command(self):
+        out = StringIO()
+        call_command('set_status_existing_organisation', stdout=out)
+        self.certifying_organisation.refresh_from_db()
+        self.pending_certifying_organisation.refresh_from_db()
+        self.assertEquals(self.certifying_organisation.status.name, 'Approved')
+        self.assertEquals(
+            self.pending_certifying_organisation.status.name, 'Pending')
