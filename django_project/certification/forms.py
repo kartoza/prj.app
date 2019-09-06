@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.gis import forms as geoforms
 from django.contrib.gis import gdal
 from django.contrib.gis.forms.widgets import BaseGeometryWidget
+from django.core.exceptions import ValidationError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout,
@@ -438,6 +439,19 @@ class CertificateForm(forms.ModelForm):
             self.fields['is_paid'].initial = False
         self.fields['is_paid'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Issue Certificate'))
+
+    def clean(self):
+        clean_data = self.cleaned_data
+        organisation = self.course.certifying_organisation
+
+        remaining_credits = \
+            organisation.organisation_credits - \
+            organisation.project.certificate_credit
+
+        if remaining_credits < 0:
+            raise ValidationError("Insufficient credits")
+
+        return clean_data
 
     def save(self, commit=True):
         instance = super(CertificateForm, self).save(commit=False)
