@@ -143,3 +143,27 @@ class TestCertifyingOrganisationView(TestCase):
         self.assertEqual(
             self.pending_certifying_organisation.status, status_object)
         self.assertEqual(self.pending_certifying_organisation.approved, False)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_get_status_list_no_login(self):
+        response = self.client.get(
+            reverse('get-status-list', kwargs={
+                'project_slug': self.project.slug,
+            })
+        )
+        self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_get_status_list_with_login(self):
+        status = self.client.login(username='anita', password='password')
+        self.assertTrue(status)
+        status_object = StatusF.create(
+            project=self.project
+        )
+        response = self.client.get(
+            reverse('get-status-list', kwargs={
+                'project_slug': self.project.slug,
+            })
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data[0]['name'], status_object.name)
