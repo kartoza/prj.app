@@ -11,6 +11,7 @@ from certification.models.attendee import Attendee
 from certification.models.course_attendee import CourseAttendee
 from certification.models.certifying_organisation import CertifyingOrganisation
 from certification.models.status import Status
+from simple_history.admin import SimpleHistoryAdmin
 
 
 class CertificateAdmin(admin.ModelAdmin):
@@ -124,7 +125,7 @@ class CourseConvenerAdmin(admin.ModelAdmin):
         return query_set
 
 
-class CertifyingOrganisationAdmin(admin.ModelAdmin):
+class CertifyingOrganisationAdmin(SimpleHistoryAdmin):
     """Certifying organisation admin model."""
 
     filter_horizontal = ('organisation_owners',)
@@ -134,6 +135,7 @@ class CertifyingOrganisationAdmin(admin.ModelAdmin):
         'approved', 'rejected', 'status', 'remarks'
     )
     list_filter = ('country', 'approved', 'rejected', 'status')
+    history_list_display = ['status', 'remarks']
 
     def queryset(self, request):
         """Ensure we use the correct manager.

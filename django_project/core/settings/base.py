@@ -123,6 +123,7 @@ MIDDLEWARE_CLASSES = (
     'core.custom_middleware.CheckDomainMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 )
 
 ROOT_URLCONF = 'core.urls'

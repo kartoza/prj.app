@@ -16,6 +16,7 @@ from unidecode import unidecode
 from django.contrib.auth.models import User
 from django_countries.fields import CountryField
 import logging
+from simple_history.models import HistoricalRecords
 from certification.utilities import check_slug
 from certification.models.status import Status
 
@@ -163,6 +164,8 @@ class CertifyingOrganisation(models.Model):
         null=True,
         blank=True
     )
+
+    history = HistoricalRecords()
 
     slug = models.SlugField()
     organisation_owners = models.ManyToManyField(User)
