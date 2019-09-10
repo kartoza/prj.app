@@ -35,3 +35,4 @@ xhtml2pdf==0.2b1
 django-modeltranslation==0.12.2
 django-colorfield
 WeasyPrint==0.42.3
+django-simple-history==1.9.1

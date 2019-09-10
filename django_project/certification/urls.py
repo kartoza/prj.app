@@ -57,6 +57,8 @@ from views import (
     regenerate_certificate,
     regenerate_all_certificate,
     preview_certificate,
+    OrganisationCertificateCreateView,
+    organisation_certificate_pdf_view,
 
     # Validate Certificate.
     ValidateCertificate,
@@ -199,6 +201,14 @@ urlpatterns = patterns(
         name='courseattendee-delete'),
 
     # Certificate.
+    url(regex='^(?P<project_slug>[\w-]+)/certificate/'
+              '(?P<organisation_slug>[\w-]+)/issue/$',
+        view=OrganisationCertificateCreateView.as_view(),
+        name='issue-certificate-organisation'),
+    url(regex='^(?P<project_slug>[\w-]+)/certificate/'
+              '(?P<organisation_slug>[\w-]+)/print/$',
+        view=organisation_certificate_pdf_view,
+        name='print-certificate-organisation'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/course/'
               '(?P<course_slug>[\w-]+)/courseattendee/'

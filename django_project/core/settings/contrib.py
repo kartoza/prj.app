@@ -23,6 +23,7 @@ INSTALLED_APPS += (
     'colorfield',  # for color picker
     # 'user_map',
     'disqus',
+    'simple_history',
 )
 
 # Set disqus and shortname

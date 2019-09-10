@@ -101,6 +101,19 @@
                         data-title="Update {{ certifyingorganisation.name }}">
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
+                    {% if certifyingorganisation.pk in certificate_lists %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "print-certificate-organisation" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
+                            data-title="Print Certificate for {{ certifyingorganisation.name }}">
+                            <span class="glyphicon glyphicon-print"></span>
+                        </a>
+                    {% else %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "issue-certificate-organisation" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
+                            data-title="Issue Cert ificate for {{ certifyingorganisation.name }}">
+                            <span class="glyphicon glyphicon-check"></span>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         {% endif %}

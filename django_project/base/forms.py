@@ -105,6 +105,7 @@ class ProjectForm(forms.ModelForm):
             'credit_cost',
             'certificate_credit',
             'sponsorship_programme',
+            'template_certifying_organisation_certificate',
         )
 
     def __init__(self, *args, **kwargs):
@@ -135,8 +136,12 @@ class ProjectForm(forms.ModelForm):
                 Field('credit_cost', css_class="form-control"),
                 Field('certificate_credit', css_class="form-control"),
                 Field('sponsorship_programme', css_class="form-control"),
-                Field('gitter_room', css_class="form-control"),
-                css_id='project-form')
+                Field(
+                    'gitter_room', css_class="form-control"
+                    ), css_id='project-form'),
+                Field(
+                    'template_certifying_organisation_certificate',
+                    css_class='form-control'),
         )
         self.helper.layout = layout
         self.helper.html5_required = False

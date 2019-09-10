@@ -22,6 +22,7 @@ from models import (
     CourseAttendee,
     Attendee,
     Certificate,
+    CertifyingOrganisationCertificate
 )
 
 
@@ -459,3 +460,29 @@ class CsvAttendeeForm(forms.Form):
             }
         )
     )
+
+
+class OrganisationCertificateForm(forms.ModelForm):
+
+    class Meta:
+        model = CertifyingOrganisationCertificate
+        fields = (
+            'certifying_organisation',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        self.helper = FormHelper()
+        self.helper.html5_required = False
+        super(OrganisationCertificateForm, self).__init__(*args, **kwargs)
+        self.fields['certifying_organisation'].initial = \
+            self.certifying_organisation
+        self.fields['certifying_organisation'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Issue Certificate'))
+
+    def save(self, commit=True):
+        instance = super(OrganisationCertificateForm, self).save(commit=False)
+        instance.author = self.user
+        instance.save()
+        return instance
