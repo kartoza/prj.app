@@ -157,7 +157,8 @@
                 <li><a href="{% url 'certifyingorganisation-list' the_project.slug %}">Approved Organisations</a></li>
                 <li><a href="{% url 'pending-certifyingorganisation-list' the_project.slug %}">Pending Organisations</a></li>
                 <li><a href="{% url 'certifyingorganisation-rejected-list' the_project.slug %}">Rejected Organisations</a></li>
-                <li><a href="{% url 'validate-certificate' the_project.slug %}">Verify certificate</a></li>
+                <li><a href="{% url 'validate-certificate-organisation' the_project.slug %}">Verify certificate for Certifying Organisation</a></li>
+                <li><a href="{% url 'validate-certificate' the_project.slug %}">Verify certificate for Attendee</a></li>
             </ul>
         </li>
     </ul>

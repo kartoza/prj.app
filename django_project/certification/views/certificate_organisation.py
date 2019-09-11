@@ -1,8 +1,8 @@
 # coding=utf-8
 from braces.views import LoginRequiredMixin
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
-from django.views.generic import CreateView
+from django.http import HttpResponse, Http404
+from django.views.generic import CreateView, DetailView
 from base.models.project import Project
 from base.views.certificate_preview import generate_certificate_pdf
 from certification.models.certifying_organisation import CertifyingOrganisation
@@ -93,3 +93,71 @@ def organisation_certificate_pdf_view(request, **kwargs):
     )
 
     return response
+
+
+class OrganisationCertificateDetailView(DetailView):
+    """Detail view for Certificate."""
+
+    model = CertifyingOrganisationCertificate
+    context_object_name = 'certificate'
+    template_name = 'certificate_organisation/detail.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+
+        self.certificateID = self.kwargs.get('id', None)
+        self.project_slug = self.kwargs.get('project_slug', None)
+        context = super(
+            OrganisationCertificateDetailView, self).get_context_data(**kwargs)
+        context['project_slug'] = self.project_slug
+        context['history'] = \
+            context['certificate'].history.all().order_by('history_date')
+
+        if self.project_slug:
+            context['the_project'] = \
+                Project.objects.get(slug=self.project_slug)
+            context['project'] = context['the_project']
+        return context
+
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        :returns: Queryset which is all certificate in the
+            corresponding project.
+        :rtype: QuerySet
+        """
+
+        qs = CertifyingOrganisationCertificate.objects.all()
+        return qs
+
+    def get_object(self, queryset=None):
+        """Get the object for this view.
+
+        :param queryset: A query set
+        :type queryset: QuerySet
+
+        :returns: Queryset which is filtered to only show a certificate
+            depends on the input certificate ID.
+        :rtype: QuerySet
+        :raises: Http404
+        """
+
+        if queryset is None:
+            queryset = self.get_queryset()
+            certificateID = self.kwargs.get('id', None)
+            if certificateID:
+                try:
+                    obj = queryset.get(certificateID=certificateID)
+                    return obj
+                except CertifyingOrganisationCertificate.DoesNotExist:
+                    return None
+            else:
+                raise Http404('Sorry! Certificate by this ID does not exist.')
+

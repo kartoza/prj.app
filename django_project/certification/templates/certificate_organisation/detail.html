@@ -1,0 +1,89 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+{% load staticfiles %}
+
+{% block title %}Certificate for Certifying Organisation {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Certificate Details</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/organisation_certificate_detail.css' %}">
+
+    {% if certificate %}
+        <div class="row" style="text-align: center">
+            <h1>Certifying Organisation Certificate Details</h1>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="certificate-header-details" style="background-color: #bcfcb0; margin-top: 20px; text-align: center;">
+                <h3>ID: {{ certificate.certificateID }}
+                    <span class="glyphicon glyphicon-ok-circle tooltip-toggle"
+                          style="font-size: 14pt; color: #2aa36e"
+                          data-title="Verified"></span>
+                </h3>
+            </div>
+            <div class="certificate-details">
+                <table style="margin: 0 auto;">
+                    <tr><td class="td-title">Certifying Organisation </td> <td class="top-vertical">&nbsp;:&nbsp;</td> <td>{{ certificate.certifying_organisation.name }}</td></tr>
+                    <tr><td class="td-title">Project </td> <td class="top-vertical">&nbsp;:&nbsp;</td> <td>{{ certificate.certifying_organisation.project.name }}</td></tr>
+                    <tr><td class="td-title">Date issued </td> <td class="top-vertical">&nbsp;:&nbsp;</td> <td>{{ certificate.issued }}</td></tr>
+                    <tr><td class="td-title">Issued by </td> <td class="top-vertical">&nbsp;:&nbsp;</td> <td>
+                        {% if certificate.author.first_name and certificate.author.last_name %}
+                            {{ certificate.author.first_name }} {{ certificate.author.last_name }}
+                        {% else %}
+                            {{ certificate.author.username }}
+                        {% endif %}
+                    </td></tr>
+                    <tr><td class="td-title">Validity </td> <td class="top-vertical">&nbsp;:&nbsp;</td> <td>
+                        {% if not certificate.valid %}
+                            Validity expired
+                        {% else %}
+                            Valid
+                        {% endif %}
+                    </td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-lg-4 history-wrapper">
+            <div style="margin: 0 auto; text-align: center">
+                <h3>Certificate Log History</h3>
+                <table id="history-table" style="margin: 0 auto">
+                    <tr>
+                        <th>Date</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Certificate Validity</th>
+                    </tr>
+                    {% for item in history %}
+                    <tr>
+                        <td>{{ item.history_date }}</td>
+                        <td>{{ item.history_user }}</td>
+                        <td>{{ item.get_history_type_display }}</td>
+                        <td>
+                            {% if item.valid %}
+                                Valid
+                            {% else %}
+                                Not valid
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="row" style="text-align: center; margin-top: 60px">
+        <span class="glyphicon glyphicon-remove" style="color: red; font-size: 40pt"></span>
+        <h3>Sorry, no certificate matching this id has been issued.</h3><br>
+        <a class="btn btn-default btn-mini" href="{% url 'validate-certificate' project_slug %}" style="font-weight: 600">Search another certificate</a>
+        </div>
+    {% endif %}
+
+
+{% endblock %}
