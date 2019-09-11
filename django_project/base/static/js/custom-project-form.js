@@ -5,7 +5,7 @@ $(document).ready(function () {
     $('#preview-template-load').appendTo($('#div_id_template_certifying_organisation_certificate'));
     readExistingFile('project_representative_signature-clear_id', 'project_representative_signature', false);
     readExistingFile('image_file-clear_id', 'project_logo', false);
-    readExistingFile('template_certifying_organisation_certificate-clear_id', 'template_certifying_organisation_certificate', true);
+    readExistingFile('template_certifying_organisation_certificate-clear_id', 'template_certificate', true);
 
     //check if browser supports file api and filereader features
     if (window.File && window.FileReader && window.FileList && window.Blob) {

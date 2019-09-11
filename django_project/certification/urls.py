@@ -214,7 +214,7 @@ urlpatterns = patterns(
         view=organisation_certificate_pdf_view,
         name='print-certificate-organisation'),
     url(regex='^(?P<project_slug>[\w-]+)/organisationcertificate/'
-              '(?P<id>[\w-]+)/detail/$',
+              '(?P<id>[\w-]+)/$',
         view=OrganisationCertificateDetailView.as_view(),
         name='detail-certificate-organisation'),
 
