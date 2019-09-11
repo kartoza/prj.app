@@ -1,4 +1,5 @@
 # coding=utf-8
+import os
 from braces.views import LoginRequiredMixin
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
@@ -80,19 +81,41 @@ def organisation_certificate_pdf_view(request, **kwargs):
         )
     current_site = request.META['HTTP_HOST']
 
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = \
-        'filename="{}.pdf"'.format(certificate.certificateID)
+    # Create the HttpResponse object with the appropriate PDF headers.
+    filename = '{}.{}'.format(certificate.certificateID, 'pdf')
+    project_folder = (project.name.lower()).replace(' ', '_')
+    pathname = \
+        os.path.join(
+            '/home/web/media',
+            'certificate_organisations/{}/{}'.format(
+                project_folder, filename))
+    found = os.path.exists(pathname)
+    if found:
+        with open(pathname, 'r') as pdf:
+            response = HttpResponse(pdf.read(), content_type='application/pdf')
+            response['Content-Disposition'] = \
+                'filename={}.pdf'.format(certificate.certificateID)
+            return response
+    else:
+        makepath = \
+            '/home/web/media/certificate_organisations/{}/'.format(
+                project_folder)
+        if not os.path.exists(makepath):
+            os.makedirs(makepath)
 
-    generate_certificate_pdf(
-        pathname=response,
-        certificate=certificate,
-        project=project,
-        certifying_organisation=certifying_organisation,
-        current_site=current_site
-    )
+        generate_certificate_pdf(
+            pathname=pathname,
+            certificate=certificate,
+            project=project,
+            certifying_organisation=certifying_organisation,
+            current_site=current_site
+        )
 
-    return response
+        with open(pathname, 'r') as pdf:
+            response = HttpResponse(pdf.read(), content_type='application/pdf')
+            response['Content-Disposition'] = \
+                'filename={}.pdf'.format(certificate.certificateID)
+            return response
 
 
 class OrganisationCertificateDetailView(DetailView):
