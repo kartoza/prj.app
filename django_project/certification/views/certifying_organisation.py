@@ -153,7 +153,7 @@ class CertifyingOrganisationListView(
             context['certificate_lists'] = \
                 CertifyingOrganisationCertificate.objects.filter(
                     certifying_organisation__project=context['the_project']
-                ).values_list('certifying_organisation', flat=True)
+            ).values_list('certifying_organisation', flat=True)
         return context
 
     def get_queryset(self, queryset=None):

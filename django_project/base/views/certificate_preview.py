@@ -46,7 +46,7 @@ class DummyProject(object):
         self.template_certifying_organisation_certificate = template
         self.project_representative_signature = \
             project_representative_signature
-        self.project_representative=project_representative
+        self.project_representative = project_representative
         words = self.name.split()
         filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
         # unidecode() represents special characters (unicode data) in ASCII

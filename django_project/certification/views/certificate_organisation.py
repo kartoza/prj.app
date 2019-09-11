@@ -56,7 +56,6 @@ def generate_certificate_pdf(
     margin_right = height - 50
     margin_left = 50
     margin_bottom = 50
-    max_left = margin_right - 100
 
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.
@@ -310,4 +309,3 @@ class OrganisationCertificateDetailView(DetailView):
                     return None
             else:
                 raise Http404('Sorry! Certificate by this ID does not exist.')
-

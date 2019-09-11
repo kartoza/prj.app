@@ -137,8 +137,8 @@ class ProjectForm(forms.ModelForm):
                 Field('certificate_credit', css_class="form-control"),
                 Field('sponsorship_programme', css_class="form-control"),
                 Field(
-                    'gitter_room', css_class="form-control"
-                    ), css_id='project-form'),
+                    'gitter_room', css_class="form-control"),
+                    css_id='project-form'),
                 Field(
                     'template_certifying_organisation_certificate',
                     css_class='form-control'),
