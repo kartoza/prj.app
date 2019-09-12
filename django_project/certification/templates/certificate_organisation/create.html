@@ -1,0 +1,38 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    <h1>Add Certificate</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <div class="col-lg-10">
+    <div class="container">
+        <h3>Are you sure you want to issue a certificate for this organisation?</h3>
+        <div style="border: 2px solid #f5f5f5; padding: 15px; width: 60%; font-size: 12pt">
+            <span class="col-lg-2" style="color: grey">Organisation: </span><span class="col-lg-10"> {{ certifying_organisation.name }}</span></br>
+        </div>
+    </div>
+
+
+    <section id="forms">
+        <div class='container' style="margin-top: 30px">
+            {% csrf_token %}
+            {% crispy form %}
+            {% for form in inlines %}
+                {% crispy form %}
+            {% endfor %}
+        </div>
+    </section>
+    </div>
+
+    <div class="col-lg-2" style="margin-top: 20px">
+        <a class="btn btn-default btn-sm tooltip-toggle pull-right"
+           href='{% url 'certifyingorganisation-list' project_slug=certifying_organisation.project.slug %}'
+           data-title="Cancel">
+            <span class="glyphicon glyphicon-arrow-left"></span>
+        </a>
+    </div>
+{% endblock %}

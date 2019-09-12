@@ -5,3 +5,4 @@ from error_views import *  # noqa
 from github_project import *  # noqa
 from custom_domain import *  # noqa
 from organisation import *  # noqa
+from certificate_preview import *  # noqa

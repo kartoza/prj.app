@@ -19,6 +19,7 @@ from views import (
     GithubSubmitView,
     custom_404,
     project_sponsor_programme,
+    preview_certificate,
 
     DomainNotFound,
     RegisterDomainView,
@@ -100,6 +101,9 @@ urlpatterns = patterns(
     url(regex='^project/list/$',
         view=ProjectListView.as_view(),
         name='project-list'),
+    url(regex='^project/preview-certificate/$',
+        view=preview_certificate,
+        name='preview-certificate-project'),
     url(regex='^(?P<slug>[\w-]+)/$',
         view=ProjectDetailView.as_view(),
         name='project-detail'),

@@ -8,3 +8,4 @@ from attendee import *
 from course_attendee import *
 from validate import *
 from certificate import *
+from certificate_organisation import *

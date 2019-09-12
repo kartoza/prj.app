@@ -254,6 +254,16 @@ class Project(models.Model):
         validators=[validate_gitter_room_name]
     )
 
+    template_certifying_organisation_certificate = models.ImageField(
+        help_text=_('Background template of the certificate for certifying '
+                    'organisation. '
+                    'Most browsers support dragging the image directly on to '
+                    'the "Choose File" button above.'),
+        upload_to=os.path.join(
+            MEDIA_ROOT, 'images/projects/organisation_certificates'),
+        blank=True
+    )
+
     # noinspection PyClassicStyleClass
     class Meta:
         """Meta class for project."""

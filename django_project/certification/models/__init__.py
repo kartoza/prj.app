@@ -11,3 +11,4 @@ from course_attendee import *
 from course_type import *
 from course_convener import *
 from certificate import *
+from organisation_certificate import *

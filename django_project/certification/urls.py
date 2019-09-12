@@ -57,8 +57,14 @@ from views import (
     regenerate_all_certificate,
     preview_certificate,
 
+    # Certificate for certifying organisation.
+    OrganisationCertificateCreateView,
+    organisation_certificate_pdf_view,
+    OrganisationCertificateDetailView,
+
     # Validate Certificate.
     ValidateCertificate,
+    ValidateCertificateOrganisation,
 
     # About.
     AboutView,
@@ -199,6 +205,20 @@ urlpatterns = patterns(
         view=CourseAttendeeDeleteView.as_view(),
         name='courseattendee-delete'),
 
+    # Certificate for certifying organisation
+    url(regex='^(?P<project_slug>[\w-]+)/organisationcertificate/'
+              '(?P<organisation_slug>[\w-]+)/issue/$',
+        view=OrganisationCertificateCreateView.as_view(),
+        name='issue-certificate-organisation'),
+    url(regex='^(?P<project_slug>[\w-]+)/organisationcertificate/'
+              '(?P<organisation_slug>[\w-]+)/print/$',
+        view=organisation_certificate_pdf_view,
+        name='print-certificate-organisation'),
+    url(regex='^(?P<project_slug>[\w-]+)/organisationcertificate/'
+              '(?P<id>[\w-]+)/$',
+        view=OrganisationCertificateDetailView.as_view(),
+        name='detail-certificate-organisation'),
+
     # Certificate.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/course/'
@@ -266,6 +286,9 @@ urlpatterns = patterns(
         name='course-detail'),
 
     # Search.
+    url(regex='^(?P<project_slug>[\w-]+)/organisationcertificate/$',
+        view=ValidateCertificateOrganisation.as_view(),
+        name='validate-certificate-organisation'),
     url(regex='^(?P<project_slug>[\w-]+)/certificate/$',
         view=ValidateCertificate.as_view(), name='validate-certificate'),
 

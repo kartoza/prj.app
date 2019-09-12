@@ -182,6 +182,10 @@ class CertificateDetailView(DetailView):
 
             context['convener_name'] = convener_name
         context['project_slug'] = self.project_slug
+        if self.project_slug:
+            context['the_project'] = \
+                Project.objects.get(slug=self.project_slug)
+            context['project'] = context['the_project']
         return context
 
     def get_queryset(self):

@@ -25,7 +25,8 @@ from ..models import (
     CourseType,
     CourseConvener,
     Course,
-    Attendee)
+    Attendee,
+    CertifyingOrganisationCertificate)
 from ..forms import CertifyingOrganisationForm
 from certification.utilities import check_slug
 
@@ -149,6 +150,10 @@ class CertifyingOrganisationListView(
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
             context['project'] = context['the_project']
+            context['certificate_lists'] = \
+                CertifyingOrganisationCertificate.objects.filter(
+                    certifying_organisation__project=context['the_project']
+            ).values_list('certifying_organisation', flat=True)
         return context
 
     def get_queryset(self, queryset=None):
