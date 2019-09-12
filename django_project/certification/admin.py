@@ -14,7 +14,6 @@ from certification.models.certifying_organisation import CertifyingOrganisation
 from certification.models.organisation_certificate import \
     CertifyingOrganisationCertificate
 from certification.models.status import Status
-from simple_history.admin import SimpleHistoryAdmin
 
 
 class CertificateAdmin(admin.ModelAdmin):
