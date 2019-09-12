@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('certification', '0020_auto_20190729_1634'),
+        ('certification', '0024_historicalcertifyingorganisation'),
     ]
 
     operations = [
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('int_id', models.AutoField(serialize=False, primary_key=True)),
                 ('certificateID', models.CharField(default=b'', max_length=100, blank=True)),
-                ('issued', models.DateTimeField(default=datetime.datetime(2019, 9, 10, 10, 38, 46, 932852))),
+                ('issued', models.DateTimeField(default=datetime.datetime(2019, 9, 12, 4, 41, 11, 444179))),
                 ('valid', models.BooleanField(default=True, help_text='Is this certificate still valid?')),
                 ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('certifying_organisation', models.ForeignKey(to='certification.CertifyingOrganisation')),
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('int_id', models.IntegerField(db_index=True, blank=True)),
                 ('certificateID', models.CharField(default=b'', max_length=100, blank=True)),
-                ('issued', models.DateTimeField(default=datetime.datetime(2019, 9, 10, 10, 38, 46, 932852))),
+                ('issued', models.DateTimeField(default=datetime.datetime(2019, 9, 12, 4, 41, 11, 444179))),
                 ('valid', models.BooleanField(default=True, help_text='Is this certificate still valid?')),
                 ('history_id', models.AutoField(serialize=False, primary_key=True)),
                 ('history_date', models.DateTimeField()),
