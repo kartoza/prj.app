@@ -16,7 +16,9 @@ from unidecode import unidecode
 from django.contrib.auth.models import User
 from django_countries.fields import CountryField
 import logging
+from simple_history.models import HistoricalRecords
 from certification.utilities import check_slug
+from certification.models.status import Status
 
 logger = logging.getLogger(__name__)
 
@@ -148,14 +150,22 @@ class CertifyingOrganisation(models.Model):
         default=False
     )
 
-    status = models.CharField(
+    status = models.ForeignKey(
+        Status,
+        null=True,
+        blank=True
+    )
+
+    remarks = models.CharField(
         help_text=_(
-            'Status of this organisation, '
+            'Remarks regarding status of this organisation, '
             'i.e. Rejected, because lacks of information'),
         max_length=500,
         null=True,
         blank=True
     )
+
+    history = HistoricalRecords()
 
     slug = models.SlugField()
     organisation_owners = models.ManyToManyField(User)

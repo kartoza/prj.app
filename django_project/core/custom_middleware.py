@@ -39,6 +39,8 @@ class NavContextMiddleware(object):
         :return: context :rtype: dict
         """
         context = response.context_data
+        if not context:
+            return response
 
         if context.get('project', None):
             context['the_project'] = context.get('project')

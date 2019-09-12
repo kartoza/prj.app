@@ -12,7 +12,6 @@ from views import (
     PendingCertifyingOrganisationListView,
     ApproveCertifyingOrganisationView,
     reject_certifying_organisation,
-    update_status_certifying_organisation,
     RejectedCertifyingOrganisationListView,
 
     # Course Type.
@@ -70,6 +69,8 @@ from views import (
     # About.
     AboutView,
 )
+from api_views.get_status import GetStatus
+from api_views.update_status import UpdateStatusOrganisation
 
 
 urlpatterns = patterns(
@@ -95,7 +96,7 @@ urlpatterns = patterns(
         name='certifyingorganisation-reject'),
     url(regex='^(?P<project_slug>[\w-]+)/update-status-certifyingorganisation/'
               '(?P<slug>[\w-]+)/$',
-        view=update_status_certifying_organisation,
+        view=UpdateStatusOrganisation.as_view(),
         name='certifyingorganisation-update-status'),
     url(regex='^(?P<project_slug>[\w-]+)/'
               'certifyingorganisation/rejected-list/$',
@@ -290,4 +291,8 @@ urlpatterns = patterns(
         name='validate-certificate-organisation'),
     url(regex='^(?P<project_slug>[\w-]+)/certificate/$',
         view=ValidateCertificate.as_view(), name='validate-certificate'),
+
+    # API Views
+    url(regex='^(?P<project_slug>[\w-]+)/get-status-list/$',
+        view=GetStatus.as_view(), name='get-status-list'),
 )
