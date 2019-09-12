@@ -1,0 +1,31 @@
+# coding=utf-8
+from braces.views import LoginRequiredMixin
+from django.http import HttpResponse
+from rest_framework import serializers, status
+from rest_framework.views import APIView, Response
+from base.models.project import Project
+from ..models.status import Status
+
+
+class StatusSerializer(serializers.ModelSerializer):
+    """Serializer for model Status."""
+
+    class Meta:
+        model = Status
+        fields = '__all__'
+
+
+class GetStatus(LoginRequiredMixin, APIView):
+    """API to get list of status."""
+
+    def get(self, request, project_slug):
+        try:
+            project = Project.objects.get(slug=project_slug)
+            status_qs = Status.objects.filter(project=project)
+            serializer = StatusSerializer(status_qs, many=True)
+            return Response(serializer.data)
+        except Project.DoesNotExist:
+            return HttpResponse(
+                'Project does not exist.',
+                status=status.HTTP_400_BAD_REQUEST
+            )

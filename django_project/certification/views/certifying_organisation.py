@@ -835,8 +835,8 @@ def reject_certifying_organisation(request, **kwargs):
         certifyingorganisation.rejected = True
         certifyingorganisation.approved = False
 
-        status = request.GET.get('status', '')
-        certifyingorganisation.status = status
+        remarks = request.GET.get('remarks', '')
+        certifyingorganisation.remarks = remarks
 
         # Check if slug have duplicates in rejected objects.
         # If there is duplicate slug, assign new slug.
@@ -883,33 +883,6 @@ def reject_certifying_organisation(request, **kwargs):
                 [organisation_owner.email],
                 fail_silently=False,
             )
-
-        url = reverse(pattern_name, kwargs={
-            'project_slug': project_slug
-        })
-        return HttpResponseRedirect(url)
-    else:
-        return HttpResponse('Please use GET method.')
-
-
-def update_status_certifying_organisation(request, **kwargs):
-    """Function to update status of a certifying organisation."""
-
-    pattern_name = 'pending-certifyingorganisation-list'
-
-    if request.method == 'GET':
-        project_slug = kwargs.pop('project_slug')
-        slug = kwargs.pop('slug')
-
-        try:
-            certifyingorganisation = \
-                CertifyingOrganisation.objects.get(slug=slug)
-            status = request.GET.get('status', '')
-            certifyingorganisation.status = status
-
-            certifyingorganisation.save()
-        except:   # noqa
-            HttpResponse('Certifying organisation is not found.')
 
         url = reverse(pattern_name, kwargs={
             'project_slug': project_slug

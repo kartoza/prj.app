@@ -1,12 +1,15 @@
 # coding=utf-8
 import logging
+from StringIO import StringIO
+from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from django.core.urlresolvers import reverse
 from certification.tests.model_factories import (
     ProjectF,
     UserF,
-    CertifyingOrganisationF
+    CertifyingOrganisationF,
+    StatusF
 )
 
 
@@ -103,7 +106,7 @@ class TestCertifyingOrganisationView(TestCase):
         status = self.client.login(username='anita', password='password')
         self.assertTrue(status)
         post_data = {
-            'status': 'test rejection'
+            'remarks': 'test rejection'
         }
         self.assertEqual(self.pending_certifying_organisation.approved, False)
         response = self.client.get(
@@ -116,25 +119,63 @@ class TestCertifyingOrganisationView(TestCase):
         self.pending_certifying_organisation.refresh_from_db()
         self.assertEqual(self.pending_certifying_organisation.rejected, True)
         self.assertEqual(
-            self.pending_certifying_organisation.status, 'test rejection')
+            self.pending_certifying_organisation.remarks, 'test rejection')
         self.assertEqual(self.pending_certifying_organisation.approved, False)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_update_status_organisation(self):
         status = self.client.login(username='anita', password='password')
         self.assertTrue(status)
+        status_object = StatusF.create()
         post_data = {
-            'status': 'test update status'
+            'remarks': 'test update status',
+            'status': status_object.id
         }
         self.assertEqual(self.pending_certifying_organisation.approved, False)
-        response = self.client.get(
+        response = self.client.post(
             reverse('certifyingorganisation-update-status', kwargs={
                 'project_slug': self.project.slug,
                 'slug': self.pending_certifying_organisation.slug
             }), post_data
         )
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         self.pending_certifying_organisation.refresh_from_db()
         self.assertEqual(
-            self.pending_certifying_organisation.status, 'test update status')
+            self.pending_certifying_organisation.remarks, 'test update status')
+        self.assertEqual(
+            self.pending_certifying_organisation.status, status_object)
         self.assertEqual(self.pending_certifying_organisation.approved, False)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_get_status_list_no_login(self):
+        response = self.client.get(
+            reverse('get-status-list', kwargs={
+                'project_slug': self.project.slug,
+            })
+        )
+        self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_get_status_list_with_login(self):
+        status = self.client.login(username='anita', password='password')
+        self.assertTrue(status)
+        status_object = StatusF.create(
+            project=self.project
+        )
+        response = self.client.get(
+            reverse('get-status-list', kwargs={
+                'project_slug': self.project.slug,
+            })
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data[0]['name'], status_object.name)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_update_status_command(self):
+        out = StringIO()
+        call_command('set_status_existing_organisation', stdout=out)
+        self.certifying_organisation.refresh_from_db()
+        self.pending_certifying_organisation.refresh_from_db()
+        self.assertEquals(self.certifying_organisation.status.name, 'Approved')
+        self.assertEquals(
+            self.pending_certifying_organisation.status.name, 'Pending')

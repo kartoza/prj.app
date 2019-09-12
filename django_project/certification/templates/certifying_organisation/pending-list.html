@@ -150,9 +150,11 @@
                      organisation_country="{{ certifyingorganisation.country.name }}"
                      organisation_slug="{{ certifyingorganisation.slug }}"
                      organisation_project_slug="{{ certifyingorganisation.project.slug }}"
-                     organisation_status="{{ certifyingorganisation.status }}"
+                     organisation_status="{{ certifyingorganisation.status.id }}"
+                     organisation_remarks="{{ certifyingorganisation.remarks }}"
                      data-title="Click to edit">
-                    <b>Status</b>: <span class="status-info">{{ certifyingorganisation.status }}</span>
+                    <b>Status</b>: <span class="status-info">{{ certifyingorganisation.status }}</span><br/>
+                    <b>Remarks</b>: <span class="remarks-info">{{ certifyingorganisation.remarks }}</span>
                 </div>
                 {% endif %}
             </div>
@@ -211,7 +213,10 @@
                     </ul>
                     <form id="updateStatusForm" role="form">
                         <label>Status:</label><br>
-                        <input name="update-status" class="form-control">
+                        <select name="update-status" class="form-control">
+                        </select><br/>
+                        <label>Remarks:</label><br>
+                        <input name="update-remarks" class="form-control">
                         <input name="status-organisation-slug" hidden>
                         <input name="status-organisation-project-slug" hidden>
                     </form>
@@ -255,11 +260,30 @@
         });
 
         $('.status-wrapper').click(function () {
+            var initial_status = $(this).attr('organisation_status');
+            var project_slug = $(this).attr('organisation_project_slug');
+            $.ajax({
+                url: '/{{ LANGUAGE_CODE }}/' + project_slug + '/get-status-list/',
+                method: 'GET',
+                success: function (data) {
+                    var $selectStatus = $('[name="update-status"]');
+                    $selectStatus.empty();
+                    $selectStatus.append('<option value="">--------------------------</option>');
+                    for(var i=0; i<data.length; i++){
+                        if(data[i].id === parseInt(initial_status)){
+                            $selectStatus.append('<option value=' + data[i].id + ' selected>' + data[i].name + '</option>')
+                        }else {
+                            $selectStatus.append('<option value=' + data[i].id + '>' + data[i].name + '</option>')
+                        }
+
+                    }
+                }
+            });
             $('#status-organisation-name').html($(this).attr('organisation_name'));
             $('#status-organisation-country').html($(this).attr('organisation_country'));
             $('[name=status-organisation-slug]').val($(this).attr('organisation_slug'));
-            $('[name=status-organisation-project-slug]').val($(this).attr('organisation_project_slug'));
-            $('[name=update-status]').val($(this).attr('organisation_status'));
+            $('[name=status-organisation-project-slug]').val(project_slug);
+            $('[name=update-remarks]').val($(this).attr('organisation_remarks'));
             $('#updateStatusModal').modal('show')
         });
 
@@ -279,8 +303,7 @@
             var organisation_slug = $('[name=rejected-organisation-slug]').val();
             var organisation_project_slug = $('[name=rejected-organisation-project-slug]').val();
             $.ajax({
-                url: '/' + organisation_project_slug + '/reject-certifyingorganisation/' + organisation_slug + '/',
-                type: 'GET',
+                url: '/{{ LANGUAGE_CODE }}/' + organisation_project_slug + '/reject-certifyingorganisation/' + organisation_slug + '/',
                 data: {
                     'status': $('[name=status]').val()
                 },
@@ -294,11 +317,13 @@
             var organisation_slug = $('[name=status-organisation-slug]').val();
             var organisation_project_slug = $('[name=status-organisation-project-slug]').val();
             $.ajax({
-                url: '/' + organisation_project_slug + '/update-status-certifyingorganisation/' + organisation_slug + '/',
-                type: 'GET',
+                url: '/{{ LANGUAGE_CODE }}/' + organisation_project_slug + '/update-status-certifyingorganisation/' + organisation_slug + '/',
+                method: 'POST',
                 data: {
-                    'status': $('[name=update-status]').val()
+                    'status': $('[name=update-status]').val(),
+                    'remarks': $('[name=update-remarks]').val()
                 },
+                dataType: 'json',
                 success: function(){
                      location.reload()
                 }
