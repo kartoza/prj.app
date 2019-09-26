@@ -17,7 +17,7 @@
 
             options_array = [
                 {
-                    'display' : 'Sponsor Count',
+                    'display' : 'Sustaining Member Count',
                     'value' : 'sponsor_total',
                     'grades' : [0, 1, 2, 3, 4, 5],
                     'attr' : ''
@@ -101,7 +101,7 @@
 
             // method that we will use to update the control based on feature properties passed
             info.update = function (props) {
-                var info_title = '<h4>Sponsor Info</h4>';
+                var info_title = '<h4>Sustaining Member Info</h4>';
                 var info_content = '';
 
                 if (props) {
@@ -302,14 +302,14 @@
 {% block title %} World Map {% endblock %}
 
 {% block page_title %}
-    <h1>World Map of Sponsors</h1>
+    <h1>World Map of Sustaining Members</h1>
 {% endblock page_title %}
 
 {% block content %}
 
     <div class="map-wrapper">
         <div class="container">
-            <h1>World Map of Sponsors</h1>
+            <h1>World Map of Sustaining Members</h1>
         </div>
         <div class="container">
             <div class="container-fluid">

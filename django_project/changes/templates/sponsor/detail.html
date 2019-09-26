@@ -1,13 +1,13 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
 
-{% block title %}Sponsors - {{ block.super }}{% endblock %}
+{% block title %}Sustaining Members - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
 
 {% block page_title %}
-    <h1>Sponsors (all)</h1>
+    <h1>Sustaining Members (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
@@ -121,7 +121,7 @@
                 {% if sponsor.sponsor.agreement and user.is_authenticated %}
                     <p>
                         <div class="sponsor-detail-title">
-                            Sponsor agreement
+                            Sustaining Member agreement
                         </div>
                         <div>
                             <b><a href="{{ sponsor.agreement.url }}"> Document agreement</a></b>
@@ -131,7 +131,7 @@
                 {% if sponsor.amount_sponsored and sponsor.currency %}
                     <p>
                         <div class="sponsor-detail-title">
-                            Amount Sponsored
+                            Amount Contributed
                         </div>
                         <div>
                             {{ sponsor.amount_sponsored }} {{ sponsor.currency }}
