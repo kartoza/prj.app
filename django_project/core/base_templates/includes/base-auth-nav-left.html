@@ -136,15 +136,15 @@
     <ul class="nav navbar-nav">
         <li>
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                Sponsors <b class="caret"></b>
+                Sustaining Members <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-                <li><a href="{% url 'sponsor-list' the_project.slug %}">Sponsors</a></li>
+                <li><a href="{% url 'sponsor-list' the_project.slug %}">Sustaining Members</a></li>
                 {% if user.is_authenticated %}
-                    <li><a href="{% url 'sponsorshiplevel-list' the_project.slug %}">Sponsor Levels</a></li>
-                    <li><a href="{% url 'sponsorshipperiod-list' the_project.slug %}">Sponsor Periods</a></li>
+                    <li><a href="{% url 'sponsorshiplevel-list' the_project.slug %}">Sustaining Member Levels</a></li>
+                    <li><a href="{% url 'sponsorshipperiod-list' the_project.slug %}">Sustaining Member Periods</a></li>
                 {% endif %}
-                <li><a href="{% url 'sponsor-world-map' the_project.slug %}">Sponsors Map</a></li>
+                <li><a href="{% url 'sponsor-world-map' the_project.slug %}">Sustaining Members Map</a></li>
             </ul>
         </li>
     </ul>
