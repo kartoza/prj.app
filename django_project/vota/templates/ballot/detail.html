@@ -45,6 +45,7 @@
     </div>
     <hr/>
     <div class="row">
+    {% if is_member %}
         <div class="col-md-7">
             <h4>{{ ballot.proposer.username }} proposes:</h4>
             <p>{{ ballot.summary }}</p>
@@ -54,6 +55,11 @@
                 <p>You have voted: {{ vote }}</p>
             {% endif %}
         </div>
+    {% else %}
+        <div class="col-md-7">
+            <h4>You are not a member of this team.</h4>
+        </div>
+    {% endif %}
     </div>
     <hr/>
     {% if ballot.description %}

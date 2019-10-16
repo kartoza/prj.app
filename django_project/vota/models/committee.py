@@ -5,6 +5,7 @@ This model is used to create 'committees' of users.
 A Committee has many Users
 """
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 from django.utils.text import slugify
 
 import logging
@@ -95,4 +96,5 @@ class Committee(models.Model):
         :return: Ballot queryset
         :rtype: QuerySet
         """
-        return Ballot.open_objects.filter(committee=self).filter(private=False)
+        return Ballot.objects.filter(
+            committee=self, closes__gt=timezone.now, private=False)

@@ -22,6 +22,8 @@ class CommitteeAdmin(reversion.VersionAdmin):
 
     """Committee admin model."""
 
+    filter_horizontal = ('users',)
+
     def queryset(self, request):
         """Ensure we use the correct manager.
 
