@@ -97,13 +97,18 @@
         <li>
             {% if the_committee and the_project %}
 
-                <a href="{% url 'committee-list' the_project.slug %}" class="dropdown-toggle" data-toggle="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown">
                     Teams <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
                     <li>
+                        <a href="{% url 'committee-list' the_project.slug %}">
+                            Team List
+                        </a>
+                    </li>
+                    <li>
                         <a href="{% url 'ballot-list' the_project.slug the_committee.slug %}">
-                            Committee Ballots
+                            Team Ballots
                         </a>
                     </li>
                     <li>

@@ -32,7 +32,13 @@ class BallotDetailView(LoginRequiredMixin, BallotMixin, DetailView):
         context = super(BallotDetailView, self).get_context_data(**kwargs)
         context['committee'] = Committee.objects.get(
             id=self.object.committee.id)
-        context['all_votes'] = Vote.objects.filter(ballot=self.object)
+        context['all_votes'] = (
+            Vote.objects.filter(
+                ballot=self.object, user__in=context['committee'].users.all()))
+        context['is_member'] = (
+            True if self.request.user in context['committee'].users.all()
+            else False
+        )
         try:
             vote = Vote.objects.get(user=self.request.user, ballot=self.object)
             context['vote'] = dict(VOTE_CHOICES).get(vote.choice)
