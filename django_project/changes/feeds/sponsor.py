@@ -48,7 +48,7 @@ class RssSponsorFeed(Feed):
          :returns: Title of the RSS Feed.
          :rtype: str
          """
-        return 'RSS Sponsors of %s Project' % obj.name
+        return 'RSS Sustaining Members of %s Project' % obj.name
 
     def description(self, obj):
         """Return a description for the RSS.
@@ -59,7 +59,8 @@ class RssSponsorFeed(Feed):
          :returns: Description of the RSS Feed.
          :rtype: str
          """
-        return 'These are the latest sponsors of %s project.' % obj.name
+        return 'These are the current sustaining members ' \
+               'of {} project.'.format(obj.name)
 
     def link(self, obj):
         """Return the url of the latest sponsor.
@@ -111,23 +112,24 @@ class RssSponsorFeed(Feed):
 
         data = {
             'domain': head,
-            'sponsor_logo': item.sponsor.logo.url,
-            'sponsor_level': item.sponsorship_level,
+            'member_logo': item.sponsor.logo.url,
+            'member_level': item.sponsorship_level,
             'start_date': item.start_date.strftime('%d %B %Y'),
             'end_date': item.end_date.strftime('%d %B %Y'),
             'currency': item.currency,
-            'amount_sponsored': item.amount_sponsored,
-            'sponsor_class': level_class,
+            'amount_contributed': item.amount_sponsored,
+            'member_class': level_class,
         }
 
         descriptions = \
             '<div>' \
-            '<img class="sponsor_img {sponsor_class}" ' \
-            'src="{domain}{sponsor_logo}" width="300px"></div>' \
-            '<p class="sponsor_body {sponsor_class}">' \
-            '<span>Sponsorship level: {sponsor_level}</span><br/>' \
-            '<span>Sponsorship period: {start_date} - {end_date}</span><br/>' \
-            '<span>Amount sponsored: {currency} {amount_sponsored}<span></p>'\
+            '<img class="member_img {member_class}" ' \
+            'src="{domain}{member_logo}" width="300px"></div>' \
+            '<p class="member_body {member_class}">' \
+            '<span>Membership level: {member_level}</span><br/>' \
+            '<span>Membership period: {start_date} - {end_date}</span><br/>' \
+            '<span>Amount contributed: ' \
+            '{currency} {amount_contributed}<span></p>'\
             .format(**data)
         return descriptions
 
@@ -136,8 +138,8 @@ class RssSponsorFeed(Feed):
     def item_extra_kwargs(self, item):
         return {
             'image_url': item.sponsor.logo.url,
-            'sponsor_level': item.sponsorship_level.name,
-            'sponsor_country': item.sponsor.country.name,
+            'member_level': item.sponsorship_level.name,
+            'member_country': item.sponsor.country.name,
             # '%d %B %Y' => "16 March 2019"
             # '%Y%m%d'   => "20181012"
             'start_date': item.start_date.strftime('%Y%m%d'),
@@ -157,7 +159,8 @@ class RssPastSponsorFeed(RssSponsorFeed):
          :returns: Description of the RSS Feed.
          :rtype: str
          """
-        return 'These are the past sponsors of %s project.' % obj.name
+        return 'These are the past sustaining ' \
+               'members of %s project.' % obj.name
 
     def items(self, obj):
         """Return past (former) sponsors of the project.
@@ -236,7 +239,7 @@ class JSONSponsorFeed(Feed):
          :returns: Title of the RSS Feed.
          :rtype: str
          """
-        return 'JSON Sponsors of %s Project' % obj.name
+        return 'JSON Sustaining Members of %s Project' % obj.name
 
     def description(self, obj):
         """Return a description for the RSS.
@@ -247,7 +250,8 @@ class JSONSponsorFeed(Feed):
          :returns: Description of the RSS Feed.
          :rtype: str
          """
-        return 'These are the latest sponsors of %s project.' % obj.name
+        return 'These are the currrent sustaining members ' \
+               'of {} project.'.format(obj.name)
 
     def link(self, obj):
         """Return the url of the latest sponsor.
@@ -300,9 +304,9 @@ class JSONSponsorFeed(Feed):
     def item_extra_kwargs(self, item):
         return {
             'image_url': item.sponsor.logo.url,
-            'sponsor_level': item.sponsorship_level.name,
-            'sponsor_country': item.sponsor.country.name,
-            'sponsor_url': item.sponsor.sponsor_url,
+            'member_level': item.sponsorship_level.name,
+            'member_country': item.sponsor.country.name,
+            'member_url': item.sponsor.sponsor_url,
             # '%d %B %Y' => "16 March 2019"
             # '%Y%m%d'   => "20181012"
             'start_date': item.start_date.strftime('%d %B %Y'),
@@ -322,7 +326,8 @@ class JSONPastSponsorFeed(JSONSponsorFeed):
          :returns: Description of the RSS Feed.
          :rtype: str
          """
-        return 'These are the past sponsors of %s project.' % obj.name
+        return 'These are the past sustaining members ' \
+               'of %s project.' % obj.name
 
     def items(self, obj):
         """Return past (former) sponsors of the project.
