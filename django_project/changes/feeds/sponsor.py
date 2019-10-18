@@ -127,7 +127,8 @@ class RssSponsorFeed(Feed):
             '<p class="member_body {member_class}">' \
             '<span>Membership level: {member_level}</span><br/>' \
             '<span>Membership period: {start_date} - {end_date}</span><br/>' \
-            '<span>Amount contributed: {currency} {amount_contributed}<span></p>'\
+            '<span>Amount contributed: ' \
+            '{currency} {amount_contributed}<span></p>'\
             .format(**data)
         return descriptions
 
