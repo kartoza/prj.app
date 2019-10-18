@@ -48,7 +48,7 @@ class RssSponsorFeed(Feed):
          :returns: Title of the RSS Feed.
          :rtype: str
          """
-        return 'RSS Members of %s Project' % obj.name
+        return 'RSS Sustaining Members of %s Project' % obj.name
 
     def description(self, obj):
         """Return a description for the RSS.
@@ -59,7 +59,7 @@ class RssSponsorFeed(Feed):
          :returns: Description of the RSS Feed.
          :rtype: str
          """
-        return 'These are the members of %s project.' % obj.name
+        return 'These are the sustaining members of %s project.' % obj.name
 
     def link(self, obj):
         """Return the url of the latest sponsor.
@@ -158,7 +158,8 @@ class RssPastSponsorFeed(RssSponsorFeed):
          :returns: Description of the RSS Feed.
          :rtype: str
          """
-        return 'These are the past members of %s project.' % obj.name
+        return 'These are the past sustaining ' \
+               'members of %s project.' % obj.name
 
     def items(self, obj):
         """Return past (former) sponsors of the project.
@@ -237,7 +238,7 @@ class JSONSponsorFeed(Feed):
          :returns: Title of the RSS Feed.
          :rtype: str
          """
-        return 'JSON Members of %s Project' % obj.name
+        return 'JSON Sustaining Members of %s Project' % obj.name
 
     def description(self, obj):
         """Return a description for the RSS.
@@ -248,7 +249,7 @@ class JSONSponsorFeed(Feed):
          :returns: Description of the RSS Feed.
          :rtype: str
          """
-        return 'These are the members of %s project.' % obj.name
+        return 'These are the sustaining members of %s project.' % obj.name
 
     def link(self, obj):
         """Return the url of the latest sponsor.
@@ -323,7 +324,8 @@ class JSONPastSponsorFeed(JSONSponsorFeed):
          :returns: Description of the RSS Feed.
          :rtype: str
          """
-        return 'These are the past members of %s project.' % obj.name
+        return 'These are the past sustaining members ' \
+               'of %s project.' % obj.name
 
     def items(self, obj):
         """Return past (former) sponsors of the project.
