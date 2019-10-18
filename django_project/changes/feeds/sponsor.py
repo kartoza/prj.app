@@ -59,7 +59,8 @@ class RssSponsorFeed(Feed):
          :returns: Description of the RSS Feed.
          :rtype: str
          """
-        return 'These are the sustaining members of %s project.' % obj.name
+        return 'These are the current sustaining members ' \
+               'of {} project.'.format(obj.name)
 
     def link(self, obj):
         """Return the url of the latest sponsor.
@@ -249,7 +250,8 @@ class JSONSponsorFeed(Feed):
          :returns: Description of the RSS Feed.
          :rtype: str
          """
-        return 'These are the sustaining members of %s project.' % obj.name
+        return 'These are the currrent sustaining members ' \
+               'of {} project.'.format(obj.name)
 
     def link(self, obj):
         """Return the url of the latest sponsor.
