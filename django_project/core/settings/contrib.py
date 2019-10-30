@@ -22,7 +22,7 @@ INSTALLED_APPS += (
     'django_countries',  # for sponsor addresses
     'colorfield',  # for color picker
     # 'user_map',
-    'disqus',
+    # 'disqus',  # disabled because of unwanted ads.
     'rest_framework',
     'simple_history',
 )
