@@ -327,10 +327,7 @@ def generate_pdf(
     page.setFont('Times-Bold', 26)
     page.drawCentredString(center, 480, 'Certificate of Completion')
 
-    try:
-        page.setFont('Noto-bold', 26)
-    except KeyError:
-        page.setFont('Times-Bold', 26)
+    page.setFont('Times-Bold', 26)
 
     page.drawCentredString(
         center, 400, '%s %s' % (
@@ -341,7 +338,7 @@ def generate_pdf(
         center, 370, 'Has attended and completed the course:')
     page.setFont('Times-Bold', 20)
     page.drawCentredString(
-            center, 350, course.course_type.name.encode('utf-8'))
+            center, 335, course.course_type.name.encode('utf-8'))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
         center, 300, 'With a trained competence in:')
@@ -817,7 +814,7 @@ class DummyCertificate(object):
     """Dummy object for preview certificate."""
 
     def __init__(self, course, attendee, project):
-        self.certificateID = '{}-1'.format(project.name)
+        self.certificateID = '{}-DEMO'.format(project.name)
         self.course = course
         self.attendee = attendee
 
