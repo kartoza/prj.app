@@ -344,7 +344,7 @@ def generate_pdf(
         center, 300, 'With a trained competence in:')
     page.setFont('Times-Bold', 14)
     page.drawCentredString(
-        center, 280, '%s' % (course.trained_competence))
+        center, 280, '{}'.format(course.trained_competence))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
         center, 250, '{}'.format(course_duration))
@@ -844,7 +844,7 @@ def preview_certificate(request, **kwargs):
         certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=organisation_slug)
         raw_image = request.POST.get('template_certificate', None)
-        trained_competence = ''
+        trained_competence = request.POST.get('trained_competence', None)
         if 'base64' in raw_image:
             image_data = re.sub('^data:image/.+;base64,', '',
                                 raw_image).decode('base64')
