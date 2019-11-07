@@ -844,7 +844,7 @@ def preview_certificate(request, **kwargs):
         certifying_organisation = \
             CertifyingOrganisation.objects.get(slug=organisation_slug)
         raw_image = request.POST.get('template_certificate', None)
-        trained_competence = request.POST.get('trained_competence', None)
+        trained_competence = request.POST.get('trained_competence', '')
         if 'base64' in raw_image:
             image_data = re.sub('^data:image/.+;base64,', '',
                                 raw_image).decode('base64')
