@@ -141,7 +141,7 @@ class CertifyingOrganisationAdmin(SimpleHistoryAdmin):
 
     filter_horizontal = ('organisation_owners',)
     search_fields = ['name']
-    list_display = ('name', 'country', 'approved', 'rejected')
+    list_display = ('name', 'project', 'country', 'approved', 'rejected')
     list_filter = ('country', 'approved', 'rejected', 'status')
     inlines = (CertifyingOrganisationCertificateAdminInline, )
     history_list_display = ['status', 'remarks']
