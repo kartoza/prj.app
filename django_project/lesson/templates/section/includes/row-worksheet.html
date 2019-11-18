@@ -2,10 +2,10 @@
 {% load lesson_tags %}
 <div class="row section-list" style="margin-top:5px; margin-left: 20px;">
     <div class="col-lg-9" id="{{ worksheet.module }}">
-        <input class="worksheet-checkbox {{ worksheet.section.slug }}-checkbox" worksheet-pk="{{ worksheet.pk }}" worksheet-number="{{ forloop.parentloop.counter }}.{{ forloop.counter }}" type="checkbox" hidden>
+        <input class="worksheet-checkbox {{ worksheet.section.slug }}-checkbox" worksheet-pk="{{ worksheet.pk }}" worksheet-number="{{ forloop.parentloop.counter|add:page_obj.start_index|add:'-1' }}.{{ forloop.counter }}" type="checkbox" hidden>
         <h4>
-            <a href="{% url "worksheet-detail" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ forloop.parentloop.counter }}.{{ forloop.counter }}">
-                {{ forloop.parentloop.counter }}.{{ forloop.counter }}. {{ worksheet.module }}
+            <a href="{% url "worksheet-detail" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ forloop.parentloop.counter|add:page_obj.start_index|add:'-1' }}.{{ forloop.counter }}">
+                {{ forloop.parentloop.counter|add:page_obj.start_index|add:'-1' }}.{{ forloop.counter }}. {{ worksheet.module }}
             </a>
             {{ worksheet|is_translation_up_to_date }}
         </h4>
@@ -14,12 +14,12 @@
     <div class="col-lg-3">
         <div class="btn-group pull-right">
             <a id="download-pdf-button" class="btn btn-default btn-mini tooltip-toggle" target="_blank"
-               href='{% url "worksheet-zip" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ forloop.parentloop.counter }}.{{ forloop.counter }}'
+               href='{% url "worksheet-zip" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ forloop.parentloop.counter|add:page_obj.start_index|add:'-1' }}.{{ forloop.counter }}'
                data-title="Download {{ worksheet.module }} module and its sample data as ZIP">
                 <span class="fa fa-download"></span>
             </a>
             <a id="download-pdf-button" class="btn btn-default btn-mini tooltip-toggle" target="_blank"
-               href='{% url "worksheet-print" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ forloop.parentloop.counter }}.{{ forloop.counter }}'
+               href='{% url "worksheet-print" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ forloop.parentloop.counter|add:page_obj.start_index|add:'-1' }}.{{ forloop.counter }}'
                data-title="Download {{ worksheet.module }} as PDF">
                 <span class="glyphicon glyphicon-download"></span>
             </a>
