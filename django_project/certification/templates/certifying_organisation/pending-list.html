@@ -132,6 +132,8 @@
                             data-title="Reject {{ certifyingorganisation.name }}">
                             <span class="glyphicon glyphicon-thumbs-down"></span>
                         </a>
+                    {% endif %}
+                    {% if not certifyingorganisation.approved and user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all or user in certifyingorganisation.organisation_owners.all %}
                         <a class="btn btn-default btn-mini tooltip-toggle"
                             href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                             data-title="Edit {{ certifyingorganisation.name }}">
