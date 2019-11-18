@@ -122,7 +122,7 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
 
         # fix padded version if there is padded name with alphabet.
         for version in versions_qs:
-            is_alphabet = re.search('[a-zA-Z]', str(version.padded_version))
+            is_alphabet = re.search('[a-zA-Z,.]', str(version.padded_version))
             if is_alphabet is not None:
                 version.save()
 
