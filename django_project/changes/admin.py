@@ -36,7 +36,9 @@ class CategoryAdmin(reversion.VersionAdmin):
 
 
 class VersionAdmin(reversion.VersionAdmin):
-    """Verion admin model."""
+    """Version admin model."""
+
+    list_display = ('__unicode__', 'project',)
 
     def queryset(self, request):
         """Ensure we use the correct manager.
