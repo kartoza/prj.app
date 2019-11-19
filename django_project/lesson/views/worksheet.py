@@ -420,9 +420,33 @@ def download_multiple_worksheet(request, **kwargs):
 
     s = StringIO.StringIO()
     zf = zipfile.ZipFile(s, "w")
+    initial_numbering = ''
+    final_numbering = ''
 
     for pk in worksheets:
         numbering = worksheets[pk]
+        array_numbering = numbering.split('.')
+
+        if initial_numbering == '':
+            initial_numbering = numbering
+        else:
+            array_initial_numbering = initial_numbering.split('.')
+            if int(array_numbering[0]) < int(array_initial_numbering[0]):
+                initial_numbering = numbering
+            elif int(array_numbering[0]) == int(array_initial_numbering[0]):
+                if int(array_numbering[1]) < int(array_initial_numbering[1]):
+                    initial_numbering = numbering
+
+        if final_numbering == '':
+            final_numbering = numbering
+        else:
+            array_final_numbering = final_numbering.split('.')
+            if int(array_numbering[0]) > int(array_final_numbering[0]):
+                final_numbering = numbering
+            elif int(array_numbering[0]) == int(array_final_numbering[0]):
+                if int(array_numbering[1]) > int(array_final_numbering[1]):
+                    final_numbering = numbering
+
         pk = int(pk)
         worksheet = Worksheet.objects.get(pk=pk)
         pdf_title = '{}. {}'.format(numbering, worksheet.module.encode("utf8"))
@@ -462,9 +486,18 @@ def download_multiple_worksheet(request, **kwargs):
 
     zf.close()
 
+    downloaded_module = ''
+    if len(worksheets) > 0:
+        if len(worksheets) == 1:
+            downloaded_module = 'module {}'.format(initial_numbering)
+        else:
+            downloaded_module = 'module {} to {}'.format(
+                initial_numbering,
+                final_numbering)
+
     zip_response = HttpResponse(
         s.getvalue(), content_type="application/x-zip-compressed")
     zip_response['Content-Disposition'] = \
-        'attachment; filename={}-worksheet.zip'.format(
-            project.name.encode('utf8'))
+        'attachment; filename={}-worksheet {}.zip'.format(
+            project.name.encode('utf8'), downloaded_module)
     return zip_response
