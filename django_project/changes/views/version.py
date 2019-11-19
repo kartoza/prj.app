@@ -120,6 +120,12 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         """
         versions_qs = Version.objects.all()
 
+        # fix padded version if there is padded name with alphabet.
+        for version in versions_qs:
+            is_alphabet = re.search('[a-zA-Z,.]', str(version.padded_version))
+            if is_alphabet is not None:
+                version.save()
+
         project_slug = self.kwargs.get('project_slug', None)
         if project_slug:
             try:
@@ -133,8 +139,6 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
             return versions_qs
         else:
             raise Http404('Sorry! We could not find your version!')
-        # In case no project filter applied
-        return versions_qs
 
 
 class VersionDetailView(VersionMixin, DetailView):

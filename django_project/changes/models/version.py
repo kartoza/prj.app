@@ -1,4 +1,5 @@
 # coding=utf-8
+import re
 from django.core.urlresolvers import reverse
 # from django.utils.text import slugify
 from common.utilities import version_slugify
@@ -76,8 +77,20 @@ class Version(models.Model):
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = version_slugify(new_list)[:50]
-        self.padded_version = self.pad_name(self.name)
+        self.padded_version = self.pad_name(str(self.get_numerical_name()))
         super(Version, self).save(*args, **kwargs)
+
+    def get_numerical_name(self):
+        name = self.name
+        non_decimal = re.compile(r'[^\d.]+')
+        numeric_name = non_decimal.sub('', name)
+        number = numeric_name.split('.')
+
+        # Fix the numbering of the version name to have format: 0.0.0.
+        while len(number) < 3:
+            numeric_name += '.0'
+            number = numeric_name.split('.')
+        return numeric_name
 
     def pad_name(self, version):
         """Create a 0 padded version of the version name.
