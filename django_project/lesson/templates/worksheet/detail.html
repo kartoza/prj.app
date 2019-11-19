@@ -309,45 +309,45 @@
                                         </div>
                                 </div>
                                 {% endif %}
+                                <ol type="a">
+                                    {% for answer in answers %}
+                                     <div class="row col-lg-12">
+                                        <li style="margin-bottom: 10px">
+                                            {% if user_can_edit %}
+                                                {# We insert a tick for the correct answer and if the user is allowed and we display explanations. #}
+                                                <div class="col-lg-10">
+                                                    {% if answer.is_correct %}
+                                                        <span class="question-answer-action" style="display:none;">&#10004;</span>
+                                                    {%  endif %}
+                                                    {{ answer.answer }}{{ answer|is_translation_up_to_date }}
+                                                    {% if answer.answer_explanation %}
+                                                        <span class="question-answer-action" style="display:none;">: <em>{{ answer.answer_explanation | base_markdown }}</em></span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-lg-2">
+                                                        <div class="pull-right btn-group question-answer-action" style="display:none;">
+                                                            <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                                                                href='{% url "answer-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
+                                                                data-title="{% trans 'Delete' %} {{ answer.answer }}">
+                                                                <span class="glyphicon glyphicon-minus"></span>
+                                                            </a>
+                                                            <a class="btn btn-default btn-mini tooltip-toggle"
+                                                                href='{% url "answer-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
+                                                                data-title="{% trans 'Edit' %} {{ answer.answer }}">
+                                                                <span class="glyphicon glyphicon-pencil"></span>
+                                                            </a>
+                                                        </div>
+                                                </div>
+                                                {% else %}
+                                                    {{ answer.answer }}
+                                                {% endif %}
+                                            </li>
+                                       </div>
+                                    {% endfor %}
+                                </ol>
 
                             </li>
                         </div>
-                        <ol type="a">
-                            {% for answer in answers %}
-                             <div class="row">
-                                <li style="margin-bottom: 10px">
-                                    {% if user_can_edit %}
-                                        {# We insert a tick for the correct answer and if the user is allowed and we display explanations. #}
-                                        <div class="col-lg-10">
-                                            {% if answer.is_correct %}
-                                                <span class="question-answer-action" style="display:none;">&#10004;</span>
-                                            {%  endif %}
-                                            {{ answer.answer }}{{ answer|is_translation_up_to_date }}
-                                            {% if answer.answer_explanation %}
-                                                <span class="question-answer-action" style="display:none;">: <em>{{ answer.answer_explanation | base_markdown }}</em></span>
-                                            {% endif %}
-                                        </div>
-                                        <div class="col-lg-2">
-                                                <div class="pull-right btn-group question-answer-action" style="display:none;">
-                                                    <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                                                        href='{% url "answer-delete" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
-                                                        data-title="{% trans 'Delete' %} {{ answer.answer }}">
-                                                        <span class="glyphicon glyphicon-minus"></span>
-                                                    </a>
-                                                    <a class="btn btn-default btn-mini tooltip-toggle"
-                                                        href='{% url "answer-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug pk=answer.pk %}'
-                                                        data-title="{% trans 'Edit' %} {{ answer.answer }}">
-                                                        <span class="glyphicon glyphicon-pencil"></span>
-                                                    </a>
-                                                </div>
-                                        </div>
-                                        {% else %}
-                                            {{ answer.answer }}
-                                        {% endif %}
-                                    </li>
-                               </div>
-                            {% endfor %}
-                        </ol>
                     {% endfor %}
                 </ol>
             </div>
