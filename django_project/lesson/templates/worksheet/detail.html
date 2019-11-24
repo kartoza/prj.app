@@ -26,14 +26,14 @@
     <div class="row page-header" style="border-bottom: 8px solid {{ worksheet.section.project.accent_color }};">
         <div class="col-lg-12">
             <div class="pull-right">
-                <div class="btn-group worksheet-action" style="display:none;">
+                <div class="btn-group worksheet-action">
                     <a class="btn btn-default btn-mini tooltip-toggle"
                         href='{% url "section-list" project_slug=worksheet.section.project.slug %}#{{ worksheet.section.slug }}'
                         data-title="{% trans 'Back' %}">
                         <span class="glyphicon glyphicon-arrow-left"></span>
                     </a>
                     <a id="download-pdf-button" class="btn btn-default btn-mini tooltip-toggle" target="_blank"
-                       href='{% url "worksheet-print" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
+                       href='{% url "worksheet-print" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ module_number }}'
                        data-title="{% blocktrans with module=worksheet.module %}Download {{ module }} as PDF{% endblocktrans %}">
                         <span class="glyphicon glyphicon-download"></span>
                     </a>
@@ -451,14 +451,6 @@
             },
             function (){
                 $(this).removeClass('btn-success').addClass('btn-default')
-            }
-        );
-        $('.page-header').hover(
-            function () {
-                $(this).find('.worksheet-action').show();
-            },
-             function () {
-                $(this).find('.worksheet-action').hide();
             }
         );
         $('.requirement-table').hover(
