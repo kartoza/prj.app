@@ -14,7 +14,7 @@ sudo: false
 dist: trusty
 
 python:
-  - '2.7'
+  - '3.6.1'
 
 addons:
   postgresql: "9.3"
@@ -45,4 +45,5 @@ after_success:
 
 email:
  - tim@kartoza.com
- - ismail@kartoza.com
+ - anita@kartoza.com
+ - dimas@kartoza.com
