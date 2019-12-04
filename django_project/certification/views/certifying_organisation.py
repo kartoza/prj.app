@@ -2,7 +2,7 @@
 from base.models import Project
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import get_list_or_404
 from django.db.models import Q
 from django.http import HttpResponse
@@ -374,7 +374,7 @@ class CertifyingOrganisationDeleteView(
         :raises: Http404
         """
 
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = CertifyingOrganisation.objects.filter(project=self.project)
         return qs

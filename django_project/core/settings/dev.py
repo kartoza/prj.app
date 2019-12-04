@@ -60,9 +60,9 @@ LOGGING = {
 try:
     # noinspection PyUnresolvedReferences
     import devserver  # noqa
-    INSTALLED_APPS += (
+    INSTALLED_APPS += [
         'devserver',
-    )
+    ]
     # more details at https://github.com/dcramer/django-devserver#configuration
     DEVSERVER_DEFAULT_ADDR = '0.0.0.0'
     DEVSERVER_DEFAULT_PORT = '8000'

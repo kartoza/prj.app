@@ -9,10 +9,10 @@ from base.models import Project
 # LOGGER = logging.getLogger(__name__)
 import re
 import zipfile
-import StringIO
+from io import StringIO
 import pypandoc
 from bs4 import BeautifulSoup
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import (
@@ -381,7 +381,7 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
         """
         project_slug = self.kwargs.get('project_slug', None)
         project = Project.objects.get(slug=project_slug)
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = Version.objects.filter(project=project)
         if self.request.user.is_staff:

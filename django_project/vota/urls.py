@@ -2,16 +2,16 @@
 # flake8: noqa
 
 """Project level url handler."""
-from django.conf.urls import patterns, url
-from feeds.ballot import BallotFeed
-from views.committee import (
+from django.conf.urls import url
+from .feeds.ballot import BallotFeed
+from .views.committee import (
     CommitteeDetailView,
     CommitteeCreateView,
     CommitteeUpdateView,
     CommitteeDeleteView,
     CommitteeListView)
-from views.vote import VoteCreateUpdateView
-from views.ballot import (
+from .views.vote import VoteCreateUpdateView
+from .views.ballot import (
     BallotDetailView,
     BallotCreateView,
     BallotDeleteView,
@@ -20,8 +20,7 @@ from views.ballot import (
 )
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     # Committee URLs
     url(regex='^(?P<project_slug>[\w-]+)/committees/(?P<slug>[\w-]+)/$',
         view=CommitteeDetailView.as_view(),
@@ -72,4 +71,4 @@ urlpatterns = patterns(
               'ballots-rss/$',
         view=BallotFeed(),
         name='latest-ballot-rss'),
-)
+]

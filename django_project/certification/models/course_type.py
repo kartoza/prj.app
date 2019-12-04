@@ -3,14 +3,14 @@
 
 """
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from core.settings.contrib import STOP_WORDS
 from unidecode import unidecode
 from django.utils.text import slugify
-from certifying_organisation import CertifyingOrganisation
+from .certifying_organisation import CertifyingOrganisation
 
 
 def increment_name(name, registered):
@@ -62,8 +62,9 @@ class CourseType(models.Model):
     )
 
     slug = models.SlugField(unique=True)
-    certifying_organisation = models.ForeignKey(CertifyingOrganisation)
-    author = models.ForeignKey(User)
+    certifying_organisation = models.ForeignKey(CertifyingOrganisation,
+                                                on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass.

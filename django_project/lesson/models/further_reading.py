@@ -24,7 +24,7 @@ class FurtherReading(TranslationMixin):
 
     tracker = FieldTracker()
 
-    worksheet = models.ForeignKey(Worksheet)
+    worksheet = models.ForeignKey(Worksheet, on_delete=models.CASCADE)
 
     text = models.CharField(
         help_text=_('Text of the further reading.'),

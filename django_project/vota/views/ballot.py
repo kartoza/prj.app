@@ -7,7 +7,7 @@ from django.http import Http404
 import logging
 from braces.views import (
     LoginRequiredMixin, StaffuserRequiredMixin)
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.generic import (
     DetailView, CreateView, DeleteView, UpdateView, ListView)
 from django.db import IntegrityError
@@ -140,7 +140,7 @@ class BallotListView(BallotMixin, ListView):
         :rtype: QuerySet
 
         """
-        if self.request.user.is_authenticated() and self.is_member:
+        if self.request.user.is_authenticated and self.is_member:
                 qs = Ballot.objects.filter(committee=self.committee)
         else:
             qs = Ballot.objects.filter(committee=self.committee) \

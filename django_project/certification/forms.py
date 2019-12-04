@@ -14,7 +14,7 @@ from crispy_forms.layout import (
     Submit,
     Field,
 )
-from models import (
+from .models import (
     CertifyingOrganisation,
     CourseConvener,
     CourseType,
@@ -216,7 +216,7 @@ class CustomOSMWidget(BaseGeometryWidget):
     def map_srid(self):
         # Use the official spherical mercator projection SRID when GDAL is
         # available.
-        if gdal.HAS_GDAL:
+        if gdal.GDAL_VERSION:
             return 3857
         else:
             return 4326

@@ -2,7 +2,7 @@
 """Views for committees."""
 # noinspection PyUnresolvedReferences
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import Http404
 import logging
 from django.views.generic import (

@@ -63,14 +63,14 @@ if 'raven.contrib.django.raven_compat' in INSTALLED_APPS and SENTRY_KEY:
         'release': release,
     }
 
-    MIDDLEWARE_CLASSES = (
+    MIDDLEWARE = [
         # We recommend putting this as high in the chain as possible
         # see http://raven.readthedocs.org/en/latest/integrations/  ...
         # ... django.html#message-references
         # This will add a client unique id in messages
         'raven.contrib.django.raven_compat.middleware.'
         'SentryResponseErrorIdMiddleware',
-    ) + MIDDLEWARE_CLASSES
+    ] + MIDDLEWARE
 
     # Sentry settings - logs exceptions to a database
     LOGGING = {

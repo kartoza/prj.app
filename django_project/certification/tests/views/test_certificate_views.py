@@ -3,7 +3,7 @@ import tempfile
 import logging
 from mock import patch, MagicMock
 from PIL import Image
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test.client import RequestFactory
 from django.test import TestCase, override_settings
 from django.test.client import Client

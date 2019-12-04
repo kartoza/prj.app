@@ -12,7 +12,7 @@ Note these admin models inherit reversion (which provides history for a model).
 
 
 from django.contrib import admin
-from models import Project, ProjectScreenshot, Domain, Organisation
+from .models import Project, ProjectScreenshot, Domain, Organisation
 import reversion
 
 
@@ -23,7 +23,7 @@ class ProjectScreenshotAdmin(admin.TabularInline):
     extra = 5
 
 
-class ProjectAdmin(reversion.VersionAdmin):
+class ProjectAdmin(reversion.admin.VersionAdmin):
     """Admin for the project model."""
 
     filter_horizontal = (
@@ -47,7 +47,7 @@ class ProjectAdmin(reversion.VersionAdmin):
         return qs
 
 
-class OrganisationAdmin(reversion.VersionAdmin):
+class OrganisationAdmin(reversion.admin.VersionAdmin):
     """Admin for the organisation model."""
 
     def queryset(self, request):

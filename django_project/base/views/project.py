@@ -2,7 +2,7 @@
 """Views for projects."""
 # noinspection PyUnresolvedReferences
 import logging
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import (
@@ -58,7 +58,7 @@ class ProjectBallotListView(ProjectMixin, PaginationMixin, DetailView):
         return context
 
     def get_queryset(self):
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             projects_qs = Project.approved_objects.all()
         else:
             projects_qs = Project.public_objects.all()
@@ -85,7 +85,7 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
         context['num_projects'] = self.get_queryset().count()
         context[
             'PROJECT_VERSION_LIST_SIZE'] = settings.PROJECT_VERSION_LIST_SIZE
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             project = Project.objects.filter(owner=self.request.user)
             pending_organisation = CertifyingOrganisation.objects.filter(
                 project=project, approved=False
@@ -114,7 +114,7 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
         :rtype: QuerySet
 
         """
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             projects_qs = Project.approved_objects.all()
         else:
             projects_qs = Project.public_objects.all()
@@ -171,7 +171,7 @@ class ProjectDeleteView(LoginRequiredMixin, ProjectMixin, DeleteView):
         return reverse('project-list')
 
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
 
         qs = Project.objects.all()

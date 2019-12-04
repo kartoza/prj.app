@@ -8,7 +8,7 @@ If no quorum is reached, no_quorum should be True
 
 A ballot has one Committee.
 """
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.text import slugify
 import logging
 from core.settings.contrib import STOP_WORDS
@@ -127,9 +127,9 @@ class Ballot(models.Model):
         default=False
     )
 
-    proposer = models.ForeignKey(User)
+    proposer = models.ForeignKey(User, on_delete=models.CASCADE)
     # noinspection PyUnresolvedReferences
-    committee = models.ForeignKey('Committee')
+    committee = models.ForeignKey('Committee', on_delete=models.CASCADE)
     slug = models.SlugField()
     objects = models.Manager()
     approved_objects = ApprovedCategoryManager()

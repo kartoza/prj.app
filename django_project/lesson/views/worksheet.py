@@ -2,12 +2,12 @@
 """Worksheet views."""
 
 import json
-import StringIO
 import os
 import zipfile
+from io import StringIO
 from collections import OrderedDict
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponse
 from django.views.generic import (
     DetailView,

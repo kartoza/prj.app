@@ -21,7 +21,8 @@ class Organisation(models.Model):
         default=False
     )
 
-    owner = models.ForeignKey(User, null=True, blank=True)
+    owner = models.ForeignKey(User, null=True, blank=True,
+                              on_delete=models.SET_NULL)
 
     # noinspection PyClassicStyleClass
     class Meta:

@@ -1,7 +1,7 @@
 # coding=utf-8
 import csv
 from django.db import transaction
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.generic import (
     CreateView, FormView)
 from braces.views import LoginRequiredMixin, FormMessagesMixin

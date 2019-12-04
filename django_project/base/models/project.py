@@ -4,7 +4,7 @@ import os
 import logging
 import string
 import re
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.text import slugify
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from unidecode import unidecode
-from organisation import Organisation
+from .organisation import Organisation
 from colorfield.fields import ColorField
 
 logger = logging.getLogger(__name__)
@@ -235,11 +235,12 @@ class Project(models.Model):
         help_text=_(
             'Project representative. '
             'This name will be used on invoices and certificates. '),
+        on_delete=models.SET_NULL,
         blank=True,
         null=True  # This is needed to populate existing database.
     )
 
-    owner = models.ForeignKey(User)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True)
     objects = models.Manager()
     approved_objects = ApprovedProjectManager()
@@ -337,7 +338,9 @@ class Project(models.Model):
 class ProjectScreenshot(models.Model):
     """A model to store a screenshot linked to a project."""
 
-    project = models.ForeignKey(Project, related_name='screenshots')
+    project = models.ForeignKey(
+        Project, related_name='screenshots',
+        on_delete=models.CASCADE)
     screenshot = models.ImageField(
         help_text=_('A project screenshot.'),
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects/screenshots'),

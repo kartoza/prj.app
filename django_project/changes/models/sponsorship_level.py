@@ -2,7 +2,7 @@
 
 import os
 from django.conf.global_settings import MEDIA_ROOT
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
 from django.db import models
@@ -90,9 +90,9 @@ class SponsorshipLevel(models.Model):
         default=False
     )
 
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField()
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
     objects = models.Manager()
     approved_objects = ApprovedSponsorshipLevelManager()
     unapproved_objects = UnapprovedSponsorshipLevelManager()

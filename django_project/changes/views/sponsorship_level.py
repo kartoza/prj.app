@@ -4,7 +4,7 @@ __date__ = '12/28/15'
 import logging
 from base.models import Project
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -298,7 +298,7 @@ class SponsorshipLevelDeleteView(
         :rtype: QuerySet
         :raises: Http404
         """
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = SponsorshipLevel.objects.filter(project=self.project)
         return qs

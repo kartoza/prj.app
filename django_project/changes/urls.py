@@ -2,13 +2,14 @@
 # flake8: noqa
 """Urls for changelog application."""
 
-from django.conf.urls import patterns, url, include  # noqa
+from django.conf.urls import url, include  # noqa
+from django.views.static import serve
 
 from django.conf import settings
 
-from feeds.version import RssVersionFeed, AtomVersionFeed
-from feeds.entry import RssEntryFeed, AtomEntryFeed
-from feeds.sponsor import (
+from .feeds.version import RssVersionFeed, AtomVersionFeed
+from .feeds.entry import RssEntryFeed, AtomEntryFeed
+from .feeds.sponsor import (
     RssSponsorFeed,
     RssPastSponsorFeed,
     AtomSponsorFeed,
@@ -16,7 +17,7 @@ from feeds.sponsor import (
     JSONSponsorFeed,
     JSONPastSponsorFeed
 )
-from views import (
+from .views import (
     # Category
     CategoryDetailView,
     CategoryDeleteView,
@@ -82,8 +83,7 @@ from views import (
     generate_sponsor_cloud,
 )
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     # Category management
 
     # This view is only accessible via ajax
@@ -309,12 +309,11 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/member-cloud/$',
         view=generate_sponsor_cloud,
         name='sponsor-cloud'),
-)
+]
 
 
 if settings.DEBUG:
     # static files (images, css, javascript, etc.)
-    urlpatterns += patterns(
-        '',
-        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT}))
+    urlpatterns += [
+        url(r'^media/(?P<path>.*)$', serve, {
+            'document_root': settings.MEDIA_ROOT})]

@@ -5,11 +5,11 @@ core.settings.contrib
 from .base import *  # noqa
 
 # Extra installed apps - grapelli needs to be added before others
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'grappelli',
-) + INSTALLED_APPS
+] + INSTALLED_APPS
 
-INSTALLED_APPS += (
+INSTALLED_APPS += [
     'modeltranslation',
     'raven.contrib.django.raven_compat',  # enable Raven plugin
     'crispy_forms',
@@ -25,7 +25,8 @@ INSTALLED_APPS += (
     # 'disqus',  # disabled because of unwanted ads.
     'rest_framework',
     'simple_history',
-)
+    'djstripe'
+]
 
 # Set disqus and shortname
 # noinspection PyUnresolvedReferences
@@ -55,13 +56,13 @@ THUMBNAIL_ALIASES = {
 
 # Pipeline related settings
 
-INSTALLED_APPS += (
-    'pipeline',)
+INSTALLED_APPS += [
+    'pipeline',]
 
-MIDDLEWARE_CLASSES += (
+MIDDLEWARE += [
     # For rosetta localisation
     'django.middleware.locale.LocaleMiddleware',
-)
+]
 
 DEFAULT_FILE_STORAGE = (
     'django_hashedfilenamestorage.storage.HashedFilenameFileSystemStorage')
@@ -74,17 +75,19 @@ STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
 # Contributed / third party js libs for pipeline compression
 # For hand rolled js for this app, use project.py
-PIPELINE_JS = {}
-PIPELINE_JS['contrib'] = {
-    'source_filenames': (
-        'js/gifffer.js',
-    ),
-    'output_filename': 'js/contrib.js',
+PIPELINE = {
+    'PIPELINE_ENABLED': True,
+    'JAVASCRIPT': {
+        'contrib': {
+            'source_filenames': (
+                'js/gifffer.js',
+            ),
+            'output_filename': 'js/contrib.js',
+        }
+    },
+    'STYLESHEETS': {
+    }
 }
-
-# Contributed / third party css for pipeline compression
-# For hand rolled css for this app, use project.py
-PIPELINE_CSS = {}
 
 # These get enabled in prod.py
 PIPELINE_ENABLED = False
@@ -101,13 +104,13 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-INSTALLED_APPS += (
+INSTALLED_APPS += [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
-)
+]
 
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
@@ -120,3 +123,13 @@ ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_SIGNUP_FORM_CLASS = 'base.forms.SignupForm'
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+
+# Stripe keys
+STRIPE_LIVE_PUBLIC_KEY = os.environ.get("STRIPE_LIVE_PUBLIC_KEY", "")
+STRIPE_LIVE_SECRET_KEY = os.environ.get("STRIPE_LIVE_SECRET_KEY", "live")
+STRIPE_TEST_PUBLIC_KEY = os.environ.get("STRIPE_TEST_PUBLIC_KEY", "")
+STRIPE_TEST_SECRET_KEY = os.environ.get("STRIPE_TEST_SECRET_KEY", "sk_test_")
+STRIPE_LIVE_MODE = False  # Change to True in production
+# Get it from the section in the Stripe dashboard where you added the
+# webhook endpoint
+DJSTRIPE_WEBHOOK_SECRET = "whsec_xxx"

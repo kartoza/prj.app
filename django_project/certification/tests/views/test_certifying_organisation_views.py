@@ -4,7 +4,7 @@ from StringIO import StringIO
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.test.client import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from certification.tests.model_factories import (
     ProjectF,
     UserF,

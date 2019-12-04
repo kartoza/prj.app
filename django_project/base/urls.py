@@ -1,9 +1,10 @@
 # coding=utf-8
 """Urls for changelog application."""
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+from django.views.static import serve
 from django.conf import settings
 
-from views import (
+from .views import (
     # Project
     ProjectDetailView,
     ProjectDeleteView,
@@ -38,8 +39,7 @@ from views import (
     OrganisationUpdateView,
 )
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     # basic app views
     url(regex='^$',
         view=ProjectListView.as_view(),
@@ -137,14 +137,13 @@ urlpatterns = patterns(
     url(regex='^(?P<slug>[\w-]+)/sponsorship-programme/$',
         view=project_sponsor_programme,
         name='sponsor-programme'),
-)
+]
 
 # Prevent cloudflare from showing an ad laden 404 with no context
 handler404 = custom_404
 
 if settings.DEBUG:
     # static files (images, css, javascript, etc.)
-    urlpatterns += patterns(
-        '',
-        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT}))
+    urlpatterns += [
+        url(r'^media/(?P<path>.*)$', serve, {
+            'document_root': settings.MEDIA_ROOT})]

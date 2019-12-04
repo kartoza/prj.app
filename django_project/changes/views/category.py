@@ -6,7 +6,7 @@
 import logging
 import json
 from base.models import Project
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.views.generic import (
@@ -343,7 +343,7 @@ class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
         :rtype: QuerySet
         :raises: Http404
         """
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = Category.objects.filter(project=self.project)
         return qs

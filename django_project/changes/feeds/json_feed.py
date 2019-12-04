@@ -1,7 +1,7 @@
 # coding=utf-8
 import json
 
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text as force_unicode
 from django.utils.feedgenerator import SyndicationFeed, rfc2822_date
 
 

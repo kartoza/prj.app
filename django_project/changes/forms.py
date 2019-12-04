@@ -9,7 +9,7 @@ from crispy_forms.layout import (
     Submit,
     Field,
 )
-from models import (
+from .models import (
     Category,
     Version,
     Entry,
