@@ -13,7 +13,7 @@ easy-thumbnails
 django-widget-tweaks==1.3
 raven==6.5.0
 requests==2.20.1
-django-hashedfilenamestorage==1.0
+django-hashedfilenamestorage==2.3
 # pypandoc is an interface for pandoc converter
 pypandoc==1.4
 beautifulsoup4==4.6.0
