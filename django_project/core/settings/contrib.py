@@ -76,7 +76,9 @@ STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 # Contributed / third party js libs for pipeline compression
 # For hand rolled js for this app, use project.py
 PIPELINE = {
-    'PIPELINE_ENABLED': True,
+    'PIPELINE_ENABLED': False,
+    'CSS_COMPRESSOR': None,
+    'JS_COMPRESSOR': None,
     'JAVASCRIPT': {
         'contrib': {
             'source_filenames': (
@@ -88,11 +90,6 @@ PIPELINE = {
     'STYLESHEETS': {
     }
 }
-
-# These get enabled in prod.py
-PIPELINE_ENABLED = False
-PIPELINE_CSS_COMPRESSOR = None
-PIPELINE_JS_COMPRESSOR = None
 
 # Django-allauth related settings
 

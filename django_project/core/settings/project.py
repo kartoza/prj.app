@@ -73,7 +73,7 @@ PIPELINE['STYLESHEETS']['project'] = {
     ),
     'output_filename': 'css/project.css',
     'extra_context': {
-        'media': 'screen, projection',
+        'media': 'screen,projection',
     },
 }
 
