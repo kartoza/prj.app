@@ -7,7 +7,7 @@ django-model-utils==1.4.0
 django-pipeline==1.6.14
 django-pure-pagination
 django-reversion==3.0.5
-markdown==2.3.1
+markdown==3.3.1
 
 easy-thumbnails
 django-widget-tweaks==1.3
@@ -38,4 +38,5 @@ django-colorfield
 WeasyPrint==0.42.3
 djangorestframework==3.10.3
 django-simple-history==2.8.0
-dj-stripe
+dj-stripe==2.1.1
+django-preferences==1.0.0

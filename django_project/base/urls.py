@@ -38,6 +38,7 @@ from .views import (
     OrganisationDeleteView,
     OrganisationUpdateView,
 )
+from .api_views.stripe_intent import StripeIntent
 
 urlpatterns = [
     # basic app views
@@ -137,6 +138,9 @@ urlpatterns = [
     url(regex='^(?P<slug>[\w-]+)/sponsorship-programme/$',
         view=project_sponsor_programme,
         name='sponsor-programme'),
+    url(regex='^stripe-intent/(?P<amount>[\d-]+)/$',
+        view=StripeIntent.as_view(),
+        name='stripe-intent'),
 ]
 
 # Prevent cloudflare from showing an ad laden 404 with no context

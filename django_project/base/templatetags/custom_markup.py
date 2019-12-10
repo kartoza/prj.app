@@ -14,7 +14,7 @@ def base_markdown(value):
     extensions = ["nl2br", "markdown.extensions.tables", ]
     html_output = markdown.markdown(
         force_unicode(value),
-        extensions,
+        extensions=extensions,
         safe_mode=True,
         enable_attributes=False)
     html_output = html_output.replace(

@@ -12,8 +12,13 @@ Note these admin models inherit reversion (which provides history for a model).
 
 
 from django.contrib import admin
-from .models import Project, ProjectScreenshot, Domain, Organisation
+from preferences.admin import PreferencesAdmin
 import reversion
+from .models import (
+    Project, ProjectScreenshot, Domain,
+    Organisation,
+    SitePreferences
+)
 
 
 class ProjectScreenshotAdmin(admin.TabularInline):
@@ -65,3 +70,4 @@ class OrganisationAdmin(reversion.admin.VersionAdmin):
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Domain)
 admin.site.register(Organisation, OrganisationAdmin)
+admin.site.register(SitePreferences, PreferencesAdmin)

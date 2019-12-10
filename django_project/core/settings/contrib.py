@@ -25,8 +25,14 @@ INSTALLED_APPS += [
     # 'disqus',  # disabled because of unwanted ads.
     'rest_framework',
     'simple_history',
-    'djstripe'
+    'djstripe',
+    'preferences'
 ]
+
+# Add preferences to context_processors
+TEMPLATES[0]['OPTIONS']['context_processors'].append(
+    'preferences.context_processors.preferences_cp'
+)
 
 # Set disqus and shortname
 # noinspection PyUnresolvedReferences

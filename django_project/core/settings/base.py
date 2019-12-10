@@ -88,6 +88,7 @@ TEMPLATES = [
         'DIRS': [
             # project level templates
             absolute_path('core', 'base_templates'),
+            absolute_path('base', 'templates'),
             absolute_path('vota', 'templates'),
             absolute_path('changes', 'templates'),
             absolute_path('certification', 'templates'),
@@ -105,6 +106,7 @@ TEMPLATES = [
                 # Already defined Django-related contexts
                 'django.contrib.auth.context_processors.auth',
                 'core.context_processors.add_intercom_app_id',
+                'core.context_processors.stripe_public_key',
                 'django.template.context_processors.i18n',
 
                 # `allauth` needs this from django

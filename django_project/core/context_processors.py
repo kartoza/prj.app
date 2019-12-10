@@ -20,3 +20,14 @@ def add_intercom_app_id(request):
         return {'intercom_app_id': INTERCOM_APP_ID}
     else:
         return {}
+
+
+def stripe_public_key(request):
+    """Return stripe public key.
+    :param request: Http Request obj
+    """
+    from django.conf import settings
+    if settings.STRIPE_LIVE_MODE:
+        return {'STRIPE_PUBLIC_KEY': settings.STRIPE_LIVE_PUBLIC_KEY}
+    else:
+        return {'STRIPE_PUBLIC_KEY': settings.STRIPE_TEST_PUBLIC_KEY}
