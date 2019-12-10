@@ -88,10 +88,10 @@ class ProjectListView(ProjectMixin, PaginationMixin, ListView):
         if self.request.user.is_authenticated:
             project = Project.objects.filter(owner=self.request.user)
             pending_organisation = CertifyingOrganisation.objects.filter(
-                project=project, approved=False
+                project__in=project, approved=False
             )
             context['num_project_with_pending'] = 0
-            if pending_organisation:
+            if pending_organisation.exists():
                 context['project_with_pending'] = []
 
                 for organisation in pending_organisation:
