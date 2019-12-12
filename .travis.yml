@@ -24,6 +24,8 @@ addons:
 
 install:
   - pip install codecov
+  - apt-get -y install python-gdal
+  - apt-get -y install python-geoip
   - pip install -r REQUIREMENTS-dev.txt
 
 
