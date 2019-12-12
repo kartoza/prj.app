@@ -2,7 +2,6 @@
 """Views for projects."""
 # noinspection PyUnresolvedReferences
 import logging
-import stripe
 from django.urls import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render

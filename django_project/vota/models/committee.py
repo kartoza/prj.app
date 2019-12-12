@@ -58,7 +58,10 @@ class Committee(models.Model):
         max_length=3
     )
 
-    chair = models.ForeignKey(User, related_name='committee_chairman', on_delete=models.CASCADE)
+    chair = models.ForeignKey(
+        User,
+        related_name='committee_chairman',
+        on_delete=models.CASCADE)
     slug = models.SlugField()
     project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
     users = models.ManyToManyField(User)

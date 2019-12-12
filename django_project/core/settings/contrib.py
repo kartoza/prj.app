@@ -63,7 +63,8 @@ THUMBNAIL_ALIASES = {
 # Pipeline related settings
 
 INSTALLED_APPS += [
-    'pipeline',]
+    'pipeline',
+]
 
 MIDDLEWARE += [
     # For rosetta localisation

@@ -15,8 +15,8 @@ historization for a model).
 
 from django.contrib import admin
 from .models import (Category, Version,
-                    Entry, Sponsor, SponsorshipLevel,
-                    SponsorshipPeriod)
+                     Entry, Sponsor, SponsorshipLevel,
+                     SponsorshipPeriod)
 import reversion
 
 
