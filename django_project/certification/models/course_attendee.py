@@ -5,8 +5,8 @@
 
 from django.db import models
 from django.contrib.auth.models import User
-from .course import Course
-from .attendee import Attendee
+from certification.models.course import Course
+from certification.models.attendee import Attendee
 
 
 class CourseAttendee(models.Model):

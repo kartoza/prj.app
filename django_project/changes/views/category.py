@@ -21,8 +21,8 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin
-from ..models import Category, Version
-from ..forms import CategoryForm
+from changes.models import Category, Version
+from changes.forms import CategoryForm
 
 logger = logging.getLogger(__name__)
 

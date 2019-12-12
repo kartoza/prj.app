@@ -1,3 +1,3 @@
-from .committee import *
-from .ballot import *
-from .vote import *
+from vota.models.committee import *
+from vota.models.ballot import *
+from vota.models.vote import *

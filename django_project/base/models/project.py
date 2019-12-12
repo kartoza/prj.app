@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from unidecode import unidecode
-from .organisation import Organisation
+from base.models.organisation import Organisation
 from colorfield.fields import ColorField
 
 logger = logging.getLogger(__name__)

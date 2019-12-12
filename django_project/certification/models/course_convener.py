@@ -12,7 +12,7 @@ from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 from core.settings.contrib import STOP_WORDS
 from unidecode import unidecode
-from .certifying_organisation import CertifyingOrganisation
+from certification.models.certifying_organisation import CertifyingOrganisation
 from certification.utilities import check_slug
 
 
