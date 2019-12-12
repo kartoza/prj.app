@@ -107,7 +107,7 @@ class RssSponsorFeed(Feed):
         :returns: description of the sponsor
         :rtype: str
         """
-        level_class = str(item.sponsorship_level.name).decode('utf-8').lower()
+        level_class = str(item.sponsorship_level.name).lower()
         head, sep, tail = self.domain_path_url.partition('/en/')
 
         data = {

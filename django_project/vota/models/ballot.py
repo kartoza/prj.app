@@ -211,7 +211,10 @@ class Ballot(models.Model):
         vote_count = self.get_total_vote_count()
         committee_user_count = self.committee.users.all().count()
         if committee_user_count != 0:
-            quorum_percent = self.committee.quorum_setting
+            try:
+                quorum_percent = float(self.committee.quorum_setting)
+            except ValueError:
+                quorum_percent = 0.0
             percentage = 100 * float(vote_count) / float(committee_user_count)
             if percentage > quorum_percent:
                 return True

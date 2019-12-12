@@ -7,7 +7,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import HttpResponseServerError
-from django.template import loader, Context
+from django.template import loader
 
 admin.autodiscover()
 handler404 = 'base.views.error_views.custom_404'
@@ -26,9 +26,9 @@ def handler500(request):
     """
     # You need to create a 500.html template.
     t = loader.get_template('500.html')
-    return HttpResponseServerError(t.render(Context({
+    return HttpResponseServerError(t.render({
         'request': request,
-    })))
+    }))
 
 
 urlpatterns = []

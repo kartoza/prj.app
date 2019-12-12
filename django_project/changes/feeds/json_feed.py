@@ -6,7 +6,7 @@ from django.utils.feedgenerator import SyndicationFeed, rfc2822_date
 
 
 class JSONFeed(SyndicationFeed):
-    mime_type = 'application/json; charset=utf-8'
+    content_type = 'application/json; charset=utf-8'
 
     def write(self, outfile, encoding):
         data = {
@@ -25,7 +25,7 @@ class JSONFeed(SyndicationFeed):
 
             data['rss']['channel']['item'] = item_element
 
-        outfile.write(json.dumps(data, encoding=encoding))
+        outfile.write(json.dumps(data))
 
     def add_item_elements(self, item):
         item_elements = {

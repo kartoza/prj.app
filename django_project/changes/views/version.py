@@ -9,7 +9,7 @@ from base.models import Project
 # LOGGER = logging.getLogger(__name__)
 import re
 import zipfile
-from io import StringIO
+from io import StringIO, BytesIO
 import pypandoc
 from bs4 import BeautifulSoup
 from django.urls import reverse
@@ -53,7 +53,7 @@ class CustomStaffuserRequiredMixin(StaffuserRequiredMixin):
         """
         Called when the user has no permissions and no exception was raised.
         """
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return super(
                 CustomStaffuserRequiredMixin, self).no_permissions_fail(
                 request)
@@ -590,7 +590,7 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
         :rtype: string
         """
         # create in memory file-like object
-        temp_path = StringIO.StringIO()
+        temp_path = BytesIO()
 
         # grab all of the images from document
         images = []
@@ -755,7 +755,7 @@ class VersionSponsorDownload(
         :rtype: string
         """
         # create in memory file-like object
-        temp_path = StringIO.StringIO()
+        temp_path = StringIO()
 
         # grab all of the images from document
         images = []

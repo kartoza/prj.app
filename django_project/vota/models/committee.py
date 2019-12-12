@@ -100,4 +100,4 @@ class Committee(models.Model):
         :rtype: QuerySet
         """
         return Ballot.objects.filter(
-            committee=self, closes__gt=timezone.now, private=False)
+            committee=self, closes__gt=timezone.now(), private=False)

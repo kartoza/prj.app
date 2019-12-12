@@ -89,7 +89,7 @@ class TestCertificatePreview(TestCase):
             'course_type': self.course_type.pk,
             'start_date': '2018-01-01',
             'end_date': '2018-02-01',
-            'template_certificate': None
+            'template_certificate': ''
         }
         response = client.post(reverse('preview-certificate', kwargs={
             'project_slug': self.test_project.slug,
