@@ -269,7 +269,7 @@ class SponsorDetailView(SponsorMixin, DetailView):
                 try:
                     obj = queryset.get(project=project, slug=slug)
                     return obj
-                except:
+                except queryset.DoesNotExist:
                     return Http404('Sorry! we could not find your sponsor.')
             else:
                 raise Http404('Sorry! We could not find your sponsor!')

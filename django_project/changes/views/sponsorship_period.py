@@ -468,8 +468,8 @@ class SponsorshipPeriodUpdateView(
             return qs.filter(
                 Q(project=self.project) & (
                     Q(author=self.request.user) | (
-                    Q(project__owner=self.request.user)) | (
-                    Q(project__sponsorship_managers=self.request.user))))
+                        Q(project__owner=self.request.user)) | (
+                        Q(project__sponsorship_managers=self.request.user))))
 
     def get_success_url(self):
         """Define the redirect URL

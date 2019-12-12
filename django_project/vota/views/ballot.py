@@ -102,12 +102,12 @@ class BallotListView(BallotMixin, ListView):
         project_slug = self.kwargs.get('project_slug')
         try:
             self.project = Project.objects.get(slug=project_slug)
-        except:
+        except:  # noqa
             raise Http404('Project could not be found')
         try:
             self.committee = Committee.objects.filter(
                 project=self.project).get(slug=committee_slug)
-        except:
+        except:  # noqa
             raise Http404('Committee could not be found')
         self.is_member = False
         if request.user in self.committee.users.all():
@@ -141,7 +141,7 @@ class BallotListView(BallotMixin, ListView):
 
         """
         if self.request.user.is_authenticated and self.is_member:
-                qs = Ballot.objects.filter(committee=self.committee)
+            qs = Ballot.objects.filter(committee=self.committee)
         else:
             qs = Ballot.objects.filter(committee=self.committee) \
                 .filter(private=False)

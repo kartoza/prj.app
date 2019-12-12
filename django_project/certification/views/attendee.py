@@ -192,7 +192,7 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin, FormView):
                     try:
                         attendee.save()
                         attendee_count += 1
-                    except:
+                    except:  # noqa
                         #  Could not save - probably they exist already
                         attendee = None
 
@@ -209,7 +209,7 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin, FormView):
                     try:
                         course_attendee.save()
                         course_attendee_count += 1
-                    except:
+                    except:  # noqa
                         #  They are probably already associated with a course
                         pass
 

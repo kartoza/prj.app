@@ -47,7 +47,7 @@ class ProjectBallotListView(ProjectMixin, PaginationMixin, DetailView):
         for committee in committees:
             if self.request.user.is_authenticated and \
                     self.request.user in committee.users.all():
-                    committee_ballots = Ballot.objects.filter(
+                committee_ballots = Ballot.objects.filter(
                         committee=committee)
             else:
                 committee_ballots = Ballot.objects.filter(
