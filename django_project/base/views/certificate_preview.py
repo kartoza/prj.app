@@ -1,5 +1,5 @@
 # coding=utf-8
-import cStringIO
+from io import StringIO
 from PIL import Image
 import re
 from unidecode import unidecode
@@ -69,7 +69,7 @@ def preview_certificate(request, **kwargs):
         if 'base64' in raw_logo:
             image_data = \
                 re.sub('^data:image/.+;base64,', '', raw_logo).decode('base64')
-            logo = Image.open(cStringIO.StringIO(image_data))
+            logo = Image.open(StringIO(image_data))
 
     raw_signature = request.POST.get('project_representative_signature', None)
     project_representative_signature = None
@@ -80,7 +80,7 @@ def preview_certificate(request, **kwargs):
                     '^data:image/.+;base64,', '', raw_signature
                 ).decode('base64')
             project_representative_signature = \
-                Image.open(cStringIO.StringIO(image_signature))
+                Image.open(StringIO(image_signature))
 
     if project_name:
         raw_image = request.POST.get('template_certificate', None)
@@ -92,7 +92,7 @@ def preview_certificate(request, **kwargs):
                         '^data:image/.+;base64,', '', raw_image
                     ).decode('base64')
                 template_certificate = \
-                    Image.open(cStringIO.StringIO(image_data))
+                    Image.open(StringIO(image_data))
 
         project_representative_id = \
             request.POST.get('project_representative', None)

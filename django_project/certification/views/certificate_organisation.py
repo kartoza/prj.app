@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from braces.views import LoginRequiredMixin
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponse, Http404
 from django.views.generic import CreateView, DetailView
 from reportlab.lib.utils import ImageReader

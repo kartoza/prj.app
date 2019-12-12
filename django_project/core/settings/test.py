@@ -2,9 +2,9 @@
 from .project import *  # noqa
 
 # http://hustoknow.blogspot.com/2011/02/setting-up-django-nose-on-hudson.html
-INSTALLED_APPS += (
+INSTALLED_APPS += [
     'django_nose',  # don't remove this comma
-)
+]
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 

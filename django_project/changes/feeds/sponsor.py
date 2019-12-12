@@ -5,7 +5,7 @@ __date__ = '23/10/2017'
 
 import datetime
 from django.contrib.syndication.views import Feed
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.feedgenerator import Atom1Feed
 from django.shortcuts import get_object_or_404
 from base.models.project import Project
@@ -107,7 +107,7 @@ class RssSponsorFeed(Feed):
         :returns: description of the sponsor
         :rtype: str
         """
-        level_class = str(item.sponsorship_level.name).decode('utf-8').lower()
+        level_class = str(item.sponsorship_level.name).lower()
         head, sep, tail = self.domain_path_url.partition('/en/')
 
         data = {

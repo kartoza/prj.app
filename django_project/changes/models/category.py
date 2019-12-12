@@ -1,6 +1,6 @@
 import logging
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
 
@@ -28,7 +28,7 @@ class Category(models.Model):
         default=0
     )
     slug = models.SlugField()
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass

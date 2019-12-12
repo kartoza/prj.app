@@ -4,7 +4,7 @@ This model is used to create 'committees' of users.
 
 A Committee has many Users
 """
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 
@@ -58,9 +58,12 @@ class Committee(models.Model):
         max_length=3
     )
 
-    chair = models.ForeignKey(User, related_name='committee_chairman')
+    chair = models.ForeignKey(
+        User,
+        related_name='committee_chairman',
+        on_delete=models.CASCADE)
     slug = models.SlugField()
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
     users = models.ManyToManyField(User)
     objects = models.Manager()
 
@@ -97,4 +100,4 @@ class Committee(models.Model):
         :rtype: QuerySet
         """
         return Ballot.objects.filter(
-            committee=self, closes__gt=timezone.now, private=False)
+            committee=self, closes__gt=timezone.now(), private=False)

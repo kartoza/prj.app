@@ -3,7 +3,7 @@
 # noinspection PyUnresolvedReferences
 from .prod import *  # noqa
 import os
-print os.environ
+print(os.environ)
 
 DEBUG = False
 

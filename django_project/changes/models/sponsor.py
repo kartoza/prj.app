@@ -2,7 +2,7 @@
 import os
 import pytz
 import logging
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
 from django.conf.global_settings import MEDIA_ROOT
@@ -132,9 +132,9 @@ class Sponsor(models.Model):
         help_text=_("Invoice number for the sponsor.")
     )
 
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField()
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
     objects = models.Manager()
     approved_objects = ApprovedSponsorManager()
     unapproved_objects = UnapprovedSponsorManager()

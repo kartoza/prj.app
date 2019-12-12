@@ -1,8 +1,8 @@
 # coding=utf-8
 """Urls for certification apps."""
 
-from django.conf.urls import patterns, url
-from views import (
+from django.conf.urls import url
+from .views import (
     # Certifying Organisation.
     CertifyingOrganisationCreateView,
     CertifyingOrganisationDeleteView,
@@ -69,13 +69,11 @@ from views import (
     # About.
     AboutView,
 )
-from api_views.get_status import GetStatus
-from api_views.update_status import UpdateStatusOrganisation
+from .api_views.get_status import GetStatus
+from .api_views.update_status import UpdateStatusOrganisation
 
 
-urlpatterns = patterns(
-    '',
-
+urlpatterns = [
     # About page
     url(regex='^(?P<project_slug>[\w-]+)/about/$',
         view=AboutView.as_view(),
@@ -295,4 +293,4 @@ urlpatterns = patterns(
     # API Views
     url(regex='^(?P<project_slug>[\w-]+)/get-status-list/$',
         view=GetStatus.as_view(), name='get-status-list'),
-)
+]

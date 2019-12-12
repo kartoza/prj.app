@@ -24,9 +24,9 @@ ALLOWED_HOSTS = [
     'changelog.kartoza.com']
 
 # Pipeline - for production we want to compress resources
-PIPELINE_ENABLED = True
-PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
-PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
+PIPELINE['PIPELINE_ENABLED'] = True
+PIPELINE['CSS_COMPRESSOR'] = 'pipeline.compressors.yuglify.YuglifyCompressor'
+PIPELINE['JS_COMPRESSOR'] = 'pipeline.compressors.yuglify.YuglifyCompressor'
 
 # Comment if you are not running behind proxy
 USE_X_FORWARDED_HOST = True
@@ -37,6 +37,9 @@ DEBUG = TEMPLATE_DEBUG = False
 SERVER_EMAIL = 'tim@kartoza.com'
 EMAIL_HOST = 'kartoza.com'
 DEFAULT_FROM_EMAIL = 'tim@kartoza.com'
+
+# Set stripe to live mode
+STRIPE_LIVE_MODE = True
 
 # Logging
 if 'raven.contrib.django.raven_compat' in INSTALLED_APPS and SENTRY_KEY:
@@ -63,14 +66,14 @@ if 'raven.contrib.django.raven_compat' in INSTALLED_APPS and SENTRY_KEY:
         'release': release,
     }
 
-    MIDDLEWARE_CLASSES = (
+    MIDDLEWARE = [
         # We recommend putting this as high in the chain as possible
         # see http://raven.readthedocs.org/en/latest/integrations/  ...
         # ... django.html#message-references
         # This will add a client unique id in messages
         'raven.contrib.django.raven_compat.middleware.'
         'SentryResponseErrorIdMiddleware',
-    ) + MIDDLEWARE_CLASSES
+    ] + MIDDLEWARE
 
     # Sentry settings - logs exceptions to a database
     LOGGING = {

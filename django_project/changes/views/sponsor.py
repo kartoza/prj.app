@@ -5,7 +5,7 @@ import os
 import time
 import logging
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
@@ -269,7 +269,7 @@ class SponsorDetailView(SponsorMixin, DetailView):
                 try:
                     obj = queryset.get(project=project, slug=slug)
                     return obj
-                except:
+                except queryset.DoesNotExist:
                     return Http404('Sorry! we could not find your sponsor.')
             else:
                 raise Http404('Sorry! We could not find your sponsor!')
@@ -343,7 +343,7 @@ class SponsorDeleteView(LoginRequiredMixin, SponsorMixin, DeleteView):
         :rtype: QuerySet
         :raises: Http404
         """
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = Sponsor.objects.filter(project=self.project)
         return qs

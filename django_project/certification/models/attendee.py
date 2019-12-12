@@ -3,14 +3,14 @@
 
 """
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 from core.settings.contrib import STOP_WORDS
 from unidecode import unidecode
-from certifying_organisation import (
+from .certifying_organisation import (
     validate_email_address,
     CertifyingOrganisation)
 
@@ -69,8 +69,9 @@ class Attendee(models.Model):
 
     slug = models.SlugField()
     certifying_organisation = \
-        models.ForeignKey(CertifyingOrganisation, null=True)
-    author = models.ForeignKey(User)
+        models.ForeignKey(CertifyingOrganisation, null=True,
+                          on_delete=models.SET_NULL)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass.

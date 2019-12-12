@@ -149,7 +149,7 @@ class GithubOrgsView(ProjectMixin, ListView):
                     })
 
             except SocialToken.DoesNotExist:
-                print 'Token not exist'
+                print('Token not exist')
 
         return retrieved_data
 
@@ -238,7 +238,7 @@ class GithubListView(ProjectMixin, ListView):
                         response.json()
                     )
             except SocialToken.DoesNotExist:
-                print 'Token not exist'
+                print('Token not exist')
 
         return retrieved_data
 
@@ -312,6 +312,6 @@ class GithubSubmitView(LoginRequiredMixin, ProjectMixin, UpdateView):
                     new_project.save()
 
             except SocialToken.DoesNotExist:
-                print 'Token not exist'
+                print('Token not exist')
 
         return HttpResponse('')

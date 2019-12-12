@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import Http404
 from django.views.generic import (
     CreateView,
@@ -156,7 +156,7 @@ class CourseTypeDeleteView(
         :raises: Http404
         """
 
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = CourseType.objects.filter(
             certifying_organisation=self.certifying_organisation)

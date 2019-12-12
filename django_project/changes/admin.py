@@ -14,13 +14,13 @@ historization for a model).
 
 
 from django.contrib import admin
-from models import (Category, Version,
-                    Entry, Sponsor, SponsorshipLevel,
-                    SponsorshipPeriod)
+from .models import (Category, Version,
+                     Entry, Sponsor, SponsorshipLevel,
+                     SponsorshipPeriod)
 import reversion
 
 
-class CategoryAdmin(reversion.VersionAdmin):
+class CategoryAdmin(reversion.admin.VersionAdmin):
     """Category admin model."""
 
     def queryset(self, request):
@@ -35,7 +35,7 @@ class CategoryAdmin(reversion.VersionAdmin):
         return qs
 
 
-class VersionAdmin(reversion.VersionAdmin):
+class VersionAdmin(reversion.admin.VersionAdmin):
     """Version admin model."""
 
     list_display = ('__unicode__', 'project',)
@@ -52,7 +52,7 @@ class VersionAdmin(reversion.VersionAdmin):
         return qs
 
 
-class EntryAdmin(reversion.VersionAdmin):
+class EntryAdmin(reversion.admin.VersionAdmin):
     """Entry admin model."""
 
     def queryset(self, request):
@@ -67,7 +67,7 @@ class EntryAdmin(reversion.VersionAdmin):
         return qs
 
 
-class SponsorAdmin(reversion.VersionAdmin):
+class SponsorAdmin(reversion.admin.VersionAdmin):
     """Sponsor admin model."""
 
     list_display = ['__unicode__', 'project']
@@ -84,7 +84,7 @@ class SponsorAdmin(reversion.VersionAdmin):
         return qs
 
 
-class SponsorLevelAdmin(reversion.VersionAdmin):
+class SponsorLevelAdmin(reversion.admin.VersionAdmin):
     """Sponsor level admin model."""
 
     list_display = ['__unicode__', 'project']
@@ -101,7 +101,7 @@ class SponsorLevelAdmin(reversion.VersionAdmin):
         return qs
 
 
-class SponsorRenewedAdmin(reversion.VersionAdmin):
+class SponsorRenewedAdmin(reversion.admin.VersionAdmin):
     """Renewed sponsor admin model."""
 
     list_display = ['__unicode__', 'project']

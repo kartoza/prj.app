@@ -1,6 +1,6 @@
 # coding=utf-8
 """Models for changelog entries."""
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 import os
@@ -82,12 +82,12 @@ class Entry(models.Model):
         null=True,
         blank=True)
 
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField()
     # noinspection PyUnresolvedReferences
-    version = models.ForeignKey('Version')
+    version = models.ForeignKey('Version', on_delete=models.CASCADE)
     # noinspection PyUnresolvedReferences
-    category = models.ForeignKey('Category')
+    category = models.ForeignKey('Category', on_delete=models.CASCADE)
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass

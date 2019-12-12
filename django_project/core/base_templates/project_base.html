@@ -1,4 +1,4 @@
-{% load compressed %}
+{% load pipeline %}
 {% load staticfiles %}
 {% load lesson_tags %}
 <!DOCTYPE html>
@@ -40,7 +40,7 @@
 
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 
-    {% compressed_css 'project' %}
+    {% stylesheet 'project' %}
 
     {% block extra_head %}{% endblock extra_head %}
 
@@ -144,8 +144,8 @@
     </div>
 </div>
 
-{% compressed_js 'contrib' %}
-{% compressed_js 'project' %}
+{% javascript 'contrib' %}
+{% javascript 'project' %}
 {% block inline-js %}{% endblock %}
 <script>
     $(function(){

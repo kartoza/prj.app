@@ -9,10 +9,10 @@ from base.models import Project
 # LOGGER = logging.getLogger(__name__)
 import re
 import zipfile
-import StringIO
+from io import StringIO, BytesIO
 import pypandoc
 from bs4 import BeautifulSoup
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import (
@@ -53,7 +53,7 @@ class CustomStaffuserRequiredMixin(StaffuserRequiredMixin):
         """
         Called when the user has no permissions and no exception was raised.
         """
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return super(
                 CustomStaffuserRequiredMixin, self).no_permissions_fail(
                 request)
@@ -381,7 +381,7 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
         """
         project_slug = self.kwargs.get('project_slug', None)
         project = Project.objects.get(slug=project_slug)
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = Version.objects.filter(project=project)
         if self.request.user.is_staff:
@@ -590,7 +590,7 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
         :rtype: string
         """
         # create in memory file-like object
-        temp_path = StringIO.StringIO()
+        temp_path = BytesIO()
 
         # grab all of the images from document
         images = []
@@ -755,7 +755,7 @@ class VersionSponsorDownload(
         :rtype: string
         """
         # create in memory file-like object
-        temp_path = StringIO.StringIO()
+        temp_path = StringIO()
 
         # grab all of the images from document
         images = []

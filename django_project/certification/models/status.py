@@ -22,7 +22,7 @@ class Status(models.Model):
         unique=True
     )
 
-    project = models.ForeignKey(Project)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['order']

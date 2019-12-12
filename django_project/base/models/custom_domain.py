@@ -14,7 +14,7 @@ ROLE = (
 class Domain(models.Model):
     """Model to save subscribed user and their custom domain."""
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.CharField(
         help_text=_(
             'For organisation, domain will point to list of projects within '

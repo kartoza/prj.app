@@ -5,14 +5,14 @@
 
 import os
 from django.conf.global_settings import MEDIA_ROOT
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 from core.settings.contrib import STOP_WORDS
 from unidecode import unidecode
-from certifying_organisation import CertifyingOrganisation
+from certification.models.certifying_organisation import CertifyingOrganisation
 from certification.utilities import check_slug
 
 
@@ -25,8 +25,9 @@ class CourseConvener(models.Model):
         default=''
     )
 
-    user = models.ForeignKey(User)
-    certifying_organisation = models.ForeignKey(CertifyingOrganisation)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    certifying_organisation = models.ForeignKey(CertifyingOrganisation,
+                                                on_delete=models.CASCADE)
     objects = models.Manager()
 
     signature = models.ImageField(

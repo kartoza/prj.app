@@ -1,6 +1,6 @@
 # coding=utf-8
 import re
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 # from django.utils.text import slugify
 from common.utilities import version_slugify
 import os
@@ -56,9 +56,9 @@ class Version(models.Model):
         null=True,
         blank=True)
 
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField()
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass

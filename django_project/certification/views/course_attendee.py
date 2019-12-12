@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.generic import (
     CreateView,
     DeleteView)
@@ -161,7 +161,7 @@ class CourseAttendeeDeleteView(
         :raises: Http404
         """
 
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = CourseAttendee.objects.filter(course=self.course)
         return qs

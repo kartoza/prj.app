@@ -2,7 +2,7 @@
 """Test for lesson views."""
 import logging
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from django.test import TestCase, override_settings, Client
 from django.shortcuts import get_object_or_404

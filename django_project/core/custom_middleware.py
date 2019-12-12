@@ -5,23 +5,24 @@ core.custom_middleware
 """
 from django.contrib.sites.models import Site
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.utils.translation import activate
+try:
+    from django.utils.deprecation import MiddlewareMixin as MiddlewareBase
+except ImportError:  # Django < 1.10
+    MiddlewareBase = object
+
 from base.models import Project, Version, Domain
 from changes.models import Category, SponsorshipLevel, SponsorshipPeriod, Entry
 from certification.models import CertifyingOrganisation
 
 
-class NavContextMiddleware(object):
+class NavContextMiddleware(MiddlewareBase):
     """
     Adds the required navigation variables to each response
     """
-
-    def __init__(self):
-        pass
-
     @staticmethod
     def process_template_response(request, response):
         """
@@ -120,16 +121,11 @@ class NavContextMiddleware(object):
         return response
 
 
-class CheckDomainMiddleware(object):
+class CheckDomainMiddleware(MiddlewareBase):
     """
     Custom middleware to check if domain is valid.
     """
-
-    def __init__(self):
-        pass
-
     def process_request(self, request):
-
         try:
             domain = request.get_host().split(':')[0]
             if domain in settings.VALID_DOMAIN:

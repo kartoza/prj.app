@@ -3,11 +3,11 @@
 
 """
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
-from certifying_organisation import (
+from .certifying_organisation import (
     CertifyingOrganisation,
     SlugifyingMixin,
     validate_email_address)
@@ -53,8 +53,9 @@ class TrainingCenter(SlugifyingMixin, models.Model):
     )
 
     slug = models.SlugField()
-    certifying_organisation = models.ForeignKey(CertifyingOrganisation)
-    author = models.ForeignKey(User)
+    certifying_organisation = models.ForeignKey(CertifyingOrganisation,
+                                                on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass.

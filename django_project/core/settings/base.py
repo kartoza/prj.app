@@ -3,7 +3,7 @@
 core.settings.base
 """
 # Django settings for projecta project.
-
+import os
 from .utils import absolute_path
 
 ADMINS = (
@@ -57,6 +57,9 @@ STATIC_ROOT = '/home/web/static'
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # Additional locations of static files
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
@@ -71,6 +74,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'pipeline.finders.PipelineFinder',
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
@@ -84,6 +88,7 @@ TEMPLATES = [
         'DIRS': [
             # project level templates
             absolute_path('core', 'base_templates'),
+            absolute_path('base', 'templates'),
             absolute_path('vota', 'templates'),
             absolute_path('changes', 'templates'),
             absolute_path('certification', 'templates'),
@@ -100,12 +105,12 @@ TEMPLATES = [
             'context_processors': [
                 # Already defined Django-related contexts
                 'django.contrib.auth.context_processors.auth',
-                'django.core.context_processors.request',
-                'django.core.context_processors.media',
                 'core.context_processors.add_intercom_app_id',
+                'core.context_processors.stripe_public_key',
                 'django.template.context_processors.i18n',
 
                 # `allauth` needs this from django
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -113,25 +118,25 @@ TEMPLATES = [
     },
 ]
 
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # For custom domain checking
     'core.custom_middleware.CheckDomainMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
-)
+]
 
 ROOT_URLCONF = 'core.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'core.wsgi.application'
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sites',
@@ -141,7 +146,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.syndication',
     'django.contrib.gis',
-)
+]
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

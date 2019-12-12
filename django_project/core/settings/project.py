@@ -12,14 +12,14 @@ from .utils import absolute_path
 from .contrib import *  # noqa
 
 # Project apps
-INSTALLED_APPS += (
+INSTALLED_APPS += [
     'base',
     'changes',
     'github_issue',
     'vota',
     'certification',
     'lesson',
-)
+]
 
 # Due to profile page does not available,
 # this will redirect to home page after login
@@ -44,14 +44,14 @@ LANGUAGES = (
 LOCALE_PATHS = (absolute_path('locale'),)
 
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE += [
     # For nav bar generation
     'core.custom_middleware.NavContextMiddleware',
-) + MIDDLEWARE_CLASSES
+]
 
 # Project specific javascript files to be pipelined
 # For third party libs like jquery should go in contrib.py
-PIPELINE_JS['project'] = {
+PIPELINE['JAVASCRIPT']['project'] = {
     'source_filenames': (
         'js/csrf-ajax.js',
         'js/changelog.js',
@@ -65,7 +65,7 @@ PIPELINE_JS['project'] = {
 
 # Project specific css files to be pipelined
 # For third party libs like bootstrap should go in contrib.py
-PIPELINE_CSS['project'] = {
+PIPELINE['STYLESHEETS']['project'] = {
     'source_filenames': (
         'css/changelog.css',
         'css/form.css',
@@ -73,7 +73,7 @@ PIPELINE_CSS['project'] = {
     ),
     'output_filename': 'css/project.css',
     'extra_context': {
-        'media': 'screen, projection',
+        'media': 'screen,projection',
     },
 }
 

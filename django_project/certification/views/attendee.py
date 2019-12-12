@@ -1,14 +1,14 @@
 # coding=utf-8
 import csv
 from django.db import transaction
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.generic import (
     CreateView, FormView)
 from braces.views import LoginRequiredMixin, FormMessagesMixin
-from ..models import Attendee, CertifyingOrganisation, CourseAttendee
-from ..forms import AttendeeForm
-from ..forms import CsvAttendeeForm
-from ..models.course_attendee import Course
+from certification.models import (
+    Attendee, CertifyingOrganisation, CourseAttendee, Course
+)
+from certification.forms import AttendeeForm, CsvAttendeeForm
 
 
 class AttendeeMixin(object):
@@ -192,7 +192,7 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin, FormView):
                     try:
                         attendee.save()
                         attendee_count += 1
-                    except:
+                    except:  # noqa
                         #  Could not save - probably they exist already
                         attendee = None
 
@@ -209,7 +209,7 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin, FormView):
                     try:
                         course_attendee.save()
                         course_attendee_count += 1
-                    except:
+                    except:  # noqa
                         #  They are probably already associated with a course
                         pass
 

@@ -1,10 +1,9 @@
 # coding=utf-8
 
 import datetime
-import StringIO
+from io import StringIO
 import os
 import zipfile
-import cStringIO
 from PIL import Image
 import re
 from django.contrib import messages
@@ -12,7 +11,7 @@ from django.core.mail import send_mail
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.views.generic import CreateView, DetailView
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.shortcuts import render
@@ -475,7 +474,7 @@ def download_certificates_zip(request, **kwargs):
 
     zip_subdir = '%s' % course.name
 
-    s = StringIO.StringIO()
+    s = StringIO()
     zf = zipfile.ZipFile(s, "w")
 
     for fpath in filenames:
@@ -848,7 +847,7 @@ def preview_certificate(request, **kwargs):
         if 'base64' in raw_image:
             image_data = re.sub('^data:image/.+;base64,', '',
                                 raw_image).decode('base64')
-            template_certificate = Image.open(cStringIO.StringIO(image_data))
+            template_certificate = Image.open(StringIO(image_data))
         else:
             template_certificate = None
 
