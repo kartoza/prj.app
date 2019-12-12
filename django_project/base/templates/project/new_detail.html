@@ -225,24 +225,8 @@
                     {% endif %}
                 {% endif %}
             </div>
-
-            <div class="panel panel-default custom-panel" style="padding-bottom: 20px;">
-                <h3>Donate</h3>
-                <div class="row">
-                    <div class="col-xs-6" style="padding-right: 0!important;">
-                    <input type="number" value="5" id="donate-amount" style="margin-top: 5px;width: 80%;border-radius: 5px;"/>$
-                    </div>
-                    <div class="col-xs-6" style="padding-left: 0!important;">
-                    <button
-                        class="btn btn-default"
-                        id="donate-button" data-toggle="modal" data-target="#paymentModal" style="width: 100%">Donate now
-                    </button>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        {% include "stripe.html" %}
     </div>
     <style>
     #action_text {
