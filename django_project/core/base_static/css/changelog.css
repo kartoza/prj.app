@@ -222,3 +222,18 @@ a.anchor-entry {
     top: -80px;
     visibility: hidden;
 }
+
+.vertical-space {
+    height: 20px;
+}
+
+#submit-save {
+    padding-right: 30px;
+    padding-left: 30px;
+    font-size: 13pt;
+}
+
+.img-preview {
+    max-height: 150px;
+    padding-top: 10px;
+}

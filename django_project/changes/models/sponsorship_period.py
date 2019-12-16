@@ -101,6 +101,8 @@ class SponsorshipPeriod(models.Model):
         )
         app_label = 'changes'
         ordering = ['project', '-end_date']
+        verbose_name = 'Sustaining Member Period'
+        verbose_name_plural = 'Sustaining Member Periods'
 
     def save(self, *args, **kwargs):
 

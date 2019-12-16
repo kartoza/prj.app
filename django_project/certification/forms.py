@@ -195,7 +195,7 @@ class CustomOSMWidget(BaseGeometryWidget):
 
         js = (
             '/en/site-admin/jsi18n/',
-            '/static/grappelli/jquery/jquery-2.1.4.min.js',
+            '/static/grappelli/jquery/jquery.min.js',
             '/static/grappelli/jquery/ui/jquery-ui.min.js',
             '/static/grappelli/js/grappelli.js',
             '/static/admin/js/SelectBox.js',

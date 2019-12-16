@@ -289,6 +289,9 @@ class Project(models.Model):
     def __unicode__(self):
         return u'%s' % self.name
 
+    def __str__(self):
+        return '{}'.format(self.name)
+
     def get_absolute_url(self):
         """Return URL to project detail page
 

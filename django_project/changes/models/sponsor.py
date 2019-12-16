@@ -148,6 +148,8 @@ class Sponsor(models.Model):
         )
         app_label = 'changes'
         ordering = ['project', 'name']
+        verbose_name = 'Sustaining Member'
+        verbose_name_plural = 'Sustaining Members'
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -159,7 +161,10 @@ class Sponsor(models.Model):
         super(Sponsor, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'%s' % (self.name)
+        return u'{}'.format(self.name)
+
+    def __str__(self):
+        return '{}'.format(self.name)
 
     def get_absolute_url(self):
         return reverse('sponsor-detail', kwargs={

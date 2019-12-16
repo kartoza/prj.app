@@ -82,6 +82,10 @@ from .views import (
 
     generate_sponsor_cloud,
 )
+from changes.views.sustaining_member import (
+    SustainingMemberCreateView,
+    SustainingMemberDetailView
+)
 
 urlpatterns = [
     # Category management
@@ -309,6 +313,12 @@ urlpatterns = [
     url(regex='^(?P<project_slug>[\w-]+)/member-cloud/$',
         view=generate_sponsor_cloud,
         name='sponsor-cloud'),
+
+    # Sustaining member
+    url(
+        regex='^(?P<project_slug>[\w-]+)/sustaining-member/add/$',
+        view=SustainingMemberCreateView.as_view(),
+        name='sustaining-member-create'),
 ]
 
 
