@@ -343,7 +343,7 @@ def generate_pdf(
         center, 300, 'With a trained competence in:')
     page.setFont('Times-Bold', 14)
     page.drawCentredString(
-        center, 280, '{}'.format(course.trained_competence))
+        center, 280, '{}'.format(course.trained_competence.encode('utf-8')))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
         center, 250, '{}'.format(course_duration))
