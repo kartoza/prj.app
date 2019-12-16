@@ -56,6 +56,7 @@ from .views import (
     SponsorUpdateView,
     PendingSponsorListView,
     ApproveSponsorView,
+    RejectSponsorView,
     GenerateSponsorPDFView,
 
     # Sponsorship Level
@@ -234,6 +235,9 @@ urlpatterns = [
     url(regex='^(?P<project_slug>[\w-]+)/approve-member/(?P<slug>[\w-]+)/$',
         view=ApproveSponsorView.as_view(),
         name='sponsor-approve'),
+    url(regex='^(?P<project_slug>[\w-]+)/reject-member/(?P<member_id>\d+)/$',
+        view=RejectSponsorView.as_view(),
+        name='sponsor-reject'),
     url(regex='^(?P<project_slug>[\w-]+)/members/list/$',
         view=SponsorListView.as_view(),
         name='sponsor-list'),

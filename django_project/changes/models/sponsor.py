@@ -51,6 +51,17 @@ class UnapprovedSponsorManager(models.Manager):
                 approved=False)
 
 
+class PendingSponsorManager(models.Manager):
+    """Custom manager that shows unapproved and unrejected records."""
+    def get_queryset(self):
+        return super(
+            PendingSponsorManager, self
+        ).get_queryset().filter(
+            approved=False,
+            rejected=False
+        )
+
+
 # noinspection PyUnresolvedReferences
 class Sponsor(models.Model):
     """A sponsor model e.g. gui, backend, web site etc."""
@@ -124,6 +135,22 @@ class Sponsor(models.Model):
         default=False
     )
 
+    rejected = models.BooleanField(
+        help_text=_(
+            'Whether this sustaining member has been rejected for use by the '
+            'project manager.'),
+        default=False
+    )
+
+    remarks = models.CharField(
+        help_text=_(
+            'Remarks regarding status of this sustaining members, '
+            'i.e. Rejected, because lacks of information'),
+        max_length=500,
+        null=True,
+        blank=True
+    )
+
     invoice_number = models.CharField(
         _("Sponsorship invoice number"),
         max_length=255,
@@ -138,6 +165,7 @@ class Sponsor(models.Model):
     objects = models.Manager()
     approved_objects = ApprovedSponsorManager()
     unapproved_objects = UnapprovedSponsorManager()
+    pending_objects = PendingSponsorManager()
 
     # noinspection PyClassicStyleClass
     class Meta:

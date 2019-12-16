@@ -568,7 +568,7 @@ class PendingSponsorListView(
             self.project_slug = self.kwargs.get('project_slug', None)
             if self.project_slug:
                 self.project = Project.objects.get(slug=self.project_slug)
-                queryset = Sponsor.unapproved_objects.filter(
+                queryset = Sponsor.pending_objects.filter(
                     project=self.project)
                 return queryset
             else:
@@ -602,6 +602,40 @@ class ApproveSponsorView(LoginRequiredMixin, SponsorMixin, RedirectView):
                 Q(project__sponsorship_managers=self.request.user))
         sponsor = get_object_or_404(sponsor_qs, slug=slug)
         sponsor.approved = True
+        sponsor.save()
+        return reverse(self.pattern_name, kwargs={
+            'project_slug': project_slug
+        })
+
+
+class RejectSponsorView(LoginRequiredMixin, SponsorMixin, RedirectView):
+    """Redirect view for rejecting Sponsor."""
+    permanent = False
+    query_string = True
+    pattern_name = 'sponsorshipperiod-create'
+
+    def get_redirect_url(self, project_slug, member_id):
+        """Save Sponsor as Rejected and redirect
+
+        :param project_slug: The slug of the parent Sponsor's parent Project
+        :type project_slug: str
+
+        :param member_id: The id of the Sponsor
+        :type member_id: int
+
+        :returns: URL
+        :rtype: str
+        """
+        if self.request.user.is_staff:
+            sponsor_qs = Sponsor.unapproved_objects.all()
+        else:
+            sponsor_qs = Sponsor.unapproved_objects.filter(
+                Q(project__owner=self.request.user) |
+                Q(project__sponsorship_managers=self.request.user))
+        sponsor = get_object_or_404(sponsor_qs, id=member_id)
+        sponsor.approved = False
+        sponsor.rejected = True
+        sponsor.remark = self.request.GET.get('remark', '')
         sponsor.save()
         return reverse(self.pattern_name, kwargs={
             'project_slug': project_slug

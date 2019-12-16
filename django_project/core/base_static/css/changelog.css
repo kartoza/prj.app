@@ -237,3 +237,15 @@ a.anchor-entry {
     max-height: 150px;
     padding-top: 10px;
 }
+
+.btn-approve:hover {
+    background-color: #419641 !important;
+    background-position: 0 -32px;
+    color: white;
+}
+
+.btn-reject:hover {
+    background-color: #c12e2a !important;
+    background-position: 0 -32px;
+    color: white;
+}

@@ -15,7 +15,9 @@ except ImportError:  # Django < 1.10
     MiddlewareBase = object
 
 from base.models import Project, Version, Domain
-from changes.models import Category, SponsorshipLevel, SponsorshipPeriod, Entry
+from changes.models import (
+    Category, SponsorshipLevel, SponsorshipPeriod, Entry, Sponsor
+)
 from certification.models import CertifyingOrganisation
 
 
@@ -55,6 +57,14 @@ class NavContextMiddleware(MiddlewareBase):
             context['has_pending_organisations'] = (
                 CertifyingOrganisation.unapproved_objects.filter(
                     project=context.get('project')).exists())
+
+            # Check if user is a sustaining member manager
+            context['has_pending_sustaining_members'] = (
+                Sponsor.unapproved_objects.filter(
+                    project=context.get('project'),
+                    project__sponsorship_managers__in=[request.user]).exists()
+            )
+
 
         else:
             if request.user.is_staff:
