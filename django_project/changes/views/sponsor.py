@@ -244,7 +244,7 @@ class SponsorDetailView(SponsorMixin, DetailView):
         :returns: Queryset which is filtered to only show approved Sponsor.
         :rtype: QuerySet
         """
-        qs = SponsorshipPeriod.approved_objects.all()
+        qs = Sponsor.objects.all()
         return qs
 
     def get_object(self, queryset=None):
@@ -756,3 +756,60 @@ class GenerateSponsorPDFView(LoginRequiredMixin, SponsorMixin, TemplateView):
             response['Content-Disposition'] = content
             return response
         return HttpResponse("Not found")
+
+
+class RejectedSustainingMemberList(
+    LoginRequiredMixin, SponsorMixin, PaginationMixin, ListView):  # noqa
+    """List view for pending Sustaining Members."""
+    context_object_name = 'sustaining_members'
+    template_name = 'sponsor/rejected-list.html'
+    paginate_by = 10
+
+    def __init__(self):
+        """
+        We overload __init__ in order to declare self.project and
+        self.project_slug. Both are then defined in self.get_queryset
+        which is the first method called. This means we can then reuse the
+        values in self.get_context_data.
+        """
+        super(RejectedSustainingMemberList, self).__init__()
+        self.project = None
+        self.project_slug = None
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(RejectedSustainingMemberList, self)\
+            .get_context_data(**kwargs)
+        context['num_sponsors'] = self.get_queryset().count()
+        context['rejected'] = True
+        context['project_slug'] = self.project_slug
+        context['project'] = self.project
+        return context
+
+    # noinspection PyAttributeOutsideInit
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        :returns: A queryset which is filtered to only show unapproved
+        Sponsor.
+        :rtype: QuerySet
+        :raises: Http404
+        """
+        if self.queryset is None:
+            self.project_slug = self.kwargs.get('project_slug', None)
+            if self.project_slug:
+                self.project = Project.objects.get(slug=self.project_slug)
+                queryset = Sponsor.objects.filter(
+                    rejected=True,
+                    project=self.project)
+                return queryset
+            else:
+                raise Http404('Sorry! We could not find your sponsor!')
+        return self.queryset

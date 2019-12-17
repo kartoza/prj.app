@@ -1,0 +1,87 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+{% load custom_markup %}
+{% block title %}Sustaining Membership Levels - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Sustaining Membership levels (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+            Your Membership
+            {% if user.is_authenticated %}
+                {% if user.is_staff or user == project.owner or user in project.sponsorship_managers.all %}
+                    <div class="pull-right btn-group">
+                       <a class="btn btn-default btn-mini tooltip-toggle icon"
+                            href='{% url "sustaining-member-create" project_slug %}'
+                           data-title="Add New!">
+                            Add New
+                       </a>
+                {% endif%}
+                </div>
+            {% endif %}
+        </h1>
+    </div>
+    {% ifequal num_sponsors 0 %}
+        {% if unapproved %}
+            <h3>All sustaining membership level are approved.</h3>
+        {% else %}
+            <h3>No sustaining membership level are defined, but you can <a
+                    class="btn btn-default btn-mini"
+                    href='{% url "sponsorshiplevel-create" project_slug %}'>create one</a>.</h3>
+        {% endif %}
+    {% endifequal %}
+    {% for sponsor in sustaining_members %}
+        <div class="row">
+            <div class="col-lg-1">
+                {% if sponsor.logo %}
+                    {% if sponsor.sponsor.sponsor_url %}
+                        <a href="{{ sponsor.sponsor_url }}">
+                            <img class="img-responsive img-rounded pull-right"
+                                 src="{% thumbnail sponsor.logo 50x50 crop %}"/>
+                        </a>
+                    {% else %}
+                        <a href="{{ sponsor.logo.url }}">
+                            <img class="img-responsive img-rounded pull-right"
+                                 src="{% thumbnail sponsor.logo 50x50 crop %}"/>
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="col-lg-9">
+                <h3 style="margin-top: 0 !important;">{{ sponsor }}  <span class="badge {% if sponsor.rejected %} badge-error"> Rejected {% elif sponsor.approved %} badge-success"> Approved {% else %}"> Pending {% endif %}</span> </h3>
+
+                {% if sponsor.rejected %}
+                    <div class="alert alert-warning" role="alert">
+                        {{ sponsor.remarks }}
+                    </div>
+                {% endif %}
+
+                <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
+                <h5>{{ sponsor.sponsorship_level }}</h5>
+                {% ifnotequal sponsor.amount_sponsored None %}
+                    <h5>Amount contributed : {{ sponsor.amount_sponsored }} {{ sponsor.currency }}</h5>
+                {% endifnotequal %}
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    <a class="btn btn-default btn-mini tooltip-toggle" data-title="Open {{ sponsor }}"
+                       href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                     <a class="btn btn-default btn-mini tooltip-toggle" data-title="Update {{ sponsor }}"
+                       href='{% url "sustaining-member-update" project_slug=sponsor.project.slug member_id=sponsor.id %}?next=/{{ sponsor.project.slug }}/membership/' >
+                        {% show_button_icon "update" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <hr/>
+    {% include "_pagination.html" %}
+{% endblock %}

@@ -55,9 +55,12 @@ from .views import (
     JSONSponsorListView,
     SponsorUpdateView,
     PendingSponsorListView,
+    RejectedSustainingMemberList,
     ApproveSponsorView,
     RejectSponsorView,
     GenerateSponsorPDFView,
+    SustainingMembership,
+    SustainingMemberUpdateView,
 
     # Sponsorship Level
 
@@ -232,6 +235,9 @@ urlpatterns = [
     url(regex='^(?P<project_slug>[\w-]+)/pending-members/list/$',
         view=PendingSponsorListView.as_view(),
         name='pending-sponsor-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/sustaining-members-rejected/list/$',
+        view=RejectedSustainingMemberList.as_view(),
+        name='sustaining-members-rejected-list'),
     url(regex='^(?P<project_slug>[\w-]+)/approve-member/(?P<slug>[\w-]+)/$',
         view=ApproveSponsorView.as_view(),
         name='sponsor-approve'),
@@ -323,6 +329,15 @@ urlpatterns = [
         regex='^(?P<project_slug>[\w-]+)/sustaining-member/add/$',
         view=SustainingMemberCreateView.as_view(),
         name='sustaining-member-create'),
+    url(
+        regex='^(?P<project_slug>[\w-]+)/membership/$',
+        view=SustainingMembership.as_view(),
+        name='sustaining-membership'),
+    url(
+        regex='^(?P<project_slug>[\w-]+)/sustaining-member/update/'
+              '(?P<member_id>\d+)/$',
+        view=SustainingMemberUpdateView.as_view(),
+        name='sustaining-member-update'),
 ]
 
 

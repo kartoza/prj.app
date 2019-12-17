@@ -249,3 +249,15 @@ a.anchor-entry {
     background-position: 0 -32px;
     color: white;
 }
+
+.badge {
+    border-radius: 5px;
+}
+
+.badge-error {
+    background-color: #c12e2a !important;
+}
+
+.badge-success {
+    background-color: #419641 !important;
+}

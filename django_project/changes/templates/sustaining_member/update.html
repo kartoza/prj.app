@@ -1,0 +1,61 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block title %}Update Sustaining Member{% endblock title %}
+
+{% block js_head %}
+    <script type="text/javascript" src="/static/js/jsi18n.js"></script>
+{% endblock %}
+
+{% block css_head %}
+    {{ form.media }}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+{% endblock %}
+
+{% block extra_head %}
+{{ Other }}
+<script type="text/javascript" src="{% static 'js/jquery.formset.min.js' %}"></script>
+{{  floppyforms }}
+{% endblock %}
+
+
+{% block content %}
+<section id="forms">
+<div class='container'>
+
+    <h2>Update Sustaining Member</h2>
+    <hr/>
+    <form method="post" enctype="multipart/form-data">
+         {% csrf_token %}
+         {{ form|crispy }}
+        <div class="vertical-space"></div>
+        <div class="form-actions">
+            <input type="submit" name="submit" value="Submit" class="btn btn-primary" id="submit-save">
+        </div>
+    </form>
+</div>
+</section>
+
+<script>
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            $(input).parent().find('.img-preview').remove();
+            reader.onload = function (e) {
+                const previewDiv = $('<img class="img-preview"/>');
+                $(input).after(previewDiv);
+                previewDiv.attr('src', e.target.result);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#id_logo").change(function(){
+        readURL(this);
+    });
+    $("#id_agreement").change(function(){
+        readURL(this);
+    });
+</script>
+{% endblock %}

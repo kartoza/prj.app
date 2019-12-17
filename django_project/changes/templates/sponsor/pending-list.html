@@ -29,8 +29,13 @@
                     <div class="pull-right btn-group">
                         <a class="btn btn-default btn-mini tooltip-toggle"
                            href='{% url "sponsor-create" project_slug %}'
-                           data-title="Create New Sponsor">
+                           data-title="Create New Sustaining Member">
                             {% show_button_icon "add" %}
+                        </a>
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "sustaining-members-rejected-list" project_slug %}'
+                           data-title="View Rejected Sustaining Members">
+                            <span class="glyphicon glyphicon-ban-circle"></span>
                         </a>
                 {% endif %}
                 {% if not unapproved %}
@@ -136,7 +141,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" onclick="closeRejectionForm()">Cancel</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" onclick="submitRejectionForm()">Submit</button>
                 </div>
             </div>
