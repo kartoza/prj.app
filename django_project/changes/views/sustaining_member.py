@@ -1,3 +1,8 @@
+from datetime import date
+import ast
+import stripe
+import djstripe.models
+import djstripe.settings
 from braces.views import LoginRequiredMixin
 from django.urls import reverse
 from django.shortcuts import redirect
@@ -10,14 +15,15 @@ from django.views.generic import (
     UpdateView,
     RedirectView)
 from django import forms
-from django.db.models import Q
+from django.db.models import Q, F
 from django.http.response import HttpResponse
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from pure_pagination.mixins import PaginationMixin
-from changes.models import Sponsor
+from changes.models import Sponsor, SponsorshipPeriod, SponsorshipLevel
 from base.models import Project
+from changes.forms import SustainingMemberPeriodForm
 
 
 class SustainingMemberForm(forms.ModelForm):
@@ -96,7 +102,6 @@ class SustainingMembership(LoginRequiredMixin, PaginationMixin, ListView):
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
-            project = Project.objects.get(slug=project_slug)
             context['project'] = Project.objects.get(slug=project_slug)
         return context
 
@@ -115,7 +120,21 @@ class SustainingMembership(LoginRequiredMixin, PaginationMixin, ListView):
                 self.project = Project.objects.get(slug=self.project_slug)
                 queryset = Sponsor.objects.filter(
                     author=user,
-                    project=self.project)
+                    project=self.project
+                ).annotate(
+                    start_date=F('sponsorshipperiod__start_date'),
+                    recurring=F('sponsorshipperiod__start_date'),
+                    end_date=F('sponsorshipperiod__end_date'),
+                    plan_interval=F(
+                        'sponsorshipperiod__sponsorship_level__'
+                        'subscription_plan__interval'),
+                    sponsorship_level_name=F('sponsorshipperiod__'
+                                             'sponsorship_level__name'),
+                    sponsorship_level_value=F('sponsorshipperiod__'
+                                             'sponsorship_level__value'),
+                    sponsorship_level_currency=F('sponsorshipperiod__'
+                                             'sponsorship_level__currency'),
+                )
                 return queryset
             else:
                 raise Http404('Sorry! We could not find '
@@ -223,3 +242,133 @@ class SustainingMemberUpdateView(LoginRequiredMixin, UpdateView):
             return super(SustainingMemberUpdateView, self).form_valid(form)
         else:
             return self.render_to_response(self.get_context_data())
+
+
+# noinspection PyAttributeOutsideInit
+class SustainingMemberPeriodCreateView(
+        LoginRequiredMixin,
+        CreateView):
+    """Create view for Sponsorship Period."""
+    context_object_name = 'sustaining_member_period'
+    template_name = 'sponsorship_period/create_from_membership.html'
+    model = SponsorshipPeriod
+    form_class = SustainingMemberPeriodForm
+
+    def get_success_url(self):
+        """Define the redirect URL
+
+        After successful creation of the object, the User will be redirected
+        to the unapproved Sponsor list page for the object's parent Project
+
+       :returns: URL
+       :rtype: HttpResponse
+       """
+        return reverse('pending-sponsorshipperiod-list', kwargs={
+            'project_slug': self.object.project.slug
+        })
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(
+                SustainingMemberPeriodCreateView,
+                self).get_context_data(**kwargs)
+
+        if djstripe.models.Plan.objects.count() == 0:
+            raise Exception(
+                "No Product Plans in the dj-stripe database - "
+                "create some in your "
+                "stripe account and then "
+                "run `./manage.py djstripe_sync_plans_from_stripe` "
+                "(or use the dj-stripe webhooks)"
+            )
+
+        self.project_slug = self.kwargs.get('project_slug', None)
+        project = Project.objects.get(slug=self.project_slug)
+        context['sponsorship_period'] = (
+            self.get_queryset().filter(project=project))
+        context['sponsorhip_levels'] = (
+            SponsorshipLevel.objects.filter(
+                project=project
+            )
+        )
+        member_id = self.kwargs.get('member_id', None)
+        context['project'] = project
+        today_date = date.today()
+        context['date_start'] = today_date.strftime("%B %d, %Y")
+        context['date_end'] = today_date.replace(
+            year = today_date.year + 1).strftime("%B %d, %Y")
+        if member_id:
+            context['member'] = Sponsor.objects.get(id=member_id)
+        return context
+
+    def process_payment(self, form, stripe_source_id, plan_id, recurring):
+        """Process payment from stripe."""
+
+        # Create the stripe Customer, by default subscriber Model is User,
+        # this can be overridden with settings.DJSTRIPE_SUBSCRIBER_MODEL
+        customer, created = djstripe.models.Customer.get_or_create(
+            subscriber=self.request.user)
+
+        # Add the source as the customer's default card
+        customer.add_card(stripe_source_id)
+
+        # Using the Stripe API, create a subscription for this customer,
+        # using the customer's default payment source
+        stripe_subscription = stripe.Subscription.create(
+            customer=customer.id,
+            items=[{"plan": plan_id}],
+            billing="charge_automatically",
+            # tax_percent=15,
+            api_key=djstripe.settings.STRIPE_SECRET_KEY,
+            cancel_at_period_end=not recurring
+        )
+
+        # Sync the Stripe API return data to the database,
+        # this way we don't need to wait for a webhook-triggered sync
+        subscription = djstripe.models.Subscription.sync_from_stripe_data(
+            stripe_subscription
+        )
+        self.request.subscription = subscription
+
+    def form_valid(self, form):
+        """Save new created Sponsor
+
+        :param form
+        :type form
+
+        :returns HttpResponseRedirect object to success_url
+        :rtype: HttpResponseRedirect
+        """
+        today_date = date.today()
+        member_id = self.kwargs.get('member_id', None)
+        project_slug = self.kwargs.get('project_slug', None)
+        source_id = self.request.POST.get('stripe-source-id')
+        try:
+            recurring = ast.literal_eval(
+                self.request.POST.get('recurring').capitalize()
+            )
+        except ValueError:
+            recurring = False
+
+        self.object = form.save(commit=False)
+        plan_id = self.object.sponsorship_level.subscription_plan.id
+
+        self.process_payment(form, source_id, plan_id, recurring)
+        self.object.author = self.request.user
+        self.object.sponsor = Sponsor.objects.get(id=member_id)
+        self.object.project = Project.objects.get(slug=project_slug)
+        self.object.approved = True
+        if recurring:
+            self.object.recurring = True
+        else:
+            self.object.end_date = today_date.replace(
+                year=today_date.year + 1)
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())

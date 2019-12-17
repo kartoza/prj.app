@@ -61,6 +61,7 @@ from .views import (
     GenerateSponsorPDFView,
     SustainingMembership,
     SustainingMemberUpdateView,
+    SustainingMemberPeriodCreateView,
 
     # Sponsorship Level
 
@@ -338,6 +339,11 @@ urlpatterns = [
               '(?P<member_id>\d+)/$',
         view=SustainingMemberUpdateView.as_view(),
         name='sustaining-member-update'),
+    url(
+        regex='^(?P<project_slug>[\w-]+)/sustaining-member-period/create/'
+              '(?P<member_id>\d+)/$',
+        view=SustainingMemberPeriodCreateView.as_view(),
+        name='sustaining-member-period-create'),
 ]
 
 

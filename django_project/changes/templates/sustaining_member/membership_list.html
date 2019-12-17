@@ -53,8 +53,9 @@
                     {% endif %}
                 {% endif %}
             </div>
-            <div class="col-lg-9">
-                <h3 style="margin-top: 0 !important;">{{ sponsor }}  <span class="badge {% if sponsor.rejected %} badge-error"> Rejected {% elif sponsor.approved %} badge-success"> Approved {% else %}"> Pending {% endif %}</span> </h3>
+            <div class="col-lg-7">
+                <h3 style="margin-top: 0 !important;">{{ sponsor }}  <span style="margin-bottom: 4px" class="badge
+                    {% if sponsor.rejected %} badge-error"> Rejected {% elif sponsor.approved %} badge-success"> Approved {% else %}"> Pending {% endif %}</span> </h3>
 
                 {% if sponsor.rejected %}
                     <div class="alert alert-warning" role="alert">
@@ -62,14 +63,30 @@
                     </div>
                 {% endif %}
 
-                <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
-                <h5>{{ sponsor.sponsorship_level }}</h5>
-                {% ifnotequal sponsor.amount_sponsored None %}
-                    <h5>Amount contributed : {{ sponsor.amount_sponsored }} {{ sponsor.currency }}</h5>
-                {% endifnotequal %}
+                {% if sponsor.start_date %}
+                    {% if sponsor.end_date %}
+                    <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
+                    {% elif sponsor.recurring %}
+                    <h5>{{ sponsor.start_date }} - {{ sponsor.plan_interval|title }}ly</h5>
+                    {% endif %}
+                    <h5>{{ sponsor.sponsorship_level_name }} : {{ sponsor.sponsorship_level_value }} {{ sponsor.sponsorship_level_currency }}</h5>
+                {% else %}
+                    No Period
+                {% endif %}
+
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-4">
                 <div class="btn-group pull-right">
+                    {% if not sponsor.start_date %}
+                        <a class="btn btn-default btn-mini icon"
+                            href='{% url "sustaining-member-period-create" project_slug=sponsor.project.slug member_id=sponsor.id %}'>
+                            Add Period
+                        </a>
+                    {% else %}
+                        <a class="btn btn-default btn-mini icon">
+                            Update Subscription
+                        </a>
+                    {% endif %}
                     <a class="btn btn-default btn-mini tooltip-toggle" data-title="Open {{ sponsor }}"
                        href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
                         <span class="glyphicon glyphicon-eye-open"></span>
@@ -81,7 +98,8 @@
                 </div>
             </div>
         </div>
+        <hr/>
     {% endfor %}
-    <hr/>
+
     {% include "_pagination.html" %}
 {% endblock %}

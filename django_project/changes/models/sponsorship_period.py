@@ -47,7 +47,9 @@ class SponsorshipPeriod(models.Model):
     end_date = models.DateField(
         _("End date"),
         help_text='End date of sponsorship period',
-        default=timezone.now)
+        null=True,
+        blank=True
+    )
 
     amount_sponsored = models.DecimalField(
         _('Amount Sponsored'),
@@ -70,6 +72,13 @@ class SponsorshipPeriod(models.Model):
         help_text=_(
             'Whether this sponsorship period has been approved for use by '
             'the project owner.'),
+        default=False
+    )
+
+    recurring = models.BooleanField(
+        help_text=_(
+            'Bill customer at the start of each period'
+        ),
         default=False
     )
 
@@ -119,10 +128,14 @@ class SponsorshipPeriod(models.Model):
         return ''.join(random.choice(chars) for _ in range(size))
 
     def __unicode__(self):
+        plan = None
+        if self.sponsorship_level.subscription_plan and self.recurring:
+            plan = self.sponsorship_level.subscription_plan.interval
+            plan = '{}ly'.format(plan.capitalize())
         return u'%s - %s : %s' % (
             self.sponsor.name,
             self.start_date,
-            self.end_date
+            plan if plan else self.end_date
         )
 
     def get_absolute_url(self):
@@ -134,6 +147,10 @@ class SponsorshipPeriod(models.Model):
     def current_sponsor(self):
         today = datetime.datetime.now().date()
         end = self.end_date
+        if not end:
+            if self.recurring:
+                return True
+            return False
         if end < today:
             return False
         else:
