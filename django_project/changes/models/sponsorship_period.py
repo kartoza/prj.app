@@ -82,6 +82,13 @@ class SponsorshipPeriod(models.Model):
         default=False
     )
 
+    subscription = models.ForeignKey(
+        'djstripe.Subscription',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField()
     project = models.ForeignKey('base.Project', on_delete=models.CASCADE)

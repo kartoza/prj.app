@@ -130,7 +130,7 @@ class SustainingMembership(LoginRequiredMixin, PaginationMixin, ListView):
                     project=self.project
                 ).annotate(
                     start_date=F('sponsorshipperiod__start_date'),
-                    recurring=F('sponsorshipperiod__start_date'),
+                    recurring=F('sponsorshipperiod__recurring'),
                     end_date=F('sponsorshipperiod__end_date'),
                     plan_interval=F(
                         'sponsorshipperiod__sponsorship_level__'
@@ -267,12 +267,12 @@ class SustainingMemberPeriodCreateView(
         """Define the redirect URL
 
         After successful creation of the object, the User will be redirected
-        to the unapproved Sponsor list page for the object's parent Project
+        to membership view
 
        :returns: URL
        :rtype: HttpResponse
        """
-        return reverse('pending-sponsorshipperiod-list', kwargs={
+        return reverse('sustaining-membership', kwargs={
             'project_slug': self.object.project.slug
         })
 
@@ -298,8 +298,12 @@ class SustainingMemberPeriodCreateView(
                 "(or use the dj-stripe webhooks)"
             )
 
-        self.project_slug = self.kwargs.get('project_slug', None)
-        project = Project.objects.get(slug=self.project_slug)
+        project_slug = self.kwargs.get('project_slug', None)
+        project = Project.objects.get(slug=project_slug)
+        member_id = self.kwargs.get('member_id', None)
+        member = Sponsor.objects.get(id=member_id)
+        today_date = date.today()
+
         context['sponsorship_period'] = (
             self.get_queryset().filter(project=project))
         context['sponsorhip_levels'] = (
@@ -307,13 +311,10 @@ class SustainingMemberPeriodCreateView(
                 project=project
             )
         )
-        member_id = self.kwargs.get('member_id', None)
         context['project'] = project
-        today_date = date.today()
         context['date_start'] = today_date.strftime("%B %d, %Y")
         context['date_end'] = today_date.replace(
             year = today_date.year + 1).strftime("%B %d, %Y")
-        member = Sponsor.objects.get(id=member_id)
         context['member'] = member
 
         if not member.approved:
@@ -359,6 +360,7 @@ class SustainingMemberPeriodCreateView(
             stripe_subscription
         )
         self.request.subscription = subscription
+        return subscription
 
     def form_valid(self, form):
         """Save new created Sponsor
@@ -386,15 +388,160 @@ class SustainingMemberPeriodCreateView(
         self.object = form.save(commit=False)
         plan_id = self.object.sponsorship_level.subscription_plan.id
 
-        self.process_payment(form, source_id, plan_id, recurring)
+        subscription = self.process_payment(
+            form, source_id, plan_id, recurring)
         self.object.author = self.request.user
         self.object.sponsor = sponsor
         self.object.project = Project.objects.get(slug=project_slug)
         self.object.approved = True
+        self.object.subscription = subscription
         if recurring:
             self.object.recurring = True
         else:
             self.object.end_date = today_date.replace(
                 year=today_date.year + 1)
         self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+# noinspection PyAttributeOutsideInit
+class SustainingMemberPeriodUpdateView(
+        LoginRequiredMixin,
+        UpdateView):
+    """Create view for Sponsorship Period."""
+    context_object_name = 'sustaining_member_period'
+    template_name = 'sponsorship_period/update_membership.html'
+    model = SponsorshipPeriod
+    form_class = SustainingMemberPeriodForm
+
+    def get_success_url(self):
+        """Define the redirect URL
+
+        After successful creation of the object, the User will be redirected
+        to membership view
+
+       :returns: URL
+       :rtype: HttpResponse
+       """
+        return reverse('sustaining-membership', kwargs={
+            'project_slug': self.object.project.slug
+        })
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(
+                SustainingMemberPeriodUpdateView,
+                self).get_context_data(**kwargs)
+
+        project_slug = self.kwargs.get('project_slug', None)
+        project = Project.objects.get(slug=project_slug)
+        member_id = self.kwargs.get('member_id', None)
+        member = Sponsor.objects.get(id=member_id)
+        period = SponsorshipPeriod.objects.get(
+            sponsor=member,
+            project=project
+        )
+
+        context['project'] = project
+        context['date_start'] = period.start_date.strftime("%B %d, %Y")
+        context['date_end'] = period.start_date.replace(
+            year=period.start_date.year + 1).strftime("%B %d, %Y")
+        context['member'] = member
+        context['recurring'] = period.recurring
+        context['level'] = period.sponsorship_level
+
+        return context
+
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        :returns: A queryset which is filtered to only show all approved
+        projects which user created (staff gets all projects)
+        :rtype: QuerySet
+        """
+
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        qs = SponsorshipPeriod.objects.all()
+        if self.request.user.is_staff:
+            return qs
+        else:
+            return qs.filter(
+                Q(project=self.project) & (
+                    Q(author=self.request.user) | (
+                        Q(project__owner=self.request.user)) | (
+                        Q(project__sponsorship_managers=self.request.user))))
+
+    def get_object(self, queryset=None):
+        """Get the object for this view.
+
+        Because Sponsor slugs are unique within a Project,
+        we need to make sure that we fetch the correct Sponsor
+        from the correct Project
+
+        :param queryset: A query set
+        :type queryset: QuerySet
+
+        :returns: Queryset which is filtered to only show a project
+        :rtype: QuerySet
+        :raises: Http404
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+            member_id = self.kwargs.get('member_id', None)
+            project_slug = self.kwargs.get('project_slug', None)
+            if member_id and project_slug:
+                project = Project.objects.get(slug=project_slug)
+                obj = queryset.get(project=project, sponsor__id=member_id)
+                return obj
+            else:
+                raise Http404(
+                    'Sorry! We could not find your sponsor!')
+
+    def update_subscription(self, subscription, recurring):
+        """Update subscription in stripe"""
+        stripe.api_key = djstripe.settings.STRIPE_SECRET_KEY
+        stripe_subscription = stripe.Subscription.modify(
+            subscription.id,
+            cancel_at_period_end=not recurring
+        )
+        return djstripe.models.Subscription.sync_from_stripe_data(
+            stripe_subscription
+        )
+
+    def form_valid(self, form):
+        """Save update period
+
+        :param form
+        :type form
+
+        :returns HttpResponseRedirect object to success_url
+        :rtype: HttpResponseRedirect
+        """
+        self.object = form.save(commit=False)
+        try:
+            recurring = ast.literal_eval(
+                self.request.POST.get('recurring').capitalize()
+            )
+        except ValueError:
+            recurring = False
+        self.object.recurring = recurring
+        if recurring:
+            self.object.end_date = None
+        else:
+            self.object.end_date = self.object.start_date.replace(
+            year=self.object.start_date.year + 1)
+        subscription = self.update_subscription(
+            self.object.subscription, recurring)
+        if subscription:
+            self.object.save()
+        else:
+            raise Http404('Subscription could not be updated')
         return HttpResponseRedirect(self.get_success_url())
