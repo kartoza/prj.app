@@ -26,7 +26,9 @@ INSTALLED_APPS += [
     'rest_framework',
     'simple_history',
     'djstripe',
-    'preferences'
+    'preferences',
+    'pinax.templates',
+    'pinax.notifications',
 ]
 
 # Add preferences to context_processors

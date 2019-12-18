@@ -28,11 +28,6 @@
                 {% if user.is_staff or user == project.owner or user in project.sponsorship_managers.all %}
                     <div class="pull-right btn-group">
                         <a class="btn btn-default btn-mini tooltip-toggle"
-                           href='{% url "sponsor-create" project_slug %}'
-                           data-title="Create New Sustaining Member">
-                            {% show_button_icon "add" %}
-                        </a>
-                        <a class="btn btn-default btn-mini tooltip-toggle"
                            href='{% url "sustaining-members-rejected-list" project_slug %}'
                            data-title="View Rejected Sustaining Members">
                             <span class="glyphicon glyphicon-ban-circle"></span>

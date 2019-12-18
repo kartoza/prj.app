@@ -82,3 +82,5 @@ VALID_DOMAIN = [
     '0.0.0.0',
     'changelog.kartoza.com',
 ]
+
+EMAIL_HOST_USER = 'noreply@kartoza.com'

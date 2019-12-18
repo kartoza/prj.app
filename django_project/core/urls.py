@@ -48,6 +48,8 @@ urlpatterns += i18n_patterns(
     #     name='password_reset_done'),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^stripe/', include("djstripe.urls", namespace="djstripe")),
+    url(r'^notifications/', include('pinax.notifications.urls',
+                                    namespace='pinax_notifications')),
 )
 
 if 'rosetta' in settings.INSTALLED_APPS:

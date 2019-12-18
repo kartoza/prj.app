@@ -4,26 +4,25 @@ import stripe
 import djstripe.models
 import djstripe.settings
 from braces.views import LoginRequiredMixin
+from pinax.notifications.models import send
 from django.urls import reverse
-from django.shortcuts import redirect
+from django.conf import settings
 from django.views.generic import (
-    TemplateView,
     ListView,
     CreateView,
-    DeleteView,
     DetailView,
-    UpdateView,
-    RedirectView)
+    UpdateView)
 from django import forms
 from django.db.models import Q, F
 from django.http.response import HttpResponse
 from django.http import HttpResponseRedirect, Http404
-from django.db import IntegrityError
-from django.core.exceptions import ValidationError
 from pure_pagination.mixins import PaginationMixin
 from changes.models import Sponsor, SponsorshipPeriod, SponsorshipLevel
 from base.models import Project
 from changes.forms import SustainingMemberPeriodForm
+from changes import (
+    NOTICE_SUSTAINING_MEMBER_CREATED
+)
 
 
 class SustainingMemberForm(forms.ModelForm):
@@ -58,12 +57,20 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         """Check if form is valid."""
         if form.is_valid():
-            self.form_object = form.save(commit=False)
-            self.form_object.author = self.request.user
-            self.form_object.project = Project.objects.get(
+            project = Project.objects.get(
                 slug=self.kwargs.get('project_slug')
             )
+            self.form_object = form.save(commit=False)
+            self.form_object.author = self.request.user
+            self.form_object.project = project
             self.form_object.save()
+            sponsorship_managers = project.sponsorship_managers.all()
+            # Send a notification
+            send([
+                self.request.user,
+            ] + list(sponsorship_managers),
+                 NOTICE_SUSTAINING_MEMBER_CREATED,
+                 {'from_user': settings.EMAIL_HOST_USER})
             return super(SustainingMemberCreateView, self).form_valid(form)
         else:
             return self.render_to_response(self.get_context_data(form=form))
@@ -134,6 +141,8 @@ class SustainingMembership(LoginRequiredMixin, PaginationMixin, ListView):
                                              'sponsorship_level__value'),
                     sponsorship_level_currency=F('sponsorshipperiod__'
                                              'sponsorship_level__currency'),
+                ).order_by(
+                    'sponsorship_level_value'
                 )
                 return queryset
             else:
@@ -254,25 +263,6 @@ class SustainingMemberPeriodCreateView(
     model = SponsorshipPeriod
     form_class = SustainingMemberPeriodForm
 
-    def get(self, request, *args, **kwargs):
-        self.project_slug = self.kwargs.get('project_slug', None)
-        project = Project.objects.get(slug=self.project_slug)
-        member_id = self.kwargs.get('member_id', None)
-        member = Sponsor.objects.get(id=member_id)
-        try:
-            period = SponsorshipPeriod.objects.get(
-                sponsor=member,
-                project=project
-            )
-            if ((period.end_date and period.end_date > date.today())
-                    or period.recurring):
-                raise Http404('Period already exist')
-        except SponsorshipPeriod.DoesNotExist:
-            pass
-        return super(SustainingMemberPeriodCreateView, self).get(
-            request, *args, **kwargs
-        )
-
     def get_success_url(self):
         """Define the redirect URL
 
@@ -323,8 +313,22 @@ class SustainingMemberPeriodCreateView(
         context['date_start'] = today_date.strftime("%B %d, %Y")
         context['date_end'] = today_date.replace(
             year = today_date.year + 1).strftime("%B %d, %Y")
-        if member_id:
-            context['member'] = Sponsor.objects.get(id=member_id)
+        member = Sponsor.objects.get(id=member_id)
+        context['member'] = member
+
+        if not member.approved:
+            raise Http404('Sustaining Member is not approved')
+        try:
+            period = SponsorshipPeriod.objects.get(
+                sponsor=member,
+                project=project
+            )
+            if ((period.end_date and period.end_date > date.today())
+                    or period.recurring):
+                raise Http404('Period already exist')
+        except SponsorshipPeriod.DoesNotExist:
+            pass
+
         return context
 
     def process_payment(self, form, stripe_source_id, plan_id, recurring):
@@ -369,6 +373,9 @@ class SustainingMemberPeriodCreateView(
         member_id = self.kwargs.get('member_id', None)
         project_slug = self.kwargs.get('project_slug', None)
         source_id = self.request.POST.get('stripe-source-id')
+        sponsor = Sponsor.objects.get(id=member_id)
+        if not sponsor.approved:
+            raise Http404('Sponsor is not approved')
         try:
             recurring = ast.literal_eval(
                 self.request.POST.get('recurring').capitalize()
@@ -381,7 +388,7 @@ class SustainingMemberPeriodCreateView(
 
         self.process_payment(form, source_id, plan_id, recurring)
         self.object.author = self.request.user
-        self.object.sponsor = Sponsor.objects.get(id=member_id)
+        self.object.sponsor = sponsor
         self.object.project = Project.objects.get(slug=project_slug)
         self.object.approved = True
         if recurring:

@@ -26,7 +26,7 @@ from django.template.loader import get_template
 from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 from PIL import Image
-
+from pinax.notifications.models import send
 
 from base.models import Project
 from ..models import Sponsor, SponsorshipPeriod  # noqa
@@ -34,6 +34,10 @@ from ..models import SponsorshipLevel  # noqa
 from ..forms import SponsorForm
 
 from ..utils import render_to_pdf
+from changes import (
+    NOTICE_SUSTAINING_MEMBER_APPROVED,
+    NOTICE_SUSTAINING_MEMBER_REJECTED
+)
 
 logger = logging.getLogger(__name__)
 
@@ -580,7 +584,7 @@ class ApproveSponsorView(LoginRequiredMixin, SponsorMixin, RedirectView):
     """Redirect view for approving Sponsor."""
     permanent = False
     query_string = True
-    pattern_name = 'sponsorshipperiod-create'
+    pattern_name = 'pending-sponsor-list'
 
     def get_redirect_url(self, project_slug, slug):
         """Save Sponsor as approved and redirect
@@ -602,6 +606,17 @@ class ApproveSponsorView(LoginRequiredMixin, SponsorMixin, RedirectView):
                 Q(project__sponsorship_managers=self.request.user))
         sponsor = get_object_or_404(sponsor_qs, slug=slug)
         sponsor.approved = True
+        sponsor.rejected = False
+        sponsor.remarks = ''
+        project = Project.objects.get(
+            slug=self.kwargs.get('project_slug')
+        )
+        sponsorship_managers = project.sponsorship_managers.all()
+        send([
+                 self.request.user,
+             ] + list(sponsorship_managers),
+             NOTICE_SUSTAINING_MEMBER_APPROVED,
+             {'sustaining_member_name': sponsor.name})
         sponsor.save()
         return reverse(self.pattern_name, kwargs={
             'project_slug': project_slug
@@ -612,7 +627,7 @@ class RejectSponsorView(LoginRequiredMixin, SponsorMixin, RedirectView):
     """Redirect view for rejecting Sponsor."""
     permanent = False
     query_string = True
-    pattern_name = 'sponsorshipperiod-create'
+    pattern_name = 'pending-sponsor-list'
 
     def get_redirect_url(self, project_slug, member_id):
         """Save Sponsor as Rejected and redirect
@@ -635,8 +650,18 @@ class RejectSponsorView(LoginRequiredMixin, SponsorMixin, RedirectView):
         sponsor = get_object_or_404(sponsor_qs, id=member_id)
         sponsor.approved = False
         sponsor.rejected = True
-        sponsor.remark = self.request.GET.get('remark', '')
+        remarks = self.request.GET.get('remark', '')
+        sponsor.remarks = remarks
         sponsor.save()
+        project = Project.objects.get(
+            slug=self.kwargs.get('project_slug')
+        )
+        sponsorship_managers = project.sponsorship_managers.all()
+        send([
+                 self.request.user,
+             ] + list(sponsorship_managers),
+             NOTICE_SUSTAINING_MEMBER_REJECTED,
+             {'remarks': remarks, 'sustaining_member_name': sponsor.name})
         return reverse(self.pattern_name, kwargs={
             'project_slug': project_slug
         })
