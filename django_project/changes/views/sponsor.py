@@ -237,13 +237,15 @@ class SponsorDetailView(SponsorMixin, DetailView):
         """
         context = super(SponsorDetailView, self).get_context_data(**kwargs)
         project_slug = self.kwargs.get('project_slug', None)
+        slug = self.kwargs.get('slug', None)
         context['project_slug'] = project_slug
         if project_slug:
             context['project'] = Project.objects.get(slug=project_slug)
             sustaining_member = self.get_object()
             context['period'] = SponsorshipPeriod.objects.get(
                 sponsor=sustaining_member,
-                project=context['project']
+                project=context['project'],
+                slug=slug
             )
         return context
 
@@ -276,7 +278,8 @@ class SponsorDetailView(SponsorMixin, DetailView):
             if slug and project_slug:
                 project = Project.objects.get(slug=project_slug)
                 try:
-                    obj = queryset.get(project=project, slug=slug)
+                    obj = queryset.get(
+                        project=project, sponsorshipperiod__slug=slug)
                     return obj
                 except queryset.DoesNotExist:
                     return Http404('Sorry! we could not find your sponsor.')
