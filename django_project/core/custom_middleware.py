@@ -59,11 +59,15 @@ class NavContextMiddleware(MiddlewareBase):
                     project=context.get('project')).exists())
 
             # Check if user is a sustaining member manager
-            context['has_pending_sustaining_members'] = (
-                Sponsor.unapproved_objects.filter(
-                    project=context.get('project'),
-                    project__sponsorship_managers__in=[request.user]).exists()
-            )
+            if request.user.is_anonymous:
+                context['has_pending_sustaining_members'] = False
+            else:
+                context['has_pending_sustaining_members'] = (
+                    Sponsor.unapproved_objects.filter(
+                        project=context.get('project'),
+                        project__sponsorship_managers__in=[request.user]
+                    ).exists()
+                )
 
 
         else:

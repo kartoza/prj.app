@@ -22,6 +22,7 @@ from base.models import Project
 from changes.forms import SustainingMemberPeriodForm
 from changes import (
     NOTICE_SUSTAINING_MEMBER_CREATED,
+    NOTICE_SUSTAINING_MEMBER_UPDATED,
     NOTICE_SUBSCRIPTION_UPDATED,
     NOTICE_SUBSCRIPTION_CREATED
 )
@@ -246,9 +247,17 @@ class SustainingMemberUpdateView(LoginRequiredMixin, UpdateView):
             self.form_object.project = Project.objects.get(
                 slug=self.kwargs.get('project_slug')
             )
-            self.form_object.approved = False
-            self.form_object.rejected = False
-            self.form_object.remarks = ''
+            sponsorship_managers = (
+                   self.form_object.project.sponsorship_managers.all()
+            )
+            if not self.form_object.approved:
+                self.form_object.rejected = False
+                self.form_object.remarks = ''
+            send([
+                     self.request.user,
+                 ] + list(sponsorship_managers),
+                 NOTICE_SUSTAINING_MEMBER_UPDATED,
+                 {'link': settings.EMAIL_HOST_USER})
             self.form_object.save()
             return super(SustainingMemberUpdateView, self).form_valid(form)
         else:

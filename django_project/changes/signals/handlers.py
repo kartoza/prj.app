@@ -4,6 +4,7 @@ from changes import (
     NOTICE_SUSTAINING_MEMBER_CREATED,
     NOTICE_SUSTAINING_MEMBER_APPROVED,
     NOTICE_SUSTAINING_MEMBER_REJECTED,
+    NOTICE_SUSTAINING_MEMBER_UPDATED,
     NOTICE_SUBSCRIPTION_CREATED,
     NOTICE_SUBSCRIPTION_UPDATED
 )
@@ -16,6 +17,9 @@ def create_notice_types(sender, **kwargs):
         NoticeType.create(NOTICE_SUSTAINING_MEMBER_CREATED,
                           _("Sustaining Member Created"),
                           _("A sustaining member has been created"))
+        NoticeType.create(NOTICE_SUSTAINING_MEMBER_UPDATED,
+                          _("Sustaining Member Updated"),
+                          _("A sustaining member has been updated"))
         NoticeType.create(NOTICE_SUSTAINING_MEMBER_REJECTED,
                           _("Sustaining Member Rejected"),
                           _("A sustaining member has been rejected"))

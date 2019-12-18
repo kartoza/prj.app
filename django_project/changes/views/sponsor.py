@@ -240,6 +240,11 @@ class SponsorDetailView(SponsorMixin, DetailView):
         context['project_slug'] = project_slug
         if project_slug:
             context['project'] = Project.objects.get(slug=project_slug)
+            sustaining_member = self.get_object()
+            context['period'] = SponsorshipPeriod.objects.get(
+                sponsor=sustaining_member,
+                project=context['project']
+            )
         return context
 
     def get_queryset(self):
