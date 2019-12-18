@@ -254,6 +254,25 @@ class SustainingMemberPeriodCreateView(
     model = SponsorshipPeriod
     form_class = SustainingMemberPeriodForm
 
+    def get(self, request, *args, **kwargs):
+        self.project_slug = self.kwargs.get('project_slug', None)
+        project = Project.objects.get(slug=self.project_slug)
+        member_id = self.kwargs.get('member_id', None)
+        member = Sponsor.objects.get(id=member_id)
+        try:
+            period = SponsorshipPeriod.objects.get(
+                sponsor=member,
+                project=project
+            )
+            if ((period.end_date and period.end_date > date.today())
+                    or period.recurring):
+                raise Http404('Period already exist')
+        except SponsorshipPeriod.DoesNotExist:
+            pass
+        return super(SustainingMemberPeriodCreateView, self).get(
+            request, *args, **kwargs
+        )
+
     def get_success_url(self):
         """Define the redirect URL
 

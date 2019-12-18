@@ -136,4 +136,4 @@ STRIPE_TEST_SECRET_KEY = os.environ.get("STRIPE_TEST_SECRET_KEY", "sk_test_")
 STRIPE_LIVE_MODE = False  # Change to True in production
 # Get it from the section in the Stripe dashboard where you added the
 # webhook endpoint
-DJSTRIPE_WEBHOOK_SECRET = "whsec_xxx"
+DJSTRIPE_WEBHOOK_SECRET = os.environ.get('DJSTRIPE_WEBHOOK_SECRET', 'whsec_x')
