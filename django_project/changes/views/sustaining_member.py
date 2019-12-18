@@ -21,7 +21,9 @@ from changes.models import Sponsor, SponsorshipPeriod, SponsorshipLevel
 from base.models import Project
 from changes.forms import SustainingMemberPeriodForm
 from changes import (
-    NOTICE_SUSTAINING_MEMBER_CREATED
+    NOTICE_SUSTAINING_MEMBER_CREATED,
+    NOTICE_SUBSCRIPTION_UPDATED,
+    NOTICE_SUBSCRIPTION_CREATED
 )
 
 
@@ -142,7 +144,7 @@ class SustainingMembership(LoginRequiredMixin, PaginationMixin, ListView):
                     sponsorship_level_currency=F('sponsorshipperiod__'
                                              'sponsorship_level__currency'),
                 ).order_by(
-                    'sponsorship_level_value'
+                    '-sponsorship_level_value'
                 )
                 return queryset
             else:
@@ -400,6 +402,23 @@ class SustainingMemberPeriodCreateView(
         else:
             self.object.end_date = today_date.replace(
                 year=today_date.year + 1)
+        sponsorship_managers = self.object.project.sponsorship_managers.all()
+        # Send a notification
+        send([
+                 self.request.user,
+             ] + list(sponsorship_managers),
+             NOTICE_SUBSCRIPTION_CREATED,
+             {
+                 'sustaining_member': self.object.sponsor.name,
+                 'sustaining_member_level': self.object.sponsorship_level,
+                 'author': self.request.user,
+                 'recurring': 'Yes' if recurring else 'No',
+                 'date_start': self.object.start_date.strftime(
+                     "%B %d, %Y"),
+                 'date_end': self.object.start_date.replace(
+                     year=self.object.start_date.year + 1).strftime(
+                     "%B %d, %Y")
+             })
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -541,6 +560,26 @@ class SustainingMemberPeriodUpdateView(
         subscription = self.update_subscription(
             self.object.subscription, recurring)
         if subscription:
+            project = Project.objects.get(
+                slug=self.kwargs.get('project_slug')
+            )
+            sponsorship_managers = project.sponsorship_managers.all()
+            # Send a notification
+            send([
+                     self.request.user,
+                 ] + list(sponsorship_managers),
+                 NOTICE_SUBSCRIPTION_UPDATED,
+                 {
+                     'sustaining_member': self.object.sponsor.name,
+                     'sustaining_member_level': self.object.sponsorship_level,
+                     'author': self.request.user,
+                     'recurring': 'Yes' if recurring else 'No',
+                     'date_start': self.object.start_date.strftime(
+                         "%B %d, %Y"),
+                     'date_end':  self.object.start_date.replace(
+                        year=self.object.start_date.year + 1).strftime(
+                         "%B %d, %Y")
+                 })
             self.object.save()
         else:
             raise Http404('Subscription could not be updated')

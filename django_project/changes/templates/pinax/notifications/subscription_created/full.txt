@@ -1,0 +1,13 @@
+{% autoescape off %}
+{% load i18n %}
+{% blocktrans %}{{ notice }}{% endblocktrans %}
+
+More information are as follows :
+- Sustaining Member : {{ sustaining_member }}
+- Sustaining Member Level : {{ sustaining_member_level }}
+- Author : {{ author }}
+- Recurring : {{ recurring }}
+- Subscription Start Date : {{ date_start }}
+- Subscription End/Renewal Date : {{ date_end }}
+
+{% endautoescape %}
