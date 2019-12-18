@@ -69,6 +69,11 @@
             <div class="form-group recurring-checkbox">
                 <label class="checkbox-inline"><input type="checkbox" id="recurring" style="margin-top: 6px;" {% if recurring %}checked{% endif %}>Charge me yearly</label>
             </div>
+
+            <div style="padding-bottom: 10px; font-size: 18px; display: none" id="membership-period">
+                Set membership for  <input type="number" id="period-end" name="period-end" style="width: 50px; margin-left: 5px;" min="1" max="100" step="1" value="{{ period_year }}"> Year
+            </div>
+
             <div class="vertical-space"></div>
              {{ form|crispy }}
             </form>
@@ -78,7 +83,7 @@
 
     <div class="container">
         <button disabled name="submit" value="Pay"
-                class="btn btn-success" id="submit-save">Update Subscription</button>
+                class="btn btn-success pull-right" id="submit-save">Update Subscription</button>
     </div>
 
 
@@ -118,9 +123,12 @@
         const $form = $('#period-form');
         const $confirmationModal = $('#confirmationModal');
         const $alert = $('.alert-data');
-        const dateStart = '{{ date_start }}';
-        const dateEnd = '{{ date_end }}';
+        const $periodEnd = $('#period-end');
+        const dateStart = moment('{{ date_start }}', 'MMMM DD, YYYY');
+        const dateEnd = moment('{{ date_end }}', 'MMMM DD, YYYY');
         let recurring = {{ recurring|yesno:"true,false" }};
+        const initialRecurring = recurring;
+        const initialPeriodYear = '{{ period_year }}';
         let selectedLevel = null;
 
         $(function(){
@@ -129,21 +137,38 @@
 
         $('#recurring').change(function() {
             const _recurring = $(this).prop('checked');
-            if (_recurring !== recurring) {
+            let _dateStart = dateStart.clone();
+            if (_recurring !== initialRecurring) {
                 $paymentButton.attr('disabled', false);
             } else {
                 $paymentButton.attr('disabled', true);
             }
-            if (_recurring) {
-                $alert.html(`Your membership will runs <strong>Yearly</strong> from <strong>{{ date_start }}</strong> and will be automatically renewed in <strong>{{ date_end }}</strong>`);
+            recurring = _recurring;
+            if (!_recurring) {
+                $('#membership-period').show();
             } else {
-                $alert.html(`Your membership will runs from <strong>{{ date_start }}</strong> to <strong>{{ date_end }}</strong>`);
+                $('#membership-period').hide();
+            }
+            if (_recurring) {
+                $alert.html(`Your membership will runs <strong>Yearly</strong> from <strong>${ dateStart.format('MMMM DD, YYYY') }</strong> and will be automatically renewed in <strong>${ _dateStart.add('years', 1).format('MMMM DD, YYYY') }</strong>`);
+            } else {
+                $alert.html(`Your membership will runs from <strong>${ dateStart.format('MMMM DD, YYYY') }</strong> to <strong>${ _dateStart.add('years', $periodEnd.val()).format('MMMM DD, YYYY') }</strong>`);
             }
         });
 
-        if (recurring) {
-            $('#recurring').change();
-        }
+        $('#recurring').change();
+
+        $periodEnd.change(function(){
+            let _dateStart = dateStart.clone();
+            if (initialPeriodYear !== $periodEnd.val()) {
+                $paymentButton.attr('disabled', false);
+            } else {
+                $paymentButton.attr('disabled', true);
+            }
+            if (!recurring) {
+                $alert.html(`Your membership will runs from <strong>${ dateStart.format('MMMM DD, YYYY') }</strong> to <strong>${ _dateStart.add('years', $periodEnd.val()).format('MMMM DD, YYYY') }</strong>`);
+            }
+        });
 
         $('#submit-subscription').click(function () {
             $(this).parent().find('.btn').attr('disabled', true);

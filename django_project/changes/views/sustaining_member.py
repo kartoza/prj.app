@@ -479,8 +479,13 @@ class SustainingMemberPeriodUpdateView(
 
         context['project'] = project
         context['date_start'] = period.start_date.strftime("%B %d, %Y")
-        context['date_end'] = period.start_date.replace(
-            year=period.start_date.year + 1).strftime("%B %d, %Y")
+        if period.end_date:
+            context['date_end'] = period.end_date.strftime("%B %d, %Y")
+            context['period_year'] = (
+                    period.end_date.year - period.start_date.year
+            )
+        else:
+            context['period_year'] = 1
         context['member'] = member
         context['recurring'] = period.recurring
         context['level'] = period.sponsorship_level
@@ -533,12 +538,30 @@ class SustainingMemberPeriodUpdateView(
                 raise Http404(
                     'Sorry! We could not find your sponsor!')
 
-    def update_subscription(self, subscription, recurring):
+    def update_subscription(self, subscription, recurring, period_end):
         """Update subscription in stripe"""
         stripe.api_key = djstripe.settings.STRIPE_SECRET_KEY
+        optional = {}
+
+        if recurring:
+            optional['cancel_at_period_end'] = False
+        else:
+            if period_end > 1:
+                new_period_end = subscription.current_period_start.replace(
+                    year=subscription.current_period_start.year + period_end)
+                if new_period_end != subscription.current_period_end:
+                    period_end_timestamp = new_period_end.timestamp()
+                else:
+                    period_end_timestamp = (
+                        subscription.current_period_end.timestamp()
+                    )
+                optional['cancel_at'] = int(period_end_timestamp)
+            else:
+                optional['cancel_at_period_end'] = True
+
         stripe_subscription = stripe.Subscription.modify(
             subscription.id,
-            cancel_at_period_end=not recurring
+            **optional
         )
         return djstripe.models.Subscription.sync_from_stripe_data(
             stripe_subscription
@@ -560,14 +583,20 @@ class SustainingMemberPeriodUpdateView(
             )
         except ValueError:
             recurring = False
+        try:
+            period_end = int(self.request.POST.get('period-end', None))
+        except ValueError:
+            period_end = None
         self.object.recurring = recurring
         if recurring:
             self.object.end_date = None
         else:
+            if not period_end:
+                period_end = 1
             self.object.end_date = self.object.start_date.replace(
-            year=self.object.start_date.year + 1)
+                year=self.object.start_date.year + period_end)
         subscription = self.update_subscription(
-            self.object.subscription, recurring)
+            self.object.subscription, recurring, period_end)
         if subscription:
             project = Project.objects.get(
                 slug=self.kwargs.get('project_slug')
@@ -586,7 +615,8 @@ class SustainingMemberPeriodUpdateView(
                      'date_start': self.object.start_date.strftime(
                          "%B %d, %Y"),
                      'date_end':  self.object.start_date.replace(
-                        year=self.object.start_date.year + 1).strftime(
+                        year=self.object.start_date.year + period_end
+                     ).strftime(
                          "%B %d, %Y")
                  })
             self.object.save()
