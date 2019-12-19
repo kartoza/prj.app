@@ -21,6 +21,25 @@ logger = logging.getLogger(__name__)
 utc = pytz.UTC
 
 
+def active_sustaining_membership(user, project):
+    """Returns active sustaining membership from user and project."""
+    from django.db.models import Q
+    from datetime import datetime
+    from changes.models.sponsorship_period import SponsorshipPeriod
+    sustaining_members = Sponsor.objects.filter(
+        author=user,
+        project=project
+    )
+    sustaining_member_periods = SponsorshipPeriod.objects.filter(
+        Q(recurring=True) | Q(end_date__gt=datetime.now()),
+        project=project,
+        sponsor__in=sustaining_members,
+    )
+    return sustaining_members.filter(
+        sponsorshipperiod__in=sustaining_member_periods
+    )
+
+
 def validate_email_address(value):
     try:
         validate_email(value)

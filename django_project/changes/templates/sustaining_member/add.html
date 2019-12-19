@@ -13,9 +13,7 @@
 {% endblock %}
 
 {% block extra_head %}
-{{ Other }}
 <script type="text/javascript" src="{% static 'js/jquery.formset.min.js' %}"></script>
-{{  floppyforms }}
     <style>
         .form-group {
             font-size: 12pt;
@@ -32,7 +30,7 @@
 <section id="forms">
 <div class='container'>
 
-    <h2>Become a Sustaining Member</h2>
+    <h2 class="text-muted">Become a Sustaining Member</h2>
     <hr/>
     <form method="post" enctype="multipart/form-data">
          {% csrf_token %}
@@ -46,6 +44,15 @@
 </section>
 
 <script>
+
+    $(function () {
+
+        setTimeout(function () {
+            // Make name input focused
+            $('#id_name').focus()
+        }, 100);
+
+    });
 
     function readURL(input) {
         if (input.files && input.files[0]) {

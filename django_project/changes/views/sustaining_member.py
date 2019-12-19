@@ -7,6 +7,7 @@ from braces.views import LoginRequiredMixin
 from pinax.notifications.models import send
 from django.urls import reverse
 from django.conf import settings
+from django.shortcuts import redirect
 from django.views.generic import (
     ListView,
     CreateView,
@@ -19,6 +20,7 @@ from django.http import HttpResponseRedirect, Http404
 from pure_pagination.mixins import PaginationMixin
 from changes.models import Sponsor, SponsorshipPeriod, SponsorshipLevel
 from base.models import Project
+from changes.models import active_sustaining_membership
 from changes.forms import SustainingMemberPeriodForm
 from changes import (
     NOTICE_SUSTAINING_MEMBER_CREATED,
@@ -50,6 +52,32 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
     model = Sponsor
     form_class = SustainingMemberForm
     form_object = None
+
+    def get(self, request, *args, **kwargs):
+        project = Project.objects.get(
+            slug=self.kwargs.get('project_slug')
+        )
+        active_memberships = active_sustaining_membership(
+            self.request.user,
+            project
+        )
+        if active_memberships.exists():
+             return redirect(reverse(
+                'sustaining-membership', kwargs={
+                'project_slug': self.kwargs.get('project_slug')}
+            ))
+        return super(SustainingMemberCreateView, self).get(
+            request, *args, **kwargs
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super(SustainingMemberCreateView, self).get_context_data(
+            **kwargs
+        )
+        context['the_project'] = Project.objects.get(
+            slug=self.kwargs.get('project_slug')
+        )
+        return context
 
     def get_success_url(self):
         return reverse('sponsor-list', kwargs={
