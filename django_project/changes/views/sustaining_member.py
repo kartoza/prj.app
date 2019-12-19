@@ -62,9 +62,10 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
             project
         )
         if active_memberships.exists():
-             return redirect(reverse(
+            return redirect(reverse(
                 'sustaining-membership', kwargs={
-                'project_slug': self.kwargs.get('project_slug')}
+                    'project_slug': self.kwargs.get('project_slug')
+                }
             ))
         return super(SustainingMemberCreateView, self).get(
             request, *args, **kwargs
@@ -111,7 +112,7 @@ class SustainingMemberDetailView(LoginRequiredMixin, DetailView):
     def get(self, request, *args, **kwargs):
         user = self.request.user
         try:
-            sponsor = Sponsor.objects.get(
+            Sponsor.objects.get(
                 author=user
             )
         except Sponsor.DoesNotExist:
@@ -169,9 +170,10 @@ class SustainingMembership(LoginRequiredMixin, PaginationMixin, ListView):
                     sponsorship_level_name=F('sponsorshipperiod__'
                                              'sponsorship_level__name'),
                     sponsorship_level_value=F('sponsorshipperiod__'
-                                             'sponsorship_level__value'),
+                                              'sponsorship_level__value'),
                     sponsorship_level_currency=F('sponsorshipperiod__'
-                                             'sponsorship_level__currency'),
+                                                 'sponsorship_level__currency'
+                                                 ),
                 ).order_by(
                     '-sponsorship_level_value'
                 )
@@ -363,8 +365,8 @@ class SustainingMemberPeriodCreateView(
                 sponsor=member,
                 project=project
             )
-            if ((period.end_date and period.end_date > date.today())
-                    or period.recurring):
+            if ((period.end_date and period.end_date > date.today()) or
+                    period.recurring):
                 raise Http404('Period already exist')
         except SponsorshipPeriod.DoesNotExist:
             pass
@@ -642,8 +644,8 @@ class SustainingMemberPeriodUpdateView(
                      'recurring': 'Yes' if recurring else 'No',
                      'date_start': self.object.start_date.strftime(
                          "%B %d, %Y"),
-                     'date_end':  self.object.start_date.replace(
-                        year=self.object.start_date.year + period_end
+                     'date_end': self.object.start_date.replace(
+                         year=self.object.start_date.year + period_end
                      ).strftime(
                          "%B %d, %Y")
                  })

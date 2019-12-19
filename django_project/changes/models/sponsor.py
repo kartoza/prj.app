@@ -28,7 +28,8 @@ def active_sustaining_membership(user, project):
     from changes.models.sponsorship_period import SponsorshipPeriod
     sustaining_members = Sponsor.objects.filter(
         author=user,
-        project=project
+        project=project,
+        sustaining_membership=True
     )
     sustaining_member_periods = SponsorshipPeriod.objects.filter(
         Q(recurring=True) | Q(end_date__gt=datetime.now()),
@@ -179,6 +180,11 @@ class Sponsor(models.Model):
         help_text=_("Invoice number for the sponsor.")
     )
 
+    sustaining_membership = models.BooleanField(
+        _("Check if this data is sustaining membership"),
+        default=False
+    )
+
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField()
     project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
@@ -206,6 +212,14 @@ class Sponsor(models.Model):
             # unidecode() represents special characters (unicode data) in ASCII
             new_list = unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
+
+        if active_sustaining_membership(
+            self.author,
+            self.project
+        ).count() > 1:
+            raise ValidationError('More than one sustaining member for '
+                                  'same user and project is not allowed')
+
         super(Sponsor, self).save(*args, **kwargs)
 
     def __unicode__(self):

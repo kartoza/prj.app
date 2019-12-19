@@ -9,7 +9,7 @@ STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'test_db',
+        'NAME': 'test_db_2',
         'USER': 'docker',
         'PASSWORD': 'docker',
         'HOST': 'db',
