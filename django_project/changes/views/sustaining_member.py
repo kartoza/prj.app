@@ -40,7 +40,6 @@ class SustainingMemberForm(forms.ModelForm):
             'address',
             'country',
             'sponsor_email',
-            'agreement',
             'logo',
         )
 
@@ -132,6 +131,7 @@ class SustainingMembership(LoginRequiredMixin, PaginationMixin, ListView):
                     author=user,
                     project=self.project
                 ).annotate(
+                    period_slug=F('sponsorshipperiod__slug'),
                     start_date=F('sponsorshipperiod__start_date'),
                     recurring=F('sponsorshipperiod__recurring'),
                     end_date=F('sponsorshipperiod__end_date'),

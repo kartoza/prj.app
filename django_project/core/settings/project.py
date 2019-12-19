@@ -70,6 +70,7 @@ PIPELINE['STYLESHEETS']['project'] = {
         'css/changelog.css',
         'css/form.css',
         'css/fonts.css',
+        'css/base.css',
     ),
     'output_filename': 'css/project.css',
     'extra_context': {

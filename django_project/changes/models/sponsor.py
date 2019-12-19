@@ -66,49 +66,50 @@ class PendingSponsorManager(models.Manager):
 class Sponsor(models.Model):
     """A sponsor model e.g. gui, backend, web site etc."""
     name = models.CharField(
-        help_text=_('Name of sponsor.'),
+        help_text=_('Name of organisation or individual.'),
         max_length=255,
         null=False,
         blank=False,
         unique=False)  # there is a unique together rule in meta class below
 
     contact_title = models.CharField(
-        _('Sponsorship Representative Title'),
+        _('Representative Title'),
         max_length=255,
         null=True,
         blank=True,
-        help_text=_('Title of the sponsorship representative i.e Treasurer.')
+        help_text=_('Title of the representative i.e Treasurer.')
     )
 
     sponsor_url = models.CharField(
-        help_text='Input the sponsor URL.',
+        _('Organisation URL'),
+        help_text=_('Website for the organisation or individual.'),
         max_length=255,
         null=True,
         blank=True,
     )
 
     contact_person = models.CharField(
-        help_text='Input the contact person of sponsor.',
+        help_text=_('Input the contact person.'),
         max_length=255,
         null=True,
         blank=True)
 
     address = models.TextField(
         help_text=(
-            'Enter the complete street address for this sponsor. '
-            'Use line breaks to separate address elements and use '
-            'the country field to specify the country.'
+            'Provide your / your organisation\'s complete address. '
+            'Use line breaks...'
         ),
         null=True,
         blank=True)
 
     country = CountryField(
-        help_text='Select the country for this sponsor',
+        help_text=_('Select the country.'),
         null=True,
         blank=True)
 
     sponsor_email = models.CharField(
-        help_text='Input an email of sponsor.',
+        _('Contact Email'),
+        help_text=_('Enter the email of the contact person.'),
         max_length=255,
         null=True,
         blank=True,
@@ -121,8 +122,8 @@ class Sponsor(models.Model):
         blank=True)
 
     logo = models.ImageField(
-        help_text=(
-            'An image of sponsor logo e.g. a splashscreen. '
+        help_text=_(
+            'An image of your / your organisation logo e.g. a splashscreen. '
             'Most browsers support dragging the image directly on to the '
             '"Choose File" button above.'),
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects'),

@@ -95,7 +95,7 @@
                         {% endif %}
                     {% endif %}
                     <a class="btn btn-default btn-mini tooltip-toggle" data-title="Open {{ sponsor }}"
-                       href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                       href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.period_slug %}'>
                         <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
                      <a class="btn btn-default btn-mini tooltip-toggle" data-title="Update {{ sponsor }}"
