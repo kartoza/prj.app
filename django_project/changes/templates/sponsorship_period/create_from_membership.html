@@ -27,8 +27,9 @@
             cursor: pointer;
         }
 
-        .panel-active {
+        .panel-active, .panel-active:hover {
             background-color: rgba(54, 188, 152, 0.15);
+            border: 1px solid rgb(54, 188, 152);;
         }
 
         .recurring-checkbox {
@@ -61,9 +62,20 @@
             </div>
             <input type="hidden" name="stripe-source-id">
             <input type="hidden" name="recurring">
-            <div class="form-group recurring-checkbox">
-                <label class="checkbox-inline"><input type="checkbox" id="recurring" style="margin-top: 6px;">Charge me yearly</label>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-inline" style="padding-bottom: 10px; font-size: 18px;" id="membership-period">
+                        Set membership for  <input type="number" class="form-control" id="period-end" name="period-end" style="width: 80px;" min="1" max="100" step="1" value="{{ default_period }}"> year
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group recurring-checkbox pull-right">
+                        <label class="checkbox-inline"><input type="checkbox" id="recurring" style="margin-top: 6px;">Charge me yearly</label>
+                    </div>
+                </div>
             </div>
+
             {% for level in sponsorhip_levels %}
                 <div class="panel panel-default panel-level" data-id="{{ level.id }}">
                     <div class="panel-body">
@@ -100,20 +112,33 @@
         const $paymentButton = $('#submit-save');
         const $form = $('#period-form');
         const $alert = $('.alert-data');
-        const dateStart = '{{ date_start }}';
-        const dateEnd = '{{ date_end }}';
+        const $recurring = $('#recurring');
+        const dateStart = moment('{{ date_start }}', 'MMMM DD, YYYY');
+        const dateEnd = moment('{{ date_end }}', 'MMMM DD, YYYY');
         let selectedLevel = null;
+        const $periodEnd = $('#period-end');
+        const $periodContainer = $('#membership-period');
 
         $(function(){
             $('#div_id_sponsorship_level').hide();
         });
 
-        $('#recurring').change(function() {
+        $recurring.change(function() {
             const recurring = $(this).prop('checked');
             if (recurring) {
+                $periodContainer.hide();
                 $alert.html(`Your membership will runs <strong>Yearly</strong> from <strong>{{ date_start }}</strong> and will be automatically renewed in <strong>{{ date_end }}</strong>`);
             } else {
-                $alert.html(`Your membership will runs from <strong>{{ date_start }}</strong> to <strong>{{ date_end }}</strong>`);
+                $periodContainer.show();
+                $periodEnd.change();
+            }
+        });
+
+        $periodEnd.change(function () {
+            let _dateStart = dateStart.clone();
+            const recurring = $recurring.prop('checked');
+            if (!recurring) {
+                $alert.html(`Your membership will runs from <strong>${dateStart.format('MMMM DD, YYYY')}</strong> to <strong>${_dateStart.add('years', $periodEnd.val()).format('MMMM DD, YYYY')}</strong>`);
             }
         });
 
@@ -136,7 +161,7 @@
             // Insert the source ID into the form so it gets submitted to the
             // server
             $form.find('input[name="stripe-source-id"]').val(source.id);
-            $form.find('input[name="recurring"]').val($('#recurring').prop('checked'));
+            $form.find('input[name="recurring"]').val($recurring.prop('checked'));
             $form.submit();
         }
 

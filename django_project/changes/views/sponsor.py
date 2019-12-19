@@ -242,21 +242,15 @@ class SponsorDetailView(SponsorMixin, DetailView):
         if project_slug:
             context['project'] = Project.objects.get(slug=project_slug)
             sustaining_member = self.get_object()
-            context['period'] = SponsorshipPeriod.objects.get(
-                sponsor=sustaining_member,
-                project=context['project'],
-                slug=slug
-            )
+            try:
+                context['period'] = SponsorshipPeriod.objects.get(
+                    Q(slug=slug) | Q(sponsor__slug=slug),
+                    sponsor=sustaining_member,
+                    project=context['project']
+                )
+            except SponsorshipPeriod.DoesNotExist:
+                pass
         return context
-
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: Queryset which is filtered to only show approved Sponsor.
-        :rtype: QuerySet
-        """
-        qs = Sponsor.objects.all()
-        return qs
 
     def get_object(self, queryset=None):
         """Get the object for this view.
@@ -272,16 +266,16 @@ class SponsorDetailView(SponsorMixin, DetailView):
         :raises: Http404
         """
         if queryset is None:
-            queryset = self.get_queryset()
             slug = self.kwargs.get('slug', None)
             project_slug = self.kwargs.get('project_slug', None)
             if slug and project_slug:
                 project = Project.objects.get(slug=project_slug)
                 try:
-                    obj = queryset.get(
-                        project=project, sponsorshipperiod__slug=slug)
+                    obj = Sponsor.objects.get(
+                        Q(sponsorshipperiod__slug=slug) | Q(slug=slug),
+                        project=project)
                     return obj
-                except queryset.DoesNotExist:
+                except Sponsor.DoesNotExist:
                     return Http404('Sorry! we could not find your sponsor.')
             else:
                 raise Http404('Sorry! We could not find your sponsor!')

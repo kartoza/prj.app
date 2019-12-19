@@ -69,6 +69,7 @@
                 <div class="texts">
                     <h5 style="margin-top: 0;">{{ sponsor.project.name }}</h5>
                     <h3 style="margin-top: 0; margin-bottom: 0">{{ sponsor.name }}</h3>
+                    <p style="padding-top: 10px;">Author : {{ sponsor.author.username }}, {{ sponsor.author.email }}</p>
                 </div>
             </div>
             <div class="col-lg-2">
@@ -83,20 +84,10 @@
                             <span class="glyphicon glyphicon-thumbs-down"></span>
                         </a>
                         {% endif %}
-                    {% endif %}
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "sponsor-update" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
-                        <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "sponsor-delete" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
-                        <span class="glyphicon glyphicon-minus"></span>
-                    </a>
-                    {% if not unapproved %}
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
-                        <span class="glyphicon glyphicon-eye-open"></span>
-                    </a>
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </a>
                     {% endif %}
                 </div>
             </div>

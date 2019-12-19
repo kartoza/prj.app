@@ -7,17 +7,15 @@ from braces.views import LoginRequiredMixin
 from pinax.notifications.models import send
 from django.urls import reverse
 from django.conf import settings
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import (
-    ListView,
     CreateView,
     DetailView,
     UpdateView)
 from django import forms
-from django.db.models import Q, F
+from django.db.models import Q
 from django.http.response import HttpResponse
 from django.http import HttpResponseRedirect, Http404
-from pure_pagination.mixins import PaginationMixin
 from changes.models import Sponsor, SponsorshipPeriod, SponsorshipLevel
 from base.models import Project
 from changes.models import active_sustaining_membership
@@ -94,6 +92,7 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
             self.form_object = form.save(commit=False)
             self.form_object.author = self.request.user
             self.form_object.project = project
+            self.form_object.sustaining_membership = True
             self.form_object.save()
             sponsorship_managers = project.sponsorship_managers.all()
             # Send a notification
@@ -120,11 +119,10 @@ class SustainingMemberDetailView(LoginRequiredMixin, DetailView):
         return HttpResponse('ok')
 
 
-class SustainingMembership(LoginRequiredMixin, PaginationMixin, ListView):
-    """List view of membership"""
-    context_object_name = 'sustaining_members'
-    template_name = 'sustaining_member/membership_list.html'
-    paginate_by = 10
+class SustainingMembership(LoginRequiredMixin, DetailView):
+    """Detail view of membership"""
+    context_object_name = 'sustaining_member'
+    template_name = 'sustaining_member/detail.html'
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -136,52 +134,35 @@ class SustainingMembership(LoginRequiredMixin, PaginationMixin, ListView):
         :rtype: dict
         """
         context = super(SustainingMembership, self).get_context_data(**kwargs)
-        context['num_sponsors'] = context['sustaining_members'].count()
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
+        sustaining_member = self.get_object()
+        try:
+            context['subscription'] = SponsorshipPeriod.objects.get(
+                project__slug=project_slug,
+                sponsor=sustaining_member
+            )
+        except SponsorshipPeriod.DoesNotExist:
+            context['subscription'] = None
         if project_slug:
             context['project'] = Project.objects.get(slug=project_slug)
         return context
 
-    # noinspection PyAttributeOutsideInit
-    def get_queryset(self):
-        """Get the queryset for this view.
-        :returns: A queryset which is filtered to only show unapproved
-        Sponsor.
-        :rtype: QuerySet
-        :raises: Http404
-        """
-        user = self.request.user
-        if self.queryset is None:
-            self.project_slug = self.kwargs.get('project_slug', None)
-            if self.project_slug:
-                self.project = Project.objects.get(slug=self.project_slug)
-                queryset = Sponsor.objects.filter(
-                    author=user,
-                    project=self.project
-                ).annotate(
-                    period_slug=F('sponsorshipperiod__slug'),
-                    start_date=F('sponsorshipperiod__start_date'),
-                    recurring=F('sponsorshipperiod__recurring'),
-                    end_date=F('sponsorshipperiod__end_date'),
-                    plan_interval=F(
-                        'sponsorshipperiod__sponsorship_level__'
-                        'subscription_plan__interval'),
-                    sponsorship_level_name=F('sponsorshipperiod__'
-                                             'sponsorship_level__name'),
-                    sponsorship_level_value=F('sponsorshipperiod__'
-                                              'sponsorship_level__value'),
-                    sponsorship_level_currency=F('sponsorshipperiod__'
-                                                 'sponsorship_level__currency'
-                                                 ),
-                ).order_by(
-                    '-sponsorship_level_value'
-                )
-                return queryset
-            else:
-                raise Http404('Sorry! We could not find '
-                              'your memberships!')
-        return self.queryset
+    def get_object(self, queryset=None):
+        """Return the a Sustaining Membership object.
+        It must match with project_slug and the user"""
+        try:
+            project_slug = self.kwargs.get('project_slug', None)
+            project = Project.objects.get(slug=project_slug)
+            sustaining_member = get_object_or_404(
+                Sponsor,
+                project=project,
+                author=self.request.user,
+                sustaining_membership=True
+            )
+            return sustaining_member
+        except (Http404, Sponsor.MultipleObjectsReturned):
+            raise Http404('Sorry! We could not find your Sustaining Member!')
 
 
 # noinspection PyAttributeOutsideInit
@@ -191,6 +172,14 @@ class SustainingMemberUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'sustaining_member/update.html'
     model = Sponsor
     form_class = SustainingMemberForm
+
+    def get(self, request, *args, **kwargs):
+        sustaining_member = self.get_object()
+        if not sustaining_member.approved and not sustaining_member.rejected:
+            raise Http404('Editing this data is not allowed')
+        return super(SustainingMemberUpdateView, self).get(
+            request, *args, **kwargs
+        )
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -352,6 +341,7 @@ class SustainingMemberPeriodCreateView(
                 project=project
             )
         )
+        context['default_period'] = 1
         context['project'] = project
         context['date_start'] = today_date.strftime("%B %d, %Y")
         context['date_end'] = today_date.replace(
@@ -373,7 +363,9 @@ class SustainingMemberPeriodCreateView(
 
         return context
 
-    def process_payment(self, form, stripe_source_id, plan_id, recurring):
+    def process_payment(self,
+                        stripe_source_id, plan_id, recurring,
+                        date_end, period_year):
         """Process payment from stripe."""
 
         # Create the stripe Customer, by default subscriber Model is User,
@@ -384,15 +376,23 @@ class SustainingMemberPeriodCreateView(
         # Add the source as the customer's default card
         customer.add_card(stripe_source_id)
 
+        optional = {}
+        if recurring:
+            optional['cancel_at_period_end'] = False
+        else:
+            if period_year > 1:
+                optional['cancel_at'] = int(date_end.timestamp())
+            else:
+                optional['cancel_at_period_end'] = True
+
         # Using the Stripe API, create a subscription for this customer,
         # using the customer's default payment source
         stripe_subscription = stripe.Subscription.create(
             customer=customer.id,
             items=[{"plan": plan_id}],
             billing="charge_automatically",
-            # tax_percent=15,
             api_key=djstripe.settings.STRIPE_SECRET_KEY,
-            cancel_at_period_end=not recurring
+            **optional
         )
 
         # Sync the Stripe API return data to the database,
@@ -428,9 +428,19 @@ class SustainingMemberPeriodCreateView(
 
         self.object = form.save(commit=False)
         plan_id = self.object.sponsorship_level.subscription_plan.id
+        try:
+            period_end = int(self.request.POST.get('period-end', None))
+        except ValueError:
+            period_end = None
+        if not period_end:
+            period_end = 1
+        self.object.end_date = self.object.start_date.replace(
+            year=self.object.start_date.year + period_end)
 
+        # Kick off the stripe payment
         subscription = self.process_payment(
-            form, source_id, plan_id, recurring)
+            source_id, plan_id, recurring, self.object.end_date, period_end)
+
         self.object.author = self.request.user
         self.object.sponsor = sponsor
         self.object.project = Project.objects.get(slug=project_slug)
@@ -454,8 +464,7 @@ class SustainingMemberPeriodCreateView(
                  'recurring': 'Yes' if recurring else 'No',
                  'date_start': self.object.start_date.strftime(
                      "%B %d, %Y"),
-                 'date_end': self.object.start_date.replace(
-                     year=self.object.start_date.year + 1).strftime(
+                 'date_end': self.object.end_date.strftime(
                      "%B %d, %Y")
              })
         self.object.save()
@@ -618,13 +627,10 @@ class SustainingMemberPeriodUpdateView(
         except ValueError:
             period_end = None
         self.object.recurring = recurring
-        if recurring:
-            self.object.end_date = None
-        else:
-            if not period_end:
-                period_end = 1
-            self.object.end_date = self.object.start_date.replace(
-                year=self.object.start_date.year + period_end)
+        if not period_end:
+            period_end = 1
+        self.object.end_date = self.object.start_date.replace(
+            year=self.object.start_date.year + period_end)
         subscription = self.update_subscription(
             self.object.subscription, recurring, period_end)
         if subscription:
