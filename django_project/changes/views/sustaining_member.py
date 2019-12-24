@@ -4,7 +4,6 @@ import stripe
 import djstripe.models
 import djstripe.settings
 from braces.views import LoginRequiredMixin
-from pinax.notifications.models import send
 from django.urls import reverse
 from django.conf import settings
 from django.shortcuts import redirect, get_object_or_404
@@ -26,6 +25,7 @@ from changes import (
     NOTICE_SUBSCRIPTION_UPDATED,
     NOTICE_SUBSCRIPTION_CREATED
 )
+from helpers.notification import send_notification
 
 
 class SustainingMemberForm(forms.ModelForm):
@@ -96,7 +96,7 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
             self.form_object.save()
             sponsorship_managers = project.sponsorship_managers.all()
             # Send a notification
-            send([
+            send_notification([
                 self.request.user,
             ] + list(sponsorship_managers),
                  NOTICE_SUSTAINING_MEMBER_CREATED,
@@ -639,22 +639,26 @@ class SustainingMemberPeriodUpdateView(
             )
             sponsorship_managers = project.sponsorship_managers.all()
             # Send a notification
-            send([
-                     self.request.user,
-                 ] + list(sponsorship_managers),
-                 NOTICE_SUBSCRIPTION_UPDATED,
-                 {
-                     'sustaining_member': self.object.sponsor.name,
-                     'sustaining_member_level': self.object.sponsorship_level,
-                     'author': self.request.user,
-                     'recurring': 'Yes' if recurring else 'No',
-                     'date_start': self.object.start_date.strftime(
-                         "%B %d, %Y"),
-                     'date_end': self.object.start_date.replace(
-                         year=self.object.start_date.year + period_end
-                     ).strftime(
-                         "%B %d, %Y")
-                 })
+            send_notification(
+                users=[
+                          self.request.user,
+                      ] + list(sponsorship_managers),
+                label=NOTICE_SUBSCRIPTION_UPDATED,
+                extra_context={
+                    'the_project_slug': self.kwargs.get('project_slug'),
+                    'sustaining_member': self.object.sponsor.name,
+                    'sustaining_member_level': self.object.sponsorship_level,
+                    'author': self.request.user,
+                    'recurring': 'Yes' if recurring else 'No',
+                    'date_start': self.object.start_date.strftime(
+                        "%B %d, %Y"),
+                    'date_end': self.object.start_date.replace(
+                        year=self.object.start_date.year + period_end
+                    ).strftime(
+                        "%B %d, %Y"),
+                },
+                request_user=self.request.user
+            )
             self.object.save()
         else:
             raise Http404('Subscription could not be updated')
