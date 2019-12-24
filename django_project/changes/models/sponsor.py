@@ -23,6 +23,8 @@ utc = pytz.UTC
 
 def active_sustaining_membership(user, project):
     """Returns active sustaining membership from user and project."""
+    if user.is_anonymous:
+        return Sponsor.objects.none()
     sustaining_members = Sponsor.objects.filter(
         author=user,
         project=project,

@@ -29,7 +29,7 @@ from PIL import Image
 from pinax.notifications.models import send
 
 from base.models import Project
-from ..models import Sponsor, SponsorshipPeriod  # noqa
+from ..models import Sponsor, SponsorshipPeriod, active_sustaining_membership  # noqa
 from ..models import SponsorshipLevel  # noqa
 from ..forms import SponsorForm
 
@@ -150,6 +150,10 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
             context['project'] = Project.objects.get(slug=project_slug)
             context['levels'] = SponsorshipLevel.objects.filter(
                 project=project)
+            context['is_sustaining_member'] = active_sustaining_membership(
+                self.request.user,
+                project
+            ).exists()
         return context
 
     def get_queryset(self, queryset=None):

@@ -27,11 +27,19 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}Sustaining Members
                 <div class="pull-right btn-group">
+                {% if not is_sustaining_member %}
                 <a class="btn btn-default btn-mini tooltip-toggle icon"
                        href='{% url "sustaining-member-create" project_slug %}'
                        data-title="Sign Up!">
                 Sign Up
                 </a>
+                {% else %}
+                <a class="btn btn-default btn-mini tooltip-toggle icon"
+                       href='{% url "sustaining-membership" project_slug %}'
+                       data-title="Your sustaining membership">
+                Membership
+                </a>
+                {% endif %}
 
                 {% if user.is_authenticated %}
                     {% if user.is_staff or user == the_project.owner or user in the_project.sponsorship_managers.all %}
