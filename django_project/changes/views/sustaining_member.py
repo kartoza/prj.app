@@ -272,7 +272,7 @@ class SustainingMemberUpdateView(LoginRequiredMixin, UpdateView):
             if not self.form_object.approved:
                 self.form_object.rejected = False
                 self.form_object.remarks = ''
-            send([
+            send_notification([
                      self.request.user,
                  ] + list(sponsorship_managers),
                  NOTICE_SUSTAINING_MEMBER_UPDATED,
@@ -453,7 +453,7 @@ class SustainingMemberPeriodCreateView(
                 year=today_date.year + 1)
         sponsorship_managers = self.object.project.sponsorship_managers.all()
         # Send a notification
-        send([
+        send_notification([
                  self.request.user,
              ] + list(sponsorship_managers),
              NOTICE_SUBSCRIPTION_CREATED,
