@@ -121,13 +121,21 @@ class SponsorshipPeriod(models.Model):
         verbose_name_plural = 'Sustaining Member Periods'
 
     def save(self, *args, **kwargs):
-
+        today = datetime.datetime.now().date()
+        end = self.end_date
         if not self.pk:
             name = self.slug_generator()
             words = name.split()
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = slugify(new_list)[:50]
+
+        self.sponsor.active = True
+        if end and today > end:
+            if not self.recurring:
+                self.sponsor.active = False
+        self.sponsor.save()
+
         super(SponsorshipPeriod, self).save(*args, **kwargs)
 
     @staticmethod

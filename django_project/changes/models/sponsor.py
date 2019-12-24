@@ -28,7 +28,8 @@ def active_sustaining_membership(user, project):
     sustaining_members = Sponsor.objects.filter(
         author=user,
         project=project,
-        sustaining_membership=True
+        sustaining_membership=True,
+        active=True
     )
     return sustaining_members
 
@@ -175,6 +176,11 @@ class Sponsor(models.Model):
     sustaining_membership = models.BooleanField(
         _("Check if this data is sustaining membership"),
         default=False
+    )
+
+    active = models.BooleanField(
+        _("Check if this sustaining member is active"),
+        default=True
     )
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)

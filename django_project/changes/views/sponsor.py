@@ -171,7 +171,9 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
             if project_slug:
                 project = Project.objects.get(slug=project_slug)
                 queryset = SponsorshipPeriod.approved_objects.filter(
-                    project=project).order_by('-sponsorship_level__value')
+                    project=project,
+                    sponsor__active=True
+                ).order_by('-sponsorship_level__value')
                 return queryset
             else:
                 raise Http404('Sorry! We could not find your Sponsor!')

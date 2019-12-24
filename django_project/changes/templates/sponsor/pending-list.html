@@ -75,7 +75,7 @@
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
                     {% if not sponsor.approved %}
-                        {% if user.is_staff or user == sponsor.project.owner or user in sponsor.project.sponsorship_manager.all %}
+                        {% if user.is_staff or user == sponsor.project.owner or user in sponsor.project.sponsorship_managers.all %}
                         <a class="btn btn-default btn-mini btn-approve tooltip-toggle"
                            href='{% url "sponsor-approve" project_slug=sponsor.project.slug slug=sponsor.slug %}' data-title="Approve {{ sponsor.name }}">
                             <span class="glyphicon glyphicon-thumbs-up"></span>

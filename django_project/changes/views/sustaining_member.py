@@ -13,7 +13,6 @@ from django.views.generic import (
     UpdateView)
 from django import forms
 from django.db.models import Q
-from django.http.response import HttpResponse
 from django.http import HttpResponseRedirect, Http404
 from changes.models import Sponsor, SponsorshipPeriod, SponsorshipLevel
 from base.models import Project
@@ -106,19 +105,6 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
             return self.render_to_response(self.get_context_data(form=form))
 
 
-class SustainingMemberDetailView(LoginRequiredMixin, DetailView):
-    """Detail view for sustaining member"""
-    def get(self, request, *args, **kwargs):
-        user = self.request.user
-        try:
-            Sponsor.objects.get(
-                author=user
-            )
-        except Sponsor.DoesNotExist:
-            pass
-        return HttpResponse('ok')
-
-
 class SustainingMembership(LoginRequiredMixin, DetailView):
     """Detail view of membership"""
     context_object_name = 'sustaining_member'
@@ -158,7 +144,8 @@ class SustainingMembership(LoginRequiredMixin, DetailView):
                 Sponsor,
                 project=project,
                 author=self.request.user,
-                sustaining_membership=True
+                sustaining_membership=True,
+                active=True
             )
             return sustaining_member
         except (Http404, Sponsor.MultipleObjectsReturned):

@@ -89,8 +89,7 @@ from .views import (
     generate_sponsor_cloud,
 )
 from changes.views.sustaining_member import (
-    SustainingMemberCreateView,
-    SustainingMemberDetailView
+    SustainingMemberCreateView
 )
 
 urlpatterns = [

@@ -158,11 +158,7 @@ class CheckDomainMiddleware(MiddlewareBase):
                 elif custom_domain.role == 'Organisation':
                     return None
         except Domain.DoesNotExist:
-            if settings.DEBUG:
-                # for dev
-                return HttpResponseRedirect(
-                    'http://0.0.0.0:61202/en/domain-not-found/')
-            else:
+            if not settings.DEBUG:
                 # for production the domain is hardcoded for consistency
                 return HttpResponseRedirect(
                     'http://changelog.kartoza.com/en/domain-not-found/'
