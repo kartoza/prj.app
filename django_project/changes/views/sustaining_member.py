@@ -162,7 +162,7 @@ class SustainingMembership(LoginRequiredMixin, DetailView):
             )
             return sustaining_member
         except (Http404, Sponsor.MultipleObjectsReturned):
-            raise Http404('Sorry! We could not find your Sustaining Member!')
+            return None
 
 
 # noinspection PyAttributeOutsideInit
