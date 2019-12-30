@@ -56,7 +56,9 @@ class TestSponsorFeeds(TestCase):
             project=self.project,
             approved=True,
             start_date=datetime.datetime.now() - datetime.timedelta(days=180),
-            end_date=datetime.datetime.now() + datetime.timedelta(days=365),
+            end_date=(
+                    datetime.datetime.now() + datetime.timedelta(days=365)
+            ).date(),
         )
 
         # Past sponsor under a certain time limit, in this case 1 year
@@ -69,7 +71,9 @@ class TestSponsorFeeds(TestCase):
             project=self.project,
             approved=True,
             start_date=datetime.datetime.now() - datetime.timedelta(days=180),
-            end_date=datetime.datetime.now() - datetime.timedelta(days=30)
+            end_date=(
+                    datetime.datetime.now() - datetime.timedelta(days=30)
+            ).date()
         )
 
         # It's a very old sponsor that will not be shown
@@ -82,7 +86,9 @@ class TestSponsorFeeds(TestCase):
             project=self.project,
             approved=True,
             start_date=datetime.datetime.now() - datetime.timedelta(days=4000),
-            end_date=datetime.datetime.now() - datetime.timedelta(days=3650)
+            end_date=(
+                    datetime.datetime.now() - datetime.timedelta(days=3650)
+            ).date()
         )
 
     @override_settings(VALID_DOMAIN=['testserver', ])

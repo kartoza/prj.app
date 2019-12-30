@@ -30,20 +30,6 @@ class TestCheckDomainMiddleware(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
-    # Test checking domain on dev.
-    @override_settings(DEBUG=True)
-    def test_invalid_domain_dev(self):
-        client = Client(SERVER_NAME='testserver')
-        client.post(
-            '/set_language/', data={'language': 'en'})
-        response = client.get(reverse('home'))
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(
-            response,
-            expected_url='http://0.0.0.0:61202/en/domain-not-found/',
-            fetch_redirect_response=False,
-        )
-
     # Test checking domain on production.
     @override_settings(DEBUG=False)
     def test_invalid_domain_prod(self):

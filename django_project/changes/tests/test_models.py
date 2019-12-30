@@ -226,8 +226,8 @@ class TestVersionSponsors(TestCase):
 
         sponsorship_period = SponsorshipPeriodF.create()
         data = {
-            'start_date': datetime(2016, 1, 1),
-            'end_date': datetime(2016, 2, 1),
+            'start_date': datetime(2016, 1, 1).date(),
+            'end_date': datetime(2016, 2, 1).date(),
             'approved': True,
             'private': False,
             'project_id': project.pk,
@@ -240,7 +240,7 @@ class TestVersionSponsors(TestCase):
             '10002001': u'10002001',
             'description': u'New description',
             'approved': True,
-            'release_date': datetime(2016, 1, 10),
+            'release_date': datetime(2016, 1, 10).date(),
             'project_id': project.pk,
         }
         version_model.__dict__.update(data)

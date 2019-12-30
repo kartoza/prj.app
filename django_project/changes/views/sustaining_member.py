@@ -224,8 +224,9 @@ class SustainingMemberUpdateView(LoginRequiredMixin, UpdateView):
             project_slug = self.kwargs.get('project_slug', None)
             if member_id and project_slug:
                 project = Project.objects.get(slug=project_slug)
-                obj = queryset.filter(project=project, id=member_id, sustaining_membership=True)
-                return obj[obj.count()-1]
+                obj = queryset.filter(
+                    project=project, id=member_id, sustaining_membership=True)
+                return obj[obj.count() - 1]
             else:
                 raise Http404(
                     'Sorry! We could not find your sponsor!')
