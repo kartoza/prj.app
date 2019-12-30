@@ -1,0 +1,7 @@
+/* Make the container smaller */
+
+@media (min-width: 1200px) {
+    .container {
+        width: 1080px !important;
+    }
+}

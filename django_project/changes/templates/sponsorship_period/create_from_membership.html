@@ -1,0 +1,169 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block title %}
+    Sustaining Member Period
+{% endblock title %}
+{% block extra_head %}
+    {{ Other }}
+    <script type="text/javascript"
+            src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
+    {{ floppyforms }}
+
+{% endblock %}
+
+{% block css_head %}
+    <link rel="stylesheet" href="{% static 'css/datepicker.css' %}">
+    <style>
+        .level-title {
+            padding-top: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .panel-level:hover {
+            background-color: rgba(54, 188, 152, 0.09);
+            cursor: pointer;
+        }
+
+        .panel-active, .panel-active:hover {
+            background-color: rgba(54, 188, 152, 0.15);
+            border: 1px solid rgb(54, 188, 152);;
+        }
+
+        .recurring-checkbox {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+    </style>
+{% endblock css_head %}
+
+{% block js_head %}
+    <script src="{% static 'js/datepicker.js' %}"></script>
+    <script src="{% static 'js/i18n/datepicker.en.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <script>
+        $(function () {
+        });
+    </script>
+
+    <section id="forms">
+        <div class='container'>
+            <form method="post" id="period-form">
+            {% csrf_token %}
+            <h2>Add Sustaining Member Period for {{ member }}</h2>
+            <hr/>
+            <div class="alert alert-info alert-data">
+                Your membership will runs from <strong>{{ date_start }}</strong> to <strong>{{ date_end }}</strong>
+            </div>
+            <input type="hidden" name="stripe-source-id">
+            <input type="hidden" name="recurring">
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-inline" style="padding-bottom: 10px; font-size: 18px;" id="membership-period">
+                        Set membership for  <input type="number" class="form-control" id="period-end" name="period-end" style="width: 80px;" min="1" max="100" step="1" value="{{ default_period }}"> year
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group recurring-checkbox pull-right">
+                        <label class="checkbox-inline"><input type="checkbox" id="recurring" style="margin-top: 6px;">Charge me yearly</label>
+                    </div>
+                </div>
+            </div>
+
+            {% for level in sponsorhip_levels %}
+                <div class="panel panel-default panel-level" data-id="{{ level.id }}">
+                    <div class="panel-body">
+                        <div class="col-lg-1 col-xs-4">
+                            <img src="{{ level.logo.url }}" width="100%">
+                        </div>
+                        <div class="col-lg-11 col-xs-8">
+                            <div class="level-title">
+                                {{ level.name }}
+                            </div>
+                            <div class="level-amount">
+                                {{ level.value }} {{ level.currency }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="vertical-space"></div>
+             {{ form|crispy }}
+            </form>
+        </div>
+
+    </section>
+
+    <div class="container">
+        <button disabled name="submit" value="Pay"
+                class="btn btn-success" id="submit-save">Process Payment</button>
+    </div>
+
+    {% include "stripe.html" %}
+
+    <script>
+        const $panelLevel = $('.panel-level');
+        const $paymentButton = $('#submit-save');
+        const $form = $('#period-form');
+        const $alert = $('.alert-data');
+        const $recurring = $('#recurring');
+        const dateStart = moment('{{ date_start }}', 'MMMM DD, YYYY');
+        const dateEnd = moment('{{ date_end }}', 'MMMM DD, YYYY');
+        let selectedLevel = null;
+        const $periodEnd = $('#period-end');
+        const $periodContainer = $('#membership-period');
+
+        $(function(){
+            $('#div_id_sponsorship_level').hide();
+        });
+
+        $recurring.change(function() {
+            const recurring = $(this).prop('checked');
+            if (recurring) {
+                $periodContainer.hide();
+                $alert.html(`Your membership will runs <strong>Yearly</strong> from <strong>{{ date_start }}</strong> and will be automatically renewed in <strong>{{ date_end }}</strong>`);
+            } else {
+                $periodContainer.show();
+                $periodEnd.change();
+            }
+        });
+
+        $periodEnd.change(function () {
+            let _dateStart = dateStart.clone();
+            const recurring = $recurring.prop('checked');
+            if (!recurring) {
+                $alert.html(`Your membership will runs from <strong>${dateStart.format('MMMM DD, YYYY')}</strong> to <strong>${_dateStart.add('years', $periodEnd.val()).format('MMMM DD, YYYY')}</strong>`);
+            }
+        });
+
+        $paymentButton.click(function () {
+            $('#paymentModal').modal('show');
+        });
+
+        $panelLevel.click(function(){
+            const $container = $panelLevel.parent();
+            $paymentButton.attr('disabled', false);
+            selectedLevel = $(this).data('id');
+            $('#id_sponsorship_level').val(selectedLevel);
+            $.each($container.find('.panel-active'), function(index, elm){
+                $(elm).removeClass('panel-active');
+            });
+            $(this).addClass('panel-active');
+        });
+
+        function stripeSourceHandler(source) {
+            // Insert the source ID into the form so it gets submitted to the
+            // server
+            $form.find('input[name="stripe-source-id"]').val(source.id);
+            $form.find('input[name="recurring"]').val($recurring.prop('checked'));
+            $form.submit();
+        }
+
+    </script>
+{% endblock %}

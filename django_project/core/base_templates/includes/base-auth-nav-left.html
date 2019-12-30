@@ -144,6 +144,9 @@
                 Sustaining Members <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'sustaining-membership' the_project.slug %}">Membership</a></li>
+                {% endif %}
                 <li><a href="{% url 'sponsor-list' the_project.slug %}">Sustaining Members</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'sponsorshiplevel-list' the_project.slug %}">Sustaining Member Levels</a></li>

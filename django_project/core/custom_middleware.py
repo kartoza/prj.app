@@ -15,7 +15,9 @@ except ImportError:  # Django < 1.10
     MiddlewareBase = object
 
 from base.models import Project, Version, Domain
-from changes.models import Category, SponsorshipLevel, SponsorshipPeriod, Entry
+from changes.models import (
+    Category, SponsorshipLevel, SponsorshipPeriod, Entry, Sponsor
+)
 from certification.models import CertifyingOrganisation
 
 
@@ -55,6 +57,18 @@ class NavContextMiddleware(MiddlewareBase):
             context['has_pending_organisations'] = (
                 CertifyingOrganisation.unapproved_objects.filter(
                     project=context.get('project')).exists())
+
+            # Check if user is a sustaining member manager
+            if request.user.is_anonymous:
+                context['has_pending_sustaining_members'] = False
+            else:
+                context['has_pending_sustaining_members'] = (
+                    Sponsor.unapproved_objects.filter(
+                        project=context.get('project'),
+                        project__sponsorship_managers__in=[request.user]
+                    ).exists()
+                )
+
 
         else:
             if request.user.is_staff:
@@ -144,11 +158,7 @@ class CheckDomainMiddleware(MiddlewareBase):
                 elif custom_domain.role == 'Organisation':
                     return None
         except Domain.DoesNotExist:
-            if settings.DEBUG:
-                # for dev
-                return HttpResponseRedirect(
-                    'http://0.0.0.0:61202/en/domain-not-found/')
-            else:
+            if not settings.DEBUG:
                 # for production the domain is hardcoded for consistency
                 return HttpResponseRedirect(
                     'http://changelog.kartoza.com/en/domain-not-found/'

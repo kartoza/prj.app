@@ -70,6 +70,7 @@ PIPELINE['STYLESHEETS']['project'] = {
         'css/changelog.css',
         'css/form.css',
         'css/fonts.css',
+        'css/base.css',
     ),
     'output_filename': 'css/project.css',
     'extra_context': {
@@ -82,3 +83,5 @@ VALID_DOMAIN = [
     '0.0.0.0',
     'changelog.kartoza.com',
 ]
+
+EMAIL_HOST_USER = 'noreply@kartoza.com'

@@ -27,6 +27,20 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}Sustaining Members
                 <div class="pull-right btn-group">
+                {% if not is_sustaining_member %}
+                <a class="btn btn-default btn-mini tooltip-toggle icon"
+                       href='{% url "sustaining-member-create" project_slug %}'
+                       data-title="Sign Up!">
+                Sign Up
+                </a>
+                {% else %}
+                <a class="btn btn-default btn-mini tooltip-toggle icon"
+                       href='{% url "sustaining-membership" project_slug %}'
+                       data-title="Your sustaining membership">
+                Membership
+                </a>
+                {% endif %}
+
                 {% if user.is_authenticated %}
                     {% if user.is_staff or user == the_project.owner or user in the_project.sponsorship_managers.all %}
                         <a class="btn btn-default btn-mini tooltip-toggle icon"
@@ -93,7 +107,7 @@
                             src="{% thumbnail sponsor.sponsorship_level.logo 50x50 %}"/> {{ sponsor.sponsorship_level }}
                     </h3>
             {% endifchanged %}
-             <div class="row" style="margin-top:10px;">
+             <div class="row">
                     <div class="col-lg-1">
                         {% if sponsor.sponsor.logo %}
                             {% if sponsor.sponsor.sponsor_url %}
@@ -111,7 +125,7 @@
 
                     </div>
                     <div class="col-lg-9">
-                        <h3>{{ sponsor.sponsor }}</h3>
+                        <h3 style="margin-top: 0 !important;">{{ sponsor.sponsor }}</h3>
 
                         <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
 
@@ -129,6 +143,7 @@
                         </div>
                     </div>
                 </div>
+            <hr/>
         {% endif %}
     {% endfor %}
 
@@ -146,7 +161,7 @@
                             src="{% thumbnail sponsor.sponsorship_level.logo 50x50 %}"/> {{ sponsor.sponsorship_level }}
                     </h3>
             {% endifchanged %}
-            <div class="row" style="margin-top:10px;">
+            <div class="row">
                     <div class="col-lg-1">
                         {% if sponsor.sponsor.logo %}
                             <a href="{{ sponsor.sponsor.logo.url }}">

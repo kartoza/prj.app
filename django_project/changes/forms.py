@@ -313,3 +313,12 @@ class SponsorshipPeriodForm(forms.ModelForm):
         instance.project = self.project
         instance.save()
         return instance
+
+
+class SustainingMemberPeriodForm(forms.ModelForm):
+    # noinspection PyClassicStyleClass
+    class Meta:
+        model = SponsorshipPeriod
+        fields = (
+            'sponsorship_level',
+        )

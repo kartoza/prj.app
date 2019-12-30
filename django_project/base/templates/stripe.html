@@ -30,8 +30,8 @@
 <script>
     // Set your publishable key: remember to change this to your live publishable key in production
     // See your keys here: https://dashboard.stripe.com/account/apikeys
-    var stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
-    var elements = stripe.elements();
+    let stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
+    let elements = stripe.elements();
 </script>
 
 
@@ -65,7 +65,7 @@
             </div>
             <div class="modal-footer">
                 <button id="submit" type="button" class="btn btn-success"
-                        style="padding-left: 40px; padding-right: 40px;" disabled>Donate
+                        style="padding-left: 40px; padding-right: 40px;">Pay
                 </button>
             </div>
         </div>
@@ -83,6 +83,9 @@
         const $cardContainer = $('.card-container');
         const $cardLoadingView = $('.card-loading-view');
         let $amountInput = 100 * parseInt($('#donate-amount').val());
+        $cardContainer.show();
+
+        /*
         if (!clientSecret || amount !== $amountInput) {
             amount = $amountInput;
             $cardLoadingView.show();
@@ -105,9 +108,10 @@
         } else {
             $cardContainer.show();
         }
+        */
     });
 
-    var style = {
+    let style = {
         base: {
             color: '#32325d',
             fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
@@ -123,10 +127,10 @@
         }
     };
 
-    var card = elements.create("card", {style: style});
+    let card = elements.create("card", {style: style});
     card.mount("#card-element");
     card.addEventListener('change', function (event) {
-        var displayError = document.getElementById('card-errors');
+        let displayError = document.getElementById('card-errors');
         if (event.error) {
             displayError.textContent = event.error.message;
         } else {
@@ -134,12 +138,35 @@
         }
     });
 
-    var submitButton = document.getElementById('submit');
+    let submitButton = document.getElementById('submit');
+
+    function stripeSourceHandler(source) {
+        // Insert the source ID into the form so it gets submitted to the
+        // server
+    }
 
     submitButton.addEventListener('click', function (ev) {
         $(ev.target).html('Loading...');
         $(ev.target).attr('disabled', true);
 
+        // Note - slightly different from the Stripe JS Quickstart because
+        // we use stripe.createSource instead of createToken
+        card['amount'] = 1099;
+        card['currency'] = 'eur';
+        stripe.createSource(card).then(function (result) {
+            if (result.error) {
+                // Inform the user if there was an error.
+                let errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+                $(ev.target).html('Pay');
+                $(ev.target).attr('disabled', false);
+            } else {
+                // Send the token to your server.
+                stripeSourceHandler(result.source);
+            }
+        });
+
+        /*
         stripe.confirmCardPayment(clientSecret, {
             payment_method: {card: card}
         }).then(function (result) {
@@ -164,7 +191,6 @@
                 }
             }
         });
-
+         */
     });
-
 </script>

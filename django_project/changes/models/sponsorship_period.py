@@ -47,7 +47,9 @@ class SponsorshipPeriod(models.Model):
     end_date = models.DateField(
         _("End date"),
         help_text='End date of sponsorship period',
-        default=timezone.now)
+        null=True,
+        blank=True
+    )
 
     amount_sponsored = models.DecimalField(
         _('Amount Sponsored'),
@@ -71,6 +73,20 @@ class SponsorshipPeriod(models.Model):
             'Whether this sponsorship period has been approved for use by '
             'the project owner.'),
         default=False
+    )
+
+    recurring = models.BooleanField(
+        help_text=_(
+            'Bill customer at the start of each period'
+        ),
+        default=False
+    )
+
+    subscription = models.ForeignKey(
+        'djstripe.Subscription',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
     )
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -101,15 +117,25 @@ class SponsorshipPeriod(models.Model):
         )
         app_label = 'changes'
         ordering = ['project', '-end_date']
+        verbose_name = 'Sustaining Member Period'
+        verbose_name_plural = 'Sustaining Member Periods'
 
     def save(self, *args, **kwargs):
-
+        today = datetime.datetime.now().date()
+        end = self.end_date
         if not self.pk:
             name = self.slug_generator()
             words = name.split()
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = slugify(new_list)[:50]
+
+        self.sponsor.active = True
+        if end and today > end:
+            if not self.recurring:
+                self.sponsor.active = False
+        self.sponsor.save()
+
         super(SponsorshipPeriod, self).save(*args, **kwargs)
 
     @staticmethod
@@ -117,10 +143,14 @@ class SponsorshipPeriod(models.Model):
         return ''.join(random.choice(chars) for _ in range(size))
 
     def __unicode__(self):
+        plan = None
+        if self.sponsorship_level.subscription_plan and self.recurring:
+            plan = self.sponsorship_level.subscription_plan.interval
+            plan = '{}ly'.format(plan.capitalize())
         return u'%s - %s : %s' % (
             self.sponsor.name,
             self.start_date,
-            self.end_date
+            plan if plan else self.end_date
         )
 
     def get_absolute_url(self):
@@ -132,6 +162,10 @@ class SponsorshipPeriod(models.Model):
     def current_sponsor(self):
         today = datetime.datetime.now().date()
         end = self.end_date
+        if not end:
+            if self.recurring:
+                return True
+            return False
         if end < today:
             return False
         else:

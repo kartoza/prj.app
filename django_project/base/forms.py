@@ -65,10 +65,11 @@ class ProjectForm(forms.ModelForm):
 
     sponsorship_managers = forms.ModelMultipleChoiceField(
         queryset=User.objects.order_by('username'),
+        label='Sustaining member managers',
         widget=CustomSelectMultipleWidget("user", is_stacked=False),
         required=False,
         help_text=_(
-            'Managers of the sponsorship in this project. '
+            'Managers of the sustaining member in this project. '
             'They will be allowed to approve sponsorship entries in the '
             'moderation queue.')
     )

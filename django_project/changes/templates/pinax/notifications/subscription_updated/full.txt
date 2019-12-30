@@ -1,0 +1,25 @@
+{% autoescape off %}
+{% load i18n %}
+{% blocktrans %}{{ notice }}{% endblocktrans %}
+
+{% if request_user == recipient %}
+Dear {{ recipient.first_name }} {{ recipient.last_name }},
+You have updated your sustaining membership.
+{% else %}
+{{ request_user }} has updated their sustaining membership.
+{% endif %}
+
+More information are as follows :
+- Sustaining Member : {{ sustaining_member }}
+- Sustaining Member Level : {{ sustaining_member_level }}
+- Recurring : {{ recurring }}
+- Subscription Start Date : {{ date_start }}
+- Subscription End/Renewal Date : {{ date_end }}
+
+{% if request_user == recipient %}
+You can review your membership by following this link :
+{{ default_http_protocol }}://{{ current_site }}{% url "sustaining-membership" project_slug=the_project_slug %}
+{% endif %}
+
+{% endautoescape %}
+

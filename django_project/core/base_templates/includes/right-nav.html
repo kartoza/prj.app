@@ -8,7 +8,7 @@
         </a>
     </li>
 {% endif %}
-{% if user.is_authenticated and has_pending_sponsor_lvl or has_pending_sponsor_period or has_pending_organisations %}
+{% if user.is_authenticated and has_pending_sponsor_lvl or has_pending_sponsor_period or has_pending_organisations or has_pending_sustaining_members %}
     {% if user.is_authenticated %}
         <li>
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -19,10 +19,14 @@
                 <li><a href='{% url "pending-project-list" %}'>Projects</a></li>
             {% else %}
                 {% if has_pending_sponsor_lvl %}
-                    <li><a href='{% url "pending-sponsorshiplevel-list" the_project.slug %}'>Sponsorship Level</a></li>
+                    <li><a href='{% url "pending-sponsorshiplevel-list" the_project.slug %}'>Sustaining Member Level</a></li>
                 {% endif %}
                 {% if has_pending_sponsor_period %}
-                    <li><a href='{% url "pending-sponsorshipperiod-list" the_project.slug %}'>Sponsorship Period</a></li>
+                    <li><a href='{% url "pending-sponsorshipperiod-list" the_project.slug %}'>Sustaining Member Period</a></li>
+                {% endif %}
+
+                {% if has_pending_sustaining_members %}
+                    <li><a href='{% url 'pending-sponsor-list' the_project.slug %}'>Sustaining Members</a></li>
                 {% endif %}
                 {% if has_pending_organisations %}
                         <li><a href='{% url "pending-certifyingorganisation-list" the_project.slug %}'>Certifying Organisations</a> </li>

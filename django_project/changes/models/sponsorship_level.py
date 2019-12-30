@@ -90,6 +90,16 @@ class SponsorshipLevel(models.Model):
         default=False
     )
 
+    subscription_plan = models.ForeignKey(
+        'djstripe.Plan',
+        help_text=(
+            'A Stripe subscription plan contains the pricing information'
+        ),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField()
     project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
@@ -106,6 +116,8 @@ class SponsorshipLevel(models.Model):
         )
         app_label = 'changes'
         ordering = ['project', '-value']
+        verbose_name = 'Sustaining Member Level'
+        verbose_name_plural = 'Sustaining Member Levels'
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -116,6 +128,9 @@ class SponsorshipLevel(models.Model):
         super(SponsorshipLevel, self).save(*args, **kwargs)
 
     def __unicode__(self):
+        return u'%s : %s %s' % (self.name, self.value, self.currency)
+
+    def __str__(self):
         return u'%s : %s %s' % (self.name, self.value, self.currency)
 
     def get_absolute_url(self):
