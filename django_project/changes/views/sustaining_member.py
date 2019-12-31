@@ -562,7 +562,7 @@ class SustainingMemberPeriodUpdateView(
                 obj = queryset.get(
                     project=project,
                     sponsor__id=member_id,
-                    sustaining_membership=True)
+                    sponsor__sustaining_membership=True)
                 return obj
             else:
                 raise Http404(
