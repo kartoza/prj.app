@@ -9,7 +9,7 @@ import re
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, TemplateView
 from django.conf import settings
 from django.urls import reverse
 from django.db import IntegrityError
@@ -21,6 +21,9 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont, TTFError
+import djstripe.models
+import djstripe.settings
+import stripe
 from ..models import (
     Certificate,
     Course,
@@ -886,3 +889,65 @@ def preview_certificate(request, **kwargs):
         page.save()
 
     return response
+
+
+class TopUpView(TemplateView):
+    template_name = 'certificate/top_up.html'
+    project_slug = ''
+    organisation_slug = ''
+
+    def get_context_data(self, **kwargs):
+        context = super(TopUpView, self).get_context_data(**kwargs)
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+
+        certifying_organisation = (
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        )
+        project = Project.objects.get(slug=self.project_slug)
+
+        context['the_project'] = project
+        context['cert_organisation'] = certifying_organisation
+
+        return context
+
+    def process_stripe_payment(self, stripe_source_id, cost_of_credits):
+        # Create the stripe Customer, by default subscriber Model is User,
+        # this can be overridden with settings.DJSTRIPE_SUBSCRIBER_MODEL
+        customer, created = djstripe.models.Customer.get_or_create(
+            subscriber=self.request.user)
+
+        customer.add_card(stripe_source_id)
+
+        stripe_payment = stripe.checkout.Session.create(
+            customer=customer,
+            amount=cost_of_credits,
+            currency='eur',
+            payment_method_types=['card'],
+            line_items=[{
+                'name': 'Top up credits',
+                'organisation': 'Test',
+                'total_credit': 20,
+                'total_payment': cost_of_credits,
+                'currency': 'eur'
+            }]
+        )
+
+        customer.charge(cost_of_credits)
+
+    def post(self, request, *args, **kwargs):
+        """Post the project_slug from the URL and define the Project
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        """
+        pass

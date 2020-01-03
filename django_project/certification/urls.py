@@ -68,6 +68,7 @@ from .views import (
 
     # About.
     AboutView,
+    TopUpView
 )
 from .api_views.get_status import GetStatus
 from .api_views.update_status import UpdateStatusOrganisation
@@ -232,7 +233,7 @@ urlpatterns = [
         name='paid-certificate'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/top-up/$',
-        view=top_up_unavailable,
+        view=TopUpView.as_view(),
         name='top-up'),
     url(regex='^(?P<project_slug>[\w-]+)/certificate/'
               '(?P<id>[\w-]+)/$',

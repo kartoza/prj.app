@@ -1,0 +1,133 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block title %} Top up {% endblock %}
+
+{% block page_title %}
+    <h1>Top Up</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <style>
+        .payment-container {
+            display: block;
+            background-color: #f7f0da;
+            padding: 20px 25px;
+            border-radius: 3px;
+        }
+
+        .total-payment {
+            font-size: 22px;
+        }
+
+        #total-amount {
+            font-weight: bolder;
+        }
+
+        #creditAmount {
+            height: 50px;
+            font-weight: bold;
+            font-size: 20px;
+        }
+    </style>
+    <div>
+        <div class="container">
+            <h1>Top up credits for {{ cert_organisation }}</h1>
+            <hr/>
+            <form method="post" id="top-up-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="form-group">
+                        <label for="creditAmount">Credits</label>
+                        <input type="number" class="form-control"
+                               id="creditAmount" placeholder="Credits">
+                    </div>
+                </div>
+                <div class="payment-container">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="total-payment">Total Payment : € <span id="total-amount">0</span></div>
+                            The amount is payed directly
+                        </div>
+                        <div class="col-md-4" style="padding-top: 8px">
+                            <button type="submit" class="btn btn-success"
+                                    id="buy"
+                                    style="padding-right: 40px; padding-left: 40px; float: right" disabled>
+                                PAY WITH STRIPE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% include "stripe.html" %}
+
+    <script>
+
+    const $payButton = $('#buy');
+    const $creditAmount = $('#creditAmount');
+    const $form = $('#top-up-form');
+    const creditCost = {{ the_project.credit_cost }};
+    const $totalAmount = $('#total-amount');
+    let payButtonDisabled = true;
+    let totalPayment = 0;
+
+    $(function () {
+        setTimeout(function () {
+            console.log('test');
+            $creditAmount.focus();
+        }, 200);
+    });
+
+    $creditAmount.keyup(function () {
+        let credits = $(this).val();
+        totalPayment = parseFloat(credits) * creditCost;
+        let totalPaymentDisplay = totalPayment.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        if (isNaN(totalPayment)) {
+            totalPaymentDisplay = 0;
+        }
+
+        $totalAmount.html(totalPaymentDisplay);
+
+        if (credits > 0 && payButtonDisabled) {
+            payButtonDisabled = false;
+            $payButton.attr('disabled', payButtonDisabled);
+        }
+
+        if ((credits === 0 || !credits) && !payButtonDisabled) {
+            payButtonDisabled = true;
+            $payButton.attr('disabled', payButtonDisabled);
+        }
+    });
+
+    $payButton.click(function (e) {
+       e.preventDefault();
+       let creditAmount = $creditAmount.val();
+       if (!creditAmount) {
+           alert('No credits');
+           return;
+       }
+       creditAmount = parseFloat(creditAmount);
+       let totalToPay = creditAmount * creditCost;
+
+       if (isNaN(totalToPay)) {
+           alert('error calculating total payment');
+       }
+
+       showPaymentModal();
+    });
+
+    function stripeSourceHandler(source) {
+        // Insert the source ID into the form so it gets submitted to the
+        // server
+        $('<input>').attr({
+            type: 'hidden',
+            id: 'stripe-source-id',
+            name: 'stripe-source-id'
+        }).appendTo($form).val(source.id);
+        $form.submit();
+    }
+
+    </script>
+{% endblock %}
