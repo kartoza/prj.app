@@ -915,17 +915,30 @@ class TopUpView(TemplateView):
 
         return context
 
-    def process_charge(self, stripe_source_id, cost_of_credits, currency):
+    def process_charge(self,
+                       stripe_source_id,
+                       cost_of_credits,
+                       currency,
+                       statement_descriptor='',
+                       description='',
+                       metadata=None):
         """
         Creates a charge for user.
 
         :param stripe_source_id: Id from stripe source
         :param cost_of_credits: cost of the total credits
         :param currency: currency of the cost
+        :param metadata: A set of key/value pairs useful for storing
+            additional information.
+        :param statement_descriptor: An arbitrary string to be displayed on the
+            customer's credit card statement.
+        :param description: Description of the payment
         :return: paid, outcome
         """
         # Create the stripe Customer, by default subscriber Model is User,
         # this can be overridden with settings.DJSTRIPE_SUBSCRIBER_MODEL
+        if metadata is None:
+            metadata = {}
         customer, created = djstripe.models.Customer.get_or_create(
             subscriber=self.request.user)
 
@@ -934,14 +947,9 @@ class TopUpView(TemplateView):
         charge = customer.charge(
             amount=cost_of_credits,
             currency=currency,
-            description='Top up credits',
-            metadata={
-                'name': 'Top up credits',
-                'organisation': 'Test',
-                'total_payment': cost_of_credits,
-                'currency': currency
-            },
-            statement_descriptor='Top up credits'
+            description=description,
+            metadata=metadata,
+            statement_descriptor=statement_descriptor
         )
         return charge.paid, charge.outcome
 
@@ -984,10 +992,27 @@ class TopUpView(TemplateView):
             raise Http404('Wrong total credits format')
 
         cost_of_credits = project.credit_cost * total_credits_decimal
+        description = 'Top up {total} credit{plural}'.format(
+                total=total_credits,
+                plural='s' if total_credits > 1 else '')
         charged, outcome = self.process_charge(
             stripe_source_id=stripe_source_id,
             cost_of_credits=cost_of_credits,
-            currency=project.credit_cost_currency
+            currency=project.credit_cost_currency,
+            metadata={
+                'name': 'Top up credits',
+                'organisation': organisation,
+                'organisation_id': organisation.id,
+                'project': project,
+                'project_id': project.id,
+                'user_id': self.request.user.id,
+                'added_credit': total_credits,
+                'credit_cost': project.credit_cost,
+                'total_payment': cost_of_credits,
+                'currency': project.credit_cost_currency,
+            },
+            description=description,
+            statement_descriptor=description
         )
 
         if charged:
