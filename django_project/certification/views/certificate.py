@@ -6,6 +6,7 @@ import os
 import zipfile
 from PIL import Image
 import re
+from decimal import *
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -911,7 +912,15 @@ class TopUpView(TemplateView):
 
         return context
 
-    def process_stripe_payment(self, stripe_source_id, cost_of_credits):
+    def process_charge(self, stripe_source_id, cost_of_credits, currency):
+        """
+        Creates a charge for user.
+
+        :param stripe_source_id: Id from stripe source
+        :param cost_of_credits: cost of the total credits
+        :param currency: currency of the cost
+        :return: paid, outcome
+        """
         # Create the stripe Customer, by default subscriber Model is User,
         # this can be overridden with settings.DJSTRIPE_SUBSCRIBER_MODEL
         customer, created = djstripe.models.Customer.get_or_create(
@@ -919,21 +928,19 @@ class TopUpView(TemplateView):
 
         customer.add_card(stripe_source_id)
 
-        stripe_payment = stripe.checkout.Session.create(
-            customer=customer,
+        charge = customer.charge(
             amount=cost_of_credits,
-            currency='eur',
-            payment_method_types=['card'],
-            line_items=[{
+            currency=currency,
+            description='Top up credits',
+            metadata={
                 'name': 'Top up credits',
                 'organisation': 'Test',
-                'total_credit': 20,
                 'total_payment': cost_of_credits,
-                'currency': 'eur'
-            }]
+                'currency': currency
+            },
+            statement_descriptor='Top up credits'
         )
-
-        customer.charge(cost_of_credits)
+        return charge.paid, charge.outcome
 
     def post(self, request, *args, **kwargs):
         """Post the project_slug from the URL and define the Project
@@ -950,4 +957,48 @@ class TopUpView(TemplateView):
         :returns: Unaltered request object
         :rtype: HttpResponse
         """
-        pass
+        total_credits = self.request.POST.get('total-credits', None)
+        stripe_source_id = self.request.POST.get('stripe-source-id', None)
+
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+
+        project = Project.objects.get(
+            slug=self.project_slug
+        )
+
+        organisation = CertifyingOrganisation.objects.get(
+            slug=self.organisation_slug
+        )
+
+        if not total_credits or not stripe_source_id:
+            raise Http404('Missing important value')
+
+        try:
+            total_credits_decimal = Decimal(total_credits)
+            total_credits = int(total_credits)
+        except ValueError:
+            raise Http404('Wrong total credits format')
+
+        cost_of_credits = project.credit_cost * total_credits_decimal
+        charged, outcome = self.process_charge(
+            stripe_source_id=stripe_source_id,
+            cost_of_credits=cost_of_credits,
+            currency=project.credit_cost_currency
+        )
+
+        if charged:
+            organisation.organisation_credits += total_credits
+            organisation.save()
+            messages.success(request, 'Your purchase of <b>{}</b>'
+                                      ' credits has been'
+                                      ' successful'.format(
+                total_credits
+            ), 'credits_top_up')
+
+        return HttpResponseRedirect(
+            reverse('certifyingorganisation-detail', kwargs={
+                'project_slug': self.project_slug,
+                'slug': self.organisation_slug
+            })
+        )

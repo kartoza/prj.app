@@ -87,6 +87,22 @@
         }
     </style>
 
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                {% if 'credits_top_up' in message.tags %}
+                    <div class="alert alert-success" role="alert" style="font-size: 15px;">
+                        {{ message|safe }}
+                        <button type="button" class="close"
+                                data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <div class="row">
         <div class="col-lg-10">
             <h1>{{ certifyingorganisation.name }}</h1><br/>

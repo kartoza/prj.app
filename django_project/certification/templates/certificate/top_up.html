@@ -1,7 +1,7 @@
 {% extends "project_base.html" %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
-{% block title %} Top up {% endblock %}
+{% block title %} Top up {{ cert_organisation }}{% endblock %}
 
 {% block page_title %}
     <h1>Top Up</h1>
@@ -40,13 +40,13 @@
                     <div class="form-group">
                         <label for="creditAmount">Credits</label>
                         <input type="number" class="form-control"
-                               id="creditAmount" placeholder="Credits">
+                               id="creditAmount" placeholder="Credits" name="total-credits">
                     </div>
                 </div>
                 <div class="payment-container">
                     <div class="row">
                         <div class="col-md-8">
-                            <div class="total-payment">Total Payment : € <span id="total-amount">0</span></div>
+                            <div class="total-payment">Total Payment : {{ the_project.get_credit_cost_currency_display }} <span id="total-amount">0</span></div>
                             The amount is payed directly
                         </div>
                         <div class="col-md-4" style="padding-top: 8px">
