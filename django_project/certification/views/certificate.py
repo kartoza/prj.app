@@ -24,7 +24,6 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont, TTFError
 import djstripe.models
 import djstripe.settings
-import stripe
 from ..models import (
     Certificate,
     Course,
@@ -36,6 +35,10 @@ from ..models import (
 )
 from ..forms import CertificateForm
 from base.models.project import Project
+from changes import (
+    NOTICE_TOP_UP_SUCCESS
+)
+from helpers.notification import send_notification
 
 
 class CertificateMixin(object):
@@ -990,6 +993,20 @@ class TopUpView(TemplateView):
         if charged:
             organisation.organisation_credits += total_credits
             organisation.save()
+            organisation_owners = organisation.organisation_owners.all()
+            send_notification(
+                users=[ self.request.user ] + list(organisation_owners),
+                label=NOTICE_TOP_UP_SUCCESS,
+                extra_context={
+                    'author': self.request.user,
+                    'top_up_credits': total_credits,
+                    'currency': project.get_credit_cost_currency_display(),
+                    'payment_amount': cost_of_credits,
+                    'certifying_organisation': organisation,
+                    'total_credits': organisation.organisation_credits
+                },
+                request_user=self.request.user
+            )
             messages.success(request, 'Your purchase of <b>{}</b>'
                                       ' credits has been'
                                       ' successful'.format(

@@ -6,7 +6,8 @@ from changes import (
     NOTICE_SUSTAINING_MEMBER_REJECTED,
     NOTICE_SUSTAINING_MEMBER_UPDATED,
     NOTICE_SUBSCRIPTION_CREATED,
-    NOTICE_SUBSCRIPTION_UPDATED
+    NOTICE_SUBSCRIPTION_UPDATED,
+    NOTICE_TOP_UP_SUCCESS
 )
 
 
@@ -32,5 +33,8 @@ def create_notice_types(sender, **kwargs):
         NoticeType.create(NOTICE_SUBSCRIPTION_UPDATED,
                           _("Subscription Updated"),
                           _("A subscription has been updated"))
+        NoticeType.create(NOTICE_TOP_UP_SUCCESS,
+                          _("Top Up Successful"),
+                          _("Top Up Successful"))
     else:
         print("Skipping creation of NoticeTypes as notification app not found")
