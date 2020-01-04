@@ -6,7 +6,7 @@ import os
 import zipfile
 from PIL import Image
 import re
-from decimal import *
+from decimal import Decimal
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -1020,7 +1020,7 @@ class TopUpView(TemplateView):
             organisation.save()
             organisation_owners = organisation.organisation_owners.all()
             send_notification(
-                users=[ self.request.user ] + list(organisation_owners),
+                users=[self.request.user] + list(organisation_owners),
                 label=NOTICE_TOP_UP_SUCCESS,
                 extra_context={
                     'author': self.request.user,
@@ -1032,11 +1032,15 @@ class TopUpView(TemplateView):
                 },
                 request_user=self.request.user
             )
-            messages.success(request, 'Your purchase of <b>{}</b>'
-                                      ' credits has been'
-                                      ' successful'.format(
-                total_credits
-            ), 'credits_top_up')
+            messages.success(
+                request,
+                'Your purchase of <b>{}</b>'
+                ' credits has been'
+                ' successful'.format(
+                    total_credits
+                ),
+                'credits_top_up'
+            )
 
         return HttpResponseRedirect(
             reverse('certifyingorganisation-detail', kwargs={

@@ -51,7 +51,6 @@ from .views import (
     certificate_pdf_view,
     download_certificates_zip,
     update_paid_status,
-    top_up_unavailable,
     email_all_attendees,
     regenerate_certificate,
     regenerate_all_certificate,

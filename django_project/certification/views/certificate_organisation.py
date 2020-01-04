@@ -4,7 +4,7 @@ from datetime import datetime
 from braces.views import LoginRequiredMixin
 from django.conf import settings
 from django.urls import reverse
-from django.http import HttpResponse, Http404, FileResponse
+from django.http import Http404, FileResponse
 from django.views.generic import CreateView, DetailView
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.pagesizes import A4, landscape
@@ -212,8 +212,6 @@ def organisation_certificate_pdf_view(request, **kwargs):
             '/home/web/media',
             'certificate_organisations/{}/{}'.format(
                 project_folder, filename))
-    found = os.path.exists(pathname)
-
     makepath = \
         '/home/web/media/certificate_organisations/{}/'.format(
             project_folder)
@@ -230,7 +228,7 @@ def organisation_certificate_pdf_view(request, **kwargs):
     try:
         return FileResponse(open(pathname, 'rb'),
                             content_type='application/pdf')
-    except FileNotFoundError:
+    except FileNotFoundError:  # noqa: F821
         raise Http404('Not found')
 
 
