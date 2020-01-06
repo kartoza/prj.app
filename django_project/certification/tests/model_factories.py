@@ -12,7 +12,8 @@ from certification.models import (
     CertifyingOrganisation,
     TrainingCenter,
     CourseAttendee,
-    Status
+    Status,
+    CertifyingOrganisationCertificate
 )
 from core.model_factories import UserF
 from base.tests.model_factories import ProjectF
@@ -31,6 +32,15 @@ class CertifyingOrganisationF(factory.django.DjangoModelFactory):
     address = factory.sequence(lambda n: u'Test address %s' % n)
     project = factory.SubFactory(ProjectF)
     approved = True
+
+
+class CertifyingOrganisationCertificateF(factory.django.DjangoModelFactory):
+    class Meta:
+        model = CertifyingOrganisationCertificate
+
+    certificateID = factory.sequence(lambda n: u'cert-%s' % n)
+    author = factory.SubFactory(UserF)
+    certifying_organisation = factory.SubFactory(CertifyingOrganisationF)
 
 
 class CourseConvenerF(factory.django.DjangoModelFactory):
