@@ -2,11 +2,11 @@
 {% load i18n %}
 {% blocktrans %}{{ notice }}{% endblocktrans %}
 
-More information are as follows :
-- Sustaining Member : {{ sustaining_member }}
+Your subscription information is as follows :
+- Sustaining Member Person / Organisation: {{ sustaining_member }}
 - Sustaining Member Level : {{ sustaining_member_level }}
-- Author : {{ author }}
-- Recurring : {{ recurring }}
+- Subscription Created By : {{ author }}
+- Recurring? : {{ recurring }}
 - Subscription Start Date : {{ date_start }}
 - Subscription End/Renewal Date : {{ date_end }}
 
