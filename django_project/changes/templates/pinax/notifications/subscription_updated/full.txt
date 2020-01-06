@@ -3,16 +3,17 @@
 {% blocktrans %}{{ notice }}{% endblocktrans %}
 
 {% if request_user == recipient %}
-Dear {{ recipient.first_name }} {{ recipient.last_name }},
-You have updated your sustaining membership.
+Dear {{ recipient.first_name }} {{ recipient.last_name }}
+
+Thank you for updating your sustaining membership.
 {% else %}
 {{ request_user }} has updated their sustaining membership.
 {% endif %}
 
-More information are as follows :
-- Sustaining Member : {{ sustaining_member }}
+Your subscription information is as follows :
+- Sustaining Member Person / Organisation: {{ sustaining_member }}
 - Sustaining Member Level : {{ sustaining_member_level }}
-- Recurring : {{ recurring }}
+- Recurring? : {{ recurring }}
 - Subscription Start Date : {{ date_start }}
 - Subscription End/Renewal Date : {{ date_end }}
 
