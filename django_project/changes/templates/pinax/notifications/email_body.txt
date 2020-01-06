@@ -2,6 +2,6 @@
 
 {{ message }}
 
-This is an auto-generated email from the system. Please do not reply to this email.
+This is an auto-generated email from {{ default_http_protocol }}://{{ current_site }}. Please do not reply to this email.
 To change how you receive notifications, please go to {{ default_http_protocol }}://{{ current_site }}{{ notices_url }}
 {% endblocktrans %}
