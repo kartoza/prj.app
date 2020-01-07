@@ -82,6 +82,26 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
             'project_slug': self.form_object.project.slug
         })
 
+    def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests, instantiating a form instance with the passed
+        POST variables and then checked for validity.
+        """
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def send_notification(self, sponsorship_managers):
+        """Send a notification to author and managers"""
+        send_notification(
+            [
+                self.request.user,
+            ] + sponsorship_managers,
+            NOTICE_SUSTAINING_MEMBER_CREATED,
+            {'from_user': settings.EMAIL_HOST_USER})
+
     def form_valid(self, form):
         """Check if form is valid."""
         if form.is_valid():
@@ -95,11 +115,8 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
             self.form_object.save()
             sponsorship_managers = project.sponsorship_managers.all()
             # Send a notification
-            send_notification([
-                self.request.user,
-            ] + list(sponsorship_managers),
-                 NOTICE_SUSTAINING_MEMBER_CREATED,
-                 {'from_user': settings.EMAIL_HOST_USER})
+            self.send_notification(list(sponsorship_managers))
+
             return super(SustainingMemberCreateView, self).form_valid(form)
         else:
             return self.render_to_response(self.get_context_data(form=form))
@@ -562,7 +579,7 @@ class SustainingMemberPeriodUpdateView(
                 obj = queryset.get(
                     project=project,
                     sponsor__id=member_id,
-                    sustaining_membership=True)
+                    sponsor__sustaining_membership=True)
                 return obj
             else:
                 raise Http404(

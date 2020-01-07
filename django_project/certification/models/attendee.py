@@ -95,6 +95,9 @@ class Attendee(models.Model):
     def __unicode__(self):
         return '%s %s' % (self.firstname, self.surname)
 
+    def __str__(self):
+        return '%s %s' % (self.firstname, self.surname)
+
     def get_absolute_url(self):
         """Return URL to attendee detail page.
 

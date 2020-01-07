@@ -79,6 +79,10 @@
     let amount = 50;
     let clientSecret = '';
 
+    function showPaymentModal() {
+        $('#paymentModal').modal('show');
+    }
+
     $('#paymentModal').on('shown.bs.modal', function (e) {
         const $cardContainer = $('.card-container');
         const $cardLoadingView = $('.card-loading-view');

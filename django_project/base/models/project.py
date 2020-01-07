@@ -79,6 +79,9 @@ def get_default_organisation():
 
 class Project(models.Model):
     """A project model e.g. QGIS, InaSAFE etc."""
+    EUR = 'EUR'
+    USD = 'USD'
+    CURRENCY_CHOICES = [(USD, '$'), (EUR, '€')]
 
     name = models.CharField(
         help_text=_('Name of this project.'),
@@ -138,6 +141,14 @@ class Project(models.Model):
         blank=True,
         null=True,
         default=0
+    )
+
+    credit_cost_currency = models.CharField(
+        help_text=_('Currency for cost of credits'),
+        choices=CURRENCY_CHOICES,
+        max_length=10,
+        blank=True,
+        null=True
     )
 
     # Credit that will be spent to issue a certificate

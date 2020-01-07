@@ -6,10 +6,11 @@ import os
 import zipfile
 from PIL import Image
 import re
+from decimal import Decimal
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, TemplateView
 from django.conf import settings
 from django.urls import reverse
 from django.db import IntegrityError
@@ -21,6 +22,8 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont, TTFError
+import djstripe.models
+import djstripe.settings
 from ..models import (
     Certificate,
     Course,
@@ -32,6 +35,10 @@ from ..models import (
 )
 from ..forms import CertificateForm
 from base.models.project import Project
+from changes import (
+    NOTICE_TOP_UP_SUCCESS
+)
+from helpers.notification import send_notification
 
 
 class CertificateMixin(object):
@@ -886,3 +893,158 @@ def preview_certificate(request, **kwargs):
         page.save()
 
     return response
+
+
+class TopUpView(TemplateView):
+    template_name = 'certificate/top_up.html'
+    project_slug = ''
+    organisation_slug = ''
+
+    def get_context_data(self, **kwargs):
+        context = super(TopUpView, self).get_context_data(**kwargs)
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+
+        certifying_organisation = (
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        )
+        project = Project.objects.get(slug=self.project_slug)
+
+        context['the_project'] = project
+        context['cert_organisation'] = certifying_organisation
+
+        return context
+
+    def process_charge(self,
+                       stripe_source_id,
+                       cost_of_credits,
+                       currency,
+                       statement_descriptor='',
+                       description='',
+                       metadata=None):
+        """
+        Creates a charge for user.
+
+        :param stripe_source_id: Id from stripe source
+        :param cost_of_credits: cost of the total credits
+        :param currency: currency of the cost
+        :param metadata: A set of key/value pairs useful for storing
+            additional information.
+        :param statement_descriptor: An arbitrary string to be displayed on the
+            customer's credit card statement.
+        :param description: Description of the payment
+        :return: paid, outcome
+        """
+        # Create the stripe Customer, by default subscriber Model is User,
+        # this can be overridden with settings.DJSTRIPE_SUBSCRIBER_MODEL
+        if metadata is None:
+            metadata = {}
+        customer, created = djstripe.models.Customer.get_or_create(
+            subscriber=self.request.user)
+
+        customer.add_card(stripe_source_id)
+
+        charge = customer.charge(
+            amount=cost_of_credits,
+            currency=currency,
+            description=description,
+            metadata=metadata,
+            statement_descriptor=statement_descriptor
+        )
+        return charge.paid, charge.outcome
+
+    def post(self, request, *args, **kwargs):
+        """Post the project_slug from the URL and define the Project
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        """
+        total_credits = self.request.POST.get('total-credits', None)
+        stripe_source_id = self.request.POST.get('stripe-source-id', None)
+
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+
+        project = Project.objects.get(
+            slug=self.project_slug
+        )
+
+        organisation = CertifyingOrganisation.objects.get(
+            slug=self.organisation_slug
+        )
+
+        if not total_credits or not stripe_source_id:
+            raise Http404('Missing important value')
+
+        try:
+            total_credits_decimal = Decimal(total_credits)
+            total_credits = int(total_credits)
+        except ValueError:
+            raise Http404('Wrong total credits format')
+
+        cost_of_credits = project.credit_cost * total_credits_decimal
+        description = 'Top up {total} credit{plural}'.format(
+                total=total_credits,
+                plural='s' if total_credits > 1 else '')
+        charged, outcome = self.process_charge(
+            stripe_source_id=stripe_source_id,
+            cost_of_credits=cost_of_credits,
+            currency=project.credit_cost_currency,
+            metadata={
+                'name': 'Top up credits',
+                'organisation': organisation,
+                'organisation_id': organisation.id,
+                'project': project,
+                'project_id': project.id,
+                'user_id': self.request.user.id,
+                'added_credit': total_credits,
+                'credit_cost': project.credit_cost,
+                'total_payment': cost_of_credits,
+                'currency': project.credit_cost_currency,
+            },
+            description=description,
+            statement_descriptor=description
+        )
+
+        if charged:
+            organisation.organisation_credits += total_credits
+            organisation.save()
+            organisation_owners = organisation.organisation_owners.all()
+            send_notification(
+                users=[self.request.user] + list(organisation_owners),
+                label=NOTICE_TOP_UP_SUCCESS,
+                extra_context={
+                    'author': self.request.user,
+                    'top_up_credits': total_credits,
+                    'currency': project.get_credit_cost_currency_display(),
+                    'payment_amount': cost_of_credits,
+                    'certifying_organisation': organisation,
+                    'total_credits': organisation.organisation_credits
+                },
+                request_user=self.request.user
+            )
+            messages.success(
+                request,
+                'Your purchase of <b>{}</b>'
+                ' credits has been'
+                ' successful'.format(
+                    total_credits
+                ),
+                'credits_top_up'
+            )
+
+        return HttpResponseRedirect(
+            reverse('certifyingorganisation-detail', kwargs={
+                'project_slug': self.project_slug,
+                'slug': self.organisation_slug
+            })
+        )

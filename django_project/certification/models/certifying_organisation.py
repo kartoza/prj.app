@@ -198,6 +198,9 @@ class CertifyingOrganisation(models.Model):
     def __unicode__(self):
         return '%s - %s' % (self.project.name, self.name)
 
+    def __str__(self):
+        return '%s - %s' % (self.project.name, self.name)
+
     def get_absolute_url(self):
         """Return URL to certifying organisation detail page.
 
