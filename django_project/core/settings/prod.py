@@ -2,6 +2,7 @@
 
 """Project level settings."""
 
+import ast
 from os.path import exists, dirname, join
 
 from .project import *  # noqa
@@ -39,7 +40,7 @@ EMAIL_HOST = 'kartoza.com'
 DEFAULT_FROM_EMAIL = 'tim@kartoza.com'
 
 # Set stripe to live mode
-STRIPE_LIVE_MODE = True
+STRIPE_LIVE_MODE = ast.literal_eval(os.environ.get('STRIPE_LIVE_MODE', 'True'))
 
 # Logging
 if 'raven.contrib.django.raven_compat' in INSTALLED_APPS and SENTRY_KEY:

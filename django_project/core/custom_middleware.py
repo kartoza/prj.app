@@ -145,14 +145,29 @@ class CheckDomainMiddleware(MiddlewareBase):
             if domain in settings.VALID_DOMAIN:
                 return None
             else:
-                custom_domain = \
-                    Domain.objects.get(domain=domain, approved=True)
+                custom_domain = Domain.objects.get(
+                    domain=domain, approved=True)
                 request.site = custom_domain.domain
                 activate('en')
                 url = reverse('project-list')
                 home_url = reverse('home')
                 if custom_domain.role == 'Project':
-                    if request.path == url or request.path == home_url:
+                    # Get current project path
+                    try:
+                        project_url_path = request.path.split(home_url)[1]
+                    except IndexError:
+                        return None
+                    project_url_path = project_url_path.split('/')[0]
+                    is_different_project = (
+                        Project.objects.filter(
+                            name__iexact=project_url_path
+                        ).exclude(id=custom_domain.project.id).exists()
+                    )
+
+                    if (
+                            request.path == url or
+                            request.path == home_url or
+                            is_different_project):
                         return redirect(
                             'project-detail', custom_domain.project.slug)
                 elif custom_domain.role == 'Organisation':
