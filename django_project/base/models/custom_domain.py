@@ -67,3 +67,9 @@ class Domain(models.Model):
 
     def __unicode__(self):
         return self.domain
+
+    def __str__(self):
+        return '{domain} - {project}'.format(
+            domain=self.domain,
+            project=self.project
+        )

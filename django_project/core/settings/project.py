@@ -80,7 +80,6 @@ PIPELINE['STYLESHEETS']['project'] = {
 
 VALID_DOMAIN = [
     'localhost',
-    '0.0.0.0',
     'changelog.kartoza.com',
 ]
 
