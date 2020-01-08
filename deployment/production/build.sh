@@ -11,9 +11,9 @@ if [ -z "$TAG_NAME" ]; then
 	TAG_NAME=latest
 fi
 
-#if [ -z "$BUILD_ARGS" ]; then
-#	BUILD_ARGS="--pull --no-cache"
-#fi
+if [ -z "$BUILD_ARGS" ]; then
+	BUILD_ARGS="--pull --no-cache"
+fi
 
 # Build Args Environment
 
