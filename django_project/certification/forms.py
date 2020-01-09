@@ -73,6 +73,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
                 Field('organisation_phone', css_class='form-control'),
                 Field('logo', css_class='form-control'),
                 Field('organisation_owners', css_class='form-control'),
+                Field('project', css_class='form-control'),
                 css_id='project-form')
         )
         self.helper.layout = layout
