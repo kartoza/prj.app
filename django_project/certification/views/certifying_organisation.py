@@ -630,8 +630,8 @@ class CertifyingOrganisationUpdateView(
         :returns: URL
         :rtype: HttpResponse
         """
-
-        return reverse('certifyingorganisation-list', kwargs={
+        return reverse('certifyingorganisation-detail', kwargs={
+            'slug': self.object.slug,
             'project_slug': self.object.project.slug
         })
 
