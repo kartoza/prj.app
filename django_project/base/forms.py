@@ -70,7 +70,7 @@ class ProjectForm(forms.ModelForm):
         required=False,
         help_text=_(
             'Managers of the sustaining member in this project. '
-            'They will be allowed to approve sponsorship entries in the '
+            'They will be allowed to approve sustaining member entries in the '
             'moderation queue.')
     )
 

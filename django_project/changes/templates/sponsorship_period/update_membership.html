@@ -27,6 +27,19 @@
             font-weight: bold;
         }
 
+        .panel-active, .panel-active:hover {
+            background-color: rgba(54, 188, 152, 0.15);
+            border: 1px solid rgb(54, 188, 152);;
+        }
+
+        .membership-options-info {
+            display: block;
+            background-color: #f7f0da;
+            padding: 20px 25px;
+            border-radius: 3px;
+            margin-bottom: 20px;
+        }
+
     </style>
 {% endblock css_head %}
 
@@ -47,11 +60,55 @@
             {% csrf_token %}
             <h2>Update Sustaining Member Period for {{ member }}</h2>
             <hr/>
-            <div class="alert alert-info alert-data">
-                Your membership will runs from <strong>{{ date_start }}</strong> to <strong>{{ date_end }}</strong>
-            </div>
             <input type="hidden" name="recurring">
-            <div class="panel panel-default panel-level" data-id="{{ level.id }}">
+            <div class="container row">
+                <div class="col-lg-12 membership-options-info">
+                    You can choose a fixed period (e.g. 3 years) by
+                    entering a number of years on the left, or tick the
+                    checkbox on the right to enable perpetual sustaining
+                    membership (in which case you will be billed on an
+                    ongoing basis each year).
+                    You can change your preferences specified below at any
+                    time by revisiting this page.
+
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-6">
+                            <div class="form-inline"
+                                 style="font-size: 18px;"
+                                 id="membership-period">
+                                Set membership for <input type="number"
+                                                          class="form-control"
+                                                          id="period-end"
+                                                          name="period-end"
+                                                          style="width: 80px;"
+                                                          min="1" max="100"
+                                                          step="1"
+                                                          value="{{ period_year }}">
+                                year
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group recurring-checkbox pull-right">
+                                <label class="checkbox-inline"><input
+                                        type="checkbox" id="recurring"
+                                        style="margin-top: 6px;"
+                                        {% if recurring %}checked{% endif %}>Charge
+                                    me yearly</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr style="border-color: #cac3b0"/>
+                    <div class="row">
+                        <div class="col-lg-12 alert-data text-muted">
+                            Your membership will runs from
+                            <strong>{{ date_start }}</strong> to
+                            <strong>{{ date_end }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default panel-level panel-active" data-id="{{ level.id }}">
                 <div class="panel-body">
                     <div class="col-lg-1 col-xs-4">
                         <img src="{{ level.logo.url }}" width="100%">
@@ -66,14 +123,6 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group recurring-checkbox">
-                <label class="checkbox-inline"><input type="checkbox" id="recurring" style="margin-top: 6px;" {% if recurring %}checked{% endif %}>Charge me yearly</label>
-            </div>
-
-            <div style="padding-bottom: 10px; font-size: 18px; display: none" id="membership-period">
-                Set membership for  <input type="number" id="period-end" name="period-end" style="width: 50px; margin-left: 5px;" min="1" max="100" step="1" value="{{ period_year }}"> Year
-            </div>
-
             <div class="vertical-space"></div>
              {{ form|crispy }}
             </form>
@@ -145,9 +194,9 @@
             }
             recurring = _recurring;
             if (!_recurring) {
-                $('#membership-period').show();
+                $periodEnd.attr('disabled', false);
             } else {
-                $('#membership-period').hide();
+                $periodEnd.attr('disabled', true);
             }
             if (_recurring) {
                 $alert.html(`Your membership will runs <strong>Yearly</strong> from <strong>${ dateStart.format('MMMM DD, YYYY') }</strong> and will be automatically renewed in <strong>${ _dateStart.add('years', 1).format('MMMM DD, YYYY') }</strong>`);

@@ -1,7 +1,9 @@
-{% load i18n %}{% url "pinax_notifications:notice_settings" as notices_url %}{% blocktrans %}You have received the following notice from {{ current_site }}:
-
+{% load i18n %}
 {{ message }}
+
+Best regards,
+
+The team.
 
 This is an auto-generated email from {{ default_http_protocol }}://{{ current_site }}. Please do not reply to this email.
 To change how you receive notifications, please go to {{ default_http_protocol }}://{{ current_site }}{{ notices_url }}
-{% endblocktrans %}

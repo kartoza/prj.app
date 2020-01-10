@@ -78,7 +78,7 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse('sponsor-list', kwargs={
+        return reverse('sustaining-membership', kwargs={
             'project_slug': self.form_object.project.slug
         })
 
@@ -93,14 +93,19 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
         else:
             return self.form_invalid(form)
 
-    def send_notification(self, sponsorship_managers):
+    def send_notification(self, sustaining_member, sponsorship_managers):
         """Send a notification to author and managers"""
         send_notification(
-            [
-                self.request.user,
-            ] + sponsorship_managers,
-            NOTICE_SUSTAINING_MEMBER_CREATED,
-            {'from_user': settings.EMAIL_HOST_USER})
+            users=[
+                      self.request.user,
+                  ] + list(sponsorship_managers),
+            label=NOTICE_SUSTAINING_MEMBER_CREATED,
+            extra_context={
+                'sustaining_member': sustaining_member,
+                'sustaining_member_manager': sponsorship_managers[0],
+            },
+            request_user=self.request.user
+        )
 
     def form_valid(self, form):
         """Check if form is valid."""
@@ -113,9 +118,12 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
             self.form_object.project = project
             self.form_object.sustaining_membership = True
             self.form_object.save()
-            sponsorship_managers = project.sponsorship_managers.all()
+            sponsorship_managers = project.sponsorship_managers.all().exclude(
+                id=self.request.user.id
+            )
             # Send a notification
-            self.send_notification(list(sponsorship_managers))
+            self.send_notification(self.form_object,
+                                   list(sponsorship_managers))
 
             return super(SustainingMemberCreateView, self).form_valid(form)
         else:

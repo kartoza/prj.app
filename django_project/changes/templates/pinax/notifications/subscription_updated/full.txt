@@ -1,7 +1,5 @@
 {% autoescape off %}
 {% load i18n %}
-{% blocktrans %}{{ notice }}{% endblocktrans %}
-
 {% if request_user == recipient %}
 Dear {{ recipient.first_name }} {{ recipient.last_name }}
 
