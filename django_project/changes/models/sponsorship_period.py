@@ -131,6 +131,8 @@ class SponsorshipPeriod(models.Model):
             self.slug = slugify(new_list)[:50]
 
         self.sponsor.active = True
+        if isinstance(end, datetime.datetime):
+            end = end.date()
         if end and today > end:
             if not self.recurring:
                 self.sponsor.active = False

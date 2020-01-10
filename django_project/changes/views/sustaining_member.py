@@ -458,38 +458,38 @@ class SustainingMemberPeriodCreateView(
             period_end = 1
         self.object.end_date = self.object.start_date.replace(
             year=self.object.start_date.year + period_end)
-
-        # Kick off the stripe payment
-        subscription = self.process_payment(
-            source_id, plan_id, recurring, self.object.end_date, period_end)
-
         self.object.author = self.request.user
         self.object.sponsor = sponsor
         self.object.project = Project.objects.get(slug=project_slug)
         self.object.approved = True
-        self.object.subscription = subscription
         if recurring:
             self.object.recurring = True
-        else:
-            self.object.end_date = today_date.replace(
-                year=today_date.year + 1)
         sponsorship_managers = self.object.project.sponsorship_managers.all()
-        # Send a notification
-        send_notification([
-                 self.request.user,
-             ] + list(sponsorship_managers),
-             NOTICE_SUBSCRIPTION_CREATED,
-             {
-                 'sustaining_member': self.object.sponsor.name,
-                 'sustaining_member_level': self.object.sponsorship_level,
-                 'author': self.request.user,
-                 'recurring': 'Yes' if recurring else 'No',
-                 'date_start': self.object.start_date.strftime(
-                     "%B %d, %Y"),
-                 'date_end': self.object.end_date.strftime(
-                     "%B %d, %Y")
-             })
         self.object.save()
+
+        # Kick off the stripe payment
+        subscription = self.process_payment(
+            source_id, plan_id, recurring, self.object.end_date, period_end)
+        if subscription:
+            self.object.subscription = subscription
+            # Send a notification
+            send_notification(
+                [
+                    self.request.user,
+                ] + list(sponsorship_managers),
+                NOTICE_SUBSCRIPTION_CREATED,
+                {
+                    'sustaining_member': self.object.sponsor.name,
+                    'sustaining_member_level': self.object.sponsorship_level,
+                    'author': self.request.user,
+                    'recurring': 'Yes' if recurring else 'No',
+                    'date_start': self.object.start_date.strftime(
+                        "%B %d, %Y"),
+                    'date_end': self.object.end_date.strftime(
+                        "%B %d, %Y")
+                })
+            self.object.save()
+
         return HttpResponseRedirect(self.get_success_url())
 
 
