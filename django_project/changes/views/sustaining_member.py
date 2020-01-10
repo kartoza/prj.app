@@ -267,8 +267,8 @@ class SustainingMemberUpdateView(LoginRequiredMixin, UpdateView):
         """
         if self.request.GET.get('next', None):
             return self.request.GET.get('next')
-        return reverse('sponsor-list', kwargs={
-            'project_slug': self.object.project.slug
+        return reverse('sustaining-membership', kwargs={
+            'project_slug': self.form_object.project.slug
         })
 
     def form_valid(self, form):
@@ -280,16 +280,25 @@ class SustainingMemberUpdateView(LoginRequiredMixin, UpdateView):
                 slug=self.kwargs.get('project_slug')
             )
             sponsorship_managers = (
-                   self.form_object.project.sponsorship_managers.all()
+                   self.form_object.project.sponsorship_managers.all().exclude(
+                       id=self.request.user.id
+                   )
             )
             if not self.form_object.approved:
                 self.form_object.rejected = False
                 self.form_object.remarks = ''
-            send_notification([
-                     self.request.user,
-                 ] + list(sponsorship_managers),
-                 NOTICE_SUSTAINING_MEMBER_UPDATED,
-                 {'link': settings.EMAIL_HOST_USER})
+
+            send_notification(
+                users=[
+                          self.request.user,
+                      ] + list(sponsorship_managers),
+                label=NOTICE_SUSTAINING_MEMBER_UPDATED,
+                extra_context={
+                    'sustaining_member': self.form_object,
+                },
+                request_user=self.request.user
+            )
+
             self.form_object.save()
             return super(SustainingMemberUpdateView, self).form_valid(form)
         else:
