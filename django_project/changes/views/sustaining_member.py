@@ -5,7 +5,6 @@ import djstripe.models
 import djstripe.settings
 from braces.views import LoginRequiredMixin
 from django.urls import reverse
-from django.conf import settings
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import (
     CreateView,
@@ -311,7 +310,7 @@ class SustainingMemberPeriodCreateView(
         CreateView):
     """Create view for Sponsorship Period."""
     context_object_name = 'sustaining_member_period'
-    template_name = 'sponsorship_period/create_from_membership.html'
+    template_name = 'sustaining_membership/create.html'
     model = SponsorshipPeriod
     form_class = SustainingMemberPeriodForm
 
@@ -434,7 +433,6 @@ class SustainingMemberPeriodCreateView(
         :returns HttpResponseRedirect object to success_url
         :rtype: HttpResponseRedirect
         """
-        today_date = date.today()
         member_id = self.kwargs.get('member_id', None)
         project_slug = self.kwargs.get('project_slug', None)
         source_id = self.request.POST.get('stripe-source-id')
@@ -499,7 +497,7 @@ class SustainingMemberPeriodUpdateView(
         UpdateView):
     """Create view for Sponsorship Period."""
     context_object_name = 'sustaining_member_period'
-    template_name = 'sponsorship_period/update_membership.html'
+    template_name = 'sustaining_membership/update.html'
     model = SponsorshipPeriod
     form_class = SustainingMemberPeriodForm
 

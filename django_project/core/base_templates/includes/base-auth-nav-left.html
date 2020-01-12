@@ -145,7 +145,11 @@
             </a>
             <ul class="dropdown-menu">
                 {% if user.is_authenticated %}
-                    <li><a href="{% url 'sustaining-membership' the_project.slug %}">Membership</a></li>
+                    {% if not is_sustaining_member %}
+                        <li><a href="{% url 'sustaining-member-create' the_project.slug %}">Sign up</a></li>
+                    {% else %}
+                        <li><a href="{% url 'sustaining-membership' the_project.slug %}">Membership</a></li>
+                    {% endif %}
                 {% endif %}
                 <li><a href="{% url 'sponsor-list' the_project.slug %}">Sustaining Members</a></li>
                 {% if user.is_authenticated %}
