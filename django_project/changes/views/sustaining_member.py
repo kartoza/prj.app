@@ -152,7 +152,7 @@ class SustainingMembership(LoginRequiredMixin, DetailView):
             sustaining_member.approved and
             not SponsorshipPeriod.objects.filter(
                 sponsor=sustaining_member,
-                proejct__slug=project_slug
+                project__slug=project_slug
             ).exists()
         )
         try:
