@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 import ast
 import stripe
 import djstripe.models
@@ -11,7 +11,7 @@ from django.views.generic import (
     DetailView,
     UpdateView)
 from django import forms
-from django.db.models import Q
+from django.db.models import Q, Case, When, BooleanField
 from django.http import HttpResponseRedirect, Http404
 from changes.models import Sponsor, SponsorshipPeriod, SponsorshipLevel
 from base.models import Project
@@ -148,23 +148,37 @@ class SustainingMembership(LoginRequiredMixin, DetailView):
         context['project_slug'] = project_slug
         sustaining_member = self.get_object()
         today = date.today()
-        context['just_approved'] = (
-            sustaining_member.approved and
-            not SponsorshipPeriod.objects.filter(
-                sponsor=sustaining_member,
-                project__slug=project_slug
-            ).exists()
-        )
+        next_month = today + timedelta(days=30)
+        just_approved = False
         try:
-            context['subscription'] = SponsorshipPeriod.objects.get(
-                Q(end_date__gt=today) | Q(recurring=True),
+            context['subscription'] = SponsorshipPeriod.objects.filter(
                 project__slug=project_slug,
                 sponsor=sustaining_member
+            ).annotate(
+                active_period=Case(
+                    When(Q(end_date__gt=today) | Q(recurring=True), then=True),
+                    default=False,
+                    output_field=BooleanField()
+                ),
+                expiring=Case(
+                    When(Q(end_date__lt=next_month) & Q(recurring=False),
+                         then=True),
+                    default=False,
+                    output_field=BooleanField()
+                )
+            )[0]
+            just_approved = (
+                sustaining_member.approved and
+                not SponsorshipPeriod.objects.filter(
+                    sponsor=sustaining_member,
+                    project__slug=project_slug
+                ).exists()
             )
-        except SponsorshipPeriod.DoesNotExist:
+        except IndexError:
             context['subscription'] = None
         if project_slug:
             context['project'] = Project.objects.get(slug=project_slug)
+        context['just_approved'] = just_approved
         return context
 
     def get_object(self, queryset=None):
@@ -547,6 +561,11 @@ class SustainingMemberPeriodUpdateView(
 
         context['project'] = project
         context['date_start'] = period.start_date.strftime("%B %d, %Y")
+        context['min_period'] = (
+            date.today().year - period.start_date.year if
+            date.today().year > period.start_date.year else
+            1
+        )
         if period.end_date:
             context['date_end'] = period.end_date.strftime("%B %d, %Y")
             context['period_year'] = (

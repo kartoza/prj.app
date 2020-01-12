@@ -129,15 +129,6 @@ class SponsorshipPeriod(models.Model):
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = slugify(new_list)[:50]
-
-        self.sponsor.active = True
-        if isinstance(end, datetime.datetime):
-            end = end.date()
-        if end and today > end:
-            if not self.recurring:
-                self.sponsor.active = False
-        self.sponsor.save()
-
         super(SponsorshipPeriod, self).save(*args, **kwargs)
 
     @staticmethod
