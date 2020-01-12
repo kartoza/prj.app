@@ -121,8 +121,6 @@ class SponsorshipPeriod(models.Model):
         verbose_name_plural = 'Sustaining Member Periods'
 
     def save(self, *args, **kwargs):
-        today = datetime.datetime.now().date()
-        end = self.end_date
         if not self.pk:
             name = self.slug_generator()
             words = name.split()
