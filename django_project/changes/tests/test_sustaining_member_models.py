@@ -39,21 +39,12 @@ class TestSustainingMemberModel(TestCase):
         Test if user is an inactive sustaining member
         """
         self.sustaining_member.sustaining_membership = True
-        sustaining_member_period = SponsorshipPeriodF.create(
+        SponsorshipPeriodF.create(
             sponsor=self.sustaining_member,
             project=self.project,
             start_date=datetime(2014, 1, 1),
         )
         self.sustaining_member.active = False
-        self.sustaining_member.save()
-        self.assertFalse(
-            active_sustaining_membership(self.user, self.project).exists())
-
-        # Should already expired
-        sustaining_member_period.recurring = False
-        sustaining_member_period.end_date = datetime(2016, 1, 1)
-        sustaining_member_period.save()
-        self.sustaining_member.active = True
         self.sustaining_member.save()
         self.assertFalse(
             active_sustaining_membership(self.user, self.project).exists())
@@ -64,21 +55,12 @@ class TestSustainingMemberModel(TestCase):
         Test if user is an active sustaining member
         """
         self.sustaining_member.sustaining_membership = True
-        sustaining_member_period = SponsorshipPeriodF.create(
+        SponsorshipPeriodF.create(
             sponsor=self.sustaining_member,
             project=self.project,
             start_date=datetime(2014, 1, 1),
         )
 
-        self.sustaining_member.active = True
-        self.sustaining_member.save()
-        self.assertTrue(
-            active_sustaining_membership(self.user, self.project).exists())
-
-        # Should still active because recurring
-        sustaining_member_period.recurring = True
-        sustaining_member_period.end_date = datetime(2016, 1, 1)
-        sustaining_member_period.save()
         self.sustaining_member.active = True
         self.sustaining_member.save()
         self.assertTrue(

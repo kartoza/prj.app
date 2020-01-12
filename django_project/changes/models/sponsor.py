@@ -23,8 +23,6 @@ utc = pytz.UTC
 
 def active_sustaining_membership(user, project):
     """Returns active sustaining membership from user and project."""
-    from changes.models import SponsorshipPeriod
-    from datetime import datetime
     if user.is_anonymous:
         return Sponsor.objects.none()
     sustaining_members = Sponsor.objects.filter(
@@ -33,19 +31,6 @@ def active_sustaining_membership(user, project):
         sustaining_membership=True,
         active=True
     )
-
-    # Check period for each sustaining member
-    today = datetime.now().date()
-    expired = SponsorshipPeriod.objects.filter(
-        sponsor__in=sustaining_members,
-        end_date__lt=today,
-        recurring=False
-    )
-    if expired.exists():
-        Sponsor.objects.filter(
-            id__in=expired.values('sponsor')
-        ).update(active=False)
-
     return sustaining_members
 
 

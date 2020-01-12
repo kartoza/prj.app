@@ -147,8 +147,17 @@ class SustainingMembership(LoginRequiredMixin, DetailView):
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         sustaining_member = self.get_object()
+        today = date.today()
+        context['just_approved'] = (
+            sustaining_member.approved and
+            not SponsorshipPeriod.objects.filter(
+                sponsor=sustaining_member,
+                proejct__slug=project_slug
+            ).exists()
+        )
         try:
             context['subscription'] = SponsorshipPeriod.objects.get(
+                Q(end_date__gt=today) | Q(recurring=True),
                 project__slug=project_slug,
                 sponsor=sustaining_member
             )

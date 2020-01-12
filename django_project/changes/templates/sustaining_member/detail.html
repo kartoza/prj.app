@@ -65,7 +65,7 @@
                     {% blocktrans %}Your sustaining membership has been rejected because : {% endblocktrans %} {{ sustaining_member.remarks }}.
                      Please <strong><a href='{% url "sustaining-member-update" project_slug=sustaining_member.project.slug member_id=sustaining_member.id %}'>edit</a></strong> your data.
                 </div>
-            {% elif sustaining_member.approved and not subscription %}
+            {% elif just_approved %}
                 <div class="alert alert-success">
                     <strong>Congratulations! </strong>
                     {% blocktrans %}Your sustaining membership has been
