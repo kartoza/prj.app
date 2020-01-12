@@ -169,7 +169,10 @@ class SponsorshipPeriod(models.Model):
                 return True
             return False
         if end < today:
-            return False
+            if self.recurring:
+                return True
+            else:
+                return False
         else:
             return True
 
