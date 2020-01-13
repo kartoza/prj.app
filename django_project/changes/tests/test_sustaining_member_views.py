@@ -1,6 +1,7 @@
 # coding=utf-8
 # flake8: noqa
 
+from unittest.mock import patch
 from mock import mock
 from django.urls import reverse
 from django.test import TestCase, override_settings
@@ -10,6 +11,7 @@ from base.tests.model_factories import ProjectF
 from changes.tests.model_factories import (
     SponsorF,
 )
+from helpers.notification import send_notification
 from core.model_factories import UserF
 import logging
 
@@ -175,7 +177,9 @@ class TestSustainingMemberUpdateView(TestCase):
                          self.project.slug)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
-    def test_SustainingMemberUpdateView_post(self ):
+    @patch(
+        'changes.views.sustaining_member.send_notification')
+    def test_SustainingMemberUpdateView_post(self, mock_send_notification):
         """
         Test if user can update a sustaining member
         """
@@ -205,3 +209,4 @@ class TestSustainingMemberUpdateView(TestCase):
             'project_slug': self.project.slug
         }))
         self.assertEqual(response.context['is_sustaining_member'], True)
+        self.assertTrue(mock_send_notification.called)
