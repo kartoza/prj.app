@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import ast
 import stripe
 import djstripe.models
@@ -40,6 +40,24 @@ class SustainingMemberForm(forms.ModelForm):
             'sponsor_email',
             'logo',
         )
+
+
+class SustainingMemberPeriodStripeMixin(object):
+    object = None
+    request = None
+
+    def stripe_metadata(self):
+        """Returns a metadata dict for stripe"""
+        return {
+            'start_date': str(self.object.start_date),
+            'end_date': str(self.object.end_date),
+            'project_id': self.object.project.id,
+            'sustaining_member_id': self.object.sponsor.id,
+            'sustaining_member_name': self.object.sponsor.name,
+            'user_id': self.request.user.id,
+            'recurring': self.object.recurring,
+            'server_time': datetime.now().ctime()
+        }
 
 
 class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
@@ -149,7 +167,6 @@ class SustainingMembership(LoginRequiredMixin, DetailView):
         sustaining_member = self.get_object()
         today = date.today()
         next_month = today + timedelta(days=30)
-        just_approved = False
         try:
             context['subscription'] = SponsorshipPeriod.objects.filter(
                 project__slug=project_slug,
@@ -167,15 +184,15 @@ class SustainingMembership(LoginRequiredMixin, DetailView):
                     output_field=BooleanField()
                 )
             )[0]
-            just_approved = (
+        except IndexError:
+            context['subscription'] = None
+        just_approved = (
                 sustaining_member.approved and
                 not SponsorshipPeriod.objects.filter(
                     sponsor=sustaining_member,
                     project__slug=project_slug
                 ).exists()
-            )
-        except IndexError:
-            context['subscription'] = None
+        )
         if project_slug:
             context['project'] = Project.objects.get(slug=project_slug)
         context['just_approved'] = just_approved
@@ -330,7 +347,8 @@ class SustainingMemberUpdateView(LoginRequiredMixin, UpdateView):
 # noinspection PyAttributeOutsideInit
 class SustainingMemberPeriodCreateView(
         LoginRequiredMixin,
-        CreateView):
+        CreateView,
+        SustainingMemberPeriodStripeMixin):
     """Create view for Sponsorship Period."""
     context_object_name = 'sustaining_member_period'
     template_name = 'sustaining_membership/create.html'
@@ -409,7 +427,7 @@ class SustainingMemberPeriodCreateView(
 
     def process_payment(self,
                         stripe_source_id, plan_id, recurring,
-                        date_end, period_year):
+                        date_end, period_year, metadata=None):
         """Process payment from stripe."""
 
         # Create the stripe Customer, by default subscriber Model is User,
@@ -417,10 +435,15 @@ class SustainingMemberPeriodCreateView(
         customer, created = djstripe.models.Customer.get_or_create(
             subscriber=self.request.user)
 
+        if not metadata:
+            metadata = {}
+
         # Add the source as the customer's default card
         customer.add_card(stripe_source_id)
 
         optional = {}
+        optional['metadata'] = metadata
+
         if recurring:
             optional['cancel_at_period_end'] = False
         else:
@@ -473,9 +496,7 @@ class SustainingMemberPeriodCreateView(
         plan_id = self.object.sponsorship_level.subscription_plan.id
         try:
             period_end = int(self.request.POST.get('period-end', None))
-        except ValueError:
-            period_end = None
-        if not period_end:
+        except (ValueError, TypeError):
             period_end = 1
         self.object.end_date = self.object.start_date.replace(
             year=self.object.start_date.year + period_end)
@@ -490,7 +511,12 @@ class SustainingMemberPeriodCreateView(
 
         # Kick off the stripe payment
         subscription = self.process_payment(
-            source_id, plan_id, recurring, self.object.end_date, period_end)
+            source_id,
+            plan_id,
+            recurring,
+            self.object.end_date,
+            period_end,
+            self.stripe_metadata())
         if subscription:
             self.object.subscription = subscription
             # Send a notification
@@ -517,7 +543,8 @@ class SustainingMemberPeriodCreateView(
 # noinspection PyAttributeOutsideInit
 class SustainingMemberPeriodUpdateView(
         LoginRequiredMixin,
-        UpdateView):
+        UpdateView,
+        SustainingMemberPeriodStripeMixin):
     """Create view for Sponsorship Period."""
     context_object_name = 'sustaining_member_period'
     template_name = 'sustaining_membership/update.html'
@@ -628,11 +655,15 @@ class SustainingMemberPeriodUpdateView(
                 raise Http404(
                     'Sorry! We could not find your sponsor!')
 
-    def update_subscription(self, subscription, recurring, period_end):
+    def update_subscription(self, subscription, recurring, period_end,
+                            metadata=None):
         """Update subscription in stripe"""
         stripe.api_key = djstripe.settings.STRIPE_SECRET_KEY
         optional = {}
+        if not metadata:
+            metadata = {}
 
+        optional['metadata'] = metadata
         if recurring:
             optional['cancel_at_period_end'] = False
         else:
@@ -682,8 +713,13 @@ class SustainingMemberPeriodUpdateView(
             period_end = 1
         self.object.end_date = self.object.start_date.replace(
             year=self.object.start_date.year + period_end)
+
         subscription = self.update_subscription(
-            self.object.subscription, recurring, period_end)
+            self.object.subscription,
+            recurring,
+            period_end,
+            self.stripe_metadata()
+        )
         if subscription:
             project = Project.objects.get(
                 slug=self.kwargs.get('project_slug')
