@@ -1,6 +1,12 @@
 {% autoescape off %}
 {% load i18n %}
-{% blocktrans %}{{ notice }}{% endblocktrans %}
+{% if request_user == recipient %}
+Dear {{ recipient.first_name }} {{ recipient.last_name }}
+
+Thank you for creating your sustaining membership.
+{% else %}
+{{ request_user }} has updated their sustaining membership.
+{% endif %}
 
 Your subscription information is as follows :
 - Sustaining Member Person / Organisation: {{ sustaining_member }}

@@ -211,7 +211,7 @@ class Sponsor(models.Model):
             new_list = unidecode(' '.join(filtered_words))
             self.slug = slugify(new_list)[:50]
 
-        if active_sustaining_membership(
+        if self.active and active_sustaining_membership(
             self.author,
             self.project
         ).count() > 1:

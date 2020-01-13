@@ -34,6 +34,12 @@
         .panel-subscription>.panel-body {
             padding: 10px !important;
         }
+        .badge-warning {
+            background-color: #ffb434;
+        }
+        .subscription-status {
+            margin-right: 15px;
+        }
     </style>
 {% endblock %}
 
@@ -65,7 +71,7 @@
                     {% blocktrans %}Your sustaining membership has been rejected because : {% endblocktrans %} {{ sustaining_member.remarks }}.
                      Please <strong><a href='{% url "sustaining-member-update" project_slug=sustaining_member.project.slug member_id=sustaining_member.id %}'>edit</a></strong> your data.
                 </div>
-            {% elif sustaining_member.approved and not subscription %}
+            {% elif just_approved %}
                 <div class="alert alert-success">
                     <strong>Congratulations! </strong>
                     {% blocktrans %}Your sustaining membership has been
@@ -90,6 +96,15 @@
                             <div class="level-title"
                                  style="font-size: 15px; font-weight: bolder">
                                 {{ subscription.sponsorship_level.name }}
+                                {% if subscription.active_period %}
+                                    {% if subscription.expiring %}
+                                        <span class="badge badge-warning pull-right subscription-status">Expiring</span>
+                                    {% else %}
+                                        <span class="badge badge-success pull-right subscription-status">Active</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="badge badge-error pull-right subscription-status">Expired</span>
+                                {% endif %}
                             </div>
                             <div class="level-amount">
                                 {{ subscription.sponsorship_level.value }} {{ subscription.sponsorship_level.currency }}
@@ -100,9 +115,17 @@
                         </div>
                     </div>
                 </div>
-                <a href="{% url "sustaining-member-period-update" project_slug=sustaining_member.project.slug member_id=sustaining_member.id %}" class="btn btn-default"
-                    style="width: 100%; margin-bottom: 10px; margin-top: 10px">Update
-                    Subscription</a>
+                {% if subscription.active_period %}
+                    <a href="{% url "sustaining-member-period-update" project_slug=sustaining_member.project.slug member_id=sustaining_member.id %}"
+                       class="btn btn-default"
+                       style="width: 100%; margin-bottom: 10px; margin-top: 10px">Update
+                        Subscription</a>
+                {% else %}
+                    <a href="{% url "sustaining-member-period-create" project_slug=sustaining_member.project.slug member_id=sustaining_member.id %}"
+                       class="btn btn-default"
+                       style="width: 100%; margin-bottom: 10px; margin-top: 10px">Add
+                        Subscription</a>
+                {% endif %}
             {% endif %}
             {% if sustaining_member.approved and not subscription %}
                 <a href="{% url "sustaining-member-period-create" project_slug=sustaining_member.project.slug member_id=sustaining_member.id %}" class="btn btn-default"

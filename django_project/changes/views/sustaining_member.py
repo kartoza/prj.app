@@ -1,18 +1,17 @@
-from datetime import date
+from datetime import date, timedelta
 import ast
 import stripe
 import djstripe.models
 import djstripe.settings
 from braces.views import LoginRequiredMixin
 from django.urls import reverse
-from django.conf import settings
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import (
     CreateView,
     DetailView,
     UpdateView)
 from django import forms
-from django.db.models import Q
+from django.db.models import Q, Case, When, BooleanField
 from django.http import HttpResponseRedirect, Http404
 from changes.models import Sponsor, SponsorshipPeriod, SponsorshipLevel
 from base.models import Project
@@ -78,7 +77,7 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse('sponsor-list', kwargs={
+        return reverse('sustaining-membership', kwargs={
             'project_slug': self.form_object.project.slug
         })
 
@@ -93,14 +92,19 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
         else:
             return self.form_invalid(form)
 
-    def send_notification(self, sponsorship_managers):
+    def send_notification(self, sustaining_member, sponsorship_managers):
         """Send a notification to author and managers"""
         send_notification(
-            [
-                self.request.user,
-            ] + sponsorship_managers,
-            NOTICE_SUSTAINING_MEMBER_CREATED,
-            {'from_user': settings.EMAIL_HOST_USER})
+            users=[
+                      self.request.user,
+                  ] + list(sponsorship_managers),
+            label=NOTICE_SUSTAINING_MEMBER_CREATED,
+            extra_context={
+                'sustaining_member': sustaining_member,
+                'sustaining_member_manager': sponsorship_managers[0],
+            },
+            request_user=self.request.user
+        )
 
     def form_valid(self, form):
         """Check if form is valid."""
@@ -113,9 +117,12 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
             self.form_object.project = project
             self.form_object.sustaining_membership = True
             self.form_object.save()
-            sponsorship_managers = project.sponsorship_managers.all()
+            sponsorship_managers = project.sponsorship_managers.all().exclude(
+                id=self.request.user.id
+            )
             # Send a notification
-            self.send_notification(list(sponsorship_managers))
+            self.send_notification(self.form_object,
+                                   list(sponsorship_managers))
 
             return super(SustainingMemberCreateView, self).form_valid(form)
         else:
@@ -140,15 +147,38 @@ class SustainingMembership(LoginRequiredMixin, DetailView):
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         sustaining_member = self.get_object()
+        today = date.today()
+        next_month = today + timedelta(days=30)
+        just_approved = False
         try:
-            context['subscription'] = SponsorshipPeriod.objects.get(
+            context['subscription'] = SponsorshipPeriod.objects.filter(
                 project__slug=project_slug,
                 sponsor=sustaining_member
+            ).annotate(
+                active_period=Case(
+                    When(Q(end_date__gt=today) | Q(recurring=True), then=True),
+                    default=False,
+                    output_field=BooleanField()
+                ),
+                expiring=Case(
+                    When(Q(end_date__lt=next_month) & Q(recurring=False),
+                         then=True),
+                    default=False,
+                    output_field=BooleanField()
+                )
+            )[0]
+            just_approved = (
+                sustaining_member.approved and
+                not SponsorshipPeriod.objects.filter(
+                    sponsor=sustaining_member,
+                    project__slug=project_slug
+                ).exists()
             )
-        except SponsorshipPeriod.DoesNotExist:
+        except IndexError:
             context['subscription'] = None
         if project_slug:
             context['project'] = Project.objects.get(slug=project_slug)
+        context['just_approved'] = just_approved
         return context
 
     def get_object(self, queryset=None):
@@ -259,8 +289,8 @@ class SustainingMemberUpdateView(LoginRequiredMixin, UpdateView):
         """
         if self.request.GET.get('next', None):
             return self.request.GET.get('next')
-        return reverse('sponsor-list', kwargs={
-            'project_slug': self.object.project.slug
+        return reverse('sustaining-membership', kwargs={
+            'project_slug': self.form_object.project.slug
         })
 
     def form_valid(self, form):
@@ -272,16 +302,25 @@ class SustainingMemberUpdateView(LoginRequiredMixin, UpdateView):
                 slug=self.kwargs.get('project_slug')
             )
             sponsorship_managers = (
-                   self.form_object.project.sponsorship_managers.all()
+                   self.form_object.project.sponsorship_managers.all().exclude(
+                       id=self.request.user.id
+                   )
             )
             if not self.form_object.approved:
                 self.form_object.rejected = False
                 self.form_object.remarks = ''
-            send_notification([
-                     self.request.user,
-                 ] + list(sponsorship_managers),
-                 NOTICE_SUSTAINING_MEMBER_UPDATED,
-                 {'link': settings.EMAIL_HOST_USER})
+
+            send_notification(
+                users=[
+                          self.request.user,
+                      ] + list(sponsorship_managers),
+                label=NOTICE_SUSTAINING_MEMBER_UPDATED,
+                extra_context={
+                    'sustaining_member': self.form_object,
+                },
+                request_user=self.request.user
+            )
+
             self.form_object.save()
             return super(SustainingMemberUpdateView, self).form_valid(form)
         else:
@@ -294,7 +333,7 @@ class SustainingMemberPeriodCreateView(
         CreateView):
     """Create view for Sponsorship Period."""
     context_object_name = 'sustaining_member_period'
-    template_name = 'sponsorship_period/create_from_membership.html'
+    template_name = 'sustaining_membership/create.html'
     model = SponsorshipPeriod
     form_class = SustainingMemberPeriodForm
 
@@ -417,7 +456,6 @@ class SustainingMemberPeriodCreateView(
         :returns HttpResponseRedirect object to success_url
         :rtype: HttpResponseRedirect
         """
-        today_date = date.today()
         member_id = self.kwargs.get('member_id', None)
         project_slug = self.kwargs.get('project_slug', None)
         source_id = self.request.POST.get('stripe-source-id')
@@ -441,38 +479,38 @@ class SustainingMemberPeriodCreateView(
             period_end = 1
         self.object.end_date = self.object.start_date.replace(
             year=self.object.start_date.year + period_end)
-
-        # Kick off the stripe payment
-        subscription = self.process_payment(
-            source_id, plan_id, recurring, self.object.end_date, period_end)
-
         self.object.author = self.request.user
         self.object.sponsor = sponsor
         self.object.project = Project.objects.get(slug=project_slug)
         self.object.approved = True
-        self.object.subscription = subscription
         if recurring:
             self.object.recurring = True
-        else:
-            self.object.end_date = today_date.replace(
-                year=today_date.year + 1)
         sponsorship_managers = self.object.project.sponsorship_managers.all()
-        # Send a notification
-        send_notification([
-                 self.request.user,
-             ] + list(sponsorship_managers),
-             NOTICE_SUBSCRIPTION_CREATED,
-             {
-                 'sustaining_member': self.object.sponsor.name,
-                 'sustaining_member_level': self.object.sponsorship_level,
-                 'author': self.request.user,
-                 'recurring': 'Yes' if recurring else 'No',
-                 'date_start': self.object.start_date.strftime(
-                     "%B %d, %Y"),
-                 'date_end': self.object.end_date.strftime(
-                     "%B %d, %Y")
-             })
         self.object.save()
+
+        # Kick off the stripe payment
+        subscription = self.process_payment(
+            source_id, plan_id, recurring, self.object.end_date, period_end)
+        if subscription:
+            self.object.subscription = subscription
+            # Send a notification
+            send_notification(
+                [
+                    self.request.user,
+                ] + list(sponsorship_managers),
+                NOTICE_SUBSCRIPTION_CREATED,
+                {
+                    'sustaining_member': self.object.sponsor.name,
+                    'sustaining_member_level': self.object.sponsorship_level,
+                    'author': self.request.user,
+                    'recurring': 'Yes' if recurring else 'No',
+                    'date_start': self.object.start_date.strftime(
+                        "%B %d, %Y"),
+                    'date_end': self.object.end_date.strftime(
+                        "%B %d, %Y")
+                })
+            self.object.save()
+
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -482,7 +520,7 @@ class SustainingMemberPeriodUpdateView(
         UpdateView):
     """Create view for Sponsorship Period."""
     context_object_name = 'sustaining_member_period'
-    template_name = 'sponsorship_period/update_membership.html'
+    template_name = 'sustaining_membership/update.html'
     model = SponsorshipPeriod
     form_class = SustainingMemberPeriodForm
 
@@ -523,6 +561,11 @@ class SustainingMemberPeriodUpdateView(
 
         context['project'] = project
         context['date_start'] = period.start_date.strftime("%B %d, %Y")
+        context['min_period'] = (
+            date.today().year - period.start_date.year if
+            date.today().year > period.start_date.year else
+            1
+        )
         if period.end_date:
             context['date_end'] = period.end_date.strftime("%B %d, %Y")
             context['period_year'] = (

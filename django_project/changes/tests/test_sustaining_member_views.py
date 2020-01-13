@@ -67,6 +67,7 @@ class TestSustainingMemberCreateView(TestCase):
             'project_slug': self.project.slug
         }))
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['is_sustaining_member'], False)
         expected_template = [
             'sustaining_member/add.html'
         ]
@@ -102,5 +103,10 @@ class TestSustainingMemberCreateView(TestCase):
         }), post_data)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url,
-                         reverse('sponsor-list',
+                         reverse('sustaining-membership',
                                  kwargs={'project_slug': self.project.slug}))
+
+        response = self.client.get(reverse('sustaining-membership', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.context['is_sustaining_member'], True)

@@ -34,3 +34,6 @@ class Organisation(models.Model):
 
     def __unicode__(self):
         return u'{}'.format(self.name)
+
+    def __str__(self):
+        return '{}'.format(self.name)

@@ -202,11 +202,12 @@ class Project(models.Model):
     sponsorship_managers = models.ManyToManyField(
         User,
         related_name='sponsorship_managers',
+        verbose_name='Sustaining member managers',
         blank=True,
         # null=True, null has no effect on ManyToManyField.
         help_text=_(
             'Managers of the sponsorship in this project. '
-            'They will be allowed to approve sponsor entries in the '
+            'They will be allowed to approve sustaining member entries in the '
             'moderation queue.')
     )
 

@@ -27,7 +27,6 @@ INSTALLED_APPS += [
     'simple_history',
     'djstripe',
     'preferences',
-    'pinax.templates',
     'pinax.notifications',
 ]
 
