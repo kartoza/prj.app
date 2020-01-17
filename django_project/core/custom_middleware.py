@@ -156,7 +156,7 @@ class CheckDomainMiddleware(MiddlewareBase):
                     try:
                         project_url_path = request.path.split(home_url)[1]
                     except IndexError:
-                        return None
+                        project_url_path = '/'
                     project_url_path = project_url_path.split('/')[0]
                     is_different_project = (
                         Project.objects.filter(
@@ -167,6 +167,7 @@ class CheckDomainMiddleware(MiddlewareBase):
                     if (
                             request.path == url or
                             request.path == home_url or
+                            project_url_path == '' or
                             is_different_project):
                         return redirect(
                             'project-detail', custom_domain.project.slug)

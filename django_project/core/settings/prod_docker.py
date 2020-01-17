@@ -11,7 +11,7 @@ ALLOWED_HOSTS = ['*']
 
 ADMINS = (
     ('Tim Sutton', 'tim@kartoza.com'),
-    ('Christian Christellis', 'christian@kartoza.com'),
+    ('Dimas Ciputra', 'dimas@kartoza.com'),
     ('Anita Hapsari', 'anita@kartoza.com'),)
 
 DATABASES = {
