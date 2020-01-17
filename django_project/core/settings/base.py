@@ -8,7 +8,7 @@ from .utils import absolute_path
 
 ADMINS = (
     ('Tim Sutton', 'tim@kartoza.com'),
-    ('Etienne Trimaille', 'etienne@kartoza.com'),
+    ('Dimas Ciputra', 'dimas@kartoza.com'),
 )
 
 MANAGERS = ADMINS
