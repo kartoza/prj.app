@@ -439,7 +439,7 @@ def certificate_pdf_view(request, **kwargs):
             '/home/web/media', 'pdf/{}/{}'.format(project_folder, filename))
     found = os.path.exists(pathname)
     if found:
-        with open(pathname, 'r') as pdf:
+        with open(pathname, 'r', encoding='ISO-8859-1') as pdf:
             response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = \
                 'filename={}.pdf'.format(certificate.certificateID)
@@ -451,7 +451,7 @@ def certificate_pdf_view(request, **kwargs):
 
         generate_pdf(
             pathname, project, course, attendee, certificate, current_site)
-        with open(pathname, 'r') as pdf:
+        with open(pathname, 'r', encoding='ISO-8859-1') as pdf:
             response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = \
                 'filename={}.pdf'.format(certificate.certificateID)
