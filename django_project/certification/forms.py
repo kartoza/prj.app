@@ -334,6 +334,7 @@ class CourseAttendeeForm(forms.ModelForm):
     class Meta:
         model = CourseAttendee
         fields = ('attendee', 'course')
+        widgets = {'course': forms.HiddenInput()}
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')

@@ -26,6 +26,7 @@ from ..models import (
     CourseConvener,
     Course,
     Attendee,
+    CourseAttendee,
     CertifyingOrganisationCertificate)
 from ..forms import CertifyingOrganisationForm
 from certification.utilities import check_slug
@@ -219,8 +220,10 @@ class CertifyingOrganisationDetailView(
             certifying_organisation=certifying_organisation)
         context['num_course'] = context['courses'].count()
         project_slug = self.kwargs.get('project_slug', None)
-        context['attendee'] = Attendee.objects.filter(
-            certifying_organisation=certifying_organisation)
+        context['attendee'] = CourseAttendee.objects.filter(
+            course__in=context['courses'],
+            attendee__certifying_organisation=certifying_organisation
+        )
         context['num_attendees'] = context['attendee'].count()
         context['project_slug'] = project_slug
         context['the_project'] = Project.objects.get(slug=project_slug)
