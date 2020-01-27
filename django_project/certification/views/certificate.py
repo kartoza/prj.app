@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import datetime
-from io import StringIO
+from io import StringIO, BytesIO
 import os
 import zipfile
 from PIL import Image
@@ -481,8 +481,8 @@ def download_certificates_zip(request, **kwargs):
 
     zip_subdir = '%s' % course.name
 
-    s = StringIO()
-    zf = zipfile.ZipFile(s, "w")
+    in_memory_data = BytesIO()
+    zf = zipfile.ZipFile(in_memory_data, "w")
 
     for fpath in filenames:
         fdir, fname = os.path.split(fpath)
@@ -493,7 +493,7 @@ def download_certificates_zip(request, **kwargs):
     zf.close()
 
     response = HttpResponse(
-        s.getvalue(), content_type="application/x-zip-compressed")
+        in_memory_data.getvalue(), content_type="application/x-zip-compressed")
     response['Content-Disposition'] = \
         'attachment; filename=certificates.zip'
 

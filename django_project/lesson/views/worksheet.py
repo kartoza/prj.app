@@ -154,7 +154,7 @@ class WorksheetPDFZipView(WorksheetDetailView):
 
         zip_subdir = '{}. {}'.format(numbering, context['file_title'])
 
-        s = StringIO.StringIO()
+        s = StringIO()
         zf = zipfile.ZipFile(s, "w")
 
         for fpath in filenames:
