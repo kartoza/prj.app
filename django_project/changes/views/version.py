@@ -9,7 +9,7 @@ from base.models import Project
 # LOGGER = logging.getLogger(__name__)
 import re
 import zipfile
-from io import StringIO, BytesIO
+from io import BytesIO
 import pypandoc
 from bs4 import BeautifulSoup
 from django.urls import reverse
@@ -755,7 +755,7 @@ class VersionSponsorDownload(
         :rtype: string
         """
         # create in memory file-like object
-        temp_path = StringIO()
+        temp_path = BytesIO()
 
         # grab all of the images from document
         images = []

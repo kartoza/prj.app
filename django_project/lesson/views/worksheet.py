@@ -4,7 +4,7 @@
 import json
 import os
 import zipfile
-from io import StringIO
+from io import BytesIO
 from collections import OrderedDict
 from django.conf import settings
 from django.urls import reverse
@@ -154,7 +154,7 @@ class WorksheetPDFZipView(WorksheetDetailView):
 
         zip_subdir = '{}. {}'.format(numbering, context['file_title'])
 
-        s = StringIO()
+        s = BytesIO()
         zf = zipfile.ZipFile(s, "w")
 
         for fpath in filenames:
@@ -418,7 +418,7 @@ def download_multiple_worksheet(request, **kwargs):
         context['file_title'] = context['file_title'].encode("utf8")
         return context
 
-    s = StringIO.StringIO()
+    s = BytesIO()
     zf = zipfile.ZipFile(s, "w")
     initial_numbering = ''
     final_numbering = ''
