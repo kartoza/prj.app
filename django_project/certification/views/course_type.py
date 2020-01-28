@@ -60,6 +60,9 @@ class CourseTypeCreateView(
             CourseTypeCreateView, self).get_context_data(**kwargs)
         context['coursetypes'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
+        context['organisation'] = CertifyingOrganisation.objects.get(
+            slug=self.kwargs.get('organisation_slug', None)
+        )
         return context
 
     def get_form_kwargs(self):
@@ -204,6 +207,9 @@ class CourseTypeUpdateView(
             CourseTypeUpdateView, self).get_context_data(**kwargs)
         context['coursetypes'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
+        context['organisation'] = CertifyingOrganisation.objects.get(
+            slug=self.kwargs.get('organisation_slug', None)
+        )
         return context
 
     def get_queryset(self):

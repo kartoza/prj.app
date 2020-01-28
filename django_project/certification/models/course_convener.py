@@ -70,6 +70,9 @@ class CourseConvener(models.Model):
     def __unicode__(self):
         return self.user.username
 
+    def __str__(self):
+        return self.user.username
+
     def get_absolute_url(self):
         """Return URL to course convener detail page.
 

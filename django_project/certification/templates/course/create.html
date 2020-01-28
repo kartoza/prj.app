@@ -38,7 +38,7 @@
             position: 'top left',
             onSelect: function (date) {
                 $("#id_end_date").val(date);
-                $("#id_end_date").datepicker({minDate: new Date(date)})
+                $("#id_end_date").datepicker();
             }
         });
 
@@ -48,7 +48,7 @@
             position: 'top left',
             onSelect: function (date) {
                 $("#id_start_date").val(date);
-                $("#id_start_date").datepicker({maxDate: new Date(date)})
+                $("#id_start_date").datepicker();
             }
         });
 
@@ -59,11 +59,17 @@
 
     <section id="forms">
         <div class='container'>
-            {% csrf_token %}
-            {% crispy form %}
-            {% for form in inlines %}
-                {% crispy form %}
-            {% endfor %}
+            <h3>New Course for {{ organisation.name }}</h3>
+            <hr/>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="vertical-space"></div>
+                <div class="form-actions">
+                    <input type="submit" name="submit" value="Submit"
+                           class="btn btn-primary" id="submit-save">
+                </div>
+            </form>
         </div>
     </section>
 
