@@ -41,12 +41,12 @@ class SponsorshipPeriod(models.Model):
 
     start_date = models.DateField(
         _("Start date"),
-        help_text='Start date of sponsorship period',
+        help_text='Start date of sustaining membership period',
         default=timezone.now)
 
     end_date = models.DateField(
         _("End date"),
-        help_text='End date of sponsorship period',
+        help_text='End date of sustaining membership period',
         null=True,
         blank=True
     )
@@ -61,7 +61,7 @@ class SponsorshipPeriod(models.Model):
     )
 
     currency = models.CharField(
-        help_text=_('The currency that is used for sponsorship payment.'),
+        help_text=_('The currency that is used for sustaining membership payment.'),
         max_length=50,
         null=True,
         blank=True,
@@ -98,15 +98,17 @@ class SponsorshipPeriod(models.Model):
     # noinspection PyUnresolvedReferences
     sponsor = models.ForeignKey(
         'Sponsor',
+        verbose_name='Sustaining member',
         on_delete=models.CASCADE,
-        help_text='Input the sponsor name',
+        help_text='Input the sustaining member name',
     )
     # noinspection PyUnresolvedReferences
     sponsorship_level = models.ForeignKey(
         'SponsorshipLevel',
+        verbose_name='Sustaining member level',
         on_delete=models.CASCADE,
-        help_text='This level take from Sponsorship Level, '
-        'you can add it by using Sponsorship Level menu',
+        help_text='This level take from Sustaining Membership Level, '
+        'you can add it by using Sustaining Membership Level menu',
     )
     # noinspection PyClassicStyleClass
 
