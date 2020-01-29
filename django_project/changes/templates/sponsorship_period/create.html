@@ -56,10 +56,18 @@
     });
     </script>
 
-<section id="forms">
-<div class='container'>
-  {% crispy form %}
-</div>
-</section>
+    <section id="forms">
+        <h3>New Sustaining Member Period for {{ project.name }}</h3>
+        <hr/>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <div class="vertical-space"></div>
+            <div class="form-actions">
+                <input type="submit" name="submit" value="Submit"
+                       class="btn btn-primary" id="submit-save">
+            </div>
+        </form>
+    </section>
 
 {% endblock %}
