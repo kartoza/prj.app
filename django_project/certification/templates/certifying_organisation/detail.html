@@ -361,7 +361,7 @@
     </th>
         {% if user_can_create %}
         <td>
-            <div class="button1 button-action" style="display: none; margin-top: -30px; margin-bottom: 20px;">
+            <div class="button1 button-action" style="margin-top: -30px; margin-bottom: 20px;">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url "trainingcenter-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
@@ -388,7 +388,7 @@
     </td></tr>
 
     {% for trainingcenter in trainingcenters %}
-        <tr>
+        <tr style="border-bottom: 1px solid #e9e9e9;">
         <td class="list"><div class="col-lg-10">
                 <a href="{% url 'trainingcenter-detail' certifyingorganisation.project.slug certifyingorganisation.slug trainingcenter.slug %}">
                     {{ trainingcenter.name }}</a>
@@ -397,7 +397,7 @@
         <td class="button">
         {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
         <div>
-            <div class="btn-group button-action" style="display: none">
+            <div class="btn-group button-action">
                 <a class="btn btn-default btn-xs btn-delete tooltip-toggle"
                    href='{% url "trainingcenter-delete" project_slug=trainingcenter.certifying_organisation.project.slug organisation_slug=trainingcenter.certifying_organisation.slug slug=trainingcenter.slug %}'
                    data-title="Delete {{ trainingcenter.name }}">
@@ -493,8 +493,8 @@
         <h2 class="custom-heading">Course Conveners</h2>
     </th>
     <td>
-        {%  if user_can_create %}
-        <div class="button1 button-action" style="display: none; margin-top: -30px; margin-bottom: 20px">
+        {% if user_can_create %}
+        <div class="button1 button-action" style="margin-top: -30px; margin-bottom: 20px">
             <div class="btn-group pull-right">
             <a class="btn btn-default btn-sm tooltip-toggle"
                href='{% url "courseconvener-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
@@ -521,7 +521,7 @@
     </td></tr>
 
     {% for courseconvener in courseconveners %}
-        <tr>
+        <tr style="border-bottom: 1px solid #e9e9e9;">
         <td class="list">
         <div class="col-lg-10">
             {% if courseconvener.user.first_name %}
@@ -534,7 +534,7 @@
 
         {% if user_can_delete %}
         <td>
-            <div class="btn-group pull-right button-action" style="display: none">
+            <div class="btn-group pull-right button-action">
                 <a class="btn btn-default btn-xs btn-delete tooltip-toggle"
                    href='{% url "courseconvener-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=courseconvener.slug %}'
                    data-title="Delete {{ courseconvener.user.first_name }} {{ courseconvener.user.last_name }} <{{ courseconvener.user }}>">
