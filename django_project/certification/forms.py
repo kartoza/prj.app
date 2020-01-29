@@ -7,6 +7,7 @@ from django.contrib.gis import forms as geoforms
 from django.contrib.gis import gdal
 from django.contrib.gis.forms.widgets import BaseGeometryWidget
 from django.core.exceptions import ValidationError
+from django.contrib.gis.forms.widgets import OSMWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout,
@@ -196,14 +197,8 @@ class CustomOSMWidget(BaseGeometryWidget):
 
         js = (
             '/en/site-admin/jsi18n/',
-            '/static/grappelli/jquery/jquery.min.js',
-            '/static/grappelli/jquery/ui/jquery-ui.min.js',
-            '/static/grappelli/js/grappelli.js',
-            '/static/admin/js/SelectBox.js',
-            '/static/admin/js/SelectFilter2.js',
             '/static/js/libs/OpenLayers-2.13.1/OpenLayers.js',
             '/static/js/libs/OpenLayers-2.13.1/OpenStreetMapSSL.js',
-            '/static/gis/js/OLMapWidget.js'
         )
 
     def __init__(self, attrs=None):
@@ -212,6 +207,7 @@ class CustomOSMWidget(BaseGeometryWidget):
             self.attrs[key] = getattr(self, key)
         if attrs:
             self.attrs.update(attrs)
+        self.attrs['default_zoom'] = 10
 
     @property
     def map_srid(self):
@@ -225,8 +221,14 @@ class CustomOSMWidget(BaseGeometryWidget):
 
 class TrainingCenterForm(geoforms.ModelForm):
 
-    location = geoforms.PointField(widget=CustomOSMWidget(
-        attrs={'map_width': 600, 'map_height': 400}), )
+    location = geoforms.PointField(widget=OSMWidget(
+        attrs={
+            'map_width': 750,
+            'map_height': 400,
+            'default_zoom': 5,
+            'default_lat': -30.559482,
+            'default_lon': 22.937506
+        }), )
 
     class Meta:
         model = TrainingCenter
