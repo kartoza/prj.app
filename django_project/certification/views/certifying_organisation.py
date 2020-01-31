@@ -217,7 +217,7 @@ class CertifyingOrganisationDetailView(
         context['num_courseconvener'] = context['courseconveners'].count()
         context['courses'] = Course.objects.filter(
             certifying_organisation=certifying_organisation).order_by(
-            '-start_date '
+            '-start_date'
         )
         context['num_course'] = context['courses'].count()
         project_slug = self.kwargs.get('project_slug', None)
