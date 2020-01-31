@@ -248,20 +248,20 @@ def generate_pdf(
     center = height * 0.5
     convener_name = \
         '{} {}'.format(
-            course.course_convener.user.first_name.encode('utf-8'),
-            course.course_convener.user.last_name.encode('utf-8'))
+            course.course_convener.user.first_name,
+            course.course_convener.user.last_name)
 
     if course.course_convener.title:
         convener_name = \
             '{} {}'.format(
-                course.course_convener.title.encode('utf-8'),
+                course.course_convener.title,
                 convener_name)
 
     if course.course_convener.degree:
         convener_name = \
             '{}, {}'.format(
                 convener_name,
-                course.course_convener.degree.encode('utf-8'))
+                course.course_convener.degree)
 
     course_duration = \
         'From {} {} {} to {} {} {}'.format(
@@ -337,20 +337,20 @@ def generate_pdf(
 
     page.drawCentredString(
         center, 400, '%s %s' % (
-            attendee.firstname.encode('utf-8'),
-            attendee.surname.encode('utf-8')))
+            attendee.firstname,
+            attendee.surname))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
         center, 370, 'Has attended and completed the course:')
     page.setFont('Times-Bold', 20)
     page.drawCentredString(
-            center, 335, course.course_type.name.encode('utf-8'))
+            center, 335, course.course_type.name)
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
         center, 300, 'With a trained competence in:')
     page.setFont('Times-Bold', 14)
     page.drawCentredString(
-        center, 280, '{}'.format(course.trained_competence.encode('utf-8')))
+        center, 280, '{}'.format(course.trained_competence))
     page.setFont('Times-Roman', 16)
     page.drawCentredString(
         center, 250, '{}'.format(course_duration))
@@ -383,8 +383,8 @@ def generate_pdf(
         page.drawCentredString(
             (margin_left + 150), (margin_bottom + 60),
             '{} {}'.format(
-                project.project_representative.first_name.encode('utf-8'),
-                project.project_representative.last_name.encode('utf-8')))
+                project.project_representative.first_name,
+                project.project_representative.last_name))
     page.drawCentredString(
         (margin_right - 150), (margin_bottom + 60),
         '{}'.format(convener_name))
