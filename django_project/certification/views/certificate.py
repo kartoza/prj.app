@@ -687,7 +687,7 @@ def regenerate_certificate(request, **kwargs):
         current_site = request.META['HTTP_HOST']
         generate_pdf(
             pathname, project, course, attendee, certificate, current_site)
-        with open(pathname, 'r') as pdf:
+        with open(pathname, 'r', encoding='ISO-8859-1') as pdf:
             response = HttpResponse(pdf.read(), content_type='application/pdf')
             response['Content-Disposition'] = \
                 'filename=%s' % certificate.certificateID
