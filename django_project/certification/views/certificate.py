@@ -9,7 +9,9 @@ import re
 from decimal import Decimal
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.http import Http404, HttpResponse, HttpResponseRedirect, FileResponse
+from django.http import (
+    Http404, HttpResponse, HttpResponseRedirect, FileResponse
+)
 from django.views.generic import CreateView, DetailView, TemplateView
 from django.conf import settings
 from django.urls import reverse
