@@ -239,9 +239,11 @@ def generate_pdf(
     # Register new font
     try:
         font_folder = os.path.join(
-            settings.STATIC_ROOT, 'fonts/NotoSans-hinted')
-        bold_ttf_file = os.path.join(font_folder, 'NotoSans-Bold.ttf')
-        regular_ttf_file = os.path.join(font_folder, 'NotoSans-Regular.ttf')
+            settings.STATIC_ROOT, 'fonts/times-new-roman')
+        bold_ttf_file = os.path.join(
+            font_folder, 'Times New Roman Gras 700.ttf')
+        regular_ttf_file = os.path.join(
+            font_folder, 'Times New Roman 400.ttf')
         pdfmetrics.registerFont(TTFont('Noto-Bold', bold_ttf_file))
         pdfmetrics.registerFont(TTFont('Noto-Regular', regular_ttf_file))
     except TTFError:
