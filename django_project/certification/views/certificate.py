@@ -9,7 +9,7 @@ import re
 from decimal import Decimal
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect, FileResponse
 from django.views.generic import CreateView, DetailView, TemplateView
 from django.conf import settings
 from django.urls import reverse
@@ -49,7 +49,7 @@ class CertificateMixin(object):
 
 
 class CertificateCreateView(
-        LoginRequiredMixin, CertificateMixin, CreateView):
+    LoginRequiredMixin, CertificateMixin, CreateView):
     """Create view for Certificate."""
 
     context_object_name = 'certificate'
@@ -238,8 +238,10 @@ def generate_pdf(
     try:
         font_folder = os.path.join(
             settings.STATIC_ROOT, 'fonts/NotoSans-hinted')
-        ttf_file = os.path.join(font_folder, 'NotoSans-Bold.ttf')
-        pdfmetrics.registerFont(TTFont('Noto-bold', ttf_file))
+        bold_ttf_file = os.path.join(font_folder, 'NotoSans-Bold.ttf')
+        regular_ttf_file = os.path.join(font_folder, 'NotoSans-Regular.ttf')
+        pdfmetrics.registerFont(TTFont('Noto-Bold', bold_ttf_file))
+        pdfmetrics.registerFont(TTFont('Noto-Regular', regular_ttf_file))
     except TTFError:
         pass
 
@@ -318,7 +320,7 @@ def generate_pdf(
             background, 0, 0, height=width, width=height,
             preserveAspectRatio=True, mask='auto')
     page.setFillColorRGB(0.1, 0.1, 0.1)
-    page.setFont('Times-Roman', 18)
+    page.setFont('Noto-Regular', 18)
 
     if project_logo is not None:
         page.drawImage(
@@ -330,28 +332,28 @@ def generate_pdf(
             organisation_logo, max_left, 450, height=100, width=100,
             preserveAspectRatio=True, anchor='c', mask='auto')
 
-    page.setFont('Times-Bold', 26)
+    page.setFont('Noto-Bold', 26)
     page.drawCentredString(center, 480, 'Certificate of Completion')
 
-    page.setFont('Times-Bold', 26)
+    page.setFont('Noto-Bold', 26)
 
     page.drawCentredString(
         center, 400, '%s %s' % (
             attendee.firstname,
             attendee.surname))
-    page.setFont('Times-Roman', 16)
+    page.setFont('Noto-Regular', 16)
     page.drawCentredString(
         center, 370, 'Has attended and completed the course:')
-    page.setFont('Times-Bold', 20)
+    page.setFont('Noto-Bold', 20)
     page.drawCentredString(
             center, 335, course.course_type.name)
-    page.setFont('Times-Roman', 16)
+    page.setFont('Noto-Regular', 16)
     page.drawCentredString(
         center, 300, 'With a trained competence in:')
-    page.setFont('Times-Bold', 14)
+    page.setFont('Noto-Bold', 14)
     page.drawCentredString(
         center, 280, '{}'.format(course.trained_competence))
-    page.setFont('Times-Roman', 16)
+    page.setFont('Noto-Regular', 16)
     page.drawCentredString(
         center, 250, '{}'.format(course_duration))
 
@@ -394,7 +396,7 @@ def generate_pdf(
     page.line(
         (margin_right - 70), (margin_bottom + 55),
         (margin_right - 230), (margin_bottom + 55))
-    page.setFont('Times-Roman', 13)
+    page.setFont('Noto-Regular', 13)
     page.drawCentredString(
         (margin_left + 150),
         (margin_bottom + 40),
@@ -403,17 +405,17 @@ def generate_pdf(
         (margin_right - 150), (margin_bottom + 40), 'Course Convener')
 
     # Footnotes.
-    page.setFont('Times-Roman', 14)
+    page.setFont('Noto-Regular', 14)
     page.drawString(
         margin_left,
         margin_bottom - 10,
         'ID: {}'.format(certificate.certificateID))
-    page.setFont('Times-Roman', 8)
+    page.setFont('Noto-Regular', 8)
     page.drawString(
         margin_left, (margin_bottom - 20),
         'You can verify this certificate by visiting '
         'http://{}/en/{}/certificate/{}/.'
-        .format(current_site, project.slug, certificate.certificateID))
+            .format(current_site, project.slug, certificate.certificateID))
 
     # Close the PDF object cleanly.
     page.showPage()
@@ -421,7 +423,6 @@ def generate_pdf(
 
 
 def certificate_pdf_view(request, **kwargs):
-
     project_slug = kwargs.pop('project_slug')
     course_slug = kwargs.pop('course_slug')
     pk = kwargs.pop('pk')
@@ -439,11 +440,11 @@ def certificate_pdf_view(request, **kwargs):
             '/home/web/media', 'pdf/{}/{}'.format(project_folder, filename))
     found = os.path.exists(pathname)
     if found:
-        with open(pathname, 'r', encoding='ISO-8859-1') as pdf:
-            response = HttpResponse(pdf.read(), content_type='application/pdf')
-            response['Content-Disposition'] = \
-                'filename={}.pdf'.format(certificate.certificateID)
-            return response
+        try:
+            return FileResponse(open(pathname, 'rb'),
+                                content_type='application/pdf')
+        except FileNotFoundError:
+            raise Http404()
     else:
         makepath = '/home/web/media/pdf/{}/'.format(project_folder)
         if not os.path.exists(makepath):
@@ -451,11 +452,11 @@ def certificate_pdf_view(request, **kwargs):
 
         generate_pdf(
             pathname, project, course, attendee, certificate, current_site)
-        with open(pathname, 'r', encoding='ISO-8859-1') as pdf:
-            response = HttpResponse(pdf.read(), content_type='application/pdf')
-            response['Content-Disposition'] = \
-                'filename={}.pdf'.format(certificate.certificateID)
-            return response
+        try:
+            return FileResponse(open(pathname, 'rb'),
+                                content_type='application/pdf')
+        except FileNotFoundError:
+            raise Http404()
 
 
 def download_certificates_zip(request, **kwargs):
@@ -511,9 +512,9 @@ def update_paid_status(request, **kwargs):
     attendee = Attendee.objects.get(pk=attendee_pk)
     project = Project.objects.get(slug=project_slug)
     url = reverse('course-detail', kwargs={
-            'project_slug': project_slug,
-            'organisation_slug': organisation_slug,
-            'slug': course_slug
+        'project_slug': project_slug,
+        'organisation_slug': organisation_slug,
+        'slug': course_slug
     })
 
     if request.method == 'POST':
@@ -621,7 +622,7 @@ def email_all_attendees(request, **kwargs):
                 '{organisation_slug}/course/'
                 '{course_slug}/print/{pk}/\n\n'
                 'Sincerely,\n{convener_firstname} {convener_lastname}'
-                .format(**data),
+                    .format(**data),
                 course.course_convener.user.email,
                 [attendee.email],
                 fail_silently=False,
@@ -649,8 +650,8 @@ def regenerate_certificate(request, **kwargs):
     attendee = Attendee.objects.get(pk=pk)
     project = Project.objects.get(slug=project_slug)
     certificate = Certificate.objects.get(course=course, attendee=attendee)
-    certifying_organisation = \
-        CertifyingOrganisation.objects.get(slug=organisation_slug)
+    certifying_organisation = (
+        CertifyingOrganisation.objects.get(slug=organisation_slug))
 
     # Checking user permissions.
     if request.user.is_staff or request.user == project.owner or \
@@ -687,11 +688,11 @@ def regenerate_certificate(request, **kwargs):
         current_site = request.META['HTTP_HOST']
         generate_pdf(
             pathname, project, course, attendee, certificate, current_site)
-        with open(pathname, 'r', encoding='ISO-8859-1') as pdf:
-            response = HttpResponse(pdf.read(), content_type='application/pdf')
-            response['Content-Disposition'] = \
-                'filename=%s' % certificate.certificateID
-            return response
+        try:
+            return FileResponse(open(pathname, 'rb'),
+                                content_type='application/pdf')
+        except FileNotFoundError:
+            raise Http404()
 
     return render(
         request, 'certificate/regenerate_certificate.html',
@@ -880,9 +881,9 @@ def preview_certificate(request, **kwargs):
         width, height = A4
         center = height * 0.5
         page.setFillColorRGB(0.1, 0.1, 0.1)
-        page.setFont('Times-Bold', 26)
+        page.setFont('Noto-Bold', 26)
         page.drawCentredString(center, 480, 'Certificate of Completion')
-        page.setFont('Times-Roman', 16)
+        page.setFont('Noto-Regular', 16)
         page.drawCentredString(
             center, 360,
             'To preview your certificate template, '
@@ -993,8 +994,8 @@ class TopUpView(TemplateView):
 
         cost_of_credits = project.credit_cost * total_credits_decimal
         description = 'Top up {total} credit{plural}'.format(
-                total=total_credits,
-                plural='s' if total_credits > 1 else '')
+            total=total_credits,
+            plural='s' if total_credits > 1 else '')
         charged, outcome = self.process_charge(
             stripe_source_id=stripe_source_id,
             cost_of_credits=cost_of_credits,
