@@ -52,6 +52,9 @@ class Category(models.Model):
     def __unicode__(self):
         return u'%s : %s' % (self.project.name, self.name)
 
+    def __str__(self):
+        return '%s : %s' % (self.project.name, self.name)
+
     def get_absolute_url(self):
         return reverse('category-detail', kwargs={
             'slug': self.slug,
