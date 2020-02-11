@@ -54,7 +54,7 @@
                 </span>
                 <span class="label-checkbox-github">
                     <input type="checkbox" class="github-state-option" name="closed" value="closed">&nbsp;
-                    <label for="open">Closed</label>
+                    <label for="closed">Closed</label>
                 </span>
                 <br>
                 <br>
@@ -176,7 +176,7 @@
 
         if(states.length === 1){
             for(var i in states){
-                query += 'state:' + states[i]
+                query += 'state:' + states[i] + '+'
             }
         }
         var category = $('[name="category-github-import"]').find(":selected").val();
