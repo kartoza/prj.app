@@ -86,6 +86,18 @@ class SponsorMixin(object):
     """Mixin class to provide standard settings for Sponsor."""
     model = Sponsor  # implies -> queryset = Sponsor.objects.all()
     form_class = SponsorForm
+    request = None
+
+    def user_can_edit(self, sustaining_member, project):
+        if not self.request:
+            return False
+        if (
+                self.request.user.is_staff or
+                self.request.user.is_superuser or
+                self.request.user == sustaining_member.author or
+                self.request.user in project.sponsorship_managers.all()):
+            return True
+        return False
 
 
 class JSONSponsorListView(SponsorMixin, JSONResponseMixin, ListView):
@@ -245,9 +257,12 @@ class SponsorDetailView(SponsorMixin, DetailView):
         project_slug = self.kwargs.get('project_slug', None)
         slug = self.kwargs.get('slug', None)
         context['project_slug'] = project_slug
+        context['slug'] = self.kwargs.get('slug', None)
         if project_slug:
             context['project'] = Project.objects.get(slug=project_slug)
             sustaining_member = self.get_object()
+            context['user_can_edit'] = self.user_can_edit(
+                sustaining_member, context['project'])
             try:
                 context['period'] = SponsorshipPeriod.objects.get(
                     Q(slug=slug) | Q(sponsor__slug=slug),
@@ -504,8 +519,13 @@ class SponsorUpdateView(LoginRequiredMixin, SponsorMixin, UpdateView):
             project_slug = self.kwargs.get('project_slug', None)
             if slug and project_slug:
                 project = Project.objects.get(slug=project_slug)
-                obj = queryset.get(project=project, slug=slug)
-                return obj
+                try:
+                    obj = Sponsor.objects.get(
+                        Q(sponsorshipperiod__slug=slug) | Q(slug=slug),
+                        project=project)
+                    return obj
+                except Sponsor.DoesNotExist:
+                    return None
             else:
                 raise Http404(
                     'Sorry! We could not find your sponsor!')
