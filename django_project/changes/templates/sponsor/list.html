@@ -136,6 +136,12 @@
                     </div>
                     <div class="col-lg-2">
                         <div class="btn-group pull-right">
+                            {% if user.is_staff or user == the_project.owner or user in the_project.sponsorship_managers.all or user == sponsor.sponsor.author %}
+                                <a class="btn btn-default btn-mini"
+                                   href='{% url "sponsor-update" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </a>
+                            {% endif %}
                             <a class="btn btn-default btn-mini"
                                href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
                                 <span class="glyphicon glyphicon-eye-open"></span>
@@ -146,8 +152,6 @@
             <hr/>
         {% endif %}
     {% endfor %}
-
-
 
 
     {% if sponsors %}
