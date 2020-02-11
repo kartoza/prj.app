@@ -3,11 +3,15 @@ import requests
 from braces.views import LoginRequiredMixin
 from rest_framework import serializers
 from rest_framework.views import APIView, Response
-from core.settings.secret import GIT_TOKEN
 from base.models.project import Project
 from changes.models.category import Category
 from changes.models.entry import Entry
 from changes.models.version import Version
+
+try:
+    from core.settings.secret import GIT_TOKEN
+except ImportError:
+    GIT_TOKEN = ''
 
 
 def create_entry_from_github_pr(version, category, data, user):
