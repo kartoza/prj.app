@@ -49,11 +49,11 @@
                 <label>State</label><br>
                 <label style="font-size: 12px; font-weight: normal" class="text-muted">Please select the state of the PRs which you'd like to fetch, no selection means all PRs will be fetched.</label><br>
                 <span class="label-checkbox-github">
-                    <input type="checkbox" class="github-state-option" name="open" value="open">&nbsp;
+                    <input type="checkbox" class="github-state-option" id="open" name="open" value="open">&nbsp;
                     <label for="open">Open</label>
                 </span>
                 <span class="label-checkbox-github">
-                    <input type="checkbox" class="github-state-option" name="closed" value="closed">&nbsp;
+                    <input type="checkbox" class="github-state-option" id="closed" name="closed" value="closed">&nbsp;
                     <label for="closed">Closed</label>
                 </span>
                 <br>
@@ -105,7 +105,7 @@
                     for(var i=0; i<data.length; i++){
                         var label = data[i];
                         var $div = $('<span class="label-checkbox-github"></span>');
-                        var $input = $('<input type="checkbox" class="github-label-option" name="' + label['name'] + '" value="' + label['name'] + '">'+
+                        var $input = $('<input type="checkbox" class="github-label-option" id="' + label['name'] + '" name="' + label['name'] + '" value="' + label['name'] + '">'+
                             '<label style="margin-left: 3px" for="' + label['name'] + '">' + label['name'] + '</label>');
                         $div.append($input);
                         $parentDiv.append($div)
