@@ -419,7 +419,7 @@ def generate_pdf(
         margin_left, (margin_bottom - 20),
         'You can verify this certificate by visiting '
         'http://{}/en/{}/certificate/{}/.'
-            .format(current_site, project.slug, certificate.certificateID))
+        ''.format(current_site, project.slug, certificate.certificateID))
 
     # Close the PDF object cleanly.
     page.showPage()
@@ -626,7 +626,7 @@ def email_all_attendees(request, **kwargs):
                 '{organisation_slug}/course/'
                 '{course_slug}/print/{pk}/\n\n'
                 'Sincerely,\n{convener_firstname} {convener_lastname}'
-                    .format(**data),
+                ''.format(**data),
                 course.course_convener.user.email,
                 [attendee.email],
                 fail_silently=False,

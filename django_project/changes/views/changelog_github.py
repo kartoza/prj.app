@@ -27,7 +27,7 @@ def create_entry_from_github_pr(version, category, data, user):
             if not name:
                 name = response.json()['login']
 
-        entry = Entry.objects.create(
+        entry = Entry.objects.create(  #noqa
             category=category,
             title=item['title'],
             description=item['body'],

@@ -61,7 +61,8 @@ class SponsorshipPeriod(models.Model):
     )
 
     currency = models.CharField(
-        help_text=_('The currency that is used for sustaining membership payment.'),
+        help_text=_('The currency that is used for '
+                    'sustaining membership payment.'),
         max_length=50,
         null=True,
         blank=True,
