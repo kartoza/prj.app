@@ -87,6 +87,9 @@ from .views import (
     ApproveSponsorshipPeriodView,
 
     generate_sponsor_cloud,
+    FetchGithubPRs,
+    FetchRepoLabels,
+    FetchCategory
 )
 from changes.views.sustaining_member import (
     SustainingMemberCreateView
@@ -122,6 +125,15 @@ urlpatterns = [
         name='category-update'),
 
     # Version management
+    url(regex='^(?P<project_pk>[\w-]+)/version/fetch-github-pr/$',
+        view=FetchGithubPRs.as_view(),
+        name='fetch-pr-github'),
+    url(regex='^(?P<project_pk>[\w-]+)/version/fetch-github-label/$',
+        view=FetchRepoLabels.as_view(),
+        name='fetch-labels-github'),
+    url(regex='^(?P<project_pk>[\w-]+)/version/fetch-category/$',
+        view=FetchCategory.as_view(),
+        name='fetch-category'),
     url(regex='^(?P<project_slug>[\w-]+)/version/list/$',
         view=VersionListView.as_view(),
         name='version-list'),

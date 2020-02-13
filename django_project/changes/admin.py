@@ -55,6 +55,12 @@ class VersionAdmin(reversion.admin.VersionAdmin):
 class EntryAdmin(reversion.admin.VersionAdmin):
     """Entry admin model."""
 
+    list_display = ['pk', 'version_name', 'category', 'title']
+    list_filter = ['category']
+
+    def version_name(self, obj):
+        return obj.version.name
+
     def queryset(self, request):
         """Ensure we use the correct manager.
 
