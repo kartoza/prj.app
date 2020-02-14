@@ -1,4 +1,5 @@
 # coding=utf-8
+import io
 import csv
 from django.db import transaction
 from django.urls import reverse
@@ -171,11 +172,13 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin, FormView):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         attendees_file = request.FILES.get('file')
+        attendees_file.seek(0)
         course = Course.objects.get(slug=self.slug)
         if form.is_valid():
             if attendees_file:
-                reader = csv.reader(attendees_file, delimiter=',')
-                next(reader)
+                reader = csv.DictReader(
+                    io.StringIO(attendees_file.read().decode('utf-8'))
+                )
                 attendee_count = 0
                 course_attendee_count = 0
                 for row in reader:
@@ -183,9 +186,9 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin, FormView):
                     # already exists and if they do, just add them to the
                     # course
                     attendee = Attendee(
-                        firstname=row[0],
-                        surname=row[1],
-                        email=row[2],
+                        firstname=row['First Name'],
+                        surname=row['Surname'],
+                        email=row['Email'],
                         certifying_organisation=self.certifying_organisation,
                         author=self.request.user,
                     )
