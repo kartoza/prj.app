@@ -169,24 +169,20 @@ class CertificateDetailView(DetailView):
             certificate = context['certificate']
             convener_name = \
                 '{} {}'.format(
-                    certificate.course.course_convener.user.first_name.encode(
-                        'utf-8'),
-                    certificate.course.course_convener.user.last_name.encode(
-                        'utf-8'))
+                    certificate.course.course_convener.user.first_name,
+                    certificate.course.course_convener.user.last_name)
 
             if certificate.course.course_convener.title:
                 convener_name = \
                     '{} {}'.format(
-                        certificate.course.course_convener.title.encode(
-                            'utf-8'),
+                        certificate.course.course_convener.title,
                         convener_name)
 
             if certificate.course.course_convener.degree:
                 convener_name = \
                     '{}, {}'.format(
                         convener_name,
-                        certificate.course.course_convener.degree.encode(
-                            'utf-8'))
+                        certificate.course.course_convener.degree)
 
             context['convener_name'] = convener_name
         context['project_slug'] = self.project_slug
