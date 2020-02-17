@@ -242,7 +242,7 @@ def generate_pdf(
             font_folder, 'Times New Roman 400.ttf')
         pdfmetrics.registerFont(TTFont('Noto-Bold', bold_ttf_file))
         pdfmetrics.registerFont(TTFont('Noto-Regular', regular_ttf_file))
-    except TTFError:
+    except (TTFError, KeyError):
         pass
 
     page = canvas.Canvas(pathname, pagesize=landscape(A4))
