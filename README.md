@@ -181,4 +181,7 @@ Thank you to the individual contributors who have helped to build projecta:
 * Ismail Sunni : imajimatika@gmail.com
 * Richard Duivenvoorde : richard@duif.net
 * Rischan Mafrur
+* Etienne Trimaille
+* Anita Hapsari
+* Muhammad Yarjuna Rohmat
 
