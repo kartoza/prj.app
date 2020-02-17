@@ -380,7 +380,7 @@ def generate_pdf(
             width=100, height=70, preserveAspectRatio=True, anchor='s',
             mask='auto')
 
-    page.setFont('Times-Italic', 12)
+    page.setFont('Noto-Regular', 12)
     if project.project_representative:
         page.drawCentredString(
             (margin_left + 150), (margin_bottom + 60),
