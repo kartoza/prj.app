@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import base64
 import datetime
 from io import StringIO, BytesIO
 import os
@@ -854,8 +855,9 @@ def preview_certificate(request, **kwargs):
         trained_competence = request.POST.get('trained_competence', '')
         if 'base64' in raw_image:
             image_data = re.sub('^data:image/.+;base64,', '',
-                                raw_image).decode('base64')
-            template_certificate = Image.open(StringIO(image_data))
+                                raw_image)
+            decoded_image = base64.b64decode(image_data.encode('utf-8'))
+            template_certificate = Image.open(BytesIO(decoded_image))
         else:
             template_certificate = None
 
