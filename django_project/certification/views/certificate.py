@@ -2,7 +2,7 @@
 
 import base64
 import datetime
-from io import StringIO, BytesIO
+from io import BytesIO
 import os
 import zipfile
 from PIL import Image
