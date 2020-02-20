@@ -829,6 +829,18 @@ class DummyCertificate(object):
 
 def preview_certificate(request, **kwargs):
     """Generate pdf for preview upon creating new course."""
+    # Register new font
+    try:
+        font_folder = os.path.join(
+            settings.STATIC_ROOT, 'fonts/times-new-roman')
+        bold_ttf_file = os.path.join(
+            font_folder, 'Times New Roman Gras 700.ttf')
+        regular_ttf_file = os.path.join(
+            font_folder, 'Times New Roman 400.ttf')
+        pdfmetrics.registerFont(TTFont('Noto-Bold', bold_ttf_file))
+        pdfmetrics.registerFont(TTFont('Noto-Regular', regular_ttf_file))
+    except (TTFError, KeyError):
+        pass
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'filename="preview.pdf"'
