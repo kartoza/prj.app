@@ -25,9 +25,13 @@ def generate_certificate_pdf(
     # Register new font
     try:
         font_folder = os.path.join(
-            settings.STATIC_ROOT, 'fonts/NotoSans-hinted')
-        ttf_file = os.path.join(font_folder, 'NotoSans-Bold.ttf')
-        pdfmetrics.registerFont(TTFont('Noto-bold', ttf_file))
+            settings.STATIC_ROOT, 'fonts/times-new-roman')
+        bold_ttf_file = os.path.join(
+            font_folder, 'Times New Roman Gras 700.ttf')
+        regular_ttf_file = os.path.join(
+            font_folder, 'Times New Roman 400.ttf')
+        pdfmetrics.registerFont(TTFont('Noto-Bold', bold_ttf_file))
+        pdfmetrics.registerFont(TTFont('Noto-Regular', regular_ttf_file))
     except TTFError:
         pass
 
@@ -78,7 +82,7 @@ def generate_certificate_pdf(
         margin_right, width - 50, 'Date issued: {}'.format(str_date))
 
     try:
-        page.setFont('Noto-bold', 26)
+        page.setFont('Noto-Bold', 26)
     except KeyError:
         page.setFont('Times-Bold', 26)
 
