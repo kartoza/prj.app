@@ -5,5 +5,5 @@ Best regards,
 
 The team.
 
-This is an auto-generated email from {{ default_http_protocol }}://{{ current_site }}. Please do not reply to this email.
-To change how you receive notifications, please go to {{ default_http_protocol }}://{{ current_site }}/notifications/settings/
+This is an auto-generated email from {{ default_http_protocol }}://{{ active_site }}. Please do not reply to this email.
+To change how you receive notifications, please go to {{ default_http_protocol }}://{{ active_site }}/notifications/settings/
