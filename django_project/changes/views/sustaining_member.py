@@ -120,6 +120,7 @@ class SustainingMemberCreateView(LoginRequiredMixin, CreateView):
             extra_context={
                 'sustaining_member': sustaining_member,
                 'sustaining_member_manager': sponsorship_managers[0],
+                'active_site': self.request.get_host()
             },
             request_user=self.request.user
         )
@@ -334,6 +335,7 @@ class SustainingMemberUpdateView(LoginRequiredMixin, UpdateView):
                 label=NOTICE_SUSTAINING_MEMBER_UPDATED,
                 extra_context={
                     'sustaining_member': self.form_object,
+                    'active_site': self.request.get_host()
                 },
                 request_user=self.request.user
             )
@@ -533,7 +535,8 @@ class SustainingMemberPeriodCreateView(
                     'date_start': self.object.start_date.strftime(
                         "%B %d, %Y"),
                     'date_end': self.object.end_date.strftime(
-                        "%B %d, %Y")
+                        "%B %d, %Y"),
+                    'active_site': self.request.get_host()
                 })
             self.object.save()
 
@@ -743,6 +746,7 @@ class SustainingMemberPeriodUpdateView(
                         year=self.object.start_date.year + period_end
                     ).strftime(
                         "%B %d, %Y"),
+                    'active_site': self.request.get_host()
                 },
                 request_user=self.request.user
             )

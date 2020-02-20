@@ -77,6 +77,7 @@ class SponsorAdmin(reversion.admin.VersionAdmin):
     """Sponsor admin model."""
 
     list_display = ['__unicode__', 'project']
+    search_fields = ['name']
 
     def queryset(self, request):
         """Ensure we use the correct manager.
