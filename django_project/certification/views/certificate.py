@@ -477,7 +477,7 @@ def download_certificates_zip(request, **kwargs):
             course_slug=course_slug, organisation_slug=organisation_slug)
 
         with open('/tmp/%s.pdf' % certificate.certificateID, 'wb') as pdf:
-            pdf.write(pdf_file.content)
+            pdf.write(pdf_file.getvalue())
 
         filenames.append('/tmp/%s.pdf' % certificate.certificateID)
 
