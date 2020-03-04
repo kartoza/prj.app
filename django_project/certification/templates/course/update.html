@@ -191,11 +191,9 @@
         function readExistingFile() {
             if($('#template_certificate-clear_id').length){
                 var file_url = $('#template_certificate-clear_id').prev().attr('href');
-                file_url = file_url.replace('/media/', '');
-                var file = {{ MEDIA_URL }}+file_url;
-                $('#preview-photo').html("<img src='"+file+"' / height='150px'>");
+                $('#preview-photo').html("<img src='"+file_url+"' / height='150px'>");
 
-                getDataUri(file, function(dataUri) {
+                getDataUri(file_url, function(dataUri) {
                     $('#preview-form input[name=template_certificate]').val(dataUri);
                 });
             }
