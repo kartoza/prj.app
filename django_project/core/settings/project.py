@@ -84,3 +84,4 @@ VALID_DOMAIN = [
 ]
 
 EMAIL_HOST_USER = 'noreply@kartoza.com'
+LOGIN_URL = '/en/accounts/login/'
