@@ -192,14 +192,16 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin, FormView):
                             firstname=row[fieldnames[0]],
                             surname=row[fieldnames[1]],
                             email=row[fieldnames[2]],
-                            certifying_organisation=self.certifying_organisation,
+                            certifying_organisation=
+                            self.certifying_organisation,
                         )
                     except Attendee.DoesNotExist:
                         attendee = Attendee(
                             firstname=row[fieldnames[0]],
                             surname=row[fieldnames[1]],
                             email=row[fieldnames[2]],
-                            certifying_organisation=self.certifying_organisation,
+                            certifying_organisation=
+                            self.certifying_organisation,
                             author=self.request.user
                         )
                         attendee.save()
