@@ -180,8 +180,8 @@ Thank you to the individual contributors who have helped to build projecta:
 * George Irwin : github@grvhi.com
 * Ismail Sunni : imajimatika@gmail.com
 * Richard Duivenvoorde : richard@duif.net
-* Rischan Mafrur
-* Etienne Trimaille
-* Anita Hapsari
-* Muhammad Yarjuna Rohmat
+* Rischan Mafrur : @rischanlab
+* Etienne Trimaille : @gustry
+* Anita Hapsari : @ann26
+* Muhammad Yarjuna Rohmat : @myarjunar
 
