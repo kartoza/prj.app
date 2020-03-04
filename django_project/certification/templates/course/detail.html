@@ -71,7 +71,6 @@
     </div>
 
     <div class="row" style="margin-left: inherit; margin-top: 15px;">
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all %}
             <div class="details col-lg-10" style="width: 60%">
                 <div class="col-lg-12">
                     <span class="grey-italic col-lg-3">Course name</span><span class="col-lg-9">{{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})<br/></span>
@@ -107,6 +106,7 @@
                 </div>
             </div>
 
+            {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner or user in course.certifying_organisation.project.certification_managers.all %}
             <div class="col-lg-2 pull-right" style="width: 20%;">
                 <h4 class="panel-heading" style="padding-left:10px; padding-right: 10px">
                     Available Credits
@@ -131,7 +131,7 @@
                         </h3>
                 {% endif %}
             </div>
-        {% endif %}
+            {% endif %}
     </div>
 
     <div class="container">
@@ -184,8 +184,8 @@
     {% endif %}
     </table>
 
-
-    <div style="margin: 0 25px">
+    {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner or user in course.certifying_organisation.project.certification_managers.all %}
+        <div style="margin: 0 25px">
     <table>
         <tr>
             <th style="width: 50%">Name</th>
@@ -258,6 +258,9 @@
         {% endfor %}
     </table>
     </div>
+    {% else %}
+        <div><i class="fa fa-eye-slash"></i> Only authorized users can see list of course attendee.</div>
+    {% endif %}
 
     </div>
     </div>
