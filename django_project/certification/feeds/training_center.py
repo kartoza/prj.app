@@ -127,4 +127,3 @@ class TrainingCenterFeed(Feed):
         return {
             'location': item.location
         }
-

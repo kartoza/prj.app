@@ -141,16 +141,20 @@ class UpcomingCourseFeed(Feed):
         return item.link
 
     def item_extra_kwargs(self, item):
+        if item.course_convener.degree:
+            degree = ', {}'.format(item.course_convener.degree)
+        else:
+            degree = ''
         return {
             'start_date': item.start_date,
             'end_date': item.end_date,
             'trained_competence': item.trained_competence,
             'language': item.language,
             'course_type': item.course_type.name,
-            'course_convener': '{} {} {}'.format(
+            'course_convener': '{} {}{}'.format(
                 item.course_convener.user.first_name,
                 item.course_convener.user.last_name,
-                item.course_convener.degree
+                degree
             ),
             'training_center': item.training_center,
         }
