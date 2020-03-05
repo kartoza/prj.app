@@ -3,7 +3,12 @@
 
 from django.conf.urls import url
 from .feeds.training_center import TrainingCenterFeed
-from .feeds.course import UpcomingCourseFeed, PastCourseFeed
+from .feeds.course import (
+    UpcomingCourseFeed,
+    PastCourseFeed,
+    UpcomingCourseProjectFeed,
+    PastCourseProjectFeed
+)
 from .views import (
     # Certifying Organisation.
     CertifyingOrganisationCreateView,
@@ -297,6 +302,12 @@ urlpatterns = [
         view=GetStatus.as_view(), name='get-status-list'),
 
     # Feeds
+    url(regex='^(?P<project_slug>[\w-]+)/feed/upcoming-course/$',
+        view=UpcomingCourseProjectFeed(),
+        name='feed-upcoming-project-course'),
+    url(regex='^(?P<project_slug>[\w-]+)/feed/past-course/$',
+        view=PastCourseProjectFeed(),
+        name='feed-past-project-course'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/feed/training-center/$',
         view=TrainingCenterFeed(),

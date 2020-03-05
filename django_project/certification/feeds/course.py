@@ -157,6 +157,7 @@ class UpcomingCourseFeed(Feed):
                 degree
             ),
             'training_center': item.training_center,
+            'certifying_organisation': item.certifying_organisation
         }
 
 
@@ -198,6 +199,136 @@ class PastCourseFeed(UpcomingCourseFeed):
         today = datetime.today()
         courses = Course.objects.filter(
             certifying_organisation=obj, end_date__lte=today
+        ).order_by('-start_date')
+        for course in courses:
+            course.link = self.get_absolute_obj_url(obj.request, course)
+        return courses
+
+
+class UpcomingCourseProjectFeed(UpcomingCourseFeed):
+    """Feed for upcoming course within the project."""
+
+    def get_object(self, request, *args, **kwargs):
+        """Return the certifying organisation object that
+        matches the project_slug and organisation slug.
+
+        :param request: The incoming HTTP request object
+        :type request: Request object
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: project
+        :rtype: Project
+
+        :raises: Http404
+        """
+        try:
+            project_slug = kwargs.get('project_slug', None)
+            project = get_object_or_404(Project, slug=project_slug)
+            project.uri = (
+                self.get_absolute_obj_url(request, project))
+            project.request = request
+            return project
+        except Http404:
+            raise Http404(
+                'Sorry! We could not find your project!')
+
+    def title(self, obj):
+        """Return a title for the RSS.
+
+         :param obj: A project
+         :type obj: Project
+
+         :returns: Title of the RSS Feed.
+         :rtype: str
+         """
+        return 'JSON Feed for upcoming course of {} project'.format(obj.name)
+
+    def description(self, obj):
+        """Return a description for the RSS.
+
+         :param obj: A certifying organisation
+         :type obj: CertifyingOrganisation
+
+         :returns: Description of the RSS Feed.
+         :rtype: str
+         """
+        return 'These are the upcoming courses ' \
+               'of {} project.'.format(obj.name)
+
+    def items(self, obj):
+        """Return upcoming course of the certifying organisation.
+
+        :param obj: A certifying organisation
+        :type obj: CertifyingOrganisation
+
+        :returns: List of course of a certifying organisation
+        :rtype: list
+        """
+        today = datetime.today()
+        courses = Course.objects.filter(
+            certifying_organisation__project=obj, start_date__gte=today
+        ).order_by('-start_date')
+        for course in courses:
+            course.link = self.get_absolute_obj_url(obj.request, course)
+        return courses
+
+    def feed_extra_kwargs(self, obj):
+        """Return the homepage of the certifying organisation.
+
+        :param obj: A certifying organisation
+        :type obj: CertifyingOrganisation
+
+        :returns: Homepage of the certifying organisation.
+        :rtype: str
+        """
+        return {
+            'homepage': obj.project_url,
+        }
+
+
+class PastCourseProjectFeed(UpcomingCourseProjectFeed):
+    """Feed for past courses."""
+
+    def title(self, obj):
+        """Return a title for the RSS.
+
+         :param obj: A project
+         :type obj: Project
+
+         :returns: Title of the RSS Feed.
+         :rtype: str
+         """
+        return 'JSON Feed for past course of {} project'.format(obj.name)
+
+    def description(self, obj):
+        """Return a description for the RSS.
+
+         :param obj: A certifying organisation
+         :type obj: CertifyingOrganisation
+
+         :returns: Description of the RSS Feed.
+         :rtype: str
+         """
+        return 'These are the past courses ' \
+               'of {} project.'.format(obj.name)
+
+    def items(self, obj):
+        """Return upcoming course of the certifying organisation.
+
+        :param obj: A certifying organisation
+        :type obj: CertifyingOrganisation
+
+        :returns: List of course of a certifying organisation
+        :rtype: list
+        """
+        today = datetime.today()
+        courses = Course.objects.filter(
+            certifying_organisation__project=obj, end_date__lte=today
         ).order_by('-start_date')
         for course in courses:
             course.link = self.get_absolute_obj_url(obj.request, course)

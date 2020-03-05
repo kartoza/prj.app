@@ -31,7 +31,8 @@ class CourseJSONFeed(SyndicationFeed):
             'end_date': str(item['end_date']),
             'course_convener': item['course_convener'],
             'course_type': item['course_type'],
-            'language': item['language']
+            'language': item['language'],
+            'certifying_organisation': item['certifying_organisation'].name
         }
 
         if item['trained_competence']:
