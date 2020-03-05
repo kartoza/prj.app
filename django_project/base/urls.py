@@ -37,6 +37,9 @@ from .views import (
     PendingOrganisationListView,
     OrganisationDeleteView,
     OrganisationUpdateView,
+
+    UserDetailView,
+    UserUpdateView
 )
 from .api_views.stripe_intent import StripeIntent
 
@@ -45,6 +48,13 @@ urlpatterns = [
     url(regex='^$',
         view=ProjectListView.as_view(),
         name='home'),
+
+    url(regex='^profile/$',
+        view=UserDetailView.as_view(),
+        name='user-profile'),
+    url(regex='^edit-profile/(?P<pk>[\w-]+)/$',
+        view=UserUpdateView.as_view(),
+        name='edit-profile'),
 
     # Custom domain management
     url(regex='^domain-not-found/$',
