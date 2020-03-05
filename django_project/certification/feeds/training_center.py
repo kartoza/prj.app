@@ -110,7 +110,7 @@ class TrainingCenterFeed(Feed):
         """
         return TrainingCenter.objects.filter(
             certifying_organisation=obj,
-        ).order_by('-name')
+        ).order_by('name')
 
     def item_title(self, item):
         """Return the title of the training center.
@@ -125,5 +125,65 @@ class TrainingCenterFeed(Feed):
 
     def item_extra_kwargs(self, item):
         return {
-            'location': item.location
+            'location': item.location,
+            'certifying_organisation': item.certifying_organisation,
+            'name': item.name
         }
+
+
+class ProjectTrainingCenterFeed(TrainingCenterFeed):
+    """Feed to list all training center within a project."""
+
+    def get_object(self, request, *args, **kwargs):
+        """Return the certifying organisation object that
+        matches the project_slug and organisation slug.
+
+        :param request: The incoming HTTP request object
+        :type request: Request object
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: project
+        :rtype: Project
+
+        :raises: Http404
+        """
+        try:
+            project_slug = kwargs.get('project_slug', None)
+            project = get_object_or_404(Project, slug=project_slug)
+            project.uri = (
+                self.get_absolute_obj_url(request, project))
+            return project
+        except Http404:
+            raise Http404(
+                'Sorry! We could not find your project!')
+
+    def feed_extra_kwargs(self, obj):
+        """Return the homepage of the certifying organisation.
+
+        :param obj: A certifying organisation
+        :type obj: CertifyingOrganisation
+
+        :returns: Homepage of the certifying organisation.
+        :rtype: str
+        """
+        return {
+            'homepage': obj.project_url
+        }
+
+    def items(self, obj):
+        """Return training center of the certifying organisation.
+
+        :param obj: A certifying organisation
+        :type obj: CertifyingOrganisation
+
+        :returns: List of training center of a certifying organisation
+        :rtype: list
+        """
+        return TrainingCenter.objects.filter(
+            certifying_organisation__project=obj,
+        ).order_by('certifying_organisation__name', 'name')

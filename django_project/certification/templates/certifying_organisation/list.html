@@ -30,6 +30,11 @@
                         Sign Up
                     </a>
                     <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
+                       href='{% url "feed-training-center-project" project_slug %}' target="_blank"
+                       data-title="Feed for List of All Training Centers">
+                        <i class="fa fa-rss-square"></i>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
                        href='{% url "feed-upcoming-project-course" project_slug %}' target="_blank"
                        data-title="Feed for List of All Upcoming Courses">
                         <i class="fa fa-rss"></i>
