@@ -29,6 +29,16 @@
                        data-title="Sign Up for Certification!">
                         Sign Up
                     </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
+                       href='{% url "feed-upcoming-project-course" project_slug %}' target="_blank"
+                       data-title="Feed for List of All Upcoming Courses">
+                        <i class="fa fa-rss"></i>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
+                           href='{% url "feed-past-project-course" project_slug %}' target="_blank"
+                           data-title="Feed for List of All Past Courses">
+                            <i class="fa fa-rss" style="color: grey"></i>
+                        </a>
                     {% if user.is_staff or user == the_project.owner or user in the_project.certification_managers.all %}
                         <a class="btn btn-default btn-mini tooltip-toggle"
                            href='{% url "certifyingorganisation-create" project_slug %}'

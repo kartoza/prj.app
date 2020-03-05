@@ -207,7 +207,7 @@ class CertifyingOrganisation(models.Model):
         :return: URL
         :rtype: str
         """
-        return reverse('certifying-organisation-detail', kwargs={
+        return reverse('certifyingorganisation-detail', kwargs={
                 'slug': self.slug,
                 'project_slug': self.project.slug
         })

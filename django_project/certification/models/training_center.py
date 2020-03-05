@@ -77,7 +77,7 @@ class TrainingCenter(SlugifyingMixin, models.Model):
         :return: URL
         :rtype: str
         """
-        return reverse('training-center-detail', kwargs={
+        return reverse('trainingcenter-detail', kwargs={
             'slug': self.slug,
             'organisation_slug': self.certifying_organisation.slug,
             'project_slug': self.certifying_organisation.project.slug
