@@ -34,7 +34,8 @@ class GeoJSONFeed(SyndicationFeed):
                 ],
             },
             'properties': {
-                'name': item['description']
+                'name': item['name'],
+                'certifying_organisation': item['certifying_organisation'].name
             }
         }
         return item_elements
