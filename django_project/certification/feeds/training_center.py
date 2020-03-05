@@ -110,7 +110,7 @@ class TrainingCenterFeed(Feed):
         """
         return TrainingCenter.objects.filter(
             certifying_organisation=obj,
-        ).order_by('-name')
+        ).order_by('name')
 
     def item_title(self, item):
         """Return the title of the training center.
@@ -186,4 +186,4 @@ class ProjectTrainingCenterFeed(TrainingCenterFeed):
         """
         return TrainingCenter.objects.filter(
             certifying_organisation__project=obj,
-        ).order_by('-name')
+        ).order_by('certifying_organisation__name', 'name')
