@@ -63,7 +63,7 @@ class UpcomingCourseFeed(Feed):
          :returns: Title of the RSS Feed.
          :rtype: str
          """
-        return 'JSON Feed upcoming course of {}'.format(obj.name)
+        return 'JSON Feed for upcoming course of {}'.format(obj.name)
 
     def link(self, obj):
         """Return the url of the certifying organisation.
@@ -98,7 +98,7 @@ class UpcomingCourseFeed(Feed):
          :returns: Description of the RSS Feed.
          :rtype: str
          """
-        return 'These are the upcoming course ' \
+        return 'These are the upcoming courses ' \
                'of {}.'.format(obj.name)
 
     def items(self, obj):
@@ -162,6 +162,29 @@ class UpcomingCourseFeed(Feed):
 
 class PastCourseFeed(UpcomingCourseFeed):
     """Feed for past courses."""
+
+    def title(self, obj):
+        """Return a title for the RSS.
+
+         :param obj: A certifying organisation
+         :type obj: CertifyingOrganisation
+
+         :returns: Title of the RSS Feed.
+         :rtype: str
+         """
+        return 'JSON Feed for past course of {}'.format(obj.name)
+
+    def description(self, obj):
+        """Return a description for the RSS.
+
+         :param obj: A certifying organisation
+         :type obj: CertifyingOrganisation
+
+         :returns: Description of the RSS Feed.
+         :rtype: str
+         """
+        return 'These are the past courses ' \
+               'of {}.'.format(obj.name)
 
     def items(self, obj):
         """Return upcoming course of the certifying organisation.
