@@ -274,3 +274,35 @@ class OrganisationForm(forms.ModelForm):
         instance.owner = self.user
         instance.save()
         return instance
+
+
+class UserForm(forms.ModelForm):
+    """Form to update user profile."""
+
+    # noinspection PyClassicStyleClass.
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        form_title = 'Update User Profile'
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('username', css_class='form-control'),
+                Field('first_name', css_class='form-control'),
+                Field('last_name', css_class='form-control'),
+                Field('email', css_class='form-control'),
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(UserForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
