@@ -127,5 +127,6 @@ class Course(models.Model):
         """
         return reverse('course-detail', kwargs={
             'slug': self.slug,
-            'certifyingorganisation_slug': self.certifying_organisation.slug
+            'organisation_slug': self.certifying_organisation.slug,
+            'project_slug': self.certifying_organisation.project.slug
         })

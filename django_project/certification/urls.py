@@ -2,6 +2,8 @@
 """Urls for certification apps."""
 
 from django.conf.urls import url
+from .feeds.training_center import TrainingCenterFeed
+from .feeds.course import UpcomingCourseFeed, PastCourseFeed
 from .views import (
     # Certifying Organisation.
     CertifyingOrganisationCreateView,
@@ -293,4 +295,18 @@ urlpatterns = [
     # API Views
     url(regex='^(?P<project_slug>[\w-]+)/get-status-list/$',
         view=GetStatus.as_view(), name='get-status-list'),
+
+    # Feeds
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/feed/training-center/$',
+        view=TrainingCenterFeed(),
+        name='feed-training-center'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/feed/upcoming-course/$',
+        view=UpcomingCourseFeed(),
+        name='feed-upcoming-course'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/feed/past-course/$',
+        view=PastCourseFeed(),
+        name='feed-past-course'),
 ]
