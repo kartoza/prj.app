@@ -21,6 +21,7 @@ def check_slug(queryset, slug):
 
 
 class CustomSerializer(Serializer):
+    """Custom serializer to return the name of the foreign key object."""
 
     def end_object(self, obj):
         for field in self.selected_fields:
