@@ -2,10 +2,6 @@
 """Urls for certification apps."""
 
 from django.conf.urls import url
-from .feeds.training_center import (
-    TrainingCenterFeed,
-    ProjectTrainingCenterFeed
-)
 from .feeds.course import (
     UpcomingCourseFeed,
     PastCourseFeed,
