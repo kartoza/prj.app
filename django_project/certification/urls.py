@@ -81,6 +81,10 @@ from .views import (
 )
 from .api_views.get_status import GetStatus
 from .api_views.update_status import UpdateStatusOrganisation
+from .api_views.training_center import (
+    GetTrainingCenterProjectLocation,
+    GetTrainingCenterOrganisationLocation
+)
 
 
 urlpatterns = [
@@ -312,11 +316,11 @@ urlpatterns = [
         view=PastCourseProjectFeed(),
         name='feed-past-project-course'),
     url(regex='^(?P<project_slug>[\w-]+)/feed/training-center/$',
-        view=ProjectTrainingCenterFeed(),
+        view=GetTrainingCenterProjectLocation.as_view(),
         name='feed-training-center-project'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/feed/training-center/$',
-        view=TrainingCenterFeed(),
+        view=GetTrainingCenterOrganisationLocation.as_view(),
         name='feed-training-center'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/feed/upcoming-course/$',
