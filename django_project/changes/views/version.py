@@ -12,6 +12,7 @@ import zipfile
 from io import BytesIO
 import pypandoc
 from bs4 import BeautifulSoup
+from django.conf import settings
 from django.urls import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -604,8 +605,9 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
             # write all of the image files (read from disk)
             for image in images:
                 try:
+                    image_url = '{}/{}'.format(settings.MEDIA_ROOT, image)
                     zip_file.write(
-                        '../media/{0}'.format(image),
+                        image_url,
                         '{0}'.format(image)
                     )
                 except FileNotFoundError:
