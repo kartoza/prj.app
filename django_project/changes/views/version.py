@@ -603,10 +603,13 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
         with zipfile.ZipFile(temp_path, 'w') as zip_file:
             # write all of the image files (read from disk)
             for image in images:
-                zip_file.write(
-                    '../media/{0}'.format(image),
-                    '{0}'.format(image)
-                )
+                try:
+                    zip_file.write(
+                        '../media/{0}'.format(image),
+                        '{0}'.format(image)
+                    )
+                except FileNotFoundError:
+                    pass
             # write the actual RST document
             zip_file.writestr(
                 'index.rst',
