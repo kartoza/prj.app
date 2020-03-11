@@ -1,7 +1,6 @@
 # coding=utf-8
 import re
 from django.urls import reverse
-# from django.utils.text import slugify
 from common.utilities import version_slugify
 import os
 import logging
@@ -12,6 +11,7 @@ from django.conf.global_settings import MEDIA_ROOT
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
+from ..utils.custom_slugfield import CustomSlugField
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +57,7 @@ class Version(models.Model):
         blank=True)
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    slug = models.SlugField()
+    slug = CustomSlugField()
     project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
     objects = models.Manager()
 
