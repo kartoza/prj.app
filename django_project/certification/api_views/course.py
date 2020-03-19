@@ -1,13 +1,10 @@
 # coding=utf-8
 from datetime import datetime
-import json
-from django.db.models import F
 from django.http import HttpResponse
 from rest_framework.views import APIView, Response
 from rest_framework import status
 from base.models.project import Project
 from ..models.certifying_organisation import CertifyingOrganisation
-from ..models.training_center import TrainingCenter
 from ..models.course import Course
 from ..serializers.course_serializer import CourseSerializer
 

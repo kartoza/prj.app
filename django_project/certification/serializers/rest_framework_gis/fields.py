@@ -58,10 +58,13 @@ class GeometryField(Field):
             value = json.dumps(value)
         try:
             return GEOSGeometry(value)
-        except (GEOSException):
-            raise ValidationError(_('Invalid format: string or unicode input unrecognized as GeoJSON, WKT EWKT or HEXEWKB.'))
+        except GEOSException:
+            raise ValidationError(
+                _('Invalid format: string or unicode input unrecognized as '
+                  'GeoJSON, WKT EWKT or HEXEWKB.'))
         except (ValueError, TypeError, GDALException) as e:
-            raise ValidationError(_('Unable to convert to python object: {}'.format(str(e))))
+            raise ValidationError(
+                _('Unable to convert to python object: {}'.format(str(e))))
 
     def validate_empty_values(self, data):
         if data == '':
@@ -105,7 +108,8 @@ class GeometryField(Field):
 
 class GeometrySerializerMethodField(SerializerMethodField):
     def to_representation(self, value):
-        value = super(GeometrySerializerMethodField, self).to_representation(value)
+        value = super(
+            GeometrySerializerMethodField, self).to_representation(value)
         if value is not None:
             # we expect value to be a GEOSGeometry instance
             return GeoJsonDict(value.geojson)

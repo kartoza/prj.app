@@ -21,7 +21,9 @@ class GeoFeatureModelListSerializer(ListSerializer):
         """
         return OrderedDict((
             ("type", "FeatureCollection"),
-            ("features", super(GeoFeatureModelListSerializer, self).to_representation(data))
+            ("features",
+             super(
+                 GeoFeatureModelListSerializer, self).to_representation(data))
         ))
 
 
@@ -40,7 +42,9 @@ class GeoFeatureModelSerializer(ModelSerializer):
             if key in LIST_SERIALIZER_KWARGS
         ]))
         meta = getattr(cls, 'Meta', None)
-        list_serializer_class = getattr(meta, 'list_serializer_class', GeoFeatureModelListSerializer)
+        list_serializer_class = (
+            getattr(
+                meta, 'list_serializer_class', GeoFeatureModelListSerializer))
         return list_serializer_class(*args, **list_kwargs)
 
     def __init__(self, *args, **kwargs):
@@ -49,7 +53,8 @@ class GeoFeatureModelSerializer(ModelSerializer):
         default_id_field = None
         primary_key = self.Meta.model._meta.pk.name
         # use primary key as id_field when possible
-        if not hasattr(meta, 'fields') or meta.fields == '__all__' or primary_key in meta.fields:
+        if not hasattr(meta, 'fields') or \
+                meta.fields == '__all__' or primary_key in meta.fields:
             default_id_field = primary_key
         meta.id_field = getattr(meta, 'id_field', default_id_field)
 
@@ -59,7 +64,8 @@ class GeoFeatureModelSerializer(ModelSerializer):
         def check_excludes(field_name, field_role):
             """make sure the field is not excluded"""
             if hasattr(meta, 'exclude') and field_name in meta.exclude:
-                raise ImproperlyConfigured("You cannot exclude your '{0}'.".format(field_role))
+                raise ImproperlyConfigured(
+                    "You cannot exclude your '{0}'.".format(field_role))
 
         def add_to_fields(field_name):
             """Make sure the field is included in the fields"""
@@ -81,8 +87,9 @@ class GeoFeatureModelSerializer(ModelSerializer):
 
         meta.auto_bbox = getattr(meta, 'auto_bbox', False)
         if meta.bbox_geo_field and meta.auto_bbox:
-            raise ImproperlyConfigured("You must eiher define a 'bbox_geo_field' or "
-                                       "'auto_bbox', but you can not set both")
+            raise ImproperlyConfigured(
+                "You must eiher define a 'bbox_geo_field' or "
+                "'auto_bbox', but you can not set both")
 
     def to_representation(self, instance):
         """
@@ -121,7 +128,8 @@ class GeoFeatureModelSerializer(ModelSerializer):
         elif self.Meta.bbox_geo_field:
             field = self.fields[self.Meta.bbox_geo_field]
             value = field.get_attribute(instance)
-            feature["bbox"] = value.extent if hasattr(value, 'extent') else None
+            feature["bbox"] = \
+                value.extent if hasattr(value, 'extent') else None
             processed_fields.add(self.Meta.bbox_geo_field)
 
         # the list of fields that will be processed by get_properties
@@ -146,7 +154,8 @@ class GeoFeatureModelSerializer(ModelSerializer):
         the ID, the geometry and the bounding box.
 
         :param instance: The current Django model instance
-        :param fields: The list of fields to process (fields already processed have been removed)
+        :param fields: The list of fields to process
+        (fields already processed have been removed)
         :return: OrderedDict containing the properties of the current feature
         :rtype: OrderedDict
         """
@@ -191,6 +200,7 @@ class GeoFeatureModelSerializer(ModelSerializer):
             attrs[self.Meta.geo_field] = feature['geometry']
 
         if self.Meta.bbox_geo_field and 'bbox' in feature:
-            attrs[self.Meta.bbox_geo_field] = Polygon.from_bbox(feature['bbox'])
+            attrs[self.Meta.bbox_geo_field] = (
+                Polygon.from_bbox(feature['bbox']))
 
         return attrs
