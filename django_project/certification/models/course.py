@@ -119,6 +119,10 @@ class Course(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def location(self):
+        return self.training_center.location
+
     def get_absolute_url(self):
         """Return URL to course detail page.
 
