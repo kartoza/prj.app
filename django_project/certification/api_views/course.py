@@ -79,7 +79,7 @@ class GetUpcomingCourseOrganisation(APIView):
 
 
 class GetPastCourseProject(APIView):
-    """API returns GeoJSON location of upcoming courses within a project.
+    """API returns GeoJSON location of past courses within a project.
     The location is the location of the training center where this course
     will be held.
 
@@ -104,7 +104,7 @@ class GetPastCourseProject(APIView):
 
 
 class GetPastCourseOrganisation(APIView):
-    """API returns GeoJSON location of upcoming courses within a certifying
+    """API returns GeoJSON location of past courses within a certifying
     organisation. The location is the location of the training center where
     this course will be held.
 
