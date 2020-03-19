@@ -73,6 +73,10 @@ class CourseConvener(models.Model):
     def __str__(self):
         return self.user.username
 
+    @property
+    def full_name(self):
+        return '{} {}'.format(self.user.first_name, self.user.last_name)
+
     def get_absolute_url(self):
         """Return URL to course convener detail page.
 
