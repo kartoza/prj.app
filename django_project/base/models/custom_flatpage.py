@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.db import models
 from django.contrib.flatpages.models import FlatPage
-from .project import Project
+from base.models import Project
 
 
 class ProjectFlatpage(FlatPage):

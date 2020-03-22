@@ -6,8 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.template import loader
 from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_protect
-from .project import Project
-from ..models.custom_flatpage import ProjectFlatpage
+from base.models import Project, ProjectFlatpage
 
 
 def project_flatpage(request, url, project_slug):
