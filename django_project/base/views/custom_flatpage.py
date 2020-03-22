@@ -27,8 +27,7 @@ def general_flatpage(request, url):
     site_id = get_current_site(request).id
 
     try:
-        f = get_object_or_404(FlatPage,
-            url=url, sites=site_id)
+        f = get_object_or_404(FlatPage, url=url, sites=site_id)
     except Http404:
         if not url.endswith('/') and settings.APPEND_SLASH:
             url += '/'
@@ -98,13 +97,13 @@ def project_flatpage(request, url, project_slug):
         raise
 
     try:
-        f = get_object_or_404(FlatPage,
-            url=url, sites=site_id)
+        f = get_object_or_404(
+            FlatPage, url=url, sites=site_id, project=project)
     except Http404:
         if not url.endswith('/') and settings.APPEND_SLASH:
             url += '/'
-            f = get_object_or_404(FlatPage,
-                url=url, sites=site_id, project=project)
+            f = get_object_or_404(
+                FlatPage, url=url, sites=site_id, project=project)
             return HttpResponsePermanentRedirect('%s/' % request.path)
         else:
             raise
