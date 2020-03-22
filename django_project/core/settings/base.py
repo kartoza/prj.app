@@ -130,6 +130,7 @@ MIDDLEWARE = [
     # For custom domain checking
     'core.custom_middleware.CheckDomainMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware'
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -147,6 +148,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.syndication',
     'django.contrib.gis',
+    'django.contrib.flatpages'
 ]
 
 # A sample logging configuration. The only tangible logging

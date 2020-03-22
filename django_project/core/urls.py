@@ -8,6 +8,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.http import HttpResponseServerError
 from django.template import loader
+from base.views.custom_flatpage import general_flatpage
 
 admin.autodiscover()
 handler404 = 'base.views.error_views.custom_404'
@@ -50,6 +51,9 @@ urlpatterns += i18n_patterns(
     url(r'^stripe/', include("djstripe.urls", namespace="djstripe")),
     url(r'^notifications/', include('pinax.notifications.urls',
                                     namespace='pinax_notifications')),
+    url(r'^flatpage/(?P<url>.*)$',
+        general_flatpage,
+        name='general_flatpage'),
 )
 
 if 'rosetta' in settings.INSTALLED_APPS:

@@ -69,6 +69,20 @@
             <a href="{% url 'project-create' %}">Create Project</a>
         </li>
     </ul>
+    {% if flatpages %}
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Info Pages <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% for page in flatpages %}
+                    <li><a href='/flatpage{{ page.url }}'>{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+    {% endif %}
 {% else %}
     <style>
         .icon-thumbnail {
@@ -176,4 +190,18 @@
             </ul>
         </li>
     </ul>
+    {% if project_flatpages %}
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Info Pages <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% for page in project_flatpages %}
+                    <li><a href='/{{ the_project.slug }}/flatpage{{ page.url }}'>{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+    {% endif %}
 {% endif %}

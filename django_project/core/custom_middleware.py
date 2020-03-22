@@ -3,20 +3,21 @@
 """
 core.custom_middleware
 """
-from django.contrib.sites.models import Site
+from django.contrib.flatpages.models import FlatPage
 from django.conf import settings
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
+from django.template import RequestContext
 from django.utils.translation import activate
 try:
     from django.utils.deprecation import MiddlewareMixin as MiddlewareBase
 except ImportError:  # Django < 1.10
     MiddlewareBase = object
 
-from base.models import Project, Version, Domain
+from base.models import Project, Version, Domain, ProjectFlatpage
 from changes.models import (
-    Category, SponsorshipLevel, SponsorshipPeriod, Entry, Sponsor
+    SponsorshipLevel, SponsorshipPeriod, Sponsor
 )
 from certification.models import CertifyingOrganisation
 
@@ -68,7 +69,9 @@ class NavContextMiddleware(MiddlewareBase):
                         project__sponsorship_managers__in=[request.user]
                     ).exists()
                 )
-
+            context['project_flatpages'] = ProjectFlatpage.objects.filter(
+                project=context['the_project']
+            )
 
         else:
             if request.user.is_staff:
@@ -131,6 +134,11 @@ class NavContextMiddleware(MiddlewareBase):
                     context.get('categories')[0].project
             except (KeyError, IndexError):
                 pass
+
+        project_flatpage_ids = (
+            ProjectFlatpage.objects.all().values_list('id', flat=True))
+        context['flatpages'] = (
+            FlatPage.objects.exclude(id__in=project_flatpage_ids))
 
         return response
 

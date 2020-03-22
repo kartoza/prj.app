@@ -39,7 +39,8 @@ from .views import (
     OrganisationUpdateView,
 
     UserDetailView,
-    UserUpdateView
+    UserUpdateView,
+    project_flatpage
 )
 from .api_views.stripe_intent import StripeIntent
 
@@ -151,6 +152,11 @@ urlpatterns = [
     url(regex='^stripe-intent/(?P<amount>[\d-]+)/$',
         view=StripeIntent.as_view(),
         name='stripe-intent'),
+
+    # Project flatpage urls
+    url(r'^(?P<project_slug>[\w-]+)/flatpage/(?P<url>.*)$',
+        project_flatpage,
+        name='project_flatpage'),
 ]
 
 # Prevent cloudflare from showing an ad laden 404 with no context
