@@ -7,11 +7,10 @@ from django.shortcuts import get_object_or_404
 from django.template import loader
 from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_protect
-from .project import Project
-from ..models.custom_flatpage import ProjectFlatpage
+from base.models import Project, ProjectFlatpage
 
 
-def project_flatpage(request, url, project_slug):
+def general_flatpage(request, url):
     """
     Public interface to the flat page view.
 
@@ -25,27 +24,21 @@ def project_flatpage(request, url, project_slug):
     if not url.startswith('/'):
         url = '/' + url
     site_id = get_current_site(request).id
-    try:
-        project = get_object_or_404(Project, slug=project_slug)
-    except Http404:
-        raise
 
     try:
-        f = get_object_or_404(
-            ProjectFlatpage, url=url, sites=site_id, project=project)
+        f = get_object_or_404(FlatPage, url=url, sites=site_id)
     except Http404:
         if not url.endswith('/') and settings.APPEND_SLASH:
             url += '/'
-            f = get_object_or_404(
-                ProjectFlatpage, url=url, sites=site_id, project=project)
+            f = get_object_or_404(FlatPage, url=url, sites=site_id)
             return HttpResponsePermanentRedirect('%s/' % request.path)
         else:
             raise
-    return render_custom_project_flatpage(request, f, project)
+    return render_custom_general_flatpage(request, f)
 
 
 @csrf_protect
-def render_custom_project_flatpage(request, f, project):
+def render_custom_general_flatpage(request, f):
     """
     Internal interface to the flat page view.
     """
@@ -64,14 +57,20 @@ def render_custom_project_flatpage(request, f, project):
     # content in the first place).
     f.title = mark_safe(f.title)
     f.content = mark_safe(f.content)
-    project_flatpages = ProjectFlatpage.objects.filter(
-        project=project
-    )
+    project_flatpage_ids = (
+        ProjectFlatpage.objects.all().values_list('id', flat=True))
+    flatpages = FlatPage.objects.exclude(id__in=project_flatpage_ids)
+    if request.user.is_staff:
+        the_projects = Project.objects.all()
+    else:
+        the_projects = Project.approved_objects.filter(
+            private=False
+        )
 
     response = HttpResponse(
         template.render({
             'flatpage': f,
-            'the_project': project,
-            'project_flatpages': project_flatpages
+            'flatpages': flatpages,
+            'the_projects': the_projects
         }, request))
     return response

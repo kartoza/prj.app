@@ -8,7 +8,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.http import HttpResponseServerError
 from django.template import loader
-from base.views.custom_flatpage import general_flatpage
+from .views import general_flatpage
 
 admin.autodiscover()
 handler404 = 'base.views.error_views.custom_404'
