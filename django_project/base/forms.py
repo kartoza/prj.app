@@ -2,6 +2,7 @@
 import logging
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.flatpages.forms import FlatpageForm
 from django.forms import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
@@ -11,7 +12,8 @@ from crispy_forms.layout import (
     Field,
     Submit,
 )
-from .models import Project, ProjectScreenshot, Domain, Organisation
+from .models import (
+    Project, ProjectScreenshot, Domain, Organisation, ProjectFlatpage)
 from certification.forms import CustomSelectMultipleWidget
 
 logger = logging.getLogger(__name__)
@@ -306,3 +308,9 @@ class UserForm(forms.ModelForm):
         self.helper.html5_required = False
         super(UserForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
+
+
+class ProjectFlatpageForm(FlatpageForm):
+    class Meta:
+        model = ProjectFlatpage
+        fields = '__all__'

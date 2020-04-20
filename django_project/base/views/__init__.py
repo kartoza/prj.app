@@ -7,3 +7,4 @@ from .custom_domain import *  # noqa
 from .organisation import *  # noqa
 from .certificate_preview import *  # noqa
 from .user import *  # noqa
+from .custom_flatpage import *  # noqa

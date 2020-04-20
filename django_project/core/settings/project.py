@@ -81,6 +81,7 @@ PIPELINE['STYLESHEETS']['project'] = {
 VALID_DOMAIN = [
     'localhost',
     'changelog.kartoza.com',
+    'staging.changelog.kartoza.com'
 ]
 
 EMAIL_HOST_USER = 'noreply@kartoza.com'
