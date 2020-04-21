@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block page_title %}
-  <h1>Sponsor Levels (all)</h1>
+  <h1>Sustaining Member Levels (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
@@ -16,9 +16,9 @@
     <div class="col-lg-10">
       <h3>{{ sponsorshiplevel.name }}</h3>
     </div>
-    {% if user.is_staff %}
+    {% if user.is_staff or user == project.owner or user in project.sponsorship_managers.all %}
     <div class="col-lg-2">
-      <div class="btn-group">
+      <div class="btn-group pull-right">
         <a class="btn btn-default btn-sm tooltip-toggle"
            href='{% url "sponsorshiplevel-delete" project_slug=sponsorshiplevel.project.slug slug=sponsorshiplevel.slug %}'
            data-title="Delete {{ sponsorshiplevel.name }}">
@@ -43,7 +43,7 @@
     <div class="col-lg-4">
       {% if sponsorshiplevel.logo %}
         <img class="img-responsive img-rounded pull-right"
-             src="{{ MEDIA_URL }}{{ sponsorshiplevel.logo }}" />
+             src="{{ sponsorshiplevel.logo.url }}" />
       {%  endif %}
     </div>
   </div>

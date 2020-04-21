@@ -1,0 +1,6 @@
+{% autoescape off %}
+{% load i18n %}
+{% blocktrans %}{{ notice }}{% endblocktrans %} for {{ sustaining_member_name }}
+Reason for rejection :
+{{ remarks }}
+{% endautoescape %}

@@ -1,0 +1,76 @@
+.chosen-container * {
+	width: 750px;
+}
+
+.chosen-container .chosen-drop {
+    width: 750px;
+}
+
+textarea.form-control {
+	height: 100px !important;;
+	width: 750px;
+}
+
+.textInput.form-control {
+	width: 750px;
+}
+
+.btn-primary {
+	color:#fff;
+	background-color:#337ab7;
+	border-color:#2e6da4;
+	margin-top: 25px !important;;
+	width: 100px !important;
+	height: 35px !important;
+	font-size: 12pt !important;;
+}
+
+.controls {
+	width: 750px;
+}
+#container img {
+    max-width: none !important;
+}
+
+.ui-widget-header {
+    border: 1px solid darkgrey !important;
+    background: #f5f5f5 !important;
+	color: black;
+}
+
+.certificate-header-details, .certificate-details {
+	width: 70%;
+	margin: 0 auto;
+	border: 1px solid #daffd3;
+	font-family: "Times New Roman", Times, serif;
+}
+
+.certificate-details {
+	font-size: 14pt;
+	color: #6e756b;
+	text-align: left;
+	padding: 20px;
+}
+
+.td-title, .top-vertical {
+	vertical-align: top;
+}
+
+.td-title {
+	width: 200px;
+}
+
+.about-icon:hover {
+	color: black !important;
+	text-decoration: none;
+}
+
+.info-text {
+	color: #737373;
+	margin-bottom: 20px;
+}
+
+.selector select[multiple=multiple] {
+    max-width: 366px !important;
+
+}

@@ -6,6 +6,20 @@
                 <a href="{% url 'committee-detail' project_slug=committee.project.slug slug=committee.slug %}">
                     {{ committee.name }}
                 </a>
+                {% if user.is_staff %}
+                    <div class="btn-group pull-right" style="margin-top: -3px;">
+                        <a href="{% url 'committee-delete' project_slug=committee.project.slug slug=committee.slug %}"
+                           class="btn btn-default btn-xs tooltip-toggle"
+                           data-placement="top" data-title="Delete {{ committee.name }}">
+                          <span class="glyphicon glyphicon-minus"></span>
+                        </a>
+                        <a href="{% url 'committee-update' project_slug=committee.project.slug slug=committee.slug %}"
+                           class="btn btn-default btn-xs tooltip-toggle"
+                           data-placement="top" data-title="Update {{ committee.name }}">
+                          <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                    </div>
+                {% endif %}
             </h3>
         </div>
         <div class="panel-body">
@@ -23,7 +37,7 @@
                     <a href="{% url 'ballot-create' project_slug=committee.project.slug committee_slug=committee.slug %}"
                        class="btn btn-default btn-xs tooltip-toggle"
                        data-title="Create New Ballot">
-                        <span class="glyphicon glyphicon-asterisk"></span>
+                        {% show_button_icon "add" %}
                     </a>
                 </div>
             </h4>

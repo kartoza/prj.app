@@ -1,8 +1,8 @@
 [flake8]
-exclude = */docs/*,*/.tox/*,*/.venv/*
-max-line-length = 100
+exclude = */docs/*,*/.tox/*,*/.venv/*,*/.pycharm_helpers/*,*/migrations/*,docs/*,fabfile.py,*/__init__.py,django_project/core/settings/*.py
+max-line-length = 79
 
 # E12x continuation line indentation
 # E251 no spaces around keyword / parameter equals
 # E303 too many blank lines (3)
-ignore = E126,E251,E303
+ignore = E125,E126,E251,E303,W504,W60

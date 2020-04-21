@@ -1,0 +1,40 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load custom_markup %}
+
+{% block page_title %}
+    <h1>Add Course Attendee</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <style>
+        html, body {
+            height: 100%;
+        }
+    </style>
+
+    <div class="pull-right">
+        <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='{% url "attendee-create" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=course.slug %}'
+                   data-title="Add another attendee to the list">
+                    {% show_button_icon "add" %}
+                </a>
+    </div>
+
+    <section id="forms">
+        <div class='container'>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="vertical-space"></div>
+                <div class="form-actions">
+                    <input type="submit" name="submit" value="Submit"
+                           class="btn btn-primary" id="submit-save">
+                </div>
+            </form>
+        </div>
+    </section>
+
+{% endblock %}

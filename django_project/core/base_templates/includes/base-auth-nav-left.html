@@ -8,9 +8,15 @@
             <ul class="dropdown-menu">
                 {% for project in the_projects %}
                     <li>
-                        <a href="{% url 'project-detail' project.slug %}">
-                            {{ project.name }}
-                        </a>
+                        {% if project.approved %}
+                            <a href="{% url 'project-detail' project.slug %}">
+                                {{ project.name }}
+                            </a>
+                        {% else %}
+                            <a href="{% url 'pending-project-list' %}">
+                                {{ project.name }} <b>(pending)</b>
+                            </a>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
@@ -18,96 +24,184 @@
     </ul>
     <ul class="nav navbar-nav">
         <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Organisation <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="{% url 'create-organisation' %}">
+                            Create Organisation
+                        </a>
+                </li>
+                <li>
+                    <a href="{% url 'list-organisation' %}">
+                            Organisation List
+                        </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    {% if user.is_staff %}
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Domain <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="{% url 'register-domain' %}">
+                            Register a Domain
+                        </a>
+                </li>
+                {% if user.is_staff %}
+                <li>
+                    <a href="{% url 'domain-list' %}">
+                            Domain List
+                        </a>
+                </li>
+                {% endif %}
+            </ul>
+        </li>
+    </ul>
+    {% endif %}
+    <ul class="nav navbar-nav">
+        <li>
             <a href="{% url 'project-create' %}">Create Project</a>
         </li>
     </ul>
+    {% if flatpages %}
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Info Pages <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% for page in flatpages %}
+                    <li><a href='/flatpage{{ page.url }}'>{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+    {% endif %}
 {% else %}
+    <style>
+        .icon-thumbnail {
+            line-height: 50px !important;
+        }
+        .icon-thumbnail img {
+            vertical-align: middle;
+        }
+    </style>
     <ul class="nav navbar-nav">
         {% if the_project.image_file %}
-            <li><img class="img-rounded"
-                     src="{% thumbnail the_project.image_file 50x50 crop %}"/></li>
+            <li><a class="icon-thumbnail" href="{% url "project-detail" the_project.slug %}" style="padding: 0;">
+                <img class="img-rounded"
+                     src="{% thumbnail the_project.image_file 50x50 %}"/>
+            </a>
+            </li>
         {% endif %}
         <li>
-            <a class="nav navbar-nav" >
+            <a href="{% url "project-detail" the_project.slug %}" class="nav navbar-nav">
                 {{ the_project.name }}
             </a>
 
         </li>
     </ul>
-     <ul class="nav navbar-nav">
-        <li>
-            <a href="{% url 'committee-list' the_project.slug %}">
-                Teams
-            </a>
-    </li>
-    </ul>
-    {% if user.is_staff %}
     <ul class="nav navbar-nav">
         <li>
+            {% if the_committee and the_project %}
+
+                <a class="dropdown-toggle" data-toggle="dropdown">
+                    Teams <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="{% url 'committee-list' the_project.slug %}">
+                            Team List
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'ballot-list' the_project.slug the_committee.slug %}">
+                            Team Ballots
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'ballot-create' the_project.slug the_committee.slug %}">
+                            Start Ballot
+                        </a>
+                    </li>
+                </ul>
+            {% else %}
+                <a href="{% url 'committee-list' the_project.slug %}">
+                    Teams
+                </a>
+            {% endif %}
+        </li>
+    </ul>
+    {% if user.is_staff or user in the_project.changelog_manager.all %}
+        <ul class="nav navbar-nav">
+        <li>
             <a href="{% url "version-create" the_project.slug %}" class="dropdown-toggle" data-toggle="dropdown">
-                Changelogs <b class="caret"></b>
+                Changelog <b class="caret"></b>
             </a>
             </a>
             <ul class="dropdown-menu">
                 <li><a href="{% url 'category-list' the_project.slug %}">Categories</a></li>
                 <li><a href="{% url 'version-list' the_project.slug %}">Versions</a></li>
             </ul>
-    </li>
+        </li>
     {% endif %}
+</ul>
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Sustaining Members <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="{% url 'sponsor-programme' the_project.slug %}">Learn about Sustaining Member Programme</a></li>
+                {% if user.is_authenticated %}
+                    {% if not is_sustaining_member %}
+                        <li><a href="{% url 'sustaining-member-create' the_project.slug %}">Sign up</a></li>
+                    {% else %}
+                        <li><a href="{% url 'sustaining-membership' the_project.slug %}">Membership</a></li>
+                    {% endif %}
+                {% endif %}
+                <li><a href="{% url 'sponsor-list' the_project.slug %}">Sustaining Members</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'sponsorshiplevel-list' the_project.slug %}">Sustaining Member Levels</a></li>
+                    <li><a href="{% url 'sponsorshipperiod-list' the_project.slug %}">Sustaining Member Periods</a></li>
+                {% endif %}
+                <li><a href="{% url 'sponsor-world-map' the_project.slug %}">Sustaining Members Map</a></li>
+            </ul>
+        </li>
     </ul>
     <ul class="nav navbar-nav">
         <li>
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                Sponsors <b class="caret"></b>
+                Certification <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-                <li><a href="{% url 'sponsor-list' the_project.slug %}">Sponsors</a></li>
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'sponsorshiplevel-list' the_project.slug %}">Sponsor Levels</a></li>
-                    <li><a href="{% url 'sponsorshipperiod-list' the_project.slug %}">Sponsor Periods</a></li>
-                {% endif %}
-                <li><a href="{% url 'sponsor-world-map' the_project.slug %}">Sponsors Map</a></li>
+                <li><a href="{% url 'about' the_project.slug %}">Learn about Certification</a></li>
+                <li><a href="{% url 'certifyingorganisation-list' the_project.slug %}">Approved Organisations</a></li>
+                <li><a href="{% url 'pending-certifyingorganisation-list' the_project.slug %}">Pending Organisations</a></li>
+                <li><a href="{% url 'certifyingorganisation-rejected-list' the_project.slug %}">Rejected Organisations</a></li>
+                <li><a href="{% url 'validate-certificate-organisation' the_project.slug %}">Verify certificate for Certifying Organisation</a></li>
+                <li><a href="{% url 'validate-certificate' the_project.slug %}">Verify certificate for Attendee</a></li>
             </ul>
-    </li>
+        </li>
     </ul>
-
-{% endif %}
-{% if the_committee and the_project %}
+    {% if project_flatpages %}
     <ul class="nav navbar-nav">
         <li>
-            <a href="{% url 'ballot-list' the_project.slug the_committee.slug %}">
-                Committee Ballots
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Info Pages <b class="caret"></b>
             </a>
-        </li>
-        <li>
-            <a href="{% url 'ballot-create' the_project.slug the_committee.slug %}">
-                Start Ballot
-            </a>
+            <ul class="dropdown-menu">
+                {% for page in project_flatpages %}
+                    <li><a href='/{{ the_project.slug }}/flatpage{{ page.url }}'>{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
         </li>
     </ul>
-{% endif %}
-{% if the_version and the_project %}
-    <ul class="nav navbar-nav">
-        <li>
-            {% if not as_thumbs %}
-                <a href="{% url 'version-thumbs' the_project.slug the_version.slug %}">
-                    Version Thumbnails
-                </a>
-            {% else %}
-                <a href="{% url 'version-detail' the_project.slug the_version.slug %}">
-                    Version as List
-                </a>
-            {% endif %}
-        </li>
-        <li>
-            <a href="{% url 'entry-list' the_project.slug the_version.slug %}">
-                Version Entries
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'entry-create' the_project.slug the_version.slug %}">
-                Add Entry
-            </a>
-        </li>
-    </ul>
+    {% endif %}
 {% endif %}

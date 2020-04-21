@@ -1,0 +1,25 @@
+{% load custom_markup %}
+{% load thumbnail %}
+{% load embed_video_tags %}
+
+<h3>Feature: {{ entry.title }}</h3>
+
+{{ entry.description|base_markdown }}
+
+{% if entry.image_file %}
+    <img class="img-responsive img-rounded"
+         src="{{ entry.image_file.url }}"
+         alt=""/>{# see core/settings/contrib.py for large-entry #}
+{% endif %}
+
+{% if entry.video %}
+    <div class="col-lg-8 col-md-offset-1">
+        {% video entry.video 'small' %}
+    </div>
+{% endif %}
+
+<p>
+    {{ entry.funder_info_html|base_markdown }}
+    {{ entry.developer_info_html|base_markdown }}
+</p>
+

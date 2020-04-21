@@ -1,10 +1,24 @@
 {% extends "project_base.html" %}
-
+{% load staticfiles %}
 {% load crispy_forms_tags %}
+
+{% block js_head %}
+    <script type="text/javascript" src="/static/js/jsi18n.js"></script>
+    <script type="text/javascript" src="/static/grappelli/jquery/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="/static/grappelli/jquery/ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/static/grappelli/js/grappelli.js"></script>
+    <script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+    <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
+{% endblock %}
+
+{% block css_head %}
+    {{ form.media }}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+{% endblock %}
 
 {% block extra_head %}
 {{ Other }}
-<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
+<script type="text/javascript" src="{% static 'js/jquery.formset.min.js' %}"></script>
 {{  floppyforms }}
 
 {% endblock %}
@@ -14,11 +28,62 @@
 {% endblock page_title %}
 
 {% block content %}
-
+<link rel="stylesheet" type="text/css" href="{% static 'css/create_project.css' %}">
 <section id="forms">
 <div class='container'>
-  {% crispy form %}
+  <form method="post" enctype="multipart/form-data">
+    {{ formset.management_form }}
+        {% csrf_token %}
+        {% crispy form %}
+        <div class="container" id="preview-template-load" style="margin-bottom: 25px">
+            <div class="row" >
+            <!-- the photo demo-->
+                <div>
+                    <div id="preview-photo" class="col-lg-3"></div>
+                    <div id="data" class="col-lg-5">
+                        <p>
+                            <span id="size"></span><br/>
+                            <span id="type"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <label>Screenshots</label>
+        <div class="form-screenshot">
+            {% crispy formset formset.form.helper %}
+        </div>
+
+        <div class="form-actions">
+            <input type="submit" name="submit" value="Submit" class="btn btn-primary" id="submit-save">
+        </div>
+    </form>
 </div>
 </section>
 
+<section id="preview">
+    <div class="container" style="padding-left: 0 !important;">
+        <form method="post" id="preview-form" action="/en/project/preview-certificate/" target="_blank" onsubmit="return previewCertificate()">
+            {% csrf_token %}
+            <input type="hidden" name="project_name" value="">
+            <input type="hidden" name="project_logo" value="">
+            <input type="hidden" name="project_representative" value="">
+            <input type="hidden" name="project_representative_signature" value="">
+            <input type="hidden" name="template_certificate" value="">
+            <input id="preview-certificate" type="submit" class="btn btn-default" value="Preview Certificate" form="preview-form">
+        </form>
+        <p id="error-submit" style="color: darkred; font-weight: bold"></p>
+    </div>
+</section>
+<script>var media_url = {{ MEDIA_URL }}; console.log({{ MEDIA_URL }})</script>
+<script>
+    $('.form-screenshot').find('*[id*="clear"]').each(function() {
+        $(this).hide();
+    });
+    $('.form-screenshot').find('*[for*="clear"]').each(function() {
+        $(this).hide();
+    });
+</script>
+<script type="text/javascript" src="/static/js/custom-project-form.js"></script>
 {% endblock %}

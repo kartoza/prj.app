@@ -1,5 +1,6 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
+{% load staticfiles %}
 
 {% block title %}Committee - {{ committee.name }}{% endblock %}
 
@@ -13,15 +14,30 @@
     <div class="row">
         <div class="col-md-10">
             <h2>Members</h2>
-            <p>Chair: {{ committee.chair }}</p>
+            <h5><b>Chair: </b></h5>
+            <div style="height: 50px">
+            {% if committee.chair.socialaccount_set.all.0.get_avatar_url %}
+                <img style="max-width: 100%; max-height: 100%; margin-right: 10px" src="{{ committee.chair.socialaccount_set.all.0.get_avatar_url }}" />
+            {% else %}
+                <img style="max-width: 100%; max-height: 100%; margin-right: 10px" src="{% static 'img/default-user.png' %}" />
+            {% endif %}
+                {{ committee.chair }}
+            </div>
             <hr/>
-            <p>
+            <div>
                 {% for user in committee.users.all %}
                     {% if user != committee.chair %}
-                        {{ user.username }} {% if not forloop.last %}|{% endif %}
+                        <div style="height: 50px; margin-bottom: 10px">
+                            {% if user.socialaccount_set.all.0.get_avatar_url %}
+                                <img style="max-width: 100%; max-height: 100%; margin-right: 10px" src="{{ user.socialaccount_set.all.0.get_avatar_url }}" />
+                            {% else %}
+                                <img style="max-width: 100%; max-height: 100%; margin-right: 10px" src="{% static 'img/default-user.png' %}" />
+                            {% endif %}
+                            {{ user.username }}
+                        </div>
                     {% endif %}
                 {% endfor %}
-            </p>
+            </div>
         </div>
         <div class="col-md-2">
       <span class="pull-right">

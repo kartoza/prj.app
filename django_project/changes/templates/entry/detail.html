@@ -1,5 +1,5 @@
 {% extends "project_base.html" %}
-{% load disqus_tags %}
+{#{% load disqus_tags %}#}
 
 {% block title %}Entries - {{ block.super }}{% endblock %}
 
@@ -22,7 +22,9 @@
         </div>
     </div>
     {% include "entry/includes/entry_detail.html" %}
-    <h5 id="comments">Comments</h5>
-    {% disqus_show_comments %}
+{#    <h5 id="comments">Comments</h5>#}
+{#    {% disqus_show_comments %}#}
+
 
 {% endblock %}
+

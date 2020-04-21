@@ -12,12 +12,14 @@ from .utils import absolute_path
 from .contrib import *  # noqa
 
 # Project apps
-INSTALLED_APPS += (
+INSTALLED_APPS += [
     'base',
     'changes',
     'github_issue',
     'vota',
-)
+    'certification',
+    'lesson',
+]
 
 # Due to profile page does not available,
 # this will redirect to home page after login
@@ -35,41 +37,52 @@ SOUTH_TESTS_MIGRATE = False
 # Set languages which want to be translated
 LANGUAGES = (
     ('en', _('English')),
-    ('af', _('Afrikaans')),
     ('id', _('Indonesian')),
-    ('ko', _('Korean')),
 )
 
 # Set storage path for the translation files
 LOCALE_PATHS = (absolute_path('locale'),)
 
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE += [
     # For nav bar generation
     'core.custom_middleware.NavContextMiddleware',
-) + MIDDLEWARE_CLASSES
+]
 
 # Project specific javascript files to be pipelined
 # For third party libs like jquery should go in contrib.py
-PIPELINE_JS['project'] = {
+PIPELINE['JAVASCRIPT']['project'] = {
     'source_filenames': (
         'js/csrf-ajax.js',
         'js/changelog.js',
-        'js/github-issue.js'
+        'js/github-issue.js',
+        'js/entry.js',
+        'js/category.js',
+        'js/form.js',
     ),
     'output_filename': 'js/project.js',
 }
 
 # Project specific css files to be pipelined
 # For third party libs like bootstrap should go in contrib.py
-PIPELINE_CSS['project'] = {
+PIPELINE['STYLESHEETS']['project'] = {
     'source_filenames': (
         'css/changelog.css',
         'css/form.css',
-        'css/fonts.css'
+        'css/fonts.css',
+        'css/base.css',
     ),
     'output_filename': 'css/project.css',
     'extra_context': {
-        'media': 'screen, projection',
+        'media': 'screen,projection',
     },
 }
+
+VALID_DOMAIN = [
+    'localhost',
+    'changelog.kartoza.com',
+    'staging.changelog.kartoza.com'
+]
+
+EMAIL_HOST_USER = 'noreply@kartoza.com'
+LOGIN_URL = '/en/accounts/login/'

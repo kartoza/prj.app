@@ -26,8 +26,10 @@ images for you in **production mode**.
 ```
 cd deployment
 make build
-make run
-make migrate migrate
+make permissions
+make web
+# Wait a few seconds for the DB to start before to do the next command
+make migrate
 make collectstatic
 ```
 
@@ -109,6 +111,9 @@ e.g.
 ```
 sudo /etc/init.d/nginx restart
 ```
+
+**Note that the default configuration runs the service directly on port 80 since
+we assume there is a dedicated server for deployment.**
 
 # Configuration options
 

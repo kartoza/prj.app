@@ -2,7 +2,7 @@
 
 import os
 from django.conf.global_settings import MEDIA_ROOT
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
 from django.db import models
@@ -16,7 +16,7 @@ class ApprovedSponsorshipLevelManager(models.Manager):
     """Custom sponsor manager that shows only approved records."""
 
     def get_queryset(self):
-        """Query set generator"""
+        """Query set generator."""
         return super(
             ApprovedSponsorshipLevelManager, self).get_queryset().filter(
                 approved=True)
@@ -26,7 +26,7 @@ class UnapprovedSponsorshipLevelManager(models.Manager):
     """Custom sponsor manager that shows only unapproved records."""
 
     def get_queryset(self):
-        """Query set generator"""
+        """Query set generator."""
         return super(
             UnapprovedSponsorshipLevelManager, self).get_queryset().filter(
                 approved=False)
@@ -90,9 +90,19 @@ class SponsorshipLevel(models.Model):
         default=False
     )
 
-    author = models.ForeignKey(User)
+    subscription_plan = models.ForeignKey(
+        'djstripe.Plan',
+        help_text=(
+            'A Stripe subscription plan contains the pricing information'
+        ),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField()
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
     objects = models.Manager()
     approved_objects = ApprovedSponsorshipLevelManager()
     unapproved_objects = UnapprovedSponsorshipLevelManager()
@@ -105,7 +115,9 @@ class SponsorshipLevel(models.Model):
             ('project', 'slug')
         )
         app_label = 'changes'
-        ordering = ['-value']
+        ordering = ['project', '-value']
+        verbose_name = 'Sustaining Member Level'
+        verbose_name_plural = 'Sustaining Member Levels'
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -116,6 +128,9 @@ class SponsorshipLevel(models.Model):
         super(SponsorshipLevel, self).save(*args, **kwargs)
 
     def __unicode__(self):
+        return u'%s : %s %s' % (self.name, self.value, self.currency)
+
+    def __str__(self):
         return u'%s : %s %s' % (self.name, self.value, self.currency)
 
     def get_absolute_url(self):

@@ -1,0 +1,49 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Worksheet Deleted - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Worksheet Deleted</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+        <div class="alert row">
+            <div class="col-lg-10">
+                <p class="lead">Are you sure you want to delete the worksheet below?</p>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    <a class="btn btn-danger btn-sm tooltip-toggle"
+                       href="#"
+                       onClick="$('#delete-confirmation').submit()"
+                       data-title="Delete {{ worksheet.title }}">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "section-list" project_slug=worksheet.section.project.slug %}#{{ worksheet.section.slug }}'
+                       data-title="Cancel">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Worksheet: {{ worksheet.title }}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8" style="font-size: 12pt">
+                <span class="col-lg-3">Module</span><span class="col-lg-9">: {{ worksheet.module }}<br/></span>
+                <span class="col-lg-3">Title</span><span class="col-lg-9">: {{ worksheet.title }}<br/></span>
+                <span class="col-lg-3">Summary</span><span class="col-lg-9">: {{ worksheet.summary_leader }}<br/></span>
+                <span class="col-lg-3">Content</span><span class="col-lg-9">: {{ worksheet.summary_text | base_markdown }}<br/></span>
+            </div>
+        </div>
+    </form>
+{% endblock %}

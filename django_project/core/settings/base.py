@@ -3,12 +3,12 @@
 core.settings.base
 """
 # Django settings for projecta project.
-
+import os
 from .utils import absolute_path
 
 ADMINS = (
     ('Tim Sutton', 'tim@kartoza.com'),
-    ('Rischan Mafrur', 'rischan@kartoza.com')
+    ('Dimas Ciputra', 'dimas@kartoza.com'),
 )
 
 MANAGERS = ADMINS
@@ -57,12 +57,16 @@ STATIC_ROOT = '/home/web/static'
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # Additional locations of static files
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     absolute_path('core', 'base_static'),
+    absolute_path('certification', 'static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -70,6 +74,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'pipeline.finders.PipelineFinder',
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
@@ -83,12 +88,16 @@ TEMPLATES = [
         'DIRS': [
             # project level templates
             absolute_path('core', 'base_templates'),
+            absolute_path('base', 'templates'),
             absolute_path('vota', 'templates'),
             absolute_path('changes', 'templates'),
+            absolute_path('certification', 'templates'),
+            absolute_path('lesson', 'templates'),
         ],
         'APP_DIRS': False,
         'OPTIONS': {
-            # List of callables that know how to import templates from various sources.
+            # List of callables that know how to import templates from various
+            # sources.
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
                 'django.template.loaders.app_directories.Loader',
@@ -96,34 +105,40 @@ TEMPLATES = [
             'context_processors': [
                 # Already defined Django-related contexts
                 'django.contrib.auth.context_processors.auth',
-                'django.core.context_processors.request',
-                'django.core.context_processors.media',
                 'core.context_processors.add_intercom_app_id',
+                'core.context_processors.stripe_public_key',
+                'core.context_processors.sustaining_member_context',
                 'django.template.context_processors.i18n',
 
                 # `allauth` needs this from django
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.contrib.messages.context_processors.messages',
             ],
         },
     },
 ]
 
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # For custom domain checking
+    'core.custom_middleware.CheckDomainMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware'
+]
 
 ROOT_URLCONF = 'core.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'core.wsgi.application'
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sites',
@@ -132,7 +147,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.syndication',
-)
+    'django.contrib.gis',
+    'django.contrib.flatpages'
+]
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -152,9 +169,18 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'null': {
+            'class': 'logging.NullHandler',
+        },
     },
     'loggers': {
+        # Special rules to not bother logging when host is
+        # not allowed otherwise we get lots of mail spam....
+        'django.security.DisallowedHost': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',

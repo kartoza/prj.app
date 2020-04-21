@@ -1,0 +1,200 @@
+{% load staticfiles %}
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+    /**
+     * The CSS shown here will not be introduced in the Quickstart guide, but shows
+     * how you can use CSS to style your Element's container.
+     */
+    .StripeElement {
+        box-sizing: border-box;
+        height: 40px;
+        padding: 10px 12px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background-color: white;
+        box-shadow: 0 1px 3px 0 #e6ebf1;
+        -webkit-transition: box-shadow 150ms ease;
+        transition: box-shadow 150ms ease;
+    }
+    .StripeElement--focus {
+        box-shadow: 0 1px 3px 0 #cfd7df;
+    }
+    .StripeElement--invalid {
+        border-color: #fa755a;
+    }
+    .StripeElement--webkit-autofill {
+        background-color: #fefde5 !important;
+    }
+</style>
+
+<script>
+    // Set your publishable key: remember to change this to your live publishable key in production
+    // See your keys here: https://dashboard.stripe.com/account/apikeys
+    let stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
+    let elements = stripe.elements();
+</script>
+
+
+<!-- Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Payment</h5>
+                <button type="button" class="close"
+                        data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"
+                          style="position: absolute; margin-top: -20px; margin-left: -10px;">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-rorm card-container" style="display: none">
+                    <label for="card-element">
+                        Credit or debit card
+                    </label>
+                    <div id="card-element">
+                        <!-- A Stripe Element will be inserted here. -->
+                    </div>
+                    <!-- Used to display form errors. -->
+                    <div id="card-errors" role="alert"></div>
+                </div>
+                <div class="card-loading-view" style="display: none; text-align: center;">
+                    <img src="{% static 'gif/loading.gif' %}" width="50px"/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="submit" type="button" class="btn btn-success"
+                        style="padding-left: 40px; padding-right: 40px;">Pay
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    // Set up Stripe.js and Elements to use in checkout form
+    let amount = 50;
+    let clientSecret = '';
+
+    function showPaymentModal() {
+        $('#paymentModal').modal('show');
+    }
+
+    $('#paymentModal').on('shown.bs.modal', function (e) {
+        const $cardContainer = $('.card-container');
+        const $cardLoadingView = $('.card-loading-view');
+        let $amountInput = 100 * parseInt($('#donate-amount').val());
+        $cardContainer.show();
+
+        /*
+        if (!clientSecret || amount !== $amountInput) {
+            amount = $amountInput;
+            $cardLoadingView.show();
+            $cardContainer.hide();
+            let stripeIntentUrl = `/stripe-intent/${amount}`;
+            $.ajax({
+                url: stripeIntentUrl,
+                type: "GET",
+                dataType: 'JSON',
+                success: function (response) {
+                    clientSecret = response['client_secret'];
+                    $cardLoadingView.hide();
+                    $cardContainer.show();
+                    $('#submit').attr('disabled', false);
+                },
+                error: function () {
+                    alert('Error');
+                }
+            })
+        } else {
+            $cardContainer.show();
+        }
+        */
+    });
+
+    let style = {
+        base: {
+            color: '#32325d',
+            fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+            fontSmoothing: 'antialiased',
+            fontSize: '16px',
+            '::placeholder': {
+                color: '#aab7c4'
+            }
+        },
+        invalid: {
+            color: '#fa755a',
+            iconColor: '#fa755a'
+        }
+    };
+
+    let card = elements.create("card", {style: style});
+    card.mount("#card-element");
+    card.addEventListener('change', function (event) {
+        let displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    let submitButton = document.getElementById('submit');
+
+    function stripeSourceHandler(source) {
+        // Insert the source ID into the form so it gets submitted to the
+        // server
+    }
+
+    submitButton.addEventListener('click', function (ev) {
+        $(ev.target).html('Loading...');
+        $(ev.target).attr('disabled', true);
+
+        // Note - slightly different from the Stripe JS Quickstart because
+        // we use stripe.createSource instead of createToken
+        card['amount'] = 1099;
+        card['currency'] = 'eur';
+        stripe.createSource(card).then(function (result) {
+            if (result.error) {
+                // Inform the user if there was an error.
+                let errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+                $(ev.target).html('Pay');
+                $(ev.target).attr('disabled', false);
+            } else {
+                // Send the token to your server.
+                stripeSourceHandler(result.source);
+            }
+        });
+
+        /*
+        stripe.confirmCardPayment(clientSecret, {
+            payment_method: {card: card}
+        }).then(function (result) {
+            clientSecret = '';
+            if (result.error) {
+                // Show error to your customer (e.g., insufficient funds)
+                console.log(result.error.message);
+                $(ev.target).html('Donate');
+                $(ev.target).attr('disabled', false);
+            } else {
+                // The payment has been processed!
+                if (result.paymentIntent.status === 'succeeded') {
+                    $(ev.target).html('Donate');
+                    $(ev.target).attr('disabled', false);
+                    $('#paymentModal').modal('hide');
+                    alert('success!');
+                    // Show a success message to your customer
+                    // There's a risk of the customer closing the window before callback
+                    // execution. Set up a webhook or plugin to listen for the
+                    // payment_intent.succeeded event that handles any business critical
+                    // post-payment actions.
+                }
+            }
+        });
+         */
+    });
+</script>

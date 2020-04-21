@@ -1,23 +1,23 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
 
-{% block title %}Sponsorship Level Deleted - {{ block.super }}{% endblock %}
+{% block title %}Sustaining Membership Level Deleted - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
 
 {% block page_title %}
-  <h1>Sponsorship Level Deleted</h1>
+  <h1>Sustaining Membership Level Deleted</h1>
 {% endblock page_title %}
 
 {% block content %}
   <form action="" id="delete-confirmation" method="post">{% csrf_token %}
     <div class="alert row">
       <div class="col-lg-10">
-        <p class="lead">Please confirm you wish to delete the sponsorship level below!</p>
+        <p class="lead">Please confirm you wish to delete the Sustaining Membership level below!</p>
       </div>
       <div class="col-lg-2">
-        <div class="btn-group">
+        <div class="btn-group pull-right">
           <a class="btn btn-default btn-sm tooltip-toggle"
              href="#"
              onClick="$('#delete-confirmation').submit()"
@@ -34,14 +34,14 @@
     </div>
     <div class="row">
       <div class="col-lg-12">
-        <h3>Sponsorship Level: {{ sponsorshiplevel.name }}</h3>
+        <h3>Sustaining Membership Level: {{ sponsorshiplevel.name }}</h3>
       </div>
     </div>
     <div class="row">
       <div class="col-lg-4">
         {% if sponsorshiplevel.logo %}
           <img class="img-responsive img-rounded"
-               src="{{ MEDIA_URL }}{{ sponsorshiplevel.logo }}" />
+               src="{{ sponsorshiplevel.logo.url }}" />
         {%  endif %}
       </div>
     </div>

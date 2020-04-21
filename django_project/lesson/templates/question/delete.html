@@ -1,0 +1,44 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Question Deleted - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Question Deleted</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+        <div class="alert row">
+            <div class="col-lg-10">
+                <p class="lead">Please confirm you wish to delete the question below!</p>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group">
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href="#"
+                       onClick="$('#delete-confirmation').submit()"
+                       data-title="Confirm Delete {{ question.question }}">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "worksheet-detail" project_slug=question.worksheet.section.project.slug section_slug=question.worksheet.section.slug pk=question.worksheet.pk %}'
+                       data-title="Cancel">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3><span class="text-muted">Question:</span> {{ question.question }}</h3>
+                {% if question.question_image %}
+                    <img src="{{ question.question_image.url }}"/>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+{% endblock %}

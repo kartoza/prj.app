@@ -1,9 +1,9 @@
 
-"""Configuration for production server"""
+"""Configuration for production server."""
 # noinspection PyUnresolvedReferences
 from .prod import *  # noqa
 import os
-print os.environ
+print(os.environ)
 
 DEBUG = False
 
@@ -11,8 +11,8 @@ ALLOWED_HOSTS = ['*']
 
 ADMINS = (
     ('Tim Sutton', 'tim@kartoza.com'),
-    ('Ismail Sunni', 'ismail@kartoza.com'),
-    ('Christian Christellis', 'christian@kartoza.com'),)
+    ('Dimas Ciputra', 'dimas@kartoza.com'),
+    ('Anita Hapsari', 'anita@kartoza.com'),)
 
 DATABASES = {
     'default': {
@@ -22,7 +22,9 @@ DATABASES = {
         'PASSWORD': os.environ['DATABASE_PASSWORD'],
         'HOST': os.environ['DATABASE_HOST'],
         'PORT': 5432,
-        'TEST_NAME': 'unittests',
+        'TEST': {
+            'NAME': 'unittests',
+        }
     }
 }
 

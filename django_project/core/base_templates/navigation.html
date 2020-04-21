@@ -69,12 +69,6 @@
                 <li>
                     <a href="{% url 'version-create' the_project.slug %}">Create Version</a>
                 </li>
-                {% if unapproved_versions %}
-                    <li>
-                        <a href="{% url 'pending-version-list' the_project.slug %}">Versions
-                            Pending Approval</a>
-                    </li>
-                {% endif %}
             </ul>
         </li>
     </ul>
@@ -104,13 +98,6 @@
                 <li>
                     <a href="{% url 'category-create' the_project.slug %}">Create Category</a>
                 </li>
-                {% if unapproved_categories %}
-                    <li>
-                        <a href="{% url 'pending-category-list' the_project.slug %}">
-                            Categories Pending Approval
-                        </a>
-                    </li>
-                {% endif %}
             </ul>
         </li>
     </ul>
@@ -205,16 +192,9 @@
                     {% endif %}
                 {% endfor %}
                 <li>
-                    <a href="{% url 'entry-list' project_slug=the_project.slug version_slug=the_version.slug %}">All Entries</a>
+                    <a href="{% url 'version-detail' project_slug=the_project.slug slug=the_version.slug %}">All Entries</a>
                     <a href="{% url 'entry-create' project_slug=the_project.slug version_slug=the_version.slug %}">Create Entry</a>
                 </li>
-                {% if unapproved_entries %}
-                    <li>
-                        <a href="{% url 'pending-entry-list' project_slug=the_project.slug version_slug=the_version.slug %}">
-                            Entries Pending Approval
-                        </a>
-                    </li>
-                {% endif %}
             </ul>
         </li>
     </ul>

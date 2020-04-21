@@ -1,0 +1,53 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Course Deleted - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Course Deleted</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+        <div class="alert row">
+            <div class="col-lg-10">
+                <p class="lead">Are you sure you want to delete the course below?</p>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    <a class="btn btn-danger btn-sm tooltip-toggle"
+                       href="#"
+                       onClick="$('#delete-confirmation').submit()"
+                       data-title="Delete {{ course.name }}">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "certifyingorganisation-detail" project_slug=course.certifying_organisation.project.slug slug=course.certifying_organisation.slug%}'
+                       data-title="Cancel">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Course: {{ course.name }}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8" style="font-size: 12pt">
+                <span class="col-lg-3">Organisation name</span><span class="col-lg-9">: {{ course.certifying_organisation.name }}<br/></span>
+                <span class="col-lg-3">Course type</span><span class="col-lg-9">: {{ course.course_type.name }}<br/></span>
+                <span class="col-lg-3">Course convener</span><span class="col-lg-9">: {{ course.course_convener.user }}<br/></span>
+                <span class="col-lg-3">Training center</span><span class="col-lg-9">: {{ course.training_center.name }}<br/></span>
+                <span class="col-lg-3">Start date</span><span class="col-lg-9">: {{ course.start_date }}<br/></span>
+                <span class="col-lg-3">End date</span><span class="col-lg-9">: {{ course.end_date }}<br/></span>
+            </div>
+        </div>
+        </div>
+    </form>
+{% endblock %}

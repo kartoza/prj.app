@@ -1,0 +1,292 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load custom_markup %}
+{% load thumbnail %}
+{% block title %}{{ project.name }}{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/project-details.css' %}">
+    <div class="row" style="margin-bottom: 20px">
+        {% if user.is_admin or user.is_staff or project.owner == user %}
+          <div class="btn-group pull-right">
+            <a href="{% url 'register-domain' %}"
+               class="btn btn-default btn-m tooltip-toggle btn-edit"
+               data-placement="top" data-title="Set up custom domain">
+              <i class="fa fa-exchange"></i>
+            </a>
+            <a href="{% url 'project-update' project.slug %}"
+               class="btn btn-default btn-m tooltip-toggle btn-edit"
+               data-placement="top" data-title="Update {{ project.name }}">
+              <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+            <a href="{% url 'project-delete' project.slug %}"
+               class="btn btn-default btn-m tooltip-toggle btn-delete"
+               data-placement="top" data-title="Delete {{ project.name }}">
+              <span class="glyphicon glyphicon-minus"></span>
+            </a>
+          </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="panel panel-default col-md-8">
+            <div class="panel panel-default left-panel" style="padding: 15px">
+                {% if project.image_file %}
+                    <img src="{{ project.image_file.url }}" height="150px" />
+                {% endif %}
+                <div>
+                    {% if project.project_repository_url %}
+                        <p><a href="{{ project.project_repository_url }}">
+                            <i class="fa fa-github" style="font-size:24px; color: #2e6da4"></i>
+                        </a></p>
+                    {% endif %}
+                    {% if project.project_url %}
+                        <p><a href="{{ project.project_url }}">Project home page</a></p>
+                    {% endif %}
+                    {% if project.description %}
+                        <p><i>{{ project.description }}</i></p>
+                    {% else %}
+                        {% if user.is_staff or user.project.owner %}
+                            <h3>No project description defined, but you can
+                                <a href="{% url 'project-update' project.slug %}"
+                                   class="btn btn-default btn-mini btn-edit"
+                                   data-placement="top" data-title="Update {{ project.name }}">
+                                  <span class="glyphicon glyphicon-pencil"></span>
+                                  add one
+                                </a>
+                            </h3>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            {% if screenshots %}
+                <div class="panel panel-default custom-panel screenshot-panel left-panel">
+                 <div class="slider-display-container">
+                {% for screenshot in screenshots %}
+                    <img class="content-slides slider-animate-opacity"
+                                 src="{{ screenshot.screenshot.url }}" height="400px" width="auto" style="margin: 0 auto">
+                {% endfor %}
+                     <button class="slider-button slider-display-left" onclick="plusDivs(-1)">&#10094;</button>
+                     <button class="slider-button slider-display-right" onclick="plusDivs(1)">&#10095;</button>
+                 </div>
+                </div>
+            {% endif %}
+            {% if project.precis %}
+            <div class="panel panel-default custom-panel project-precis left-panel">
+                <span>{{ project.precis|base_markdown }}</span>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='members/list/';">
+                <h3>Sustaining Members</h3>
+            {% if sponsors %}
+                <h6 class="text-muted">
+                    View Our Project Sustaining Members
+                </h6>
+                <div class="content-list">
+                {% for sponsor in sponsors %}
+                    {% if sponsor.current_sponsor %}
+                        {% ifchanged sponsor.sponsorship_level %}
+                           <h4><img src="{% thumbnail sponsor.sponsorship_level.logo 20x20 %}"> {{ sponsor.sponsorship_level.name }}</h4>
+                        {% endifchanged %}
+                            <a href="{% url 'sponsor-detail' project_slug=sponsor.project.slug slug=sponsor.slug %}">
+                                <img class="img-rounded tooltip-toggle"
+                                 src="{% thumbnail sponsor.sponsor.logo 50x50 %}"
+                                 data-title="{{ sponsor.sponsor.name }}">
+                             </a>
+                    {% endif %}
+                {% endfor %}
+                </div>
+            {% else %}
+                {% if user.is_staff or user == project.owner %}
+                    <h6>No sustaining members are defined, but you can
+                    <span>
+                        <a
+                          class="btn btn-default btn-mini" id="action_text"
+                          href='{% url "sponsor-create" project.slug %}'>create one
+                        </a>
+                      </span>
+                    </h6>
+                {% endif %}
+            {% endif %}
+            </div>
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='{% url 'section-list' project_slug=project.slug %}';">
+                <h3>Lessons</h3>
+                {% if sections %}
+                    <h6 class="text-muted">
+                    Learn and learn
+                  </h6>
+                    <div class="content-list">
+                        {% for section in sections %}
+                            <h5>
+                                <span>
+                                    <a href="{% url 'section-list' project_slug=section.project.slug %}#{{ section.slug }}">{{ section.name }}</a>
+                                </span>
+                            </h5>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {% if user.is_staff or user == project.owner %}
+                        <h6><span>No sections exist, but you can </span>
+                          <span>
+                            <a
+                                class="btn btn-default btn-mini" id="action_text"
+                                href='{% url "section-create" project.slug %}'> create one
+                            </a>
+                          </span>
+                      </h6>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='certifyingorganisation/list/';">
+                <h3>Certification</h3>
+                {% if organisations %}
+                    <h6 class="text-muted">
+                    Certifying Organisations
+                    </h6>
+                    <div class="content-list">
+                    {% for organisation in organisations %}
+                    <a href="{% url 'certifyingorganisation-detail' project_slug=organisation.project.slug slug=organisation.slug %}">
+                        <h5>{{ organisation.name }}</h5>
+                    </a>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    {% if user.is_staff or user == project.owner %}
+                        <h6>No certifying organisation are defined, but you can
+                          <span>
+                            <a
+                                class="btn btn-default btn-mini" id="action_text"
+                                href='{% url "certifyingorganisation-create" project.slug %}'>register one
+                            </a>
+                          </span>
+                        </h6>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='version/list/';">
+                <h3>Release Changelogs</h3>
+                {% if versions %}
+                <h6 class="text-muted">
+                    New Features and Releases
+                  </h6>
+                    <div class="version-list">
+                    {% for version in versions %}
+                        <p>
+                            <span class="text-muted">Version:</span>
+                            <span class="pull-right">
+                                <a href="{% url 'version-detail' project_slug=version.project.slug slug=version.slug %}">
+                                    {{ version.name }}
+                                </a>
+                            </span>
+                        </p>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    {% if user.is_staff or user == project.owner %}
+                        <h6>No versions are defined, but you can
+                          <span>
+                            <a
+                                class="btn btn-default btn-mini" id="action_text"
+                                href='{% url "version-create" project.slug %}'>create one
+                            </a>
+                          </span>
+                        </h6>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='committees/';">
+                <h3>Project Teams</h3>
+                {% if committees %}
+                    <h6 class="text-muted">
+                    Collaborate and Decide
+                  </h6>
+                    <div class="content-list">
+                        {% for team in committees %}
+                            <h5>
+                                <span>
+                                    <a href="{% url 'committee-detail' project_slug=team.project.slug slug=team.slug %}">
+                                        {{ team.name }}
+                                    </a>
+                                </span>
+                            </h5>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {% if user.is_staff or user == project.owner %}
+                        <h6><span>No teams are defined, but you can </span>
+                          <span>
+                            <a
+                                class="btn btn-default btn-mini" id="action_text"
+                                href='{% url "committee-create" project.slug %}'> create one
+                            </a>
+                          </span>
+                      </h6>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+    <style>
+    #action_text {
+        font-size: 8px;
+        font-weight: normal;
+        padding: 4px;
+    }
+
+    h6 {
+        white-space: pre-line;
+        font-size: 10pt;
+        margin-top: 10px;
+    }
+    h3 {
+        margin-bottom: -5px;
+    }
+    </style>
+    <script>
+        var slideIndex = 1;
+        {% if screenshots %}
+            showDivs(slideIndex);
+            carousel();
+        {% endif %}
+
+        function plusDivs(n) {
+          showDivs(slideIndex += n);
+        }
+
+        function carousel() {
+            slideIndex++;
+            showDivs(slideIndex);
+            setTimeout(carousel, 4000);
+        }
+
+        function showDivs(n) {
+          var i;
+          var x = document.getElementsByClassName("content-slides");
+          if (n > x.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = x.length}
+          for (i = 0; i < x.length; i++) {
+             x[i].style.display = "none";
+          }
+          x[slideIndex-1].style.display = "block";
+        }
+
+        $('.btn-delete').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-danger')
+            },
+            function (){
+                $(this).removeClass('btn-danger').addClass('btn-default')
+            }
+        );
+        $('.btn-edit').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-primary')
+            },
+            function (){
+                $(this).removeClass('btn-primary').addClass('btn-default')
+            }
+        );
+    </script>
+{% endblock %}

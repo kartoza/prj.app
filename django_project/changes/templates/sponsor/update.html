@@ -9,16 +9,24 @@
 
 {% endblock %}
 
-{% block page_title %}
-    <h1>Add sponsor</h1>
-{% endblock page_title %}
+{% block title %}
+    Update Sustaining Member
+{% endblock title %}
 
 {% block content %}
 
     <section id="forms">
-        <div class='container'>
-            {% crispy form %}
-        </div>
+        <h3>Update Sustaining Member for {{ project.name }}</h3>
+        <hr/>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <div class="vertical-space"></div>
+            <div class="form-actions">
+                <input type="submit" name="submit" value="Submit"
+                       class="btn btn-primary" id="submit-save">
+            </div>
+        </form>
     </section>
 
 {% endblock %}

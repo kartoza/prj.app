@@ -16,20 +16,18 @@ site has been deployed under docker. These deployment modes are supported:
 
 ## Production
 
-You can simply run the provided script and it will build and deploy the docker
+You can simply run the provided make command and it will build and deploy the docker
 images for you in **production mode**.
 
 ```
 cd deployment
-# allow pg volume to be written to
-sudo chmod -R a+rwX pg/postgres_data/
-make deploy
-sudo chmod -R a+rwX static
+make web
+make migrate
+make collect static
 ```
 
-Now point your browser at the ip of the web container on port 8080 or to the
-host port mapping as defined in the fig.yml file.
-
+Now point your browser at the ip of the web container on port 80 or to the
+host port mapping as defined in the docker-compose.yml file.
 
 To make a superuser account do:
 
@@ -56,6 +54,7 @@ The following key make commands are provided for production:
 * **run** - builds then runs db and uwsgi services
 * **collectstatic** - collect static in production instance
 * **migrate** - run django migrations in production instance
+* **help** - list all other management commands available (there are quite a few)
 
 Additional make commands are provided in the Makefile - please see there
 for details.
@@ -66,6 +65,10 @@ Running arbitrary management commands is easy
 
 
 ## Setup nginx reverse proxy
+
+**Note:** Normally you would not need to do this if you are running on a 
+dedicated host. On a dedicated host you can just run the services in the 
+docker-compose scripts straight out of port 80.
 
 You should create a new nginx virtual host - please see
 ``*-nginx.conf`` in the deployment directory for examples. There is
@@ -89,11 +92,11 @@ sudo /etc/init.d/nginx restart
 
 ### Managing containers
 
-Please refer to the general [fig documentation](http://www.fig.sh/cli.hyml)
-for further notes on how to manage the infrastructure using fig.
+Please refer to the general docker-compose documentation
+for further notes on how to manage the infrastructure using docker-compose.
 
 # Configuration options
 
 You can configure the base port used and various other options like the
-image organisation namespace and postgis user/pass by editing the ``fig*.yml``
+image organisation namespace and postgis user/pass by editing the ``docker-compose*.yml``
 files.

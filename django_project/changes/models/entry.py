@@ -1,7 +1,8 @@
 # coding=utf-8
 """Models for changelog entries."""
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
 import os
 import logging
 from core.settings.contrib import STOP_WORDS
@@ -13,28 +14,18 @@ from django.contrib.auth.models import User
 logger = logging.getLogger(__name__)
 
 
-class ApprovedEntryManager(models.Manager):
-    """Custom entry manager that shows only approved records."""
-
-    def get_queryset(self):
-        """Query set generator"""
-        return super(
-            ApprovedEntryManager, self).get_queryset().filter(
-                approved=True)
-
-
-class UnapprovedEntryManager(models.Manager):
-    """Custom entry manager that shows only unapproved records."""
-
-    def get_queryset(self):
-        """Query set generator"""
-        return super(
-            UnapprovedEntryManager, self).get_queryset().filter(
-                approved=False)
-
-
 class Entry(models.Model):
     """An entry is the basic unit of a changelog."""
+
+    sequence_number = models.IntegerField(
+        verbose_name=_('Entry number'),
+        help_text=_(
+            'The order in which this entry is listed within the category.'),
+        blank=False,
+        null=False,
+        default=0
+    )
+
     title = models.CharField(
         help_text='Feature title for this changelog entry.',
         max_length=255,
@@ -91,21 +82,13 @@ class Entry(models.Model):
         null=True,
         blank=True)
 
-    approved = models.BooleanField(
-        help_text=(
-            'Whether this entry has been approved for use by the '
-            'project owner.'),
-        default=False
-    )
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField()
     # noinspection PyUnresolvedReferences
-    version = models.ForeignKey('Version')
+    version = models.ForeignKey('Version', on_delete=models.CASCADE)
     # noinspection PyUnresolvedReferences
-    category = models.ForeignKey('Category')
+    category = models.ForeignKey('Category', on_delete=models.CASCADE)
     objects = models.Manager()
-    approved_objects = ApprovedEntryManager()
-    unapproved_objects = UnapprovedEntryManager()
 
     # noinspection PyClassicStyleClass
     class Meta:
@@ -114,6 +97,7 @@ class Entry(models.Model):
             ('title', 'version', 'category'),
             ('version', 'slug'),
         )
+        ordering = ['version', 'category', 'sequence_number']
         app_label = 'changes'
 
     def save(self, *args, **kwargs):
@@ -122,6 +106,17 @@ class Entry(models.Model):
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = slugify(new_list)[:50]
+
+            # Sequence number
+            max_number = Entry.objects.all().\
+                filter(version=self.version, category=self.category).aggregate(
+                models.Max('sequence_number'))
+            max_number = max_number['sequence_number__max']
+            # We take the maximum number. If the table is empty, we let the
+            # default value defined in the field definitions.
+            if max_number is not None:
+                self.sequence_number = max_number + 1
+
         super(Entry, self).save(*args, **kwargs)
 
     def __unicode__(self):

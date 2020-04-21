@@ -1,0 +1,96 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+{% load i18n %}
+{% load staticfiles %}
+{% block title %}Projects{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block auth-nav-left %}
+{% endblock %}
+
+{% block anon-nav-left %}
+{% endblock %}
+
+{% block css_head %}
+    <link rel="stylesheet" href="{% static 'css/github.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <h1> Github Repo </h1>
+    </div>
+
+    {% if not has_github_account %}
+        <h4> You don't have Github account connected, please add your account
+            <a href="{% url 'socialaccount_connections' %}">here</a>.</h4>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-lg-3">
+            <div id="loading-orgs-view" style="text-align: center; margin-top: 100px;
+                letter-spacing: 1px; color: #8B8989" hidden>
+                <img src="{% static 'gif/loading.gif' %}" width="50px"/>
+                <p style="margin-top: 10px;"> Getting Organizations... </p>
+            </div>
+            <div class="list-group" id="org-list-container">
+            </div>
+        </div>
+        <div class="col-lg-9">
+
+            <div class="loading-view" style="text-align: center; margin-top: 100px;
+                letter-spacing: 1px; color: #8B8989" hidden>
+                <img src="{% static 'gif/loading.gif' %}" width="50px"/>
+                <p style="margin-top: 10px;"> Getting Repositories... </p>
+            </div>
+
+            <div id="github-list-container">
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmation-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" >
+            <div class="modal-content" >
+                <div class="modal-body" >
+                    Are you sure you want to add this to your projects?
+                    <div id="modal-github-container">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <img id="loading-bar" src="{% static 'gif/loading-bar.gif' %}" hidden class="pull-left"/>
+                    <span id="project-saved" hidden class="alert alert-success pull-left"
+                          style="font-size: 9pt; padding: 3px;font-style: italic; margin-bottom: -20px">Added</span>
+                    <span id="project-not-saved" hidden class="alert alert-danger pull-left"
+                          style="font-size: 9pt; padding: 3px;font-style: italic; margin-bottom: -20px">Failed</span>
+                    <button type="button" class="btn btn-default" id="modal-close" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="modal-submit">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/github-repo.js' %}"></script>
+    <script type="text/javascript">
+
+        // Window onload event //
+
+        $(document).ready(function(){
+            {% if has_github_account %}
+                GithubRepo.init({
+                    org_url: "{% url 'get-github-orgs' %}",
+                    repo_url: "{% url 'get-github-repo' %}",
+                    repo_from_org_url: "{% url 'get-github-repo-org' org='org_name' %}",
+                    repo_submit_url: "{% url 'submit-github-repo' %}"
+                });
+            {% endif %}
+        });
+
+    </script>
+
+{% endblock %}

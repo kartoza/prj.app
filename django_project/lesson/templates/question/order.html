@@ -1,0 +1,48 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+
+{% block title %}Question - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Questions (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+            <span class="glyphicon glyphicon-sort-by-order"></span> Order Questions
+            <span id="order-saved" hidden class="alert alert-success" style="font-size: 9pt; padding: 3px;font-style: italic;">
+                order saved</span>
+            <span id="order-not-saved" hidden class="alert alert-danger" style="font-size: 9pt; padding: 3px;font-style: italic;">
+                order not saved</span>
+            <div class="pull-right btn-group" style="margin-top: 5px;">
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "worksheet-detail" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
+                       data-title="Back to worksheet">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+            </div>
+        </h1>
+    </div>
+    {% if questions.count == 0 %}
+        <h3>No questions are defined.</h3>
+    {% endif %}
+    <ul id="sortable" data-url="{% url "question-submit-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}">
+    {% for question in questions %}
+        <li class="row order" style="margin-top:6px;" id="{{ question.id }}-{{ question.question }}" >
+            <div class="col-lg-12">
+                <p>
+                    <span class="glyphicon glyphicon-menu-hamburger" style="margin-right: 20px"></span>
+                    {{ question.question }}
+                </p>
+            </div>
+        </li>
+    {%  endfor %}
+    </ul>
+    <hr />
+
+{% endblock %}
+

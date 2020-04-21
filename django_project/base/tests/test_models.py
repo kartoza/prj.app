@@ -50,6 +50,7 @@ class TestProjectCRUD(TestCase):
             'description': u'New description',
             'approved': False,
             'private': True,
+            'project_url': u'http://foo.org',
             'slug': u'new-project-slug',
             'gitter_room': u'test/new',
         }
@@ -82,6 +83,7 @@ class TestProjectCRUD(TestCase):
             'description': u'New description',
             'approved': False,
             'private': True,
+            'project_url': u'http://foo.org',
             'slug': u'new-project-slug',
             'gitter_room': u'invalid',
         }
@@ -91,4 +93,14 @@ class TestProjectCRUD(TestCase):
             if model.full_clean():
                 model.save()
 
-        self.assertEqual(Project.objects.filter(gitter_room='invalid').count(), 0)
+        self.assertEqual(
+            Project.objects.filter(gitter_room='invalid').count(), 0)
+
+    def test_unidecode(self):
+        """
+        Tests unidecode() to represent special characters into ASCII
+        """
+        model = ProjectF.create(name=u'straße',)
+
+        # check if properly decoded into ASCII
+        self.assertTrue(model.slug == "strasse")

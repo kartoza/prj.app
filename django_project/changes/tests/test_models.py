@@ -1,5 +1,6 @@
 # coding=utf-8
 """Tests for models."""
+from datetime import datetime
 from django.test import TestCase
 from changes.tests.model_factories import (
     CategoryF,
@@ -53,7 +54,6 @@ class TestCategoryCRUD(TestCase):
         new_model_data = {
             'name': u'New Category Name',
             'description': u'New description',
-            'approved': False,
             'private': True,
         }
         model.__dict__.update(new_model_data)
@@ -179,7 +179,6 @@ class TestVersionCRUD(TestCase):
         new_model_data = {
             '10002001': u'10002001',
             'description': u'New description',
-            'approved': True
         }
         model.__dict__.update(new_model_data)
         model.save()
@@ -187,6 +186,14 @@ class TestVersionCRUD(TestCase):
         # check if updated
         for key, val in new_model_data.items():
             self.assertEqual(model.__dict__.get(key), val)
+
+    def test_formatted_release_date(self):
+        """Tests we can get, set and present the release date nicely."""
+        model = VersionF.create(
+            description=u'New description',
+            release_date=datetime(2016, 6, 6),
+        )
+        self.assertEquals(model.formatted_release_date(), '6 June, 2016')
 
     def test_Version_delete(self):
         """
@@ -219,8 +226,8 @@ class TestVersionSponsors(TestCase):
 
         sponsorship_period = SponsorshipPeriodF.create()
         data = {
-            'start_date': u'2016-01-01',
-            'end_date': u'2016-02-01',
+            'start_date': datetime(2016, 1, 1).date(),
+            'end_date': datetime(2016, 2, 1).date(),
             'approved': True,
             'private': False,
             'project_id': project.pk,
@@ -233,7 +240,7 @@ class TestVersionSponsors(TestCase):
             '10002001': u'10002001',
             'description': u'New description',
             'approved': True,
-            'release_date': u'2016-01-10',
+            'release_date': datetime(2016, 1, 10).date(),
             'project_id': project.pk,
         }
         version_model.__dict__.update(data)
@@ -400,10 +407,10 @@ class TestSponsorshipPeriodCRUD(TestCase):
         Tests Sponsorship Period model read
         """
         model = SponsorshipPeriodF.create(
-            start_date=u'2016-01-01'
+            start_date=datetime(2016, 1, 1)
         )
 
-        self.assertTrue(model.start_date == '2016-01-01')
+        self.assertTrue(model.start_date == datetime(2016, 1, 1))
 
     def test_SponsorshipPeriod_update(self):
         """
@@ -411,7 +418,7 @@ class TestSponsorshipPeriodCRUD(TestCase):
         """
         model = SponsorshipPeriodF.create()
         new_model_data = {
-            'start_date': u'2016-01-01',
+            'start_date': datetime(2016, 1, 1),
             'approved': False,
             'private': True,
         }

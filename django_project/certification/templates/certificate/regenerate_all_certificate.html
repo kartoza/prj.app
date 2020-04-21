@@ -1,0 +1,46 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    <h1>Send email</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <style>
+
+        table {
+            border: 1px solid #f5f5f5;
+            font-size: 12pt;
+        }
+        table, tr, td, th {
+            padding: 5px 25px;
+            text-align: center;
+        }
+    </style>
+
+    <div>
+        <div class="container">
+            <h4 style="font-size: 16pt">Are you sure you want to regenerate pdf of these certificates?</h4>
+            <div class="row">
+                <div class="col-lg-8">
+                <h4>Course: {{ course.certifying_organisation.project }} - {{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})</h4>
+                <table>
+                <tr>
+                <th>Certificate ID</th>
+                <th>Attendee</th>
+                </tr>
+                {% for key, value in certificates.items %}
+                    <tr><td>{{ value.certificateID }}</td><td>{{ key.firstname }} {{ key.surname }}</td></tr>
+                {% endfor %}
+                </table>
+                </div>
+            </div>
+            <h5>Note: If you regenerate these certificates, the current certificates will be deleted and unrecoverable.</h5>
+             <form id="regenerate-all" action="." method="POST">
+                 {% csrf_token %}
+                 <input type="submit" value="Submit" class="btn btn-primary">
+             </form>
+        </div>
+    </div>
+{% endblock %}

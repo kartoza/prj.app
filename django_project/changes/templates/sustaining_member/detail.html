@@ -1,0 +1,203 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+{% load custom_markup %}
+{% load i18n %}
+{% block title %}Sustaining Membership Levels - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+    <style>
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group  p {
+            font-size: 14pt;
+            font-weight: bold;
+        }
+        .form-group label {
+            font-weight: lighter;
+        }
+        .panel-body {
+            padding: 40px;
+        }
+        hr {
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+        .alert {
+            font-size: 12pt;
+        }
+        .panel-default>.panel-heading {
+            background-color: #f7f7f7 !important;
+            background-image: none;
+            border-bottom: 0;
+        }
+        .panel-subscription>.panel-body {
+            padding: 10px !important;
+        }
+        .badge-warning {
+            background-color: #ffb434;
+        }
+        .subscription-status {
+            margin-right: 15px;
+        }
+    </style>
+{% endblock %}
+
+{% block page_title %}
+    <h1>Sustaining Membership levels (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+            {% blocktrans %}Your Sustaining Membership{% endblocktrans %}
+        </h1>
+    </div>
+
+    {% if sustaining_member %}
+    <div class="row">
+        <div class="col-lg-12">
+            {% if not sustaining_member.approved and not sustaining_member.rejected %}
+                <div class="alert alert-warning">
+                    <strong><span
+                            class="glyphicon glyphicon-warning-sign"></span></strong>
+                    {% blocktrans %}Your sustaining membership application hasn't been approved
+                    yet.{% endblocktrans %}
+                </div>
+            {% elif sustaining_member.rejected %}
+                 <div class="alert alert-danger">
+                    <strong><span
+                            class="glyphicon glyphicon-warning-sign"></span></strong>
+                    {% blocktrans %}Your sustaining membership has been rejected because : {% endblocktrans %} {{ sustaining_member.remarks }}.
+                     Please <strong><a href='{% url "sustaining-member-update" project_slug=sustaining_member.project.slug member_id=sustaining_member.id %}'>edit</a></strong> your data.
+                </div>
+            {% elif just_approved %}
+                <div class="alert alert-success">
+                    <strong>Congratulations! </strong>
+                    {% blocktrans %}Your sustaining membership has been
+                        approved.
+                        You can now add your {% endblocktrans %}<strong><a
+                        href="{% url "sustaining-member-period-create" project_slug=sustaining_member.project.slug member_id=sustaining_member.id %}">
+                    subscription</a></strong>.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4 col-md-6">
+            <img src="{{ sustaining_member.logo.url }}" width="100%" />
+            {% if subscription %}
+                <div class="panel panel-default panel-subscription" style="margin-top: 10px; margin-bottom: 10px;">
+                    <div class="panel-body row">
+                        <div class="col-xs-3" style="text-align: center">
+                            <img style="max-height: 60px;" src="{{ subscription.sponsorship_level.logo.url }}">
+                        </div>
+                        <div class="co-xs-9">
+                            <div class="level-title"
+                                 style="font-size: 15px; font-weight: bolder">
+                                {{ subscription.sponsorship_level.name }}
+                                {% if subscription.active_period %}
+                                    {% if subscription.expiring %}
+                                        <span class="badge badge-warning pull-right subscription-status">Expiring</span>
+                                    {% else %}
+                                        <span class="badge badge-success pull-right subscription-status">Active</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="badge badge-error pull-right subscription-status">Expired</span>
+                                {% endif %}
+                            </div>
+                            <div class="level-amount">
+                                {{ subscription.sponsorship_level.value }} {{ subscription.sponsorship_level.currency }}
+                            </div>
+                            <duv class="period text-muted">
+                                {{ subscription.start_date }} - {% if subscription.recurring %} Yearly {% else %} {{ subscription.end_date }} {% endif %}
+                            </duv>
+                        </div>
+                    </div>
+                </div>
+                {% if subscription.active_period %}
+                    <a href="{% url "sustaining-member-period-update" project_slug=sustaining_member.project.slug member_id=sustaining_member.id %}"
+                       class="btn btn-default"
+                       style="width: 100%; margin-bottom: 10px; margin-top: 10px">Update
+                        Subscription</a>
+                {% else %}
+                    <a href="{% url "sustaining-member-period-create" project_slug=sustaining_member.project.slug member_id=sustaining_member.id %}"
+                       class="btn btn-default"
+                       style="width: 100%; margin-bottom: 10px; margin-top: 10px">Add
+                        Subscription</a>
+                {% endif %}
+            {% endif %}
+            {% if sustaining_member.approved and not subscription %}
+                <a href="{% url "sustaining-member-period-create" project_slug=sustaining_member.project.slug member_id=sustaining_member.id %}" class="btn btn-default"
+                    style="width: 100%; margin-bottom: 10px; margin-top: 10px">Add
+                    Subscription</a>
+            {% endif %}
+        </div>
+        <div class="col-lg-8 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="text-muted"> {% blocktrans %}Sustaining Member Info{% endblocktrans %}
+                        {% if sustaining_member.approved or sustaining_member.rejected %}
+                        <a href='{% url "sustaining-member-update" project_slug=sustaining_member.project.slug member_id=sustaining_member.id %}'
+                           class="btn btn-default pull-right"
+                           style="margin-top: -7px;">Edit</a>
+                        {% endif %}
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <p>{% if sustaining_member.name %}
+                            {{ sustaining_member.name }} {% else %}
+                            - {% endif %}</p>
+                    </div>
+                    <hr/>
+                    <div class="form-group">
+                        <label>Representative Title</label>
+                        <p>{% if sustaining_member.contact_title %}
+                            {{ sustaining_member.contact_title }} {% else %}
+                            - {% endif %}</p>
+                    </div>
+                    <hr/>
+                    <div class="form-group">
+                        <label>Organisation URL</label>
+                        <p>{% if sustaining_member.sponsor_url %}
+                            {{ sustaining_member.sponsor_url }} {% else %}
+                            - {% endif %}</p>
+                    </div>
+                    <hr/>
+                    <div class="form-group">
+                        <label>Contact Person</label>
+                        <p>{% if sustaining_member.contact_person %}
+                            {{ sustaining_member.contact_person }} {% else %}
+                            - {% endif %}</p>
+                    </div>
+                    <hr/>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <p>{% if sustaining_member.address %}
+                            {{ sustaining_member.address | safe }} {% else %}
+                            - {% endif %}</p>
+                    </div>
+                    <hr/>
+                    <div class="form-group">
+                        <label>Country</label>
+                        <p>{% if sustaining_member.country %}
+                            {{ sustaining_member.country.name }} {% else %}
+                            - {% endif %}</p>
+                    </div>
+                    <hr/>
+                    <div class="form-group">
+                        <label>Email of the contact person</label>
+                        <p>{% if sustaining_member.sponsor_email %}
+                            {{ sustaining_member.sponsor_email }} {% else %}
+                            - {% endif %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+        <h4>You haven't become a sustaining member yet, <a href="{% url "sustaining-member-create" project_slug %}" class="btn btn-default">sign up</a> to become one.</h4>
+    {% endif %}
+{% endblock %}

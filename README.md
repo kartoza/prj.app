@@ -13,7 +13,7 @@ Note that whilst usable, Projecta is under continual development and not
 yet feature complete.
 
 The latest source code is available at 
-[https://github.com/kartoza/projecta](https://github.com/kartoza/projecta).
+[https://github.com/kartoza/prj.app](https://github.com/kartoza/prj.app).
 
 * **Developers:** See our [developer guide](README-dev.md)
 * **For production:** See our [deployment guide](README-docker.md)
@@ -38,17 +38,18 @@ The latest source code is available at
 
 Story queue on Waffle:
 
-* [![Stories in Ready](https://badge.waffle.io/kartoza/projecta.svg?label=ready&title=Ready)](http://waffle.io/kartoza/projecta) 
-* [![Stories in In Progress](https://badge.waffle.io/kartoza/projecta.svg?label=in%20progress&title=In%20Progress)](http://waffle.io/kartoza/projecta)
+* [![Stories in Ready](https://badge.waffle.io/kartoza/prj.app.svg?label=ready&title=Ready)](http://waffle.io/kartoza/prj.app) 
+* [![Stories in In Progress](https://badge.waffle.io/kartoza/prj.app.svg?label=in%20progress&title=In%20Progress)](http://waffle.io/kartoza/prj.app)
 
-[![Throughput Graph](https://graphs.waffle.io/kartoza/projecta/throughput.svg)](https://waffle.io/kartoza/projecta/metrics)
+[![Throughput Graph](https://graphs.waffle.io/kartoza/prj.app/throughput.svg)](https://waffle.io/kartoza/prj.app/metrics)
 
-* Current test status master: [![Build Status](https://travis-ci.org/inasafe/inasafe.svg?branch=master)](https://travis-ci.org/inasafe/inasafe) and
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kartoza/projecta/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kartoza/projecta/?branch=master)
+* Current test status master: [![Build Status](https://travis-ci.org/kartoza/prj.app.svg?branch=master)](https://travis-ci.org/kartoza/prj.app) and
+[![Code Health](https://landscape.io/github/kartoza/prj.app/master/landscape.svg?style=flat)](https://landscape.io/github/kartoza/prj.app/master)
 
-* Current test status develop: [![Build Status](https://travis-ci.org/inasafe/inasafe.svg?branch=develop)](https://travis-ci.org/inasafe/inasafe) and
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kartoza/projecta/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/kartoza/projecta/?branch=develop)
+* Current test status develop: [![Build Status](https://travis-ci.org/kartoza/prj.app.svg?branch=develop)](https://travis-ci.org/kartoza/prj.app) and
+[![Code Health](https://landscape.io/github/kartoza/prj.app/develop/landscape.svg?style=flat)](https://landscape.io/github/kartoza/prj.app/develop)
 
+* Test coverage [![codecov](https://codecov.io/gh/kartoza/prj.app/branch/develop/graph/badge.svg)](https://codecov.io/gh/kartoza/prj.app)
 
 
 
@@ -61,10 +62,22 @@ some knowledge of running a django site.
 ```
 git clone git://github.com/kartoza/projecta.git
 cd projecta/deployment
+cp btsync-db.env.EXAMPLE btsync-db.env
+cp btsync-media.env.EXAMPLE btsync-media.env
 make build
-make run
+make permissions
+make web
+# Wait a few seconds for the DB to start before to do the next command
 make migrate
 make collectstatic
+```
+
+If you need backups, put btsync keys in these files. If you don't need backups, 
+you can let the default content.
+
+So as to create your admin account:
+```
+make superuser
 ```
 
 **intercom.io**
@@ -73,6 +86,49 @@ If you wish to make use of [intercom.io](https://www.intercom.io), include a
 `private.py` file in `core.settings` with your `INTERCOM_APP_ID` as a string.
 The necessary code snippet is already included in `project_base.html`.
 
+**google authentication**
+
+In social auth to use the google authentication you need to go to:
+
+https://console.developers.google.com/apis/credentials
+
+Create and oath2 credential with these options:
+
+Authorized redirect URIs
+
+http://<your domain>/en/complete/google-oauth2/
+
+Use the projecta admin panel to set up the google account with your id and
+secret
+
+**github authentication**
+
+Create a developer key here:
+
+https://github.com/settings/applications/new
+
+Set the callback and site homepage url to the top of your site e.g.
+
+http://localhost:61202
+
+At http://localhost:61202/en/site-admin/socialaccount/socialapp/add/
+
+Set the key and secret from the github key page.
+
+**Backups**
+
+If you wish to sync backups, you need to establish a read / write btsync 
+key on your production server and run one or more btsync clients 
+with a read only key.
+
+```
+cd deployment
+cp btsync-media.env.EXAMPLE btsync-media.env
+cp btsync-db.env.EXAMPLE btsync-db.env
+```
+
+Now edit the ``btsync-media.env`` and ``btsync-db.env`` files, including 
+relevant SECRET and DEVICE settings.
 
 ## Participation
 
@@ -80,7 +136,7 @@ The necessary code snippet is already included in `project_base.html`.
 We work under the philosophy that stakeholders should have access to the
 development and source code, and be able to participate in every level of the 
 project - we invite comments, suggestions and contributions.  See
-[our milestones list](https://github.com/kartoza/projecta/issues/milestones) and
+[our milestones list](https://github.com/kartoza/projecta/milestones) and
 [our open issues list](https://github.com/kartoza/projecta/issues?page=1&state=open)
 for known bugs and outstanding tasks. You can also chat live with our developers
 and community members using the link below.
@@ -122,7 +178,10 @@ Thank you to the individual contributors who have helped to build projecta:
 * Tim Sutton (Lead developer): tim@kartoza.com
 * Dražen Odobašić : dodobas@geoinfo.geof.hr
 * George Irwin : github@grvhi.com
-* Ismail Sunni : ismail@kartoza.com
+* Ismail Sunni : imajimatika@gmail.com
 * Richard Duivenvoorde : richard@duif.net
-* Rischan Mafrur : rischan@kartoza.com
+* Rischan Mafrur : @rischanlab
+* Etienne Trimaille : @gustry
+* Anita Hapsari : @ann26
+* Muhammad Yarjuna Rohmat : @myarjunar
 

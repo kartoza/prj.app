@@ -1,0 +1,19 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+<h1>Domain not found</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <style>
+    .btn-register:hover {
+        background: #2B6FB6;
+        color: white;
+        border-color: #0A246A;
+    }
+    </style>
+    <h2 style="text-align: center">Custom domain registration</h2>
+    <h4 style="text-align: center; margin-top: 50px">Sorry, your domain is not registered in our system. <br/>If you like to use your own domain please register <a href="{% url 'register-domain' %}" class="btn btn-default btn-register">here</a></h4>
+{% endblock %}

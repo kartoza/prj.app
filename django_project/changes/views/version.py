@@ -9,9 +9,11 @@ from base.models import Project
 # LOGGER = logging.getLogger(__name__)
 import re
 import zipfile
-import StringIO
+from io import BytesIO
 import pypandoc
-from django.core.urlresolvers import reverse
+from bs4 import BeautifulSoup
+from django.conf import settings
+from django.urls import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import (
@@ -20,9 +22,10 @@ from django.views.generic import (
     DeleteView,
     DetailView,
     UpdateView,
-    RedirectView)
+)
 from django.http import HttpResponse
 from django.db import IntegrityError
+from django.db.models import Q
 from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from pure_pagination.mixins import PaginationMixin
@@ -37,9 +40,26 @@ __copyright__ = ''
 
 
 class VersionMixin(object):
+
     """Mixing for all views to inherit which sets some standard properties."""
     model = Version  # implies -> queryset = Version.objects.all()
     form_class = VersionForm
+
+
+class CustomStaffuserRequiredMixin(StaffuserRequiredMixin):
+
+    """Fix redirect loop when user is already authenticated but non staff."""
+
+    def no_permissions_fail(self, request=None):
+        """
+        Called when the user has no permissions and no exception was raised.
+        """
+        if not request.user.is_authenticated:
+            return super(
+                CustomStaffuserRequiredMixin, self).no_permissions_fail(
+                request)
+
+        raise Http404('Sorry! You have to be staff to open this page.')
 
 
 class VersionListView(VersionMixin, PaginationMixin, ListView):
@@ -58,28 +78,54 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         :rtype: dict
         """
         context = super(VersionListView, self).get_context_data(**kwargs)
+
+        # lets set the the flags to a default
+        # for running checks in templates
+        context['user_can_edit'] = False
+        context['user_can_delete'] = False
+
         context['num_versions'] = self.get_queryset().count()
-        context['unapproved'] = False
         context['rst_download'] = False
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = context['the_project']
+
+        # lets check for specific user permissions here.
+        if self.request.user.is_staff:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user.is_superuser:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user in context['project'].changelog_managers.all():
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user == context['project'].owner:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
         return context
 
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved Version
-        for this project.
+        :returns: A queryset which show all Version for this project.
         :rtype: QuerySet
 
         :raises: Http404
         """
-        if self.request.user.is_staff:
-            versions_qs = Version.objects.all()
-        else:
-            versions_qs = Version.approved_objects.all()
+        versions_qs = Version.objects.all()
+
+        # fix padded version if there is padded name with alphabet.
+        for version in versions_qs:
+            is_alphabet = re.search('[a-zA-Z,.]', str(version.padded_version))
+            if is_alphabet is not None:
+                version.save()
 
         project_slug = self.kwargs.get('project_slug', None)
         if project_slug:
@@ -94,8 +140,6 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
             return versions_qs
         else:
             raise Http404('Sorry! We could not find your version!')
-        # In case no project filter applied
-        return versions_qs
 
 
 class VersionDetailView(VersionMixin, DetailView):
@@ -103,17 +147,52 @@ class VersionDetailView(VersionMixin, DetailView):
     context_object_name = 'version'
     template_name = 'version/detail.html'
 
-    def get_queryset(self):
-        """Get the queryset for this view.
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
 
-        :returns: A queryset which is filtered to only show approved Versions.
-        :rtype: QuerySet
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
         """
+        context = super(VersionDetailView, self).get_context_data(**kwargs)
+        versions = self.get_object()
+        sponsors = {}
+
+        # group sponsors by sponsorship level
+        if versions.sponsors():
+            for sponsor in versions.sponsors():
+                if sponsor.sponsorship_level not in sponsors:
+                    sponsors[sponsor.sponsorship_level] = []
+
+                sponsors[sponsor.sponsorship_level].append(sponsor.sponsor)
+
+        context['sponsors'] = sponsors
+        context['user_can_edit'] = False
+        context['user_can_delete'] = False
+        project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
+        if project_slug:
+            context['project'] = Project.objects.get(slug=project_slug)
+
+        # lets check for specific user permissions here.
         if self.request.user.is_staff:
-            versions_qs = Version.objects.all()
-        else:
-            versions_qs = Version.approved_objects.all()
-        return versions_qs
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user.is_superuser:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user in context['project'].changelog_managers.all():
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user == context['project'].owner:
+            context['user_can_edit'] = True
+            context['user_can_delete'] = True
+        return context
 
     def get_object(self, queryset=None):
         """Get the object for this view.
@@ -145,8 +224,7 @@ class VersionDetailView(VersionMixin, DetailView):
                 raise Http404(
                     'Sorry! The project you are requesting a version for '
                     'could not be found or you do not have permission to '
-                    'view the version. Also the version may not be '
-                    'approved yet. Try logging in as a staff member if '
+                    'view the version. Try logging in as a staff member if '
                     'you wish to view it.')
         else:
             raise Http404('Sorry! We could not find your version!')
@@ -194,18 +272,6 @@ class VersionThumbnailView(VersionMixin, DetailView):
         context['as_thumbs'] = True
         return context
 
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: A queryset which is filtered to only show approved Versions.
-        :rtype: QuerySet
-        """
-        if self.request.user.is_staff:
-            versions_qs = Version.objects.all()
-        else:
-            versions_qs = Version.approved_objects.all()
-        return versions_qs
-
     def get_object(self, queryset=None):
         """Get the object referenced by this view.
 
@@ -227,8 +293,7 @@ class VersionThumbnailView(VersionMixin, DetailView):
                 raise Http404(
                     'Sorry! The project you are requesting a version for '
                     'could not be found or you do not have permission to '
-                    'view the version. Also the version may not be '
-                    'approved yet. Try logging in as a staff member if '
+                    'view the version. Try logging in as a staff member if '
                     'you wish to view it.')
             try:
                 obj = queryset.filter(project=project).get(slug=slug)
@@ -237,8 +302,7 @@ class VersionThumbnailView(VersionMixin, DetailView):
                 raise Http404(
                     'Sorry! The version you are requesting '
                     'could not be found or you do not have permission to '
-                    'view the version. Also the version may not be '
-                    'approved yet. Try logging in as a staff member if '
+                    'view the version. Try logging in as a staff member if '
                     'you wish to view it.')
         else:
             raise Http404('Sorry! We could not find your version!')
@@ -316,13 +380,19 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
         :rtype: QuerySet
         :raises: Http404
         """
-        if not self.request.user.is_authenticated():
+        project_slug = self.kwargs.get('project_slug', None)
+        project = Project.objects.get(slug=project_slug)
+        if not self.request.user.is_authenticated:
             raise Http404
-        qs = Version.objects.filter(project=self.project)
+        qs = Version.objects.filter(project=project)
         if self.request.user.is_staff:
             return qs
         else:
-            return qs.filter(author=self.request.user)
+            return qs.filter(
+                Q(project=project) &
+                (Q(author=self.request.user) |
+                 Q(project__owner=self.request.user) |
+                 Q(project__changelog_managers=self.request.user))).distinct()
 
 
 # noinspection PyAttributeOutsideInit
@@ -348,12 +418,12 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
         """Define the redirect URL
 
         After successful creation of the object, the User will be redirected
-        to the unapproved Version list page for the object's parent Project
+        to the Version list page for the object's parent Project
 
         :returns: URL
         :rtype: HttpResponse
         """
-        return reverse('pending-version-list', kwargs={
+        return reverse('version-list', kwargs={
             'project_slug': self.object.project.slug
         })
 
@@ -383,7 +453,7 @@ class VersionCreateView(LoginRequiredMixin, VersionMixin, CreateView):
 
 
 # noinspection PyAttributeOutsideInit
-class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
+class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
     """Update view for Version."""
     context_object_name = 'version'
     template_name = 'version/update.html'
@@ -395,24 +465,27 @@ class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
         :rtype dict
         """
         kwargs = super(VersionUpdateView, self).get_form_kwargs()
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.project = Project.objects.get(slug=self.project_slug)
-        kwargs.update({
-            'user': self.request.user,
-            'project': self.project
-        })
+        project_slug = self.kwargs.get('project_slug', None)
+        kwargs['user'] = self.request.user
+        kwargs['project'] = get_object_or_404(Project, slug=project_slug)
         return kwargs
 
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved Versions.
+        :returns: A queryset which is filtered to only show versions that the
+        current user can potentially edit.
         :rtype: QuerySet
         """
-        if self.request.user.is_staff:
-            versions_qs = Version.objects.all()
-        else:
-            versions_qs = Version.approved_objects.all()
+        project_slug = self.kwargs.get('project_slug', None)
+        project = get_object_or_404(Project, slug=project_slug)
+        # Versions are uniques only within the same project.
+        versions_qs = Version.objects.filter(project=project)
+        if not self.request.user.is_staff:
+            versions_qs = versions_qs.filter(
+                (Q(author=self.request.user) |
+                 Q(project__owner=self.request.user) |
+                 Q(project__changelog_managers=self.request.user))).distinct()
         return versions_qs
 
     def get_success_url(self):
@@ -437,26 +510,9 @@ class VersionUpdateView(StaffuserRequiredMixin, VersionMixin, UpdateView):
                 'ERROR: Version by this name already exists!')
 
 
-class PendingVersionListView(
-        StaffuserRequiredMixin,
-        VersionMixin,
-        PaginationMixin,
-        ListView):
-    """List view for pending Version. Staff see all """
-    context_object_name = 'versions'
-    template_name = 'version/list.html'
-    paginate_by = 10
-
-    def __init__(self):
-        """
-        We overload __init__ in order to declare self.project and
-        self.project_slug. Both are then defined in self.get_queryset which is
-        the first method called. This means we can then reuse the values in
-        self.get_context_data.
-        """
-        super(PendingVersionListView, self).__init__()
-        self.project_slug = None
-        self.project = None
+class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
+    """View to allow staff users to download Version page in RST format."""
+    template_name = 'version/detail-content-rst.html'
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -467,66 +523,20 @@ class PendingVersionListView(
         :returns: Context data which will be passed to the template.
         :rtype: dict
         """
-        context = super(PendingVersionListView, self).get_context_data(
-            **kwargs)
-        context['num_versions'] = self.get_queryset().count()
-        context['unapproved'] = True
-        context['project'] = self.project
+        context = super(VersionDownload, self).get_context_data(**kwargs)
+        versions = self.get_object()
+        sponsors = {}
+
+        # group sponsors by sponsorship level
+        if versions.sponsors():
+            for sponsor in versions.sponsors():
+                if sponsor.sponsorship_level not in sponsors:
+                    sponsors[sponsor.sponsorship_level] = []
+
+                sponsors[sponsor.sponsorship_level].append(sponsor.sponsor)
+
+        context['sponsors'] = sponsors
         return context
-
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: A queryset which is filtered to only show approved Version.
-        :rtype: QuerySet
-        :raises: Http404
-        """
-        if self.queryset is None:
-            self.project_slug = self.kwargs.get('project_slug', None)
-            if self.project_slug:
-                self.project = Project.objects.get(slug=self.project_slug)
-                queryset = Version.unapproved_objects.filter(
-                    project=self.project)
-                if self.request.user.is_staff:
-                    return queryset
-                else:
-                    return queryset.filter(author=self.request.user)
-            else:
-                raise Http404('Sorry! We could not find your version!')
-        return self.queryset
-
-
-class ApproveVersionView(StaffuserRequiredMixin, VersionMixin, RedirectView):
-    """View for approving Version."""
-    permanent = False
-    query_string = True
-    pattern_name = 'version-list'
-
-    def get_redirect_url(self, project_slug, slug):
-        """Get the url for when the operation completes.
-
-        :param project_slug: The slug of the Version's parent Project
-        :type project_slug: str
-
-        :param slug: The slug of the object being approved.
-        :type slug: str
-
-        :returns: A url.
-        :rtype: str
-        """
-        project = Project.objects.get(slug=project_slug)
-        version_qs = Version.unapproved_objects.filter(project=project)
-        version = get_object_or_404(version_qs, slug=slug)
-        version.approved = True
-        version.save()
-        return reverse(self.pattern_name, kwargs={
-            'project_slug': version.project.slug
-        })
-
-
-class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
-    """View to allow staff users to download Version page in RST format"""
-    template_name = 'version/detail-content.html'
 
     def render_to_response(self, context, **response_kwargs):
         """Returns a RST document for a project Version page.
@@ -552,8 +562,8 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
         )
         # convert the html to rst
         converted_doc = pypandoc.convert(
-            document.rendered_content.encode(
-                'utf8', 'ignore'), 'rst', format='html')
+            document.rendered_content.encode('utf8', 'ignore'),
+            'rst', format='html', extra_args=['--no-wrap'])
         converted_doc = converted_doc.replace('/media/images/', 'images/')
 
         # prepare the ZIP file
@@ -573,6 +583,7 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
     # noinspection PyMethodMayBeStatic
     def _prepare_zip_archive(self, document, version_obj):
         """Prepare a ZIP file with the document and referenced images.
+
         :param document:
         :param version_obj: Instance of a version object.
 
@@ -580,7 +591,7 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
         :rtype: string
         """
         # create in memory file-like object
-        temp_path = StringIO.StringIO()
+        temp_path = BytesIO()
 
         # grab all of the images from document
         images = []
@@ -593,35 +604,54 @@ class VersionDownload(VersionMixin, StaffuserRequiredMixin, DetailView):
         with zipfile.ZipFile(temp_path, 'w') as zip_file:
             # write all of the image files (read from disk)
             for image in images:
-                zip_file.write(
-                    '../media/{0}'.format(image),
-                    '{0}'.format(image)
-                )
+                try:
+                    image_url = '{}/{}'.format(settings.MEDIA_ROOT, image)
+                    zip_file.write(
+                        image_url,
+                        '{0}'.format(image)
+                    )
+                except FileNotFoundError:
+                    pass
             # write the actual RST document
             zip_file.writestr(
-                '{}-{}.rst'.format(
-                    version_obj.project.name, version_obj.name),
+                'index.rst',
                 document)
 
         return temp_path
+
+    def get_queryset(self):
+        """Get the queryset for download.
+
+        This will search a specific version within a project.
+        Thus it will not raise duplicates when there is
+        another same version name from another project.
+
+        :returns: A queryset which is filtered to only show Version
+        from specific project.
+        :rtype: QuerySet
+        :raises: Http404
+        """
+
+        if self.queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            slug = self.kwargs.get('slug', None)
+            if project_slug and slug:
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                    queryset = Version.objects.filter(
+                        project=project, slug=slug)
+                    return queryset
+                except (Project.DoesNotExist, Version.DoesNotExist):
+                    raise Http404('Sorry! We could not find your version!')
+            else:
+                raise Http404('Sorry! We could not find your version!')
+        return self.queryset
 
 
 class VersionDownloadGnu(VersionMixin, DetailView):
     """A tabular list style view for a Version."""
     context_object_name = 'version'
     template_name = 'version/detail-titles.txt'
-
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: A queryset which is filtered to only show approved Versions.
-        :rtype: QuerySet
-        """
-        if self.request.user.is_staff:
-            versions_qs = Version.objects.all()
-        else:
-            versions_qs = Version.approved_objects.all()
-        return versions_qs
 
     def get_object(self, queryset=None):
         """Get the object for this view.
@@ -653,8 +683,7 @@ class VersionDownloadGnu(VersionMixin, DetailView):
                 raise Http404(
                     'Sorry! The project you are requesting a version for '
                     'could not be found or you do not have permission to '
-                    'view the version. Also the version may not be '
-                    'approved yet. Try logging in as a staff member if '
+                    'view the version. Try logging in as a staff member if '
                     'you wish to view it.')
         else:
             raise Http404('Sorry! We could not find your version!')
@@ -670,3 +699,89 @@ class VersionDownloadGnu(VersionMixin, DetailView):
         return self.render_to_response(
             context,
             content_type="text/plain; charset=utf-8")
+
+
+class VersionSponsorDownload(
+    CustomStaffuserRequiredMixin, VersionMixin, DetailView):
+
+    """View to allow staff users to download Version page in html format."""
+
+    template_name = 'version/includes/version-sponsors.html'
+
+    def render_to_response(self, context, **response_kwargs):
+        """Returns a html document for a project Version page.
+
+        :param context:
+        :type context: dict
+
+        :param response_kwargs: Keyword Arguments
+        :param response_kwargs: dict
+
+        :returns: a html document for a project Version page.
+        :rtype: HttpResponse
+        """
+        version_obj = context.get('version')
+        # set the context flag for 'html_download'
+        context['html_download'] = True
+        # render the template
+        document = self.response_class(
+            request=self.request,
+            template=self.get_template_names(),
+            context=context,
+            **response_kwargs
+        )
+        # convert the html to html
+        converted_doc = pypandoc.convert(
+            document.rendered_content.encode(
+                'utf8', 'ignore'), 'html', format='html')
+        converted_doc = converted_doc.replace('/media/images/', 'images/')
+
+        # prepare the ZIP file
+        zip_file = self._prepare_zip_archive(converted_doc, version_obj)
+
+        # Grab the ZIP file from memory, make response with correct MIME-type
+        response = HttpResponse(
+            zip_file.getvalue(), content_type="application/x-zip-compressed")
+        # ..and correct content-disposition
+        response['Content-Disposition'] = (
+            'attachment; filename="{}-Sponsor-{}.zip"'.format(
+                version_obj.project.name, version_obj.name)
+        )
+
+        return response
+
+    # noinspection PyMethodMayBeStatic
+    def _prepare_zip_archive(self, document, version_obj):
+        """Prepare a ZIP file with the document and referenced images.
+        :param document:
+        :param version_obj: Instance of a version object.
+
+        :returns temporary path for the created zip file
+        :rtype: string
+        """
+        # create in memory file-like object
+        temp_path = BytesIO()
+
+        # grab all of the images from document
+        images = []
+        page = BeautifulSoup(document, 'html.parser')
+        pages = page.findAll('img')
+        for image in pages:
+            img = image['src']
+            images.append(img)
+
+        # create the ZIP file
+        with zipfile.ZipFile(temp_path, 'w') as zip_file:
+            # write all of the image files (read from disk)
+            for image in images:
+                zip_file.write(
+                    '../media/{0}'.format(image),
+                    '{0}'.format(image)
+                )
+            # write the actual html document
+            zip_file.writestr(
+                '{}-Sponsor-{}.html'.format(
+                    version_obj.project.name, version_obj.name),
+                document)
+
+        return temp_path

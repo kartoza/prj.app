@@ -1,0 +1,70 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Update {{ certifyingorganisation.name }}
+{% endblock %}
+
+{% block js_head %}
+    <script type="text/javascript" charset="utf-8">
+        let grappelli = {};
+    </script>
+    <script type="text/javascript" src="/static/js/jsi18n.js"></script>
+    <script type="text/javascript" src="/static/grappelli/jquery/jquery.min.js"></script>
+    <script src="/static/grappelli/jquery/jquery-migrate-3.0.1.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/static/grappelli/jquery/ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/static/grappelli/js/grappelli.min.js"></script>
+{% endblock %}
+
+{% block css_head %}
+    {{ form.media }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css" rel="stylesheet" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+{% endblock css_head %}
+
+{% block page_title %}
+    <h1>Update Certifying Organisation</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <style>
+     legend {
+         margin-bottom: 10px;
+     }
+
+     .selector {
+         margin-top: 10px;
+     }
+
+     .selector h2 {
+         padding-top: 20px !important;
+     }
+
+     #id_organisation_owners_input {
+         top: -4px;
+         left: 0;
+     }
+    </style>
+
+    <section id="forms">
+        <div class='container' style="margin-bottom: 60px">
+            {% csrf_token %}
+            {% crispy form %}
+            {% for form in inlines %}
+                {% crispy form %}
+            {% endfor %}
+        </div>
+    </section>
+
+    <script>
+     $('legend').append('<div class="pull-right"><a href={% url "about" the_project.slug %} class="glyphicon glyphicon-info-sign tooltip-toggle about-icon"'+
+                  'style="font-size: 14pt; padding: 7px; color: #7F7F98; display: inline-block; vertical-align: middle"'+
+                  'data-title="About"></a></div>')
+    $('#div_id_name').prepend('<div class="info-text">Click the <span class="glyphicon glyphicon-info-sign"></span> icon for details on how the certification programme works.</div>')
+    </script>
+
+{% endblock %}

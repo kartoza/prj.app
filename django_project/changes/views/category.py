@@ -6,7 +6,7 @@
 import logging
 import json
 from base.models import Project
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.views.generic import (
@@ -15,14 +15,14 @@ from django.views.generic import (
     DeleteView,
     DetailView,
     UpdateView,
-    RedirectView)
+)
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
+from django.db.models import Q
 from django.core.exceptions import ValidationError
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
-from pure_pagination.mixins import PaginationMixin
-from ..models import Category, Version
-from ..forms import CategoryForm
+from braces.views import LoginRequiredMixin
+from changes.models import Category, Version
+from changes.forms import CategoryForm
 
 logger = logging.getLogger(__name__)
 
@@ -117,22 +117,20 @@ class JSONCategoryListView(CategoryMixin, JSONResponseMixin, ListView):
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved versions
-        of project.
+        :returns: A queryset which to show all versions of project.
         :rtype: QuerySet
         :raises: Http404
         """
         version_id = self.kwargs['version']
         version = get_object_or_404(Version, id=version_id)
-        qs = Category.approved_objects.filter(project=version.project)
+        qs = Category.objects.all().filter(project=version.project)
         return qs
 
 
-class CategoryListView(CategoryMixin, PaginationMixin, ListView):
+class CategoryListView(LoginRequiredMixin, CategoryMixin, ListView):
     """List view for Category."""
     context_object_name = 'categories'
     template_name = 'category/list.html'
-    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
@@ -145,7 +143,6 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
         """
         context = super(CategoryListView, self).get_context_data(**kwargs)
         context['num_categories'] = context['categories'].count()
-        context['unapproved'] = False
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
@@ -155,8 +152,7 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
     def get_queryset(self, queryset=None):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved
-            Categories.
+        :returns: A queryset to show all Categories.
 
         :param queryset: Optional queryset.
         :rtype: QuerySet
@@ -171,10 +167,9 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
                     raise Http404(
                         'Sorry! The project you are requesting a category for '
                         'could not be found or you do not have permission to '
-                        'view the category. Also the version may not be '
-                        'approved yet. Try logging in as a staff member if '
-                        'you wish to view it.')
-                queryset = Category.approved_objects.filter(
+                        'view the category. Try logging in as a staff member '
+                        'if you wish to view it.')
+                queryset = Category.objects.all().filter(
                     project=project).order_by('sort_number')
                 return queryset
             else:
@@ -185,8 +180,8 @@ class CategoryListView(CategoryMixin, PaginationMixin, ListView):
             return queryset
 
 
-class CategoryOrderView(CategoryMixin, ListView):
-    """List view to order category"""
+class CategoryOrderView(LoginRequiredMixin, CategoryMixin, ListView):
+    """List view to order category."""
     context_object_name = 'categories'
     template_name = 'category/order.html'
 
@@ -210,8 +205,7 @@ class CategoryOrderView(CategoryMixin, ListView):
     def get_queryset(self, queryset=None):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show approved
-            Categories.
+        :returns: A queryset to show Categories.
 
         :param queryset: Optional queryset.
         :rtype: QuerySet
@@ -226,11 +220,13 @@ class CategoryOrderView(CategoryMixin, ListView):
                     raise Http404(
                         'Sorry! The project you are requesting a category for '
                         'could not be found or you do not have permission to '
-                        'view the category. Also the version may not be '
-                        'approved yet. Try logging in as a staff member if '
-                        'you wish to view it.')
-                queryset = Category.approved_objects.filter(
-                    project=project).order_by('sort_number')
+                        'view the category. Try logging in as a staff member '
+                        'if you wish to view it.')
+                queryset = Category.objects.all().filter(
+                    Q(project=project) &
+                    (Q(project__owner=self.request.user) |
+                     Q(project__changelog_managers=self.request.user))
+                ).order_by('sort_number')
                 return queryset
             else:
                 raise Http404(
@@ -244,15 +240,6 @@ class CategoryDetailView(CategoryMixin, DetailView):
     """Detail view for Category."""
     context_object_name = 'category'
     template_name = 'category/detail.html'
-
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: Queryset which is filtered to only show approved Category.
-        :rtype: QuerySet
-        """
-        qs = Category.approved_objects.all()
-        return qs
 
     def get_object(self, queryset=None):
         """Get the object for this view.
@@ -356,14 +343,14 @@ class CategoryDeleteView(LoginRequiredMixin, CategoryMixin, DeleteView):
         :rtype: QuerySet
         :raises: Http404
         """
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = Category.objects.filter(project=self.project)
         return qs
 
 
 class CategoryOrderSubmitView(LoginRequiredMixin, CategoryMixin, UpdateView):
-    """Update order view for Category"""
+    """Update order view for Category."""
     context_object_name = 'category'
 
     def post(self, request, *args, **kwargs):
@@ -418,7 +405,7 @@ class CategoryCreateView(LoginRequiredMixin, CategoryMixin, CreateView):
        :returns: URL
        :rtype: HttpResponse
        """
-        return reverse('pending-category-list', kwargs={
+        return reverse('category-list', kwargs={
             'project_slug': self.object.project.slug
         })
 
@@ -504,15 +491,20 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
     def get_queryset(self):
         """Get the queryset for this view.
 
-        :returns: A queryset which is filtered to only show all approved
-        projects which user created (staff gets all projects)
+        :returns: A queryset which is filtered to show all projects which
+        user created (staff gets all projects)
         :rtype: QuerySet
         """
-        qs = Category.approved_objects
+        project_slug = self.kwargs.get('project_slug', None)
+        project = Project.objects.get(slug=project_slug)
+        qs = Category.objects.all()
         if self.request.user.is_staff:
             return qs
         else:
-            return qs.filter(creator=self.request.user)
+            return qs.filter(
+                Q(project=project) &
+                (Q(project__owner=self.request.user) |
+                 Q(project__changelog_managers=self.request.user)))
 
     def get_success_url(self):
         """Define the redirect URL
@@ -534,96 +526,3 @@ class CategoryUpdateView(LoginRequiredMixin, CategoryMixin, UpdateView):
         except IntegrityError:
             return ValidationError(
                 'ERROR: Category by this name already exists!')
-
-
-class PendingCategoryListView(
-        StaffuserRequiredMixin, CategoryMixin, PaginationMixin, ListView):
-    """List view for pending Category."""
-    context_object_name = 'categories'
-    template_name = 'category/list.html'
-    paginate_by = 10
-
-    def __init__(self):
-        """
-        We overload __init__ in order to declare self.project and
-        self.project_slug. Both are then defined in self.get_queryset
-        which is the first method called. This means we can then reuse the
-        values in self.get_context_data.
-        """
-        super(PendingCategoryListView, self).__init__()
-        self.project = None
-        self.project_slug = None
-
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-        context = super(PendingCategoryListView, self)\
-            .get_context_data(**kwargs)
-        context['num_categories'] = self.get_queryset().count()
-        context['unapproved'] = True
-        context['project_slug'] = self.project_slug
-        context['project'] = self.project
-        return context
-
-    # noinspection PyAttributeOutsideInit
-    def get_queryset(self):
-        """Get the queryset for this view.
-
-        :returns: A queryset which is filtered to only show unapproved
-        Category.
-        :rtype: QuerySet
-        :raises: Http404
-        """
-        if self.queryset is None:
-            self.project_slug = self.kwargs.get('project_slug', None)
-            if self.project_slug:
-                try:
-                    self.project = Project.objects.get(slug=self.project_slug)
-                except Project.DoesNotExist:
-                    raise Http404(
-                        'Sorry! The project you are requesting a category for '
-                        'could not be found or you do not have permission to '
-                        'view the category. Also the version may not be '
-                        'approved yet. Try logging in as a staff member if '
-                        'you wish to view it.')
-                self.queryset = Category.unapproved_objects.filter(
-                    project=self.project)
-                return self.queryset
-            else:
-                raise Http404(
-                        'Sorry! We could not find the project for '
-                        'your category!')
-        return self.queryset
-
-
-class ApproveCategoryView(CategoryMixin, StaffuserRequiredMixin, RedirectView):
-    """Redirect view for approving Category."""
-    permanent = False
-    query_string = True
-    pattern_name = 'pending-category-list'
-
-    def get_redirect_url(self, project_slug, slug):
-        """Save Version as approved and redirect
-
-        :param project_slug: The slug of the parent Version's parent Project
-        :type project_slug: str
-
-        :param slug: The slug of the Version
-        :type slug: str
-
-        :returns: URL
-        :rtype: str
-        """
-        category_qs = Category.unapproved_objects.all()
-        category = get_object_or_404(category_qs, slug=slug)
-        category.approved = True
-        category.save()
-        return reverse(self.pattern_name, kwargs={
-            'project_slug': project_slug
-        })

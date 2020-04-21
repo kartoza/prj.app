@@ -1,26 +1,14 @@
 #
 # Production server with UWSGI configured to run on port 8080
+# and web configured to run directly on port 80
 #
 # docker-compose build
 # docker-compose up -d web
 #
 # See accompanying Make commands for easy collectstatic etc.
 
-# Our main nginx service - this is for testing only - normally
-# You would use a standalone nginx instance running on the host!
-nginx:
-  # Note you cannot scale if you use conteiner_name
-  container_name: projecta-nginx
-  image: nginx
-  hostname: nginx
-  volumes:
-    - ./nginx-conf:/etc/nginx/conf.d
-  ports:
-    - "0.0.0.0:80:80"
-  restart: on-failure:5
-
 smtp:
-  # Note you cannot scale if you use conteiner_name
+  # Note you cannot scale if you use container_name
   container_name: projecta-smtp
   image: catatnight/postfix
   hostname: postfix
@@ -28,22 +16,26 @@ smtp:
     # You could change this to something more suitable
     - maildomain=kartoza.com
     - smtp_user=noreply:docker
-  restart: on-failure:5
+  restart: unless-stopped
 
 db:
-  # Note you cannot scale if you use conteiner_name
+  # Note you cannot scale if you use container_name
   container_name: projecta-db
-  image: kartoza/postgis:9.4-2.1
+  image: kartoza/postgis:9.6-2.4
   volumes:
     #- ./pg/postgres_data:/var/lib/postgresql
     - ./backups:/backups
   environment:
     - USERNAME=docker
     - PASS=docker
-  restart: on-failure:5
+  restart: unless-stopped
+#  Uncomment the next line to have an access with PGAdmin using localhost and port 25432 on your computer.
+#  Only for development !
+#  ports:
+#    - "25432:5432"
 
 uwsgi:
-  # Note you cannot scale if you use conteiner_name
+  # Note you cannot scale if you use container_name
   container_name: projecta-uwsgi
   build: docker
   hostname: uwsgi
@@ -64,13 +56,13 @@ uwsgi:
   links:
     - smtp:smtp
     - db:db
-  restart: on-failure:5
+  restart: unless-stopped
   user: root
 
 dbbackups:
-  # Note you cannot scale if you use conteiner_name
+  # Note you cannot scale if you use container_name
   container_name: projecta-db-backups
-  image: kartoza/pg-backup:9.4
+  image: kartoza/pg-backup:9.6
   hostname: pg-backups
   volumes:
     - ./backups:/backups
@@ -87,11 +79,11 @@ dbbackups:
     - PGPORT=5432
     - PGHOST=db
     - PGDATABASE=gis
-  restart: on-failure:5
+  restart: unless-stopped
 
 # This is normally the main entry point for a production server
 web:
-  # Note you cannot scale if you use conteiner_name
+  # Note you cannot scale if you use container_name
   container_name: projecta-web
   image: nginx
   hostname: nginx
@@ -104,14 +96,15 @@ web:
   links:
     - uwsgi:uwsgi
   ports:
-    - "61200:8080"
-  restart: on-failure:5
+    - "80:8080"
+    - "4430:443"
+  restart: unless-stopped
 
 # This is the entry point for a development server.
 # Run with --no-deps to run attached to the services
 # from produ environment if wanted
 devweb:
-  # Note you cannot scale if you use conteiner_name
+  # Note you cannot scale if you use container_name
   container_name: projecta-dev-web
   build: docker
   dockerfile: Dockerfile-dev
@@ -139,3 +132,39 @@ devweb:
     - "61202:8080"
     # for ssh
     - "61203:22"
+
+btsync-db:
+  # BTSync backups for database dumps
+  image: kartoza/btsync
+  volumes:
+    # We mount RW so that we can use remove peer to clean up old backups off the server
+    - ./backups:/web:rw
+  env_file:
+    # The environment file should define two variables:
+    # SECRET: a RW btsync key if the server is a production server
+    #         a RO btsync key if it is staging or development machine
+    # DEVICE: a unique device name so you can recognise which host is being peered with in btsync
+    # See the btsync example env in this folder for a template
+    # NOTE:
+    # Do not version control the env file as anyone else could peer it and sync
+    # our database backups etc.
+    - btsync-db.env
+
+btsync-media:
+  # BTSync backups for django media
+  image: kartoza/btsync
+  volumes:
+    # We mount RO as we do not really want peers to change this data
+    - ./media:/web:ro
+  env_file:
+    # The environment file should define two variables:
+    # SECRET: a RW btsync key if the server is a production server
+    #         a RO btsync key if it is staging or development machine
+    # DEVICE: a unique device name so you can recognise which host is being peered with in btsync
+    # See the btsync example env in this folder for a template
+    # NOTE:
+    # Do not version control the env file as anyone else could peer it and sync
+    # our media backups etc.
+    - btsync-media.env
+
+

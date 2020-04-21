@@ -1,8 +1,8 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
 {% load staticfiles %}
-
-{% block title %}Teams - {{ block.super }}{% endblock %}
+{% load custom_markup %}
+{% block title %}Teams - {{ project_slug }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
@@ -10,7 +10,6 @@
 {% block page_title %}
     <h1>Teams</h1>
 {% endblock page_title %}
-
 {% block content %}
     <div class="page-header">
         <h1 class="text-muted">
@@ -20,12 +19,19 @@
                     <a class="btn btn-default btn-mini tooltip-toggle"
                        href='{% url "committee-create" committees.0.project.slug %}'
                        data-title="Create New Version">
-                        <span class="glyphicon glyphicon-asterisk"></span>
+                        {% show_button_icon "add" %}
                     </a>
                 {% endif %}
             </div>
         </h1>
     </div>
+    {%  ifequal num_committees 0 %}
+        {% if unapproved %}
+            <h3>All teams are approved.</h3>
+        {% else %}
+            <h3>No teams are defined.</h3>
+        {% endif %}
+    {%  endifequal %}
     {% for committee in committees %}
         {% include 'committee/includes/committee-panel.html' %}
     {%  endfor %}

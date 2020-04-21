@@ -1,5 +1,7 @@
 # coding=utf-8
 from django import forms
+from django.forms.widgets import TextInput
+from django.core.validators import ValidationError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout,
@@ -7,7 +9,7 @@ from crispy_forms.layout import (
     Submit,
     Field,
 )
-from models import (
+from .models import (
     Category,
     Version,
     Entry,
@@ -45,6 +47,21 @@ class CategoryForm(forms.ModelForm):
         instance.project = self.project
         instance.save()
         return instance
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+
+        try:
+            Category.objects.get(
+                name=cleaned_data['name'], project=self.project)
+        except Category.DoesNotExist:
+            pass
+        else:
+            raise ValidationError(
+                'Category with this name already exists for this project'
+            )
+
+        return cleaned_data
 
 
 class VersionForm(forms.ModelForm):
@@ -128,10 +145,21 @@ class EntryForm(forms.ModelForm):
         super(EntryForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
         self.fields['title'].label = 'Feature Title'
+        # Need to add required=False explicitly for these because
+        # even though they are declared as not required in the model,
+        # crispy is rendering them as required.
+        self.fields['video'].label = 'Video URL'
+        self.fields['video'] = forms.URLField(
+                widget=TextInput, required=False)
+        self.fields['funder_url'].label = 'Funder URL'
+        self.fields['funder_url'] = forms.URLField(
+                widget=TextInput, required=False)
+        self.fields['developer_url'] = forms.URLField(
+                widget=TextInput, required=False)
+        self.fields['developer_url'].label = 'Developer URL'
         # Filter the category list when editing so it shows only relevant ones
-        if not self.instance.id:
-            self.fields['category'].queryset = Category.objects.filter(
-                project=self.project).order_by('name')
+        self.fields['category'].queryset = Category.objects.filter(
+            project=self.project).order_by('name')
 
     def save(self, commit=True):
         instance = super(EntryForm, self).save(commit=False)
@@ -149,13 +177,16 @@ class SponsorForm(forms.ModelForm):
         model = Sponsor
         fields = (
             'name',
+            'contact_title',
             'address',
             'country',
             'sponsor_url',
             'contact_person',
             'sponsor_email',
             'agreement',
-            'logo'
+            'logo',
+            'invoice_number',
+            'project',
         )
 
     def __init__(self, *args, **kwargs):
@@ -167,24 +198,27 @@ class SponsorForm(forms.ModelForm):
             Fieldset(
                 form_title,
                 Field('name', css_class='form-control'),
+                Field('contact_title', css_class='form-control'),
                 Field('address', css_class='form-control'),
-                Field('country', css_class='form-control'),
+                Field('country', css_class='form-control chosen-select'),
                 Field('sponsor_url', css_class='form-control'),
                 Field('contact_person', css_class='form-control'),
                 Field('sponsor_email', css_class='form-control'),
                 Field('agreement', css_class='form-control'),
                 Field('logo', css_class='form-control'),
+                Field('invoice_number', css_class='form-control'),
                 css_id='project-form')
         )
         self.helper.layout = layout
         self.helper.html5_required = False
         super(SponsorForm, self).__init__(*args, **kwargs)
+        self.fields['project'].initial = self.project
+        self.fields['project'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
         instance = super(SponsorForm, self).save(commit=False)
         instance.author = self.user
-        instance.project = self.project
         instance.approved = False
         instance.save()
         return instance
@@ -238,7 +272,9 @@ class SponsorshipPeriodForm(forms.ModelForm):
             'sponsor',
             'sponsorship_level',
             'start_date',
-            'end_date'
+            'end_date',
+            'amount_sponsored',
+            'currency'
         )
 
     def __init__(self, *args, **kwargs):
@@ -249,15 +285,26 @@ class SponsorshipPeriodForm(forms.ModelForm):
         layout = Layout(
             Fieldset(
                 form_title,
-                Field('sponsor', css_class='form-control'),
-                Field('sponsorship_level', css_class='form-control'),
+                Field('sponsor', css_class='form-control chosen-select'),
+                Field(
+                    'sponsorship_level',
+                    css_class='form-control chosen-select'),
                 Field('start_date', css_class='form-control'),
                 Field('end_date', css_class='form-control'),
+                Field('amount_sponsored', css_class='form-control'),
+                Field('currency', css_class='form-control'),
                 css_id='project-form')
         )
         self.helper.layout = layout
         self.helper.html5_required = False
         super(SponsorshipPeriodForm, self).__init__(*args, **kwargs)
+        # Filter items to only show the approved items in the same project
+        self.fields['sponsor'].queryset = \
+            Sponsor.objects.filter(
+                project=self.project, approved=True).order_by('name')
+        self.fields['sponsorship_level'].queryset = \
+            SponsorshipLevel.objects.filter(
+                project=self.project, approved=True).order_by('name')
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
@@ -266,3 +313,12 @@ class SponsorshipPeriodForm(forms.ModelForm):
         instance.project = self.project
         instance.save()
         return instance
+
+
+class SustainingMemberPeriodForm(forms.ModelForm):
+    # noinspection PyClassicStyleClass
+    class Meta:
+        model = SponsorshipPeriod
+        fields = (
+            'sponsorship_level',
+        )

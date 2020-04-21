@@ -16,16 +16,26 @@
     <div class="col-lg-9">
         <div class="row">
             {% if not rst_download %}
-                <div class="col-lg-12">
+                <div class="col-lg-12" style="margin-bottom: -15px;">
                     <h3 class="muted align-right">
                         <small>Project:</small>
                         {{ version.project }}</h3>
                 </div>
-                <div class="col-lg-12">
+                <div class="col-lg-12" style="margin-bottom: -15px;">
                     <h3 class="muted align-right">
                         <small>Changelog for version:</small>
-                        {{ version.name }}</h3>
+                        {{ version.name }}
+                    </h3>
                 </div>
+                {% if version.release_date %}
+                <div class="col-lg-12" style="margin-bottom: -15px;">
+                    <h3 class="muted align-right">
+                        <small>Release date:
+                        {{ version.formatted_release_date }}</small>
+                    </h3>
+                </div>
+                {% endif %}
+
             {% else %}
                 <div class="col-lg-12">
                     <h1>
@@ -40,46 +50,78 @@
     <hr />
 {% endif %}
 {% if version.image_file %}
+
 <div class="row">
-    <div class="col-lg-12">
-        {% if not rst_download %}
-            <a href="{{ MEDIA_URL }}{{ version.image_file }}">
-                <img class="img-responsive img-rounded center-block""
+    <div class="col-lg-10">
+    <div class="row">
+        <div class="col-lg-12">
+            {% if not rst_download %}
+                <a href="{{ version.image_file.url }}">
+                    <img class="img-responsive img-rounded center-block"
+                         src="{{ version.image_file.url }}"/>
+                </a>
+            {% else %}
+                <img class="img-responsive img-rounded center-block"
                      src="{{ version.image_file.url }}"/>
-            </a>
-        {% else %}
-            <img class="img-responsive img-rounded center-block"
-                 src="{{ version.image_file.url }}"/>
-        {% endif %}
-    </div>
-</div>
-{% endif %}
-{% if version.description %}
-<div class="row" style="padding-top: 10px;">
-    <div class="col-lg-12">
-        {{ version.description|base_markdown }}
-    </div>
-</div>
-{% endif %}
-
-{% include "version/includes/version-sponsors.html" %}
-
-{% if not rst_download %}
-    <hr />
-{% endif %}
-
-{% for row in version.categories %}
-    {% if row.entries %}
-        <h2 class="text-muted" id="category-{{ row.category.id }}">
-            {{ row.category.name }}
-        </h2>
-        {% if not rst_download %}
-            <hr />
-        {% endif %}
-        {% for entry in row.entries %}
-            {% if entry.approved %}
-                {% include "entry/includes/entry_detail.html" %}
             {% endif %}
-        {% endfor %}
+        </div>
+    </div>
     {% endif %}
-{% endfor %}{# row loop #}
+    {% if version.description %}
+    <div class="row" style="padding-top: 10px;">
+        <div class="col-lg-12">
+            {{ version.description|base_markdown }}
+        </div>
+    </div>
+    {% endif %}
+
+    {% include "version/includes/version-sponsors.html" %}
+
+    {% if not rst_download %}
+        <hr />
+    {% endif %}
+
+        {% for row in version.categories %}
+            {% if row.entries %}
+                <div class="btn-group btn-group pull-right">
+                {% if user.is_staff or user in project.changelog_manager.all and not rst_download %}
+                    <a class="btn-circle btn-default btn-mini tooltip-toggle"
+                       data-title="Order Entries"
+                       href='{% url "entry-order" project_pk=version.project.pk version_pk=version.pk category_pk=row.category.pk %}'>
+                        <span class="glyphicon glyphicon-sort-by-order"></span>
+                    </a>
+                {% endif %}
+                </div>
+                <a class="anchor" id="category-{{ row.category.id }}"></a>
+                <h2 class="text-muted">
+                    {{ row.category.name }}
+                </h2>
+                {% if not rst_download %}
+                    <hr />
+                {% endif %}
+                {% for entry in row.entries %}
+                    {% include "entry/includes/entry_detail.html" %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}{# row loop #}
+    </div>
+
+    {% if not rst_download %}
+        <div class="col-lg-2 sidebar-offcanvas" id="sidebar">
+            <div class="list-group">
+                <div class="list-group-item" id="list-title">
+                    Categories
+                </div>
+                <div id="category-list">
+                    {% for row in version.categories %}
+                        {% if row.entries %}
+                            <a href="#category-{{ row.category.id }}" class="list-group-item">
+                                {{ row.category.name }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>

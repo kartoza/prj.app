@@ -1,5 +1,6 @@
-{% load compressed %}
+{% load pipeline %}
 {% load staticfiles %}
+{% load lesson_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,12 +13,22 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css" rel="stylesheet" type="text/css" media="screen, projection" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdn.rawgit.com/leafo/sticky-kit/v1.1.2/jquery.sticky-kit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+
+    <!-- Chosen library -->
+    <link rel="stylesheet" href="{% static 'chosen/chosen.min.css' %}">
+    <script src="{% static 'chosen/chosen.jquery.min.js' %}"></script>
+
     {% block js_head %}{% endblock js_head %}
+    {% block css_head %}{% endblock css_head %}
     {% if the_project.gitter_room %}
         <script type="text/javascript">
             var project_gitter_room = '{{ the_project.gitter_room }}';
@@ -28,7 +39,10 @@
         <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
     {% endif %}
 
-    {% compressed_css 'project' %}
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    {% stylesheet 'project' %}
+
+    {% block extra_head %}{% endblock extra_head %}
 
 </head>
 
@@ -85,7 +99,7 @@
                             Close
                         </button>
                         <button id="issue-submit-button" class="btn btn-primary"
-                                onclick="submitIssue()">
+                                onclick="window.submitIssue()">
                             Submit an issue
                         </button>
                     </div>
@@ -108,15 +122,38 @@
             <a href="https://github.com/kartoza/projecta">
                 Available on GitHub!
             </a>
+            <span>Version: {% version_tag %}</span>
         </p>
     </nav>
 </div>
-{% compressed_js 'contrib' %}
-{% compressed_js 'project' %}
+
+<!-- Creates the bootstrap modal where the thumbnaiul image will appear -->
+<div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" >
+        <div class="modal-content" >
+            <div class="modal-body" >
+                <a href="#" id="image-url" target="_blank">
+                    <img src="" id="imagepreview">
+                </a>
+            </div>
+            Click the image to open original size image in new tab
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% javascript 'contrib' %}
+{% javascript 'project' %}
 {% block inline-js %}{% endblock %}
 <script>
     $(function(){
-        var offsetSize = 100;
+
+        // Paus GIF's on page load...
+        window.onload = function() {
+            Gifffer();
+        };
 
         $('.tooltip-toggle').tooltip();
         if ($('.panel-to-wrap').length) {
@@ -129,33 +166,14 @@
                 panels.wrapAll($('<div class="row"></div>'));
             }
         }
-        if (window.location.hash) {
-            $(document).scroll(function () {
-                var hash = window.location.hash;
-                var hashName = hash.substring(1, hash.length);
-                var element;
-                if ($(hash).length != 0) {
-                    element = $(hash);
-                }
-                else if ($('a[name="' + hashName + '"]').length != 0) {
-                    element = $('a[name="' + hashName + '"]:first');
-                }
-                if (element != undefined) {
-                    window.scrollTo(0, element.position().top - offsetSize);
-                }
-                $(document).unbind("scroll");
-            });
-        }
-        $("[href^='#']").not("[href~='#']").click(function (evt) {
-            evt.preventDefault();
-            var obj = $(this);
-            var getHref = obj.attr("href").split("#")[1];
-            $(window).scrollTop($("[name*='" + getHref + "']").offset().top - offsetSize);
-        });
-
     });
 
+    function copyToClipboard(text) {
+        window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+    }
+
 </script>
+
 {% if intercom_app_id and request.user %}
     <script id="IntercomSettingsScriptTag">
         window.intercomSettings = {

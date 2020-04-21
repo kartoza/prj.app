@@ -1,0 +1,105 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+{% load staticfiles %}
+
+{% block title %}Training Center - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block js_head %}
+    <link rel="stylesheet" type="text/css"
+          href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/organisation_detail.css' %}">
+    <script>
+        var map;
+        var marker;
+
+        $(document).ready(function () {
+
+            var lat = {{ trainingcenter.location.y }};
+            var long = {{ trainingcenter.location.x }};
+
+            // Add map
+            $('#map').css({'height': 400, 'width': 900});
+            map = L.map('map').setView([lat, long], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+                attribution:  '&copy; <a href="http://www.openstreetmap.org/copyright">'+
+                                'OpenStreetMap</a>, Tiles courtesy of '+
+                                '<a href="http://hot.openstreetmap.org/" target="_blank">'+
+                                'Humanitarian OpenStreetMap Team</a>'
+            }).addTo(map);
+
+            var green_icon = L.icon({
+                            iconUrl: '/static/img/marker_green.png',
+                            iconSize:     [30, 40],
+                            iconAnchor:   [14, 39],
+                            popupAnchor:  [0, -30]
+                        });
+
+            marker = L.marker( [ lat,long ], {icon: green_icon} ).addTo( map );
+        })
+
+    </script>
+{% endblock %}
+
+{% block page_title %}
+    <h1>Training Center Detail</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <div class="row">
+        <div class=".col-md-4">
+            <div class="col-lg-10">
+            <h1>{{ trainingcenter.name }}</h1>
+        </div>
+
+        {# Only organisation owners or staff can edit #}
+        <div class="col-lg-2">
+            <div class="btn-group pull-right">
+                {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in project.certification_manager.all %}
+                <a class="btn btn-default btn-sm btn-delete tooltip-toggle"
+                   href='{% url "trainingcenter-delete" project_slug=trainingcenter.certifying_organisation.project.slug organisation_slug=trainingcenter.certifying_organisation.slug slug=trainingcenter.slug %}'
+                   data-title="Delete {{ trainingcenter.name }}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-sm tooltip-toggle"
+                   href='{% url "trainingcenter-update" project_slug=trainingcenter.certifying_organisation.project.slug organisation_slug=trainingcenter.certifying_organisation.slug slug=trainingcenter.slug %}'
+                   data-title="Edit {{ trainingcenter.name }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                {% endif %}
+                 <a class="btn btn-default btn-sm tooltip-toggle"
+                    href='{% url "certifyingorganisation-detail" trainingcenter.certifying_organisation.project.slug trainingcenter.certifying_organisation.slug %}'
+                    data-title="Back">
+                     <span class="glyphicon glyphicon-arrow-left"></span>
+                 </a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="details col-lg-5" style="margin-top: 20px; margin-bottom: 20px;">
+        <span class="grey-italic col-lg-4">Training center name</span><span class="col-lg-8">{{ trainingcenter.name }}<br/></span>
+        <span class="grey-italic col-lg-4">Email</span><span class="col-lg-8">{{ trainingcenter.email }}<br/></span>
+        <span class="grey-italic col-lg-4">Address</span><span class="col-lg-8">{{ trainingcenter.address }}<br/></span>
+        <span class="grey-italic col-lg-4">Phone</span><span class="col-lg-8">{{ trainingcenter.phone }}<br/></span>
+    </div>
+
+    <div class="map-wrapper">
+        <div id="map"></div>
+    </div>
+
+    <script>
+        $('.btn-delete').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-danger')
+            },
+            function (){
+                $(this).removeClass('btn-danger').addClass('btn-default')
+            }
+        )
+    </script>
+{% endblock %}

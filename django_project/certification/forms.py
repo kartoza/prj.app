@@ -1,0 +1,506 @@
+# coding=utf-8
+from __future__ import unicode_literals
+from django import forms
+from django.contrib.admin import widgets
+from django.contrib.auth.models import User
+from django.contrib.gis import forms as geoforms
+from django.contrib.gis import gdal
+from django.contrib.gis.forms.widgets import BaseGeometryWidget
+from django.core.exceptions import ValidationError
+from django.contrib.gis.forms.widgets import OSMWidget
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import (
+    Layout,
+    Fieldset,
+    Submit,
+    Field,
+)
+from .models import (
+    CertifyingOrganisation,
+    CourseConvener,
+    CourseType,
+    TrainingCenter,
+    Course,
+    CourseAttendee,
+    Attendee,
+    Certificate,
+    CertifyingOrganisationCertificate
+)
+
+
+class CustomSelectMultipleWidget(widgets.FilteredSelectMultiple):
+
+    class Media:
+        css = {'all': ['/static/css/custom-widget.css',
+                       '/static/grappelli/jquery/ui/jquery-ui.min.css',
+                       '/static/grappelli/stylesheets/screen.css']}
+
+
+class CertifyingOrganisationForm(forms.ModelForm):
+
+    organisation_owners = forms.ModelMultipleChoiceField(
+        queryset=User.objects.order_by('username'),
+        widget=CustomSelectMultipleWidget("user", is_stacked=False),
+    )
+
+    # noinspection PyClassicStyleClass.
+    class Meta:
+        model = CertifyingOrganisation
+        fields = (
+            'name',
+            'organisation_email',
+            'url',
+            'address',
+            'country',
+            'organisation_phone',
+            'logo',
+            'organisation_owners',
+            'project',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.project = kwargs.pop('project')
+        form_title = 'New Certifying Organisation for %s' % self.project.name
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('name', css_class='form-control'),
+                Field('organisation_email', css_class='form-control'),
+                Field('url', css_class='form-control'),
+                Field('address', css_class='form-control'),
+                Field('country', css_class='form-control chosen-select'),
+                Field('organisation_phone', css_class='form-control'),
+                Field('logo', css_class='form-control'),
+                Field('organisation_owners', css_class='form-control'),
+                Field('project', css_class='form-control'),
+                css_id='project-form')
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(CertifyingOrganisationForm, self).__init__(*args, **kwargs)
+        self.fields['organisation_owners'].label_from_instance = \
+            lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
+        self.fields['organisation_owners'].initial = [self.user]
+        self.fields['project'].initial = self.project
+        self.fields['project'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(CertifyingOrganisationForm, self).save(commit=False)
+        instance.save()
+        self.save_m2m()
+        return instance
+
+
+class CourseTypeForm(forms.ModelForm):
+
+    # noinspection PyClassicStyleClass.
+    class Meta:
+        model = CourseType
+        fields = (
+            'name',
+            'description',
+            'instruction_hours',
+            'coursetype_link',
+            'certifying_organisation',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = \
+            'New Course Type for %s' % self.certifying_organisation.name
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('name', css_class='form-control'),
+                Field('description', css_class='form-control'),
+                Field('instruction_hours', css_class='form-control'),
+                Field('coursetype_link', css_class='form-control'),
+                css_id='project-form')
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(CourseTypeForm, self).__init__(*args, **kwargs)
+        self.fields['certifying_organisation'].initial = \
+            self.certifying_organisation
+        self.fields['certifying_organisation'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(CourseTypeForm, self).save(commit=False)
+        instance.author = self.user
+        instance.save()
+        return instance
+
+
+class CourseConvenerForm(forms.ModelForm):
+
+    user = forms.ModelChoiceField(
+        queryset=User.objects.order_by('username'),
+        widget=forms.Select)
+
+    # noinspection PyClassicStyleClass.
+    class Meta:
+        model = CourseConvener
+        fields = (
+            'title',
+            'user',
+            'degree',
+            'signature',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = 'New Course Convener for %s' % \
+                     self.certifying_organisation.name
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('title', css_class='form-control'),
+                Field('user', css_class='form-control chosen-select'),
+                Field('degree', css_class='form-control'),
+                Field('signature', css_class='form-control'),
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(CourseConvenerForm, self).__init__(*args, **kwargs)
+        self.fields['user'].label_from_instance = \
+            lambda obj: "%s < %s >" % (obj.get_full_name(), obj)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(CourseConvenerForm, self).save(commit=False)
+        instance.certifying_organisation = self.certifying_organisation
+        instance.save()
+        return instance
+
+
+class CustomOSMWidget(BaseGeometryWidget):
+    """An OpenLayers/OpenStreetMap-based widget."""
+
+    template_name = 'gis/openlayers-osm.html'
+
+    default_lon = 0
+    default_lat = 0
+
+    class Media:
+        css = {'all': ['/static/css/custom-widget.css',
+                       '/static/grappelli/jquery/ui/jquery-ui.min.css',
+                       '/static/grappelli/stylesheets/screen.css']}
+
+        js = (
+            '/en/site-admin/jsi18n/',
+            '/static/js/libs/OpenLayers-2.13.1/OpenLayers.js',
+            '/static/js/libs/OpenLayers-2.13.1/OpenStreetMapSSL.js',
+        )
+
+    def __init__(self, attrs=None):
+        super(CustomOSMWidget, self).__init__()
+        for key in ('default_lon', 'default_lat'):
+            self.attrs[key] = getattr(self, key)
+        if attrs:
+            self.attrs.update(attrs)
+        self.attrs['default_zoom'] = 10
+
+    @property
+    def map_srid(self):
+        # Use the official spherical mercator projection SRID when GDAL is
+        # available.
+        if gdal.GDAL_VERSION:
+            return 3857
+        else:
+            return 4326
+
+
+class TrainingCenterForm(geoforms.ModelForm):
+
+    location = geoforms.PointField(widget=OSMWidget(
+        attrs={
+            'map_width': 750,
+            'map_height': 400,
+            'default_zoom': 5,
+            'default_lat': -30.559482,
+            'default_lon': 22.937506
+        }), )
+
+    class Meta:
+        model = TrainingCenter
+        fields = (
+            'name',
+            'email',
+            'address',
+            'phone',
+            'location',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = 'New Training Center for %s' % \
+                     self.certifying_organisation.name
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('name', css_class='form-control'),
+                Field('email', css_class='form-control'),
+                Field('address', css_class='form-control'),
+                Field('phone', css_class='form-control'),
+                Field('location', css_class='form-control'),
+            ))
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(TrainingCenterForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(TrainingCenterForm, self).save(commit=False)
+        instance.certifying_organisation = self.certifying_organisation
+        instance.author = self.user
+        instance.save()
+        return instance
+
+
+class CourseForm(forms.ModelForm):
+
+    # noinspection PyClassicStyleClass.
+    class Meta:
+        model = Course
+        fields = (
+            'course_type',
+            'course_convener',
+            'training_center',
+            'language',
+            'trained_competence',
+            'start_date',
+            'end_date',
+            'template_certificate',
+            'certifying_organisation',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = 'New Course for %s' % self.certifying_organisation.name
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('course_type', css_class='form-control'),
+                Field('course_convener',
+                      css_class='form-control chosen-select'),
+                Field('training_center', css_class='form-control'),
+                Field('language', css_class='form-control'),
+                Field('trained_competence', css_class='form-control'),
+                Field('start_date', css_class='form-control'),
+                Field('end_date', css_class='form-control'),
+                Field('template_certificate', css_class='form-control'),
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(CourseForm, self).__init__(*args, **kwargs)
+        self.fields['course_convener'].queryset = \
+            CourseConvener.objects.filter(
+                certifying_organisation=self.certifying_organisation)
+        self.fields['course_convener'].label_from_instance = \
+            lambda obj: "%s <%s>" % (obj.user.get_full_name(), obj)
+        self.fields['course_type'].queryset = \
+            CourseType.objects.filter(
+                certifying_organisation=self.certifying_organisation)
+        self.fields['training_center'].queryset = \
+            TrainingCenter.objects.filter(
+                certifying_organisation=self.certifying_organisation)
+        self.fields['certifying_organisation'].initial = \
+            self.certifying_organisation
+        self.fields['certifying_organisation'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        instance = super(CourseForm, self).save(commit=False)
+        instance.certifying_organisation = self.certifying_organisation
+        instance.author = self.user
+        instance.save()
+        return instance
+
+
+class CourseAttendeeForm(forms.ModelForm):
+
+    class Meta:
+        model = CourseAttendee
+        fields = ('attendee', 'course')
+        widgets = {'course': forms.HiddenInput()}
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.course = kwargs.pop('course')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = 'Add Course Attendee'
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('attendee', css_class='form-control chosen-select'),
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(CourseAttendeeForm, self).__init__(*args, **kwargs)
+        self.fields['attendee'].queryset = \
+            Attendee.objects.filter(
+                certifying_organisation=self.certifying_organisation)
+        self.fields['course'].initial = self.course
+        self.fields['course'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Add'))
+
+    def save(self, commit=True):
+        instance = super(CourseAttendeeForm, self).save(commit=False)
+        instance.author = self.user
+        instance.save()
+        return instance
+
+
+class AttendeeForm(forms.ModelForm):
+
+    add_to_course = forms.BooleanField(
+        initial=True,
+        help_text='Add this attendee to course.',
+        required=False
+    )
+
+    class Meta:
+        model = Attendee
+        fields = (
+            'firstname',
+            'surname',
+            'email',
+            'certifying_organisation',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = 'Add Attendee'
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('firstname', css_class='form-control'),
+                Field('surname', css_class='form-control'),
+                Field('email', css_class='form-control'),
+                Field('add_to_course', css_class='form-control')
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(AttendeeForm, self).__init__(*args, **kwargs)
+        self.fields['certifying_organisation'].initial = \
+            self.certifying_organisation
+        self.fields['certifying_organisation'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Add'))
+
+    def save(self, commit=True):
+        instance = super(AttendeeForm, self).save(commit=False)
+        instance.author = self.user
+        instance.save()
+        return instance
+
+
+class CertificateForm(forms.ModelForm):
+
+    class Meta:
+        model = Certificate
+        fields = (
+            'course',
+            'attendee',
+            'is_paid',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.course = kwargs.pop('course')
+        self.attendee = kwargs.pop('attendee')
+        organisation_credits = \
+            self.course.certifying_organisation.organisation_credits
+        cost = self.course.certifying_organisation.project.certificate_credit
+        remaining_credits = organisation_credits - cost
+        self.helper = FormHelper()
+        self.helper.html5_required = False
+        super(CertificateForm, self).__init__(*args, **kwargs)
+        self.fields['course'].initial = self.course
+        self.fields['course'].widget = forms.HiddenInput()
+        self.fields['attendee'].initial = self.attendee
+        self.fields['attendee'].widget = forms.HiddenInput()
+        if remaining_credits >= 0:
+            self.fields['is_paid'].initial = True
+        else:
+            self.fields['is_paid'].initial = False
+        self.fields['is_paid'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Issue Certificate'))
+
+    def clean(self):
+        clean_data = self.cleaned_data
+        organisation = self.course.certifying_organisation
+
+        remaining_credits = \
+            organisation.organisation_credits - \
+            organisation.project.certificate_credit
+
+        if remaining_credits < 0:
+            raise ValidationError("Insufficient credits")
+
+        return clean_data
+
+    def save(self, commit=True):
+        instance = super(CertificateForm, self).save(commit=False)
+        instance.author = self.user
+        instance.course = self.course
+        instance.attendee = self.attendee
+        instance.save()
+        return instance
+
+
+class CsvAttendeeForm(forms.Form):
+    """Form to upload CSV file."""
+
+    file = forms.FileField(
+        label="Choose Attendee CSV File:",
+        widget=forms.FileInput(
+            attrs={
+                'accept': ".csv"
+            }
+        )
+    )
+
+
+class OrganisationCertificateForm(forms.ModelForm):
+
+    class Meta:
+        model = CertifyingOrganisationCertificate
+        fields = (
+            'certifying_organisation',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        self.helper = FormHelper()
+        self.helper.html5_required = False
+        super(OrganisationCertificateForm, self).__init__(*args, **kwargs)
+        self.fields['certifying_organisation'].initial = \
+            self.certifying_organisation
+        self.fields['certifying_organisation'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Issue Certificate'))
+
+    def save(self, commit=True):
+        instance = super(OrganisationCertificateForm, self).save(commit=False)
+        instance.author = self.user
+        instance.save()
+        return instance

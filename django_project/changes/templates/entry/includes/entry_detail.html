@@ -3,49 +3,69 @@
 {% load embed_video_tags %}
 
 <div class="row">
-    <div class="col-lg-9">
+    <a class="anchor-entry" id="{{ entry.slug }}"></a>
+    <div class="col-lg-10">
         <h3><span class="text-muted">Feature:</span> {{ entry.title }}</h3>
     </div>
     <div class="col-lg-2">
-        {% if user.is_authenticated %}
-            <div class="btn-group pull-right">
-                {% if not entry.approved and user.is_staff %}
-                    <a class="btn btn-success btn-mini tooltip-toggle"
-                       data-title="Approve Entry"
-                       href='{% url "entry-approve" pk=entry.id %}'>
-                        <span class="glyphicon glyphicon-thumbs-up"></span>
-                    </a>
-                {% endif %}
-                <a class="btn btn-default btn-mini tooltip-toggle"
+        <div class="btn-group pull-right align-bottom">
+            {% if user.is_authenticated and not rst_download %}
+                <a class="btn-default btn-mini tooltip-toggle"
                    data-title="Delete Entry"
                    href='{% url "entry-delete" pk=entry.id %}'>
                     <span class="glyphicon glyphicon-minus"></span>
                 </a>
-                <a class="btn btn-default btn-mini tooltip-toggle"
+                <a class="btn-default btn-mini tooltip-toggle"
                    data-title="Update Entry"
                    href='{% url "entry-update" pk=entry.id %}'>
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
-            </div>
-        {% endif %}
+            {% endif %}
+
+            <a class="btn-default btn-mini tooltip-toggle"
+               data-title="Get Permalink"
+               onclick="copyToClipboard('{{ request.scheme }}://{{ request.get_host }}{{ request.path }}#{{ entry.slug }}')">
+                <span class="glyphicon glyphicon-link"></span>
+            </a>
+        </div>
     </div>
 </div>
 <div class="row" style="margin-top:10px">
+<style>
+   code {
+       display: block;
+       padding: 1rem;
+        word-wrap: normal;
+   }
+</style>
     <div class="col-lg-8">
         {{ entry.description|base_markdown }}
     </div>
-    <div class="col-lg-4">
-        <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
-            {% if entry.image_file|is_gif %}
-                <img class="img-responsive img-rounded pull-right"
-                     src="{{ MEDIA_URL }}{{ entry.image_file }}"
-                     alt=""/>{# see core/settings/contrib.py for large-entry #}
-            {% else %}
-                <img class="img-responsive img-rounded pull-right"
-                     src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
-                     alt=""/>{# see core/settings/contrib.py for large-entry #}
+    <div class="col-lg-4 text-center">
+            {% if entry.image_file %}
+                {% if entry.image_file|is_gif %}
+                    {% if not rst_download %}
+                        <img id="{{ entry.image_file.url }}" class="img-responsive img-rounded pull-right"
+                             data-gifffer="{{ entry.image_file.url }}"
+                             gifffer-alt=""/>{# see core/settings/contrib.py for large-entry #}
+                        <a href="#" class="pop-gif">
+                            Click here for bigger size animation.
+                        </a>
+                    {% else %}
+                        <a href="{{ entry.image_file.url }}">
+                        <img class="img-responsive img-rounded pull-right"
+                             src="{{ entry.image_file.url }}"
+                             alt=""/>{# see core/settings/contrib.py for large-entry #}
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a href="#" class="pop-image">
+                    <img id="{{ entry.image_file.url }}" class="img-responsive img-rounded pull-right"
+                         src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
+                         alt=""/>{# see core/settings/contrib.py for large-entry #}
+                    </a>
+                {% endif %}
             {% endif %}
-        </a>
     </div>
 </div>
 
@@ -59,10 +79,17 @@
 
 <div class="row">
     <div class="col-lg-8">
-        <h5 class="text-muted">
-            {{ entry.funder_info_html|base_markdown }}
-            {{ entry.developer_info_html|base_markdown }}
-        </h5>
+        {% if not rst_download %}
+            <h5 class="text-muted">
+                {{ entry.funder_info_html|base_markdown }}
+                {{ entry.developer_info_html|base_markdown }}
+            </h5>
+        {% else %}
+            <p>
+                {{ entry.funder_info_html|base_markdown }}
+                {{ entry.developer_info_html|base_markdown }}
+            </p>
+        {% endif %}
     </div>
 </div>
 

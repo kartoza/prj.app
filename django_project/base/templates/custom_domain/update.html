@@ -1,0 +1,68 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    <h1>Update Domain</h1>
+{% endblock page_title %}
+
+{% block content %}
+
+    <style>
+        .info-error {
+            color: darkred;
+        }
+    </style>
+
+    <section id="forms">
+        <div class='container'>
+            {% csrf_token %}
+            {% crispy form %}
+            {% for form in inlines %}
+                {% crispy form %}
+            {% endfor %}
+        </div>
+    </section>
+
+    <script>
+    $(document).ready(function () {
+        $('legend').html('Update Domain')
+
+        $('#div_id_project').append('<p class="info-error" id="project-error"></p>');
+        $('#div_id_organisation').append('<p class="info-error" id="organisation-error"></p>');
+
+        $('select[id=id_role]').change(function () {
+            $('.info-error').html('');
+            if($(this).val() == 'Project') {
+                $('#div_id_organisation').hide();
+                $('select[id=id_organisation]').val('');
+                $('#div_id_project').show();
+            }else {
+                $('select[id=id_project]').val('');
+                $('#div_id_project').hide();
+                $('#div_id_organisation').show();
+            }
+            }
+        );
+        $('select[id=id_role]').trigger('change');
+
+        $('form').submit(function () {
+            var project = $('select[id=id_project]').val();
+            var organisation = $('select[id=id_organisation]').val();
+            if(project === '' && organisation === ''){
+                if(project === ''){
+                    $('#project-error').html('This field should not be empty.');
+                }
+
+                if(organisation === ''){
+                    $('#organisation-error').html('This field should not be empty.');
+                }
+                return false
+            }else {
+                return true
+            }
+        })
+    });
+    </script>
+
+{% endblock %}

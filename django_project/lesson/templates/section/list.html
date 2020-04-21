@@ -1,0 +1,92 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+{% load staticfiles %}
+{% load custom_markup %}
+
+{% block title %} {{ project.name }} Lessons {% endblock %}
+
+{% block js_head %}
+    <script>
+    var worksheets_download_url = '{% url "download-multiple-worksheets" project_slug=project.slug %}'
+    </script>
+    <script src="{% static 'js/download_multiple_files.js' %}"></script>
+{% endblock js_head %}
+
+{% block css_head %}
+    <link rel="stylesheet" href="{% static 'css/section-list.css' %}">
+{% endblock css_head %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1 xmlns="http://www.w3.org/1999/html">Section for {{ project.name }} </h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+            {{ project.name }} Worksheet Sections
+            <div class="pull-right btn-group">
+                    <a class="btn btn-default btn-mini tooltip-toggle" id="download-multiple-submit"
+                       onclick="downloadCheckedFiles()"
+                       data-title="Download Checked Files as Zip" style="display: none">
+                        <span>Download as Zip</span>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle" id="toggle-checklist-btn"
+                       onclick="toggleCheckList(this)"
+                       data-title="Download Multiple Module & Sample Files">
+                        <span class="fa fa-download"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "about-lesson-app" project_slug=project.slug %}'
+                       data-title="About Lessons App">
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                    </a>
+                {% if user_can_edit %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "section-create" project_slug=project.slug %}'
+                       data-title="Create New Section">
+                        {% show_button_icon "add" %}
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "section-order" project_slug=project.slug %}'
+                       data-title="Order Section">
+                        <span class="glyphicon glyphicon-sort-by-order"></span>
+                    </a>
+                {% endif %}
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                   href='{% url "project-detail" slug=project.slug %}'
+                   data-title="Back">
+                    <span class="glyphicon glyphicon-arrow-left"></span>
+                </a>
+            </div>
+        </h1>
+    </div>
+    {% for section, worksheets in worksheets.items %}
+        {% include 'section/includes/section-list-detail.html' %}
+    {%  endfor %}
+    <div class="row" style="margin-left: 400pt;">
+            {% if is_paginated %}
+              <ul class="pagination">
+                {% if page_obj.has_previous %}
+                  <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&laquo;</span></li>
+                {% endif %}
+                {% for i in paginator.page_range %}
+                  {% if page_obj.number == i %}
+                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                  {% else %}
+                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                  <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&raquo;</span></li>
+                {% endif %}
+              </ul>
+            {% endif %}
+        </div>
+{% endblock %}

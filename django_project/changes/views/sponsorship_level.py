@@ -4,9 +4,8 @@ __date__ = '12/28/15'
 import logging
 from base.models import Project
 
-logger = logging.getLogger(__name__)
-
-from django.core.urlresolvers import reverse
+from django.urls import reverse
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.views.generic import (
@@ -17,11 +16,13 @@ from django.views.generic import (
     UpdateView,
     RedirectView)
 from django.http import HttpResponseRedirect, Http404
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin
 from pure_pagination.mixins import PaginationMixin
 
 from ..models import SponsorshipLevel  # noqa
 from ..forms import SponsorshipLevelForm
+
+logger = logging.getLogger(__name__)
 
 
 class JSONResponseMixin(object):
@@ -58,20 +59,26 @@ class JSONResponseMixin(object):
         for sponsorshiplevel in context['sponsorshiplevels']:
             if not first_flag:
                 result += ',\n'
-            result += '    "%s" : "%s"' % (sponsorshiplevel.id, sponsorshiplevel.name)
+            result += '    "%s" : "%s"' % (
+                sponsorshiplevel.id, sponsorshiplevel.name)
             first_flag = False
         result += '\n}'
         return result
 
 
 class SponsorshipLevelMixin(object):
+
     """Mixin class to provide standard settings for SponsorshipLevel."""
+
     model = SponsorshipLevel
     form_class = SponsorshipLevelForm
 
 
-class JSONSponsorshipLevelListView(SponsorshipLevelMixin, JSONResponseMixin, ListView):
-    """List view for sponsorship level as json object - needed by javascript."""
+class JSONSponsorshipLevelListView(
+    SponsorshipLevelMixin, JSONResponseMixin, ListView):
+
+    """List view for sponsorship level as json object, needed by javascript."""
+
     context_object_name = 'sponsorshiplevels'
 
     def dispatch(self, request, *args, **kwargs):
@@ -132,7 +139,7 @@ class SponsorshipLevelListView(
         project_slug = self.kwargs.get('project_slug', None)
         context['project_slug'] = project_slug
         if project_slug:
-            context['the_project'] = Project.objects.get(slug=project_slug)
+            context['project'] = Project.objects.get(slug=project_slug)
         return context
 
     def get_queryset(self, queryset=None):
@@ -149,7 +156,8 @@ class SponsorshipLevelListView(
             project_slug = self.kwargs.get('project_slug', None)
             if project_slug:
                 project = Project.objects.get(slug=project_slug)
-                queryset = SponsorshipLevel.objects.filter(project=project)
+                queryset = \
+                    SponsorshipLevel.approved_objects.filter(project=project)
                 return queryset
             else:
                 raise Http404('Sorry! We could not find your Sponsor Period!')
@@ -195,6 +203,24 @@ class SponsorshipLevelDetailView(SponsorshipLevelMixin, DetailView):
             else:
                 raise Http404('Sorry! We could not '
                               'find your sponsorship level!')
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+
+        project_slug = self.kwargs.get('project_slug', None)
+        project = Project.objects.get(slug=project_slug)
+        context = super(
+                SponsorshipLevelDetailView,
+                self).get_context_data(**kwargs)
+        context['project'] = project
+        return context
 
 
 # noinspection PyAttributeOutsideInit
@@ -272,7 +298,7 @@ class SponsorshipLevelDeleteView(
         :rtype: QuerySet
         :raises: Http404
         """
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = SponsorshipLevel.objects.filter(project=self.project)
         return qs
@@ -314,6 +340,7 @@ class SponsorshipLevelCreateView(
                 self).get_context_data(**kwargs)
         context['sponsorshiplevels'] = self.get_queryset() \
             .filter(project=self.project)
+        context['the_project'] = self.project
         return context
 
     def form_valid(self, form):
@@ -354,21 +381,6 @@ class SponsorshipLevelUpdateView(
     context_object_name = 'sponsorshiplevel'
     template_name = 'sponsorship_level/update.html'
 
-    def get_form_kwargs(self):
-        """Get keyword arguments from form.
-
-        :returns keyword argument from the form
-        :rtype: dict
-        """
-        kwargs = super(SponsorshipLevelUpdateView, self).get_form_kwargs()
-        self.project_slug = self.kwargs.get('project_slug', None)
-        self.project = Project.objects.get(slug=self.project_slug)
-        kwargs.update({
-            'user': self.request.user,
-            'project': self.project
-        })
-        return kwargs
-
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
 
@@ -383,20 +395,70 @@ class SponsorshipLevelUpdateView(
                 self).get_context_data(**kwargs)
         context['sponsorshiplevels'] = self.get_queryset() \
             .filter(project=self.project)
+        context['project'] = self.project
         return context
+
+    def get_form_kwargs(self):
+        """Get keyword arguments from form.
+
+        :returns keyword argument from the form
+        :rtype: dict
+        """
+        kwargs = super(SponsorshipLevelUpdateView, self).get_form_kwargs()
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+
+        kwargs.update({
+            'user': self.request.user,
+            'project': self.project
+        })
+        return kwargs
 
     def get_queryset(self):
         """Get the queryset for this view.
 
         :returns: A queryset which is filtered to only show all approved
-        projects which user created (staff gets all projects)
+        sponsorship level which user created (staff gets all)
         :rtype: QuerySet
         """
-        qs = SponsorshipLevel.approved_objects
+
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.project = Project.objects.get(slug=self.project_slug)
+        qs = SponsorshipLevel.objects.all()
         if self.request.user.is_staff:
             return qs
         else:
-            return qs.filter(creator=self.request.user)
+            return qs.filter(
+                Q(project=self.project) &
+                (Q(author=self.request.user) |
+                 Q(project__owner=self.request.user) |
+                 Q(project__sponsorship_managers=self.request.user)))
+
+    def get_object(self, queryset=None):
+        """Get the object for this view.
+
+        Because Sponsorship level slugs are unique within a Project,
+        we need to make sure that we fetch the correct Sponsorship level
+        from the correct Project
+
+        :param queryset: A query set
+        :type queryset: QuerySet
+
+        :returns: Queryset which is filtered to only show a project
+        :rtype: QuerySet
+        :raises: Http404
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+            slug = self.kwargs.get('slug', None)
+            project_slug = self.kwargs.get('project_slug', None)
+            if slug and project_slug:
+                project = Project.objects.get(slug=project_slug)
+                obj = queryset.get(project=project, slug=slug)
+                return obj
+            else:
+                raise Http404(
+                    'Sorry! We could not find your sponsorship level!')
 
     def get_success_url(self):
         """Define the redirect URL
@@ -413,7 +475,7 @@ class SponsorshipLevelUpdateView(
 
 
 class PendingSponsorshipLevelListView(
-        StaffuserRequiredMixin,
+        LoginRequiredMixin,
         SponsorshipLevelMixin,
         PaginationMixin,
         ListView):
@@ -473,8 +535,8 @@ class PendingSponsorshipLevelListView(
 
 
 class ApproveSponsorshipLevelView(
+        LoginRequiredMixin,
         SponsorshipLevelMixin,
-        StaffuserRequiredMixin,
         RedirectView):
     """Redirect view for approving Sponsorship Level."""
     permanent = False

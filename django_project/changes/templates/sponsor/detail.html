@@ -1,51 +1,136 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
 
-{% block title %}Sponsors - {{ block.super }}{% endblock %}
+{% block title %}Sustaining Members - {{ sponsor }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
 
 {% block page_title %}
-    <h1>Sponsors (all)</h1>
+    <h1>Sustaining Members (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
+     <div class="page-header">
+        <h1 class="text-muted">
+            {{ sponsor }}
+        </h1>
+     </div>
 
     <div class="row">
-        <div class="col-lg-10">
-            <h3>{{ sponsor.sponsor.name }}</h3>
+        <div class="col-lg-4">
+            {% if sponsor.logo %}
+                <img class="img-responsive img-rounded pull-left"
+                     src="{{ sponsor.logo.url }}"/>
+            {% endif %}
+            {% if sponsor.sponsorship_level.logo %}
+                <img class="img-responsive img-rounded pull-right"
+                     src="{{ sponsor.sponsorship_level.logo.url }}"
+                     width="60"/>
+            {% endif %}
         </div>
-    </div>
-    <div class="row">
         <div class="col-lg-8">
-            {% if sponsor.sponsor.sponsor_url or sponsor.sponsor.contact_person or sponsor.sponsor.sponsor_email or sponsor.sponsor.sponsor_duration %}
-                <a href="{{ sponsor.sponsor.sponsor_url }}">{{ sponsor.sponsor.sponsor_url}}</a><br/>
-                Sponsorship Level : {{ sponsor.sponsorship_level }}<br/>
-                Start Date : {{ sponsor.start_date }}<br/>
-                End Date : {{ sponsor.end_date }}<br/>
 
-                Contact Person : {{ sponsor.sponsor.contact_person }} <br/>
-                Email : {{ sponsor.sponsor.sponsor_email }}<br/>
-                Sponsor agreement:
-                {% if sponsor.sponsor.agreement %}
-                    <a href="{{ MEDIA_URL }}{{ sponsor.agreement }}" /> Document agreement</a>
-                {%  endif %}
+            {% if sponsor.sponsor_url or sponsor.contact_person or sponsor.sponsor_email or sponsor.sponsor_duration %}
+                {% if period.sponsorship_level %}
+                    <div class="panel panel-default panel-level">
+                        <div class="panel-body">
+                            <div class="col-lg-1 col-xs-4">
+                                <img src="{{ period.sponsorship_level.logo.url }}" width="100%">
+                            </div>
+                            <div class="col-lg-11 col-xs-8">
+                                <div class="level-title" style="font-size: 15px; font-weight: bolder">
+                                    {{ period.sponsorship_level.name }}
+                                </div>
+                                <div class="level-amount">
+                                    {{ period.sponsorship_level.value }} {{ period.sponsorship_level.currency }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="sponsor-detail-title">
+                    Author
+                </div>
+                <div>
+                    {{ sponsor.author }}
+                </div>
+                <div class="sponsor-detail-title">
+                    Website
+                </div>
+                <div>
+                    <b><a href="{{ sponsor.sponsor_url }}">{{ sponsor.sponsor_url }}</a></b>
+                </div>
+                <div class="sponsor-detail-title">
+                    Start Date
+                </div>
+                <div>
+                    {{ period.start_date }}
+                </div>
+                {% if period.recurring %}
+                    <div class="sponsor-detail-title">
+                        Recurring yearly
+                    </div>
+                    <div>
+                        Yes
+                    </div>
+                {% else %}
+                <div class="sponsor-detail-title">
+                    End Date
+                </div>
+                <div>
+                    {{ period.end_date }}
+                </div>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <div class="sponsor-detail-title">
+                        Contact Person
+                    </div>
+                    <div>
+                        {% if sponsor.sponsor.contact_person %}
+                            {{ sponsor.sponsor.contact_person }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </div>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <div class="sponsor-detail-title">
+                        Email
+                    </div>
+                    <div>
+                        {% if sponsor.sponsor.sponsor_email %}
+                            {{ sponsor.sponsor.sponsor_email }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </div>
+                {% endif %}
+                {% if sponsor.sponsor.agreement and user.is_authenticated %}
+                    <div class="sponsor-detail-title">
+                        Sustaining Member agreement
+                    </div>
+                    <div>
+                        <b><a href="{{ sponsor.agreement.url }}"> Document
+                            agreement</a></b>
+                    </div>
+                {% endif %}
+                {% if sponsor.amount_sponsored and sponsor.currency %}
+                    <div class="sponsor-detail-title">
+                        Amount Contributed
+                    </div>
+                    <div>
+                        {{ sponsor.amount_sponsored }} {{ sponsor.currency }}
+                    </div>
+                {% endif %}
             {% else %}
                 <p>No description</p>
             {% endif %}
 
-
-            {% if sponsor.sponsorship_level.logo %}
-                <img class="img-responsive img-rounded"
-                     src="{{ MEDIA_URL }}{{ sponsor.sponsorship_level.logo }}" width="100" />
-            {%  endif %}
-        </div>
-        <div class="col-lg-4">
-            {% if sponsor.sponsor.logo %}
-                <img class="img-responsive img-rounded pull-right"
-                     src="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}" />
-            {%  endif %}
+            {% if user_can_edit %}
+                <a href="/{{ the_project.slug }}/member/{{ slug }}/update" class="btn btn-primary" style="margin-top: 20px;">Update Sustaining Member</a>
+            {% endif %}
         </div>
     </div>
 

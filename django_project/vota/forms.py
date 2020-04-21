@@ -54,22 +54,24 @@ class CreateCommitteeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         self.project = kwargs.pop('project')
-        form_title = 'New Committee for %s' % self.project.name
+        form_title = 'New Team for %s' % self.project.name
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
                 form_title,
                 Field('name', css_class="form-control"),
                 Field('description', css_class="form-control"),
-                Field('chair', css_class="form-control"),
+                Field('chair', css_class="form-control chosen-select"),
                 Field('sort_number', css_class="form-control"),
                 Field('quorum_setting', css_class="form-control"),
-                Field('users', css_class="form-control"),
+                Field('users',
+                      css_class="form-control chosen-select bottom-dropdown ",
+                      data_placeholder="Choose users"
+                      ),
             )
         )
         self.helper.layout = layout
         self.helper.html5_required = False
-        self.helper.form_class = 'form-horizontal'
         self.helper.form_id = 'committee-form'
         super(CreateCommitteeForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))
@@ -79,10 +81,11 @@ class CreateCommitteeForm(forms.ModelForm):
             .order_by('username')
 
     def save(self, commit=True):
-        instance = super(CreateCommitteeForm, self).save(commit=False)
-        instance.chair = self.user
+        form = super(CreateCommitteeForm, self)
+        instance = form.save(commit=False)
         instance.project = self.project
         instance.save()
+        form.save()
         return instance
 
 
@@ -117,7 +120,6 @@ class BallotCreateForm(forms.ModelForm):
         )
         self.helper.layout = layout
         self.helper.html5_required = False
-        self.helper.form_class = 'form-horizontal'
         self.helper.form_id = 'committee-form'
         super(BallotCreateForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Submit'))

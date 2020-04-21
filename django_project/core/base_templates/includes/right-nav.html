@@ -1,45 +1,80 @@
+{% load i18n %}
+{% load staticfiles %}
 {% if user.is_authenticated %}
     <li>
         <i class="icon-wrench"></i>
-        <a href="#issue-modal" data-toggle="modal">
+        <a href="https://github.com/kartoza/projecta/issues" target="_blank" data-toggle="modal">
             Report an issue
         </a>
     </li>
 {% endif %}
-{% if user.is_authenticated and has_pending_versions or has_pending_categories or has_pending_sponsor_lvl or has_pending_sponsor_period %}
-<li>
+{% if user.is_authenticated and has_pending_sponsor_lvl or has_pending_sponsor_period or has_pending_organisations or has_pending_sustaining_members %}
+    {% if user.is_authenticated %}
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <b class="caret"></b> Pending Approval
+            </a>
+        <ul class="dropdown-menu">
+            {% if not the_project %}
+                <li><a href='{% url "pending-project-list" %}'>Projects</a></li>
+            {% else %}
+                {% if has_pending_sponsor_lvl %}
+                    <li><a href='{% url "pending-sponsorshiplevel-list" the_project.slug %}'>Sustaining Member Level</a></li>
+                {% endif %}
+                {% if has_pending_sponsor_period %}
+                    <li><a href='{% url "pending-sponsorshipperiod-list" the_project.slug %}'>Sustaining Member Period</a></li>
+                {% endif %}
+
+                {% if has_pending_sustaining_members %}
+                    <li><a href='{% url 'pending-sponsor-list' the_project.slug %}'>Sustaining Members</a></li>
+                {% endif %}
+                {% if has_pending_organisations %}
+                        <li><a href='{% url "pending-certifyingorganisation-list" the_project.slug %}'>Certifying Organisations</a> </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+        </li>
+    {% endif %}
+{% endif %}
+
+        {% get_current_language as LANGUAGE_CODE %}
+        {% get_available_languages as LANGUAGES %}
+        {% get_language_info_list for LANGUAGES as languages %}
+<li class="dropdown" style="padding-left: 2pt;">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <b class="caret"></b> Pending Approval
+        {% static "img/language_flags/" as img_path %}
+        {% for language_header in languages %}
+             {% if language_header.code == LANGUAGE_CODE %}
+                     <span><b class="caret"></b> <img src="{{ img_path }}{{ language_header.code }}.png" style="height: 13pt; margin-bottom: 3pt;">
+                         <span>  {{ language_header.name|capfirst }}</span></span>
+             {% endif %}
+        {% endfor %}
     </a>
     <ul class="dropdown-menu">
-        {% if not the_project %}
-            <li><a href='{% url "pending-project-list" %}'>Projects</a></li>
-        {% else %}
-            {% if has_pending_versions %}
-                <li><a href='{% url "pending-version-list" the_project.slug %}'>Versions</a></li>
-            {% endif %}
-            {% if has_pending_categories %}
-                <li><a href='{% url "pending-category-list" the_project.slug %}'>Categories</a></li>
-            {% endif %}
-            {% if has_pending_sponsor_lvl %}
-                <li><a href='{% url "pending-sponsorshiplevel-list" the_project.slug %}'>Sponsorship Level</a></li>
-            {% endif %}
-            {% if has_pending_sponsor_period %}
-                <li><a href='{% url "pending-sponsorshipperiod-list" the_project.slug %}'>Sponsorship Period</a></li>
-            {% endif %}
-            {% if the_version %}
-                <li><a href='{% url "pending-entry-list" the_project.slug the_version.slug %}'>Entries</a></li>
-            {% endif %}
-        {% endif %}
+        {% for language in languages %}
+            <li>
+                <a href="/{{ language.code }}{{ request.get_full_path|slice:'3:' }}"
+                   class="{% if language.code == LANGUAGE_CODE %}selected{% endif %}"
+                   lang="{{ language.code }}">
+                         <img src="{{ img_path }}{{ language.code }}.png" style="height: 13pt; margin-bottom: 3pt;">
+                        {{ language.name|capfirst }}
+                </a>
+            </li>
+        {% endfor %}
     </ul>
 </li>
-{% endif %}
 <li class="dropdown">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <b class="caret"></b> Account
+        {% if user.is_authenticated %}
+            <span><b class="caret"></b> {{ user.get_full_name|default:user.username }}</span>
+        {% else %}
+            <span><b class="caret"></b> Account</span>
+        {% endif %}
+
     </a>
     <ul class="dropdown-menu">
         {% if user.is_authenticated %}
+            <li><a href='{% url "user-profile" %}'>Profile Page</a></li>
             {% if user.is_staff %}
                 <li><a href="{% url 'admin:index' %}">Admin Site</a></li>
             {% endif %}

@@ -1,150 +1,198 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
-
-{% block title %}Sponsors - {{ block.super }}{% endblock %}
+{% load custom_markup %}
+{% load staticfiles %}
+{% block title %}Sustaining Members - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
 
 {% block page_title %}
-    <h1 xmlns="http://www.w3.org/1999/html">Sponsors (all)</h1>
+    <h1 xmlns="http://www.w3.org/1999/html">Sustaining Members (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
+    <style>
+        .rss-icon:hover {
+            color: darkorange;
+        }
+        .icon:hover {
+            color: #2a62bc;
+        }
+        .json-feed:hover {
+            color: limegreen;
+        }
+    </style>
     <div class="page-header">
         <h1 class="text-muted">
-            {% if unapproved %}Unapproved {% endif %}Sponsors
-            {% if user.is_authenticated %}
+            {% if unapproved %}Unapproved {% endif %}Sustaining Members
                 <div class="pull-right btn-group">
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                       href='{% url "sponsor-create" project_slug %}'
-                       data-title="Create New Sponsor">
-                        <span class="glyphicon glyphicon-asterisk"></span></a>
+                {% if not is_sustaining_member %}
+                <a class="btn btn-default btn-mini tooltip-toggle icon"
+                       href='{% url "sustaining-member-create" project_slug %}'
+                       data-title="Sign Up!">
+                Sign Up
+                </a>
+                {% else %}
+                <a class="btn btn-default btn-mini tooltip-toggle icon"
+                       href='{% url "sustaining-membership" project_slug %}'
+                       data-title="Your sustaining membership">
+                Membership
+                </a>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    {% if user.is_staff or user == the_project.owner or user in the_project.sponsorship_managers.all %}
+                        <a class="btn btn-default btn-mini tooltip-toggle icon"
+                           href='{% url "sponsor-create" project_slug %}'
+                           data-title="Create New Sustaining Member">
+                            {% show_button_icon "add" %}
+                        </a>
+                    {% endif %}
                     {% if not unapproved %}
-                        <a class="btn btn-default btn-mini tooltip-toggle"
+                        <a class="btn btn-default btn-mini tooltip-toggle icon"
                            href='{% url "pending-sponsor-list" project_slug %}'
-                           data-title="View Pending sponsorship period">
+                           data-title="View Pending Sustaining Membership period">
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
                     {% endif %}
+                  <a class="btn btn-default btn-mini tooltip-toggle icon"
+                       href='{% url "sponsor-cloud" project_slug %}'
+                       data-title="Generate Current Sustaining Member Cloud">
+                        <i class="glyphicon glyphicon-cloud"></i>
+                    </a>
+                {% endif %}
+                    <a class="btn btn-default btn-mini tooltip-toggle icon"
+                       href='{% url "sponsor-programme" project_slug %}'
+                       data-title="View Sustaining Membership Programme">
+                        <i class="glyphicon glyphicon-info-sign"></i></a>
+                    <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
+                       href='{% url "sponsor-rss-feed" project_slug %}'
+                       data-title="RSS Feed for Sustaining Members">
+                        <i class="fa fa-rss-square"></i>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
+                       href='{% url "sponsor-atom-feed" project_slug %}'
+                       data-title="Atom Feed for Sustaining Members">
+                        <i class="fa fa-rss"></i>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle json-feed"
+                       href='{% url "sponsor-json-feed" project_slug %}'
+                       data-title="JSON Feed for Sustaining Members">
+                        <i class="fa fa-rss-square"></i>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
+                       href='{% url "past-sponsor-rss-feed" project_slug %}'
+                       data-title="RSS Feed for Past Sustaining Members">
+                        <i class="fa fa-rss-square" style="font-weight: bold"></i>
+                    </a>
                 </div>
-            {% endif %}
         </h1>
     </div>
     {% ifequal num_sponsors 0 %}
         {% if unapproved %}
-            <h3>All sponsors are approved.</h3>
+            <h3>All sustaining members are approved.</h3>
         {% else %}
-            {% if user.is_staff %}
-                <h3>No sponsors are defined, but you can <a
-                        class="btn btn-default btn-mini"
-                        href='{% url "sponsor-create" project_slug %}'>create one</a>.</h3>
-            {% else %}
-                <h3>No sponsors are defined</h3>
-            {% endif %}
+            <h3>No sustaining members are defined.</h3>
         {% endif %}
     {% endifequal %}
 
-    {% if sponsors %}<h2 class="text-muted">List of Current Sponsors</h2> {% endif %}
-
-    {% for level in levels %}
-        {% if sponsors %}
-            <hr>
-            <div>
-
-                {% if level.logo %}
-                    <img class="img-responsive img-rounded pull-left" style="margin-right: 5px"
-                         src="{{ MEDIA_URL }}{{ level.logo }}" width="30"/>
-                {% endif %}
-                <h3>{{ level.name }}</h3>
-            </div>
-            <br/>{% endif %}
+    {% if sponsors %}<h2 class="text-muted">List of Current Sustaining Members</h2> {% endif %}
 
 
-        {% for sponsor in sponsors %}
-            {% if sponsor.current_sponsor %}
-                {% if sponsor.sponsorship_level.name == level.name %}
-                    <div class="row" style="margin-top:10px;">
-                        <div class="col-lg-1">
-                            {% if sponsor.sponsor.logo %}
-                                <a href="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}">
+    {% for sponsor in sponsors %}
+        {% if sponsor.current_sponsor %}
+            {% ifchanged sponsor.sponsorship_level %}
+               <h3 class="text-muted"><img
+                            src="{% thumbnail sponsor.sponsorship_level.logo 50x50 %}"/> {{ sponsor.sponsorship_level }}
+                    </h3>
+            {% endifchanged %}
+             <div class="row">
+                    <div class="col-lg-1">
+                        {% if sponsor.sponsor.logo %}
+                            {% if sponsor.sponsor.sponsor_url %}
+                                <a href="{{ sponsor.sponsor.sponsor_url }}">
+                                <img class="img-responsive img-rounded pull-right"
+                                     src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
+                            </a>
+                            {% else %}
+                                <a href="{{ sponsor.sponsor.logo.url }}">
                                     <img class="img-responsive img-rounded pull-right"
                                          src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
                                 </a>
                             {% endif %}
+                        {% endif %}
 
-                        </div>
-                        <div class="col-lg-9">
-                            <h3>{{ sponsor.sponsor }}</h3>
+                    </div>
+                    <div class="col-lg-9">
+                        <h3 style="margin-top: 0 !important;">{{ sponsor.sponsor }}</h3>
 
-                            <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
+                        <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
 
-                            <h5>{{ sponsor.sponsorship_level }} : {{ sponsor.project.name }}</h5>
-                        </div>
-                        <div class="col-lg-2">
-                            <div class="btn-group pull-right">
+                        <h5>{{ sponsor.sponsorship_level }}</h5>
+                        {% ifnotequal sponsor.amount_sponsored None %}
+                        <h5>Amount contributed : {{ sponsor.amount_sponsored }} {{ sponsor.currency }}</h5>
+                        {% endifnotequal %}
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="btn-group pull-right">
+                            {% if user.is_staff or user == the_project.owner or user in the_project.sponsorship_managers.all or user == sponsor.sponsor.author %}
                                 <a class="btn btn-default btn-mini"
-                                   href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
-                                    <span class="glyphicon glyphicon-eye-open"></span>
+                                   href='{% url "sponsor-update" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                                    <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
-                            </div>
+                            {% endif %}
+                            <a class="btn btn-default btn-mini"
+                               href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </a>
                         </div>
                     </div>
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-
+                </div>
+            <hr/>
+        {% endif %}
     {% endfor %}
 
 
     {% if sponsors %}
-        <hr/><h2 class="text-muted">List of Past Sponsors</h2> {% endif %}
+        <hr/><h2 class="text-muted">List of Past Sustaining Members</h2> {% endif %}
 
-    {% for level in levels %}
-        {% if sponsors %}
-            <hr>
-            <div>
 
-                {% if level.logo %}
-                    <img class="img-responsive img-rounded pull-left" style="margin-right: 5px"
-                         src="{{ MEDIA_URL }}{{ level.logo }}" width="30"/>
-                {% endif %}
-                <h3>{{ level.name }}</h3>
-            </div><br/>{% endif %}
+    {% for sponsor in sponsors %}
+        {% if not sponsor.current_sponsor %}
+            {% ifchanged sponsor.sponsorship_level %}
+                <h3 class="text-muted"><img
+                            src="{% thumbnail sponsor.sponsorship_level.logo 50x50 %}"/> {{ sponsor.sponsorship_level }}
+                    </h3>
+            {% endifchanged %}
+            <div class="row">
+                    <div class="col-lg-1">
+                        {% if sponsor.sponsor.logo %}
+                            <a href="{{ sponsor.sponsor.logo.url }}">
+                                <img class="img-responsive img-rounded pull-right"
+                                     src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-lg-9">
+                        <h3>{{ sponsor.sponsor }}</h3>
 
-        {% for sponsor in sponsors %}
-            {% if not sponsor.current_sponsor %}
-                {% if sponsor.sponsorship_level.name == level.name %}
-                    <div class="row" style="margin-top:10px;">
-                        <div class="col-lg-1">
-                            {% if sponsor.sponsor.logo %}
-                                <a href="{{ MEDIA_URL }}{{ sponsor.sponsor.logo }}">
-                                    <img class="img-responsive img-rounded pull-right"
-                                         src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
-                                </a>
-                            {% endif %}
-                        </div>
-                        <div class="col-lg-9">
-                            <h3>{{ sponsor.sponsor }}</h3>
+                        <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
 
-                            <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
-
-                            <h5>{{ sponsor.sponsorship_level }} : {{ sponsor.project.name }}</h5>
-                        </div>
-                        <div class="col-lg-2">
-                            <div class="btn-group pull-right">
-                                <a class="btn btn-default btn-mini"
-                                   href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
-                                    <span class="glyphicon glyphicon-eye-open"></span>
-                                </a>
-                            </div>
+                        <h5>{{ sponsor.sponsorship_level }} : {{ sponsor.project.name }}</h5>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="btn-group pull-right">
+                            <a class="btn btn-default btn-mini"
+                               href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </a>
                         </div>
                     </div>
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-
+                </div>
+        {% endif %}
     {% endfor %}
+
     <hr>
     {% include "_pagination.html" %}
 {% endblock %}

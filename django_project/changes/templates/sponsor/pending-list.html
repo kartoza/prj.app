@@ -1,43 +1,54 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
-
-{% block title %}Sponsors - {{ block.super }}{% endblock %}
+{% load custom_markup %}
+{% block title %}Sustaining Members - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
+    <style>
+
+        .panel-body {
+            -webkit-box-shadow: rgba(0, 0, 0, 0.8) 0px 0 10px;
+            -moz-box-shadow: rgba(0, 0, 0, 0.8) 0 0 10px;
+            box-shadow: rgba(197, 197, 197, 0.8) 0 0 10px;
+        }
+
+    </style>
 {% endblock %}
 
 {% block page_title %}
-    <h1>Sponsors (all)</h1>
+    <h2>Sustaining Members (all)</h2>
 {% endblock page_title %}
 
 {% block content %}
     <div class="page-header">
-        <h1 class="text-muted">
+        <h2 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
-            Sponsors
+            Sustaining Members
             {% if user.is_authenticated %}
-                <div class="pull-right btn-group">
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                       href='{% url "sponsor-create" project_slug %}'
-                       data-title="Create New Sponsor">
-                        <span class="glyphicon glyphicon-asterisk"></span></a>
-
-                    {% if not unapproved %}
+                {% if user.is_staff or user == project.owner or user in project.sponsorship_managers.all %}
+                    <div class="pull-right btn-group">
                         <a class="btn btn-default btn-mini tooltip-toggle"
-                           href='{% url "pending-sponsor-list" project_slug %}'
-                           data-title="View Pending Sponsors">
-                            <span class="glyphicon glyphicon-time"></span>
+                           href='{% url "sustaining-members-rejected-list" project_slug %}'
+                           data-title="View Rejected Sustaining Members">
+                            <span class="glyphicon glyphicon-ban-circle"></span>
                         </a>
-                    {% endif %}
+                {% endif %}
+                {% if not unapproved %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "pending-sponsor-list" project_slug %}'
+                       data-title="View Pending Sponsors">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </a>
+                {% endif %}
                 </div>
             {% endif %}
-        </h1>
+        </h2>
     </div>
     {% ifequal num_sponsors 0 %}
         {% if unapproved %}
-            <h3>All sponsors are approved.</h3>
+            <h3>All sustaining members are approved.</h3>
         {% else %}
-            <h3>No sponsors are defined, but you can <a
+            <h3>No sustaining members are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='{% url "sponsor-create" project_slug %}'>create one</a>.</h3>
         {% endif %}
@@ -45,44 +56,125 @@
 
     {% for sponsor in sponsors %}
         <script>console.debug("{{ sponsor }}");</script>
-        <div class="row" style="margin-top:10px;">
+        <div class="row" style="margin-top:10px;" data-id="{{ sponsor.id }}" data-project-slug="{{ sponsor.project.slug }}">
             <div class="col-lg-1">
                 {% if sponsor.logo %}
-                    <a href="{{ MEDIA_URL }}{{ sponsor.logo }}">
+                    <a href="{{ sponsor.logo.url }}" class="logo">
                         <img class="img-responsive img-rounded pull-right"
                              src="{% thumbnail sponsor.logo 50x50 crop %}"/>
                     </a>
                 {% endif %}
             </div>
             <div class="col-lg-9">
-                <h5>{{ sponsor.project.name }}</h5>
-
-                <h3>{{ sponsor.name }}</h3>
+                <div class="texts">
+                    <h5 style="margin-top: 0;">{{ sponsor.project.name }}</h5>
+                    <h3 style="margin-top: 0; margin-bottom: 0">{{ sponsor.name }}</h3>
+                    <p style="padding-top: 10px;">Author : {{ sponsor.author.username }}, {{ sponsor.author.email }}</p>
+                </div>
             </div>
             <div class="col-lg-2">
                 <div class="btn-group pull-right">
-                    {% if not sponsor.approved and user.is_staff %}
-                        <a class="btn btn-default btn-mini"
-                           href='{% url "sponsor-approve" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                    {% if not sponsor.approved %}
+                        {% if user.is_staff or user == sponsor.project.owner or user in sponsor.project.sponsorship_managers.all %}
+                        <a class="btn btn-default btn-mini btn-approve tooltip-toggle"
+                           href='{% url "sponsor-approve" project_slug=sponsor.project.slug slug=sponsor.slug %}' data-title="Approve {{ sponsor.name }}">
                             <span class="glyphicon glyphicon-thumbs-up"></span>
                         </a>
+                        <a class="btn btn-default btn-mini btn-reject tooltip-toggle" data-title="Reject {{ sponsor.name }}">
+                            <span class="glyphicon glyphicon-thumbs-down"></span>
+                        </a>
+                        {% endif %}
+                        <a class="btn btn-default btn-mini"
+                           href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </a>
                     {% endif %}
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "sponsor-delete" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
-                        <span class="glyphicon glyphicon-minus"></span>
-                    </a>
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "sponsor-update" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
-                        <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
-                    <a class="btn btn-default btn-mini"
-                       href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
-                        <span class="glyphicon glyphicon-eye-open"></span>
-                    </a>
                 </div>
             </div>
         </div>
+        {% if not forloop.last %} <hr/> {% endif %}
     {% endfor %}
     <hr/>
     {% include "_pagination.html" %}
+
+    <!-- Rejection Modal -->
+    <div class="modal fade" id="rejectionModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><b>Rejection Form</b></h4>
+                </div>
+                <div class="modal-body">
+                    <p>You are going to reject this sustaining member below:</p>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-2 logo-container">
+                                </div>
+                                <div class="col-lg-10 text-container">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form id="rejectionForm" role="form">
+                        <label>Please indicate your reason of this rejection.</label><br>
+                        <input name="status" id="reject-remark" class="form-control" value="Rejected, because ">
+                        <input name="rejected-sustaining-member-id" hidden>
+                        <input name="rejected-sustaining-member-project-slug" hidden>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitRejectionForm()">Submit</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const $rejectionModal = $('#rejectionModal');
+
+        const submitRejectionForm = () => {
+            let remark = $rejectionModal.find('input[name="status"]').val();
+            let projectSlug = $('[name=rejected-sustaining-member-project-slug]').val();
+            let id = $('[name=rejected-sustaining-member-id]').val();
+            $.ajax({
+                url: `/{{ LANGUAGE_CODE }}/${projectSlug}/reject-member/${id}/`,
+                data: {
+                    'remark': remark
+                },
+                success: function(){
+                     location.reload()
+                }
+            });
+        };
+
+        $('.btn-reject').click(function () {
+            const $row = $($(this).parents('.row')[0]);
+            const id = $row.data('id');
+            const projectSlug = $row.data('project-slug');
+            const $logo = $row.find('.logo');
+            const $texts = $row.find('.texts');
+            const $logoContainer = $rejectionModal.find('.logo-container');
+            const $textContainer = $rejectionModal.find('.text-container');
+
+            $logoContainer.html($logo.clone());
+            $textContainer.html($texts.clone());
+            $rejectionModal.find('input[name="rejected-sustaining-member-id"]').val(id);
+            $rejectionModal.find('input[name="rejected-sustaining-member-project-slug"]').val(projectSlug);
+
+            $rejectionModal.modal('show');
+        });
+
+        $rejectionModal.on('show.bs.modal', function() {
+
+            setTimeout(function() { $rejectionModal.find('input[name="status"]').focus().val('').val('Rejected, because ') }, 250);
+        });
+
+    </script>
+
 {% endblock %}

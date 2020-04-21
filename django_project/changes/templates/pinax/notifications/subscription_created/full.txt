@@ -1,0 +1,19 @@
+{% autoescape off %}
+{% load i18n %}
+{% if request_user == recipient %}
+Dear {{ recipient.first_name }} {{ recipient.last_name }}
+
+Thank you for creating your sustaining membership.
+{% else %}
+{{ request_user }} has updated their sustaining membership.
+{% endif %}
+
+Your subscription information is as follows :
+- Sustaining Member Person / Organisation: {{ sustaining_member }}
+- Sustaining Member Level : {{ sustaining_member_level }}
+- Subscription Created By : {{ author }}
+- Recurring? : {{ recurring }}
+- Subscription Start Date : {{ date_start }}
+- Subscription End/Renewal Date : {{ date_end }}
+
+{% endautoescape %}

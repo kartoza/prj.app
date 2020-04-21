@@ -1,0 +1,56 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Certifying Organisation Deleted - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Certifying Organisation Deleted</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+        <div class="alert row">
+            <div class="col-lg-10">
+                <p class="lead">Are you sure you want to delete the certifying organisation below?</p>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    <a class="btn btn-danger btn-sm tooltip-toggle"
+                       href="#"
+                       onClick="$('#delete-confirmation').submit()"
+                       data-title="Delete {{ certifyingorganisation.name }}">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "certifyingorganisation-list" certifyingorganisation.project.slug %}'
+                       data-title="Cancel">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Certifying Organisation: {{ certifyingorganisation.name }}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8" style="font-size: 12pt">
+                <span class="col-lg-3">Address</span><span class="col-lg-9">: {{ certifyingorganisation.address }}<br/></span>
+                <span class="col-lg-3">Country</span><span class="col-lg-9">: {{ certifyingorganisation.country.name }}<br/></span>
+                <span class="col-lg-3">Email</span><span class="col-lg-9">: {{ certifyingorganisation.organisation_email }}<br/></span>
+                <span class="col-lg-3">Phone</span><span class="col-lg-9">: {{ certifyingorganisation.organisation_phone }}<br/></span>
+                <span class="col-lg-3">Organisation owners</span><span class="col-lg-9">: {% for organisation_owners in certifyingorganisation.organisation_owners.all %}
+                    {% if organisation_owners.first_name %}
+                        {{ organisation_owners.first_name }} {{ organisation_owners.last_name }}{{ ", " }}
+                    {% else %}
+                        {{ organisation_owners }}{{ ", " }}
+                    {% endif %}
+                    {% endfor %}</span>
+            </div>
+        </div>
+    </form>
+{% endblock %}

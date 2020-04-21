@@ -1,0 +1,49 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Training Center Deleted - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Training Center Deleted</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+        <div class="alert row">
+            <div class="col-lg-10">
+                <p class="lead">Are you sure you want to delete the training center below?</p>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    <a class="btn btn-danger btn-sm tooltip-toggle"
+                       href="#"
+                       onClick="$('#delete-confirmation').submit()"
+                       data-title="Delete {{ trainingcenter.name }}">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "certifyingorganisation-detail" trainingcenter.certifying_organisation.project.slug trainingcenter.certifying_organisation.slug %}'
+                       data-title="Cancel">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Training Center: {{ trainingcenter.name }}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8" style="font-size: 12pt">
+                <span class="col-lg-2">Email</span><span class="col-lg-10">: {{ trainingcenter.email }}<br/></span>
+                <span class="col-lg-2">Address</span><span class="col-lg-10">: {{ trainingcenter.address }}<br/></span>
+                <span class="col-lg-2">Phone</span><span class="col-lg-10">: {{ trainingcenter.phone }}<br/></span>
+                <span class="col-lg-2">Location</span><span class="col-lg-10">: {{ trainingcenter.location }}<br/></span>
+            </div>
+        </div>
+    </form>
+{% endblock %}

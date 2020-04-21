@@ -1,0 +1,38 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block js_head %}
+
+{% endblock %}
+
+{% block css_head %}
+    {{ form.media }}
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+{% endblock %}
+
+{% block title %}
+    Update Training Center
+{% endblock title %}
+
+{% block content %}
+
+    <section id="forms">
+        <div class='container'>
+            <h3>Update Training Centre for {{ organisation.name }}</h3>
+            <hr/>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="vertical-space" style="margin-top: 400px;"></div>
+                <div class="form-actions">
+                    <input type="submit" name="submit" value="Submit"
+                           class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </section>
+
+{% endblock %}

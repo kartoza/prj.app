@@ -2,7 +2,7 @@
 """Views for committees."""
 # noinspection PyUnresolvedReferences
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import Http404
 import logging
 from django.views.generic import (
@@ -101,6 +101,24 @@ class CommitteeListView(CommitteeMixin, ListView):
     context_object_name = 'committees'
     template_name = 'committee/list.html'
 
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(CommitteeListView, self).get_context_data(**kwargs)
+        context['num_committees'] = self.get_queryset().count()
+        context['unapproved'] = False
+        project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
+        if project_slug:
+            context['the_project'] = Project.objects.get(slug=project_slug)
+        return context
+
     def get(self, request, *args, **kwargs):
         """Access URL parameters
 
@@ -119,7 +137,7 @@ class CommitteeListView(CommitteeMixin, ListView):
         project_slug = self.kwargs.get('project_slug')
         try:
             self.project = Project.objects.get(slug=project_slug)
-        except:
+        except Project.DoesNotExist:
             raise Http404('Project could not be found')
         return super(CommitteeListView, self).get(
             request, *args, **kwargs
@@ -160,9 +178,8 @@ class CommitteeCreateView(LoginRequiredMixin, CommitteeMixin, CreateView):
         return kwargs
 
     def get_success_url(self):
-        return reverse('committee-detail', kwargs={
-            'project_slug': self.object.project.slug,
-            'slug': self.object.slug
+        return reverse('committee-list', kwargs={
+            'project_slug': self.object.project.slug
         })
 
     def form_valid(self, form):

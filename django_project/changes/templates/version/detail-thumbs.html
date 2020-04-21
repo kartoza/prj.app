@@ -34,7 +34,7 @@
     <div class="row">
         {% if version.project.image_file %}
             <div class="col-lg-3">
-                <a href="{{ MEDIA_URL }}{{ version.project.image_file }}">
+                <a href="{{ version.project.image_file.url }}">
                     <img class="img-responsive img-rounded pull-left"
                          src="{{ version.project.image_file|thumbnail_url:'medium-entry' }}"/>
                 </a>
@@ -82,7 +82,7 @@
         <div class="col-md-3 thumbnail-to-wrap">
             <div class="thumbnail">
                 {% if entry.image_file %}
-                    <a href="{{ MEDIA_URL }}{{ entry.image_file }}">
+                    <a href="{{ entry.image_file.url }}">
                         <img class="img-responsive img-rounded"
                              src="{{ entry.image_file|thumbnail_url:'thumb300x200' }}" alt=""/>
                     </a>
@@ -91,13 +91,6 @@
                     <h3>{{ entry.category.name }}</h3>
                     <p>{{ entry.title }}</p>
                     <div class="btn-group">
-                        {% if not entry.approved and user.is_staff %}
-                            <a class="btn btn-success btn-xs tooltip-toggle"
-                               href='{% url "entry-approve"  pk=entry.id %}'
-                               data-title="Approve {{ entry.title }}">
-                                <span class="glyphicon glyphicon-thumbs-up"></span>
-                            </a>
-                        {% endif %}
                         {% if user.is_authenticated %}
                             <a class="btn btn-default btn-xs tooltip-toggle"
                                href='{% url "entry-delete" pk=entry.id %}'

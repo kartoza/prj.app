@@ -11,6 +11,14 @@
 {% endblock page_title %}
 
 {% block content %}
+    <style>
+        .btn-delete:hover {
+            background: #c12e2a;
+            color: white;
+            border-color: #c12e2a;
+        }
+    </style>
+
   <form action="" id="delete-confirmation" method="post">{% csrf_token %}
     <div class="alert row">
       <div class="col-lg-10">
@@ -18,7 +26,7 @@
       </div>
       <div class="col-lg-2">
         <div class="btn-group">
-          <a class="btn btb-default btn-sm tooltip-toggle"
+          <a class="btn btn-default btn-delete btn-sm tooltip-toggle"
              href="#"
              onClick="$('#delete-confirmation').submit()"
              data-title="{{ project.name }}">
@@ -44,7 +52,7 @@
       <div class="col-lg-4">
         {% if project.image_file %}
           <img class="img-responsive img-rounded"
-               src="{{ MEDIA_URL }}{{ project.image_file }}" />
+               src="{{ project.image_file.url }}" />
         {%  endif %}
       </div>
     </div>

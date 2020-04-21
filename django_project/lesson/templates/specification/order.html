@@ -1,0 +1,48 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+
+{% block title %}Specifications - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Specifications (all)</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="text-muted">
+            <span class="glyphicon glyphicon-sort-by-order"></span> Order Sections
+            <span id="order-saved" hidden class="alert alert-success" style="font-size: 9pt; padding: 3px;font-style: italic;">
+                order saved</span>
+            <span id="order-not-saved" hidden class="alert alert-danger" style="font-size: 9pt; padding: 3px;font-style: italic;">
+                order not saved</span>
+            <div class="pull-right btn-group" style="margin-top: 5px;">
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "worksheet-detail" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
+                       data-title="Back to worksheet">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+            </div>
+        </h1>
+    </div>
+    {% if specifications.count == 0 %}
+        <h3>No specifications are defined.</h3>
+    {% endif %}
+    <ul id="sortable" data-url="{% url "specification-submit-order" worksheet.section.project.slug worksheet.section.slug worksheet.slug %}">
+    {% for specification in specifications %}
+        <li class="row order" style="margin-top:6px;" id="{{ specification.id }}-{{ specification.title }}" >
+            <div class="col-lg-12">
+                <p>
+                    <span class="glyphicon glyphicon-menu-hamburger" style="margin-right: 20px"></span>
+                    {{ specification.title }}
+                </p>
+            </div>
+        </li>
+    {%  endfor %}
+    </ul>
+    <hr />
+
+{% endblock %}
+

@@ -7,25 +7,25 @@
 {% endblock %}
 
 {% block page_title %}
-  <h1>Sponsor Periods (all)</h1>
+  <h1>Sustaining Member Periods (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
 
   <div class="row">
     <div class="col-lg-10">
-      <h3>{{ sponsorshipperiod.project.name }}</h3>
+      <h3>{{ sponsorshipperiod.sponsor.name }}</h3>
     </div>
     <div class="col-lg-2">
-      <div class="btn-group">
+      <div class="btn-group pull-right">
         <a class="btn btn-default btn-sm tooltip-toggle"
-           href='{% url "sponsorshiplevel-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
-           data-title="Delete {{ sponsorshipperiod.project.name }}">
+           href='{% url "sponsorshipperiod-delete" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
+           data-title="Delete {{ sponsorshipperiod.sponsor.name }}">
           <span class="glyphicon glyphicon-minus"></span>
         </a>
         <a class="btn btn-default btn-sm tooltip-toggle"
-           href='{% url "sponsorshiplevel-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
-           data-title="Edit {{ sponsorshipperiod.project.name }}">
+           href='{% url "sponsorshipperiod-update" project_slug=sponsorshipperiod.project.slug slug=sponsorshipperiod.slug %}'
+           data-title="Edit {{ sponsorshipperiod.sponsor.name }}">
           <span class="glyphicon glyphicon-pencil"></span>
         </a>
       </div>
@@ -33,18 +33,24 @@
   </div>
   <div class="row">
     <div class="col-lg-8">
-          Sponsorship Level : {{ sponsorshipperiod.sponsorshiplevel }}<br/>
+          Sustaining Membership Level : {{ sponsorshipperiod.sponsorship_level }}<br/>
           Start Date : {{ sponsorshipperiod.start_date }}<br/>
           End Date : {{ sponsorshipperiod.end_date }}<br/>
+          Amount Paid :
+            {% ifnotequal sponsorshipperiod.amount_sponsored None %}
+                {{ sponsorshipperiod.amount_sponsored }} {{ sponsorshipperiod.currency }}<br/>
+            {% else %}
+                n/a
+            {% endifnotequal %}
         {% if sponsorshipperiod.sponsorshiplevel.logo %}
         <img class="img-responsive img-rounded"
-             src="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsorshiplevel.logo }}" width="100" />
+             src="{{ sponsorshipperiod.sponsorshiplevel.logo.url }}" width="100" />
       {%  endif %}
     </div>
   <div class="col-lg-4">
       {% if sponsorshipperiod.sponsor.logo %}
         <img class="img-responsive img-rounded pull-right"
-             src="{{ MEDIA_URL }}{{ sponsorshipperiod.sponsor.logo }}" />
+             src="{{ sponsorshipperiod.sponsor.logo.url }}" />
       {%  endif %}
     </div>
   </div>
