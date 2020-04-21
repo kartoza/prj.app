@@ -2,13 +2,14 @@
 # flake8: noqa
 """Urls for changelog application."""
 
-from django.conf.urls import patterns, url, include  # noqa
+from django.conf.urls import url, include  # noqa
+from django.views.static import serve
 
 from django.conf import settings
 
-from feeds.version import RssVersionFeed, AtomVersionFeed
-from feeds.entry import RssEntryFeed, AtomEntryFeed
-from feeds.sponsor import (
+from .feeds.version import RssVersionFeed, AtomVersionFeed
+from .feeds.entry import RssEntryFeed, AtomEntryFeed
+from .feeds.sponsor import (
     RssSponsorFeed,
     RssPastSponsorFeed,
     AtomSponsorFeed,
@@ -16,7 +17,7 @@ from feeds.sponsor import (
     JSONSponsorFeed,
     JSONPastSponsorFeed
 )
-from views import (
+from .views import (
     # Category
     CategoryDetailView,
     CategoryDeleteView,
@@ -54,8 +55,14 @@ from views import (
     JSONSponsorListView,
     SponsorUpdateView,
     PendingSponsorListView,
+    RejectedSustainingMemberList,
     ApproveSponsorView,
+    RejectSponsorView,
     GenerateSponsorPDFView,
+    SustainingMembership,
+    SustainingMemberUpdateView,
+    SustainingMemberPeriodCreateView,
+    SustainingMemberPeriodUpdateView,
 
     # Sponsorship Level
 
@@ -80,10 +87,15 @@ from views import (
     ApproveSponsorshipPeriodView,
 
     generate_sponsor_cloud,
+    FetchGithubPRs,
+    FetchRepoLabels,
+    FetchCategory
+)
+from changes.views.sustaining_member import (
+    SustainingMemberCreateView
 )
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     # Category management
 
     # This view is only accessible via ajax
@@ -113,6 +125,15 @@ urlpatterns = patterns(
         name='category-update'),
 
     # Version management
+    url(regex='^(?P<project_pk>[\w-]+)/version/fetch-github-pr/$',
+        view=FetchGithubPRs.as_view(),
+        name='fetch-pr-github'),
+    url(regex='^(?P<project_pk>[\w-]+)/version/fetch-github-label/$',
+        view=FetchRepoLabels.as_view(),
+        name='fetch-labels-github'),
+    url(regex='^(?P<project_pk>[\w-]+)/version/fetch-category/$',
+        view=FetchCategory.as_view(),
+        name='fetch-category'),
     url(regex='^(?P<project_slug>[\w-]+)/version/list/$',
         view=VersionListView.as_view(),
         name='version-list'),
@@ -227,9 +248,15 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/pending-members/list/$',
         view=PendingSponsorListView.as_view(),
         name='pending-sponsor-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/sustaining-members-rejected/list/$',
+        view=RejectedSustainingMemberList.as_view(),
+        name='sustaining-members-rejected-list'),
     url(regex='^(?P<project_slug>[\w-]+)/approve-member/(?P<slug>[\w-]+)/$',
         view=ApproveSponsorView.as_view(),
         name='sponsor-approve'),
+    url(regex='^(?P<project_slug>[\w-]+)/reject-member/(?P<member_id>\d+)/$',
+        view=RejectSponsorView.as_view(),
+        name='sponsor-reject'),
     url(regex='^(?P<project_slug>[\w-]+)/members/list/$',
         view=SponsorListView.as_view(),
         name='sponsor-list'),
@@ -309,12 +336,36 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/member-cloud/$',
         view=generate_sponsor_cloud,
         name='sponsor-cloud'),
-)
+
+    # Sustaining member
+    url(
+        regex='^(?P<project_slug>[\w-]+)/sustaining-member/add/$',
+        view=SustainingMemberCreateView.as_view(),
+        name='sustaining-member-create'),
+    url(
+        regex='^(?P<project_slug>[\w-]+)/membership/$',
+        view=SustainingMembership.as_view(),
+        name='sustaining-membership'),
+    url(
+        regex='^(?P<project_slug>[\w-]+)/sustaining-member/update/'
+              '(?P<member_id>\d+)/$',
+        view=SustainingMemberUpdateView.as_view(),
+        name='sustaining-member-update'),
+    url(
+        regex='^(?P<project_slug>[\w-]+)/sustaining-member-period/create/'
+              '(?P<member_id>\d+)/$',
+        view=SustainingMemberPeriodCreateView.as_view(),
+        name='sustaining-member-period-create'),
+    url(
+        regex='^(?P<project_slug>[\w-]+)/sustaining-member-period/update/'
+              '(?P<member_id>\d+)/$',
+        view=SustainingMemberPeriodUpdateView.as_view(),
+        name='sustaining-member-period-update'),
+]
 
 
 if settings.DEBUG:
     # static files (images, css, javascript, etc.)
-    urlpatterns += patterns(
-        '',
-        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT}))
+    urlpatterns += [
+        url(r'^media/(?P<path>.*)$', serve, {
+            'document_root': settings.MEDIA_ROOT})]

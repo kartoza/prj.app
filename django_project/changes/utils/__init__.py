@@ -1,1 +1,1 @@
-from render_to_pdf import *
+from .render_to_pdf import *

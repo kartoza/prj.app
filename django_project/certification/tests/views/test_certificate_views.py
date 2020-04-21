@@ -3,7 +3,7 @@ import tempfile
 import logging
 from mock import patch, MagicMock
 from PIL import Image
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test.client import RequestFactory
 from django.test import TestCase, override_settings
 from django.test.client import Client
@@ -99,7 +99,7 @@ class TestCertificateView(TestCase):
     @override_settings(VALID_DOMAIN=['testserver', ])
     @patch('os.path.exists')
     @patch('os.makedirs')
-    @patch('__builtin__.open', create=True)
+    @patch('builtins.open', create=True)
     def test_generate_certificate(
             self, mock_open, mock_make_dirs, mock_exists):
         mock_open.return_value = MagicMock()
@@ -125,7 +125,7 @@ class TestCertificateView(TestCase):
     @override_settings(VALID_DOMAIN=['testserver', ])
     @patch('os.path.exists')
     @patch('os.makedirs')
-    @patch('__builtin__.open', create=True)
+    @patch('builtins.open', create=True)
     @patch('reportlab.lib.utils.ImageReader')
     def test_generate_certificate_with_signature(
             self, mock_open, mock_make_dirs, mock_exists, mock_image):
@@ -160,7 +160,7 @@ class TestCertificateView(TestCase):
     @override_settings(VALID_DOMAIN=['testserver', ])
     @patch('os.path.exists')
     @patch('os.makedirs')
-    @patch('__builtin__.open', create=True)
+    @patch('builtins.open', create=True)
     def test_regenerate_certificate_allowed_user(
             self, mock_open, mock_make_dirs, mock_exists):
         mock_open.return_value = MagicMock()
@@ -181,7 +181,7 @@ class TestCertificateView(TestCase):
     @override_settings(VALID_DOMAIN=['testserver', ])
     @patch('os.path.exists')
     @patch('os.makedirs')
-    @patch('__builtin__.open', create=True)
+    @patch('builtins.open', create=True)
     @patch('django.contrib.messages.success')
     @patch('os.remove')
     @patch('certification.views.certificate.generate_pdf')

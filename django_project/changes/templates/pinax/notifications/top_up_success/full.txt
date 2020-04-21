@@ -1,0 +1,18 @@
+{% autoescape off %}
+{% load i18n %}
+{% blocktrans %}{{ notice }}{% endblocktrans %}
+
+{% if request_user == recipient %}
+Dear {{ recipient.first_name }} {{ recipient.last_name }},
+Top up credits successful!
+{% else %}
+{{ request_user }} has successfully added credits.
+{% endif %}
+
+More information are as follows :
+- Top up : {{ top_up_credits }} credit(s)
+- Payment amount : {{ currency }} {{ payment_amount }}
+- Certifying Organisation : {{ certifying_organisation }}
+- Current Total Credits : {{ total_credits }}
+
+{% endautoescape %}

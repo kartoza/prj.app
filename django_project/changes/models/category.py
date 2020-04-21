@@ -1,6 +1,6 @@
 import logging
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.text import slugify
 from core.settings.contrib import STOP_WORDS
 
@@ -28,7 +28,7 @@ class Category(models.Model):
         default=0
     )
     slug = models.SlugField()
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass
@@ -51,6 +51,9 @@ class Category(models.Model):
 
     def __unicode__(self):
         return u'%s : %s' % (self.project.name, self.name)
+
+    def __str__(self):
+        return '%s : %s' % (self.project.name, self.name)
 
     def get_absolute_url(self):
         return reverse('category-detail', kwargs={

@@ -5,7 +5,7 @@
 
 import os
 from django.conf.global_settings import MEDIA_ROOT
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import models
@@ -153,7 +153,7 @@ class CertifyingOrganisation(models.Model):
     status = models.ForeignKey(
         Status,
         null=True,
-        blank=True
+        blank=True, on_delete=models.SET_NULL
     )
 
     remarks = models.CharField(
@@ -169,7 +169,7 @@ class CertifyingOrganisation(models.Model):
 
     slug = models.SlugField()
     organisation_owners = models.ManyToManyField(User)
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
     objects = models.Manager()
     approved_objects = ApprovedCertifyingOrganisationManager()
     unapproved_objects = UnapprovedCertifyingOrganisationManager()
@@ -198,13 +198,16 @@ class CertifyingOrganisation(models.Model):
     def __unicode__(self):
         return '%s - %s' % (self.project.name, self.name)
 
+    def __str__(self):
+        return '%s - %s' % (self.project.name, self.name)
+
     def get_absolute_url(self):
         """Return URL to certifying organisation detail page.
 
         :return: URL
         :rtype: str
         """
-        return reverse('certifying-organisation-detail', kwargs={
+        return reverse('certifyingorganisation-detail', kwargs={
                 'slug': self.slug,
                 'project_slug': self.project.slug
         })

@@ -28,6 +28,7 @@ class Curriculum(models.Model):
         help_text=_('The project.'),
         null=False,
         blank=False,
+        on_delete=models.CASCADE
     )
 
     owner = models.ForeignKey(
@@ -36,6 +37,7 @@ class Curriculum(models.Model):
         help_text=_('The owner of the curriculum.'),
         null=False,
         blank=False,
+        on_delete=models.CASCADE
     )
 
     title = models.CharField(

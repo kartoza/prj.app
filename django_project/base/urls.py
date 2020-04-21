@@ -1,9 +1,10 @@
 # coding=utf-8
 """Urls for changelog application."""
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+from django.views.static import serve
 from django.conf import settings
 
-from views import (
+from .views import (
     # Project
     ProjectDetailView,
     ProjectDeleteView,
@@ -36,14 +37,25 @@ from views import (
     PendingOrganisationListView,
     OrganisationDeleteView,
     OrganisationUpdateView,
-)
 
-urlpatterns = patterns(
-    '',
+    UserDetailView,
+    UserUpdateView,
+    project_flatpage
+)
+from .api_views.stripe_intent import StripeIntent
+
+urlpatterns = [
     # basic app views
     url(regex='^$',
         view=ProjectListView.as_view(),
         name='home'),
+
+    url(regex='^profile/$',
+        view=UserDetailView.as_view(),
+        name='user-profile'),
+    url(regex='^edit-profile/(?P<pk>[\w-]+)/$',
+        view=UserUpdateView.as_view(),
+        name='edit-profile'),
 
     # Custom domain management
     url(regex='^domain-not-found/$',
@@ -137,14 +149,21 @@ urlpatterns = patterns(
     url(regex='^(?P<slug>[\w-]+)/sponsorship-programme/$',
         view=project_sponsor_programme,
         name='sponsor-programme'),
-)
+    url(regex='^stripe-intent/(?P<amount>[\d-]+)/$',
+        view=StripeIntent.as_view(),
+        name='stripe-intent'),
+
+    # Project flatpage urls
+    url(r'^(?P<project_slug>[\w-]+)/flatpage/(?P<url>.*)$',
+        project_flatpage,
+        name='project_flatpage'),
+]
 
 # Prevent cloudflare from showing an ad laden 404 with no context
 handler404 = custom_404
 
 if settings.DEBUG:
     # static files (images, css, javascript, etc.)
-    urlpatterns += patterns(
-        '',
-        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT}))
+    urlpatterns += [
+        url(r'^media/(?P<path>.*)$', serve, {
+            'document_root': settings.MEDIA_ROOT})]

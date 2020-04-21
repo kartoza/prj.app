@@ -1,0 +1,219 @@
+<style>
+    .label-checkbox-github {
+        border: 1px solid lightgrey;
+        border-radius: 3px;
+        margin-right: 5px;
+        padding: 6px 7px 3px 7px;
+        white-space: nowrap;
+        line-height: 23px;
+    }
+    .label-github {
+        max-height: 200px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        overflow-y: auto;
+    }
+    .error {
+        border: 1px solid red !important;
+    }
+    .error-message {
+        padding: 7px 0;
+        background: rgba(255, 173, 173, 0.7);
+    }
+    .error-notification {
+        display: inline-block;
+        color: red;
+        margin-right: 12px;
+    }
+</style>
+
+<!-- Modal -->
+<div class="modal fade" id="GithubPRModal" tabindex="-1" role="dialog" aria-labelledby="GithubPRModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" id="exampleModalLabel">Import PR from Github into Entries</h4>
+            <div class="error-message" style="display: none"></div>
+        </div>
+        <div class="modal-body">
+            <form id="github-entry-import">
+                <label for="repo">Repository url</label>
+                <input class="form-control" name="repo" required>
+                <br>
+                <label>Labels</label><br>
+                <label style="font-size: 12px; font-weight: normal" class="text-muted">Please select the label of the PRs which you'd like to fetch, no label selected means all PRs will be fetched.</label>
+                <label style="font-size: 12px; font-weight: normal" class="text-muted">If you select more than one label, only PRs containing all label selected will be fetched.</label><br>
+                <div class="label-github">
+                </div>
+                <br>
+                <label>State</label><br>
+                <label style="font-size: 12px; font-weight: normal" class="text-muted">Please select the state of the PRs which you'd like to fetch, no selection means all PRs will be fetched.</label><br>
+                <span class="label-checkbox-github">
+                    <input type="checkbox" class="github-state-option" id="open" name="open" value="open">&nbsp;
+                    <label for="open">Open</label>
+                </span>
+                <span class="label-checkbox-github">
+                    <input type="checkbox" class="github-state-option" id="closed" name="closed" value="closed">&nbsp;
+                    <label for="closed">Closed</label>
+                </span>
+                <br>
+                <br>
+                <label for="category-github-import">Category</label><br>
+                <label style="font-size: 12px; font-weight: normal" class="text-muted">Please select a category where the new entries will associate to.</label><br>
+                <select class="form-control" name="category-github-import" required>
+                </select>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <div class="error-notification" style="display: none">Import error see message above</div>
+            <button type="button" onclick="resetForm()" class="btn btn-secondary">Cancel</button>
+            <button type="submit" onclick="submitForm(this)" class="btn btn-primary">Import <i id="import-loading" style="font-size: 12pt; display: none" class="fa fa-spinner fa-spin fa-3x fa-fw"></i></button>
+        </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '{% url "fetch-category" project_pk=version.project.pk %}',
+            success: function (data) {
+                var $select = $('[name="category-github-import"]');
+                $select.append('<option value="">Select a Category</option>');
+                for(var i=0; i<data.length; i++){
+                    var $element = $('<option value=' + data[i]["id"] + '>' + data[i]["name"] + '</option>');
+                    $select.append($element)
+                }
+            }
+        });
+
+        var $inputRepo = $('[name=repo]');
+        $inputRepo.change(function () {
+            $('.error-message').html('').hide();
+            $('[name=repo]').removeClass('error');
+            var $parentDiv = $('.label-github');
+            $parentDiv.html('<i style="font-size: 12pt" class="fa fa-spinner fa-spin fa-3x fa-fw"></i>');
+            var repo = this.value;
+            $.ajax({
+                url: '{% url "fetch-labels-github" project_pk=version.project.pk %}',
+                data: {
+                    repo: repo
+                },
+                success: function (data) {
+                    $parentDiv.html('');
+                    for(var i=0; i<data.length; i++){
+                        var label = data[i];
+                        var $div = $('<span class="label-checkbox-github"></span>');
+                        var $input = $('<input type="checkbox" class="github-label-option" id="' + label['name'] + '" name="' + label['name'] + '" value="' + label['name'] + '">'+
+                            '<label style="margin-left: 3px" for="' + label['name'] + '">' + label['name'] + '</label>');
+                        $div.append($input);
+                        $parentDiv.append($div)
+                    }
+                },
+                error: function (err) {
+                    $parentDiv.html('Cannot find label for this repository/repository is invalid');
+                }
+            })
+        });
+
+        $('[name="category-github-import"]').change(function () {
+            $('[name="category-github-import"]').removeClass('error');
+            $('.error-message').html('').hide();
+        });
+
+        {% if version.project.project_repository_url %}
+            $inputRepo.val('{{ version.project.project_repository_url }}').trigger('change');
+        {% endif %}
+
+    });
+
+    function formValidation(repo, category) {
+        if(repo === '' || repo === null){
+            $('[name=repo]').addClass('error');
+            $('.error-message').html('Repository url is empty').show();
+            return false;
+        }else if(category === '' || category === null){
+            $('[name="category-github-import"]').addClass('error');
+            $('.error-message').html('Category is empty').show();
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    function resetForm() {
+        $('button[type="submit"]').prop('disabled', false);
+        $('#github-entry-import').trigger('reset');
+        $('[name="category-github-import"]').removeClass('error');
+        $('[name=repo]').removeClass('error');
+        $('#form_id').trigger("reset");
+        {% if version.project.project_repository_url %}
+            $('[name=repo]').val('{{ version.project.project_repository_url }}').trigger('change');
+        {% endif %}
+        $('.error-notification').hide();
+        $('#GithubPRModal').modal('hide');
+    }
+
+    function submitForm(obj) {
+        $('.error-notification').hide();
+        var repo = $('[name="repo"]').val();
+        var labels = [];
+        $('.github-label-option:checked').each(function () {
+            labels.push($(this).val())
+        });
+        var states = [];
+        $('.github-state-option:checked').each(function () {
+            states.push($(this).val())
+        });
+
+        var query = '';
+        if(labels.length > 0){
+            for(var i in labels){
+                query += 'label:"' + labels[i] + '"+'
+            }
+        }
+
+        if(states.length === 1){
+            for(var i in states){
+                query += 'state:' + states[i] + '+'
+            }
+        }
+        var category = $('[name="category-github-import"]').find(":selected").val();
+
+        var valid = formValidation(repo, category);
+
+        if(valid) {
+            var $button = $(obj).closest('button');
+            $button.prop('disabled', true);
+            $('#import-loading').show();
+
+            $.ajax({
+                url: '{% url "fetch-pr-github" project_pk=version.project.pk %}',
+                type: 'POST',
+                data: {
+                    'repo': repo,
+                    'query': query,
+                    'category': category,
+                    'version_slug': '{{ version.slug }}'
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if(data['status'] === 'success') {
+                        location.reload()
+                    } else {
+                        $('.error-message').html(data['reason']).show();
+                        $button.prop('disabled', false);
+                        $('#import-loading').hide();
+                        $('.error-notification').show();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    $button.prop('disabled', false);
+                    $('#import-loading').hide();
+                }
+            });
+        }
+    }
+</script>

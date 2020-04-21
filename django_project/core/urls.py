@@ -1,13 +1,14 @@
 # coding=utf-8
 """Project level url handler."""
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib.auth import views as auth_views  # noqa
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import HttpResponseServerError
-from django.template import loader, Context
+from django.template import loader
+from .views import general_flatpage
 
 admin.autodiscover()
 handler404 = 'base.views.error_views.custom_404'
@@ -26,16 +27,16 @@ def handler500(request):
     """
     # You need to create a 500.html template.
     t = loader.get_template('500.html')
-    return HttpResponseServerError(t.render(Context({
+    return HttpResponseServerError(t.render({
         'request': request,
-    })))
+    }))
 
 
 urlpatterns = []
 # These patterns work if there is a locale code injected in front of them
 # e.g. /en/reports/
 urlpatterns += i18n_patterns(
-    url(r'^site-admin/', include(admin.site.urls)),
+    url(r'^site-admin/', admin.site.urls),
     url(r'^', include('base.urls')),
     url(r'^', include('changes.urls')),
     url(r'^', include('vota.urls')),
@@ -47,13 +48,18 @@ urlpatterns += i18n_patterns(
     #     'template_name': 'userena/password_reset_done.html'},
     #     name='password_reset_done'),
     url(r'^accounts/', include('allauth.urls')),
+    url(r'^stripe/', include("djstripe.urls", namespace="djstripe")),
+    url(r'^notifications/', include('pinax.notifications.urls',
+                                    namespace='pinax_notifications')),
+    url(r'^flatpage/(?P<url>.*)$',
+        general_flatpage,
+        name='general_flatpage'),
 )
 
 if 'rosetta' in settings.INSTALLED_APPS:
-    urlpatterns += patterns(
-        '',
+    urlpatterns += [
         url(r'^rosetta/', include('rosetta.urls')),
-    )
+    ]
 
 if settings.DEBUG:
     urlpatterns += static(

@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase, override_settings
 from django.test.client import Client
 import logging
@@ -89,7 +89,7 @@ class TestCertificatePreview(TestCase):
             'course_type': self.course_type.pk,
             'start_date': '2018-01-01',
             'end_date': '2018-02-01',
-            'template_certificate': None
+            'template_certificate': ''
         }
         response = client.post(reverse('preview-certificate', kwargs={
             'project_slug': self.test_project.slug,

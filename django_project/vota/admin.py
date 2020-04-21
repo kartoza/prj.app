@@ -14,11 +14,11 @@ historization for a model).
 
 
 from django.contrib import admin
-from models import Committee, Vote, Ballot
+from .models import Committee, Vote, Ballot
 import reversion
 
 
-class CommitteeAdmin(reversion.VersionAdmin):
+class CommitteeAdmin(reversion.admin.VersionAdmin):
 
     """Committee admin model."""
 
@@ -36,7 +36,7 @@ class CommitteeAdmin(reversion.VersionAdmin):
         return qs
 
 
-class VoteAdmin(reversion.VersionAdmin):
+class VoteAdmin(reversion.admin.VersionAdmin):
     """Vote admin model."""
 
     def queryset(self, request):
@@ -51,7 +51,7 @@ class VoteAdmin(reversion.VersionAdmin):
         return qs
 
 
-class BallotAdmin(reversion.VersionAdmin):
+class BallotAdmin(reversion.admin.VersionAdmin):
     """Ballot admin model."""
 
     def queryset(self, request):

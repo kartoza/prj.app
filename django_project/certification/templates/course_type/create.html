@@ -7,14 +7,19 @@
 {% endblock page_title %}
 
 {% block content %}
-
     <section id="forms">
-        <div class='container'>
-            {% csrf_token %}
-            {% crispy form %}
-            {% for form in inlines %}
-                {% crispy form %}
-            {% endfor %}
+       <div class='container'>
+            <h3>New Course Type for {{ organisation.name }}</h3>
+            <hr/>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="vertical-space"></div>
+                <div class="form-actions">
+                    <input type="submit" name="submit" value="Submit"
+                           class="btn btn-primary" id="submit-save">
+                </div>
+            </form>
         </div>
     </section>
 

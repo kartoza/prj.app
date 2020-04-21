@@ -21,7 +21,8 @@ class Organisation(models.Model):
         default=False
     )
 
-    owner = models.ForeignKey(User, null=True, blank=True)
+    owner = models.ForeignKey(User, null=True, blank=True,
+                              on_delete=models.SET_NULL)
 
     # noinspection PyClassicStyleClass
     class Meta:
@@ -33,3 +34,6 @@ class Organisation(models.Model):
 
     def __unicode__(self):
         return u'{}'.format(self.name)
+
+    def __str__(self):
+        return '{}'.format(self.name)

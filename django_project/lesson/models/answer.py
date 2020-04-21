@@ -26,7 +26,7 @@ class Answer(TranslationMixin):
 
     tracker = FieldTracker()
 
-    question = models.ForeignKey(WorksheetQuestion)
+    question = models.ForeignKey(WorksheetQuestion, on_delete=models.CASCADE)
 
     sequence_number = models.IntegerField(
         help_text=_(

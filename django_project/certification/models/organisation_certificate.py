@@ -5,12 +5,12 @@ model definitions for certification apps.
 """
 
 from datetime import datetime
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from simple_history.models import HistoricalRecords
-from certifying_organisation import CertifyingOrganisation
+from .certifying_organisation import CertifyingOrganisation
 
 
 def increment_id(project):
@@ -49,7 +49,7 @@ class CertifyingOrganisationCertificate(models.Model):
     )
 
     issued = models.DateTimeField(
-        default=datetime.now()
+        default=datetime.now
     )
 
     valid = models.BooleanField(
@@ -57,8 +57,9 @@ class CertifyingOrganisationCertificate(models.Model):
         default=True
     )
 
-    author = models.ForeignKey(User)
-    certifying_organisation = models.ForeignKey(CertifyingOrganisation)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    certifying_organisation = models.ForeignKey(CertifyingOrganisation,
+                                                on_delete=models.CASCADE)
     history = HistoricalRecords()
 
     class Meta:

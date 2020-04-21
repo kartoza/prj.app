@@ -9,10 +9,11 @@ from base.models import Project
 # LOGGER = logging.getLogger(__name__)
 import re
 import zipfile
-import StringIO
+from io import BytesIO
 import pypandoc
 from bs4 import BeautifulSoup
-from django.core.urlresolvers import reverse
+from django.conf import settings
+from django.urls import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import (
@@ -53,7 +54,7 @@ class CustomStaffuserRequiredMixin(StaffuserRequiredMixin):
         """
         Called when the user has no permissions and no exception was raised.
         """
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return super(
                 CustomStaffuserRequiredMixin, self).no_permissions_fail(
                 request)
@@ -381,7 +382,7 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
         """
         project_slug = self.kwargs.get('project_slug', None)
         project = Project.objects.get(slug=project_slug)
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = Version.objects.filter(project=project)
         if self.request.user.is_staff:
@@ -590,7 +591,7 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
         :rtype: string
         """
         # create in memory file-like object
-        temp_path = StringIO.StringIO()
+        temp_path = BytesIO()
 
         # grab all of the images from document
         images = []
@@ -603,10 +604,14 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
         with zipfile.ZipFile(temp_path, 'w') as zip_file:
             # write all of the image files (read from disk)
             for image in images:
-                zip_file.write(
-                    '../media/{0}'.format(image),
-                    '{0}'.format(image)
-                )
+                try:
+                    image_url = '{}/{}'.format(settings.MEDIA_ROOT, image)
+                    zip_file.write(
+                        image_url,
+                        '{0}'.format(image)
+                    )
+                except FileNotFoundError:
+                    pass
             # write the actual RST document
             zip_file.writestr(
                 'index.rst',
@@ -755,7 +760,7 @@ class VersionSponsorDownload(
         :rtype: string
         """
         # create in memory file-like object
-        temp_path = StringIO.StringIO()
+        temp_path = BytesIO()
 
         # grab all of the images from document
         images = []

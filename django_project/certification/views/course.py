@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.views.generic import (
@@ -63,6 +63,10 @@ class CourseCreateView(LoginRequiredMixin, CourseMixin, CreateView):
         context['courses'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
         context['organisation_slug'] = self.kwargs.pop('organisation_slug')
+        context['organisation'] = (
+            CertifyingOrganisation.objects.get(
+                slug=context['organisation_slug'])
+        )
         context['project_slug'] = self.kwargs.pop('project_slug')
         return context
 
@@ -159,6 +163,10 @@ class CourseUpdateView(LoginRequiredMixin, CourseMixin, UpdateView):
         context['courses'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
         context['organisation_slug'] = self.kwargs.pop('organisation_slug')
+        context['organisation'] = (
+            CertifyingOrganisation.objects.get(
+                slug=context['organisation_slug'])
+        )
         context['project_slug'] = self.kwargs.pop('project_slug')
         return context
 
@@ -334,7 +342,7 @@ class CourseDeleteView(LoginRequiredMixin, CourseMixin, DeleteView):
         :raises: Http404
         """
 
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = Course.objects.filter(
             certifying_organisation=self.certifying_organisation)

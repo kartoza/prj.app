@@ -3,12 +3,12 @@
 
 """
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from course import Course
-from attendee import Attendee
+from .course import Course
+from .attendee import Attendee
 
 
 def increment_id(project):
@@ -51,9 +51,9 @@ class Certificate(models.Model):
         default=False
     )
 
-    author = models.ForeignKey(User)
-    course = models.ForeignKey(Course)
-    attendee = models.ForeignKey(Attendee)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    attendee = models.ForeignKey(Attendee, on_delete=models.CASCADE)
     objects = models.Manager()
 
     class Meta:

@@ -1,8 +1,8 @@
 # coding=utf-8
 """Urls for lesson application."""
 
-from django.conf.urls import patterns, url
-
+from django.conf.urls import url
+from django.views.static import serve
 from django.conf import settings
 
 from lesson.views.answer import (
@@ -51,8 +51,7 @@ from lesson.views.specification import (
     SpecificationDeleteView
 )
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(regex='^(?P<project_slug>[\w-]+)/section/about/$',
         view=AboutLessonsApp.as_view(),
         name='about-lesson-app'),
@@ -212,12 +211,11 @@ urlpatterns = patterns(
               'delete/(?P<pk>[\w-]+)/$',
         view=AnswerDeleteView.as_view(),
         name='answer-delete'),
-)
+]
 
 
 if settings.DEBUG:
     # static files (images, css, javascript, etc.)
-    urlpatterns += patterns(
-        '',
-        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT}))
+    urlpatterns += [
+        url(r'^media/(?P<path>.*)$', serve, {
+            'document_root': settings.MEDIA_ROOT})]

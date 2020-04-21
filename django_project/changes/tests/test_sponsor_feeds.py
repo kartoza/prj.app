@@ -4,7 +4,7 @@ import datetime
 import urllib
 import logging
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from base.tests.model_factories import ProjectF
@@ -56,7 +56,9 @@ class TestSponsorFeeds(TestCase):
             project=self.project,
             approved=True,
             start_date=datetime.datetime.now() - datetime.timedelta(days=180),
-            end_date=datetime.datetime.now() + datetime.timedelta(days=365),
+            end_date=(
+                    datetime.datetime.now() + datetime.timedelta(days=365)
+            ).date(),
         )
 
         # Past sponsor under a certain time limit, in this case 1 year
@@ -69,7 +71,9 @@ class TestSponsorFeeds(TestCase):
             project=self.project,
             approved=True,
             start_date=datetime.datetime.now() - datetime.timedelta(days=180),
-            end_date=datetime.datetime.now() - datetime.timedelta(days=30)
+            end_date=(
+                    datetime.datetime.now() - datetime.timedelta(days=30)
+            ).date()
         )
 
         # It's a very old sponsor that will not be shown
@@ -82,7 +86,9 @@ class TestSponsorFeeds(TestCase):
             project=self.project,
             approved=True,
             start_date=datetime.datetime.now() - datetime.timedelta(days=4000),
-            end_date=datetime.datetime.now() - datetime.timedelta(days=3650)
+            end_date=(
+                    datetime.datetime.now() - datetime.timedelta(days=3650)
+            ).date()
         )
 
     @override_settings(VALID_DOMAIN=['testserver', ])
@@ -102,11 +108,13 @@ class TestSponsorFeeds(TestCase):
         response = self.client.get(reverse('sponsor-rss-feed', kwargs={
             'project_slug': self.project.slug
         }))
+        response_content_str = str(response.content)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.current_sponsor.name in response.content, True)
-        self.assertEqual(self.past_sponsor.name in response.content, False)
+        self.assertEqual(self.current_sponsor.name in response_content_str,
+                         True)
+        self.assertEqual(self.past_sponsor.name in response_content_str, False)
         self.assertEqual(
-            self.one_decade_ago_sponsor.name in response.content, False)
+            self.one_decade_ago_sponsor.name in response_content_str, False)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_past_sponsor_rss_feed_view_without_years_limit(self):
@@ -114,23 +122,29 @@ class TestSponsorFeeds(TestCase):
             'project_slug': self.project.slug
         }))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.current_sponsor.name in response.content, False)
-        self.assertEqual(self.past_sponsor.name in response.content, True)
+        response_content_str = str(response.content)
+        self.assertEqual(self.current_sponsor.name in response_content_str,
+                         False)
+        self.assertEqual(self.past_sponsor.name in response_content_str, True)
         self.assertEqual(
-            self.one_decade_ago_sponsor.name in response.content, True)
+            self.one_decade_ago_sponsor.name in response_content_str, True)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_past_sponsor_rss_feed_view_with_years_limit(self):
         url_with_limit = reverse('past-sponsor-rss-feed', kwargs={
             'project_slug': self.project.slug
         })
-        url_with_limit += '?' + urllib.urlencode({'years_limit': 2})
+        url_with_limit += '?' + urllib.parse.urlencode(
+            {'years_limit': 2})
         response = self.client.get(url_with_limit)
+        response_content_str = str(response.content)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.current_sponsor.name in response.content, False)
-        self.assertEqual(self.past_sponsor.name in response.content, True)
+        self.assertEqual(self.current_sponsor.name in response_content_str,
+                         False)
+        self.assertEqual(self.past_sponsor.name in response_content_str,
+                         True)
         self.assertEqual(
-            self.one_decade_ago_sponsor.name in response.content, False)
+            self.one_decade_ago_sponsor.name in response_content_str, False)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_past_sponsor_rss_feed_view_with_invalid_years_limit(self):
@@ -141,24 +155,31 @@ class TestSponsorFeeds(TestCase):
         url_with_limit = reverse('past-sponsor-rss-feed', kwargs={
             'project_slug': self.project.slug
         })
-        url_with_limit += '?' + urllib.urlencode({'years_limit': 'a'})
+        url_with_limit += '?' + urllib.parse.urlencode(
+            {'years_limit': 'a'})
         response = self.client.get(url_with_limit)
+        response_content_str = str(response.content)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.current_sponsor.name in response.content, False)
-        self.assertEqual(self.past_sponsor.name in response.content, True)
+        self.assertEqual(self.current_sponsor.name in response_content_str,
+                         False)
+        self.assertEqual(self.past_sponsor.name in response_content_str,
+                         True)
         self.assertEqual(
-            self.one_decade_ago_sponsor.name in response.content, True)
+            self.one_decade_ago_sponsor.name in response_content_str,
+            True)
 
         url_with_limit = reverse('past-sponsor-rss-feed', kwargs={
             'project_slug': self.project.slug
         })
-        url_with_limit += '?' + urllib.urlencode({'years_limit': -1})
+        url_with_limit += '?' + urllib.parse.urlencode({'years_limit': -1})
         response = self.client.get(url_with_limit)
+        response_content_str = str(response.content)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.current_sponsor.name in response.content, False)
-        self.assertEqual(self.past_sponsor.name in response.content, True)
+        self.assertEqual(self.current_sponsor.name in response_content_str,
+                         False)
+        self.assertEqual(self.past_sponsor.name in response_content_str, True)
         self.assertEqual(
-            self.one_decade_ago_sponsor.name in response.content, True)
+            self.one_decade_ago_sponsor.name in response_content_str, True)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_current_sponsor_json_feed_view(self):
@@ -166,10 +187,13 @@ class TestSponsorFeeds(TestCase):
             'project_slug': self.project.slug
         }))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.current_sponsor.name in response.content, True)
-        self.assertEqual(self.past_sponsor.name in response.content, False)
+        self.assertEqual(self.current_sponsor.name in str(response.content),
+                         True)
+        self.assertEqual(self.past_sponsor.name in str(response.content),
+                         False)
         self.assertEqual(
-            self.one_decade_ago_sponsor.name in response.content, False)
+            self.one_decade_ago_sponsor.name in str(response.content),
+            False)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_past_sponsor_json_feed_view_without_years_limit(self):
@@ -177,23 +201,28 @@ class TestSponsorFeeds(TestCase):
             'project_slug': self.project.slug
         }))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.current_sponsor.name in response.content, False)
-        self.assertEqual(self.past_sponsor.name in response.content, True)
+        response_content_str = str(response.content)
         self.assertEqual(
-            self.one_decade_ago_sponsor.name in response.content, True)
+            self.current_sponsor.name in response_content_str, False)
+        self.assertEqual(self.past_sponsor.name in response_content_str, True)
+        self.assertEqual(
+            self.one_decade_ago_sponsor.name in response_content_str, True)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_past_sponsor_json_feed_view_with_years_limit(self):
         url_with_limit = reverse('past-sponsor-json-feed', kwargs={
             'project_slug': self.project.slug
         })
-        url_with_limit += '?' + urllib.urlencode({'years_limit': 2})
+        url_with_limit += '?' + urllib.parse.urlencode(
+            {'years_limit': 2})
         response = self.client.get(url_with_limit)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.current_sponsor.name in response.content, False)
-        self.assertEqual(self.past_sponsor.name in response.content, True)
+        response_content_str = str(response.content)
+        self.assertEqual(self.current_sponsor.name in response_content_str,
+                         False)
+        self.assertEqual(self.past_sponsor.name in response_content_str, True)
         self.assertEqual(
-            self.one_decade_ago_sponsor.name in response.content, False)
+            self.one_decade_ago_sponsor.name in response_content_str, False)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_past_sponsor_json_feed_view_with_invalid_years_limit(self):
@@ -204,21 +233,26 @@ class TestSponsorFeeds(TestCase):
         url_with_limit = reverse('past-sponsor-json-feed', kwargs={
             'project_slug': self.project.slug
         })
-        url_with_limit += '?' + urllib.urlencode({'years_limit': 'a'})
+        url_with_limit += '?' + urllib.parse.urlencode(
+            {'years_limit': 'a'})
         response = self.client.get(url_with_limit)
+        response_content_str = str(response.content)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.current_sponsor.name in response.content, False)
-        self.assertEqual(self.past_sponsor.name in response.content, True)
+        self.assertEqual(self.current_sponsor.name in response_content_str,
+                         False)
+        self.assertEqual(self.past_sponsor.name in response_content_str, True)
         self.assertEqual(
-            self.one_decade_ago_sponsor.name in response.content, True)
+            self.one_decade_ago_sponsor.name in response_content_str, True)
 
         url_with_limit = reverse('past-sponsor-json-feed', kwargs={
             'project_slug': self.project.slug
         })
-        url_with_limit += '?' + urllib.urlencode({'years_limit': -1})
+        url_with_limit += '?' + urllib.parse.urlencode({'years_limit': -1})
         response = self.client.get(url_with_limit)
+        response_content_str = str(response.content)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.current_sponsor.name in response.content, False)
-        self.assertEqual(self.past_sponsor.name in response.content, True)
+        self.assertEqual(self.current_sponsor.name in response_content_str,
+                         False)
+        self.assertEqual(self.past_sponsor.name in response_content_str, True)
         self.assertEqual(
-            self.one_decade_ago_sponsor.name in response.content, True)
+            self.one_decade_ago_sponsor.name in response_content_str, True)

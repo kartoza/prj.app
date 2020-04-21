@@ -58,6 +58,11 @@
             </div>
             <div class="pull-right">
                 {% if user.is_authenticated %}
+                    <button class="btn btn-default tooltip-toggle"
+                            data-title="Import PR from Github into Entries"
+                            data-toggle="modal" data-target="#GithubPRModal">
+                        <i class="fa fa-github"></i>
+                    </button>
                     <a href="{% url 'entry-create' project_slug=version.project.slug version_slug=version.slug %}"
                        class="btn btn-default tooltip-toggle"
                        data-title="Add New Entry">
@@ -74,6 +79,7 @@
     </div>
 
     {% include "version/detail-content.html" %}
+    {% include "version/includes/github-form-modal.html" %}
 {#    we disable disqus temporarily because of unwanted ads. #}
 {#    <h5 id="comments">Comments</h5>#}
 {#    {% disqus_show_comments %}#}

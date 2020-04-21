@@ -24,9 +24,9 @@ class Vote(models.Model):
 
     choice = models.CharField(max_length=1, choices=VOTE_CHOICES,
                               default='-')
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     # noinspection PyUnresolvedReferences
-    ballot = models.ForeignKey('Ballot')
+    ballot = models.ForeignKey('Ballot', on_delete=models.CASCADE)
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass

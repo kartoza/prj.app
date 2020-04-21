@@ -3,25 +3,29 @@
 """
 core.custom_middleware
 """
-from django.contrib.sites.models import Site
+from django.contrib.flatpages.models import FlatPage
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
+from django.template import RequestContext
 from django.utils.translation import activate
-from base.models import Project, Version, Domain
-from changes.models import Category, SponsorshipLevel, SponsorshipPeriod, Entry
+try:
+    from django.utils.deprecation import MiddlewareMixin as MiddlewareBase
+except ImportError:  # Django < 1.10
+    MiddlewareBase = object
+
+from base.models import Project, Version, Domain, ProjectFlatpage
+from changes.models import (
+    SponsorshipLevel, SponsorshipPeriod, Sponsor
+)
 from certification.models import CertifyingOrganisation
 
 
-class NavContextMiddleware(object):
+class NavContextMiddleware(MiddlewareBase):
     """
     Adds the required navigation variables to each response
     """
-
-    def __init__(self):
-        pass
-
     @staticmethod
     def process_template_response(request, response):
         """
@@ -54,6 +58,20 @@ class NavContextMiddleware(object):
             context['has_pending_organisations'] = (
                 CertifyingOrganisation.unapproved_objects.filter(
                     project=context.get('project')).exists())
+
+            # Check if user is a sustaining member manager
+            if request.user.is_anonymous:
+                context['has_pending_sustaining_members'] = False
+            else:
+                context['has_pending_sustaining_members'] = (
+                    Sponsor.unapproved_objects.filter(
+                        project=context.get('project'),
+                        project__sponsorship_managers__in=[request.user]
+                    ).exists()
+                )
+            context['project_flatpages'] = ProjectFlatpage.objects.filter(
+                project=context['the_project']
+            )
 
         else:
             if request.user.is_staff:
@@ -117,42 +135,54 @@ class NavContextMiddleware(object):
             except (KeyError, IndexError):
                 pass
 
+        project_flatpage_ids = (
+            ProjectFlatpage.objects.all().values_list('id', flat=True))
+        context['flatpages'] = (
+            FlatPage.objects.exclude(id__in=project_flatpage_ids))
+
         return response
 
 
-class CheckDomainMiddleware(object):
+class CheckDomainMiddleware(MiddlewareBase):
     """
     Custom middleware to check if domain is valid.
     """
-
-    def __init__(self):
-        pass
-
     def process_request(self, request):
-
         try:
             domain = request.get_host().split(':')[0]
             if domain in settings.VALID_DOMAIN:
                 return None
             else:
-                custom_domain = \
-                    Domain.objects.get(domain=domain, approved=True)
+                custom_domain = Domain.objects.get(
+                    domain=domain, approved=True)
                 request.site = custom_domain.domain
                 activate('en')
                 url = reverse('project-list')
                 home_url = reverse('home')
                 if custom_domain.role == 'Project':
-                    if request.path == url or request.path == home_url:
+                    # Get current project path
+                    try:
+                        project_url_path = request.path.split(home_url)[1]
+                    except IndexError:
+                        project_url_path = '/'
+                    project_url_path = project_url_path.split('/')[0]
+                    is_different_project = (
+                        Project.objects.filter(
+                            name__iexact=project_url_path
+                        ).exclude(id=custom_domain.project.id).exists()
+                    )
+
+                    if (
+                            request.path == url or
+                            request.path == home_url or
+                            project_url_path == '' or
+                            is_different_project):
                         return redirect(
                             'project-detail', custom_domain.project.slug)
                 elif custom_domain.role == 'Organisation':
                     return None
         except Domain.DoesNotExist:
-            if settings.DEBUG:
-                # for dev
-                return HttpResponseRedirect(
-                    'http://0.0.0.0:61202/en/domain-not-found/')
-            else:
+            if not settings.DEBUG:
                 # for production the domain is hardcoded for consistency
                 return HttpResponseRedirect(
                     'http://changelog.kartoza.com/en/domain-not-found/'

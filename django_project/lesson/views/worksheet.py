@@ -2,12 +2,12 @@
 """Worksheet views."""
 
 import json
-import StringIO
 import os
 import zipfile
+from io import BytesIO
 from collections import OrderedDict
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponse
 from django.views.generic import (
     DetailView,
@@ -154,7 +154,7 @@ class WorksheetPDFZipView(WorksheetDetailView):
 
         zip_subdir = '{}. {}'.format(numbering, context['file_title'])
 
-        s = StringIO.StringIO()
+        s = BytesIO()
         zf = zipfile.ZipFile(s, "w")
 
         for fpath in filenames:
@@ -418,7 +418,7 @@ def download_multiple_worksheet(request, **kwargs):
         context['file_title'] = context['file_title'].encode("utf8")
         return context
 
-    s = StringIO.StringIO()
+    s = BytesIO()
     zf = zipfile.ZipFile(s, "w")
     initial_numbering = ''
     final_numbering = ''

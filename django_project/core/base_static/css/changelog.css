@@ -1,6 +1,6 @@
 body {
   padding-top: 70px;
-  padding-bottom : 140px;
+  padding-bottom : 100px;
 }
 
 .align-bottom {
@@ -221,4 +221,43 @@ a.anchor-entry {
     position: relative;
     top: -80px;
     visibility: hidden;
+}
+
+.vertical-space {
+    height: 20px;
+}
+
+#submit-save {
+    padding-right: 30px;
+    padding-left: 30px;
+    font-size: 13pt;
+}
+
+.img-preview {
+    max-height: 150px;
+    padding-top: 10px;
+}
+
+.btn-approve:hover {
+    background-color: #419641 !important;
+    background-position: 0 -32px;
+    color: white;
+}
+
+.btn-reject:hover {
+    background-color: #c12e2a !important;
+    background-position: 0 -32px;
+    color: white;
+}
+
+.badge {
+    border-radius: 5px;
+}
+
+.badge-error {
+    background-color: #c12e2a !important;
+}
+
+.badge-success {
+    background-color: #419641 !important;
 }

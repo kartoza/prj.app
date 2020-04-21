@@ -14,7 +14,7 @@ ROLE = (
 class Domain(models.Model):
     """Model to save subscribed user and their custom domain."""
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.CharField(
         help_text=_(
             'For organisation, domain will point to list of projects within '
@@ -67,3 +67,9 @@ class Domain(models.Model):
 
     def __unicode__(self):
         return self.domain
+
+    def __str__(self):
+        return '{domain} - {project}'.format(
+            domain=self.domain,
+            project=self.project
+        )

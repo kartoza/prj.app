@@ -4,7 +4,7 @@ import os
 import logging
 import string
 import re
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.text import slugify
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from unidecode import unidecode
-from organisation import Organisation
+from base.models.organisation import Organisation
 from colorfield.fields import ColorField
 
 logger = logging.getLogger(__name__)
@@ -79,6 +79,9 @@ def get_default_organisation():
 
 class Project(models.Model):
     """A project model e.g. QGIS, InaSAFE etc."""
+    EUR = 'EUR'
+    USD = 'USD'
+    CURRENCY_CHOICES = [(USD, '$'), (EUR, '€')]
 
     name = models.CharField(
         help_text=_('Name of this project.'),
@@ -140,6 +143,14 @@ class Project(models.Model):
         default=0
     )
 
+    credit_cost_currency = models.CharField(
+        help_text=_('Currency for cost of credits'),
+        choices=CURRENCY_CHOICES,
+        max_length=10,
+        blank=True,
+        null=True
+    )
+
     # Credit that will be spent to issue a certificate
     certificate_credit = models.IntegerField(
         help_text=_(
@@ -191,11 +202,12 @@ class Project(models.Model):
     sponsorship_managers = models.ManyToManyField(
         User,
         related_name='sponsorship_managers',
+        verbose_name='Sustaining member managers',
         blank=True,
         # null=True, null has no effect on ManyToManyField.
         help_text=_(
             'Managers of the sponsorship in this project. '
-            'They will be allowed to approve sponsor entries in the '
+            'They will be allowed to approve sustaining member entries in the '
             'moderation queue.')
     )
 
@@ -235,11 +247,12 @@ class Project(models.Model):
         help_text=_(
             'Project representative. '
             'This name will be used on invoices and certificates. '),
+        on_delete=models.SET_NULL,
         blank=True,
         null=True  # This is needed to populate existing database.
     )
 
-    owner = models.ForeignKey(User)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True)
     objects = models.Manager()
     approved_objects = ApprovedProjectManager()
@@ -287,6 +300,9 @@ class Project(models.Model):
 
     def __unicode__(self):
         return u'%s' % self.name
+
+    def __str__(self):
+        return '{}'.format(self.name)
 
     def get_absolute_url(self):
         """Return URL to project detail page
@@ -337,7 +353,9 @@ class Project(models.Model):
 class ProjectScreenshot(models.Model):
     """A model to store a screenshot linked to a project."""
 
-    project = models.ForeignKey(Project, related_name='screenshots')
+    project = models.ForeignKey(
+        Project, related_name='screenshots',
+        on_delete=models.CASCADE)
     screenshot = models.ImageField(
         help_text=_('A project screenshot.'),
         upload_to=os.path.join(MEDIA_ROOT, 'images/projects/screenshots'),

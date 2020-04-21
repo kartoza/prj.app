@@ -1,18 +1,21 @@
 # coding=utf-8
 
+import base64
 import datetime
-import StringIO
+from io import BytesIO
 import os
 import zipfile
-import cStringIO
 from PIL import Image
 import re
+from decimal import Decimal
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.views.generic import CreateView, DetailView
+from django.http import (
+    Http404, HttpResponse, HttpResponseRedirect, FileResponse
+)
+from django.views.generic import CreateView, DetailView, TemplateView
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.shortcuts import render
@@ -22,6 +25,8 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont, TTFError
+import djstripe.models
+import djstripe.settings
 from ..models import (
     Certificate,
     Course,
@@ -33,6 +38,10 @@ from ..models import (
 )
 from ..forms import CertificateForm
 from base.models.project import Project
+from changes import (
+    NOTICE_TOP_UP_SUCCESS
+)
+from helpers.notification import send_notification
 
 
 class CertificateMixin(object):
@@ -43,7 +52,7 @@ class CertificateMixin(object):
 
 
 class CertificateCreateView(
-        LoginRequiredMixin, CertificateMixin, CreateView):
+    LoginRequiredMixin, CertificateMixin, CreateView):
     """Create view for Certificate."""
 
     context_object_name = 'certificate'
@@ -161,24 +170,20 @@ class CertificateDetailView(DetailView):
             certificate = context['certificate']
             convener_name = \
                 '{} {}'.format(
-                    certificate.course.course_convener.user.first_name.encode(
-                        'utf-8'),
-                    certificate.course.course_convener.user.last_name.encode(
-                        'utf-8'))
+                    certificate.course.course_convener.user.first_name,
+                    certificate.course.course_convener.user.last_name)
 
             if certificate.course.course_convener.title:
                 convener_name = \
                     '{} {}'.format(
-                        certificate.course.course_convener.title.encode(
-                            'utf-8'),
+                        certificate.course.course_convener.title,
                         convener_name)
 
             if certificate.course.course_convener.degree:
                 convener_name = \
                     '{}, {}'.format(
                         convener_name,
-                        certificate.course.course_convener.degree.encode(
-                            'utf-8'))
+                        certificate.course.course_convener.degree)
 
             context['convener_name'] = convener_name
         context['project_slug'] = self.project_slug
@@ -231,10 +236,14 @@ def generate_pdf(
     # Register new font
     try:
         font_folder = os.path.join(
-            settings.STATIC_ROOT, 'fonts/NotoSans-hinted')
-        ttf_file = os.path.join(font_folder, 'NotoSans-Bold.ttf')
-        pdfmetrics.registerFont(TTFont('Noto-bold', ttf_file))
-    except TTFError:
+            settings.STATIC_ROOT, 'fonts/times-new-roman')
+        bold_ttf_file = os.path.join(
+            font_folder, 'Times New Roman Gras 700.ttf')
+        regular_ttf_file = os.path.join(
+            font_folder, 'Times New Roman 400.ttf')
+        pdfmetrics.registerFont(TTFont('Noto-Bold', bold_ttf_file))
+        pdfmetrics.registerFont(TTFont('Noto-Regular', regular_ttf_file))
+    except (TTFError, KeyError):
         pass
 
     page = canvas.Canvas(pathname, pagesize=landscape(A4))
@@ -242,20 +251,20 @@ def generate_pdf(
     center = height * 0.5
     convener_name = \
         '{} {}'.format(
-            course.course_convener.user.first_name.encode('utf-8'),
-            course.course_convener.user.last_name.encode('utf-8'))
+            course.course_convener.user.first_name,
+            course.course_convener.user.last_name)
 
     if course.course_convener.title:
         convener_name = \
             '{} {}'.format(
-                course.course_convener.title.encode('utf-8'),
+                course.course_convener.title,
                 convener_name)
 
     if course.course_convener.degree:
         convener_name = \
             '{}, {}'.format(
                 convener_name,
-                course.course_convener.degree.encode('utf-8'))
+                course.course_convener.degree)
 
     course_duration = \
         'From {} {} {} to {} {} {}'.format(
@@ -312,7 +321,7 @@ def generate_pdf(
             background, 0, 0, height=width, width=height,
             preserveAspectRatio=True, mask='auto')
     page.setFillColorRGB(0.1, 0.1, 0.1)
-    page.setFont('Times-Roman', 18)
+    page.setFont('Noto-Regular', 18)
 
     if project_logo is not None:
         page.drawImage(
@@ -324,28 +333,28 @@ def generate_pdf(
             organisation_logo, max_left, 450, height=100, width=100,
             preserveAspectRatio=True, anchor='c', mask='auto')
 
-    page.setFont('Times-Bold', 26)
+    page.setFont('Noto-Bold', 26)
     page.drawCentredString(center, 480, 'Certificate of Completion')
 
-    page.setFont('Times-Bold', 26)
+    page.setFont('Noto-Bold', 26)
 
     page.drawCentredString(
         center, 400, '%s %s' % (
-            attendee.firstname.encode('utf-8'),
-            attendee.surname.encode('utf-8')))
-    page.setFont('Times-Roman', 16)
+            attendee.firstname,
+            attendee.surname))
+    page.setFont('Noto-Regular', 16)
     page.drawCentredString(
         center, 370, 'Has attended and completed the course:')
-    page.setFont('Times-Bold', 20)
+    page.setFont('Noto-Bold', 20)
     page.drawCentredString(
-            center, 335, course.course_type.name.encode('utf-8'))
-    page.setFont('Times-Roman', 16)
+            center, 335, course.course_type.name)
+    page.setFont('Noto-Regular', 16)
     page.drawCentredString(
         center, 300, 'With a trained competence in:')
-    page.setFont('Times-Bold', 14)
+    page.setFont('Noto-Bold', 14)
     page.drawCentredString(
-        center, 280, '{}'.format(course.trained_competence.encode('utf-8')))
-    page.setFont('Times-Roman', 16)
+        center, 280, '{}'.format(course.trained_competence))
+    page.setFont('Noto-Regular', 16)
     page.drawCentredString(
         center, 250, '{}'.format(course_duration))
 
@@ -372,13 +381,13 @@ def generate_pdf(
             width=100, height=70, preserveAspectRatio=True, anchor='s',
             mask='auto')
 
-    page.setFont('Times-Italic', 12)
+    page.setFont('Noto-Regular', 12)
     if project.project_representative:
         page.drawCentredString(
             (margin_left + 150), (margin_bottom + 60),
             '{} {}'.format(
-                project.project_representative.first_name.encode('utf-8'),
-                project.project_representative.last_name.encode('utf-8')))
+                project.project_representative.first_name,
+                project.project_representative.last_name))
     page.drawCentredString(
         (margin_right - 150), (margin_bottom + 60),
         '{}'.format(convener_name))
@@ -388,7 +397,7 @@ def generate_pdf(
     page.line(
         (margin_right - 70), (margin_bottom + 55),
         (margin_right - 230), (margin_bottom + 55))
-    page.setFont('Times-Roman', 13)
+    page.setFont('Noto-Regular', 13)
     page.drawCentredString(
         (margin_left + 150),
         (margin_bottom + 40),
@@ -397,17 +406,17 @@ def generate_pdf(
         (margin_right - 150), (margin_bottom + 40), 'Course Convener')
 
     # Footnotes.
-    page.setFont('Times-Roman', 14)
+    page.setFont('Noto-Regular', 14)
     page.drawString(
         margin_left,
         margin_bottom - 10,
         'ID: {}'.format(certificate.certificateID))
-    page.setFont('Times-Roman', 8)
+    page.setFont('Noto-Regular', 8)
     page.drawString(
         margin_left, (margin_bottom - 20),
         'You can verify this certificate by visiting '
         'http://{}/en/{}/certificate/{}/.'
-        .format(current_site, project.slug, certificate.certificateID))
+        ''.format(current_site, project.slug, certificate.certificateID))
 
     # Close the PDF object cleanly.
     page.showPage()
@@ -415,7 +424,6 @@ def generate_pdf(
 
 
 def certificate_pdf_view(request, **kwargs):
-
     project_slug = kwargs.pop('project_slug')
     course_slug = kwargs.pop('course_slug')
     pk = kwargs.pop('pk')
@@ -433,11 +441,11 @@ def certificate_pdf_view(request, **kwargs):
             '/home/web/media', 'pdf/{}/{}'.format(project_folder, filename))
     found = os.path.exists(pathname)
     if found:
-        with open(pathname, 'r') as pdf:
-            response = HttpResponse(pdf.read(), content_type='application/pdf')
-            response['Content-Disposition'] = \
-                'filename={}.pdf'.format(certificate.certificateID)
-            return response
+        try:
+            return FileResponse(open(pathname, 'rb'),
+                                content_type='application/pdf')
+        except FileNotFoundError:
+            raise Http404()
     else:
         makepath = '/home/web/media/pdf/{}/'.format(project_folder)
         if not os.path.exists(makepath):
@@ -445,11 +453,11 @@ def certificate_pdf_view(request, **kwargs):
 
         generate_pdf(
             pathname, project, course, attendee, certificate, current_site)
-        with open(pathname, 'r') as pdf:
-            response = HttpResponse(pdf.read(), content_type='application/pdf')
-            response['Content-Disposition'] = \
-                'filename={}.pdf'.format(certificate.certificateID)
-            return response
+        try:
+            return FileResponse(open(pathname, 'rb'),
+                                content_type='application/pdf')
+        except FileNotFoundError:
+            raise Http404()
 
 
 def download_certificates_zip(request, **kwargs):
@@ -469,14 +477,14 @@ def download_certificates_zip(request, **kwargs):
             course_slug=course_slug, organisation_slug=organisation_slug)
 
         with open('/tmp/%s.pdf' % certificate.certificateID, 'wb') as pdf:
-            pdf.write(pdf_file.content)
+            pdf.write(pdf_file.getvalue())
 
         filenames.append('/tmp/%s.pdf' % certificate.certificateID)
 
     zip_subdir = '%s' % course.name
 
-    s = StringIO.StringIO()
-    zf = zipfile.ZipFile(s, "w")
+    in_memory_data = BytesIO()
+    zf = zipfile.ZipFile(in_memory_data, "w")
 
     for fpath in filenames:
         fdir, fname = os.path.split(fpath)
@@ -487,7 +495,7 @@ def download_certificates_zip(request, **kwargs):
     zf.close()
 
     response = HttpResponse(
-        s.getvalue(), content_type="application/x-zip-compressed")
+        in_memory_data.getvalue(), content_type="application/x-zip-compressed")
     response['Content-Disposition'] = \
         'attachment; filename=certificates.zip'
 
@@ -505,9 +513,9 @@ def update_paid_status(request, **kwargs):
     attendee = Attendee.objects.get(pk=attendee_pk)
     project = Project.objects.get(slug=project_slug)
     url = reverse('course-detail', kwargs={
-            'project_slug': project_slug,
-            'organisation_slug': organisation_slug,
-            'slug': course_slug
+        'project_slug': project_slug,
+        'organisation_slug': organisation_slug,
+        'slug': course_slug
     })
 
     if request.method == 'POST':
@@ -615,7 +623,7 @@ def email_all_attendees(request, **kwargs):
                 '{organisation_slug}/course/'
                 '{course_slug}/print/{pk}/\n\n'
                 'Sincerely,\n{convener_firstname} {convener_lastname}'
-                .format(**data),
+                ''.format(**data),
                 course.course_convener.user.email,
                 [attendee.email],
                 fail_silently=False,
@@ -643,8 +651,8 @@ def regenerate_certificate(request, **kwargs):
     attendee = Attendee.objects.get(pk=pk)
     project = Project.objects.get(slug=project_slug)
     certificate = Certificate.objects.get(course=course, attendee=attendee)
-    certifying_organisation = \
-        CertifyingOrganisation.objects.get(slug=organisation_slug)
+    certifying_organisation = (
+        CertifyingOrganisation.objects.get(slug=organisation_slug))
 
     # Checking user permissions.
     if request.user.is_staff or request.user == project.owner or \
@@ -681,11 +689,11 @@ def regenerate_certificate(request, **kwargs):
         current_site = request.META['HTTP_HOST']
         generate_pdf(
             pathname, project, course, attendee, certificate, current_site)
-        with open(pathname, 'r') as pdf:
-            response = HttpResponse(pdf.read(), content_type='application/pdf')
-            response['Content-Disposition'] = \
-                'filename=%s' % certificate.certificateID
-            return response
+        try:
+            return FileResponse(open(pathname, 'rb'),
+                                content_type='application/pdf')
+        except FileNotFoundError:
+            raise Http404()
 
     return render(
         request, 'certificate/regenerate_certificate.html',
@@ -821,6 +829,18 @@ class DummyCertificate(object):
 
 def preview_certificate(request, **kwargs):
     """Generate pdf for preview upon creating new course."""
+    # Register new font
+    try:
+        font_folder = os.path.join(
+            settings.STATIC_ROOT, 'fonts/times-new-roman')
+        bold_ttf_file = os.path.join(
+            font_folder, 'Times New Roman Gras 700.ttf')
+        regular_ttf_file = os.path.join(
+            font_folder, 'Times New Roman 400.ttf')
+        pdfmetrics.registerFont(TTFont('Noto-Bold', bold_ttf_file))
+        pdfmetrics.registerFont(TTFont('Noto-Regular', regular_ttf_file))
+    except (TTFError, KeyError):
+        pass
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'filename="preview.pdf"'
@@ -847,8 +867,9 @@ def preview_certificate(request, **kwargs):
         trained_competence = request.POST.get('trained_competence', '')
         if 'base64' in raw_image:
             image_data = re.sub('^data:image/.+;base64,', '',
-                                raw_image).decode('base64')
-            template_certificate = Image.open(cStringIO.StringIO(image_data))
+                                raw_image)
+            decoded_image = base64.b64decode(image_data.encode('utf-8'))
+            template_certificate = Image.open(BytesIO(decoded_image))
         else:
             template_certificate = None
 
@@ -874,9 +895,9 @@ def preview_certificate(request, **kwargs):
         width, height = A4
         center = height * 0.5
         page.setFillColorRGB(0.1, 0.1, 0.1)
-        page.setFont('Times-Bold', 26)
+        page.setFont('Noto-Bold', 26)
         page.drawCentredString(center, 480, 'Certificate of Completion')
-        page.setFont('Times-Roman', 16)
+        page.setFont('Noto-Regular', 16)
         page.drawCentredString(
             center, 360,
             'To preview your certificate template, '
@@ -887,3 +908,158 @@ def preview_certificate(request, **kwargs):
         page.save()
 
     return response
+
+
+class TopUpView(TemplateView):
+    template_name = 'certificate/top_up.html'
+    project_slug = ''
+    organisation_slug = ''
+
+    def get_context_data(self, **kwargs):
+        context = super(TopUpView, self).get_context_data(**kwargs)
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+
+        certifying_organisation = (
+            CertifyingOrganisation.objects.get(slug=self.organisation_slug)
+        )
+        project = Project.objects.get(slug=self.project_slug)
+
+        context['the_project'] = project
+        context['cert_organisation'] = certifying_organisation
+
+        return context
+
+    def process_charge(self,
+                       stripe_source_id,
+                       cost_of_credits,
+                       currency,
+                       statement_descriptor='',
+                       description='',
+                       metadata=None):
+        """
+        Creates a charge for user.
+
+        :param stripe_source_id: Id from stripe source
+        :param cost_of_credits: cost of the total credits
+        :param currency: currency of the cost
+        :param metadata: A set of key/value pairs useful for storing
+            additional information.
+        :param statement_descriptor: An arbitrary string to be displayed on the
+            customer's credit card statement.
+        :param description: Description of the payment
+        :return: paid, outcome
+        """
+        # Create the stripe Customer, by default subscriber Model is User,
+        # this can be overridden with settings.DJSTRIPE_SUBSCRIBER_MODEL
+        if metadata is None:
+            metadata = {}
+        customer, created = djstripe.models.Customer.get_or_create(
+            subscriber=self.request.user)
+
+        customer.add_card(stripe_source_id)
+
+        charge = customer.charge(
+            amount=cost_of_credits,
+            currency=currency,
+            description=description,
+            metadata=metadata,
+            statement_descriptor=statement_descriptor
+        )
+        return charge.paid, charge.outcome
+
+    def post(self, request, *args, **kwargs):
+        """Post the project_slug from the URL and define the Project
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        """
+        total_credits = self.request.POST.get('total-credits', None)
+        stripe_source_id = self.request.POST.get('stripe-source-id', None)
+
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+
+        project = Project.objects.get(
+            slug=self.project_slug
+        )
+
+        organisation = CertifyingOrganisation.objects.get(
+            slug=self.organisation_slug
+        )
+
+        if not total_credits or not stripe_source_id:
+            raise Http404('Missing important value')
+
+        try:
+            total_credits_decimal = Decimal(total_credits)
+            total_credits = int(total_credits)
+        except ValueError:
+            raise Http404('Wrong total credits format')
+
+        cost_of_credits = project.credit_cost * total_credits_decimal
+        description = 'Top up {total} credit{plural}'.format(
+            total=total_credits,
+            plural='s' if total_credits > 1 else '')
+        charged, outcome = self.process_charge(
+            stripe_source_id=stripe_source_id,
+            cost_of_credits=cost_of_credits,
+            currency=project.credit_cost_currency,
+            metadata={
+                'name': 'Top up credits',
+                'organisation': organisation,
+                'organisation_id': organisation.id,
+                'project': project,
+                'project_id': project.id,
+                'user_id': self.request.user.id,
+                'added_credit': total_credits,
+                'credit_cost': project.credit_cost,
+                'total_payment': cost_of_credits,
+                'currency': project.credit_cost_currency,
+            },
+            description=description,
+            statement_descriptor=description
+        )
+
+        if charged:
+            organisation.organisation_credits += total_credits
+            organisation.save()
+            organisation_owners = organisation.organisation_owners.all()
+            send_notification(
+                users=[self.request.user] + list(organisation_owners),
+                label=NOTICE_TOP_UP_SUCCESS,
+                extra_context={
+                    'author': self.request.user,
+                    'top_up_credits': total_credits,
+                    'currency': project.get_credit_cost_currency_display(),
+                    'payment_amount': cost_of_credits,
+                    'certifying_organisation': organisation,
+                    'total_credits': organisation.organisation_credits
+                },
+                request_user=self.request.user
+            )
+            messages.success(
+                request,
+                'Your purchase of <b>{}</b>'
+                ' credits has been'
+                ' successful'.format(
+                    total_credits
+                ),
+                'credits_top_up'
+            )
+
+        return HttpResponseRedirect(
+            reverse('certifyingorganisation-detail', kwargs={
+                'project_slug': self.project_slug,
+                'slug': self.organisation_slug
+            })
+        )

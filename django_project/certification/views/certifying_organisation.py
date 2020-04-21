@@ -2,7 +2,7 @@
 from base.models import Project
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import get_list_or_404
 from django.db.models import Q
 from django.http import HttpResponse
@@ -25,7 +25,7 @@ from ..models import (
     CourseType,
     CourseConvener,
     Course,
-    Attendee,
+    CourseAttendee,
     CertifyingOrganisationCertificate)
 from ..forms import CertifyingOrganisationForm
 from certification.utilities import check_slug
@@ -216,11 +216,15 @@ class CertifyingOrganisationDetailView(
             certifying_organisation=certifying_organisation)
         context['num_courseconvener'] = context['courseconveners'].count()
         context['courses'] = Course.objects.filter(
-            certifying_organisation=certifying_organisation)
+            certifying_organisation=certifying_organisation).order_by(
+            '-start_date'
+        )
         context['num_course'] = context['courses'].count()
         project_slug = self.kwargs.get('project_slug', None)
-        context['attendee'] = Attendee.objects.filter(
-            certifying_organisation=certifying_organisation)
+        context['attendee'] = CourseAttendee.objects.filter(
+            course__in=context['courses'],
+            attendee__certifying_organisation=certifying_organisation
+        )
         context['num_attendees'] = context['attendee'].count()
         context['project_slug'] = project_slug
         context['the_project'] = Project.objects.get(slug=project_slug)
@@ -374,7 +378,7 @@ class CertifyingOrganisationDeleteView(
         :raises: Http404
         """
 
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = CertifyingOrganisation.objects.filter(project=self.project)
         return qs
@@ -630,8 +634,8 @@ class CertifyingOrganisationUpdateView(
         :returns: URL
         :rtype: HttpResponse
         """
-
-        return reverse('certifyingorganisation-list', kwargs={
+        return reverse('certifyingorganisation-detail', kwargs={
+            'slug': self.object.slug,
             'project_slug': self.object.project.slug
         })
 

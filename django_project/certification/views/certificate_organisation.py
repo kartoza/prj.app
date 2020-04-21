@@ -3,8 +3,8 @@ import os
 from datetime import datetime
 from braces.views import LoginRequiredMixin
 from django.conf import settings
-from django.core.urlresolvers import reverse
-from django.http import HttpResponse, Http404
+from django.urls import reverse
+from django.http import Http404, FileResponse
 from django.views.generic import CreateView, DetailView
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.pagesizes import A4, landscape
@@ -25,9 +25,13 @@ def generate_certificate_pdf(
     # Register new font
     try:
         font_folder = os.path.join(
-            settings.STATIC_ROOT, 'fonts/NotoSans-hinted')
-        ttf_file = os.path.join(font_folder, 'NotoSans-Bold.ttf')
-        pdfmetrics.registerFont(TTFont('Noto-bold', ttf_file))
+            settings.STATIC_ROOT, 'fonts/times-new-roman')
+        bold_ttf_file = os.path.join(
+            font_folder, 'Times New Roman Gras 700.ttf')
+        regular_ttf_file = os.path.join(
+            font_folder, 'Times New Roman 400.ttf')
+        pdfmetrics.registerFont(TTFont('Noto-Bold', bold_ttf_file))
+        pdfmetrics.registerFont(TTFont('Noto-Regular', regular_ttf_file))
     except TTFError:
         pass
 
@@ -78,7 +82,7 @@ def generate_certificate_pdf(
         margin_right, width - 50, 'Date issued: {}'.format(str_date))
 
     try:
-        page.setFont('Noto-bold', 26)
+        page.setFont('Noto-Bold', 26)
     except KeyError:
         page.setFont('Times-Bold', 26)
 
@@ -106,8 +110,8 @@ def generate_certificate_pdf(
         page.drawCentredString(
             (margin_right - 150), (margin_bottom + 60),
             '{} {}'.format(
-                project.project_representative.first_name.encode('utf-8'),
-                project.project_representative.last_name.encode('utf-8')))
+                project.project_representative.first_name,
+                project.project_representative.last_name))
     page.line(
         (margin_right - 70), (margin_bottom + 55),
         (margin_right - 230), (margin_bottom + 55))
@@ -212,33 +216,24 @@ def organisation_certificate_pdf_view(request, **kwargs):
             '/home/web/media',
             'certificate_organisations/{}/{}'.format(
                 project_folder, filename))
-    found = os.path.exists(pathname)
-    if found:
-        with open(pathname, 'r') as pdf:
-            response = HttpResponse(pdf.read(), content_type='application/pdf')
-            response['Content-Disposition'] = \
-                'filename={}.pdf'.format(certificate.certificateID)
-            return response
-    else:
-        makepath = \
-            '/home/web/media/certificate_organisations/{}/'.format(
-                project_folder)
-        if not os.path.exists(makepath):
-            os.makedirs(makepath)
+    makepath = \
+        '/home/web/media/certificate_organisations/{}/'.format(
+            project_folder)
+    if not os.path.exists(makepath):
+        os.makedirs(makepath)
 
-        generate_certificate_pdf(
-            pathname=pathname,
-            certificate=certificate,
-            project=project,
-            certifying_organisation=certifying_organisation,
-            current_site=current_site
-        )
-
-        with open(pathname, 'r') as pdf:
-            response = HttpResponse(pdf.read(), content_type='application/pdf')
-            response['Content-Disposition'] = \
-                'filename={}.pdf'.format(certificate.certificateID)
-            return response
+    generate_certificate_pdf(
+        pathname=pathname,
+        certificate=certificate,
+        project=project,
+        certifying_organisation=certifying_organisation,
+        current_site=current_site
+    )
+    try:
+        return FileResponse(open(pathname, 'rb'),
+                            content_type='application/pdf')
+    except FileNotFoundError:  # noqa: F821
+        raise Http404('Not found')
 
 
 class OrganisationCertificateDetailView(DetailView):

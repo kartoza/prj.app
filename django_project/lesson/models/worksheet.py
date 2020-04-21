@@ -23,7 +23,7 @@ class Worksheet(TranslationMixin):
 
     tracker = FieldTracker()
 
-    section = models.ForeignKey(Section)
+    section = models.ForeignKey(Section, on_delete=models.CASCADE)
 
     sequence_number = models.IntegerField(
         verbose_name=_('Worksheet number'),
