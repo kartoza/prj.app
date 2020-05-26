@@ -154,7 +154,7 @@ urlpatterns = [
         name='stripe-intent'),
 
     # Project flatpage urls
-    url(r'^(?P<project_slug>[\w-]+)/flatpage/(?P<url>.*)$',
+    url(r'^(?P<project_slug>[\w-]+)/flatpage(?P<url>.*)$',
         project_flatpage,
         name='project_flatpage'),
 ]

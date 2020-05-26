@@ -198,7 +198,7 @@
             </a>
             <ul class="dropdown-menu">
                 {% for page in project_flatpages %}
-                    <li><a href='/{{ the_project.slug }}/flatpage{{ page.url }}'>{{ page.title }}</a></li>
+                    <li><a href='{% url "project_flatpage" project_slug=the_project.slug url=page.url %}'>{{ page.title }}</a></li>
                 {% endfor %}
             </ul>
         </li>
