@@ -255,7 +255,6 @@ def download_all_referenced_images(request, **kwargs):
                                 print(image)
                                 pass
                             for block in response.iter_content(1024):
-                                print(filename)
                                 if not block:
                                     break
                                 handle.write(block)
