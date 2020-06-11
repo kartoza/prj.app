@@ -243,8 +243,10 @@ def download_all_referenced_images(request, **kwargs):
                             while found:
                                 n += 1
                                 img_name = file_path_original.rsplit('.', 1)[0]
-                                extension = file_path_original.rsplit('.', 1)[-1]
-                                file_path = img_name + '-' + str(n) + '.' + extension
+                                extension = \
+                                    file_path_original.rsplit('.', 1)[-1]
+                                file_path = \
+                                    img_name + '-' + str(n) + '.' + extension
                                 found = os.path.exists(file_path)
                         with open(file_path, 'wb+') as handle:
                             response = requests.get(image, stream=True)
