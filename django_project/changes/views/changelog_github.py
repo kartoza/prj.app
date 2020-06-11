@@ -3,7 +3,6 @@ import os
 import re
 import requests
 import markdown
-import math
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
 from django.conf import settings
@@ -276,19 +275,3 @@ def download_all_referenced_images(request, **kwargs):
     del request.session['total_entries']
     del request.session['progress_entries']
     return JsonResponse({'status': 'success'})
-
-
-class FetchProgressDownloadImages(LoginRequiredMixin, APIView):
-    """
-    API to fetch progress on downloading the images.
-    """
-
-    def get(self, request):
-        total = request.session.get('total_entries', 0)
-        progress = request.session.get('progress_entries', 0)
-        percentage = (total/progress) * 100
-        return Response({
-            'total': total,
-            'progress': progress,
-            'percentage': math.ceil(percentage)
-        })

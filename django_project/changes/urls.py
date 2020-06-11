@@ -91,7 +91,6 @@ from .views import (
     FetchRepoLabels,
     FetchCategory,
     download_all_referenced_images,
-    FetchProgressDownloadImages,
 )
 from changes.views.sustaining_member import (
     SustainingMemberCreateView
@@ -127,9 +126,6 @@ urlpatterns = [
         name='category-update'),
 
     # Version management
-    url(regex='^(?P<project_slug>[\w-]+)/version/progress-download-images/$',
-        view=FetchProgressDownloadImages.as_view(),
-        name='progress-download-images'),
     url(regex='^(?P<project_pk>[\w-]+)/version/fetch-github-pr/$',
         view=FetchGithubPRs.as_view(),
         name='fetch-pr-github'),
