@@ -58,6 +58,15 @@
             </div>
             <div class="pull-right">
                 {% if user.is_authenticated %}
+                    <span class="loading-img" style="margin-right: 5px; font-size: 9pt; display: none
+">
+                        Downloading all referenced images is in progress, please do not close this window.
+                        <i style="font-size: 15pt; margin-left: 5px" class="fa fa-spinner fa-spin"></i></span>
+                    <button onclick="downloadAllReferencedImages()"
+                       class="btn btn-default tooltip-toggle btn-download-images"
+                       data-title="Download All Referenced Images for This Version">
+                        <i class="fa fa-download"></i>
+                    </button>
                     <button class="btn btn-default tooltip-toggle"
                             data-title="Import PR from Github into Entries"
                             data-toggle="modal" data-target="#GithubPRModal">
@@ -83,5 +92,20 @@
 {#    we disable disqus temporarily because of unwanted ads. #}
 {#    <h5 id="comments">Comments</h5>#}
 {#    {% disqus_show_comments %}#}
+    <script>
+        function downloadAllReferencedImages() {
+            $.ajax({
+                url: "{% url 'download-referenced-images' project_slug=version.project.slug slug=version.slug %}",
+                async: true,
+                beforeSend: function () {
+                    $('.loading-img').show();
+                    $('.btn-download-images').prop('disabled', true)
+                },
+                success: function (data) {
+                    location.reload()
+                }
+            })
+        }
+    </script>
 
 {% endblock %}

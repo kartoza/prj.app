@@ -89,7 +89,9 @@ from .views import (
     generate_sponsor_cloud,
     FetchGithubPRs,
     FetchRepoLabels,
-    FetchCategory
+    FetchCategory,
+    download_all_referenced_images,
+    FetchProgressDownloadImages,
 )
 from changes.views.sustaining_member import (
     SustainingMemberCreateView
@@ -125,6 +127,9 @@ urlpatterns = [
         name='category-update'),
 
     # Version management
+    url(regex='^(?P<project_slug>[\w-]+)/version/progress-download-images/$',
+        view=FetchProgressDownloadImages.as_view(),
+        name='progress-download-images'),
     url(regex='^(?P<project_pk>[\w-]+)/version/fetch-github-pr/$',
         view=FetchGithubPRs.as_view(),
         name='fetch-pr-github'),
@@ -137,6 +142,10 @@ urlpatterns = [
     url(regex='^(?P<project_slug>[\w-]+)/version/list/$',
         view=VersionListView.as_view(),
         name='version-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/'
+              'download-referenced-images/$',
+        view=download_all_referenced_images,
+        name='download-referenced-images'),
     url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/markdown/$',
         view=VersionMarkdownView.as_view(),
         name='version-markdown'),
