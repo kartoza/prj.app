@@ -89,7 +89,8 @@ from .views import (
     generate_sponsor_cloud,
     FetchGithubPRs,
     FetchRepoLabels,
-    FetchCategory
+    FetchCategory,
+    download_all_referenced_images,
 )
 from changes.views.sustaining_member import (
     SustainingMemberCreateView
@@ -137,6 +138,10 @@ urlpatterns = [
     url(regex='^(?P<project_slug>[\w-]+)/version/list/$',
         view=VersionListView.as_view(),
         name='version-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/'
+              'download-referenced-images/$',
+        view=download_all_referenced_images,
+        name='download-referenced-images'),
     url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/markdown/$',
         view=VersionMarkdownView.as_view(),
         name='version-markdown'),

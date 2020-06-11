@@ -1,5 +1,12 @@
 # coding=utf-8
+import os
+import re
 import requests
+import markdown
+from markdown.treeprocessors import Treeprocessor
+from markdown.extensions import Extension
+from django.conf import settings
+from django.http import JsonResponse
 from braces.views import LoginRequiredMixin
 from rest_framework import serializers
 from rest_framework.views import APIView, Response
@@ -179,3 +186,94 @@ class FetchCategory(LoginRequiredMixin, APIView):
             return Response(serializer.data)
         except:
             return Response([])
+
+
+class ImgExtractor(Treeprocessor):
+    def run(self, doc):
+        """Find all images and append to markdown.images."""
+        self.markdown.images = []
+        for image in doc.findall('.//img'):
+            self.markdown.images.append(image.get('src'))
+
+
+class ImgExtExtension(Extension):
+    def extendMarkdown(self, md, md_globals):
+        img_ext = ImgExtractor(md)
+        md.treeprocessors.add('imgext', img_ext, '>inline')
+
+
+def download_all_referenced_images(request, **kwargs):
+    """Function to download all referenced images from other site."""
+
+    project_slug = kwargs.get('project_slug', None)
+    version_slug = kwargs.get('slug', None)
+
+    try:
+        version = \
+            Version.objects.get(project__slug=project_slug, slug=version_slug)
+    except Version.DoesNotExist:
+        JsonResponse({
+            'status': 'failed',
+            'reason': 'Version does not exist'
+        })
+
+    try:
+        entries = Entry.objects.filter(version=version)
+        request.session['total_entries'] = entries.count()
+        request.session['progress_entries'] = 0
+        num_entry = 0
+        for entry in entries:
+            content = entry.description
+            md = markdown.Markdown(extensions=[ImgExtExtension()])
+            html = md.convert(content)
+            try:
+                images = md.images
+                if len(images) > 0:
+                    for image in images:
+                        filename = image.rsplit('/', 1)[-1]
+                        folder_path = os.path.join(
+                            settings.MEDIA_ROOT,
+                            'images/entries')
+                        file_path = os.path.join(
+                            folder_path, '{}'.format(filename))
+                        found = os.path.exists(file_path)
+                        if found:
+                            file_path_original = file_path
+                            n = 0
+                            while found:
+                                n += 1
+                                img_name = file_path_original.rsplit('.', 1)[0]
+                                extension = \
+                                    file_path_original.rsplit('.', 1)[-1]
+                                file_path = \
+                                    img_name + '-' + str(n) + '.' + extension
+                                found = os.path.exists(file_path)
+                        with open(file_path, 'wb+') as handle:
+                            response = requests.get(image, stream=True)
+                            if not response.ok:
+                                print('downloading file failed')
+                                print(image)
+                                pass
+                            for block in response.iter_content(1024):
+                                print(filename)
+                                if not block:
+                                    break
+                                handle.write(block)
+                            img_url = file_path.replace('/home/web', '')
+                            html = html.replace(image, img_url)
+                            html = re.sub(r"alt=\".*?\"", "", html)
+                entry.description = html
+                entry.save()
+                num_entry += 1
+                request.session['progress_entries'] = num_entry
+            except AttributeError:
+                pass
+    except Entry.DoesNotExist:
+        JsonResponse({
+            'status': 'failed',
+            'reason': 'Entry does not exist'
+        })
+
+    del request.session['total_entries']
+    del request.session['progress_entries']
+    return JsonResponse({'status': 'success'})
