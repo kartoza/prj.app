@@ -744,7 +744,7 @@ class VersionSponsorDownload(
             zip_file.getvalue(), content_type="application/x-zip-compressed")
         # ..and correct content-disposition
         response['Content-Disposition'] = (
-            'attachment; filename="{}-Sponsor-{}.zip"'.format(
+            'attachment; filename="{}-SustainingMember-{}.zip"'.format(
                 version_obj.project.name, version_obj.name)
         )
 
@@ -780,7 +780,7 @@ class VersionSponsorDownload(
                 )
             # write the actual html document
             zip_file.writestr(
-                '{}-Sponsor-{}.html'.format(
+                '{}-SustainingMember-{}.html'.format(
                     version_obj.project.name, version_obj.name),
                 document)
 
