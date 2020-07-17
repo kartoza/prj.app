@@ -26,7 +26,9 @@ class Section(TranslationMixin):
 
     tracker = FieldTracker()
 
-    project = models.ForeignKey('base.Project', verbose_name=_('Project name'))
+    project = models.ForeignKey('base.Project',
+                                on_delete=models.CASCADE,
+                                verbose_name=_('Project name'))
 
     sequence_number = models.IntegerField(
         verbose_name=_('Section number'),

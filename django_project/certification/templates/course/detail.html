@@ -71,24 +71,42 @@
     </div>
 
     <div class="row" style="margin-left: inherit; margin-top: 15px;">
-        {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all %}
             <div class="details col-lg-10" style="width: 60%">
-                <span class="grey-italic col-lg-3">Course name</span><span class="col-lg-9">{{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})<br/></span>
-                <span class="grey-italic col-lg-3">Course type</span><span class="col-lg-9">{{ course.course_type }}<br/></span>
-                <span class="grey-italic col-lg-3">Course language</span><span class="col-lg-9">{{ course.language }}<br/></span>
-                <span class="grey-italic col-lg-3">Trained competence(s)</span><span class="col-lg-9">{{ course.trained_competence }}<br/></span>
-                <span class="grey-italic col-lg-3">Course convener</span>
-                {% if course.course_convener.user.first_name %}
-                    <span class="col-lg-9">{{ course.course_convener.user.first_name }} {{ course.course_convener.user.last_name }}<br/></span>
-                    {% else %}
-                    <span class="col-lg-9">{{ course.course_convener }}<br/></span>
-                {% endif %}
+                <div class="col-lg-12">
+                    <span class="grey-italic col-lg-3">Course name</span><span class="col-lg-9">{{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})<br/></span>
+                </div>
+                <div class="col-lg-12">
+                    <span class="grey-italic col-lg-3">Course type</span><span class="col-lg-9">{{ course.course_type }}<br/></span>
+                </div>
+                <div class="col-lg-12">
+                    <span class="grey-italic col-lg-3">Course language</span><span class="col-lg-9">{{ course.language }}<br/></span>
+                </div>
+                <div class="col-lg-12">
+                    <span class="grey-italic col-lg-3">Trained competence(s)</span><span class="col-lg-9">{{ course.trained_competence }}<br/></span>
+                </div>
+                <div class="col-lg-12">
+                    <span class="grey-italic col-lg-3">Course convener</span>
+                    {% if course.course_convener.user.first_name %}
+                        <span class="col-lg-9">{{ course.course_convener.user.first_name }} {{ course.course_convener.user.last_name }}<br/></span>
+                        {% else %}
+                        <span class="col-lg-9">{{ course.course_convener }}<br/></span>
+                    {% endif %}
+                </div>
+                <div class="col-lg-12">
                     <span class="grey-italic col-lg-3">Training center</span><span class="col-lg-9">{{ course.training_center }}<br/></span>
+                </div>
+                <div class="col-lg-12">
                     <span class="grey-italic col-lg-3">Organisation</span><span class="col-lg-9">{{ course.certifying_organisation.name }}<br/></span>
+                </div>
+                <div class="col-lg-12">
                     <span class="grey-italic col-lg-3">Start date</span><span class="col-lg-9">{{ course.start_date }}<br/></span>
+                </div>
+                <div class="col-lg-12">
                     <span class="grey-italic col-lg-3">End date</span><span class="col-lg-9">{{ course.end_date }}<br/></span>
+                </div>
             </div>
 
+            {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner or user in course.certifying_organisation.project.certification_managers.all %}
             <div class="col-lg-2 pull-right" style="width: 20%;">
                 <h4 class="panel-heading" style="padding-left:10px; padding-right: 10px">
                     Available Credits
@@ -113,7 +131,7 @@
                         </h3>
                 {% endif %}
             </div>
-        {% endif %}
+            {% endif %}
     </div>
 
     <div class="container">
@@ -166,8 +184,8 @@
     {% endif %}
     </table>
 
-
-    <div style="margin: 0 25px">
+    {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner or user in course.certifying_organisation.project.certification_managers.all %}
+        <div style="margin: 0 25px">
     <table>
         <tr>
             <th style="width: 50%">Name</th>
@@ -215,11 +233,18 @@
                                 {% endif %}
                             {% endif %}
                         {% else %}
-                            <a class="btn btn-default btn-xs btn-issue tooltip-toggle"
-                                href='{% url "certificate-create" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
-                                data-title="Issue Certificate">
-                                <span class="glyphicon glyphicon-check"></span>
-                            </a>
+                            {% if course.certifying_organisation.organisation_credits >= course.certifying_organisation.project.certificate_credit %}
+                                <a class="btn btn-default btn-xs btn-issue tooltip-toggle"
+                                    href='{% url "certificate-create" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
+                                    data-title="Issue Certificate using credits">
+                                    <span class="glyphicon glyphicon-check"></span>
+                                </a>
+                            {% else %}
+                                <a class="btn btn-default btn-xs tooltip-toggle btn-top-up"
+                                   href='{% url "top-up" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug %}'
+                                    data-title="Top up credits to issue the certificate">
+                                    <i class="glyphicon glyphicon-shopping-cart"></i></a>
+                            {% endif %}
                         {% endif %}
                     <a class="btn btn-default btn-xs btn-delete tooltip-toggle"
                         href='{% url "courseattendee-delete" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.pk %}'
@@ -233,6 +258,9 @@
         {% endfor %}
     </table>
     </div>
+    {% else %}
+        <div><i class="fa fa-eye-slash"></i> Only authorized users can see list of course attendee.</div>
+    {% endif %}
 
     </div>
     </div>

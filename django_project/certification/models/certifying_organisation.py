@@ -5,7 +5,7 @@
 
 import os
 from django.conf.global_settings import MEDIA_ROOT
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import models
@@ -16,7 +16,9 @@ from unidecode import unidecode
 from django.contrib.auth.models import User
 from django_countries.fields import CountryField
 import logging
+from simple_history.models import HistoricalRecords
 from certification.utilities import check_slug
+from certification.models.status import Status
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +64,7 @@ class UnapprovedCertifyingOrganisationManager(models.Manager):
 
         return super(
             UnapprovedCertifyingOrganisationManager, self).get_queryset(
-        ).filter(approved=False)
+        ).filter(approved=False, rejected=False)
 
 
 def validate_email_address(value):
@@ -143,9 +145,31 @@ class CertifyingOrganisation(models.Model):
         default=True
     )
 
+    rejected = models.BooleanField(
+        help_text=_('Rejection from project admin'),
+        default=False
+    )
+
+    status = models.ForeignKey(
+        Status,
+        null=True,
+        blank=True, on_delete=models.SET_NULL
+    )
+
+    remarks = models.CharField(
+        help_text=_(
+            'Remarks regarding status of this organisation, '
+            'i.e. Rejected, because lacks of information'),
+        max_length=500,
+        null=True,
+        blank=True
+    )
+
+    history = HistoricalRecords()
+
     slug = models.SlugField()
     organisation_owners = models.ManyToManyField(User)
-    project = models.ForeignKey('base.Project')
+    project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
     objects = models.Manager()
     approved_objects = ApprovedCertifyingOrganisationManager()
     unapproved_objects = UnapprovedCertifyingOrganisationManager()
@@ -174,13 +198,16 @@ class CertifyingOrganisation(models.Model):
     def __unicode__(self):
         return '%s - %s' % (self.project.name, self.name)
 
+    def __str__(self):
+        return '%s - %s' % (self.project.name, self.name)
+
     def get_absolute_url(self):
         """Return URL to certifying organisation detail page.
 
         :return: URL
         :rtype: str
         """
-        return reverse('certifying-organisation-detail', kwargs={
+        return reverse('certifyingorganisation-detail', kwargs={
                 'slug': self.slug,
                 'project_slug': self.project.slug
         })

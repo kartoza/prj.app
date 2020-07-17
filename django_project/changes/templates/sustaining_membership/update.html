@@ -1,0 +1,235 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block title %}
+    Sustaining Member Period
+{% endblock title %}
+{% block extra_head %}
+    {{ Other }}
+    <script type="text/javascript"
+            src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
+    {{ floppyforms }}
+
+{% endblock %}
+
+{% block css_head %}
+    <link rel="stylesheet" href="{% static 'css/datepicker.css' %}">
+    <style>
+        .level-title {
+            padding-top: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .recurring-checkbox {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .panel-active, .panel-active:hover {
+            background-color: rgba(54, 188, 152, 0.15);
+            border: 1px solid rgb(54, 188, 152);;
+        }
+
+        .membership-options-info {
+            display: block;
+            background-color: #f7f0da;
+            padding: 20px 25px;
+            border-radius: 3px;
+            margin-bottom: 20px;
+        }
+
+    </style>
+{% endblock css_head %}
+
+{% block js_head %}
+    <script src="{% static 'js/datepicker.js' %}"></script>
+    <script src="{% static 'js/i18n/datepicker.en.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <script>
+        $(function () {
+        });
+    </script>
+
+    <section id="forms">
+        <div class='container'>
+            <form method="post" id="period-form">
+            {% csrf_token %}
+            <h2>Update Sustaining Member Period for {{ member }}</h2>
+            <hr/>
+            <input type="hidden" name="recurring">
+            <div class="container row">
+                <div class="col-lg-12 membership-options-info">
+                    You can choose a fixed period (e.g. 3 years) by
+                    entering a number of years on the left, or tick the
+                    checkbox on the right to enable perpetual sustaining
+                    membership (in which case you will be billed on an
+                    ongoing basis each year).
+                    You can change your preferences specified below at any
+                    time by revisiting this page.
+
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-6">
+                            <div class="form-inline"
+                                 style="font-size: 18px;"
+                                 id="membership-period">
+                                Set membership for <input type="number"
+                                                          class="form-control"
+                                                          id="period-end"
+                                                          name="period-end"
+                                                          style="width: 80px;"
+                                                          min="{{ min_period }}" max="100"
+                                                          step="1"
+                                                          value="{{ period_year }}">
+                                year
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group recurring-checkbox pull-right">
+                                <label class="checkbox-inline"><input
+                                        type="checkbox" id="recurring"
+                                        style="margin-top: 6px;"
+                                        {% if recurring %}checked{% endif %}>Charge
+                                    me yearly</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr style="border-color: #cac3b0"/>
+                    <div class="row">
+                        <div class="col-lg-12 alert-data text-muted">
+                            Your membership will runs from
+                            <strong>{{ date_start }}</strong> to
+                            <strong>{{ date_end }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default panel-level panel-active" data-id="{{ level.id }}">
+                <div class="panel-body">
+                    <div class="col-lg-1 col-xs-4">
+                        <img src="{{ level.logo.url }}" width="100%">
+                    </div>
+                    <div class="col-lg-11 col-xs-8">
+                        <div class="level-title">
+                            {{ level.name }}
+                        </div>
+                        <div class="level-amount">
+                            {{ level.value }} {{ level.currency }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="vertical-space"></div>
+             {{ form|crispy }}
+            </form>
+        </div>
+
+    </section>
+
+    <div class="container">
+        <button disabled name="submit" value="Pay"
+                class="btn btn-success pull-right" id="submit-save">Update Subscription</button>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel">Are you sure?</h3>
+                    <button type="button" class="close close-modal"
+                            data-dismiss="modal" aria-label="Close" disabled>
+                    <span aria-hidden="true"
+                          style="position: absolute; margin-top: -25px; margin-left: -10px;">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="font-size: 16px; padding-top: 40px; padding-bottom: 40px;">
+                    Do you really want to update your subscription?
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" type="button" class="btn btn-default close-modal"
+                            style="padding-left: 40px; padding-right: 40px;">Cancel
+                    </button>
+                    <button id="submit-subscription" type="button" class="btn btn-success"
+                            style="padding-left: 40px; padding-right: 40px;">Yes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        const $panelLevel = $('.panel-level');
+        const $paymentButton = $('#submit-save');
+        const $form = $('#period-form');
+        const $confirmationModal = $('#confirmationModal');
+        const $alert = $('.alert-data');
+        const $periodEnd = $('#period-end');
+        const dateStart = moment('{{ date_start }}', 'MMMM DD, YYYY');
+        const dateEnd = moment('{{ date_end }}', 'MMMM DD, YYYY');
+        let recurring = {{ recurring|yesno:"true,false" }};
+        const initialRecurring = recurring;
+        const initialPeriodYear = '{{ period_year }}';
+        let selectedLevel = null;
+
+        $(function(){
+            $('#div_id_sponsorship_level').hide();
+        });
+
+        $('#recurring').change(function() {
+            const _recurring = $(this).prop('checked');
+            let _dateStart = dateStart.clone();
+            if (_recurring !== initialRecurring) {
+                $paymentButton.attr('disabled', false);
+            } else {
+                $paymentButton.attr('disabled', true);
+            }
+            recurring = _recurring;
+            if (!_recurring) {
+                $periodEnd.attr('disabled', false);
+            } else {
+                $periodEnd.attr('disabled', true);
+            }
+            if (_recurring) {
+                $alert.html(`Your membership will runs <strong>Yearly</strong> from <strong>${ dateStart.format('MMMM DD, YYYY') }</strong> and will be automatically renewed in <strong>${ _dateStart.add('years', 1).format('MMMM DD, YYYY') }</strong>`);
+            } else {
+                $alert.html(`Your membership will runs from <strong>${ dateStart.format('MMMM DD, YYYY') }</strong> to <strong>${ _dateStart.add('years', $periodEnd.val()).format('MMMM DD, YYYY') }</strong>`);
+            }
+        });
+
+        $('#recurring').change();
+
+        $periodEnd.change(function(){
+            let _dateStart = dateStart.clone();
+            if (initialPeriodYear !== $periodEnd.val()) {
+                $paymentButton.attr('disabled', false);
+            } else {
+                $paymentButton.attr('disabled', true);
+            }
+            if (!recurring) {
+                $alert.html(`Your membership will runs from <strong>${ dateStart.format('MMMM DD, YYYY') }</strong> to <strong>${ _dateStart.add('years', $periodEnd.val()).format('MMMM DD, YYYY') }</strong>`);
+            }
+        });
+
+        $('#submit-subscription').click(function () {
+            $(this).parent().find('.btn').attr('disabled', true);
+            $(this).html('Updating...');
+            $('.close-modal').hide();
+            $form.find('input[name="recurring"]').val($('#recurring').prop('checked'));
+            $form.submit();
+        });
+
+        $paymentButton.click(function () {
+            $confirmationModal.modal('show');
+        });
+
+    </script>
+{% endblock %}

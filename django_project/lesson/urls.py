@@ -1,8 +1,8 @@
 # coding=utf-8
 """Urls for lesson application."""
 
-from django.conf.urls import patterns, url
-
+from django.conf.urls import url
+from django.views.static import serve
 from django.conf import settings
 
 from lesson.views.answer import (
@@ -40,6 +40,8 @@ from lesson.views.worksheet import (
     WorksheetOrderView,
     WorksheetOrderSubmitView,
     WorksheetModuleQuestionAnswers,
+    WorksheetPDFZipView,
+    download_multiple_worksheet
 )
 from lesson.views.specification import (
     SpecificationCreateView,
@@ -49,8 +51,7 @@ from lesson.views.specification import (
     SpecificationDeleteView
 )
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(regex='^(?P<project_slug>[\w-]+)/section/about/$',
         view=AboutLessonsApp.as_view(),
         name='about-lesson-app'),
@@ -73,7 +74,12 @@ urlpatterns = patterns(
     url(regex='^(?P<project_slug>[\w-]+)/section/(?P<slug>[\w-]+)/delete/$',
         view=SectionDeleteView.as_view(),
         name='section-delete'),
+
     # Worksheet
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              'download-multiple-worksheet/$',
+        view=download_multiple_worksheet,
+        name='download-multiple-worksheets'),
     url(regex='^(?P<project_slug>[\w-]+)/section/'
               '(?P<section_slug>[\w-]+)/worksheet/create/$',
         view=WorksheetCreateView.as_view(),
@@ -96,6 +102,10 @@ urlpatterns = patterns(
         view=WorksheetModuleQuestionAnswers.as_view(),
         name='worksheet-module-answers'),
 
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/zip/(?P<pk>[\w-]+)/$',
+        view=WorksheetPDFZipView.as_view(),
+        name='worksheet-zip'),
     url(regex='^(?P<project_slug>[\w-]+)/section/'
               '(?P<section_slug>[\w-]+)/print/(?P<pk>[\w-]+)/$',
         view=WorksheetPrintView.as_view(),
@@ -201,12 +211,11 @@ urlpatterns = patterns(
               'delete/(?P<pk>[\w-]+)/$',
         view=AnswerDeleteView.as_view(),
         name='answer-delete'),
-)
+]
 
 
 if settings.DEBUG:
     # static files (images, css, javascript, etc.)
-    urlpatterns += patterns(
-        '',
-        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT}))
+    urlpatterns += [
+        url(r'^media/(?P<path>.*)$', serve, {
+            'document_root': settings.MEDIA_ROOT})]

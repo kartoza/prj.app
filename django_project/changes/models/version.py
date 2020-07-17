@@ -1,6 +1,6 @@
 # coding=utf-8
-from django.core.urlresolvers import reverse
-# from django.utils.text import slugify
+import re
+from django.urls import reverse
 from common.utilities import version_slugify
 import os
 import logging
@@ -11,6 +11,7 @@ from django.conf.global_settings import MEDIA_ROOT
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
+from ..utils.custom_slugfield import CustomSlugField
 
 logger = logging.getLogger(__name__)
 
@@ -55,9 +56,9 @@ class Version(models.Model):
         null=True,
         blank=True)
 
-    author = models.ForeignKey(User)
-    slug = models.SlugField()
-    project = models.ForeignKey('base.Project')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    slug = CustomSlugField()
+    project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass
@@ -76,8 +77,20 @@ class Version(models.Model):
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
             self.slug = version_slugify(new_list)[:50]
-        self.padded_version = self.pad_name(self.name)
+        self.padded_version = self.pad_name(str(self.get_numerical_name()))
         super(Version, self).save(*args, **kwargs)
+
+    def get_numerical_name(self):
+        name = self.name
+        non_decimal = re.compile(r'[^\d.]+')
+        numeric_name = non_decimal.sub('', name)
+        number = numeric_name.split('.')
+
+        # Fix the numbering of the version name to have format: 0.0.0.
+        while len(number) < 3:
+            numeric_name += '.0'
+            number = numeric_name.split('.')
+        return numeric_name
 
     def pad_name(self, version):
         """Create a 0 padded version of the version name.

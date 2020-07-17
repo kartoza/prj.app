@@ -1,0 +1,70 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+{% load custom_markup %}
+{% block title %}Sustaining Members - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+    <style>
+
+        .panel-body {
+            -webkit-box-shadow: rgba(0, 0, 0, 0.8) 0px 0 10px;
+            -moz-box-shadow: rgba(0, 0, 0, 0.8) 0 0 10px;
+            box-shadow: rgba(197, 197, 197, 0.8) 0 0 10px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block page_title %}
+    <h2>Sustaining Members (all)</h2>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="page-header">
+        <h2 class="text-muted">
+            Rejected Sustaining Members
+            {% if user.is_authenticated %}
+                <div class="pull-right btn-group">
+                {% if not unapproved %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "pending-sponsor-list" project_slug %}'
+                       data-title="View Pending Sponsors">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </a>
+                {% endif %}
+                </div>
+            {% endif %}
+        </h2>
+    </div>
+    {% ifequal num_sponsors 0 %}
+        <h3>No rejected sustaining members.</h3>
+    {% endifequal %}
+
+    {% for sponsor in sustaining_members %}
+        <div class="row" style="margin-top:10px;" data-id="{{ sponsor.id }}" data-project-slug="{{ sponsor.project.slug }}">
+            <div class="col-lg-1">
+                {% if sponsor.logo %}
+                    <a href="{{ sponsor.logo.url }}" class="logo">
+                        <img class="img-responsive img-rounded pull-right"
+                             src="{% thumbnail sponsor.logo 50x50 crop %}"/>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="col-lg-7">
+                <div class="texts">
+                    <h5 style="margin-top: 0;">{{ sponsor.project.name }}</h5>
+                    <h3 style="margin-top: 0; margin-bottom: 0">{{ sponsor.name }}</h3>
+                </div>
+            </div>
+            <div class="col-lg-4">
+               <div class="alert alert-danger" role="alert" style="margin-bottom: 0">
+                    {{ sponsor.remarks }}
+                </div>
+            </div>
+        </div>
+        {% if not forloop.last %} <hr/> {% endif %}
+    {% endfor %}
+    <hr/>
+    {% include "_pagination.html" %}
+
+{% endblock %}

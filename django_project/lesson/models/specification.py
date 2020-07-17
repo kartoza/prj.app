@@ -25,7 +25,7 @@ class Specification(TranslationMixin):
 
     tracker = FieldTracker()
 
-    worksheet = models.ForeignKey(Worksheet)
+    worksheet = models.ForeignKey(Worksheet, on_delete=models.CASCADE)
 
     sequence_number = models.IntegerField(
         help_text=_(

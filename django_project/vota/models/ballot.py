@@ -8,7 +8,7 @@ If no quorum is reached, no_quorum should be True
 
 A ballot has one Committee.
 """
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.text import slugify
 import logging
 from core.settings.contrib import STOP_WORDS
@@ -19,6 +19,7 @@ from django.utils import timezone
 from vota.models.vote import Vote
 import datetime
 from django.contrib.auth.models import User
+from certification.utilities import check_slug
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +51,7 @@ class OpenBallotManager(models.Manager):
         """Query set generator."""
         return super(
             OpenBallotManager, self).get_query_set().filter(
-                open_from__lt=timezone.now()).filter(closes__gt=timezone.now())
+            closes__gt=timezone.now)
 
 
 class ClosedBallotManager(models.Manager):
@@ -126,9 +127,9 @@ class Ballot(models.Model):
         default=False
     )
 
-    proposer = models.ForeignKey(User)
+    proposer = models.ForeignKey(User, on_delete=models.CASCADE)
     # noinspection PyUnresolvedReferences
-    committee = models.ForeignKey('Committee')
+    committee = models.ForeignKey('Committee', on_delete=models.CASCADE)
     slug = models.SlugField()
     objects = models.Manager()
     approved_objects = ApprovedCategoryManager()
@@ -150,7 +151,9 @@ class Ballot(models.Model):
             words = self.name.split()
             filtered_words = [t for t in words if t.lower() not in STOP_WORDS]
             new_list = ' '.join(filtered_words)
-            self.slug = slugify(new_list)[:50]
+            new_slug = slugify(new_list)[:50]
+            new_slug = check_slug(Ballot.objects.all(), new_slug)
+            self.slug = slugify(new_slug)[:50]
         super(Ballot, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -170,15 +173,24 @@ class Ballot(models.Model):
         return voted
 
     def get_positive_vote_count(self):
-        votes = Vote.objects.filter(ballot=self).filter(choice='y').count()
+        votes = (
+            Vote.objects.filter(
+                ballot=self, user__in=self.committee.users.all()
+            ).filter(choice='y').count())
         return votes
 
     def get_negative_vote_count(self):
-        votes = Vote.objects.filter(ballot=self).filter(choice='n').count()
+        votes = (
+            Vote.objects.filter(
+                ballot=self, user__in=self.committee.users.all()
+            ).filter(choice='n').count())
         return votes
 
     def get_abstainer_count(self):
-        votes = Vote.objects.filter(ballot=self).filter(choice='-').count()
+        votes = (
+            Vote.objects.filter(
+                ballot=self, user__in=self.committee.users.all()
+            ).filter(choice='-').count())
         return votes
 
     def get_current_tally(self):
@@ -190,14 +202,19 @@ class Ballot(models.Model):
         return tally
 
     def get_total_vote_count(self):
-        vote_count = Vote.objects.filter(ballot=self).count()
+        vote_count = (
+            Vote.objects.filter(
+                ballot=self, user__in=self.committee.users.all()).count())
         return vote_count
 
     def has_quorum(self):
         vote_count = self.get_total_vote_count()
         committee_user_count = self.committee.users.all().count()
         if committee_user_count != 0:
-            quorum_percent = self.committee.quorum_setting
+            try:
+                quorum_percent = float(self.committee.quorum_setting)
+            except ValueError:
+                quorum_percent = 0.0
             percentage = 100 * float(vote_count) / float(committee_user_count)
             if percentage > quorum_percent:
                 return True

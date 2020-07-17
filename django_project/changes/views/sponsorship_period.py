@@ -5,7 +5,7 @@ import logging
 from base.models import Project
 
 from django.db.models import Q
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.views.generic import (
@@ -314,7 +314,7 @@ class SponsorshipPeriodDeleteView(
         :rtype: QuerySet
         :raises: Http404
         """
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = SponsorshipPeriod.objects.filter(project=self.project)
         return qs
@@ -466,10 +466,10 @@ class SponsorshipPeriodUpdateView(
             return qs
         else:
             return qs.filter(
-                Q(project=self.project) &
-                (Q(author=self.request.user) |
-                 Q(project__owner=self.request.user) |
-                 Q(project__sponsorship_managers=self.request.user)))
+                Q(project=self.project) & (
+                    Q(author=self.request.user) | (
+                        Q(project__owner=self.request.user)) | (
+                        Q(project__sponsorship_managers=self.request.user))))
 
     def get_success_url(self):
         """Define the redirect URL

@@ -1,7 +1,8 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
 {% load staticfiles %}
-{% load disqus_tags %}
+{#    we disable disqus temporarily because of unwanted ads. #}
+{#{% load disqus_tags %}#}
 
 {% block title %}Entries - {{ block.super }}{% endblock %}
 
@@ -23,7 +24,7 @@
             <div class="btn-group btn-group pull-left">
                 {% if user_can_edit %}
                     <a class="btn btn-default btn-mini tooltip-toggle"
-                       data-title="Download sponsor list as html"
+                       data-title="Download sustaining member list as html"
                        href='{% url 'version-sponsor-download' project_slug=version.project.slug slug=version.slug %}'>
                         <span class="glyphicon glyphicon-download"></span>
                         <span style="font-size: 7pt;">H T M L</span>
@@ -57,6 +58,20 @@
             </div>
             <div class="pull-right">
                 {% if user.is_authenticated %}
+                    <span class="loading-img" style="margin-right: 5px; font-size: 9pt; display: none
+">
+                        Downloading all referenced images is in progress, please do not close this window.
+                        <i style="font-size: 15pt; margin-left: 5px" class="fa fa-spinner fa-spin"></i></span>
+                    <button onclick="downloadAllReferencedImages()"
+                       class="btn btn-default tooltip-toggle btn-download-images"
+                       data-title="Download All Referenced Images for This Version">
+                        <i class="fa fa-download"></i>
+                    </button>
+                    <button class="btn btn-default tooltip-toggle"
+                            data-title="Import PR from Github into Entries"
+                            data-toggle="modal" data-target="#GithubPRModal">
+                        <i class="fa fa-github"></i>
+                    </button>
                     <a href="{% url 'entry-create' project_slug=version.project.slug version_slug=version.slug %}"
                        class="btn btn-default tooltip-toggle"
                        data-title="Add New Entry">
@@ -73,7 +88,24 @@
     </div>
 
     {% include "version/detail-content.html" %}
-    <h5 id="comments">Comments</h5>
-    {% disqus_show_comments %}
+    {% include "version/includes/github-form-modal.html" %}
+{#    we disable disqus temporarily because of unwanted ads. #}
+{#    <h5 id="comments">Comments</h5>#}
+{#    {% disqus_show_comments %}#}
+    <script>
+        function downloadAllReferencedImages() {
+            $.ajax({
+                url: "{% url 'download-referenced-images' project_slug=version.project.slug slug=version.slug %}",
+                async: true,
+                beforeSend: function () {
+                    $('.loading-img').show();
+                    $('.btn-download-images').prop('disabled', true)
+                },
+                success: function (data) {
+                    location.reload()
+                }
+            })
+        }
+    </script>
 
 {% endblock %}

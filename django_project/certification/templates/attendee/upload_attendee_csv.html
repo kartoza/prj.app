@@ -34,7 +34,8 @@
                     <blockquote>
                             <p>Please note that you need to upload a CSV (with a .csv extension) file
                                 with the following fields only and the fields needs to be seperated by a comma.
-                                The header row is needed.
+                                The header row is needed.<br/>
+                                Please make sure the fields order are correct as shown below:
                             </p>
                     </blockquote>
                   <div class="row">
@@ -49,24 +50,19 @@
                               </thead>
                               <tbody>
                                 <tr>
-                                  <td>first name<span id="comma">,</span></td>
-                            <td>surname<span id="comma">,</span></td>
+                                  <td>first name</td>
+                                  <td>surname</td>
                                   <td>attendee@bar.com</td>
                                 </tr>
                               <tr>
-                                  <td>foo<span id="comma">,</span></td>
-                            <td>last name<span id="comma">,</span></td>
+                                  <td>foo</td>
+                                  <td>last name</td>
                                   <td>attendee2@bar.com</td>
                                 </tr>
                               </tbody>
                         </table>
                       </div>
-                        <style>
-                            #comma {
-                                padding-left: 50pt;
-                            }
-
-                        </style>
+                      <div>You may also use this template: <a href="{% static 'docs/example.csv' %}" download>example.csv</a></div>
                   </div>
                 </div>
             </div>

@@ -2,7 +2,7 @@
 """Views for committees."""
 # noinspection PyUnresolvedReferences
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import Http404
 import logging
 from django.views.generic import (
@@ -137,7 +137,7 @@ class CommitteeListView(CommitteeMixin, ListView):
         project_slug = self.kwargs.get('project_slug')
         try:
             self.project = Project.objects.get(slug=project_slug)
-        except:
+        except Project.DoesNotExist:
             raise Http404('Project could not be found')
         return super(CommitteeListView, self).get(
             request, *args, **kwargs

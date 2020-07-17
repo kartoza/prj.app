@@ -1,0 +1,16 @@
+{% autoescape off %}
+{% load i18n %}
+{% if request_user == recipient %}
+Thank you for your application to become a sustaining member of {{ sustaining_member.project.name }}.
+Your application will be reviewed by our admin team who will respond as soon as they can.
+If you have any queries regarding your application process please contact {{ sustaining_member_manager.email }}.
+You will receive an automated email once your application has been reviewed.
+If your membership is approved you can go back to the sustaining member web page to manage your subscription.
+
+Thank you for supporting our project!
+
+{% else %}
+{{ request_user }} has created a Sustaining Member {{ sustaining_member.name }}.
+Go to this link to approve/reject : {{ default_http_protocol }}://{{ current_site }}/en/{{ sustaining_member.project.slug }}/pending-members/list/
+{% endif %}
+{% endautoescape %}

@@ -77,11 +77,11 @@
             {% endif %}
         </div>
         <div class="col-md-4">
-            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='sponsors/list/';">
-                <h3>Sponsors</h3>
+            <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='members/list/';">
+                <h3>Sustaining Members</h3>
             {% if sponsors %}
                 <h6 class="text-muted">
-                    View Our Project Sponsors
+                    View Our Project Sustaining Members
                 </h6>
                 <div class="content-list">
                 {% for sponsor in sponsors %}
@@ -99,7 +99,7 @@
                 </div>
             {% else %}
                 {% if user.is_staff or user == project.owner %}
-                    <h6>No sponsors are defined, but you can
+                    <h6>No sustaining members are defined, but you can
                     <span>
                         <a
                           class="btn btn-default btn-mini" id="action_text"
@@ -226,6 +226,7 @@
                 {% endif %}
             </div>
         </div>
+
     </div>
     <style>
     #action_text {

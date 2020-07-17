@@ -1,0 +1,29 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+
+{% block extra_js %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="container" style="text-align: center">
+        <h1>Validate Certificate for Certifying Organisation</h1>
+        <h4>Input your certificate ID here:</h4>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $("#submit-button").on("click", function() {
+                var query = $("#InputID").val();
+                location.href = '/en/' + '{{ project_slug }}' + '/organisationcertificate/' + query + '/';
+            });
+        });
+    </script>
+
+    <div class="container" style="text-align: center">
+        <input style="text-align:center; margin-top: 20px;" type="text" id="InputID" value="" autofocus/>
+        <button style="text-align: center" class="go" id="submit-button"><i style="font-size: 8pt" class="glyphicon glyphicon-search"></i> Search</button>
+    </div>
+
+{% endblock %}

@@ -1,37 +1,44 @@
 psycopg2-binary
-Django>=1.8,<1.9
-django-countries==3.4.1
-django-crispy-forms==1.4.0
-django-braces==1.9.0
+Django==2.2
+django-countries==5.5
+django-crispy-forms==1.8.1
+django-braces==1.13.0
 django-model-utils==1.4.0
-django-pipeline==1.3.11
+django-pipeline==1.6.14
 django-pure-pagination
-django-reversion==1.9.3
-markdown==2.3.1
+django-reversion==3.0.5
+markdown==3.1.1
 
 easy-thumbnails
 django-widget-tweaks==1.3
 raven==6.5.0
-requests==1.2.3
-django-hashedfilenamestorage==1.0
+requests==2.20.1
+django-hashedfilenamestorage==2.3
 # pypandoc is an interface for pandoc converter
-pypandoc==0.6.0
+pypandoc==1.4
 beautifulsoup4==4.6.0
 # disqus
 django-disqus==0.5
 # custom slugify
-awesome-slugify==1.4
+awesome-slugify==1.6.5
 #translation management tool
-django-rosetta==0.7.0
+django-rosetta==0.9.3
 # youtube embed
 django-embed-video==1.0.0
-django-grappelli==2.7.3
+django-grappelli==2.13.2
 pytz
-django-allauth==0.25.2
+django-allauth==0.40.0
 # support special characters
 Unidecode==0.4.20
-reportlab==3.4.0
+Pillow==5.3.0
+reportlab==3.5.34
 xhtml2pdf==0.2b1
-django-modeltranslation
+django-modeltranslation==0.14.0
 django-colorfield
-WeasyPrint
+WeasyPrint==0.42.3
+djangorestframework==3.10.3
+django-simple-history==2.8.0
+dj-stripe==2.1.1
+django-preferences==1.0.0
+pinax-notifications==5.0.3
+pinax-templates==2.0.2

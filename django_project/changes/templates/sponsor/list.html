@@ -2,13 +2,13 @@
 {% load thumbnail %}
 {% load custom_markup %}
 {% load staticfiles %}
-{% block title %}Sponsors - {{ block.super }}{% endblock %}
+{% block title %}Sustaining Members - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
 
 {% block page_title %}
-    <h1 xmlns="http://www.w3.org/1999/html">Sponsors (all)</h1>
+    <h1 xmlns="http://www.w3.org/1999/html">Sustaining Members (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
@@ -25,8 +25,22 @@
     </style>
     <div class="page-header">
         <h1 class="text-muted">
-            {% if unapproved %}Unapproved {% endif %}Sponsors
+            {% if unapproved %}Unapproved {% endif %}Sustaining Members
                 <div class="pull-right btn-group">
+                {% if not is_sustaining_member %}
+                <a class="btn btn-default btn-mini tooltip-toggle icon"
+                       href='{% url "sustaining-member-create" project_slug %}'
+                       data-title="Sign Up!">
+                Sign Up
+                </a>
+                {% else %}
+                <a class="btn btn-default btn-mini tooltip-toggle icon"
+                       href='{% url "sustaining-membership" project_slug %}'
+                       data-title="Your sustaining membership">
+                Membership
+                </a>
+                {% endif %}
+
                 {% if user.is_authenticated %}
                     {% if user.is_staff or user == the_project.owner or user in the_project.sponsorship_managers.all %}
                         <a class="btn btn-default btn-mini tooltip-toggle icon"
@@ -36,45 +50,45 @@
                         </a>
                         <a class="btn btn-default btn-mini tooltip-toggle icon"
                            href='{% url "sponsor-create" project_slug %}'
-                           data-title="Create New Sponsor">
+                           data-title="Create New Sustaining Member">
                             {% show_button_icon "add" %}
                         </a>
                     {% endif %}
                     {% if not unapproved %}
                         <a class="btn btn-default btn-mini tooltip-toggle icon"
                            href='{% url "pending-sponsor-list" project_slug %}'
-                           data-title="View Pending sponsorship period">
+                           data-title="View Pending Sustaining Membership period">
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
                     {% endif %}
                   <a class="btn btn-default btn-mini tooltip-toggle icon"
                        href='{% url "sponsor-cloud" project_slug %}'
-                       data-title="Generate Current Sponsor Cloud">
+                       data-title="Generate Current Sustaining Member Cloud">
                         <i class="glyphicon glyphicon-cloud"></i>
                     </a>
                 {% endif %}
                     <a class="btn btn-default btn-mini tooltip-toggle icon"
                        href='{% url "sponsor-programme" project_slug %}'
-                       data-title="View Sponsorship Programme">
+                       data-title="View Sustaining Membership Programme">
                         <i class="glyphicon glyphicon-info-sign"></i></a>
                     <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
                        href='{% url "sponsor-rss-feed" project_slug %}'
-                       data-title="RSS Feed for Sponsors">
+                       data-title="RSS Feed for Sustaining Members">
                         <i class="fa fa-rss-square"></i>
                     </a>
                     <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
                        href='{% url "sponsor-atom-feed" project_slug %}'
-                       data-title="Atom Feed for Sponsors">
+                       data-title="Atom Feed for Sustaining Members">
                         <i class="fa fa-rss"></i>
                     </a>
                     <a class="btn btn-default btn-mini tooltip-toggle json-feed"
                        href='{% url "sponsor-json-feed" project_slug %}'
-                       data-title="JSON Feed for Sponsors">
+                       data-title="JSON Feed for Sustaining Members">
                         <i class="fa fa-rss-square"></i>
                     </a>
                     <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
                        href='{% url "past-sponsor-rss-feed" project_slug %}'
-                       data-title="RSS Feed for Past Sponsors">
+                       data-title="RSS Feed for Past Sustaining Members">
                         <i class="fa fa-rss-square" style="font-weight: bold"></i>
                     </a>
                 </div>
@@ -82,13 +96,13 @@
     </div>
     {% ifequal num_sponsors 0 %}
         {% if unapproved %}
-            <h3>All sponsors are approved.</h3>
+            <h3>All sustaining members are approved.</h3>
         {% else %}
-            <h3>No sponsors are defined.</h3>
+            <h3>No sustaining members are defined.</h3>
         {% endif %}
     {% endifequal %}
 
-    {% if sponsors %}<h2 class="text-muted">List of Current Sponsors</h2> {% endif %}
+    {% if sponsors %}<h2 class="text-muted">List of Current Sustaining Members</h2> {% endif %}
 
 
     {% for sponsor in sponsors %}
@@ -98,7 +112,7 @@
                             src="{% thumbnail sponsor.sponsorship_level.logo 50x50 %}"/> {{ sponsor.sponsorship_level }}
                     </h3>
             {% endifchanged %}
-             <div class="row" style="margin-top:10px;">
+             <div class="row">
                     <div class="col-lg-1">
                         {% if sponsor.sponsor.logo %}
                             {% if sponsor.sponsor.sponsor_url %}
@@ -116,17 +130,23 @@
 
                     </div>
                     <div class="col-lg-9">
-                        <h3>{{ sponsor.sponsor }}</h3>
+                        <h3 style="margin-top: 0 !important;">{{ sponsor.sponsor }}</h3>
 
                         <h5>{{ sponsor.start_date }} - {{ sponsor.end_date }}</h5>
 
                         <h5>{{ sponsor.sponsorship_level }}</h5>
                         {% ifnotequal sponsor.amount_sponsored None %}
-                        <h5>Amount sponsored : {{ sponsor.amount_sponsored }} {{ sponsor.currency }}</h5>
+                        <h5>Amount contributed : {{ sponsor.amount_sponsored }} {{ sponsor.currency }}</h5>
                         {% endifnotequal %}
                     </div>
                     <div class="col-lg-2">
                         <div class="btn-group pull-right">
+                            {% if user.is_staff or user == the_project.owner or user in the_project.sponsorship_managers.all or user == sponsor.sponsor.author %}
+                                <a class="btn btn-default btn-mini"
+                                   href='{% url "sponsor-update" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </a>
+                            {% endif %}
                             <a class="btn btn-default btn-mini"
                                href='{% url "sponsor-detail" project_slug=sponsor.project.slug slug=sponsor.slug %}'>
                                 <span class="glyphicon glyphicon-eye-open"></span>
@@ -134,14 +154,13 @@
                         </div>
                     </div>
                 </div>
+            <hr/>
         {% endif %}
     {% endfor %}
 
 
-
-
     {% if sponsors %}
-        <hr/><h2 class="text-muted">List of Past Sponsors</h2> {% endif %}
+        <hr/><h2 class="text-muted">List of Past Sustaining Members</h2> {% endif %}
 
 
     {% for sponsor in sponsors %}
@@ -151,7 +170,7 @@
                             src="{% thumbnail sponsor.sponsorship_level.logo 50x50 %}"/> {{ sponsor.sponsorship_level }}
                     </h3>
             {% endifchanged %}
-            <div class="row" style="margin-top:10px;">
+            <div class="row">
                     <div class="col-lg-1">
                         {% if sponsor.sponsor.logo %}
                             <a href="{{ sponsor.sponsor.logo.url }}">

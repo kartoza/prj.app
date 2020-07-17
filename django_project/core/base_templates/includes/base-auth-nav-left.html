@@ -69,6 +69,20 @@
             <a href="{% url 'project-create' %}">Create Project</a>
         </li>
     </ul>
+    {% if flatpages %}
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Info Pages <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% for page in flatpages %}
+                    <li><a href='/flatpage{{ page.url }}'>{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+    {% endif %}
 {% else %}
     <style>
         .icon-thumbnail {
@@ -97,13 +111,18 @@
         <li>
             {% if the_committee and the_project %}
 
-                <a href="{% url 'committee-list' the_project.slug %}" class="dropdown-toggle" data-toggle="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown">
                     Teams <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
                     <li>
+                        <a href="{% url 'committee-list' the_project.slug %}">
+                            Team List
+                        </a>
+                    </li>
+                    <li>
                         <a href="{% url 'ballot-list' the_project.slug the_committee.slug %}">
-                            Committee Ballots
+                            Team Ballots
                         </a>
                     </li>
                     <li>
@@ -136,15 +155,23 @@
     <ul class="nav navbar-nav">
         <li>
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                Sponsors <b class="caret"></b>
+                Sustaining Members <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-                <li><a href="{% url 'sponsor-list' the_project.slug %}">Sponsors</a></li>
+                <li><a href="{% url 'sponsor-programme' the_project.slug %}">Learn about Sustaining Member Programme</a></li>
                 {% if user.is_authenticated %}
-                    <li><a href="{% url 'sponsorshiplevel-list' the_project.slug %}">Sponsor Levels</a></li>
-                    <li><a href="{% url 'sponsorshipperiod-list' the_project.slug %}">Sponsor Periods</a></li>
+                    {% if not is_sustaining_member %}
+                        <li><a href="{% url 'sustaining-member-create' the_project.slug %}">Sign up</a></li>
+                    {% else %}
+                        <li><a href="{% url 'sustaining-membership' the_project.slug %}">Membership</a></li>
+                    {% endif %}
                 {% endif %}
-                <li><a href="{% url 'sponsor-world-map' the_project.slug %}">Sponsors Map</a></li>
+                <li><a href="{% url 'sponsor-list' the_project.slug %}">Sustaining Members</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'sponsorshiplevel-list' the_project.slug %}">Sustaining Member Levels</a></li>
+                    <li><a href="{% url 'sponsorshipperiod-list' the_project.slug %}">Sustaining Member Periods</a></li>
+                {% endif %}
+                <li><a href="{% url 'sponsor-world-map' the_project.slug %}">Sustaining Members Map</a></li>
             </ul>
         </li>
     </ul>
@@ -154,9 +181,27 @@
                 Certification <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-                <li><a href="{% url 'certifyingorganisation-list' the_project.slug %}">Organisations</a></li>
-                <li><a href="{% url 'validate-certificate' the_project.slug %}">Verify certificate</a></li>
+                <li><a href="{% url 'about' the_project.slug %}">Learn about Certification</a></li>
+                <li><a href="{% url 'certifyingorganisation-list' the_project.slug %}">Approved Organisations</a></li>
+                <li><a href="{% url 'pending-certifyingorganisation-list' the_project.slug %}">Pending Organisations</a></li>
+                <li><a href="{% url 'certifyingorganisation-rejected-list' the_project.slug %}">Rejected Organisations</a></li>
+                <li><a href="{% url 'validate-certificate-organisation' the_project.slug %}">Verify certificate for Certifying Organisation</a></li>
+                <li><a href="{% url 'validate-certificate' the_project.slug %}">Verify certificate for Attendee</a></li>
             </ul>
         </li>
     </ul>
+    {% if project_flatpages %}
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Info Pages <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% for page in project_flatpages %}
+                    <li><a href='{% url "project_flatpage" project_slug=the_project.slug url=page.url %}'>{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+    {% endif %}
 {% endif %}

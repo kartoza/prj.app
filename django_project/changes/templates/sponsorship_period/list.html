@@ -1,20 +1,20 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
 {% load custom_markup %}
-{% block title %}Sponsorship Periods - {{ block.super }}{% endblock %}
+{% block title %}Sustaining Membership Periods - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
 
 {% block page_title %}
-    <h1>Sponsorship Periods (all)</h1>
+    <h1>Sustaining Membership Periods (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
     <div class="page-header">
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
-            Sponsorship Periods
+            Sustaining Membership Periods
             {% if user.is_authenticated %}
                 <div class="pull-right btn-group">
                     {% if user.is_staff or user == project.owner or user in project.changelog_managers.all %}
@@ -38,9 +38,9 @@
     </div>
     {% ifequal num_sponsorshipperiods 0 %}
         {% if unapproved %}
-            <h3>All sponsorship period are approved.</h3>
+            <h3>All sustaining membership period are approved.</h3>
         {% else %}
-            <h3>No sponsorship period are defined, but you can <a
+            <h3>No sustaining membership period are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='{% url "sponsorshipperiod-create" project_slug %}'>create one</a>.</h3>
         {% endif %}
@@ -58,8 +58,8 @@
                     <tr>
                         <th>Logo</th>
                         <th>Organisation</th>
-                        <th>Amount Sponsored</th>
-                        <th>Sponsorship Period</th>
+                        <th>Amount Contributed</th>
+                        <th>Sustaining Membership Period</th>
                         <th>View</th>
                     </tr>
                 {% endifchanged %}

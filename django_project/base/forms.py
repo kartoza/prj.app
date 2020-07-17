@@ -2,6 +2,7 @@
 import logging
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.flatpages.forms import FlatpageForm
 from django.forms import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
@@ -11,7 +12,8 @@ from crispy_forms.layout import (
     Field,
     Submit,
 )
-from models import Project, ProjectScreenshot, Domain, Organisation
+from .models import (
+    Project, ProjectScreenshot, Domain, Organisation, ProjectFlatpage)
 from certification.forms import CustomSelectMultipleWidget
 
 logger = logging.getLogger(__name__)
@@ -65,11 +67,12 @@ class ProjectForm(forms.ModelForm):
 
     sponsorship_managers = forms.ModelMultipleChoiceField(
         queryset=User.objects.order_by('username'),
+        label='Sustaining member managers',
         widget=CustomSelectMultipleWidget("user", is_stacked=False),
         required=False,
         help_text=_(
-            'Managers of the sponsorship in this project. '
-            'They will be allowed to approve sponsorship entries in the '
+            'Managers of the sustaining member in this project. '
+            'They will be allowed to approve sustaining member entries in the '
             'moderation queue.')
     )
 
@@ -105,6 +108,7 @@ class ProjectForm(forms.ModelForm):
             'credit_cost',
             'certificate_credit',
             'sponsorship_programme',
+            'template_certifying_organisation_certificate',
         )
 
     def __init__(self, *args, **kwargs):
@@ -135,8 +139,12 @@ class ProjectForm(forms.ModelForm):
                 Field('credit_cost', css_class="form-control"),
                 Field('certificate_credit', css_class="form-control"),
                 Field('sponsorship_programme', css_class="form-control"),
-                Field('gitter_room', css_class="form-control"),
-                css_id='project-form')
+                Field(
+                    'gitter_room',
+                    css_class="form-control"), css_id='project-form'),
+                Field(
+                    'template_certifying_organisation_certificate',
+                    css_class='form-control'),
         )
         self.helper.layout = layout
         self.helper.html5_required = False
@@ -268,3 +276,41 @@ class OrganisationForm(forms.ModelForm):
         instance.owner = self.user
         instance.save()
         return instance
+
+
+class UserForm(forms.ModelForm):
+    """Form to update user profile."""
+
+    # noinspection PyClassicStyleClass.
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        form_title = 'Update User Profile'
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('username', css_class='form-control'),
+                Field('first_name', css_class='form-control'),
+                Field('last_name', css_class='form-control'),
+                Field('email', css_class='form-control'),
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(UserForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+
+class ProjectFlatpageForm(FlatpageForm):
+    class Meta:
+        model = ProjectFlatpage
+        fields = '__all__'

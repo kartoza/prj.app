@@ -8,7 +8,7 @@ __copyright__ = 'kartoza.com'
 import logging
 
 from django.test import TestCase, override_settings, Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from lesson.tests.model_factories import WorksheetF
 from lesson.tests.model_factories import SectionF
@@ -130,15 +130,4 @@ class TestViews(TestCase):
 
         response = self.client.get(reverse('worksheet-module-answers',
                                            kwargs=self.kwargs_worksheet_full))
-        self.assertEqual(response.status_code, 302)
-
-    @override_settings(VALID_DOMAIN = ['testserver', ])
-    def test_WorksheetModuleQuestionAnswers_with_login(self):
-
-        status = self.client.login(username='sonlinux', password='password')
-        self.assertTrue(status)
-
-        response = self.client.get(
-                reverse('worksheet-module-answers',
-                        kwargs = self.kwargs_worksheet_full))
         self.assertEqual(response.status_code, 200)

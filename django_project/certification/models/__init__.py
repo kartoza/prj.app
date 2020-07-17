@@ -3,11 +3,12 @@
 Certification app models initialisation
 """
 
-from attendee import *
-from certifying_organisation import *
-from training_center import *
-from course import *
-from course_attendee import *
-from course_type import *
-from course_convener import *
-from certificate import *
+from certification.models.attendee import *
+from certification.models.certifying_organisation import *
+from certification.models.training_center import *
+from certification.models.course import *
+from certification.models.course_attendee import *
+from certification.models.course_type import *
+from certification.models.course_convener import *
+from certification.models.certificate import *
+from certification.models.organisation_certificate import *

@@ -1,8 +1,8 @@
 # coding=utf-8
 """Urls for certification apps."""
 
-from django.conf.urls import patterns, url
-from views import (
+from django.conf.urls import url
+from .views import (
     # Certifying Organisation.
     CertifyingOrganisationCreateView,
     CertifyingOrganisationDeleteView,
@@ -11,6 +11,8 @@ from views import (
     CertifyingOrganisationUpdateView,
     PendingCertifyingOrganisationListView,
     ApproveCertifyingOrganisationView,
+    reject_certifying_organisation,
+    RejectedCertifyingOrganisationListView,
 
     # Course Type.
     CourseTypeCreateView,
@@ -49,23 +51,39 @@ from views import (
     certificate_pdf_view,
     download_certificates_zip,
     update_paid_status,
-    top_up_unavailable,
     email_all_attendees,
     regenerate_certificate,
     regenerate_all_certificate,
     preview_certificate,
 
+    # Certificate for certifying organisation.
+    OrganisationCertificateCreateView,
+    organisation_certificate_pdf_view,
+    OrganisationCertificateDetailView,
+
     # Validate Certificate.
     ValidateCertificate,
+    ValidateCertificateOrganisation,
 
     # About.
     AboutView,
+    TopUpView
+)
+from .api_views.course import (
+    GetUpcomingCourseProject,
+    GetUpcomingCourseOrganisation,
+    GetPastCourseProject,
+    GetPastCourseOrganisation
+)
+from .api_views.get_status import GetStatus
+from .api_views.update_status import UpdateStatusOrganisation
+from .api_views.training_center import (
+    GetTrainingCenterProjectLocation,
+    GetTrainingCenterOrganisationLocation
 )
 
 
-urlpatterns = patterns(
-    '',
-
+urlpatterns = [
     # About page
     url(regex='^(?P<project_slug>[\w-]+)/about/$',
         view=AboutView.as_view(),
@@ -80,6 +98,18 @@ urlpatterns = patterns(
               '(?P<slug>[\w-]+)/$',
         view=ApproveCertifyingOrganisationView.as_view(),
         name='certifyingorganisation-approve'),
+    url(regex='^(?P<project_slug>[\w-]+)/reject-certifyingorganisation/'
+              '(?P<slug>[\w-]+)/$',
+        view=reject_certifying_organisation,
+        name='certifyingorganisation-reject'),
+    url(regex='^(?P<project_slug>[\w-]+)/update-status-certifyingorganisation/'
+              '(?P<slug>[\w-]+)/$',
+        view=UpdateStatusOrganisation.as_view(),
+        name='certifyingorganisation-update-status'),
+    url(regex='^(?P<project_slug>[\w-]+)/'
+              'certifyingorganisation/rejected-list/$',
+        view=RejectedCertifyingOrganisationListView.as_view(),
+        name='certifyingorganisation-rejected-list'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/list/$',
         view=CertifyingOrganisationListView.as_view(),
         name='certifyingorganisation-list'),
@@ -183,6 +213,20 @@ urlpatterns = patterns(
         view=CourseAttendeeDeleteView.as_view(),
         name='courseattendee-delete'),
 
+    # Certificate for certifying organisation
+    url(regex='^(?P<project_slug>[\w-]+)/organisationcertificate/'
+              '(?P<organisation_slug>[\w-]+)/issue/$',
+        view=OrganisationCertificateCreateView.as_view(),
+        name='issue-certificate-organisation'),
+    url(regex='^(?P<project_slug>[\w-]+)/organisationcertificate/'
+              '(?P<organisation_slug>[\w-]+)/print/$',
+        view=organisation_certificate_pdf_view,
+        name='print-certificate-organisation'),
+    url(regex='^(?P<project_slug>[\w-]+)/organisationcertificate/'
+              '(?P<id>[\w-]+)/$',
+        view=OrganisationCertificateDetailView.as_view(),
+        name='detail-certificate-organisation'),
+
     # Certificate.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/course/'
@@ -198,7 +242,7 @@ urlpatterns = patterns(
         name='paid-certificate'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/top-up/$',
-        view=top_up_unavailable,
+        view=TopUpView.as_view(),
         name='top-up'),
     url(regex='^(?P<project_slug>[\w-]+)/certificate/'
               '(?P<id>[\w-]+)/$',
@@ -250,6 +294,36 @@ urlpatterns = patterns(
         name='course-detail'),
 
     # Search.
+    url(regex='^(?P<project_slug>[\w-]+)/organisationcertificate/$',
+        view=ValidateCertificateOrganisation.as_view(),
+        name='validate-certificate-organisation'),
     url(regex='^(?P<project_slug>[\w-]+)/certificate/$',
         view=ValidateCertificate.as_view(), name='validate-certificate'),
-)
+
+    # API Views
+    url(regex='^(?P<project_slug>[\w-]+)/get-status-list/$',
+        view=GetStatus.as_view(), name='get-status-list'),
+
+    # Feeds
+    url(regex='^(?P<project_slug>[\w-]+)/feed/upcoming-course/$',
+        view=GetUpcomingCourseProject.as_view(),
+        name='feed-upcoming-project-course'),
+    url(regex='^(?P<project_slug>[\w-]+)/feed/past-course/$',
+        view=GetPastCourseProject.as_view(),
+        name='feed-past-project-course'),
+    url(regex='^(?P<project_slug>[\w-]+)/feed/training-center/$',
+        view=GetTrainingCenterProjectLocation.as_view(),
+        name='feed-training-center-project'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/feed/training-center/$',
+        view=GetTrainingCenterOrganisationLocation.as_view(),
+        name='feed-training-center'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/feed/upcoming-course/$',
+        view=GetUpcomingCourseOrganisation.as_view(),
+        name='feed-upcoming-course'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<organisation_slug>[\w-]+)/feed/past-course/$',
+        view=GetPastCourseOrganisation.as_view(),
+        name='feed-past-course'),
+]
