@@ -2,7 +2,7 @@ import markdown
 from django import template
 from django.contrib.staticfiles import finders
 from django.template.defaultfilters import stringfilter
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text as force_unicode
 from django.utils.safestring import mark_safe
 
 register = template.Library()
@@ -14,7 +14,7 @@ def base_markdown(value):
     extensions = ["nl2br", "markdown.extensions.tables", ]
     html_output = markdown.markdown(
         force_unicode(value),
-        extensions,
+        extensions=extensions,
         safe_mode=True,
         enable_attributes=False)
     html_output = html_output.replace(

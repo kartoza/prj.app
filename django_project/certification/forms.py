@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.contrib.gis import forms as geoforms
 from django.contrib.gis import gdal
 from django.contrib.gis.forms.widgets import BaseGeometryWidget
+from django.core.exceptions import ValidationError
+from django.contrib.gis.forms.widgets import OSMWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
     Layout,
@@ -13,7 +15,7 @@ from crispy_forms.layout import (
     Submit,
     Field,
 )
-from models import (
+from .models import (
     CertifyingOrganisation,
     CourseConvener,
     CourseType,
@@ -22,6 +24,7 @@ from models import (
     CourseAttendee,
     Attendee,
     Certificate,
+    CertifyingOrganisationCertificate
 )
 
 
@@ -71,6 +74,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
                 Field('organisation_phone', css_class='form-control'),
                 Field('logo', css_class='form-control'),
                 Field('organisation_owners', css_class='form-control'),
+                Field('project', css_class='form-control'),
                 css_id='project-form')
         )
         self.helper.layout = layout
@@ -168,7 +172,7 @@ class CourseConvenerForm(forms.ModelForm):
         self.helper.html5_required = False
         super(CourseConvenerForm, self).__init__(*args, **kwargs)
         self.fields['user'].label_from_instance = \
-            lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
+            lambda obj: "%s < %s >" % (obj.get_full_name(), obj)
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
@@ -193,14 +197,8 @@ class CustomOSMWidget(BaseGeometryWidget):
 
         js = (
             '/en/site-admin/jsi18n/',
-            '/static/grappelli/jquery/jquery-2.1.4.min.js',
-            '/static/grappelli/jquery/ui/jquery-ui.min.js',
-            '/static/grappelli/js/grappelli.js',
-            '/static/admin/js/SelectBox.js',
-            '/static/admin/js/SelectFilter2.js',
             '/static/js/libs/OpenLayers-2.13.1/OpenLayers.js',
             '/static/js/libs/OpenLayers-2.13.1/OpenStreetMapSSL.js',
-            '/static/gis/js/OLMapWidget.js'
         )
 
     def __init__(self, attrs=None):
@@ -209,12 +207,13 @@ class CustomOSMWidget(BaseGeometryWidget):
             self.attrs[key] = getattr(self, key)
         if attrs:
             self.attrs.update(attrs)
+        self.attrs['default_zoom'] = 10
 
     @property
     def map_srid(self):
         # Use the official spherical mercator projection SRID when GDAL is
         # available.
-        if gdal.HAS_GDAL:
+        if gdal.GDAL_VERSION:
             return 3857
         else:
             return 4326
@@ -222,8 +221,14 @@ class CustomOSMWidget(BaseGeometryWidget):
 
 class TrainingCenterForm(geoforms.ModelForm):
 
-    location = geoforms.PointField(widget=CustomOSMWidget(
-        attrs={'map_width': 600, 'map_height': 400}), )
+    location = geoforms.PointField(widget=OSMWidget(
+        attrs={
+            'map_width': 750,
+            'map_height': 400,
+            'default_zoom': 5,
+            'default_lat': -30.559482,
+            'default_lon': 22.937506
+        }), )
 
     class Meta:
         model = TrainingCenter
@@ -331,6 +336,7 @@ class CourseAttendeeForm(forms.ModelForm):
     class Meta:
         model = CourseAttendee
         fields = ('attendee', 'course')
+        widgets = {'course': forms.HiddenInput()}
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
@@ -439,6 +445,19 @@ class CertificateForm(forms.ModelForm):
         self.fields['is_paid'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Issue Certificate'))
 
+    def clean(self):
+        clean_data = self.cleaned_data
+        organisation = self.course.certifying_organisation
+
+        remaining_credits = \
+            organisation.organisation_credits - \
+            organisation.project.certificate_credit
+
+        if remaining_credits < 0:
+            raise ValidationError("Insufficient credits")
+
+        return clean_data
+
     def save(self, commit=True):
         instance = super(CertificateForm, self).save(commit=False)
         instance.author = self.user
@@ -459,3 +478,29 @@ class CsvAttendeeForm(forms.Form):
             }
         )
     )
+
+
+class OrganisationCertificateForm(forms.ModelForm):
+
+    class Meta:
+        model = CertifyingOrganisationCertificate
+        fields = (
+            'certifying_organisation',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        self.helper = FormHelper()
+        self.helper.html5_required = False
+        super(OrganisationCertificateForm, self).__init__(*args, **kwargs)
+        self.fields['certifying_organisation'].initial = \
+            self.certifying_organisation
+        self.fields['certifying_organisation'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Issue Certificate'))
+
+    def save(self, commit=True):
+        instance = super(OrganisationCertificateForm, self).save(commit=False)
+        instance.author = self.user
+        instance.save()
+        return instance

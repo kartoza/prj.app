@@ -7,8 +7,8 @@
 {{ entry.description|base_markdown }}
 
 {% if entry.image_file %}
-    <img id="{{ entry.image_file.url }}" class="img-responsive img-rounded pull-right"
-         src="{{ entry.image_file|thumbnail_url:'large-entry' }}"
+    <img class="img-responsive img-rounded"
+         src="{{ entry.image_file.url }}"
          alt=""/>{# see core/settings/contrib.py for large-entry #}
 {% endif %}
 

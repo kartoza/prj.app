@@ -1,20 +1,20 @@
 {% extends "project_base.html" %}
 {% load thumbnail %}
 {% load custom_markup %}
-{% block title %}Sponsorship Levels - {{ block.super }}{% endblock %}
+{% block title %}Sustaining Membership Levels - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
 
 {% block page_title %}
-    <h1>Sponsorship levels (all)</h1>
+    <h1>Sustaining Membership levels (all)</h1>
 {% endblock page_title %}
 
 {% block content %}
     <div class="page-header">
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
-            Sponsorship Levels
+            Sustaining Membership Levels
             {% if user.is_authenticated %}
                 {% if user.is_staff or user == project.owner or user in project.sponsorship_managers.all %}
                     <div class="pull-right btn-group">
@@ -37,9 +37,9 @@
     </div>
     {% ifequal num_sponsorshiplevels 0 %}
         {% if unapproved %}
-            <h3>All sponsorship level are approved.</h3>
+            <h3>All sustaining membership level are approved.</h3>
         {% else %}
-            <h3>No sponsorship level are defined, but you can <a
+            <h3>No sustaining membership level are defined, but you can <a
                     class="btn btn-default btn-mini"
                     href='{% url "sponsorshiplevel-create" project_slug %}'>create one</a>.</h3>
         {% endif %}

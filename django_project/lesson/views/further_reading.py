@@ -1,7 +1,7 @@
 # coding=utf-8
 """Further reading views."""
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.generic import (
     CreateView,
     DeleteView,

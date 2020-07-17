@@ -1,6 +1,7 @@
 {% extends "project_base.html" %}
 {% load custom_markup %}
-{% load disqus_tags %}
+{# We disable disqus temporarily because of unwanted ads. #}
+{#{% load disqus_tags %}#}
 
 {% block title %}Committee - {{ committee.name }}{% endblock %}
 
@@ -45,11 +46,21 @@
     </div>
     <hr/>
     <div class="row">
+    {% if is_member %}
         <div class="col-md-7">
             <h4>{{ ballot.proposer.username }} proposes:</h4>
             <p>{{ ballot.summary }}</p>
         </div>
-        <div id="vote-container" class="col-md-5"></div>
+        <div id="vote-container" class="col-md-5">
+            {% if not ballot.is_open %}
+                <p>You have voted: {{ vote }}</p>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="col-md-7">
+            <h4>You are not a member of this team.</h4>
+        </div>
+    {% endif %}
     </div>
     <hr/>
     {% if ballot.description %}
@@ -60,10 +71,12 @@
             </div>
         </div>
     {% endif %}
-    <h5 id="comments">Comments</h5>
-    {% disqus_show_comments %}
+{#    we disable disqus temporarily because of unwanted ads. #}
+{#    <h5 id="comments">Comments</h5>#}
+{#    {% disqus_show_comments %}#}
 {% endblock %}
 {% block inline-js %}
+    {% if ballot.is_open %}
     <script>
         $(function(){
             var loadUrl = '{% url "vote-create" project_slug=ballot.committee.project.slug committee_slug=ballot.committee.slug ballot_slug=ballot.slug %}';
@@ -97,4 +110,5 @@
             });
         });
     </script>
+    {% endif %}
 {% endblock %}

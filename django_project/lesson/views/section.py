@@ -3,7 +3,7 @@
 
 from collections import OrderedDict
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.generic import (
     ListView,
     TemplateView,

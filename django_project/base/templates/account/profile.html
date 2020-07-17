@@ -1,0 +1,60 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% block title %}Profile Page{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+    <style>
+        td:nth-child(odd){
+            padding: 2px 25px;
+        }
+        td:nth-child(even){
+            padding: 2px;
+        }
+    </style>
+    <div class="container">
+        <div class="col-lg-6">
+            <h1>User Profile</h1>
+        </div>
+        <div class="col-lg-6">
+            <div class="btn-group pull-right">
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                   href='{% url "edit-profile" user.pk %}'
+                   data-title="Edit Profile">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="col-lg-3" style="border: 2px solid lightgray">
+            {% if user.socialaccount_set.all.0.get_avatar_url %}
+                <img style="max-width: 100%; max-height: 100%; margin-right: 10px" src="{{ user.socialaccount_set.all.0.get_avatar_url }}" />
+            {% else %}
+                <img style="max-width: 100%; max-height: 100%; margin-right: 10px" src="{% static 'img/default-user.png' %}" />
+            {% endif %}
+        </div>
+        <div class="col-lg-8">
+            <table>
+            <tr>
+                <td><b>Username</b></td>
+                <td>{{ user.username }}</td>
+            </tr>
+            <tr>
+                <td><b>First Name</b></td>
+                <td>{{ user.first_name }}</td>
+            </tr>
+            <tr>
+                <td><b>Last Name</b></td>
+                <td>{{ user.last_name }}</td>
+            </tr>
+            <tr>
+                <td><b>Email</b></td>
+                <td>{{ user.email }}</td>
+            </tr>
+        </table>
+        </div>
+    </div>
+{% endblock %}

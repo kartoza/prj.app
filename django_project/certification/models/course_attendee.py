@@ -4,17 +4,17 @@
 """
 
 from django.db import models
-from course import Course
-from attendee import Attendee
 from django.contrib.auth.models import User
+from certification.models.course import Course
+from certification.models.attendee import Attendee
 
 
 class CourseAttendee(models.Model):
     """One person who attends course is defined here."""
 
-    attendee = models.ForeignKey(Attendee)
-    course = models.ForeignKey(Course)
-    author = models.ForeignKey(User)
+    attendee = models.ForeignKey(Attendee, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     objects = models.Manager()
 
     class Meta:

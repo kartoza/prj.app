@@ -8,7 +8,7 @@ __copyright__ = 'kartoza.com'
 import logging
 
 from django.test import TestCase, override_settings, Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from lesson.tests.model_factories import WorksheetF
 from lesson.tests.model_factories import SectionF

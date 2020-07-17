@@ -3,11 +3,11 @@
 
 """
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
-from certifying_organisation import (
+from .certifying_organisation import (
     CertifyingOrganisation,
     SlugifyingMixin,
     validate_email_address)
@@ -53,8 +53,9 @@ class TrainingCenter(SlugifyingMixin, models.Model):
     )
 
     slug = models.SlugField()
-    certifying_organisation = models.ForeignKey(CertifyingOrganisation)
-    author = models.ForeignKey(User)
+    certifying_organisation = models.ForeignKey(CertifyingOrganisation,
+                                                on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     objects = models.Manager()
 
     # noinspection PyClassicStyleClass.
@@ -67,13 +68,16 @@ class TrainingCenter(SlugifyingMixin, models.Model):
     def __unicode__(self):
         return self.name
 
+    def __str__(self):
+        return self.name
+
     def get_absolute_url(self):
         """Return URL to training center detail page.
 
         :return: URL
         :rtype: str
         """
-        return reverse('training-center-detail', kwargs={
+        return reverse('trainingcenter-detail', kwargs={
             'slug': self.slug,
             'organisation_slug': self.certifying_organisation.slug,
             'project_slug': self.certifying_organisation.project.slug

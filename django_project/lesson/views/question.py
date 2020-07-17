@@ -1,7 +1,7 @@
 # coding=utf-8
 """Question views."""
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.generic import (
     ListView,
     CreateView,

@@ -18,7 +18,7 @@
 
 {% block extra_head %}
 {{ Other }}
-<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
+<script type="text/javascript" src="{% static 'js/jquery.formset.min.js' %}"></script>
 {{  floppyforms }}
 
 {% endblock %}
@@ -35,6 +35,20 @@
     {{ formset.management_form }}
         {% csrf_token %}
         {% crispy form  %}
+        <div class="container" id="preview-template-load" style="margin-bottom: 25px">
+            <div class="row" >
+            <!-- the photo demo-->
+                <div>
+                    <div id="preview-photo" class="col-lg-3"></div>
+                    <div id="data" class="col-lg-5">
+                        <p>
+                            <span id="size"></span><br/>
+                            <span id="type"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <label>Screenshots</label>
         <div class="form-screenshot">
@@ -48,5 +62,20 @@
 </div>
 </section>
 
+<section id="preview">
+    <div class="container" style="padding-left: 0 !important;">
+        <form method="post" id="preview-form" action="/en/project/preview-certificate/" target="_blank" onsubmit="return previewCertificate()">
+            {% csrf_token %}
+            <input type="hidden" name="project_name" value="">
+            <input type="hidden" name="project_logo" value="">
+            <input type="hidden" name="project_representative" value="">
+            <input type="hidden" name="project_representative_signature" value="">
+            <input type="hidden" name="template_certificate" value="">
+            <input id="preview-certificate" type="submit" class="btn btn-default" value="Preview Certificate" form="preview-form">
+        </form>
+        <p id="error-submit" style="color: darkred; font-weight: bold"></p>
+    </div>
+</section>
+<script>var media_url = {{ MEDIA_URL }}</script>
 <script type="text/javascript" src="/static/js/custom-project-form.js"></script>
 {% endblock %}

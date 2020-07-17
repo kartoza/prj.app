@@ -1,7 +1,7 @@
 # coding=utf-8
 # flake8: noqa
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from base.tests.model_factories import ProjectF

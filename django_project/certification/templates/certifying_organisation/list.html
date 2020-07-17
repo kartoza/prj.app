@@ -22,29 +22,59 @@
         <h1 class="text-muted">
             {% if unapproved %}Unapproved {% endif %}
             Certifying Organisations
-            {% if user.is_staff or user == the_project.owner or user in the_project.certification_managers.all %}
+
                 <div class="pull-right btn-group">
-                    <a class="btn btn-default btn-mini tooltip-toggle"
+                    <a class="btn btn-primary btn-mini tooltip-toggle"
                        href='{% url "certifyingorganisation-create" project_slug %}'
-                       data-title="Create New Certifying Organisation">
-                        {% show_button_icon "add" %}
+                       data-title="Sign Up for Certification!">
+                        Sign Up
                     </a>
-                    {% if not unapproved %}
-                        <a class="btn btn-default btn-mini tooltip-toggle"
-                           href='{% url "pending-certifyingorganisation-list" project_slug %}'
-                           data-title="View Pending Certifying Organisations">
-                            <span class="glyphicon glyphicon-time"></span>
+                    <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
+                       href='{% url "feed-training-center-project" project_slug %}' target="_blank"
+                       data-title="Feed for List of All Training Centers">
+                        <i class="fa fa-rss-square"></i>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
+                       href='{% url "feed-upcoming-project-course" project_slug %}' target="_blank"
+                       data-title="Feed for List of All Upcoming Courses">
+                        <i class="fa fa-rss"></i>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
+                           href='{% url "feed-past-project-course" project_slug %}' target="_blank"
+                           data-title="Feed for List of All Past Courses">
+                            <i class="fa fa-rss" style="color: grey"></i>
                         </a>
-                    {% else %}
+                    {% if user.is_staff or user == the_project.owner or user in the_project.certification_managers.all %}
                         <a class="btn btn-default btn-mini tooltip-toggle"
-                           href='{% url "certifyingorganisation-list" project_slug %}'
-                           data-title="View Certifying Organisations">
-                            <span class="glyphicon glyphicon-th-list"></span>
+                           href='{% url "certifyingorganisation-create" project_slug %}'
+                           data-title="Create New Certifying Organisation">
+                            {% show_button_icon "add" %}
+                        </a>
+                        {% if not unapproved %}
+                            <a class="btn btn-default btn-mini tooltip-toggle"
+                               href='{% url "pending-certifyingorganisation-list" project_slug %}'
+                               data-title="View Pending Certifying Organisations">
+                                <span class="glyphicon glyphicon-time"></span>
+                            </a>
+                        {% else %}
+                            <a class="btn btn-default btn-mini tooltip-toggle"
+                               href='{% url "certifyingorganisation-list" project_slug %}'
+                               data-title="View Certifying Organisations">
+                                <span class="glyphicon glyphicon-th-list"></span>
+                            </a>
+                        {% endif %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "certifyingorganisation-rejected-list" project_slug %}'
+                           data-title="View Rejected Certifying Organisations">
+                            <span class="glyphicon glyphicon-ban-circle"></span>
                         </a>
                     {% endif %}
-
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url 'about' the_project.slug %}'
+                       data-title="About Certification">
+                        <i class="glyphicon glyphicon-info-sign"></i>
+                    </a>
                 </div>
-            {% endif %}
         </h1>
     </div>
 
@@ -86,6 +116,19 @@
                         data-title="Update {{ certifyingorganisation.name }}">
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
+                    {% if certifyingorganisation.pk in certificate_lists %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "print-certificate-organisation" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
+                            data-title="Print Certificate for {{ certifyingorganisation.name }}">
+                            <span class="glyphicon glyphicon-print"></span>
+                        </a>
+                    {% else %}
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "issue-certificate-organisation" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
+                            data-title="Issue Cert ificate for {{ certifyingorganisation.name }}">
+                            <span class="glyphicon glyphicon-check"></span>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         {% endif %}

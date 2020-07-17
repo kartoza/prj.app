@@ -1,14 +1,15 @@
 # coding=utf-8
+import io
 import csv
 from django.db import transaction
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.generic import (
     CreateView, FormView)
 from braces.views import LoginRequiredMixin, FormMessagesMixin
-from ..models import Attendee, CertifyingOrganisation, CourseAttendee
-from ..forms import AttendeeForm
-from ..forms import CsvAttendeeForm
-from ..models.course_attendee import Course
+from certification.models import (
+    Attendee, CertifyingOrganisation, CourseAttendee, Course
+)
+from certification.forms import AttendeeForm, CsvAttendeeForm
 
 
 class AttendeeMixin(object):
@@ -171,52 +172,65 @@ class CsvUploadView(FormMessagesMixin, LoginRequiredMixin, FormView):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         attendees_file = request.FILES.get('file')
+        attendees_file.seek(0)
         course = Course.objects.get(slug=self.slug)
         if form.is_valid():
             if attendees_file:
-                reader = csv.reader(attendees_file, delimiter=',')
-                next(reader)
+                reader = csv.DictReader(
+                    io.StringIO(attendees_file.read().decode('utf-8'))
+                )
+                fieldnames = reader.fieldnames
                 attendee_count = 0
                 course_attendee_count = 0
+                existing_attendee_count = 0
                 for row in reader:
                     # We should have logic here to first see if the attendee
                     # already exists and if they do, just add them to the
                     # course
-                    attendee = Attendee(
-                        firstname=row[0],
-                        surname=row[1],
-                        email=row[2],
-                        certifying_organisation=self.certifying_organisation,
-                        author=self.request.user,
-                    )
                     try:
+                        attendee = Attendee.objects.get(
+                            firstname=row[fieldnames[0]],
+                            surname=row[fieldnames[1]],
+                            email=row[fieldnames[2]],
+                            certifying_organisation=
+                            self.certifying_organisation,
+                        )
+                    except Attendee.DoesNotExist:
+                        attendee = Attendee(
+                            firstname=row[fieldnames[0]],
+                            surname=row[fieldnames[1]],
+                            email=row[fieldnames[2]],
+                            certifying_organisation=
+                            self.certifying_organisation,
+                            author=self.request.user
+                        )
                         attendee.save()
                         attendee_count += 1
-                    except:
-                        #  Could not save - probably they exist already
-                        attendee = None
 
-                    if not attendee:
-                        # put more checks in case attendee
-                        # does not already exist
-                        continue
-
-                    course_attendee = CourseAttendee(
-                        attendee=attendee,
-                        course=course,
-                        author=self.request.user,
-                    )
                     try:
+                        course_attendee = CourseAttendee.objects.get(
+                            attendee=attendee,
+                            course=course,
+                        )
+                    except CourseAttendee.DoesNotExist:
+                        course_attendee = CourseAttendee(
+                            attendee=attendee,
+                            course=course,
+                            author=self.request.user
+                        )
                         course_attendee.save()
                         course_attendee_count += 1
-                    except:
-                        #  They are probably already associated with a course
-                        pass
+                    else:
+                        existing_attendee_count += 1
 
                 self.form_valid_message = (
-                    '%i new attendees were created, and %i attendees were '
-                    'added to the course: % s' % (
-                        attendee_count, course_attendee_count, self.course)
+                    'From the csv: {} attendee already exist in this course, '
+                    '{} new attendees were created, and {} attendees were '
+                    'added to the course: {}'.format(
+                        existing_attendee_count,
+                        attendee_count,
+                        course_attendee_count,
+                        self.course)
                 )
 
                 self.form_invalid_message = (

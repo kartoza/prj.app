@@ -9,10 +9,11 @@ from base.models import Project
 # LOGGER = logging.getLogger(__name__)
 import re
 import zipfile
-import StringIO
+from io import BytesIO
 import pypandoc
 from bs4 import BeautifulSoup
-from django.core.urlresolvers import reverse
+from django.conf import settings
+from django.urls import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import (
@@ -53,7 +54,7 @@ class CustomStaffuserRequiredMixin(StaffuserRequiredMixin):
         """
         Called when the user has no permissions and no exception was raised.
         """
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return super(
                 CustomStaffuserRequiredMixin, self).no_permissions_fail(
                 request)
@@ -120,6 +121,12 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
         """
         versions_qs = Version.objects.all()
 
+        # fix padded version if there is padded name with alphabet.
+        for version in versions_qs:
+            is_alphabet = re.search('[a-zA-Z,.]', str(version.padded_version))
+            if is_alphabet is not None:
+                version.save()
+
         project_slug = self.kwargs.get('project_slug', None)
         if project_slug:
             try:
@@ -133,8 +140,6 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
             return versions_qs
         else:
             raise Http404('Sorry! We could not find your version!')
-        # In case no project filter applied
-        return versions_qs
 
 
 class VersionDetailView(VersionMixin, DetailView):
@@ -180,8 +185,7 @@ class VersionDetailView(VersionMixin, DetailView):
             context['user_can_edit'] = True
             context['user_can_delete'] = True
 
-        if context['project'].changelog_managers.filter(
-                project__owner=self.request.user.id).exists():
+        if self.request.user in context['project'].changelog_managers.all():
             context['user_can_edit'] = True
             context['user_can_delete'] = True
 
@@ -378,7 +382,7 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
         """
         project_slug = self.kwargs.get('project_slug', None)
         project = Project.objects.get(slug=project_slug)
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = Version.objects.filter(project=project, locked=False)
         if self.request.user.is_staff:
@@ -388,7 +392,7 @@ class VersionDeleteView(LoginRequiredMixin, VersionMixin, DeleteView):
                 Q(project=project) &
                 (Q(author=self.request.user) |
                  Q(project__owner=self.request.user) |
-                 Q(project__changelog_managers=self.request.user)))
+                 Q(project__changelog_managers=self.request.user))).distinct()
 
 
 # noinspection PyAttributeOutsideInit
@@ -481,7 +485,7 @@ class VersionUpdateView(LoginRequiredMixin, VersionMixin, UpdateView):
             versions_qs = versions_qs.filter(
                 (Q(author=self.request.user) |
                  Q(project__owner=self.request.user) |
-                 Q(project__changelog_managers=self.request.user)))
+                 Q(project__changelog_managers=self.request.user))).distinct()
         return versions_qs
 
     def get_success_url(self):
@@ -587,7 +591,7 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
         :rtype: string
         """
         # create in memory file-like object
-        temp_path = StringIO.StringIO()
+        temp_path = BytesIO()
 
         # grab all of the images from document
         images = []
@@ -600,10 +604,14 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
         with zipfile.ZipFile(temp_path, 'w') as zip_file:
             # write all of the image files (read from disk)
             for image in images:
-                zip_file.write(
-                    '../media/{0}'.format(image),
-                    '{0}'.format(image)
-                )
+                try:
+                    image_url = '{}/{}'.format(settings.MEDIA_ROOT, image)
+                    zip_file.write(
+                        image_url,
+                        '{0}'.format(image)
+                    )
+                except FileNotFoundError:
+                    pass
             # write the actual RST document
             zip_file.writestr(
                 'index.rst',
@@ -736,7 +744,7 @@ class VersionSponsorDownload(
             zip_file.getvalue(), content_type="application/x-zip-compressed")
         # ..and correct content-disposition
         response['Content-Disposition'] = (
-            'attachment; filename="{}-Sponsor-{}.zip"'.format(
+            'attachment; filename="{}-SustainingMember-{}.zip"'.format(
                 version_obj.project.name, version_obj.name)
         )
 
@@ -752,7 +760,7 @@ class VersionSponsorDownload(
         :rtype: string
         """
         # create in memory file-like object
-        temp_path = StringIO.StringIO()
+        temp_path = BytesIO()
 
         # grab all of the images from document
         images = []
@@ -772,7 +780,7 @@ class VersionSponsorDownload(
                 )
             # write the actual html document
             zip_file.writestr(
-                '{}-Sponsor-{}.html'.format(
+                '{}-SustainingMember-{}.html'.format(
                     version_obj.project.name, version_obj.name),
                 document)
 

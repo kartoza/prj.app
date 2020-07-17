@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.generic import (
     CreateView,
     DetailView,
@@ -61,6 +61,7 @@ class TrainingCenterCreateView(
             TrainingCenterCreateView, self).get_context_data(**kwargs)
         context['trainingcenters'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
+        context['organisation'] = self.certifying_organisation
         return context
 
     def form_valid(self, form):
@@ -249,7 +250,7 @@ class TrainingCenterDeleteView(
         :raises: Http404
         """
 
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise Http404
         qs = TrainingCenter.objects.filter(
             certifying_organisation=self.certifying_organisation)
@@ -294,6 +295,7 @@ class TrainingCenterUpdateView(
             TrainingCenterUpdateView, self).get_context_data(**kwargs)
         context['trainingcenters'] = self.get_queryset() \
             .filter(certifying_organisation=self.certifying_organisation)
+        context['organisation'] = self.certifying_organisation
         return context
 
     def form_valid(self, form):

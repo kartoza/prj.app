@@ -3,7 +3,7 @@
 
 import json
 from mock import mock
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponse
 from django.test import TestCase, override_settings
 from django.test.client import Client
@@ -766,7 +766,7 @@ class TestVersionViews(TestCase):
             'project_slug': other_project.slug
         }))
         self.assertEqual(
-            response.context[0].get('version'),
+            response.context.get('version'),
             version_same_name_from_other_project)
         self.assertEqual(response.status_code, 200)
 

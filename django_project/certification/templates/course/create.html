@@ -38,7 +38,7 @@
             position: 'top left',
             onSelect: function (date) {
                 $("#id_end_date").val(date);
-                $("#id_end_date").datepicker({minDate: new Date(date)})
+                $("#id_end_date").datepicker();
             }
         });
 
@@ -48,7 +48,7 @@
             position: 'top left',
             onSelect: function (date) {
                 $("#id_start_date").val(date);
-                $("#id_start_date").datepicker({maxDate: new Date(date)})
+                $("#id_start_date").datepicker();
             }
         });
 
@@ -59,11 +59,17 @@
 
     <section id="forms">
         <div class='container'>
-            {% csrf_token %}
-            {% crispy form %}
-            {% for form in inlines %}
-                {% crispy form %}
-            {% endfor %}
+            <h3>New Course for {{ organisation.name }}</h3>
+            <hr/>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="vertical-space"></div>
+                <div class="form-actions">
+                    <input type="submit" name="submit" value="Submit"
+                           class="btn btn-primary" id="submit-save">
+                </div>
+            </form>
         </div>
     </section>
 
@@ -92,6 +98,7 @@
                 <input type="hidden" name="start_date" value="">
                 <input type="hidden" name="end_date" value="">
                 <input type="hidden" name="template_certificate" value="">
+                <input type="hidden" name="trained_competence" value="">
                 <input id="preview-certificate" type="submit" class="btn btn-default" value="Preview Certificate" form="preview-form">
             </form>
             <p id="error-submit" style="color: darkred; font-weight: bold"></p>
@@ -130,6 +137,7 @@
             $('#preview-form input[name=training_center]').val($('select[name=training_center]').val());
             $('#preview-form input[name=start_date]').val($('input[id=id_start_date]').val());
             $('#preview-form input[name=end_date]').val($('input[id=id_end_date]').val());
+            $('#preview-form input[name=trained_competence]').val($('input[id=id_trained_competence]').val());
         }
 
         //check if browser supports file api and filereader features

@@ -5,7 +5,7 @@
 
 import os
 from django.conf.global_settings import MEDIA_ROOT
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -14,11 +14,11 @@ from django.utils.translation import ugettext_lazy as _
 import logging
 from unidecode import unidecode
 from core.settings.contrib import STOP_WORDS
-from course_convener import CourseConvener
-from certifying_organisation import CertifyingOrganisation
-from course_type import CourseType
+from .course_convener import CourseConvener
+from .certifying_organisation import CertifyingOrganisation
+from .course_type import CourseType
 from certification.utilities import check_slug
-from training_center import TrainingCenter
+from .training_center import TrainingCenter
 
 logger = logging.getLogger(__name__)
 
@@ -77,11 +77,15 @@ class Course(models.Model):
         blank=True
     )
 
-    course_convener = models.ForeignKey(CourseConvener)
-    course_type = models.ForeignKey(CourseType)
-    training_center = models.ForeignKey(TrainingCenter)
-    certifying_organisation = models.ForeignKey(CertifyingOrganisation)
-    author = models.ForeignKey(User)
+    course_convener = models.ForeignKey(CourseConvener,
+                                        on_delete=models.CASCADE)
+    course_type = models.ForeignKey(CourseType,
+                                    on_delete=models.CASCADE)
+    training_center = models.ForeignKey(TrainingCenter,
+                                        on_delete=models.CASCADE)
+    certifying_organisation = models.ForeignKey(CertifyingOrganisation,
+                                                on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     objects = models.Manager()
 
     class Meta:
@@ -112,6 +116,13 @@ class Course(models.Model):
     def __unicode__(self):
         return self.name
 
+    def __str__(self):
+        return self.name
+
+    @property
+    def location(self):
+        return self.training_center.location
+
     def get_absolute_url(self):
         """Return URL to course detail page.
 
@@ -120,5 +131,6 @@ class Course(models.Model):
         """
         return reverse('course-detail', kwargs={
             'slug': self.slug,
-            'certifyingorganisation_slug': self.certifying_organisation.slug
+            'organisation_slug': self.certifying_organisation.slug,
+            'project_slug': self.certifying_organisation.project.slug
         })

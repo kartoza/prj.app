@@ -2,6 +2,7 @@
 """Model admin class definitions."""
 
 from django.contrib.gis import admin
+from simple_history.admin import SimpleHistoryAdmin
 from certification.models.certificate import Certificate
 from certification.models.course import Course
 from certification.models.training_center import TrainingCenter
@@ -10,6 +11,9 @@ from certification.models.course_type import CourseType
 from certification.models.attendee import Attendee
 from certification.models.course_attendee import CourseAttendee
 from certification.models.certifying_organisation import CertifyingOrganisation
+from certification.models.organisation_certificate import \
+    CertifyingOrganisationCertificate
+from certification.models.status import Status
 
 
 class CertificateAdmin(admin.ModelAdmin):
@@ -123,11 +127,24 @@ class CourseConvenerAdmin(admin.ModelAdmin):
         return query_set
 
 
-class CertifyingOrganisationAdmin(admin.ModelAdmin):
+class CertifyingOrganisationCertificateAdminInline(admin.TabularInline):
+    model = CertifyingOrganisationCertificate
+    extra = 0
+
+
+class CertifyingOrganisationCertificateAdmin(SimpleHistoryAdmin):
+    history_list_display = ['issued', 'valid']
+
+
+class CertifyingOrganisationAdmin(SimpleHistoryAdmin):
     """Certifying organisation admin model."""
 
     filter_horizontal = ('organisation_owners',)
     search_fields = ['name']
+    list_display = ('name', 'project', 'country', 'approved', 'rejected')
+    list_filter = ('country', 'approved', 'rejected', 'status')
+    inlines = (CertifyingOrganisationCertificateAdminInline, )
+    history_list_display = ['status', 'remarks']
 
     def queryset(self, request):
         """Ensure we use the correct manager.
@@ -141,6 +158,10 @@ class CertifyingOrganisationAdmin(admin.ModelAdmin):
         return query_set
 
 
+class StatusAdmin(admin.ModelAdmin):
+    list_display = ('name', 'project', 'order')
+
+
 admin.site.register(Certificate, CertificateAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
 admin.site.register(Course, CourseAdmin)
@@ -149,3 +170,6 @@ admin.site.register(TrainingCenter, TrainingCenterAdmin)
 admin.site.register(CourseConvener, CourseConvenerAdmin)
 admin.site.register(CertifyingOrganisation, CertifyingOrganisationAdmin)
 admin.site.register(CourseAttendee, CourseAttendeeAdmin)
+admin.site.register(
+    CertifyingOrganisationCertificate, CertifyingOrganisationCertificateAdmin)
+admin.site.register(Status, StatusAdmin)

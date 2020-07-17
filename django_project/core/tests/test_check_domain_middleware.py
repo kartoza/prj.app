@@ -1,6 +1,6 @@
 # coding=utf-8
 import logging
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase, override_settings
 from django.test.client import Client
 
@@ -17,10 +17,10 @@ class TestCheckDomainMiddleware(TestCase):
             '/set_language/', data={'language': 'en'})
         logging.disable(logging.CRITICAL)
 
-    # Override project settings to include testdomain as valid domain.
-    @override_settings(VALID_DOMAIN=['testdomain', ])
+    # Override project settings to include testserver as valid domain.
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_valid_domain(self):
-        client = Client(SERVER_NAME='testdomain')
+        client = Client(SERVER_NAME='testserver')
         client.post(
             '/set_language/', data={'language': 'en'})
         response = client.get(reverse('home'))
@@ -30,24 +30,10 @@ class TestCheckDomainMiddleware(TestCase):
         ]
         self.assertEqual(response.template_name, expected_templates)
 
-    # Test checking domain on dev.
-    @override_settings(DEBUG=True)
-    def test_invalid_domain_dev(self):
-        client = Client(SERVER_NAME='testdomain')
-        client.post(
-            '/set_language/', data={'language': 'en'})
-        response = client.get(reverse('home'))
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(
-            response,
-            expected_url='http://0.0.0.0:61202/en/domain-not-found/',
-            fetch_redirect_response=False,
-        )
-
     # Test checking domain on production.
     @override_settings(DEBUG=False)
     def test_invalid_domain_prod(self):
-        client = Client(SERVER_NAME='testdomain')
+        client = Client(SERVER_NAME='testserver')
         client.post(
             '/set_language/', data={'language': 'en'})
         response = client.get(reverse('home'))

@@ -1,0 +1,11 @@
+.section-checkbox {
+    margin-left: -25px !important;
+    float: left;
+    margin-top: 25px !important;
+}
+
+.worksheet-checkbox {
+    float: left;
+    margin-left: -20px !important;
+    margin-top: 12px !important;
+}

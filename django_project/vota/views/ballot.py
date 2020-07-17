@@ -7,14 +7,14 @@ from django.http import Http404
 import logging
 from braces.views import (
     LoginRequiredMixin, StaffuserRequiredMixin)
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.generic import (
     DetailView, CreateView, DeleteView, UpdateView, ListView)
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from base.models import Project
 from vota.forms import BallotCreateForm
-from vota.models import Ballot, Committee
+from vota.models import Ballot, Committee, Vote, VOTE_CHOICES
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +32,18 @@ class BallotDetailView(LoginRequiredMixin, BallotMixin, DetailView):
         context = super(BallotDetailView, self).get_context_data(**kwargs)
         context['committee'] = Committee.objects.get(
             id=self.object.committee.id)
+        context['all_votes'] = (
+            Vote.objects.filter(
+                ballot=self.object, user__in=context['committee'].users.all()))
+        context['is_member'] = (
+            True if self.request.user in context['committee'].users.all()
+            else False
+        )
+        try:
+            vote = Vote.objects.get(user=self.request.user, ballot=self.object)
+            context['vote'] = dict(VOTE_CHOICES).get(vote.choice)
+        except Vote.DoesNotExist:
+            pass
         return context
 
     def get_queryset(self):
@@ -90,12 +102,12 @@ class BallotListView(BallotMixin, ListView):
         project_slug = self.kwargs.get('project_slug')
         try:
             self.project = Project.objects.get(slug=project_slug)
-        except:
+        except:  # noqa
             raise Http404('Project could not be found')
         try:
             self.committee = Committee.objects.filter(
                 project=self.project).get(slug=committee_slug)
-        except:
+        except:  # noqa
             raise Http404('Committee could not be found')
         self.is_member = False
         if request.user in self.committee.users.all():
@@ -128,8 +140,8 @@ class BallotListView(BallotMixin, ListView):
         :rtype: QuerySet
 
         """
-        if self.request.user.is_authenticated() and self.is_member:
-                qs = Ballot.objects.filter(committee=self.committee)
+        if self.request.user.is_authenticated and self.is_member:
+            qs = Ballot.objects.filter(committee=self.committee)
         else:
             qs = Ballot.objects.filter(committee=self.committee) \
                 .filter(private=False)

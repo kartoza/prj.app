@@ -3,7 +3,7 @@
 # noinspection PyUnresolvedReferences
 from .prod import *  # noqa
 import os
-print os.environ
+print(os.environ)
 
 DEBUG = False
 
@@ -11,7 +11,7 @@ ALLOWED_HOSTS = ['*']
 
 ADMINS = (
     ('Tim Sutton', 'tim@kartoza.com'),
-    ('Christian Christellis', 'christian@kartoza.com'),
+    ('Dimas Ciputra', 'dimas@kartoza.com'),
     ('Anita Hapsari', 'anita@kartoza.com'),)
 
 DATABASES = {
