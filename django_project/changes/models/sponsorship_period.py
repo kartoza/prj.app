@@ -168,11 +168,6 @@ class SponsorshipPeriod(models.Model):
         start = self.start_date
         if end < today or start < today:
             return False
-        if end < today:
-            if self.recurring:
-                return True
-            else:
-                return False
         else:
             return True
 
