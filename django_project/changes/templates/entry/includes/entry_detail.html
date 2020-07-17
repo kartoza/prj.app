@@ -9,16 +9,23 @@
     </div>
     <div class="col-lg-2">
         <div class="btn-group pull-right align-bottom">
-            {% if user.is_authenticated and not rst_download %}
+            {% if not entry.version.locked %}
+                {% if user.is_authenticated and not rst_download %}
+                    <a class="btn-default btn-mini tooltip-toggle"
+                       data-title="Delete Entry"
+                       href='{% url "entry-delete" pk=entry.id %}'>
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn-default btn-mini tooltip-toggle"
+                       data-title="Update Entry"
+                       href='{% url "entry-update" pk=entry.id %}'>
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                {% endif %}
+            {% else %}
                 <a class="btn-default btn-mini tooltip-toggle"
-                   data-title="Delete Entry"
-                   href='{% url "entry-delete" pk=entry.id %}'>
-                    <span class="glyphicon glyphicon-minus"></span>
-                </a>
-                <a class="btn-default btn-mini tooltip-toggle"
-                   data-title="Update Entry"
-                   href='{% url "entry-update" pk=entry.id %}'>
-                    <span class="glyphicon glyphicon-pencil"></span>
+                   data-title="This entry is locked because the version is locked." disabled="disabled">
+                    <i class="fa fa-lock" aria-hidden="true"></i>
                 </a>
             {% endif %}
 

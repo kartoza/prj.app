@@ -56,7 +56,7 @@
                     </a>
                 {% endif %}
                 {% if version.locked %}
-                    {% if user.is_staff %}
+                    {% if user.is_staff or user == version.project.owner or user in version.project.changelog_managers.all %}
                         <a class="btn btn-default btn-mini tooltip-toggle"
                            data-title="Unlock this version."
                            data-toggle="modal" data-target="#unlockModal">
@@ -69,7 +69,7 @@
                         </a>
                     {% endif %}
                 {% else %}
-                    {% if user.is_staff %}
+                    {% if user.is_staff or user == version.project.owner or user in version.project.changelog_managers.all %}
                         <a class="btn btn-default btn-mini tooltip-toggle"
                            data-title="Lock this version."
                             data-toggle="modal" data-target="#lockModal">

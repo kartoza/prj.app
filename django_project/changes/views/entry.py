@@ -4,6 +4,7 @@
 from base.models import Project
 # noinspection PyUnresolvedReferences
 import logging
+from django.http import Http404
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.views.generic import (
@@ -70,7 +71,7 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
         :rtype: QuerySet
         :raises: Http404
         """
-        qs = Entry.objects
+        qs = Entry.objects.filter(version__locked=False)
         # In future we should further filter to only allow deletion for
         # staff members when they are owners of the project...
         if self.request.user.is_staff:
@@ -159,6 +160,20 @@ class EntryUpdateView(LoginRequiredMixin, EntryMixin, UpdateView):
             'project_slug': self.object.version.project.slug,
             'slug': self.object.version.slug}
         )
+
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        :returns: A queryset which shows all Versions if user.is_staff,
+                or only the creator's Versions if not user.is_staff.
+        :rtype: QuerySet
+        :raises: Http404
+        """
+
+        if not self.request.user.is_authenticated:
+            raise Http404
+        qs = Entry.objects.filter(version__locked=False)
+        return qs
 
 
 class EntryOrderView(LoginRequiredMixin, EntryMixin, ListView):

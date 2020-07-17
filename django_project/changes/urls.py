@@ -17,6 +17,7 @@ from .feeds.sponsor import (
     JSONSponsorFeed,
     JSONPastSponsorFeed
 )
+from changes.api_views.lock_version import LockVersion, UnlockVersion
 from .views import (
     # Category
     CategoryDetailView,
