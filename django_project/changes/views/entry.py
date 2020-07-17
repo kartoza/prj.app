@@ -74,7 +74,12 @@ class EntryDeleteView(LoginRequiredMixin, EntryMixin, DeleteView):
         qs = Entry.objects.filter(version__locked=False)
         # In future we should further filter to only allow deletion for
         # staff members when they are owners of the project...
-        if self.request.user.is_staff:
+        pk_entry = self.kwargs.get('pk', None)
+        entry = Entry.objects.get(pk=pk_entry)
+        project = entry.version.project
+        if self.request.user.is_staff \
+                or self.request.user == project.owner \
+                or self.request.user in project.changelog_managers.all():
             return qs
         else:
             return qs.filter(author=self.request.user)
