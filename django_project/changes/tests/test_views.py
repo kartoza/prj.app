@@ -1,7 +1,9 @@
 # coding=utf-8
 # flake8: noqa
 
+import datetime
 import json
+from datetime import timedelta
 from mock import mock
 from django.urls import reverse
 from django.http import HttpResponse
@@ -1308,6 +1310,8 @@ class TestSponsorViews(TestCase):
         logging.disable(logging.CRITICAL)
         self.project = ProjectF.create()
         self.sponsor = SponsorF.create(project=self.project)
+        self.current_sponsor = SponsorF.create(project=self.project)
+        self.future_sponsor = SponsorF.create(project=self.project)
         self.user = UserF.create(**{
             'username': 'timlinux',
             'password': 'password',
@@ -1320,6 +1324,40 @@ class TestSponsorViews(TestCase):
         # a work around for that - sett #581
         self.user.set_password('password')
         self.user.save()
+
+        self.non_staff_user = UserF.create(**{
+            'username': 'non-staff',
+            'password': 'password',
+            'is_staff': False
+        })
+        self.non_staff_user.set_password('password')
+        self.non_staff_user.save()
+
+        self.sponsorship_level = SponsorshipLevelF.create(
+            project=self.project,
+            name='Gold')
+        self.today = datetime.date.today()
+        self.past_sponsorship_period = SponsorshipPeriodF.create(
+            project=self.project,
+            sponsor=self.sponsor,
+            sponsorship_level=self.sponsorship_level,
+            start_date=self.today - timedelta(days=200),
+            end_date=self.today - timedelta(days=100),
+            approved=True)
+        self.current_sponsorship_period = SponsorshipPeriodF.create(
+            project=self.project,
+            sponsor=self.current_sponsor,
+            sponsorship_level=self.sponsorship_level,
+            start_date=self.today,
+            end_date=self.today + timedelta(days=700),
+            approved=True)
+        self.future_sponsorship_period = SponsorshipPeriodF.create(
+            project=self.project,
+            sponsor=self.future_sponsor,
+            sponsorship_level=self.sponsorship_level,
+            start_date=self.today + timedelta(days=200),
+            end_date=self.today + timedelta(days=700),
+            approved=True)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
@@ -1339,6 +1377,29 @@ class TestSponsorViews(TestCase):
             'project_slug': self.project.slug
         }))
         self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_FutureSponsorListView_no_login(self):
+        response = self.client.get(reverse('future-sponsor-list', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_FutureSponsorListView_with_staff_login(self):
+        self.client.login(username='timlinux', password='password')
+        response = self.client.get(reverse('future-sponsor-list', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_FutureSponsorListView_with_non_staff_login(self):
+        self.client.login(username='non-staff', password='password')
+        response = self.client.get(reverse('future-sponsor-list', kwargs={
+            'project_slug': self.project.slug
+        }))
+        self.assertEqual(response.status_code, 404)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SponsorWorldMapView(self):

@@ -192,6 +192,66 @@ class SponsorListView(SponsorMixin, PaginationMixin, ListView):
         return self.queryset
 
 
+class FutureSponsorListView(
+    LoginRequiredMixin, SponsorMixin, PaginationMixin, ListView):
+    """List view for Sponsor."""
+    context_object_name = 'sponsors'
+    template_name = 'sponsor/future-list.html'
+    paginate_by = 1000
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+
+        context = super(FutureSponsorListView, self).get_context_data(**kwargs)
+        context['num_sponsors'] = context['sponsors'].count()
+        context['unapproved'] = False
+        project_slug = self.kwargs.get('project_slug', None)
+        context['project_slug'] = project_slug
+        if project_slug:
+            project = Project.objects.get(slug=project_slug)
+            # Checking user permissions.
+            if self.request.user.is_staff or \
+                    self.request.user == project.owner or \
+                    self.request.user in project.sponsorship_managers.all()\
+                    or self.request.user == project.project_representative:
+                pass
+            else:
+                raise Http404
+
+            context['project'] = Project.objects.get(slug=project_slug)
+            context['levels'] = SponsorshipLevel.objects.filter(
+                project=project)
+        return context
+
+    def get_queryset(self, queryset=None):
+        """Get the queryset for this view.
+
+        :param queryset: A query set
+        :type queryset: QuerySet
+
+        :returns: Sponsor Queryset which is filtered by project
+        :rtype: QuerySet
+        :raises: Http404
+        """
+        if self.queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            if project_slug:
+                project = Project.objects.get(slug=project_slug)
+                queryset = SponsorshipPeriod.approved_objects.filter(
+                    project=project).order_by('-sponsorship_level__value')
+                return queryset
+            else:
+                raise Http404('Sorry! We could not find your Sponsor!')
+        return self.queryset
+
+
 class SponsorWorldMapView(SponsorMixin, ListView):
     """World map view for Sponsors."""
     context_object_name = 'sponsors'
