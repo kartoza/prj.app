@@ -17,6 +17,7 @@ from .feeds.sponsor import (
     JSONSponsorFeed,
     JSONPastSponsorFeed
 )
+from changes.api_views.lock_version import LockVersion, UnlockVersion
 from .views import (
     # Category
     CategoryDetailView,
@@ -27,6 +28,7 @@ from .views import (
     CategoryOrderSubmitView,
     JSONCategoryListView,
     CategoryUpdateView,
+
     # Version
     VersionMarkdownView,
     VersionDetailView,
@@ -38,6 +40,7 @@ from .views import (
     VersionDownload,
     VersionDownloadGnu,
     VersionSponsorDownload,
+
     # Entry
     EntryDetailView,
     EntryDeleteView,
@@ -170,6 +173,12 @@ urlpatterns = [
     url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/downloadmember/$',
         view=VersionSponsorDownload.as_view(),
         name='version-sponsor-download'),
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/locked/$',
+        view=LockVersion.as_view(),
+        name='version-locked'),
+    url(regex='^(?P<project_slug>[\w-]+)/version/(?P<slug>[\w.-]+)/unlocked/$',
+        view=UnlockVersion.as_view(),
+        name='version-unlocked'),
 
     # Changelog entry management
     url(regex='^entry/(?P<pk>\d+)$',

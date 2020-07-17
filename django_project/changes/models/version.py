@@ -56,6 +56,11 @@ class Version(models.Model):
         null=True,
         blank=True)
 
+    locked = models.BooleanField(
+        default=False,
+        help_text='Whether this version is locked for editing.',
+    )
+
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = CustomSlugField()
     project = models.ForeignKey('base.Project', on_delete=models.CASCADE)
