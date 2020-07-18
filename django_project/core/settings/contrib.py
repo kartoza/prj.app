@@ -119,7 +119,7 @@ INSTALLED_APPS += [
 
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
-        'SCOPE': ['user:email', 'public_repo', 'read:org']
+        'SCOPE': ['user:email', 'read:org']
     }
 }
 
