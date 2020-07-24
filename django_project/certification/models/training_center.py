@@ -33,7 +33,10 @@ class TrainingCenter(SlugifyingMixin, models.Model):
     )
 
     address = models.TextField(
-        help_text=_('Address of the training center.'),
+        help_text=_(
+            'Address of the training center. '
+            'If your training center is online, '
+            'you can put your web address of your training center.'),
         max_length=250,
         null=False,
         blank=False,
