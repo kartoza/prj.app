@@ -226,7 +226,7 @@ class CategoryOrderView(LoginRequiredMixin, CategoryMixin, ListView):
                     Q(project=project) &
                     (Q(project__owner=self.request.user) |
                      Q(project__changelog_managers=self.request.user))
-                ).order_by('sort_number')
+                ).order_by('sort_number').distinct()
                 return queryset
             else:
                 raise Http404(
