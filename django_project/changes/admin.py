@@ -23,6 +23,9 @@ import reversion
 class CategoryAdmin(reversion.admin.VersionAdmin):
     """Category admin model."""
 
+    list_filter = ('project',)
+    search_fields = ('name',)
+
     def queryset(self, request):
         """Ensure we use the correct manager.
 
