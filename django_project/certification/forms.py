@@ -229,7 +229,7 @@ class TrainingCenterForm(geoforms.ModelForm):
             'default_zoom': 5,
             'default_lat': -30.559482,
             'default_lon': 22.937506
-        }), )
+        }), required=False)
 
     class Meta:
         model = TrainingCenter
