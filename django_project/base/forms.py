@@ -38,6 +38,7 @@ class ProjectScreenshotForm(forms.ModelForm):
                 css_id='project-form')
         )
         self.helper.layout = layout
+        self.helper.include_media = False
         self.helper.html5_required = False
         super(ProjectScreenshotForm, self).__init__(*args, **kwargs)
 
@@ -147,6 +148,7 @@ class ProjectForm(forms.ModelForm):
                     css_class='form-control'),
         )
         self.helper.layout = layout
+        self.helper.include_media = False
         self.helper.html5_required = False
         super(ProjectForm, self).__init__(*args, **kwargs)
         self.fields['changelog_managers'].label_from_instance = \

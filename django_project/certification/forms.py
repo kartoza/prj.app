@@ -63,6 +63,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
         self.project = kwargs.pop('project')
         form_title = 'New Certifying Organisation for %s' % self.project.name
         self.helper = FormHelper()
+        self.helper.include_media = False
         layout = Layout(
             Fieldset(
                 form_title,
