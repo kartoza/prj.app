@@ -19,7 +19,7 @@ from certification.models.status import Status
 class CertificateAdmin(admin.ModelAdmin):
     """Certificate admin model."""
 
-    list_display = ('__unicode__', 'course')
+    list_display = ('certificateID', 'course')
     search_fields = ('certificateID', 'course__name',)
 
     def queryset(self, request):

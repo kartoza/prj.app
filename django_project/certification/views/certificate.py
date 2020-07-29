@@ -11,14 +11,17 @@ from decimal import Decimal
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import (
-    Http404, HttpResponse, HttpResponseRedirect, FileResponse
+    Http404, HttpResponse, HttpResponseRedirect, FileResponse,
+    HttpResponseForbidden
 )
-from django.views.generic import CreateView, DetailView, TemplateView
+from django.views.generic import (
+    CreateView, DetailView, TemplateView, DeleteView)
 from django.conf import settings
 from django.urls import reverse
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.shortcuts import render
+from django.utils.translation import ugettext as _
 from braces.views import LoginRequiredMixin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
@@ -1062,3 +1065,158 @@ class TopUpView(TemplateView):
                 'slug': self.organisation_slug
             })
         )
+
+
+class CertificateRevokeView(
+        LoginRequiredMixin,
+        CertificateMixin,
+        DeleteView):
+    """Revoke view for Certificate."""
+
+    context_object_name = 'certificate'
+    template_name = 'certificate/delete.html'
+
+    def get_object(self, queryset=None):
+        """
+        Returns the object the view is displaying.
+
+        By default this requires `self.queryset` and a `pk` or `slug` argument
+        in the URLconf, but subclasses can override this to return any object.
+        """
+        # Use a custom queryset if provided; this is required for subclasses
+        # like DateDetailView
+        if queryset is None:
+            queryset = self.get_queryset()
+
+        # Next, try looking up by primary key.
+        pk = self.kwargs.get(self.pk_url_kwarg, None)
+        slug = self.kwargs.get(self.slug_url_kwarg, None)
+        if pk is not None:
+            queryset = queryset.filter(attendee__pk=pk)
+
+        # Next, try looking up by slug.
+        if slug is not None and (pk is None or self.query_pk_and_slug):
+            slug_field = self.get_slug_field()
+            queryset = queryset.filter(**{slug_field: slug})
+
+        # If none of those are defined, it's an error.
+        if pk is None and slug is None:
+            raise AttributeError("Generic detail view %s must be called with "
+                                 "either an object pk or a slug."
+                                 % self.__class__.__name__)
+
+        try:
+            # Get the single item from the filtered queryset
+            obj = queryset.get()
+        except queryset.model.DoesNotExist:
+            raise Http404(_("No %(verbose_name)s found matching the query") %
+                          {'verbose_name': queryset.model._meta.verbose_name})
+        return obj
+
+    def get(self, request, *args, **kwargs):
+        """Get the course_slug and course attendee pk from the URL
+        and define the course.
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        """
+
+        self.course_slug = self.kwargs.get('course_slug', None)
+        self.pk = self.kwargs.get('pk', None)
+        self.course = Course.objects.get(slug=self.course_slug)
+
+        if not self.course.editable:
+            return HttpResponseForbidden('Course is not editable.')
+
+        return super(
+            CertificateRevokeView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """Post the project_slug, organisation_slug, course_slug from the URL.
+
+        :param request: HTTP request object
+        :type request: HttpRequest
+
+        :param args: Positional arguments
+        :type args: tuple
+
+        :param kwargs: Keyword arguments
+        :type kwargs: dict
+
+        :returns: Unaltered request object
+        :rtype: HttpResponse
+        """
+
+        self.project_slug = self.kwargs.get('project_slug', None)
+        self.organisation_slug = self.kwargs.get('organisation_slug', None)
+        self.course_slug = self.kwargs.get('course_slug', None)
+        self.course = Course.objects.get(slug=self.course_slug)
+
+        return super(
+            CertificateRevokeView, self).post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        """Define the redirect URL.
+
+        After successful deletion  of the object, the User will be redirected
+        to the Course detail page.
+
+        :returns: URL
+        :rtype: HttpResponse
+        """
+
+        return reverse('course-detail', kwargs={
+            'project_slug': self.project_slug,
+            'organisation_slug': self.organisation_slug,
+            'slug': self.course_slug
+        })
+
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        :returns: Course Attendee queryset filtered by Course
+        :rtype: QuerySet
+        :raises: Http404
+        """
+
+        if not self.request.user.is_authenticated:
+            raise Http404
+        qs = Certificate.objects.filter(course=self.course)
+        return qs
+
+    def delete(self, request, *args, **kwargs):
+
+        # Update organisation credits every time a certificate is revoked.
+        organisation = \
+            CertifyingOrganisation.objects.get(
+                slug=self.organisation_slug)
+        remaining_credits = \
+            organisation.organisation_credits + \
+            organisation.project.certificate_credit
+        organisation.organisation_credits = remaining_credits
+        organisation.save()
+
+        # Delete existing certificate
+        certificate = self.get_object()
+        filename = "{}.{}".format(certificate.certificateID, "pdf")
+        project_folder = (
+            organisation.project.name.lower()).replace(' ', '_')
+        pathname = \
+            os.path.join(
+                '/home/web/media',
+                'pdf/{}/{}'.format(project_folder, filename))
+        found = os.path.exists(pathname)
+        if found:
+            os.remove(pathname)
+
+        return super(
+            CertificateRevokeView, self).delete(request, *args, **kwargs)
