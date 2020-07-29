@@ -3,6 +3,7 @@
 
 """
 
+import datetime
 import os
 from django.conf.global_settings import MEDIA_ROOT
 from django.urls import reverse
@@ -134,3 +135,12 @@ class Course(models.Model):
             'organisation_slug': self.certifying_organisation.slug,
             'project_slug': self.certifying_organisation.project.slug
         })
+
+    @property
+    def editable(self):
+        today = datetime.datetime.today().date()
+        delta = self.end_date + datetime.timedelta(days=7)
+        if today > delta:
+            return False
+        else:
+            return True

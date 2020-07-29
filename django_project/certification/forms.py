@@ -414,6 +414,45 @@ class AttendeeForm(forms.ModelForm):
         return instance
 
 
+class UpdateAttendeeForm(forms.ModelForm):
+
+    class Meta:
+        model = Attendee
+        fields = (
+            'firstname',
+            'surname',
+            'email',
+            'certifying_organisation',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.certifying_organisation = kwargs.pop('certifying_organisation')
+        form_title = 'Update Attendee'
+        self.helper = FormHelper()
+        layout = Layout(
+            Fieldset(
+                form_title,
+                Field('firstname', css_class='form-control'),
+                Field('surname', css_class='form-control'),
+                Field('email', css_class='form-control'),
+            )
+        )
+        self.helper.layout = layout
+        self.helper.html5_required = False
+        super(UpdateAttendeeForm, self).__init__(*args, **kwargs)
+        self.fields['certifying_organisation'].initial = \
+            self.certifying_organisation
+        self.fields['certifying_organisation'].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', 'Add'))
+
+    def save(self, commit=True):
+        instance = super(UpdateAttendeeForm, self).save(commit=False)
+        instance.author = self.user
+        instance.save()
+        return instance
+
+
 class CertificateForm(forms.ModelForm):
 
     class Meta:
