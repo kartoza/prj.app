@@ -262,10 +262,10 @@ class AttendeeUpdateView(LoginRequiredMixin, UpdateView):
        """
 
         return reverse('course-detail', kwargs={
-                'project_slug': self.project_slug,
-                'organisation_slug': self.organisation_slug,
-                'slug': self.course_slug,
-            })
+            'project_slug': self.project_slug,
+            'organisation_slug': self.organisation_slug,
+            'slug': self.course_slug,
+        })
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
