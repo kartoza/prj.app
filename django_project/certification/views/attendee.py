@@ -2,6 +2,7 @@
 import io
 import csv
 from django.db import transaction
+from django.http import HttpResponseForbidden
 from django.urls import reverse
 from django.views.generic import (
     CreateView, FormView, UpdateView)
@@ -299,3 +300,10 @@ class AttendeeUpdateView(LoginRequiredMixin, UpdateView):
             'certifying_organisation': self.certifying_organisation
         })
         return kwargs
+
+    def get(self, request, *args, **kwargs):
+        self.course_slug = self.kwargs.get('course_slug', None)
+        course = Course.objects.get(slug=self.course_slug)
+        if not course.editable:
+            return HttpResponseForbidden('Course is not editable.')
+        return super(AttendeeUpdateView, self).get(request, *args, **kwargs)

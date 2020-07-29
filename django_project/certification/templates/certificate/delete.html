@@ -1,0 +1,49 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Revoke Certificate - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Revoke Certificate</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <form action="" id="delete-confirmation" method="post">{% csrf_token %}
+        <div class="alert row">
+            <div class="col-lg-10">
+                <p class="lead">Are you sure you want to revoke the certificate below? (This action is irreversible)</p>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    <a class="btn btn-danger btn-sm tooltip-toggle"
+                       href="#"
+                       onClick="$('#delete-confirmation').submit()"
+                       data-title="Revoke {{ certificate.certificateID }}">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url 'course-detail' project_slug=certificate.course.certifying_organisation.project.slug organisation_slug=certificate.course.certifying_organisation.slug slug=certificate.course.slug %}'
+                       data-title="Cancel">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Certificate: {{ certificate.certificateID }}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8" style="font-size: 12pt">
+                <span class="col-lg-3">Course</span><span class="col-lg-9">: {{ certificate.course.course_type.name }} ({{ certificate.course.start_date }} to {{ certificate.course.end_date }})<br/></span>
+                <span class="col-lg-3">Attendee</span><span class="col-lg-9">: {{ certificate.attendee.firstname }} {{ certificate.attendee.surname }}<br/></span>
+            </div>
+        </div>
+        </div>
+    </form>
+{% endblock %}

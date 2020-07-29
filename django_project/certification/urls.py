@@ -56,6 +56,7 @@ from .views import (
     regenerate_certificate,
     regenerate_all_certificate,
     preview_certificate,
+    CertificateRevokeView,
 
     # Certificate for certifying organisation.
     OrganisationCertificateCreateView,
@@ -258,6 +259,10 @@ urlpatterns = [
         '(?P<organisation_slug>[\w-]+)/course/'
         '(?P<course_slug>[\w-]+)/print/(?P<pk>[\w-]+)/$',
         certificate_pdf_view, name='print-certificate'),
+    url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+        '(?P<organisation_slug>[\w-]+)/course/'
+        '(?P<course_slug>[\w-]+)/revoke/(?P<pk>[\w-]+)/$',
+        CertificateRevokeView.as_view(), name='revoke-certificate'),
     url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
         '(?P<organisation_slug>[\w-]+)/course/'
         '(?P<course_slug>[\w-]+)/download_zip/$',
