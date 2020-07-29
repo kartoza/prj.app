@@ -207,6 +207,19 @@
                 {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner or user in course.certifying_organisation.project.certification_managers.all %}
                 <td  style="text-align: center">
                     <div class="btn-group pull-right">
+                        {% if course.editable %}
+                            <a class="btn btn-default btn-xs btn-print tooltip-toggle"
+                                href='{% url "attendee-update" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
+                                data-title="Edit Attendee">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                        {% else %}
+                            <a class="btn btn-default btn-xs btn-print tooltip-toggle" disabled
+                                href='#'
+                                data-title="Edit attendee only available until 7 days after the course ends.">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                        {% endif %}
                         {% if attendee.attendee.pk in certificates %}
                             {% if attendee.attendee.pk in paid_certificates %}
                                 <a class="btn btn-default btn-xs btn-print tooltip-toggle"

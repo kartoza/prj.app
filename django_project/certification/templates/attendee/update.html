@@ -1,0 +1,23 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    <h1>Update Attendee</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <section id="forms">
+        <div class='container'>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="vertical-space"></div>
+                <div class="form-actions">
+                    <input type="submit" name="submit" value="Submit"
+                           class="btn btn-primary" id="submit-save">
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}
