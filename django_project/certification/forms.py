@@ -1,6 +1,10 @@
 # coding=utf-8
 from __future__ import unicode_literals
+import json
+import os
 from django import forms
+from django.conf import settings
+from django.contrib.gis.geos import Point
 from django.contrib.admin import widgets
 from django.contrib.auth.models import User
 from django.contrib.gis import forms as geoforms
@@ -259,6 +263,21 @@ class TrainingCenterForm(geoforms.ModelForm):
         self.helper.layout = layout
         self.helper.html5_required = False
         super(TrainingCenterForm, self).__init__(*args, **kwargs)
+
+        json_file = settings.STATIC_ROOT + '/json/geo.json'
+        found = os.path.exists(json_file)
+        lat = -30.559482
+        lon = 22.937506
+        if found:
+            with open(json_file) as file:
+                datas = json.load(file)
+                for data in datas['features']:
+                    if data['properties'][
+                            'ISO2'] == self.certifying_organisation.country:
+                        lat = data['properties']['LAT']
+                        lon = data['properties']['LON']
+        point = Point(x=lon, y=lat, srid=4326)
+        self.fields['location'].initial = point
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
