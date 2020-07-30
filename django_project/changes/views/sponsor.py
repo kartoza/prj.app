@@ -810,7 +810,8 @@ def generate_sponsor_cloud(request, **kwargs):
             (0, 0, max_x, max_y)).save(
             filepath + '{}.png'.format(project_name))
 
-        image_path = settings.MEDIA_URL + 'images/sponsors/{}.png'.format(project_name)
+        image_path = \
+            settings.MEDIA_URL + 'images/sponsors/{}.png'.format(project_name)
 
     return render(
         request, 'sponsor/sponsor_cloud.html',
