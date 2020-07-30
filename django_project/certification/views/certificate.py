@@ -37,7 +37,8 @@ from ..models import (
     CertifyingOrganisation,
     CourseConvener,
     TrainingCenter,
-    CourseType
+    CourseType,
+    CourseAttendee
 )
 from ..forms import CertificateForm
 from base.models.project import Project
@@ -705,6 +706,67 @@ def regenerate_certificate(request, **kwargs):
             'attendee': attendee,
             'id': certificate.certificateID,
             'course': course})
+
+
+def generate_all_certificate(request, **kwargs):
+    """Generate all certificates within a course."""
+
+    project_slug = kwargs.pop('project_slug', None)
+    course_slug = kwargs.pop('course_slug', None)
+    organisation_slug = kwargs.get('organisation_slug', None)
+    course = Course.objects.get(slug=course_slug)
+    project = Project.objects.get(slug=project_slug)
+    certifying_organisation = \
+        CertifyingOrganisation.objects.get(slug=organisation_slug)
+
+    # Checking user permissions.
+    if request.user.is_staff or request.user == project.owner or \
+            request.user in project.certification_managers.all() or \
+            request.user in certifying_organisation.organisation_owners.all() \
+            or request.user == project.project_representative:
+        pass
+    else:
+        raise Http404
+
+    course_attendees = CourseAttendee.objects.filter(course=course)
+    for course_attendee in course_attendees:
+
+        try:
+            certificate = Certificate.objects.get(
+                author=request.user,
+                attendee=course_attendee.attendee,
+                course=course,
+            )
+        except Certificate.DoesNotExist:
+
+            remaining_credits = \
+                certifying_organisation.organisation_credits - \
+                certifying_organisation.project.certificate_credit
+
+            is_paid = False
+            if remaining_credits >= 0:
+                is_paid = True
+
+            certificate = Certificate.objects.create(
+                author=request.user,
+                attendee=course_attendee.attendee,
+                course=course,
+                is_paid=is_paid
+            )
+
+            if certificate and (remaining_credits >= 0):
+                certifying_organisation.organisation_credits = \
+                    remaining_credits
+                certifying_organisation.save()
+
+    url = reverse('course-detail', kwargs={
+        'project_slug': project_slug,
+        'organisation_slug': organisation_slug,
+        'slug': course_slug
+    })
+
+    messages.success(request, 'All certificates are generated', 'generate')
+    return HttpResponseRedirect(url)
 
 
 def regenerate_all_certificate(request, **kwargs):

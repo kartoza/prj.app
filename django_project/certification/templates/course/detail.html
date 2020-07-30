@@ -170,6 +170,11 @@
             <span class="glyphicon glyphicon-download-alt"></span>
             </a>
         <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
+           href='{% url "generate-all-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
+            data-title="Generate all certificate for this course">
+            <i class="glyphicon glyphicon-folder-open"></i>
+            </a>
+        <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
            href='{% url "regenerate-all-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
             data-title="Re-generate all PDF certificate for this course">
             <i class="glyphicon glyphicon-repeat"></i>
