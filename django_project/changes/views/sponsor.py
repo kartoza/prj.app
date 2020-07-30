@@ -5,6 +5,7 @@ import os
 import time
 import logging
 
+from django.conf import settings
 from django.urls import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
@@ -796,7 +797,7 @@ def generate_sponsor_cloud(request, **kwargs):
             if max_y <= y:
                 max_y = y + xy_size
             background.paste(
-                im, box=(x, y + ((xy_size - height) / 2)), mask=im)
+                im, box=(x, y + int((xy_size - height) / 2)), mask=im)
             x += xy_size
 
     image_path = 'none'
@@ -809,7 +810,7 @@ def generate_sponsor_cloud(request, **kwargs):
             (0, 0, max_x, max_y)).save(
             filepath + '{}.png'.format(project_name))
 
-        image_path = '/images/sponsors/{}.png'.format(project_name)
+        image_path = settings.MEDIA_URL + 'images/sponsors/{}.png'.format(project_name)
 
     return render(
         request, 'sponsor/sponsor_cloud.html',
