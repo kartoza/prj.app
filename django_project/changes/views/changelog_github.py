@@ -27,6 +27,8 @@ def create_entry_from_github_pr(version, category, data, user):
     :return:
     """
 
+    existing_entries = Entry.objects.filter(
+        github_PR_url__isnull=False).values_list('github_PR_url', flat=True)
     for item in data:
         response = requests.get(
             item['user']['url'],
@@ -38,16 +40,18 @@ def create_entry_from_github_pr(version, category, data, user):
             if not name:
                 name = response.json()['login']
 
-        # Create new entry from data.
-        Entry.objects.create(
-            category=category,
-            title=item['title'],
-            description=item['body'],
-            developer_url=item['user']['url'],
-            developed_by=name,
-            author=user,
-            version=version
-        )
+        if item['html_url'] not in existing_entries:
+            # Create new entry from data.
+            Entry.objects.create(
+                category=category,
+                title=item['title'],
+                description=item['body'],
+                developer_url=item['user']['url'],
+                developed_by=name,
+                author=user,
+                version=version,
+                github_PR_url=item['html_url']
+            )
     return True
 
 

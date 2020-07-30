@@ -82,6 +82,12 @@ class Entry(models.Model):
         null=True,
         blank=True)
 
+    github_PR_url = models.CharField(
+        help_text='Input the Github PR URL when applicable.',
+        max_length=255,
+        null=True,
+        blank=True)
+
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField()
     # noinspection PyUnresolvedReferences
