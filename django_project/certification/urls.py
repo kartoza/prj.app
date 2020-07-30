@@ -55,6 +55,7 @@ from .views import (
     email_all_attendees,
     regenerate_certificate,
     regenerate_all_certificate,
+    generate_all_certificate,
     preview_certificate,
     CertificateRevokeView,
 
@@ -279,6 +280,10 @@ urlpatterns = [
         '(?P<organisation_slug>[\w-]+)/course/'
         '(?P<course_slug>[\w-]+)/regenerate-all-certificate/$',
         regenerate_all_certificate, name='regenerate-all-certificate'),
+    url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+        '(?P<organisation_slug>[\w-]+)/course/'
+        '(?P<course_slug>[\w-]+)/generate-all-certificate/$',
+        generate_all_certificate, name='generate-all-certificate'),
     url(r'^(?P<project_slug>[\w-]+)/certifyingorganisation/'
         '(?P<organisation_slug>[\w-]+)/preview-certificate/$',
         preview_certificate, name='preview-certificate'),
