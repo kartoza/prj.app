@@ -118,12 +118,12 @@
                             {% if sponsor.sponsor.sponsor_url %}
                                 <a href="{{ sponsor.sponsor.sponsor_url }}">
                                 <img class="img-responsive img-rounded pull-right"
-                                     src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
+                                     src="{% thumbnail sponsor.sponsor.logo 50x50 %}"/>
                             </a>
                             {% else %}
                                 <a href="{{ sponsor.sponsor.logo.url }}">
                                     <img class="img-responsive img-rounded pull-right"
-                                         src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
+                                         src="{% thumbnail sponsor.sponsor.logo 50x50 %}"/>
                                 </a>
                             {% endif %}
                         {% endif %}
@@ -175,7 +175,7 @@
                         {% if sponsor.sponsor.logo %}
                             <a href="{{ sponsor.sponsor.logo.url }}">
                                 <img class="img-responsive img-rounded pull-right"
-                                     src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"/>
+                                     src="{% thumbnail sponsor.sponsor.logo 50x50 %}"/>
                             </a>
                         {% endif %}
                     </div>
