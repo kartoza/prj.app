@@ -3,6 +3,8 @@ import os
 import re
 import requests
 import markdown
+import warnings
+
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
 from django.conf import settings
@@ -19,6 +21,9 @@ try:
     from core.settings.secret import GIT_TOKEN
 except ImportError:
     GIT_TOKEN = ''
+    warnings.warn(
+        "Be careful, the GIT_TOKEN is not set. Using the GitHub API will "
+        "fail.")
 
 
 def create_entry_from_github_pr(version, category, data, user):
@@ -144,6 +149,12 @@ class FetchRepoLabels(LoginRequiredMixin, APIView):
 
         if not repo:
             return Response([])
+
+        if not GIT_TOKEN:
+            return Response({
+                'status': 'failed',
+                'reason': 'The GitHub token is not set.'
+            })
 
         results = []
         repo = repo.replace('https://github.com/', '')
