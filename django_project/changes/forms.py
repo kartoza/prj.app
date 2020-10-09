@@ -97,6 +97,9 @@ class VersionForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super(VersionForm, self).save(commit=False)
+        version = Version.objects.get(pk=instance.pk)
+        if version:
+            instance.release_date = version.release_date
         instance.author = self.user
         instance.project = self.project
         instance.approved = False
