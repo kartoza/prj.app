@@ -7,7 +7,7 @@ from vota.models.vote import Vote
 from core.model_factories import UserF
 
 
-class BallotF(factory.DjangoModelFactory):
+class BallotF(factory.django.DjangoModelFactory):
     """
     Ballot model factory
     """
@@ -27,7 +27,7 @@ class BallotF(factory.DjangoModelFactory):
     committee = factory.SubFactory('vota.tests.model_factories.CommitteeF')
 
 
-class CommitteeF(factory.DjangoModelFactory):
+class CommitteeF(factory.django.DjangoModelFactory):
     """
     Committee model factory
     """
@@ -53,7 +53,7 @@ class CommitteeF(factory.DjangoModelFactory):
                 self.users.add(user)
 
 
-class VoteF(factory.DjangoModelFactory):
+class VoteF(factory.django.DjangoModelFactory):
     """
     Vote model factory
     """
