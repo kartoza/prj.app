@@ -233,7 +233,7 @@ def download_all_referenced_images(request, **kwargs):
             try:
                 images = md.images
                 if len(images) > 0:
-                    for image in images:
+                    for i, image in enumerate(images):
                         filename = image.rsplit('/', 1)[-1]
                         folder_path = os.path.join(
                             settings.MEDIA_ROOT,
@@ -265,6 +265,14 @@ def download_all_referenced_images(request, **kwargs):
                             img_url = file_path.replace('/home/web', '')
                             html = html.replace(image, img_url)
                             html = re.sub(r"alt=\".*?\"", "", html)
+
+                        if i == 0:
+                            # Take the first image set in the pull request
+                            # and set it as default for the entry and remove
+                            # it from the body
+                            entry.image_file = img_url
+                            html = html.replace(img_url, '')
+
                 entry.description = html
                 entry.save()
                 num_entry += 1
