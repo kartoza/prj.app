@@ -10,7 +10,7 @@ if DJANGO_VERSION[:2] >= (1, 4):
 
 
 # noinspection PyProtectedMember
-class UserF(factory.DjangoModelFactory):
+class UserF(factory.django.DjangoModelFactory):
 
     class Meta:
         model = User
