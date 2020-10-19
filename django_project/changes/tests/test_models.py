@@ -118,7 +118,7 @@ class TestEntryCRUD(TestCase):
         )
         self.assertTrue(
             model.developer_info_html() == 'This feature was '
-                                        'developed by Tim ')
+                                           'developed by Tim ')
 
         model = EntryF.create(
             title=u'Custom Entry',
@@ -127,7 +127,8 @@ class TestEntryCRUD(TestCase):
         )
         self.assertTrue(
             model.developer_info_html() == 'This feature was '
-            'developed by [Tim](https://github.com/timlinux)')
+                                           'developed by [Tim]'
+                                           '(https://github.com/timlinux)')
 
     def test_Entry_update(self):
         """
