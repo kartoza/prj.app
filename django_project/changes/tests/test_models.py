@@ -103,11 +103,31 @@ class TestEntryCRUD(TestCase):
         Tests Entry model read
         """
         model = EntryF.create(
-            title=u'Custom Entry'
+            title=u'Custom Entry',
+            developed_by=u'Tim'
         )
 
         self.assertTrue(model.title == 'Custom Entry')
         self.assertTrue(model.slug == 'custom-entry')
+        self.assertTrue(model.developer_info_html() == '')
+
+        model = EntryF.create(
+            title=u'Custom Entry',
+            developed_by=u'Tim',
+            developer_url=''
+        )
+        self.assertTrue(
+            model.developer_info_html() == 'This feature was '
+                                        'developed by Tim ')
+
+        model = EntryF.create(
+            title=u'Custom Entry',
+            developed_by=u'Tim',
+            developer_url=u'https://github.com/timlinux'
+        )
+        self.assertTrue(
+            model.developer_info_html() == 'This feature was '
+            'developed by [Tim](https://github.com/timlinux)')
 
     def test_Entry_update(self):
         """
