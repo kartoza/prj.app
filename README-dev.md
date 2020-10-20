@@ -48,12 +48,25 @@ repeatable steps:
 6. `make devweb`
 7. start PyCharm
 
+> If you're not using remote interpreter in PyCharm, skip step `7` and run: `make devweb-runserver` to runserver in devweb container
+
 Windows:
 
 ```
 make-devbuild.bat
 make-devweb.bat
 ```
+
+
+> Run test before you commit your modified files:
+>
+> `make test`
+>
+> or you can run test individually:
+>
+> `make flake8`
+>
+> `make coverage'
 
 ### Create a remote interpreter in pycharm
 
