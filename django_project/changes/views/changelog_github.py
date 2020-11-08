@@ -57,7 +57,7 @@ def create_entry_from_github_pr(version, category, data, user):
                 developer_url=item['user']['url'],
                 developed_by=name,
                 funded_by=funded_by,
-                funded_by_url=funded_by_url,
+                funder_url=funded_by_url,
                 author=user,
                 version=version,
                 github_PR_url=item['html_url']
