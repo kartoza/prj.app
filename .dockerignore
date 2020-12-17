@@ -94,7 +94,6 @@ scrap.html
 .sudo_as_admin_successful
 
 # Pg cluster for docker
-deployment/pg
 deployment/pg/postgres_data/9.3
 deployment/pg/postgres_staging_data/9.3
 deployment/pg/postgres_dev_data/9.3
@@ -125,3 +124,7 @@ deployment/btsync-media.env.PRODUCTION
 # These don't get versioned since they are generated on the fly 
 deployment/docker/Dockerfile-prod
 deployment/docker/projecta.tar.gz
+
+
+docs
+deployment/pg

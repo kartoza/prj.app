@@ -1,0 +1,62 @@
+## docker-compose override recipe sample
+## Intended to be used to override default recipe for development environment
+## Copy paste it as docker-compose.override.yml to use
+version: '3'
+volumes:
+  postgres-data:
+    driver_opts:
+      type: none
+      device: ${PWD}/pg/postgres_data
+      o: bind
+  db-backups:
+    driver_opts:
+      type: none
+      device: ${PWD}/backups
+      o: bind
+  static-data:
+    driver_opts:
+      type: none
+      device: ${PWD}/static
+      o: bind
+  media-data:
+    driver_opts:
+      type: none
+      device: ${PWD}/media
+      o: bind
+  reports-data:
+    driver_opts:
+      type: none
+      device: ${PWD}/reports
+      o: bind
+  nginx-conf:
+    driver_opts:
+      type: none
+      device: ${PWD}/sites-enabled
+      o: bind
+services:
+  uwsgi:
+    build:
+      context: ${PWD}/../
+      dockerfile: deployment/docker/Dockerfile
+    volumes:
+      - ../django_project:/home/web/django_project
+      - ./logs:/var/log
+
+  web:
+    volumes:
+      - ./logs:/var/log/nginx
+    ports:
+      - "${HTTP_PORT}:8080"
+      - "${HTTPS_PORT}:443"
+
+  devweb:
+    image: kartoza/project-uwsgi:dev-latest
+    build:
+      context: docker
+      dockerfile: Dockerfile-dev
+    volumes:
+      - ../django_project:/home/web/django_project
+      - ./logs:/var/log
+    ports:
+      - "${TEST_HTTP_PORT}:8080"
+      - "${SSH_PORT}:22"
