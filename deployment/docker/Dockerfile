@@ -12,7 +12,7 @@ RUN dpkg -i pandoc-1.17.1-2-amd64.deb && rm pandoc-1.17.1-2-amd64.deb
 
 ADD deployment/docker/REQUIREMENTS.txt /REQUIREMENTS.txt
 ADD deployment/docker/uwsgi.conf /uwsgi.conf
-ADD django_project /home/web
+ADD django_project /home/web/django_project
 RUN pip install -r /REQUIREMENTS.txt
 RUN pip install uwsgi
 
