@@ -206,18 +206,30 @@ h2{
         </ul>
     </section>
 {% endif %}
+
+{% if worksheet.youtube_link %}
+    <section>
+        <div class="icon-project-color icon-section">
+            <img class="icon-section" src="{{ "img/youtube.png" | local_static_filepath }}">
+        </div>
+        <h2>{% trans 'Module video tutorial:'%}</h2>
+        <ul>
+            <li>
+                <a target="_blank" href="{{ worksheet.youtube_link }}">{{ worksheet.youtube_link }}</a>
+            </li>
+        </ul>
+    </section>
+
+{% endif %}
+
 {% if further_reading %}
     <section>
         <div class="icon-project-color icon-section">
             <img class="icon-section" src="{{ "img/book.png" | local_static_filepath }}">
         </div>
+
         <h2>{% trans 'Further reading:'%}</h2>
         <ul>
-            {% if worksheet.youtube_link %}
-                <li>
-                    <a target="_blank" href="{{ worksheet.youtube_link }}">module video tutorial</a>
-                </li>
-            {% endif %}
             {% for info in further_reading %}
                 <li>
                     {{ info.text }}
