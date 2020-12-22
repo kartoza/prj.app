@@ -213,6 +213,11 @@ h2{
         </div>
         <h2>{% trans 'Further reading:'%}</h2>
         <ul>
+            {% if worksheet.youtube_link %}
+                <li>
+                    <a target="_blank" href="{{ worksheet.youtube_link }}">module video tutorial</a>
+                </li>
+            {% endif %}
             {% for info in further_reading %}
                 <li>
                     {{ info.text }}
