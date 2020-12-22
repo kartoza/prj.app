@@ -109,7 +109,8 @@ class WorksheetPrintView(WorksheetDetailView):
         # return response
         pdf_response = HttpResponse(content_type='application/pdf')
         pdf_response['Content-Disposition'] = \
-            'filename={}. {}'.format(numbering, context['file_title'])
+            'filename={}. {}.pdf'.format(
+                numbering, context['file_title'].decode("utf-8"))
         # Need to improve for URL outside of the dev env.
         html_object = HTML(
             string=response.content,
@@ -133,10 +134,11 @@ class WorksheetPDFZipView(WorksheetDetailView):
         response = super(WorksheetPDFZipView, self).render_to_response(
             context, **response_kwargs)
         response.render()
+        file_title = context['file_title'].decode('utf-8')
         # return response
         pdf_response = HttpResponse(content_type='application/pdf')
         pdf_response['Content-Disposition'] = \
-            'attachment; filename={}'.format(context['file_title'])
+            'attachment; filename={}'.format(file_title)
         # Need to improve for URL outside of the dev env.
         html_object = HTML(
             string=response.content,
@@ -146,13 +148,13 @@ class WorksheetPDFZipView(WorksheetDetailView):
 
         filenames = []
         with open('/tmp/{}. {}.pdf'.format(
-                numbering, context['file_title']), 'wb') as pdf:
+                numbering, file_title), 'wb') as pdf:
             pdf.write(pdf_response.content)
 
         filenames.append(
-            '/tmp/{}. {}.pdf'.format(numbering, context['file_title']))
+            '/tmp/{}. {}.pdf'.format(numbering, file_title))
 
-        zip_subdir = '{}. {}'.format(numbering, context['file_title'])
+        zip_subdir = '{}. {}'.format(numbering, file_title)
 
         s = BytesIO()
         zf = zipfile.ZipFile(s, "w")
@@ -168,7 +170,7 @@ class WorksheetPDFZipView(WorksheetDetailView):
             zip_data_path = settings.MEDIA_ROOT + data_path[6:]
             zip_path = os.path.join(
                 zip_subdir,
-                '{}. {}.zip'.format(numbering, context['file_title']))
+                '{}. {}.zip'.format(numbering, file_title))
             zf.write(zip_data_path, zip_path)
 
         zf.close()
@@ -177,7 +179,7 @@ class WorksheetPDFZipView(WorksheetDetailView):
             s.getvalue(), content_type="application/x-zip-compressed")
         zip_response['Content-Disposition'] = \
             'attachment; filename={}. {}.zip'.format(
-                numbering, context['file_title'])
+                numbering, file_title)
         return zip_response
 
 
@@ -449,7 +451,7 @@ def download_multiple_worksheet(request, **kwargs):
 
         pk = int(pk)
         worksheet = Worksheet.objects.get(pk=pk)
-        pdf_title = '{}. {}'.format(numbering, worksheet.module.encode("utf8"))
+        pdf_title = '{}. {}'.format(numbering, worksheet.module)
         context = get_context_data(pk)
         context['section_number'] = numbering.split('.')[0]
         context['module_number'] = numbering
@@ -499,5 +501,5 @@ def download_multiple_worksheet(request, **kwargs):
         s.getvalue(), content_type="application/x-zip-compressed")
     zip_response['Content-Disposition'] = \
         'attachment; filename={}-worksheet {}.zip'.format(
-            project.name.encode('utf8'), downloaded_module)
+            project.name, downloaded_module)
     return zip_response
