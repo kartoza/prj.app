@@ -26,6 +26,9 @@ class TestSpecification(TestCase):
         # check if model title exists.
         self.assertTrue(model.title is not None)
 
+        # check if __str__ method returns the correct value
+        self.assertEqual(str(model), model.title)
+
     def test_Specification_delete(self):
         """Test specification model deletion."""
 

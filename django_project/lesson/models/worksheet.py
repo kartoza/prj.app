@@ -185,4 +185,7 @@ class Worksheet(TranslationMixin):
     def __unicode__(self):
         return self.module
 
+    def __str__(self):
+        return self.module
+
 from lesson.signals.worksheet import *  # noqa

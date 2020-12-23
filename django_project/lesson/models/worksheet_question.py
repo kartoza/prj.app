@@ -79,5 +79,8 @@ class WorksheetQuestion(TranslationMixin):
     def __unicode__(self):
         return self.question
 
+    def __str__(self):
+        return self.question
+
 
 from lesson.signals.worksheet_question import *  # noqa
