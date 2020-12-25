@@ -7,6 +7,7 @@ __copyright__ = 'kartoza.com'
 
 import logging
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings, Client
 from django.urls import reverse
 
@@ -59,6 +60,13 @@ class TestViews(TestCase):
             'section_slug': self.test_section.slug,
             'pk': self.test_worksheet.pk
         }
+        gif_byte = (
+            b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x05\x04'
+            b'\x04\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02'
+            b'\x02\x44\x01\x00\x3b'
+        )
+        self.image_uploaded = SimpleUploadedFile(
+            'gif.gif', gif_byte, content_type='image/gif')
 
     @override_settings(VALID_DOMAIN = ['testserver', ])
     def test_WorksheetCreateView(self):
@@ -131,3 +139,57 @@ class TestViews(TestCase):
         response = self.client.get(reverse('worksheet-module-answers',
                                            kwargs=self.kwargs_worksheet_full))
         self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_WorksheetPrintView(self):
+        self.test_section.name = "Test section print"
+        self.test_section.save()
+        self.test_worksheet.summary_image = self.image_uploaded
+        self.test_worksheet.more_about_image = self.image_uploaded
+        self.test_worksheet.module = "Test module print"
+        self.test_worksheet.save()
+        response = self.client.get(reverse(
+            'worksheet-print', kwargs= self.kwargs_worksheet_full
+        ) + '?q=1')
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(
+            response.get('Content-Disposition'),
+            "filename=1. Test section print-Test module print.pdf"
+        )
+
+    @override_settings(VALID_DOMAIN=['testserver'])
+    def test_WorksheetPDFZipView(self):
+        self.test_section.name = "Test section zip"
+        self.test_section.save()
+        self.test_worksheet.summary_image = self.image_uploaded
+        self.test_worksheet.more_about_image = self.image_uploaded
+        self.test_worksheet.module = "Test module zip"
+        self.test_worksheet.save()
+        response = self.client.get(reverse(
+            'worksheet-zip', kwargs=self.kwargs_worksheet_full
+        ) + '?q=2')
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(
+            response.get('Content-Disposition'),
+            "attachment; filename=2. Test section zip-Test module zip.zip"
+        )
+
+    @override_settings(VALID_DOMAIN=['testserver'])
+    def test_download_multiple_worksheets(self):
+        self.test_project.name = "Test project name multiple zip"
+        self.test_project.save()
+        self.test_worksheet.summary_image = self.image_uploaded
+        self.test_worksheet.more_about_image = self.image_uploaded
+        self.test_worksheet.save()
+        worksheet_obj = ('?worksheet={%22' +
+                         str(self.test_worksheet.pk) +
+                         '%22:%221.1%22}')
+        response = self.client.get(reverse(
+            'download-multiple-worksheets', kwargs=self.kwargs_project
+        ) + worksheet_obj)
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(
+            response.get('Content-Disposition'),
+            "attachment; "
+            "filename=Test project name multiple zip-worksheet module 1.1.zip"
+        )
