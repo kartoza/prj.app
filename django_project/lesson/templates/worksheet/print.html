@@ -105,6 +105,19 @@ h2{
     font-size: medium;
 }
 
+/* issue #1239 */
+ul {
+    padding-left: 18px;
+}
+ol.question {
+    list-style-type: decimal;
+    padding-left: 24px;
+}
+ol.answer {
+    list-style-type:lower-alpha;
+    padding-left: 24px;
+}
+
     </style>
     <title>{{ worksheet.module }}</title>
 </head>
@@ -186,10 +199,9 @@ h2{
             <img class="icon-section" src="{{ "img/check.png" | local_static_filepath }}">
         </div>
         <h2>{% trans 'Check your knowledge:' %}</h2>
-    {#  Bullet list with type="1" or type="a" do not work well in the PDF generation. We need a custom counter.  #}
-        <ul style="list-style: none;">
+        <ol class="question" >
             {% for question, answers in questions.items %}
-                <li>{{ forloop.counter }}. {{ question.question }}:
+                <li style="margin-bottom: 0.5em;">{{ question.question }}:
                     {% if question.question_image %}
                         <div>
                         <img id="{{ question.question_image }}"
@@ -198,13 +210,13 @@ h2{
                              style="max-width: 300px !important;"/>
                         </div>
                     {% endif %}
-                <ul style="list-style: none; margin-bottom: 10px;">
+                <ol class="answer">
                     {% for answer in answers %}
-                        <li>{{ forloop.counter | to_char }}. {{ answer.answer }}</li>
+                        <li>{{ answer.answer }}</li>
                     {% endfor %}
-                </ul>
+                </ol>
             {% endfor %}
-        </ul>
+        </ol>
     </section>
 {% endif %}
 
