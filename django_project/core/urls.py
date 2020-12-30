@@ -55,6 +55,9 @@ urlpatterns += i18n_patterns(
         general_flatpage,
         name='general_flatpage'),
 )
+urlpatterns += [
+    url(r'^tinymce/', include('tinymce.urls')),
+]
 
 if 'rosetta' in settings.INSTALLED_APPS:
     urlpatterns += [

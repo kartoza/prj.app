@@ -1,6 +1,7 @@
 # coding=utf-8
 """Further reading form."""
 
+from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from crispy_forms.helper import FormHelper
@@ -10,6 +11,7 @@ from crispy_forms.layout import (
     Field,
     Submit,
 )
+from tinymce.widgets import TinyMCE
 
 from modeltranslation.forms import TranslationModelForm
 from lesson.models.further_reading import FurtherReading
@@ -18,6 +20,7 @@ from lesson.models.further_reading import FurtherReading
 class FurtherReadingForm(TranslationModelForm):
     """Form for creating further reading item."""
 
+    text = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
     class Meta:
         model = FurtherReading
         fields = (

@@ -400,7 +400,7 @@
                     {% for info in further_reading %}
                         <li style="list-style: none;">
                             <div class="row">
-                                {{ info.text }}
+                                {{ info.text|safe }}
                                 {% if info.link %}
                                     <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
                                 {% endif %}
