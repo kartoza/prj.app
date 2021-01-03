@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from model_utils import FieldTracker
 
 from lesson.models.mixins import TranslationMixin
+from lesson.models.license import License
 from lesson.models.section import Section
 from lesson.utilities import custom_slug
 
@@ -24,6 +25,10 @@ class Worksheet(TranslationMixin):
     tracker = FieldTracker()
 
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    license = models.ForeignKey(License,
+                                blank=True,
+                                null=True,
+                                on_delete=models.CASCADE)
 
     sequence_number = models.IntegerField(
         verbose_name=_('Worksheet number'),
