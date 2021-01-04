@@ -26,6 +26,9 @@ class TestSection(TestCase):
         # check if model name exists.
         self.assertTrue(model.name is not None)
 
+        # check if __str__ method returns the correct value
+        self.assertEqual(str(model), model.name)
+
     def test_Section_delete(self):
         """Test section model deletion."""
 

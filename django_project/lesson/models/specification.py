@@ -85,5 +85,8 @@ class Specification(TranslationMixin):
     def __unicode__(self):
         return self.title
 
+    def __str__(self):
+        return self.title
+
 
 from lesson.signals.specification import *  # noqa
