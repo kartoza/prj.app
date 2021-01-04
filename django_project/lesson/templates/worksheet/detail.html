@@ -290,7 +290,7 @@
                         <div class="row">
                             <li style="margin-bottom: 20px">
                                 <div class="col-lg-10">
-                                  <strong>{{ question.question }}:</strong>{{ question|is_translation_up_to_date }}
+                                  <p><strong>{{ question.question }}:</strong>{{ question|is_translation_up_to_date }}</p>
                                     {% if question.question_image %}
                                         <img id="{{ question.question_image }}"
                                              class="img-responsive img-rounded pull-left"
@@ -370,7 +370,7 @@
            {% if further_reading %}
                 <div class="col-lg-1">
                   <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }}; height:50px;width:50px; margin-left:-15px;">
-                      <span class="glyphicon glyphicon-list-alt fa-3x" style="color:white"></span>
+                    <img src="{% static "img/book.png" %}" style="height:50px;width:50px">
                   </div>
                 </div>
                     <div class="col-lg-8">
