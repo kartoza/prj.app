@@ -65,6 +65,7 @@ class LicenseAdmin(admin.ModelAdmin):
     list_display = ('name', 'description', 'url')
     fields = ('name', 'description', 'url', 'file')
 
+
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(FurtherReading, FurtherReadingAdmin)
 admin.site.register(License, LicenseAdmin)
