@@ -6,6 +6,7 @@ import factory
 from base.tests.model_factories import ProjectF
 
 from lesson.models import (
+    License,
     Section,
     Specification,
     Worksheet,
@@ -63,3 +64,13 @@ class SpecificationF(factory.django.DjangoModelFactory):
         lambda n: u'Test value %s' % n)
     notes = factory.sequence(
         lambda n: u'Test section notes %s' % n)
+
+
+class LicenseF(factory.django.DjangoModelFactory):
+    """License model factory"""
+
+    class Meta:
+        model = License
+
+    name = 'Test License'
+    file = factory.django.FileField(byte=b'test license content')

@@ -243,6 +243,23 @@ h2{
     </section>
 {% endif %}
 
+
+{% if worksheet.license %}
+    <section>
+        <div class="icon-project-color icon-section">
+            <img class="icon-section" src="{{ "img/license.png" | local_static_filepath }}">
+        </div>
+
+        <h2>{% trans 'License:'%}</h2>
+        <ul>
+            <li>
+                {{ worksheet.license.description }}
+                Read more about {{ worksheet.license.name }} at <a href="{{ worksheet.license.url }}" target="_blank">{{ worksheet.license.url }}</a>.
+            </li>
+        </ul>
+    </section>
+{% endif %}
+  
 {# funded by  #}
 <div class="row">
     <h5>

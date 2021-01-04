@@ -444,6 +444,41 @@
         </div>
     </div>
 
+    {# License #}
+    {% if worksheet.license %}
+    <div class="container">
+      <div class="row details-worksheet license">
+          <div class="col-lg-1">
+            <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+              <img src="{% static "img/license.png" %}" style="height:50px;width:50px">
+            </div>
+          </div>
+          <div class="col-lg-8">
+            <h3 class="custom-heading" style="margin-left:-40px">
+              <strong>
+                {% trans 'License:'%}
+              </strong>
+            </h3>
+          </div>
+      </div>
+      <div class="row details-worksheet license col-lg-12">
+        <ul style="margin-left: 10px">
+          <li style="list-style: none;">
+            <div class="row">
+              {{ worksheet.license.description|base_markdown }}
+            </div>
+          </li>
+          <li style="list-style: none;">
+            <div class="row">
+              <a href="{{ worksheet.license.url }}" target="_blank">Read more about {{ worksheet.license.name }}</a>.
+            </div>
+          </li>
+        </ul>
+        <p></p>
+      </div>
+    </div>
+    {% endif %}
+
 
 
     <script>
