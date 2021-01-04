@@ -62,9 +62,8 @@ class WorksheetQuestionAdmin(admin.ModelAdmin):
 
 class LicenseAdmin(admin.ModelAdmin):
     """License admin model"""
-    list_display = (
-        'name', 'description', 'url'
-    )
+    list_display = ('name', 'description', 'url')
+    fields = ('name', 'description', 'url', 'file')
 
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(FurtherReading, FurtherReadingAdmin)

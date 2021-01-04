@@ -40,7 +40,7 @@ class License(TranslationMixin):
                     'on to the "Choose File" button above.'),
         upload_to=os.path.join(
             MEDIA_ROOT, 'images/lesson/license'),
-        blank=True
+        blank=False
     )
 
     class Meta:

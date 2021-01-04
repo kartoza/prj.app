@@ -173,6 +173,13 @@ class WorksheetPDFZipView(WorksheetDetailView):
                 '{}. {}.zip'.format(numbering, file_title))
             zf.write(zip_data_path, zip_path)
 
+        # license
+        if context['worksheet'].license:
+            data_path = context['worksheet'].license.file.url
+            zip_data_path = settings.MEDIA_ROOT + data_path[6:]
+            zip_path = os.path.join(zip_subdir, 'license.txt')
+            zf.write(zip_data_path, zip_path)
+
         zf.close()
 
         zip_response = HttpResponse(
@@ -484,6 +491,14 @@ def download_multiple_worksheet(request, **kwargs):
             data_path = worksheet.external_data.url
             zip_data_path = settings.MEDIA_ROOT + data_path[6:]
             zip_path = os.path.join(zip_subdir, pdf_title + '.zip')
+            zf.write(zip_data_path, zip_path)
+
+        # license
+        if worksheet.license:
+            data_path = context['worksheet'].license.file.url
+            zip_data_path = settings.MEDIA_ROOT + data_path[6:]
+            zip_path = os.path.join(zip_subdir,
+                                    context['worksheet'].license.name + '.txt')
             zf.write(zip_data_path, zip_path)
 
     zf.close()

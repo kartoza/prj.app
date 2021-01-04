@@ -437,9 +437,9 @@
     </div>
 
     {# License #}
+    {% if worksheet.license %}
     <div class="container">
       <div class="row details-worksheet license">
-        {% if worksheet.license or user_can_edit %}
           <div class="col-lg-1">
             <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
               <img src="{% static "img/license.png" %}" style="height:50px;width:50px">
@@ -452,21 +452,24 @@
               </strong>
             </h3>
           </div>
-        {% endif %}
-        <div class="col-lg-3 pull-right">
-          {% if user_can_edit %}
-          <div class="pull-right btn-group license-action" style="display:none;">
-            <a class="btn btn-default btn-mini tooltip-toggle"
-               href='{% url "further-reading-create" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug %}'
-               data-title="{% trans 'Create New Further Reading Item' %}">
-              {% show_button_icon "add" %}
-            </a>
-          </div>
-        {% endif %}
-        </div>
       </div>
-
+      <div class="row details-worksheet license col-lg-12">
+        <ul style="margin-left: 10px">
+          <li style="list-style: none;">
+            <div class="row">
+              {{ worksheet.license.description|base_markdown }}
+            </div>
+          </li>
+          <li style="list-style: none;">
+            <div class="row">
+              <a href="{{ worksheet.license.url }}" target="_blank">Read more about {{ worksheet.license.name }}</a>.
+            </div>
+          </li>
+        </ul>
+        <p></p>
+      </div>
     </div>
+    {% endif %}
 
 
 
@@ -517,14 +520,6 @@
             },
              function () {
                 $(this).find('.further-reading-action').hide();
-            }
-        );
-        $('.license').hover(
-            function () {
-                $(this).find('.license-action').show();
-            },
-             function () {
-                $(this).find('.license-action').hide();
             }
         );
     </script>
