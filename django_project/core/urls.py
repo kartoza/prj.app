@@ -6,6 +6,7 @@ from django.contrib.auth import views as auth_views  # noqa
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic.base import RedirectView
 from django.http import HttpResponseServerError
 from django.template import loader
 from .views import general_flatpage
@@ -32,7 +33,11 @@ def handler500(request):
     }))
 
 
-urlpatterns = []
+urlpatterns = [
+    # force redirect to /en/
+    # to fix 500 error temporarily  after user logged in on production
+    url(r'^$', RedirectView.as_view(url='/en/')),
+]
 # These patterns work if there is a locale code injected in front of them
 # e.g. /en/reports/
 urlpatterns += i18n_patterns(
