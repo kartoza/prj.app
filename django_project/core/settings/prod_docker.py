@@ -10,7 +10,6 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 ADMINS = (
-    ('Tim Sutton', 'tim@kartoza.com'),
     ('Dimas Ciputra', 'dimas@kartoza.com'),
     ('Sumandari', 'sumandari@kartoza.com'),)
 
