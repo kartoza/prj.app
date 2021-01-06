@@ -61,10 +61,10 @@ class Worksheet(TranslationMixin):
     )
 
     summary_text = models.TextField(
-        help_text=_('Content of the summary. Markdown is supported. '
-                    'In order to insert a new page in PDF output, add element '
-                    '&ltdiv class="page-break"&gt&lt/div&gt before your '
-                    'content on the new page.'),
+        help_text=_('Content of the Summary. Markdown is supported. '
+                    'You can add a pagebreak to the PDF output by inserting '
+                    'a &ltdiv class="page-break"&gt&lt/div&gt element between '
+                    'sections of the content.'),
         blank=False,
         null=False,
     )
