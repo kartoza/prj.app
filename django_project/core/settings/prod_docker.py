@@ -10,9 +10,8 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 ADMINS = (
-    ('Tim Sutton', 'tim@kartoza.com'),
     ('Dimas Ciputra', 'dimas@kartoza.com'),
-    ('Anita Hapsari', 'anita@kartoza.com'),)
+    ('Sumandari', 'sumandari@kartoza.com'),)
 
 DATABASES = {
     'default': {
