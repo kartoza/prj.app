@@ -38,7 +38,7 @@ jobs:
           context: .
           file: deployment/docker/Dockerfile
           push: true
-          tags: ${{ steps.docker_meta.outputs }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
       - name: Image digest
         run: echo ${{ steps.docker_build_geonode.outputs.digest }}
   docker-builder-on-latest:
