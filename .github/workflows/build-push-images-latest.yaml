@@ -5,8 +5,7 @@ on:
     branches:
       - develop
 jobs:
-  docker-builder-on-latest:
-    if: github.event_name == 'push'
+  docker-builder:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
