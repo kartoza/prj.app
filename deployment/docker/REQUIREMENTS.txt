@@ -27,7 +27,7 @@ django-rosetta==0.9.3
 django-embed-video==1.0.0
 django-grappelli==2.13.2
 pytz
-django-allauth==0.40.0
+django-allauth==0.44.0
 # support special characters
 Unidecode==0.4.20
 Pillow==5.3.0
