@@ -35,7 +35,8 @@ class WorksheetForm(TranslationModelForm):
             'external_data',
             'youtube_link',
             'author_name',
-            'author_link'
+            'author_link',
+            'license'
         )
 
     def __init__(self, *args, **kwargs):
@@ -57,6 +58,7 @@ class WorksheetForm(TranslationModelForm):
                 Field('more_about_image', css_class='form_control'),
                 Field('external_data', css_class='form_control'),
                 Field('youtube_link', css_class='form_control'),
+                Field('license', css_class='form_control'),
                 css_id='project-form'
             )
         )

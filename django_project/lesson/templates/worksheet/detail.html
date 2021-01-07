@@ -4,6 +4,7 @@
 {% load custom_markup %}
 {% load staticfiles %}
 {% load lesson_tags %}
+{% load embed_video_tags %}
 
 {% block title %}{% trans 'Worksheet' %} - {{ block.super }}{% endblock %}
 
@@ -78,6 +79,15 @@
             </h3>
         </div>
     </div>
+
+    {% if worksheet.youtube_link  %}
+        <div class="row text-center">
+            <!-- The video tag: -->
+            {% video worksheet.youtube_link as youtube %}
+              {% video youtube "large" %}
+            {% endvideo %}
+        </div>
+    {% endif %}
 
     <div class="row details-worksheet" style="margin-top:10px;">
         <div class="col-lg-1">
@@ -280,7 +290,7 @@
                         <div class="row">
                             <li style="margin-bottom: 20px">
                                 <div class="col-lg-10">
-                                  <strong>{{ question.question }}:</strong>{{ question|is_translation_up_to_date }}
+                                  <p><strong>{{ question.question }}:</strong>{{ question|is_translation_up_to_date }}</p>
                                     {% if question.question_image %}
                                         <img id="{{ question.question_image }}"
                                              class="img-responsive img-rounded pull-left"
@@ -360,7 +370,7 @@
            {% if further_reading %}
                 <div class="col-lg-1">
                   <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }}; height:50px;width:50px; margin-left:-15px;">
-                      <span class="glyphicon glyphicon-list-alt fa-3x" style="color:white"></span>
+                    <img src="{% static "img/book.png" %}" style="height:50px;width:50px">
                   </div>
                 </div>
                     <div class="col-lg-8">
@@ -424,7 +434,50 @@
                 {% endif %}
             </div>
         </div>
+
+        {# funded by  #}
+        <div class="row">
+            <h5 class="text-muted">
+                <p>{{ funded_by|base_markdown }}</p>
+            </h5>
+
+        </div>
     </div>
+
+    {# License #}
+    {% if worksheet.license %}
+    <div class="container">
+      <div class="row details-worksheet license">
+          <div class="col-lg-1">
+            <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+              <img src="{% static "img/license.png" %}" style="height:50px;width:50px">
+            </div>
+          </div>
+          <div class="col-lg-8">
+            <h3 class="custom-heading" style="margin-left:-40px">
+              <strong>
+                {% trans 'License:'%}
+              </strong>
+            </h3>
+          </div>
+      </div>
+      <div class="row details-worksheet license col-lg-12">
+        <ul style="margin-left: 10px">
+          <li style="list-style: none;">
+            <div class="row">
+              {{ worksheet.license.description|base_markdown }}
+            </div>
+          </li>
+          <li style="list-style: none;">
+            <div class="row">
+              <a href="{{ worksheet.license.url }}" target="_blank">Read more about {{ worksheet.license.name }}</a>.
+            </div>
+          </li>
+        </ul>
+        <p></p>
+      </div>
+    </div>
+    {% endif %}
 
 
 
