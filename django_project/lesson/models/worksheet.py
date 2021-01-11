@@ -153,6 +153,36 @@ class Worksheet(TranslationMixin):
         unique=True,
     )
 
+    summary_image_dimension = models.CharField(
+        help_text=_('Set the height and width of summary_image element '
+                    'in a css format. e.g <b>height: 200px; width: 300px;</b>.'
+                    ' The value will be added onto image style attribute in '
+                    'the PDF output.'),
+        blank=True,
+        null=True,
+        max_length=200
+    )
+
+    exercise_image_dimension = models.CharField(
+        help_text=_('Set the height and width of exercise_image element '
+                    'in a css format. e.g <b>height: 200px; width: 300px;</b>.'
+                    ' The value will be added onto image style attribute in '
+                    'the PDF output.'),
+        blank=True,
+        null=True,
+        max_length=200
+    )
+
+    more_about_image_dimension = models.CharField(
+        help_text=_('Set the height and width of more_about_image element '
+                    'in a css format. e.g <b>height: 200px; width: 300px;</b>.'
+                    ' The value will be added onto image style attribute in '
+                    'the PDF output.'),
+        blank=True,
+        null=True,
+        max_length=200
+    )
+
     # noinspection PyClassicStyleClass.
     class Meta:
         """Meta class for Worksheet model."""
