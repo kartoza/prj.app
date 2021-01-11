@@ -165,16 +165,34 @@
                 <table style="margin-top: 30px;" >
                     <tbody>
                         <tr style="background-color:#d6e6fb;">
-                            <th style="padding:5px;">{% trans 'Name' %}</th>
-                            <th style="padding:5px;">{% trans 'Expectation' %}</th>
+                            <th style="padding:5px;">
+                              {% if worksheet.requirement_header_name_first %}
+                                {% trans worksheet.requirement_header_name_first|base_markdown %}
+                              {% else %}
+                                {% trans 'Name' %}
+                              {% endif %}
+                            </th>
+                            <th style="padding:5px;">
+                              {% if worksheet.requirement_header_name_last %}
+                                {% trans worksheet.requirement_header_name_last|base_markdown %}
+                              {% else %}
+                                {% trans 'Expectation' %}
+                              {% endif %}
+                            </th>
                          {% if user_can_edit %}
                             <th class="requirement-action" style="text-align:right;padding-right:0px;display:none;background-color:#FFFFFF">Actions</th>
                          {% endif %}
                         </tr>
                         {% for requirement in requirements %}
                             <tr>
-                                <td style="background-color:#f3f9fe;padding:5px;">{{ requirement.title|base_markdown }}{{ requirement|is_translation_up_to_date }}</td>
-                                <td style="padding:5px;">{{ requirement.value|base_markdown }}</td>
+                                <td style="background-color:#f3f9fe;padding:5px;">
+                                  <div {% if requirement.notes %}class="requirement-cell"{% endif %}>{{ requirement.title|base_markdown }}{{ requirement|is_translation_up_to_date }}</div>
+                                  <div class="requirement-notes">{{ requirement.notes|base_markdown }}</div>
+                                </td>
+                                <td style="padding:5px;">
+                                  <div {% if requirement.description %}class="requirement-cell"{% endif %}>{{ requirement.value|base_markdown }}</div>
+                                  <div class="requirement-notes">{{ requirement.description|base_markdown }}</div>
+                                </td>
                                 {% if user_can_edit %}
                                 <td style="padding-right: 0">
                                     <div class="btn-group pull-right requirement-action" style="display:none;">

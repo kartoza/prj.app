@@ -51,11 +51,19 @@ class Specification(TranslationMixin):
     )
 
     notes = models.CharField(
-        help_text=_('Notes of specification.'),
+        help_text=_('Description of title field. Markdown is supported'),
         blank=True,
         null=False,
         max_length=200,
     )
+
+    description = models.CharField(
+        help_text=_('Description of value field. Markdown is supported'),
+        blank=True,
+        null=False,
+        max_length=200,
+    )
+
 
     # noinspection PyClassicStyleClass.
     class Meta:
