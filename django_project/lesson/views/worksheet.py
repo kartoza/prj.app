@@ -31,7 +31,6 @@ from lesson.models.worksheet_question import WorksheetQuestion
 from lesson.utilities import re_order_features
 
 from base.models.project import Project
-from changes.models.entry import Entry
 from ..models.section import Section
 
 
