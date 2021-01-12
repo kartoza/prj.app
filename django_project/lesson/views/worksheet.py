@@ -241,6 +241,7 @@ class WorksheetUpdateView(LoginRequiredMixin, WorksheetMixin, UpdateView):
         :rtype: dict
         """
         kwargs = super(WorksheetUpdateView, self).get_form_kwargs()
+        self.numbering = self.request.GET.get('q', '')
         slug = self.kwargs.get('section_slug', None)
         kwargs['section'] = get_object_or_404(Section, slug=slug)
         return kwargs
@@ -254,11 +255,12 @@ class WorksheetUpdateView(LoginRequiredMixin, WorksheetMixin, UpdateView):
         :returns: URL
         :rtype: HttpResponse
         """
-        return reverse('worksheet-detail', kwargs={
+        url = reverse('worksheet-detail', kwargs={
             'pk': self.object.pk,
             'project_slug': self.object.section.project.slug,
             'section_slug': self.object.section.slug,
         })
+        return '%s?q=%s' % (url, self.numbering)
 
 
 class WorksheetDeleteView(

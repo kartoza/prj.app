@@ -45,7 +45,7 @@
                             <span class="glyphicon glyphicon-minus"></span>
                         </a>
                         <a class="btn btn-default btn-mini tooltip-toggle"
-                           href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
+                           href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ module_number }}'
                            data-title="{% trans 'Edit' %} {{ module }}">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>
