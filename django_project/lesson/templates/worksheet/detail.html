@@ -45,7 +45,7 @@
                             <span class="glyphicon glyphicon-minus"></span>
                         </a>
                         <a class="btn btn-default btn-mini tooltip-toggle"
-                           href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}'
+                           href='{% url "worksheet-update" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ module_number }}'
                            data-title="{% trans 'Edit' %} {{ module }}">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>
@@ -380,24 +380,23 @@
                           </strong>
                       </h3>
                     </div>
-           {% else %}
+           {% endif %}
+           {% if user_can_edit %}
                 <div class="col-lg-3 pull-right">
-                    {% if user_can_edit %}
-                        <div class="pull-right btn-group further-reading-action" style="display:none;">
-                            <a class="btn btn-default btn-mini tooltip-toggle"
-                               href='{% url "further-reading-create" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug %}'
-                               data-title="{% trans 'Create New Further Reading Item' %}">
-                                {% show_button_icon "add" %}
-                            </a>
-                        </div>
-                    {% endif %}
+                    <div class="pull-right btn-group further-reading-action" style="display:none;">
+                        <a class="btn btn-default btn-mini tooltip-toggle"
+                           href='{% url "further-reading-create" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug worksheet_slug=worksheet.slug %}'
+                           data-title="{% trans 'Create New Further Reading Item' %}">
+                            {% show_button_icon "add" %}
+                        </a>
+                    </div>
                 </div>
            {% endif %}
         </div>
         <div class="row details-worksheet further-reading" style="margin-top:10px;">
             <div class="details-worksheet col-lg-12" style="margin-bottom: 20px">
                 <ul>
-                    {% for info in further_reading %}
+                    {% for info in further_reading reversed %}
                         <li style="list-style: none;">
                             <div class="row">
                                 {{ info.text }}
@@ -429,18 +428,10 @@
             <div class="col-lg-12 text-center" style="margin-bottom: 10px;">
                 {% if worksheet.external_data %}
                 <p>
-                    {% blocktrans with url=worksheet.external_data.url %}Click <a target="_blank" href="{{ url }}" download="{{ file_title }}">here</a> to download the sample data for the lesson.{% endblocktrans %}
+                    {% blocktrans with url=worksheet.external_data.url %}<a target="_blank" href="{{ url }}" download="{{ file_title }}">Download the sample data</a> for the lesson.{% endblocktrans %}
                 </p>
                 {% endif %}
             </div>
-        </div>
-
-        {# funded by  #}
-        <div class="row">
-            <h5 class="text-muted">
-                <p>{{ funded_by|base_markdown }}</p>
-            </h5>
-
         </div>
     </div>
 
@@ -479,6 +470,14 @@
     </div>
     {% endif %}
 
+    <div class="container">
+    {# funded by  #}
+        <div class="row">
+            <h5 class="text-muted">
+                <p>{{ funded_by|base_markdown }}</p>
+            </h5>
+        </div>
+    </div>
 
 
     <script>

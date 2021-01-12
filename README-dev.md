@@ -35,6 +35,7 @@ Linux and MacOS:
 ```
 make build-devweb
 make devweb
+cp docker-compose.override.example.yml docker-compose.override.yml
 ```
 
 In case you don't get some not installed packages, you can run this 
