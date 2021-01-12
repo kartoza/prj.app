@@ -180,11 +180,11 @@ ol.answer {
                         <tr>
                             <td style="background-color: #cdcdcd">
                               {{ requirement.title | base_markdown }}
-                              <div class="requirement-notes">{{ requirement.notes|base_markdown }}</div>
+                              <div class="requirement-notes">{{ requirement.title_notes|base_markdown }}</div>
                             </td>
                             <td>
                               {{ requirement.value | base_markdown }}
-                              <div class="requirement-notes">{{ requirement.description|base_markdown }}</div>
+                              <div class="requirement-notes">{{ requirement.value_notes|base_markdown }}</div>
                             </td>
                         </tr>
                     {% endfor %}

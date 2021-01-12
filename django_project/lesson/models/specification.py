@@ -50,14 +50,14 @@ class Specification(TranslationMixin):
         max_length=200,
     )
 
-    notes = models.CharField(
+    title_notes = models.CharField(
         help_text=_('Description of title field. Markdown is supported'),
         blank=True,
         null=False,
         max_length=200,
     )
 
-    description = models.CharField(
+    value_notes = models.CharField(
         help_text=_('Description of value field. Markdown is supported'),
         blank=True,
         null=False,

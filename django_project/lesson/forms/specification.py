@@ -23,8 +23,8 @@ class SpecificationForm(TranslationModelForm):
         fields = (
             'title',
             'value',
-            'notes',
-            'description'
+            'title_notes',
+            'value_notes'
         )
 
     def __init__(self, *args, **kwargs):
