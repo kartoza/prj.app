@@ -36,7 +36,9 @@ class WorksheetForm(TranslationModelForm):
             'youtube_link',
             'author_name',
             'author_link',
-            'license'
+            'license',
+            'funded_by',
+            'funder_url'
         )
 
     def __init__(self, *args, **kwargs):
@@ -59,6 +61,8 @@ class WorksheetForm(TranslationModelForm):
                 Field('external_data', css_class='form_control'),
                 Field('youtube_link', css_class='form_control'),
                 Field('license', css_class='form_control'),
+                Field('funded_by', css_class='form_control'),
+                Field('funder_url', css_class='form_control'),
                 css_id='project-form'
             )
         )

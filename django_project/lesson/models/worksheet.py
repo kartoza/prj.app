@@ -156,6 +156,18 @@ class Worksheet(TranslationMixin):
         unique=True,
     )
 
+    funded_by = models.CharField(
+        help_text='Input the funder name.',
+        max_length=255,
+        null=True,
+        blank=True)
+
+    funder_url = models.CharField(
+        help_text='Input the funder URL.',
+        max_length=255,
+        null=True,
+        blank=True)
+
     # noinspection PyClassicStyleClass.
     class Meta:
         """Meta class for Worksheet model."""
@@ -166,6 +178,25 @@ class Worksheet(TranslationMixin):
         # https://stackoverflow.com/questions/40891574/how-can-i-set-a-
         # table-constraint-deferrable-initially-deferred-in-django-model
         # unique_together = ['section', 'sequence_number']
+
+    def funder_info_html(self):
+        string = ""
+        if self.funded_by and self.funder_url is None:
+            string = ""
+            return string
+        elif self.funded_by and not self.funder_url:
+            string = "This lesson was funded by %s " % self.funded_by
+            return string
+        elif self.funder_url and not self.funded_by:
+            string = "This lesson was funded by [%s](%s)" % (
+                self.funder_url, self.funder_url)
+            return string
+        elif self.funded_by and self.funder_url:
+            string = "This lesson was funded by [%s](%s)" % (
+                self.funded_by, self.funder_url)
+            return string
+        else:
+            return string
 
     def save(self, *args, **kwargs):
         is_new_record = False if self.pk else True

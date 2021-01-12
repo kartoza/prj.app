@@ -93,35 +93,7 @@ class WorksheetDetailView(
             + '-' + context['worksheet'].module
         context['file_title'] = context['file_title'].encode("utf8")
 
-        # Funded by
-        try:
-            last_version = self.object.section.project.version_set.last()
-            entries = Entry.objects.filter(version=last_version).all()
-        except Exception:
-            context['funded_by'] = ""
-            return context
-        funded_by = []
-        for entry in entries:
-            if entry.funded_by and entry.funder_url:
-                funded_by.append("[%s](%s)" % (entry.funded_by,
-                                               entry.funder_url))
-            elif entry.funded_by and not entry.funder_url:
-                funded_by.append("%s" % (entry.funded_by,))
-            elif not entry.funded_by and entry.funder_url:
-                funded_by.append("[%s](%s)" % (entry.funder_url,
-                                               entry.funder_url))
-        funded_by = list(set(funded_by))
-        separator = ", "
-        if len(funded_by) > 1:
-            string_funded_by = ("This latest version was funded by %s and %s."
-                                % (separator.join(funded_by[:-1]),
-                                   funded_by[-1]))
-        elif len(funded_by) == 1:
-            string_funded_by = "This latest version was funded by %s." % (
-                funded_by[0])
-        else:
-            string_funded_by = ""
-        context['funded_by'] = string_funded_by
+        context['funded_by'] = self.object.funder_info_html()
         return context
 
 
