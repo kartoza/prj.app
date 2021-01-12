@@ -118,6 +118,31 @@ ol.answer {
     padding-left: 24px;
 }
 
+{% if worksheet.summary_image_dimension %}
+img#summaryImage {
+  max-width: 100%;
+{{ worksheet.summary_image_dimension }}
+}
+{% endif %}
+
+{% if worksheet.exercise_image_dimension %}
+img.exercise-image {
+  max-width: 100%;
+  {{ worksheet.exercise_image_dimension }}
+}
+{% endif %}
+
+{% if worksheet.more_about_image_dimension %}
+img.more-about-image {
+  max-width: 100%;
+{{ worksheet.more_about_image_dimension }}
+}
+{% endif %}
+
+.page-break{
+  page-break-before: always;
+}
+
     </style>
     <title>{{ worksheet.module }}</title>
 </head>
@@ -140,7 +165,8 @@ ol.answer {
     <blockquote>&#147{{ worksheet.summary_leader }}&#148</blockquote>
     <p>{{ worksheet.summary_text | base_markdown }}</p>
     {% if worksheet.summary_image %}
-        <img src="{{ worksheet.summary_image.file }}">
+        <img src="{{ worksheet.summary_image.file }}"
+             id="summaryImage">
     {% endif %}
     {% if worksheet.exercise_goal or worksheet.exercise_task %}
         <h3>{% trans 'You try:' %}</h3>
@@ -190,8 +216,9 @@ ol.answer {
     {% endif %}
     {% if worksheet.exercise_image %}
         <img id="{{ worksheet.exercise_image }}"
+             class="exercise-image"
              src="{{ worksheet.exercise_image.file }}"
-             alt="" />
+             alt=""/>
     {% endif %}
 </section>
 {% if worksheet.more_about_text or worksheet.more_about_image %}
@@ -205,8 +232,9 @@ ol.answer {
         </p>
         {% if worksheet.more_about_image %}
             <img id="{{ worksheet.more_about_image }}"
+                 class="more-about-image"
                  src="{{ worksheet.more_about_image.file }}"
-                 alt="" />
+                 alt=""/>
         {% endif %}
     </section>
 {% endif %}
@@ -297,10 +325,10 @@ ol.answer {
 </div>
 
 <footer>
-        <div style="margin-bottom: 10px;padding-left: 100pt; padding-top: 10pt;">
+        <div style="margin-bottom: 10px;padding-top: 10pt;">
             {% if worksheet.external_data %}
                 <p>
-                    {% blocktrans with url=worksheet.external_data.url href_value=request.META.HTTP_HOST %}Click <a target="_blank" href="http://{{ href_value }}{{ url }}">here</a> to download the sample data for the lesson.{% endblocktrans %}
+                    {% blocktrans with url=worksheet.external_data.url href_value=request.META.HTTP_HOST %}Download the sample data for the lesson from <a target="_blank" href="http://{{ href_value }}{{ url }}">http://{{ href_value }}{{ url }}</a>.{% endblocktrans %}
                 </p>
             {% endif %}
         </div>
