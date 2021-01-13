@@ -84,5 +84,8 @@ class Answer(TranslationMixin):
     def __unicode__(self):
         return self.answer
 
+    def __str__(self):
+        return self.answer
+
 
 from lesson.signals.answer import *  # noqa

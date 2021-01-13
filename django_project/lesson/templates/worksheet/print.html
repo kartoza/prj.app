@@ -105,6 +105,44 @@ h2{
     font-size: medium;
 }
 
+/* issue #1239 */
+ul {
+    padding-left: 18px;
+}
+ol.question {
+    list-style-type: decimal;
+    padding-left: 24px;
+}
+ol.answer {
+    list-style-type:lower-alpha;
+    padding-left: 24px;
+}
+
+{% if worksheet.summary_image_dimension %}
+img#summaryImage {
+  max-width: 100%;
+{{ worksheet.summary_image_dimension }}
+}
+{% endif %}
+
+{% if worksheet.exercise_image_dimension %}
+img.exercise-image {
+  max-width: 100%;
+  {{ worksheet.exercise_image_dimension }}
+}
+{% endif %}
+
+{% if worksheet.more_about_image_dimension %}
+img.more-about-image {
+  max-width: 100%;
+{{ worksheet.more_about_image_dimension }}
+}
+{% endif %}
+
+.page-break{
+  page-break-before: always;
+}
+
     </style>
     <title>{{ worksheet.module }}</title>
 </head>
@@ -127,7 +165,8 @@ h2{
     <blockquote>&#147{{ worksheet.summary_leader }}&#148</blockquote>
     <p>{{ worksheet.summary_text | base_markdown }}</p>
     {% if worksheet.summary_image %}
-        <img src="{{ worksheet.summary_image.file }}">
+        <img src="{{ worksheet.summary_image.file }}"
+             id="summaryImage">
     {% endif %}
     {% if worksheet.exercise_goal or worksheet.exercise_task %}
         <h3>{% trans 'You try:' %}</h3>
@@ -160,8 +199,9 @@ h2{
     {% endif %}
     {% if worksheet.exercise_image %}
         <img id="{{ worksheet.exercise_image }}"
+             class="exercise-image"
              src="{{ worksheet.exercise_image.file }}"
-             alt="" />
+             alt=""/>
     {% endif %}
 </section>
 {% if worksheet.more_about_text or worksheet.more_about_image %}
@@ -175,8 +215,9 @@ h2{
         </p>
         {% if worksheet.more_about_image %}
             <img id="{{ worksheet.more_about_image }}"
+                 class="more-about-image"
                  src="{{ worksheet.more_about_image.file }}"
-                 alt="" />
+                 alt=""/>
         {% endif %}
     </section>
 {% endif %}
@@ -186,10 +227,9 @@ h2{
             <img class="icon-section" src="{{ "img/check.png" | local_static_filepath }}">
         </div>
         <h2>{% trans 'Check your knowledge:' %}</h2>
-    {#  Bullet list with type="1" or type="a" do not work well in the PDF generation. We need a custom counter.  #}
-        <ul style="list-style: none;">
+        <ol class="question" >
             {% for question, answers in questions.items %}
-                <li>{{ forloop.counter }}. {{ question.question }}:
+                <li style="margin-bottom: 0.5em;">{{ question.question }}:
                     {% if question.question_image %}
                         <div>
                         <img id="{{ question.question_image }}"
@@ -198,13 +238,13 @@ h2{
                              style="max-width: 300px !important;"/>
                         </div>
                     {% endif %}
-                <ul style="list-style: none; margin-bottom: 10px;">
+                <ol class="answer">
                     {% for answer in answers %}
-                        <li>{{ forloop.counter | to_char }}. {{ answer.answer }}</li>
+                        <li>{{ answer.answer }}</li>
                     {% endfor %}
-                </ul>
+                </ol>
             {% endfor %}
-        </ul>
+        </ol>
     </section>
 {% endif %}
 
@@ -243,11 +283,35 @@ h2{
     </section>
 {% endif %}
 
+
+{% if worksheet.license %}
+    <section>
+        <div class="icon-project-color icon-section">
+            <img class="icon-section" src="{{ "img/license.png" | local_static_filepath }}">
+        </div>
+
+        <h2>{% trans 'License:'%}</h2>
+        <ul>
+            <li>
+                {{ worksheet.license.description }}
+                Read more about {{ worksheet.license.name }} at <a href="{{ worksheet.license.url }}" target="_blank">{{ worksheet.license.url }}</a>.
+            </li>
+        </ul>
+    </section>
+{% endif %}
+  
+{# funded by  #}
+<div class="row">
+    <h5>
+        <p>{{ funded_by|base_markdown }}</p>
+    </h5>
+</div>
+
 <footer>
-        <div style="margin-bottom: 10px;padding-left: 100pt; padding-top: 10pt;">
+        <div style="margin-bottom: 10px;padding-top: 10pt;">
             {% if worksheet.external_data %}
                 <p>
-                    {% blocktrans with url=worksheet.external_data.url href_value=request.META.HTTP_HOST %}Click <a target="_blank" href="http://{{ href_value }}{{ url }}">here</a> to download the sample data for the lesson.{% endblocktrans %}
+                    {% blocktrans with url=worksheet.external_data.url href_value=request.META.HTTP_HOST %}Download the sample data for the lesson from <a target="_blank" href="http://{{ href_value }}{{ url }}">http://{{ href_value }}{{ url }}</a>.{% endblocktrans %}
                 </p>
             {% endif %}
         </div>

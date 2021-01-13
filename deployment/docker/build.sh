@@ -1,2 +1,3 @@
 #!/bin/sh
- docker build -t kartoza/projecta .
+cd ../../
+docker build -t kartoza/projecta-uwsgi -f deployment/docker/Dockerfile .

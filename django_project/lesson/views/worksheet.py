@@ -91,6 +91,8 @@ class WorksheetDetailView(
             context['worksheet'].section.name \
             + '-' + context['worksheet'].module
         context['file_title'] = context['file_title'].encode("utf8")
+
+        context['funded_by'] = self.object.funder_info_html()
         return context
 
 
@@ -173,6 +175,13 @@ class WorksheetPDFZipView(WorksheetDetailView):
                 '{}. {}.zip'.format(numbering, file_title))
             zf.write(zip_data_path, zip_path)
 
+        # license
+        if context['worksheet'].license:
+            data_path = context['worksheet'].license.file.url
+            zip_data_path = settings.MEDIA_ROOT + data_path[6:]
+            zip_path = os.path.join(zip_subdir, 'license.txt')
+            zf.write(zip_data_path, zip_path)
+
         zf.close()
 
         zip_response = HttpResponse(
@@ -231,6 +240,7 @@ class WorksheetUpdateView(LoginRequiredMixin, WorksheetMixin, UpdateView):
         :rtype: dict
         """
         kwargs = super(WorksheetUpdateView, self).get_form_kwargs()
+        self.numbering = self.request.GET.get('q', '')
         slug = self.kwargs.get('section_slug', None)
         kwargs['section'] = get_object_or_404(Section, slug=slug)
         return kwargs
@@ -244,11 +254,12 @@ class WorksheetUpdateView(LoginRequiredMixin, WorksheetMixin, UpdateView):
         :returns: URL
         :rtype: HttpResponse
         """
-        return reverse('worksheet-detail', kwargs={
+        url = reverse('worksheet-detail', kwargs={
             'pk': self.object.pk,
             'project_slug': self.object.section.project.slug,
             'section_slug': self.object.section.slug,
         })
+        return '%s?q=%s' % (url, self.numbering)
 
 
 class WorksheetDeleteView(
@@ -484,6 +495,14 @@ def download_multiple_worksheet(request, **kwargs):
             data_path = worksheet.external_data.url
             zip_data_path = settings.MEDIA_ROOT + data_path[6:]
             zip_path = os.path.join(zip_subdir, pdf_title + '.zip')
+            zf.write(zip_data_path, zip_path)
+
+        # license
+        if worksheet.license:
+            data_path = context['worksheet'].license.file.url
+            zip_data_path = settings.MEDIA_ROOT + data_path[6:]
+            zip_path = os.path.join(zip_subdir,
+                                    context['worksheet'].license.name + '.txt')
             zf.write(zip_data_path, zip_path)
 
     zf.close()

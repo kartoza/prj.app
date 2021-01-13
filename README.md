@@ -64,6 +64,7 @@ git clone git://github.com/kartoza/projecta.git
 cd projecta/deployment
 cp btsync-db.env.EXAMPLE btsync-db.env
 cp btsync-media.env.EXAMPLE btsync-media.env
+cp .env.example .env
 make build
 make permissions
 make web

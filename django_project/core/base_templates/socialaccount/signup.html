@@ -1,0 +1,39 @@
+{% extends "project_base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block container %}
+    <div class="content">
+        {% block content %}
+
+            {% csrf_token %}
+            <div class="container">
+
+                <div class="custom-form-container">
+                    <h1>{% trans "Sign Up" %}</h1>
+                    <form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">{% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-warning">
+                                {% for error in form.non_field_errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {{ form.as_p }}
+                        {% if redirect_field_value %}
+                            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                        {% endif %}
+                        <button class="login custom-form-submit" type="submit">{% trans "Sign Up" %}</button>
+                    </form>
+                    <div class="login-help">
+                        <a href="{% url 'account_login' %}">{% trans "Log In" %}</a> -
+                        <a href="{% url 'account_reset_password' %}">{% trans "Forgot Password" %}</a>
+                    </div>
+                </div>
+            </div> <!-- /container -->
+            </div>
+        {% endblock %}
+{% endblock %}

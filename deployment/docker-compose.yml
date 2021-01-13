@@ -6,165 +6,104 @@
 # docker-compose up -d web
 #
 # See accompanying Make commands for easy collectstatic etc.
+version: '3'
+volumes:
+  postgres-data:
+  db-backups:
+  static-data:
+  media-data:
+  reports-data:
+  nginx-conf:
+services:
+  smtp:
+    image: catatnight/postfix
+    hostname: postfix
+    environment:
+      # You could change this to something more suitable
+      - maildomain=kartoza.com
+      - smtp_user=noreply:docker
+    restart: unless-stopped
 
-smtp:
-  # Note you cannot scale if you use container_name
-  container_name: projecta-smtp
-  image: catatnight/postfix
-  hostname: postfix
-  environment:
-    # You could change this to something more suitable
-    - maildomain=kartoza.com
-    - smtp_user=noreply:docker
-  restart: unless-stopped
+  db:
+    image: kartoza/postgis:9.6-2.4
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - db-backups:/backups
+    environment:
+      - USERNAME=${DATABASE_USERNAME}
+      - PASS=${DATABASE_PASSWORD}
+      - ALLOW_IP_RANGE=0.0.0.0/0
+    restart: unless-stopped
 
-db:
-  # Note you cannot scale if you use container_name
-  container_name: projecta-db
-  image: kartoza/postgis:9.6-2.4
-  volumes:
-    #- ./pg/postgres_data:/var/lib/postgresql
-    - ./backups:/backups
-  environment:
-    - USERNAME=docker
-    - PASS=docker
-  restart: unless-stopped
-#  Uncomment the next line to have an access with PGAdmin using localhost and port 25432 on your computer.
-#  Only for development !
-#  ports:
-#    - "25432:5432"
+  uwsgi: &uwsgi-common
+    image: kartoza/projecta-uwsgi
+    environment:
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
+      - VIRTUAL_PORT=${VIRTUAL_PORT}
+    volumes:
+      - static-data:/home/web/static:rw
+      - media-data:/home/web/media:rw
+      - reports-data:/home/web/reports
+    links:
+      - smtp:smtp
+      - db:db
+    restart: unless-stopped
+    user: root
 
-uwsgi:
-  # Note you cannot scale if you use container_name
-  container_name: projecta-uwsgi
-  build: docker
-  hostname: uwsgi
-  environment:
-    - DATABASE_NAME=gis
-    - DATABASE_USERNAME=docker
-    - DATABASE_PASSWORD=docker
-    - DATABASE_HOST=db
-    - DJANGO_SETTINGS_MODULE=core.settings.prod_docker
-    - VIRTUAL_HOST=projecta.kartoza.com
-    - VIRTUAL_PORT=8080
-  volumes:
-    - ../django_project:/home/web/django_project
-    - ./static:/home/web/static:rw
-    - ./media:/home/web/media:rw
-    - ./reports:/home/web/reports
-    - ./logs:/var/log/
-  links:
-    - smtp:smtp
-    - db:db
-  restart: unless-stopped
-  user: root
+  dbbackups:
+    image: kartoza/pg-backup:9.6
+    hostname: pg-backups
+    volumes:
+      - db-backups:/backups
+    links:
+      - db:db
+    environment:
+      # take care to let the project name below match that
+      # declared in the top of the makefile
+      - DUMPPREFIX=${DUMPPREFIX}
+      # These are all defaults anyway, but setting explicitly in
+      # case we ever want to ever use different credentials
+      - PGUSER=${DATABASE_USERNAME}
+      - PGPASSWORD=${DATABASE_PASSWORD}
+      - PGPORT=5432
+      - PGHOST=${DATABASE_HOST}
+      - PGDATABASE=${DATABASE_NAME}
+    restart: unless-stopped
 
-dbbackups:
-  # Note you cannot scale if you use container_name
-  container_name: projecta-db-backups
-  image: kartoza/pg-backup:9.6
-  hostname: pg-backups
-  volumes:
-    - ./backups:/backups
-  links:
-    - db:db
-  environment:
-    # take care to let the project name below match that
-    # declared in the top of the makefile
-    - DUMPPREFIX=PG_projecta
-    # These are all defaults anyway, but setting explicitly in
-    # case we ever want to ever use different credentials
-    - PGUSER=docker
-    - PGPASSWORD=docker
-    - PGPORT=5432
-    - PGHOST=db
-    - PGDATABASE=gis
-  restart: unless-stopped
+  # This is normally the main entry point for a production server
+  web:
+    image: nginx
+    volumes:
+      - nginx-conf:/etc/nginx/conf.d:ro
+      - static-data:/home/web/static:ro
+      - media-data:/home/web/media:ro
+    links:
+      - uwsgi:uwsgi
+    restart: unless-stopped
 
-# This is normally the main entry point for a production server
-web:
-  # Note you cannot scale if you use container_name
-  container_name: projecta-web
-  image: nginx
-  hostname: nginx
-  volumes:
-    - ./sites-enabled:/etc/nginx/conf.d:ro
-    # I dont use volumes_from as I want to use the ro modifier
-    - ./static:/home/web/static:ro
-    - ./media:/home/web/media:ro
-    - ./logs:/var/log/nginx
-  links:
-    - uwsgi:uwsgi
-  ports:
-    - "80:8080"
-    - "4430:443"
-  restart: unless-stopped
+  # This is the entry point for a development server.
+  # Run with --no-deps to run attached to the services
+  # from prod environment if wanted
+  devweb:
+    <<: *uwsgi-common
 
-# This is the entry point for a development server.
-# Run with --no-deps to run attached to the services
-# from produ environment if wanted
-devweb:
-  # Note you cannot scale if you use container_name
-  container_name: projecta-dev-web
-  build: docker
-  dockerfile: Dockerfile-dev
-  hostname: uwsgi
-  environment:
-    - DATABASE_NAME=gis
-    - DATABASE_USERNAME=docker
-    - DATABASE_PASSWORD=docker
-    - DATABASE_HOST=db
-    - DJANGO_SETTINGS_MODULE=core.settings.prod_docker
-    - PYTHONPATH=/home/web/django_project
-    - VIRTUAL_HOST=projecta.kartoza.com
-    - VIRTUAL_PORT=8080
-  volumes:
-    - ../django_project:/home/web/django_project
-    - ./static:/home/web/static
-    - ./media:/home/web/media
-    - ./reports:/home/web/reports
-    - ./logs:/var/log/
-  links:
-    - smtp:smtp
-    - db:db
-  ports:
-    # for django test server
-    - "61202:8080"
-    # for ssh
-    - "61203:22"
+  btsync-db:
+    # BTSync backups for database dumps
+    image: kartoza/btsync
+    volumes:
+      # We mount RW so that we can use remove peer to clean up old backups off the server
+      - db-backups:/web:rw
 
-btsync-db:
-  # BTSync backups for database dumps
-  image: kartoza/btsync
-  volumes:
-    # We mount RW so that we can use remove peer to clean up old backups off the server
-    - ./backups:/web:rw
-  env_file:
-    # The environment file should define two variables:
-    # SECRET: a RW btsync key if the server is a production server
-    #         a RO btsync key if it is staging or development machine
-    # DEVICE: a unique device name so you can recognise which host is being peered with in btsync
-    # See the btsync example env in this folder for a template
-    # NOTE:
-    # Do not version control the env file as anyone else could peer it and sync
-    # our database backups etc.
-    - btsync-db.env
-
-btsync-media:
-  # BTSync backups for django media
-  image: kartoza/btsync
-  volumes:
-    # We mount RO as we do not really want peers to change this data
-    - ./media:/web:ro
-  env_file:
-    # The environment file should define two variables:
-    # SECRET: a RW btsync key if the server is a production server
-    #         a RO btsync key if it is staging or development machine
-    # DEVICE: a unique device name so you can recognise which host is being peered with in btsync
-    # See the btsync example env in this folder for a template
-    # NOTE:
-    # Do not version control the env file as anyone else could peer it and sync
-    # our media backups etc.
-    - btsync-media.env
+  btsync-media:
+    # BTSync backups for django media
+    image: kartoza/btsync
+    volumes:
+      # We mount RO as we do not really want peers to change this data
+      - media-data:/web:ro
 
 

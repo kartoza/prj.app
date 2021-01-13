@@ -35,7 +35,13 @@ class WorksheetForm(TranslationModelForm):
             'external_data',
             'youtube_link',
             'author_name',
-            'author_link'
+            'author_link',
+            'license',
+            'summary_image_dimension',
+            'exercise_image_dimension',
+            'more_about_image_dimension',
+            'funded_by',
+            'funder_url'
         )
 
     def __init__(self, *args, **kwargs):
@@ -49,14 +55,20 @@ class WorksheetForm(TranslationModelForm):
                 Field('summary_leader', css_class='form_control'),
                 Field('summary_text', css_class='form_control'),
                 Field('summary_image', css_class='form_control'),
+                Field('summary_image_dimension', css_class='form_control'),
                 Field('exercise_goal', css_class='form_control'),
                 Field('exercise_task', css_class='form_control'),
                 Field('exercise_image', css_class='form_control'),
+                Field('exercise_image_dimension', css_class='form_control'),
                 Field('more_about_title', css_class='form_control'),
                 Field('more_about_text', css_class='form_control'),
                 Field('more_about_image', css_class='form_control'),
+                Field('more_about_image_dimension', css_class='form_control'),
                 Field('external_data', css_class='form_control'),
                 Field('youtube_link', css_class='form_control'),
+                Field('license', css_class='form_control'),
+                Field('funded_by', css_class='form_control'),
+                Field('funder_url', css_class='form_control'),
                 css_id='project-form'
             )
         )
