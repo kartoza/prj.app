@@ -150,7 +150,7 @@ class TestViews(TestCase):
                                            kwargs=self.kwargs_worksheet_full))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Test Question Answer')
-        self.assertContains(response, 'Test Module Question Answer')\
+        self.assertContains(response, 'Test Module Question Answer')
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def WorksheetModuleQuestionAnswersPDF(self):
