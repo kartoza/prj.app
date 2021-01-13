@@ -22,8 +22,8 @@ class AnswerAdmin(admin.ModelAdmin):
 
 class FurtherReadingAdmin(admin.ModelAdmin):
     """Further reading admin model."""
-    list_display = ('worksheet', 'text', 'link')
-    fields = ('worksheet', 'text', 'link')
+    list_display = ('worksheet', 'text')
+    fields = ('worksheet', 'text')
 
 
 class SectionAdmin(admin.ModelAdmin):

@@ -400,9 +400,6 @@
                         <li style="list-style: none;">
                             <div class="row">
                                 {{ info.text|safe }}
-                                {% if info.link %}
-                                    <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
-                                {% endif %}
                                 {{ info|is_translation_up_to_date }}
                                 {% if user_can_edit %}
                                     <div class="pull-right btn-group">

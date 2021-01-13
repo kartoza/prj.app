@@ -21,11 +21,11 @@ class FurtherReadingForm(TranslationModelForm):
     """Form for creating further reading item."""
 
     text = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
+
     class Meta:
         model = FurtherReading
         fields = (
             'text',
-            'link',
         )
 
     def __init__(self, *args, **kwargs):
@@ -36,7 +36,6 @@ class FurtherReadingForm(TranslationModelForm):
                 _('Worksheet {}: further more item details').format(
                     self.worksheet),
                 Field('text', css_class='form_control'),
-                Field('link', css_class='form_control'),
                 css_id='project-form'
             )
         )
