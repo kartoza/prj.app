@@ -41,6 +41,7 @@ from lesson.views.worksheet import (
     WorksheetOrderView,
     WorksheetOrderSubmitView,
     WorksheetModuleQuestionAnswers,
+    WorksheetModuleQuestionAnswersPDF,
     WorksheetPDFZipView,
     download_multiple_worksheet
 )
@@ -102,6 +103,11 @@ urlpatterns = [
               '(?P<section_slug>[\w-]+)/answers/(?P<pk>[\w-]+)/$',
         view=WorksheetModuleQuestionAnswers.as_view(),
         name='worksheet-module-answers'),
+
+    url(regex='^(?P<project_slug>[\w-]+)/lesson/'
+              '(?P<section_slug>[\w-]+)/answers/(?P<pk>[\w-]+)/print$',
+        view=WorksheetModuleQuestionAnswersPDF.as_view(),
+        name='worksheet-module-answers-print'),
 
     url(regex='^(?P<project_slug>[\w-]+)/lesson/'
               '(?P<section_slug>[\w-]+)/zip/(?P<pk>[\w-]+)/$',
@@ -214,8 +220,8 @@ urlpatterns = [
         name='answer-delete'),
 ]
 
-# Redirect url above in order to make URL path
-# for the lessons app more apparent
+# The original urlpatterns below will redirect to urlpatterns above
+# in order to make URL path for the lessons app more apparent.
 urlpatterns += [
     url(regex='^(?P<project_slug>[\w-]+)/section/about/$',
         view=RedirectView.as_view(pattern_name='about-lesson-app',
@@ -266,6 +272,12 @@ urlpatterns += [
               '(?P<section_slug>[\w-]+)/answers/(?P<pk>[\w-]+)/$',
         view=RedirectView.as_view(pattern_name='worksheet-module-answers',
                                   permanent=False)),
+
+    url(regex='^(?P<project_slug>[\w-]+)/section/'
+              '(?P<section_slug>[\w-]+)/answers/(?P<pk>[\w-]+)/print$',
+        view=RedirectView.as_view(
+            pattern_name='worksheet-module-answers-print',
+            permanent=False)),
 
     url(regex='^(?P<project_slug>[\w-]+)/section/'
               '(?P<section_slug>[\w-]+)/zip/(?P<pk>[\w-]+)/$',
