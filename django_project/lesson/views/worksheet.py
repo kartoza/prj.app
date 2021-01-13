@@ -405,11 +405,14 @@ class WorksheetModuleQuestionAnswersPDF(WorksheetModuleQuestionAnswers):
     template_name = 'worksheet/question_answers_pdf.html'
 
     def render_to_response(self, context, **response_kwargs):
+        project_slug = self.kwargs.get('project_slug', None)
+        project = get_object_or_404(Project, slug=project_slug)
         response = super(WorksheetModuleQuestionAnswersPDF,
                          self).render_to_response(context, **response_kwargs)
         response.render()
         pdf_response = HttpResponse(content_type='application/pdf')
-        pdf_response['Content-Disposition'] = 'filename=answer.pdf'
+        pdf_response['Content-Disposition'] = (
+                'filename=%s.pdf' % project.name)
         html_object = HTML(
             string=response.content,
             base_url='file://',

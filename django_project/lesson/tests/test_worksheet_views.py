@@ -150,7 +150,24 @@ class TestViews(TestCase):
                                            kwargs=self.kwargs_worksheet_full))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Test Question Answer')
-        self.assertContains(response, 'Test Module Question Answer')
+        self.assertContains(response, 'Test Module Question Answer')\
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def WorksheetModuleQuestionAnswersPDF(self):
+        """Test accessing module question answer"""
+
+        self.test_project.name = 'Test Question Answer'
+        self.test_project.save()
+        self.test_worksheet.module = 'Test Module Question Answer'
+        self.test_worksheet.save()
+        response = self.client.get(reverse('worksheet-module-answers-print',
+                                           kwargs=self.kwargs_worksheet_full))
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(
+            response.get('Content-Disposition'),
+            'filename=Test Question Answer.pdf'
+        )
+
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_WorksheetPrintView(self):
