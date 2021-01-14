@@ -35,8 +35,9 @@ class SectionAdmin(admin.ModelAdmin):
 class SpecificationAdmin(admin.ModelAdmin):
     """Specification admin model."""
     list_display = (
-        'worksheet', 'sequence_number', 'title', 'value', 'notes')
-    fields = ('worksheet', 'title', 'value', 'notes')
+        'worksheet', 'sequence_number', 'title', 'value', 'title_notes',
+        'value_notes')
+    fields = ('worksheet', 'title', 'value', 'title_notes', 'value_notes')
 
 
 class WorksheetAdmin(admin.ModelAdmin):

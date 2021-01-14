@@ -10,3 +10,12 @@ Inspired from the "details" class in organisation_detail.css
     float: left;
     width: 100%;
 }
+
+.requirement-cell > p {
+    margin-bottom: 0px;
+}
+
+.requirement-notes {
+    margin: 0 0 10px;
+    font-size: 0.75em;
+}

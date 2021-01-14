@@ -41,7 +41,7 @@ class SectionTranslation(TranslationMixinTranslation):
 
 @register(Specification)
 class SpecificationTranslation(TranslationMixinTranslation):
-    fields = ('title', 'value', 'notes')
+    fields = ('title', 'value', 'title_notes', 'value_notes')
 
 
 @register(Worksheet)
