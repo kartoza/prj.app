@@ -87,10 +87,6 @@ class SectionListView(SectionMixin, PaginationMixin, ListView):
         context = super(SectionListView, self).get_context_data(**kwargs)
         context['project'] = get_object_or_404(
             Project, slug=self.kwargs.get('project_slug', None))
-        context['worksheets'] = OrderedDict()
-        for section in context['sections']:
-            query_set = Worksheet.objects.filter(section=section)
-            context['worksheets'][section] = query_set
 
         # Permissions
         context['user_can_edit'] = False
@@ -102,6 +98,14 @@ class SectionListView(SectionMixin, PaginationMixin, ListView):
 
         if self.request.user.is_staff:
             context['user_can_edit'] = True
+
+        context['worksheets'] = OrderedDict()
+        for section in context['sections']:
+            if context['user_can_edit']:
+                query_set = Worksheet.objects.filter(section=section)
+            else:
+                query_set = Worksheet.published_objects.filter(section=section)
+            context['worksheets'][section] = query_set
 
         return context
 
