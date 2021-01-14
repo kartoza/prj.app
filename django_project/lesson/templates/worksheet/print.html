@@ -184,13 +184,30 @@ img.more-about-image {
             <table>
                 <tbody>
                     <tr>
-                        <th>{% trans 'Name' %}</th>
-                        <th>{% trans 'Expectation' %}</th>
+                        <th>
+                          {% if worksheet.requirement_header_name_first %}
+                            {% trans worksheet.requirement_header_name_first|base_markdown %}
+                          {% else %}
+                            {% trans 'Name' %}
+                          {% endif %}</th>
+                        <th>
+                          {% if worksheet.requirement_header_name_last %}
+                            {% trans worksheet.requirement_header_name_last|base_markdown %}
+                          {% else %}
+                            {% trans 'Expectation' %}
+                          {% endif %}
+                        </th>
                     </tr>
                     {% for requirement in requirements %}
                         <tr>
-                            <td style="background-color: #cdcdcd">{{ requirement.title | base_markdown }}</td>
-                            <td>{{ requirement.value | base_markdown }}</td>
+                            <td style="background-color: #cdcdcd">
+                              {{ requirement.title | base_markdown }}
+                              <div class="requirement-notes">{{ requirement.title_notes|base_markdown }}</div>
+                            </td>
+                            <td>
+                              {{ requirement.value | base_markdown }}
+                              <div class="requirement-notes">{{ requirement.value_notes|base_markdown }}</div>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

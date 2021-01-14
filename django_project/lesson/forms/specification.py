@@ -23,7 +23,8 @@ class SpecificationForm(TranslationModelForm):
         fields = (
             'title',
             'value',
-            'notes'
+            'title_notes',
+            'value_notes'
         )
 
     def __init__(self, *args, **kwargs):
@@ -35,7 +36,8 @@ class SpecificationForm(TranslationModelForm):
                     self.worksheet),
                 Field('title', css_class='form_control'),
                 Field('value', css_class='form_control'),
-                Field('notes', css_class='form_control'),
+                Field('title_notes', css_class='form_control'),
+                Field('value_notes', css_class='form_control'),
                 css_id='project-form'
             )
         )

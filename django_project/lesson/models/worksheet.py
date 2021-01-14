@@ -156,6 +156,22 @@ class Worksheet(TranslationMixin):
         unique=True,
     )
 
+    requirement_header_name_first = models.CharField(
+        help_text=_('Set header name of the first column in requirements '
+                    'table questions. Markdown is supported.'),
+        blank=True,
+        null=True,
+        max_length=200,
+    )
+
+    requirement_header_name_last = models.CharField(
+        help_text=_('Set header name of the last column in requirements '
+                    'table questions. Markdown is supported.'),
+        blank=True,
+        null=True,
+        max_length=200,
+    )
+
 
     summary_image_dimension = models.CharField(
         help_text=_('Set the height and width of summary_image element '
@@ -198,7 +214,6 @@ class Worksheet(TranslationMixin):
         max_length=255,
         null=True,
         blank=True)
-
 
     # noinspection PyClassicStyleClass.
     class Meta:

@@ -62,8 +62,10 @@ class SpecificationF(factory.django.DjangoModelFactory):
         lambda n: u'Test title %s' % n)
     value = factory.sequence(
         lambda n: u'Test value %s' % n)
-    notes = factory.sequence(
-        lambda n: u'Test section notes %s' % n)
+    title_notes = factory.sequence(
+        lambda n: u'Test section title notes %s' % n)
+    value_notes = factory.sequence(
+        lambda n: u'Test section value notes %s' % n)
 
 
 class LicenseF(factory.django.DjangoModelFactory):
