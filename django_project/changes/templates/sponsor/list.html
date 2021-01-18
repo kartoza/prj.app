@@ -120,17 +120,17 @@
                                 <img class="img-responsive img-rounded pull-right"
                                      {% thumbnail sponsor.sponsor.logo 50x50 as logo %}
                                         {% if logo %}
-                                            src="{% thumbnail sponsor.sponsor.logo 50x50 %}"
+                                            src="{{ logo }}"
                                         {% else %}
                                             src="{{ sponsor.sponsor.logo.url }}" width="50" height="50"
                                      {% endif %}/>
-                            </a>
+                                  </a>
                             {% else %}
                                 <a href="{{ sponsor.sponsor.logo.url }}">
                                     <img class="img-responsive img-rounded pull-right"
                                      {% thumbnail sponsor.sponsor.logo 50x50 as logo %}
                                         {% if logo %}
-                                            src="{% thumbnail sponsor.sponsor.logo 50x50 %}"
+                                            src="{{ logo }}"
                                         {% else %}
                                             src="{{ sponsor.sponsor.logo.url }}" width="50" height="50"
                                      {% endif %}/>
@@ -187,7 +187,7 @@
                                 <img class="img-responsive img-rounded pull-right"
                                      {% thumbnail sponsor.sponsor.logo 50x50 as logo %}
                                         {% if logo %}
-                                            src="{% thumbnail sponsor.sponsor.logo 50x50 %}"
+                                            src="{{ logo }}"
                                         {% else %}
                                             src="{{ sponsor.sponsor.logo.url }}" width="50" height="50"
                                      {% endif %}/>

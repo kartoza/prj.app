@@ -27,5 +27,3 @@ DATABASES = {
         }
     }
 }
-
-# THUMBNAIL_DEBUG = True
