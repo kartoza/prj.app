@@ -26,18 +26,10 @@ class FurtherReading(TranslationMixin):
 
     worksheet = models.ForeignKey(Worksheet, on_delete=models.CASCADE)
 
-    text = models.CharField(
+    text = models.TextField(
         help_text=_('Text of the further reading.'),
-        max_length=200,
         blank=False,
         null=False,
-    )
-
-    link = models.CharField(
-        help_text=_('Further reading link.'),
-        blank=True,
-        null=False,
-        max_length=200,
     )
 
     # noinspection PyClassicStyleClass.
