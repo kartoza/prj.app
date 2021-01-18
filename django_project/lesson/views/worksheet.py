@@ -368,6 +368,10 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin,
         section_slug = self.kwargs.get('section_slug', None)
         project = get_object_or_404(Project, slug=project_slug)
 
+        context['project_slug'] = project_slug
+        context['section_slug'] = section_slug
+        context['worksheet_pk'] = self.object.pk
+
         context['sections'] = Section.objects.filter(project=project,
                                                      slug=section_slug)
         for section in context['sections']:
@@ -393,6 +397,28 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin,
                     worksheet_json['question_answers'].append(question_json)
                 context['worksheets'].append(worksheet_json)
         return context
+
+
+class WorksheetModuleQuestionAnswersPDF(WorksheetModuleQuestionAnswers):
+    """Rendering PDF Question-Answer module"""
+
+    template_name = 'worksheet/question_answers_pdf.html'
+
+    def render_to_response(self, context, **response_kwargs):
+        project_slug = self.kwargs.get('project_slug', None)
+        project = get_object_or_404(Project, slug=project_slug)
+        response = super(WorksheetModuleQuestionAnswersPDF,
+                         self).render_to_response(context, **response_kwargs)
+        response.render()
+        pdf_response = HttpResponse(content_type='application/pdf')
+        pdf_response['Content-Disposition'] = (
+                'filename=%s.pdf' % project.name)
+        html_object = HTML(
+            string=response.content,
+            base_url='file://',
+        )
+        html_object.write_pdf(pdf_response)
+        return pdf_response
 
 
 def download_multiple_worksheet(request, **kwargs):

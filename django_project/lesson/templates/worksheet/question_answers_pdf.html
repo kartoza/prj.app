@@ -1,0 +1,97 @@
+{% load i18n %}
+
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @page {
+        size: a4 portrait;
+        margin: 10mm;
+    }
+
+    html {
+        font-family: 'Lato', sans-serif;
+        font-style: normal;
+        font-variant: normal;
+        line-height: 1.25;
+    }
+
+    hr {
+        margin-top: 12px;
+        margin-bottom: 24px;
+    }
+
+    h3.title {
+        text-align: center;
+        margin-bottom: 2em;
+    }
+
+    ul.module-name {
+        list-style-type: none;
+        padding: 0;
+        margin: 0 0 24px;
+        font-weight: bold;
+    }
+
+    .badge {
+        color: white;
+        background-color: #777;
+        padding: 5px 5px;
+        border-radius: 5px;
+    }
+
+    .answer > u {
+        color: #5cc4ef;
+    }
+
+  </style>
+</head>
+<body>
+{% block content %}
+  <div>
+    <h3 class="title">
+      Section: {% for name in sections %}{{ name }}{% endfor %}<br/>
+      Answers to section modules.
+    </h3>
+  </div>
+
+
+  <div class="container">
+    {% for worksheet_set in worksheets %}
+      <div>
+        <ul class="module-name" role="tablist">
+          <li role="presentation">
+            Module Name
+            <span  class="badge">{{ worksheet_set.worksheet }}</span>
+          </li>
+        </ul>
+
+        {% if not worksheet_set.question_answers %}
+          <div>
+            <span><strong>Question:</strong> -</span><br/>
+            <br />
+          </div>
+        {% else %}
+          {% for question_answer in worksheet_set.question_answers %}
+            <div>
+              <span><strong>Question:</strong> {{ question_answer.question }}</span><br/>
+              {% for answer in question_answer.answer %}
+                <span class="d-none d-print-block">
+                  {% if answer.is_correct %}
+                    <span class="answer"><u>Answer</u>:
+                      <i>{{ answer }}</i></span><br/>
+                  {% endif %}
+                </span>
+              {% endfor %}
+              <br />
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <hr />
+    {% endfor %}
+  </div>
+
+{% endblock %}
+</body>
+</html>
