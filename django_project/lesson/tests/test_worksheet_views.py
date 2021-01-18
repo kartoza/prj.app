@@ -118,7 +118,7 @@ class TestViews(TestCase):
         self.test_worksheet.save()
         response = self.client.get(reverse(
                 'worksheet-detail', kwargs = self.kwargs_worksheet_full))
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
 
         # Publish the worksheet
         self.test_worksheet.published = True
