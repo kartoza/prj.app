@@ -23,14 +23,16 @@ class SVGAndImageFormField(DjangoImageField):
 
     def to_python(self, data):
         """
-        Checks that the file-upload field data contains a valid image (GIF, JPG,
-        PNG, possibly others -- whatever the Python Imaging Library supports).
+        Checks that the file-upload field data contains a valid image (GIF,
+        JPG, PNG, possibly others -- whatever the Python Imaging Library
+        supports).
         """
         test_file = super(DjangoImageField, self).to_python(data)
         if test_file is None:
             return None
 
-        # We need to get a file object for Pillow. We might have a path or we might
+        # We need to get a file object for Pillow.
+        # We might have a path or we might
         # have to read the data into memory.
         if hasattr(data, "temporary_file_path"):
             ifile = data.temporary_file_path()
