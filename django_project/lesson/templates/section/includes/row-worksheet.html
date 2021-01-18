@@ -5,7 +5,7 @@
         <input class="worksheet-checkbox {{ worksheet.section.slug }}-checkbox" worksheet-pk="{{ worksheet.pk }}" worksheet-number="{{ forloop.parentloop.counter|add:page_obj.start_index|add:'-1' }}.{{ forloop.counter }}" type="checkbox" hidden>
         <h4>
             <a href="{% url "worksheet-detail" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ forloop.parentloop.counter|add:page_obj.start_index|add:'-1' }}.{{ forloop.counter }}">
-                {{ forloop.parentloop.counter|add:page_obj.start_index|add:'-1' }}.{{ forloop.counter }}. {{ worksheet.module }}
+              {{ forloop.parentloop.counter|add:page_obj.start_index|add:'-1' }}.{{ forloop.counter }}. {{ worksheet.module }} {% if not worksheet.published %}<small>[draft]</small>{% endif %}
             </a>
             {{ worksheet|is_translation_up_to_date }}
         </h4>

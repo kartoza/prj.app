@@ -51,7 +51,8 @@ class TestViews(TestCase):
 
         # Create section
         self.test_section = SectionF.create(project=self.test_project)
-        self.test_worksheet = WorksheetF.create(section=self.test_section)
+        self.test_worksheet = WorksheetF.create(section=self.test_section,
+                                                published=True)
         self.kwargs_project = {'project_slug': self.test_section.project.slug}
         self.kwargs_section = {'slug': self.test_section.slug}
         self.kwargs_section_full = {
@@ -109,9 +110,40 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN = ['testserver', ])
-    def test_WorksheetDetailView(self):
-        """Tests accessing worksheet detail view."""
+    def test_WorksheetDetailView_unpublished_worksheet_normal_view(self):
+        """Tests accessing unpublish worksheet detail view in normal view."""
 
+        self.test_worksheet.published = False
+        self.test_worksheet.module = 'Unpublished worksheet'
+        self.test_worksheet.save()
+        response = self.client.get(reverse(
+                'worksheet-detail', kwargs = self.kwargs_worksheet_full))
+        self.assertEqual(response.status_code, 302)
+
+        # Publish the worksheet
+        self.test_worksheet.published = True
+        self.test_worksheet.save()
+        response = self.client.get(reverse(
+                'worksheet-detail', kwargs = self.kwargs_worksheet_full))
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN = ['testserver', ])
+    def test_WorksheetDetailView_unpublished_worksheet_admin_view(self):
+        """Tests accessing unpublish worksheet detail view in admin view."""
+
+        self.test_worksheet.published = False
+        status = self.client.login(username='sonlinux', password='password')
+        self.assertTrue(status)
+
+        self.test_worksheet.module = 'Unpublished worksheet'
+        self.test_worksheet.save()
+        response = self.client.get(reverse(
+                'worksheet-detail', kwargs = self.kwargs_worksheet_full))
+        self.assertEqual(response.status_code, 200)
+
+        # Publish the worksheet
+        self.test_worksheet.published = True
+        self.test_worksheet.save()
         response = self.client.get(reverse(
                 'worksheet-detail', kwargs = self.kwargs_worksheet_full))
         self.assertEqual(response.status_code, 200)

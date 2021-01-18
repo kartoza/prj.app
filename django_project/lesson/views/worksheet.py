@@ -8,7 +8,7 @@ from io import BytesIO
 from collections import OrderedDict
 from django.conf import settings
 from django.urls import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import (
     DetailView,
     CreateView,
@@ -94,6 +94,22 @@ class WorksheetDetailView(
 
         context['funded_by'] = self.object.funder_info_html()
         return context
+
+    def get(self, request, *args, **kwargs):
+        object = self.get_object()
+
+        # permission
+        user_can_edit = False
+        if self.request.user in object.section.project.lesson_managers.all():
+            user_can_edit = True
+        if self.request.user == object.section.project.owner:
+            user_can_edit = True
+        if self.request.user.is_staff:
+            user_can_edit = True
+
+        if not object.published and not user_can_edit:
+            return HttpResponseRedirect(reverse('account_login'))
+        return super(WorksheetDetailView, self).get(request, *args, **kwargs)
 
 
 class WorksheetPrintView(WorksheetDetailView):

@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from base.tests.model_factories import ProjectF
 from core.model_factories import UserF
 from lesson.models.section import Section
-from lesson.tests.model_factories import SectionF
+from lesson.tests.model_factories import SectionF, WorksheetF
 
 
 class TestViews(TestCase):
@@ -67,6 +67,27 @@ class TestViews(TestCase):
         self.assertEqual(response.template_name, expected_templates)
         self.assertEqual(
             response.context_data['object_list'][0], self.test_section)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_SectionListView_unpublished_worksheet(self):
+        """Test List View of Section."""
+        worksheet_unpublished = WorksheetF.create()
+        worksheet_unpublished.section = self.test_section
+        worksheet_unpublished.module = 'Unpublished Worksheet'
+        worksheet_unpublished.save()
+        client = Client()
+        response = client.get(
+            reverse('section-list', kwargs=self.kwargs_project))
+        self.assertNotContains(response, 'Unpublished Worksheet',
+                               status_code=200)
+        # publish the worksheet
+        worksheet_unpublished.published = True
+        worksheet_unpublished.save()
+        response = client.get(
+            reverse('section-list', kwargs=self.kwargs_project))
+        self.assertContains(response, 'Unpublished Worksheet',
+                            status_code=200)
+
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_SectionCreateView_with_login(self):
