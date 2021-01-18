@@ -91,7 +91,12 @@
                         {% endifchanged %}
                             <a href="{% url 'sponsor-detail' project_slug=sponsor.project.slug slug=sponsor.slug %}">
                                 <img class="img-rounded tooltip-toggle"
-                                 src="{% thumbnail sponsor.sponsor.logo 50x50 %}"
+                                     {% thumbnail sponsor.sponsor.logo 50x50 as logo %}
+                                        {% if logo %}
+                                            src="{{ logo }}"
+                                        {% else %}
+                                            src="{{ sponsor.sponsor.logo.url }}" width="50" height="50"
+                                     {% endif %}
                                  data-title="{{ sponsor.sponsor.name }}">
                              </a>
                     {% endif %}

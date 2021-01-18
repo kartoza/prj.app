@@ -34,7 +34,7 @@ Pillow==7.1.0
 reportlab==3.5.34
 xhtml2pdf==0.2b1
 django-modeltranslation==0.16.1
-django-colorfield
+django-colorfield==0.3.2
 WeasyPrint==0.42.3
 djangorestframework==3.10.3
 django-simple-history==2.8.0
