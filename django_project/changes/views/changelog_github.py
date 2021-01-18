@@ -278,7 +278,7 @@ def download_all_referenced_images(request, **kwargs):
                                 if not block:
                                     break
                                 handle.write(block)
-                            img_url = file_path.replace('/home/web', '')
+                            img_url = file_path.replace('/home/web/media', '')
                             html = html.replace(image, img_url)
                             html = re.sub(r"alt=\".*?\"", "", html)
 
