@@ -76,6 +76,7 @@
                     {% trans 'Module' %} : {{ module_number }}. {{ worksheet.module }}
                 </i>
                 {{ worksheet|is_translation_up_to_date }}
+              {% if not worksheet.published %}<small>[draft]</small>{% endif %}
             </h3>
         </div>
     </div>

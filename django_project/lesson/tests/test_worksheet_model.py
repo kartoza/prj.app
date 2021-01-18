@@ -24,6 +24,9 @@ class TestSection(TestCase):
         # check if __str__ method returns the correct value
         self.assertEqual(str(model), model.module)
 
+        # check if published default False
+        self.assertFalse(model.published)
+
     def test_Worksheet_delete(self):
         """Test worksheet model deletion."""
 
@@ -61,7 +64,8 @@ class TestSection(TestCase):
             'exercise_goal': u'new goal',
             'exercise_task': u'new task',
             'more_about_text': u'new more text',
-            'more_about_image': u'new more image'
+            'more_about_image': u'new more image',
+            'published': True
         }
         model.__dict__.update(new_model_data)
         model.save()

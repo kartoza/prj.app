@@ -8,7 +8,7 @@ from io import BytesIO
 from collections import OrderedDict
 from django.conf import settings
 from django.urls import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.views.generic import (
     DetailView,
     CreateView,
@@ -93,6 +93,9 @@ class WorksheetDetailView(
         context['file_title'] = context['file_title'].encode("utf8")
 
         context['funded_by'] = self.object.funder_info_html()
+
+        if not context['user_can_edit'] and not self.object.published:
+            raise Http404("Worksheet does not exist")
         return context
 
 
