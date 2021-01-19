@@ -70,7 +70,7 @@
                                 <img class="img-responsive"
                                       {% thumbnail sponsorshipperiod.sponsor.logo 30x30 as logo %}
                                         {% if logo %}
-                                            src="{{ logo }}"
+                                            src="{% thumbnail sponsorshipperiod.sponsor.logo 30x30 %}"
                                         {% else %}
                                             src="{{ sponsorshipperiod.sponsor.logo.url }}" width="30" height="30"
                                      {% endif %}/>

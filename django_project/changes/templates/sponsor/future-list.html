@@ -106,7 +106,7 @@
                                 <img class="img-responsive img-rounded pull-right"
                                      {% thumbnail sponsor.sponsor.logo 50x50 crop as logo %}
                                         {% if logo %}
-                                            src="{{ logo }}"
+                                            src="{{% thumbnail sponsor.sponsor.logo 50x50 crop %}"
                                         {% else %}
                                             src="{{ sponsor.sponsor.logo.url }}" width="50" height="50"
                                      {% endif %} />
@@ -116,7 +116,7 @@
                                     <img class="img-responsive img-rounded pull-right"
                                         {% thumbnail sponsor.sponsor.logo 50x50 crop as logo %}
                                         {% if logo %}
-                                            src="{{ logo }}"
+                                            src="{% thumbnail sponsor.sponsor.logo 50x50 crop %}"
                                         {% else %}
                                             src="{{ sponsor.sponsor.logo.url }}" width="50" height="50"
                                         {% endif %}/>
