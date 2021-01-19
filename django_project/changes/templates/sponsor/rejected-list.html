@@ -48,7 +48,7 @@
                         <img class="img-responsive img-rounded pull-right"
                             {% thumbnail sponsor.logo 50x50 crop as logo %}
                             {% if logo %}
-                                src="{{ logo }}"
+                                src="{% thumbnail sponsor.logo 50x50 crop %}"
                             {% else %}
                                 src="{{ sponsor.logo.url }}" width="50" height="50"
                             {% endif %}/>

@@ -93,7 +93,7 @@
                                 <img class="img-rounded tooltip-toggle"
                                      {% thumbnail sponsor.sponsor.logo 50x50 as logo %}
                                         {% if logo %}
-                                            src="{{ logo }}"
+                                            src="{% thumbnail sponsor.sponsor.logo 50x50 %}"
                                         {% else %}
                                             src="{{ sponsor.sponsor.logo.url }}" width="50" height="50"
                                      {% endif %}
