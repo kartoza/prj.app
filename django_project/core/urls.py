@@ -8,7 +8,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.http import HttpResponseServerError
 from django.template import loader
-from .views import general_flatpage
+from .views import general_flatpage, index_view
 
 admin.autodiscover()
 handler404 = 'base.views.error_views.custom_404'
@@ -32,7 +32,11 @@ def handler500(request):
     }))
 
 
-urlpatterns = []
+urlpatterns = [
+    # force redirect to /en/
+    # to fix 500 error temporarily  after user logged in on production
+    url(r'^$', index_view),
+]
 # These patterns work if there is a locale code injected in front of them
 # e.g. /en/reports/
 urlpatterns += i18n_patterns(
