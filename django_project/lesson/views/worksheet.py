@@ -8,7 +8,7 @@ from io import BytesIO
 from collections import OrderedDict
 from django.conf import settings
 from django.urls import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import (
     DetailView,
     CreateView,
@@ -94,6 +94,22 @@ class WorksheetDetailView(
 
         context['funded_by'] = self.object.funder_info_html()
         return context
+
+    def get(self, request, *args, **kwargs):
+        object = self.get_object()
+
+        # permission
+        user_can_edit = False
+        if self.request.user in object.section.project.lesson_managers.all():
+            user_can_edit = True
+        if self.request.user == object.section.project.owner:
+            user_can_edit = True
+        if self.request.user.is_staff:
+            user_can_edit = True
+
+        if not object.published and not user_can_edit:
+            return HttpResponseRedirect(reverse('account_login'))
+        return super(WorksheetDetailView, self).get(request, *args, **kwargs)
 
 
 class WorksheetPrintView(WorksheetDetailView):
@@ -368,6 +384,10 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin,
         section_slug = self.kwargs.get('section_slug', None)
         project = get_object_or_404(Project, slug=project_slug)
 
+        context['project_slug'] = project_slug
+        context['section_slug'] = section_slug
+        context['worksheet_pk'] = self.object.pk
+
         context['sections'] = Section.objects.filter(project=project,
                                                      slug=section_slug)
         for section in context['sections']:
@@ -393,6 +413,28 @@ class WorksheetModuleQuestionAnswers(WorksheetMixin,
                     worksheet_json['question_answers'].append(question_json)
                 context['worksheets'].append(worksheet_json)
         return context
+
+
+class WorksheetModuleQuestionAnswersPDF(WorksheetModuleQuestionAnswers):
+    """Rendering PDF Question-Answer module"""
+
+    template_name = 'worksheet/question_answers_pdf.html'
+
+    def render_to_response(self, context, **response_kwargs):
+        project_slug = self.kwargs.get('project_slug', None)
+        project = get_object_or_404(Project, slug=project_slug)
+        response = super(WorksheetModuleQuestionAnswersPDF,
+                         self).render_to_response(context, **response_kwargs)
+        response.render()
+        pdf_response = HttpResponse(content_type='application/pdf')
+        pdf_response['Content-Disposition'] = (
+                'filename=%s.pdf' % project.name)
+        html_object = HTML(
+            string=response.content,
+            base_url='file://',
+        )
+        html_object.write_pdf(pdf_response)
+        return pdf_response
 
 
 def download_multiple_worksheet(request, **kwargs):

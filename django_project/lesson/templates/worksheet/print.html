@@ -290,10 +290,7 @@ img.more-about-image {
         <ul>
             {% for info in further_reading %}
                 <li>
-                    {{ info.text }}
-                    {% if info.link %}
-                        <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
-                    {% endif %}
+                    {{ info.text|safe }}
                 </li>
             {% endfor %}
         </ul>

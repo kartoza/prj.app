@@ -86,3 +86,6 @@ VALID_DOMAIN = [
 
 EMAIL_HOST_USER = 'noreply@kartoza.com'
 LOGIN_URL = '/en/accounts/login/'
+
+# The numeric mode (i.e. 0o644) to set newly uploaded files to.
+FILE_UPLOAD_PERMISSIONS = 0o644

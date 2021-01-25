@@ -1,12 +1,11 @@
-name: stable-build
+name: pr-build
 on:
-  workflow_dispatch:
-  push:
+  pull_request:
     branches:
-      - master
-      - main
+      - develop
 jobs:
   docker-builder:
+    if: github.event.pull_request.head.repo.fork == 'false'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -20,6 +19,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: ${{ secrets.DOCKERHUB_REPO }}/projecta-uwsgi
+          tag-match: \d{1,3}.\d{1,3}.\d{1,3}
+          tag-semver: true
+
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
@@ -27,6 +34,6 @@ jobs:
           context: .
           file: deployment/docker/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_REPO }}/projecta-uwsgi:stable
+          tags: ${{ steps.docker_meta.outputs.tags }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

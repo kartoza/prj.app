@@ -68,7 +68,12 @@
                         {% if sponsorshipperiod.sponsor.logo %}
                             <a href="{{ sponsorshipperiod.sponsor.logo.url }}">
                                 <img class="img-responsive"
-                                     src="{% thumbnail sponsorshipperiod.sponsor.logo 30x30 %}"/>
+                                      {% thumbnail sponsorshipperiod.sponsor.logo 30x30 as logo %}
+                                        {% if logo %}
+                                            src="{% thumbnail sponsorshipperiod.sponsor.logo 30x30 %}"
+                                        {% else %}
+                                            src="{{ sponsorshipperiod.sponsor.logo.url }}" width="30" height="30"
+                                     {% endif %}/>
                             </a>
                         {% endif %}
                     </td>

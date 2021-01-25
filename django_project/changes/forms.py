@@ -17,6 +17,7 @@ from .models import (
     SponsorshipPeriod,
     SponsorshipLevel
 )
+from changes.utils.svgimagefile import SVGAndImageFormField
 
 
 class CategoryForm(forms.ModelForm):
@@ -195,6 +196,9 @@ class SponsorForm(forms.ModelForm):
             'invoice_number',
             'project',
         )
+        field_classes = {
+            'logo': SVGAndImageFormField
+        }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')

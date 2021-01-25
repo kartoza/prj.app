@@ -3,9 +3,11 @@ from django.contrib.flatpages.models import FlatPage
 from django.contrib.flatpages.views import DEFAULT_TEMPLATE
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404, HttpResponse, HttpResponsePermanentRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
+from django.utils import translation
 from django.utils.safestring import mark_safe
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_protect
 from base.models import Project, ProjectFlatpage
 
@@ -74,3 +76,11 @@ def render_custom_general_flatpage(request, f):
             'the_projects': the_projects
         }, request))
     return response
+
+
+def index_view(request):
+    user_language = (translation.get_language() or
+                     settings.LANGUAGE_CODE or 'en')
+    translation.activate(user_language)
+    # look up the view name in base.urls
+    return redirect(reverse('home'))

@@ -43,7 +43,8 @@ class WorksheetForm(TranslationModelForm):
             'exercise_image_dimension',
             'more_about_image_dimension',
             'funded_by',
-            'funder_url'
+            'funder_url',
+            'published',
         )
 
     def __init__(self, *args, **kwargs):
@@ -75,6 +76,7 @@ class WorksheetForm(TranslationModelForm):
                 Field('license', css_class='form_control'),
                 Field('funded_by', css_class='form_control'),
                 Field('funder_url', css_class='form_control'),
+                Field('published', css_class='form_control'),
                 css_id='project-form'
             )
         )

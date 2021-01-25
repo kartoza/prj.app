@@ -19,6 +19,15 @@ from lesson.utilities import custom_slug
 logger = logging.getLogger(__name__)
 
 
+class PublishedWorksheetManager(models.Manager):
+    """Custom worksheet manager that shows only published worksheet."""
+
+    def get_queryset(self):
+        """Query set generator."""
+        return super(PublishedWorksheetManager, self).get_queryset().filter(
+            published=True)
+
+
 class Worksheet(TranslationMixin):
     """Worksheet lesson model."""
 
@@ -214,6 +223,17 @@ class Worksheet(TranslationMixin):
         max_length=255,
         null=True,
         blank=True)
+
+    published = models.BooleanField(
+        help_text=_(
+            'Whether this worksheet is visible for public.'),
+        default=False,
+        null=False,
+        blank=False
+    )
+
+    objects = models.Manager()
+    published_objects = PublishedWorksheetManager()
 
     # noinspection PyClassicStyleClass.
     class Meta:

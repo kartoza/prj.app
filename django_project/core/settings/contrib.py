@@ -28,6 +28,7 @@ INSTALLED_APPS += [
     'djstripe',
     'preferences',
     'pinax.notifications',
+    'tinymce',  # rich text editor
 ]
 
 # Add preferences to context_processors

@@ -20,7 +20,13 @@
                         <td>
                             {% if sponsor.logo %}
                                 <a href="{{ sponsor.sponsor_url }}">
-                                    <img src="{% thumbnail sponsor.logo 150x50 %}"
+                                    <img
+                                        {% thumbnail sponsor.logo 150x50 as logo %}
+                                        {% if logo %}
+                                            src="{% thumbnail sponsor.logo 150x50 %}"
+                                        {% else %}
+                                            src="{{ sponsor.logo.url }}" width="150" height="50"
+                                        {% endif %}
                                          alt="{{ sponsor }}" />
                                 </a>
                             {% endif %}
