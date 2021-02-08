@@ -278,15 +278,14 @@ def download_all_referenced_images(request, **kwargs):
                                 if not block:
                                     break
                                 handle.write(block)
-                            img_url = file_path.replace('/home/web/media', '')
+                            img_url = file_path.replace('/home/web', '')
                             html = html.replace(image, img_url)
                             html = re.sub(r"alt=\".*?\"", "", html)
-
                         if i == 0:
                             # Take the first image set in the pull request
                             # and set it as default for the entry and remove
                             # it from the body
-                            entry.image_file = img_url
+                            entry.image_file = img_url.replace('/media', '')
                             html = html.replace(img_url, '')
 
                 entry.description = html
