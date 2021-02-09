@@ -788,6 +788,16 @@ class TestVersionViews(TestCase):
         }))
         self.assertEqual(response.status_code, 404)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_download_all_referenced_images(self):
+        self.client.login(username='timlinux', password='password')
+        response = self.client.get(
+            reverse('download-referenced-images', kwargs={
+                'slug': self.version.slug,
+                'project_slug': self.project.slug
+            }))
+        self.assertEqual(response.status_code, 200)
+
 
 class TestVersionViewsWithAnonymousUserForCRUD(TestCase):
     """
