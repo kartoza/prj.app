@@ -232,6 +232,57 @@ class Worksheet(TranslationMixin):
         blank=False
     )
 
+    page_break_before_exercise = models.BooleanField(
+        help_text=_(
+            'Check if you wish a page break before the Exercise content.'),
+        default=False,
+        null=False,
+        blank=False
+    )
+    page_break_before_requirement_table = models.BooleanField(
+        help_text=_(
+            'Check if you wish a page break before the Requirement table.'),
+        default=False,
+        null=False,
+        blank=False
+    )
+    page_break_before_exercise_image = models.BooleanField(
+        help_text=_(
+            'Check if you wish a page break before the Exercise image.'),
+        default=False,
+        null=False,
+        blank=False
+    )
+    page_break_before_more_about = models.BooleanField(
+        help_text=_(
+            'Check if you wish a page break before the More About content.'),
+        default=False,
+        null=False,
+        blank=False
+    )
+    page_break_before_question = models.BooleanField(
+        help_text=_(
+            'Check if you wish a page break before the Question content.'),
+        default=False,
+        null=False,
+        blank=False
+    )
+    page_break_before_youtube_link = models.BooleanField(
+        help_text=_(
+            'Check if you wish a page break before the YouTube Link.'),
+        default=False,
+        null=False,
+        blank=False
+    )
+    page_break_before_further_reading = models.BooleanField(
+        help_text=_(
+            'Check if you wish a page break before the Further Reading '
+            'content.'),
+        default=False,
+        null=False,
+        blank=False
+    )
+
     objects = models.Manager()
     published_objects = PublishedWorksheetManager()
 

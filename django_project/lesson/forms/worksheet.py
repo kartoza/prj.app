@@ -45,6 +45,14 @@ class WorksheetForm(TranslationModelForm):
             'funded_by',
             'funder_url',
             'published',
+            #  checkbox for page break between content
+            'page_break_before_exercise',
+            'page_break_before_requirement_table',
+            'page_break_before_exercise_image',
+            'page_break_before_more_about',
+            'page_break_before_question',
+            'page_break_before_youtube_link',
+            'page_break_before_further_reading',
         )
 
     def __init__(self, *args, **kwargs):
@@ -77,6 +85,18 @@ class WorksheetForm(TranslationModelForm):
                 Field('funded_by', css_class='form_control'),
                 Field('funder_url', css_class='form_control'),
                 Field('published', css_class='form_control'),
+                Field('page_break_before_exercise', css_class='form_control'),
+                Field('page_break_before_requirement_table',
+                      css_class='form_control'),
+                Field('page_break_before_exercise_image',
+                      css_class='form_control'),
+                Field('page_break_before_more_about',
+                      css_class='form_control'),
+                Field('page_break_before_question', css_class='form_control'),
+                Field('page_break_before_youtube_link',
+                      css_class='form_control'),
+                Field('page_break_before_further_reading',
+                      css_class='form_control'),
                 css_id='project-form'
             )
         )
