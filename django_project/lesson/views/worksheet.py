@@ -22,7 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 from braces.views import LoginRequiredMixin
 from weasyprint import HTML
 
-from lesson.forms.worksheet import WorksheetForm
+from lesson.forms.worksheet import WorksheetForm, WorksheetUpdateForm
 from lesson.models.answer import Answer
 from lesson.models.further_reading import FurtherReading
 from lesson.models.specification import Specification
@@ -248,6 +248,7 @@ class WorksheetUpdateView(LoginRequiredMixin, WorksheetMixin, UpdateView):
     context_object_name = 'worksheet'
     template_name = 'update.html'
     update_label = _('Update worksheet')
+    form_class = WorksheetUpdateForm
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.

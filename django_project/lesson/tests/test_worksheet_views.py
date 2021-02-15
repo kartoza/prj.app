@@ -169,6 +169,8 @@ class TestViews(TestCase):
             'update.html'
         ]
         self.assertEqual(response.template_name, expected_templates)
+        self.assertContains(response, 'Select to change the section.')
+
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_WorksheetModuleQuestionAnswers(self):
