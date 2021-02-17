@@ -242,7 +242,6 @@ class TestViews(TestCase):
                           zip_file.namelist())
             zip_file.close()
 
-
     @override_settings(VALID_DOMAIN=['testserver'])
     def test_download_multiple_worksheets(self):
         self.test_project.name = 'Test project name multiple zip'
@@ -271,3 +270,14 @@ class TestViews(TestCase):
             self.assertIn('1. Section Multiple Download/Test License.txt',
                           zip_file.namelist())
             zip_file.close()
+
+    @override_settings(VALID_DOMAIN=['testserver'])
+    def test_WorksheetSampleData(self):
+        response = self.client.get(reverse(
+            'worksheet-sampledata',
+            kwargs={
+                'project_slug': self.test_section.project.slug,
+                'pk': self.test_worksheet.pk
+            }
+        ))
+        self.assertEqual(response.status_code, 404)

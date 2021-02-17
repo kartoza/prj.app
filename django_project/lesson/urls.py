@@ -43,6 +43,7 @@ from lesson.views.worksheet import (
     WorksheetModuleQuestionAnswers,
     WorksheetModuleQuestionAnswersPDF,
     WorksheetPDFZipView,
+    WorksheetSampleData,
     download_multiple_worksheet
 )
 from lesson.views.specification import (
@@ -218,6 +219,12 @@ urlpatterns = [
               'delete/(?P<pk>[\w-]+)/$',
         view=AnswerDeleteView.as_view(),
         name='answer-delete'),
+
+    # download a worksheet external data
+    url(regex='^(?P<project_slug>[\w-]+)/sample/(?P<pk>[\w-]+)/$',
+        view=WorksheetSampleData.as_view(),
+        name='worksheet-sampledata'),
+
 ]
 
 # The original urlpatterns below will redirect to urlpatterns above
