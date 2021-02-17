@@ -325,8 +325,8 @@ img.more-about-image {
         <div style="margin-bottom: 10px;padding-top: 10pt;">
             {% if worksheet.external_data %}
                 <p>
-                    {% blocktrans with pk=worksheet.id project_slug=worksheet.section.project.slug href_value=request.META.HTTP_HOST %}
-                      Download the sample data for the lesson from <a target="_blank" href="http://{{ href_value }}/{{ project_slug }}/sample/{{ pk }}">http://{{ href_value }}/{{ project_slug }}/sample/{{ pk }}</a>.{% endblocktrans %}
+                    {% blocktrans with pk=worksheet.id project_slug=worksheet.section.project.slug module_number=module_number href_value=request.META.HTTP_HOST %}
+                      Download the sample data for the lesson from <a target="_blank" href="http://{{ href_value }}/{{ project_slug }}/sample/{{ pk }}?q={{ module_number }}">http://{{ href_value }}/{{ project_slug }}/sample/{{ pk }}?q={{ module_number }}</a>.{% endblocktrans %}
                 </p>
             {% endif %}
         </div>
