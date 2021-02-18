@@ -7,6 +7,7 @@ __copyright__ = 'kartoza.com'
 
 import io
 import logging
+import os
 import zipfile
 
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -18,6 +19,15 @@ from lesson.tests.model_factories import SectionF
 from lesson.tests.model_factories import LicenseF
 from base.tests.model_factories import ProjectF
 from core.model_factories import UserF
+
+
+def create_zipfile(filename: str) -> io.BytesIO:
+    in_memory_data = io.BytesIO()
+    zf = zipfile.ZipFile(in_memory_data, "w")
+    fdir, fname = os.path.split(filename)
+    zf.write(filename, fname)
+    zf.close()
+    return in_memory_data
 
 
 class TestViews(TestCase):
@@ -73,6 +83,9 @@ class TestViews(TestCase):
         )
         self.image_uploaded = SimpleUploadedFile(
             'gif.gif', gif_byte, content_type='image/gif')
+        file_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), '__init__.py'))
+        self.zipfile = create_zipfile(file_path)
 
     @override_settings(VALID_DOMAIN = ['testserver', ])
     def test_WorksheetCreateView(self):
@@ -273,11 +286,24 @@ class TestViews(TestCase):
 
     @override_settings(VALID_DOMAIN=['testserver'])
     def test_WorksheetSampleData(self):
+        self.test_project.name = 'SampleProject'
+        self.test_project.save()
+        self.test_worksheet.summary_image = self.image_uploaded
+        self.test_worksheet.more_about_image = self.image_uploaded
+        self.test_worksheet.license = self.license
+        self.test_worksheet.external_data = SimpleUploadedFile(
+            'azip.zip', self.zipfile.read())
+        self.test_worksheet.save()
         response = self.client.get(reverse(
             'worksheet-sampledata',
             kwargs={
                 'project_slug': self.test_section.project.slug,
                 'pk': self.test_worksheet.pk
             }
-        ))
-        self.assertEqual(response.status_code, 404)
+        ) + '?q=8.8')
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(
+            response.get('Content-Disposition'),
+            'attachment; '
+            'filename=SampleProject8.8.zip'
+        )

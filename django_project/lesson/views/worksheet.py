@@ -587,6 +587,6 @@ class WorksheetSampleData(View):
             zip_file,
             content_type="application/x-zip-compressed")
         response['Content-Disposition'] = \
-            'attachment; filename="%s%s%s"' % (
+            'attachment; filename=%s%s%s' % (
                 project.name, numbering, extension)
         return response
