@@ -287,6 +287,8 @@ def download_all_referenced_images(request, **kwargs):
                             # it from the body
                             entry.image_file = img_url.replace('/media', '')
                             html = html.replace(img_url, '')
+                            # remove image with empty source
+                            html = html.replace('<img  src="" />', '')
 
                 entry.description = html
                 entry.save()
