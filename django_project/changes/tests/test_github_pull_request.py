@@ -165,3 +165,4 @@ class TestGithubDownloadImage(TestCase):
         )
         self.assertFalse('/media/media' in self.entry.image_file.url)
         self.assertTrue('/media/images/entries' in self.entry.image_file.url)
+        self.assertFalse('<img  src="" />' in self.entry.description)
