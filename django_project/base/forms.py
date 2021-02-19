@@ -154,8 +154,7 @@ class ProjectForm(forms.ModelForm):
                 Field('is_changelogs'),
                 Field('is_certification'),
                 css_id='project-form'),
-
-                Field(
+            Field(
                     'template_certifying_organisation_certificate',
                     css_class='form-control'),
 
