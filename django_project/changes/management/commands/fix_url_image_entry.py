@@ -28,11 +28,13 @@ class Command(BaseCommand):
                     self.stdout.write('Fix %s in %s' % (
                         image_file.url, entry.title))
                     image_path = image_file.url.replace(
-                        'media/media/images/entries',
+                        '/media/media/images/entries',
                         'images/entries'
                     )
                     entry.image_file = image_path
-                    self.stdout.write('Replace url to media/%s' % image_path)
                     entry.save(update_fields=['image_file'])
+                    self.stdout.write(
+                        'Replace url to %s' % entry.image_file.url
+                    )
 
         self.stdout.write('Successfully updated all entry images.')
