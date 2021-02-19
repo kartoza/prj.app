@@ -1,5 +1,4 @@
 from io import StringIO
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -8,9 +7,10 @@ from changes.tests.model_factories import EntryF
 
 class FixUrlImageEntryTest(TestCase):
     def setUp(self):
-        description = ('<p>There was no way we ship <em>QGIS 3.14 '
-                       '"Temporal edition"</em> without temporal support '
-                       'to layouts:<img  src="" /></p>'
+        description = (
+            '<p>There was no way we ship <em>QGIS 3.14 '
+            '"Temporal edition"</em> without temporal support '
+            'to layouts:<img  src="" /></p>'
         )
         self.entry = EntryF.create(description=description)
         self.entry.save()
