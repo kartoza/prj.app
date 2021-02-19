@@ -158,7 +158,7 @@ class TestViews(TestCase):
         self.assertNotContains(response, '<h3>Certification</h3>')
         self.assertNotContains(response, '<h3>Project Teams</h3>')
         self.assertNotContains(response, '<h3>Release Changelogs</h3>')
-        self.assertNotContains(response, '<h3>Sustaining Members</h3>')\
+        self.assertNotContains(response, '<h3>Sustaining Members</h3>')
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_ProjectDetailView_with_features_checked(self):
