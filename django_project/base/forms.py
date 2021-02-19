@@ -110,6 +110,11 @@ class ProjectForm(forms.ModelForm):
             'certificate_credit',
             'sponsorship_programme',
             'template_certifying_organisation_certificate',
+            'is_lessons',
+            'is_sustaining_members',
+            'is_teams',
+            'is_changelogs',
+            'is_certification'
         )
 
     def __init__(self, *args, **kwargs):
@@ -142,10 +147,18 @@ class ProjectForm(forms.ModelForm):
                 Field('sponsorship_programme', css_class="form-control"),
                 Field(
                     'gitter_room',
-                    css_class="form-control"), css_id='project-form'),
+                    css_class="form-control"),
+                Field('is_lessons'),
+                Field('is_sustaining_members'),
+                Field('is_teams'),
+                Field('is_changelogs'),
+                Field('is_certification'),
+                css_id='project-form'),
+
                 Field(
                     'template_certifying_organisation_certificate',
                     css_class='form-control'),
+
         )
         self.helper.layout = layout
         self.helper.include_media = False
@@ -162,6 +175,12 @@ class ProjectForm(forms.ModelForm):
         self.fields['project_representative'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.get_full_name(), obj)
         # self.helper.add_input(Submit('submit', 'Submit'))
+        self.fields['is_lessons'].label = 'Enable Lessons'
+        self.fields['is_sustaining_members'].label = \
+            'Enable Sustaining Members'
+        self.fields['is_teams'].label = 'Enable Project Teams'
+        self.fields['is_changelogs'].label = 'Enable Changelogs'
+        self.fields['is_certification'].label = 'Enable Certification'
 
     def save(self, commit=True):
         instance = super(ProjectForm, self).save(commit=False)

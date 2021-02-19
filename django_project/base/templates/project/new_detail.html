@@ -77,6 +77,7 @@
             {% endif %}
         </div>
         <div class="col-md-4">
+          {% if project.is_sustaining_members %}
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='members/list/';">
                 <h3>Sustaining Members</h3>
             {% if sponsors %}
@@ -115,6 +116,8 @@
                 {% endif %}
             {% endif %}
             </div>
+          {% endif %}
+          {% if project.is_lessons %}
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='{% url 'section-list' project_slug=project.slug %}';">
                 <h3>Lessons</h3>
                 {% if sections %}
@@ -143,6 +146,8 @@
                     {% endif %}
                 {% endif %}
             </div>
+          {% endif %}
+          {% if project.is_certification %}
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='certifyingorganisation/list/';">
                 <h3>Certification</h3>
                 {% if organisations %}
@@ -169,6 +174,8 @@
                     {% endif %}
                 {% endif %}
             </div>
+          {% endif %}
+          {% if project.is_changelogs %}
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='version/list/';">
                 <h3>Release Changelogs</h3>
                 {% if versions %}
@@ -200,6 +207,8 @@
                     {% endif %}
                 {% endif %}
             </div>
+          {% endif %}
+          {% if project.is_teams %}
             <div class="panel panel-default custom-panel clickable-panel" onclick="window.location='committees/';">
                 <h3>Project Teams</h3>
                 {% if committees %}
@@ -230,6 +239,7 @@
                     {% endif %}
                 {% endif %}
             </div>
+          {% endif %}
         </div>
 
     </div>
