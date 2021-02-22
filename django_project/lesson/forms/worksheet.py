@@ -93,3 +93,20 @@ class WorksheetForm(TranslationModelForm):
         instance.section = self.section
         instance.save()
         return instance
+
+
+class WorksheetUpdateForm(WorksheetForm):
+    def __init__(self, *args, **kwargs):
+        super(WorksheetUpdateForm, self).__init__(*args, **kwargs)
+        # insert in the bottom of page
+        self.helper.layout.insert(
+            0, Field('section', css_class='form_control'))
+        self.fields['section'].help_text = "Select to change the section."
+
+    class Meta(WorksheetForm.Meta):
+        fields = WorksheetForm.Meta.fields + ('section',)
+
+    def save(self, commit=True):
+        instance = super(WorksheetForm, self).save(commit=False)
+        instance.save()
+        return instance
