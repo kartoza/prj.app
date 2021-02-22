@@ -62,6 +62,15 @@
                         width:auto;
                         max-height:100px;
                         max-width:100px;">
+            {% elif not worksheet.published %}
+                <div class="text-center" style="
+                        display: block;
+                        height:100px;
+                        width:100px;
+                        color: white;
+                        background-color: grey">
+                  Your Project Image will be displayed here.
+                </div>
             {% endif %}
         </div>
         <div class="col-lg-8" style="text-align:right;">
@@ -87,6 +96,14 @@
             {% video worksheet.youtube_link as youtube %}
               {% video youtube "large" %}
             {% endvideo %}
+        </div>
+    {% elif not worksheet.published %}
+        <div class="text-center" style="display: block;
+                                        height:300px;
+                                        width:100%;
+                                        color: white;
+                                        background-color: grey">
+          Your YouTube video will be embedded here.
         </div>
     {% endif %}
 
@@ -121,6 +138,15 @@
                                     height:auto;
                                     max-height:300px;
                                     max-width: 300px;">
+                      {% elif not worksheet.published %}
+                        <div class="text-center" style="
+                                                        display: block;
+                                                        height:300px;
+                                                        width:300px;
+                                                        color: white;
+                                                        background-color: grey">
+                          Your Summary Image will be displayed here.
+                        </div>
                       {% endif %}
                 </div>
             </div>
@@ -133,6 +159,10 @@
                     <h4><strong>
                         {% trans 'You try:' %}
                     </strong></h4>
+                {% elif not worksheet.published %}
+                   <h4><strong>
+                        {% trans 'You try:' %}
+                    </strong></h4>
                 {% endif %}
                 {% if worksheet.exercise_goal %}
                     <p>
@@ -142,9 +172,19 @@
                             </i>
                         </strong>
                     </p>
+                 {% elif not worksheet.published %}
+                    <p>
+                        <strong>
+                            <i>
+                                {% trans 'Goal:' %} <i>Your exercise goal will be displayed here. You will only see this help text in draft view.</i>
+                            </i>
+                        </strong>
+                    </p>
                 {% endif %}
                 {% if worksheet.exercise_task %}
                     <p>{{ worksheet.exercise_task | base_markdown }}</p>
+                {% elif not worksheet.published %}
+                    <p><i>You exercise task will be displayed here. You will only see this help text in draft view.</i></p>
                 {% endif %}
             </div>
         <div style="margin-bottom: 20px" class="details-worksheet col-lg-12 requirement-table">
@@ -212,6 +252,8 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            {% elif not worksheet.published %}
+              <p>Your requirement table will be displayed here. You will only see this help text in draft view.</p>
             {% endif %}
         </div>
         {% if worksheet.exercise_image %}
@@ -221,6 +263,15 @@
                      style="max-width: 100% !important;"
                      alt="" />
             </a>
+        {% elif not worksheet.published %}
+          <div class="img-responsive img-rounded pull-right" style="
+
+                                          height:100px;
+                                          width:300px;
+                                          color: white;
+                                          background-color: grey">
+            Your Exercise Image will be displayed here. You will only see this help text in draft view.
+          </div>
         {% endif %}
     </div>
 
@@ -260,6 +311,40 @@
                 </div>
             {% endif %}
         </div>
+    {% elif not worksheet.published %}
+        <div class="row details-worksheet" style="margin-top:10px;">
+                <div class="col-lg-1">
+                  <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+                    <img src="{% static "img/info.png" %}" style="height:50px;width:50px">
+                  </div>
+                </div>
+                <div class="col-lg-8">
+                  <h3 class="custom-heading" style="margin-left:-40px"><strong>Your More About title will be displayed here</strong></h3>
+                </div>
+        </div>
+        <div class="row details-worksheet" style="margin-top:10px;">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                      <p>Your More About content will be displayed here. You will only see this help text in draft view.</p>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="text-center" style="
+                                                        display: block;
+                                                        height:300px;
+                                                        width:100%;
+                                                        color: white;
+                                                        background-color: grey">
+                          Your More About Image will be displayed here.
+                        </div>
+                    </div>
+                </div>
+
+        </div>
     {% endif %}
 
     {# Check your knowledge #}
@@ -277,6 +362,20 @@
                           {% trans 'Check your knowledge:' %}
                       </strong>
                   </h3>
+                </div>
+            {% elif not worksheet.published %}
+                <div class="col-lg-1">
+                  <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+                      <img src="{% static "img/check.png" %}" style="height:50px;width:50px">
+                  </div>
+                </div>
+                <div class="col-lg-8">
+                  <h3 class="custom-heading" style="margin-left:-40px">
+                      <strong>
+                          {% trans 'Check your knowledge:' %}
+                      </strong>
+                  </h3>
+                  <p>Your Question Answer will be displayed here. You will only see this help text in draft view.</p>
                 </div>
             {% endif %}
             <div class="col-lg-3 pull-right">
@@ -393,6 +492,20 @@
                           </strong>
                       </h3>
                     </div>
+          {% elif not worksheet.published %}
+                <div class="col-lg-1">
+                  <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }}; height:50px;width:50px; margin-left:-15px;">
+                    <img src="{% static "img/book.png" %}" style="height:50px;width:50px">
+                  </div>
+                </div>
+                    <div class="col-lg-8">
+                      <h3 class="custom-heading" style="margin-left:-40px">
+                          <strong>
+                              {% trans 'Further reading:'%}
+                          </strong>
+                      </h3>
+                      <p>Your Further Reading content will be displayed here. You will only see this help text in draft view.</p>
+                    </div>
            {% endif %}
            {% if user_can_edit %}
                 <div class="col-lg-3 pull-right">
@@ -440,6 +553,10 @@
                 <p>
                     {% blocktrans with url=worksheet.external_data.url %}<a target="_blank" href="{{ url }}" download="{{ file_title }}">Download the sample data</a> for the lesson.{% endblocktrans %}
                 </p>
+                {% elif not worksheet.published %}
+                <p>
+                    <a target="_blank" href="#" download="file title">Download the sample data</a> for your lesson will be displayed here. You will only see this help text in draft view.
+                </p>
                 {% endif %}
             </div>
         </div>
@@ -478,6 +595,38 @@
         <p></p>
       </div>
     </div>
+    {% elif not worksheet.published %}
+    <div class="container">
+      <div class="row details-worksheet license">
+          <div class="col-lg-1">
+            <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+              <img src="{% static "img/license.png" %}" style="height:50px;width:50px">
+            </div>
+          </div>
+          <div class="col-lg-8">
+            <h3 class="custom-heading" style="margin-left:-40px">
+              <strong>
+                {% trans 'License:'%}
+              </strong>
+            </h3>
+          </div>
+      </div>
+      <div class="row details-worksheet license col-lg-12">
+        <ul style="margin-left: 10px">
+          <li style="list-style: none;">
+            <div class="row">
+              Your license description will be displayed here. You will only see this help text in draft view.
+            </div>
+          </li>
+          <li style="list-style: none;">
+            <div class="row">
+              <a href="#" target="_blank">Read more about your &ltlicense url link&gt </a>.
+            </div>
+          </li>
+        </ul>
+        <p></p>
+      </div>
+    </div>
     {% endif %}
 
     <div class="container">
@@ -485,6 +634,9 @@
         <div class="row">
             <h5 class="text-muted">
                 <p>{{ funded_by|base_markdown }}</p>
+                {% if not worksheet.published %}
+                  <p>Your funder information will be displayed here.</p>
+                {% endif %}
             </h5>
         </div>
     </div>
