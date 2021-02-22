@@ -13,10 +13,35 @@ from changes.tests.model_factories import (
     CategoryF,
     EntryF,
     VersionF)
+from changes.views import create_entry_from_github_pr
+from changes.models import Entry
 from core.model_factories import UserF
 
 
 class TestGithubPullRequest(unittest.TestCase):
+
+    def setUp(self):
+        self.project = ProjectF.create()
+        self.category = CategoryF.create(project=self.project)
+        self.version = VersionF.create(project=self.project)
+        self.user = UserF.create(**{
+            'username': 'suman',
+            'password': 'password',
+            'is_staff': True
+        })
+        # Something changed in the way factoryboy works with django 1.8
+        # I think - we need to explicitly set the users password
+        # because the core.model_factories.UserF._prepare method
+        # which sets the password is never called. Next two lines are
+        # a work around for that - sett #581
+        self.user.set_password('password')
+        self.user.save()
+
+    def tearDown(self):
+        self.project.delete()
+        self.version.delete()
+        self.category.delete()
+        self.user.delete()
 
     def test_funded_by(self):
         """ Test to parse the PR content and find the funded by. """
@@ -97,6 +122,37 @@ class TestGithubPullRequest(unittest.TestCase):
         self.assertEqual('This is a new feature :\n* Another line', content)
         self.assertEqual('', funded_by)
         self.assertEqual('', url)
+
+    def test_create_entry_from_github_pr(self):
+        RESULT_RESPONSE_GITHUB = [
+            {
+                'body': '## Description\r\n',
+                'html_url': 'https://github.com/kartoza/prj.app/issues/1309',
+                'repository_url':
+                    'https://api.github.com/repos/qgis/QGIS-Django',
+                'title': 'Reorder expression operators',
+                'updated_at': '2021-02-21T22:45:33Z',
+                'url': 'https://api.github.com/repos/qgis/QGIS/issues/41692',
+                'user': {
+                    'html_url': 'https://github.com/qgis',
+                    'url': 'https://api.github.com/users/qgis'
+                }
+            }
+        ]
+
+        create_entry_from_github_pr(
+            self.version,
+            self.category,
+            RESULT_RESPONSE_GITHUB,
+            self.user
+        )
+
+        self.entry_created = Entry.objects.filter(author=self.user).all()
+        self.assertEqual(len(self.entry_created), 1)
+        self.assertEqual(
+            self.entry_created[0].developer_url,
+            'https://github.com/qgis'
+        )
 
 
 class TestGithubDownloadImage(TestCase):
