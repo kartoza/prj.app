@@ -20,6 +20,7 @@ from core.model_factories import UserF
 
 class TestGithubPullRequest(unittest.TestCase):
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         self.project = ProjectF.create()
         self.category = CategoryF.create(project=self.project)
@@ -37,6 +38,7 @@ class TestGithubPullRequest(unittest.TestCase):
         self.user.set_password('password')
         self.user.save()
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
         self.project.delete()
         self.version.delete()
@@ -123,6 +125,7 @@ class TestGithubPullRequest(unittest.TestCase):
         self.assertEqual('', funded_by)
         self.assertEqual('', url)
 
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_create_entry_from_github_pr(self):
         RESULT_RESPONSE_GITHUB = [
             {
@@ -150,9 +153,7 @@ class TestGithubPullRequest(unittest.TestCase):
         self.entry_created = Entry.objects.filter(author=self.user).all()
         self.assertEqual(len(self.entry_created), 1)
         self.assertEqual(
-            self.entry_created[0].developer_url,
-            'https://github.com/qgis'
-        )
+            self.entry_created[0].developer_url, 'https://github.com/qgis')
 
 
 class TestGithubDownloadImage(TestCase):
