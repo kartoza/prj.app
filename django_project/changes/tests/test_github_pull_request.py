@@ -3,7 +3,7 @@
 import unittest
 import logging
 
-from unittest.mock import patch
+from unittest import mock
 
 from django.test import TestCase, override_settings
 from django.test.client import Client
@@ -18,6 +18,22 @@ from changes.tests.model_factories import (
 from changes.views import create_entry_from_github_pr, requests
 from changes.models import Entry
 from core.model_factories import UserF
+
+
+def mocked_request_get_github(*args, **kwargs):
+    class MockResponse:
+        def __init__(self, json_data, status_code):
+            self.json_data = json_data
+            self.status_code = status_code
+
+        def json(self):
+            return self.json_data
+
+
+    return MockResponse({
+        'html_url': 'https://github.com/qgis',
+        'name': 'name'
+    }, 200)
 
 
 class TestGithubPullRequest(unittest.TestCase):
@@ -128,10 +144,11 @@ class TestGithubPullRequest(unittest.TestCase):
         self.assertEqual('', url)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
-    @patch.object(requests, 'get', side_effect=requests.exceptions.Timeout)
+    @mock.patch('requests.get', side_effect=mocked_request_get_github)
     def test_create_entry_from_github_pr_timeout(self, mock_request):
         RESULT_RESPONSE_GITHUB = [
             {
+                'name': 'name',
                 'body': '## Description\r\n',
                 'html_url': 'https://github.com/kartoza/prj.app/issues/1309',
                 'repository_url':
@@ -146,18 +163,17 @@ class TestGithubPullRequest(unittest.TestCase):
             }
         ]
 
-        with self.assertRaises(requests.exceptions.Timeout):
-            create_entry_from_github_pr(
-                self.version,
-                self.category,
-                RESULT_RESPONSE_GITHUB,
-                self.user
-            )
+        create_entry_from_github_pr(
+            self.version,
+            self.category,
+            RESULT_RESPONSE_GITHUB,
+            self.user
+        )
 
-            self.entry_created = Entry.objects.filter(author=self.user).all()
-            self.assertEqual(len(self.entry_created), 1)
-            self.assertEqual(
-                self.entry_created[0].developer_url, 'https://github.com/qgis')
+        self.entry_created = Entry.objects.filter(author=self.user).all()
+        self.assertEqual(len(self.entry_created), 1)
+        self.assertEqual(
+            self.entry_created[0].developer_url, 'https://github.com/qgis')
 
 
 class TestGithubDownloadImage(TestCase):
