@@ -70,13 +70,17 @@ def validate_zipfile(file) -> bool:
     try:
         zip = zipfile.ZipFile(file)
     except:
-        raise ValidationError(_("Could not unzip file.") )
+        raise ValidationError(_("Could not unzip file."))
     for zname in zip.namelist():
-        if zname.find('..') != -1 or zname.find(os.path.sep) == 0 :
-            raise ValidationError(_("For security reasons, zip file cannot contain path informations") )
+        if zname.find('..') != -1 or zname.find(os.path.sep) == 0:
+            raise ValidationError(
+                _('For security reasons, zip file cannot contain path '
+                  'informations')
+            )
         for forbidden_dir in ['__MACOSX', '.git', '__pycache__']:
             if forbidden_dir in zname.split('/'):
-                raise ValidationError(_("For security reasons, zip file "
-                                        "cannot contain '%s' directory"
-                                        % (forbidden_dir,)))
+                raise ValidationError(
+                    _("For security reasons, zip file cannot contain "
+                      "'%s' directory" % (forbidden_dir,))
+                )
     return True
