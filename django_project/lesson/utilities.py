@@ -2,10 +2,14 @@
 """Tools for the lesson app."""
 
 import json
+import os
+import zipfile
 from unidecode import unidecode
 
+from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponse
 from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
 
 from core.settings.contrib import STOP_WORDS
 
@@ -60,3 +64,19 @@ def re_order_features(request, features):
             feature.save()
 
     return HttpResponse('')
+
+
+def validate_zipfile(file) -> bool:
+    try:
+        zip = zipfile.ZipFile(file)
+    except:
+        raise ValidationError(_("Could not unzip file.") )
+    for zname in zip.namelist():
+        if zname.find('..') != -1 or zname.find(os.path.sep) == 0 :
+            raise ValidationError(_("For security reasons, zip file cannot contain path informations") )
+        for forbidden_dir in ['__MACOSX', '.git', '__pycache__']:
+            if forbidden_dir in zname.split('/'):
+                raise ValidationError(_("For security reasons, zip file "
+                                        "cannot contain '%s' directory"
+                                        % (forbidden_dir,)))
+    return True

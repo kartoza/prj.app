@@ -14,6 +14,8 @@ from crispy_forms.layout import (
 from modeltranslation.forms import TranslationModelForm
 from lesson.models.worksheet import Worksheet
 
+from lesson.utilities import validate_zipfile
+
 
 class WorksheetForm(TranslationModelForm):
     """Form for creating worksheet."""
@@ -93,6 +95,15 @@ class WorksheetForm(TranslationModelForm):
         instance.section = self.section
         instance.save()
         return instance
+
+    def clean_external_data(self):
+        """
+        validate the zipfile during uploading
+        """
+
+        file = self.cleaned_data['external_data']
+        if validate_zipfile(file):
+            return file
 
 
 class WorksheetUpdateForm(WorksheetForm):
