@@ -3,6 +3,8 @@
 import unittest
 import logging
 
+from unittest.mock import patch
+
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from django.urls import reverse
@@ -13,7 +15,7 @@ from changes.tests.model_factories import (
     CategoryF,
     EntryF,
     VersionF)
-from changes.views import create_entry_from_github_pr
+from changes.views import create_entry_from_github_pr, requests
 from changes.models import Entry
 from core.model_factories import UserF
 
@@ -126,7 +128,8 @@ class TestGithubPullRequest(unittest.TestCase):
         self.assertEqual('', url)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
-    def test_create_entry_from_github_pr(self):
+    @patch.object(requests, 'get', side_effect=requests.exceptions.Timeout)
+    def test_create_entry_from_github_pr_timeout(self, mock_request):
         RESULT_RESPONSE_GITHUB = [
             {
                 'body': '## Description\r\n',
@@ -143,17 +146,18 @@ class TestGithubPullRequest(unittest.TestCase):
             }
         ]
 
-        create_entry_from_github_pr(
-            self.version,
-            self.category,
-            RESULT_RESPONSE_GITHUB,
-            self.user
-        )
+        with self.assertRaises(requests.exceptions.Timeout):
+            create_entry_from_github_pr(
+                self.version,
+                self.category,
+                RESULT_RESPONSE_GITHUB,
+                self.user
+            )
 
-        self.entry_created = Entry.objects.filter(author=self.user).all()
-        self.assertEqual(len(self.entry_created), 1)
-        self.assertEqual(
-            self.entry_created[0].developer_url, 'https://github.com/qgis')
+            self.entry_created = Entry.objects.filter(author=self.user).all()
+            self.assertEqual(len(self.entry_created), 1)
+            self.assertEqual(
+                self.entry_created[0].developer_url, 'https://github.com/qgis')
 
 
 class TestGithubDownloadImage(TestCase):
