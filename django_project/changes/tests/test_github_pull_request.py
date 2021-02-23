@@ -15,7 +15,7 @@ from changes.tests.model_factories import (
     CategoryF,
     EntryF,
     VersionF)
-from changes.views import create_entry_from_github_pr, requests
+from changes.views import create_entry_from_github_pr
 from changes.models import Entry
 from core.model_factories import UserF
 
