@@ -5,7 +5,7 @@ on:
       - develop
 jobs:
   docker-builder:
-    if: github.event.pull_request.head.repo.fork == 'false'
+    if: github.event.pull_request.base.repo.url == github.event.pull_request.head.repo.url
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
