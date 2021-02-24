@@ -29,11 +29,13 @@ def mocked_request_get_github(*args, **kwargs):
         def json(self):
             return self.json_data
 
+    if args[0] == 'https://api.github.com/users/qgis':
+        return MockResponse({
+            'html_url': 'https://github.com/qgis',
+            'name': 'name'
+        }, 200)
 
-    return MockResponse({
-        'html_url': 'https://github.com/qgis',
-        'name': 'name'
-    }, 200)
+    return MockResponse(None, 404)
 
 
 class TestGithubPullRequest(unittest.TestCase):
@@ -179,6 +181,10 @@ class TestGithubPullRequest(unittest.TestCase):
 class TestGithubDownloadImage(TestCase):
     """Tests that Category views work."""
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.Entry = EntryF._meta.model
+
     @override_settings(VALID_DOMAIN=['testserver', ])
     def setUp(self):
         self.client = Client()
@@ -222,11 +228,15 @@ class TestGithubDownloadImage(TestCase):
     def test_download_all_referenced_images(self):
         self.entry.description = (
             '![image](https://user-images.githubusercontent.com/40058076/'
-            '106831321-a99d0900-66ca-11eb-8764-11627dcfbf17.png)   and '
-            '![image](https://user-images.githubusercontent.com/40058076/'
             '106831433-dea95b80-66ca-11eb-8026-6823084d726e.png)'
+            ' this should be in description '
+            '![image](https://user-images.githubusercontent.com/40058076/'
+            '106831321-a99d0900-66ca-11eb-8764-11627dcfbf17.png)'
         )
+        self.entry.image_file = None
         self.entry.save()
+        # Ensure the image_file is None
+        self.assertFalse(self.entry.image_file)
         self.client.login(username='timlinux', password='password')
         response = self.client.get(
             reverse('download-referenced-images', kwargs={
@@ -236,10 +246,16 @@ class TestGithubDownloadImage(TestCase):
             content_type='application/json',
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
+
+        entry = self.Entry.objects.first()
+        self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             str(response.content, encoding='utf8'),
             {'status': 'success'}
         )
-        self.assertFalse('/media/media' in self.entry.image_file.url)
-        self.assertTrue('/media/images/entries' in self.entry.image_file.url)
-        self.assertFalse('<img  src="" />' in self.entry.description)
+        self.assertTrue(entry.image_file)
+        self.assertTrue(entry.image_file.name.startswith('images/entries/'))
+        self.assertTrue(entry.image_file.url.startswith(
+            '/media/images/entries/'))
+        self.assertNotIn('<img  src="" />', entry.description)
+        self.assertIn('this should be in description', entry.description)

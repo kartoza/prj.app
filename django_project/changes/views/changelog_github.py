@@ -287,7 +287,7 @@ def download_all_referenced_images(request, **kwargs):
                             # Take the first image set in the pull request
                             # and set it as default for the entry and remove
                             # it from the body
-                            entry.image_file = img_url.replace('/media', '')
+                            entry.image_file = img_url.replace('/media/', '')
                             html = html.replace(img_url, '')
                             # remove image with empty source
                             html = html.replace('<img  src="" />', '')
