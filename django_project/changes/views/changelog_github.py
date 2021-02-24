@@ -41,7 +41,9 @@ def create_entry_from_github_pr(version, category, data, user):
             headers={'Authorization': 'token {}'.format(GIT_TOKEN)})
 
         name = ''
+        developer_url = ''
         if response.status_code == 200:
+            developer_url = response.json()['html_url']
             name = response.json()['name']
             if not name:
                 name = response.json()['login']
@@ -54,7 +56,7 @@ def create_entry_from_github_pr(version, category, data, user):
                 category=category,
                 title=item['title'],
                 description=content,
-                developer_url=item['user']['url'],
+                developer_url=developer_url,
                 developed_by=name,
                 funded_by=funded_by,
                 funder_url=funded_by_url,
