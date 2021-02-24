@@ -254,6 +254,7 @@ class TestGithubDownloadImage(TestCase):
             {'status': 'success'}
         )
         self.assertTrue(entry.image_file)
+        self.assertEqual(entry.image_file.name, '')
         self.assertTrue(entry.image_file.name.startswith('images/entries/'))
         self.assertTrue(entry.image_file.url.startswith(
             '/media/images/entries/'))
