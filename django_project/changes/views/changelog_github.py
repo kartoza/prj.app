@@ -260,6 +260,8 @@ def download_all_referenced_images(request, **kwargs):
                             folder_path, '{}'.format(filename))
                         found = os.path.exists(file_path)
                         if found:
+                            # file_path
+                            # e.g /home/web/media/images/entries/img.png
                             file_path_original = file_path
                             n = 0
                             while found:
@@ -267,6 +269,9 @@ def download_all_referenced_images(request, **kwargs):
                                 img_name = file_path_original.rsplit('.', 1)[0]
                                 extension = \
                                     file_path_original.rsplit('.', 1)[-1]
+                                # create a unique filename:
+                                # add sufix -n in filename prior to extension
+                                # e.g /home/web/media/images/entries/img-1.png
                                 file_path = \
                                     img_name + '-' + str(n) + '.' + extension
                                 found = os.path.exists(file_path)
@@ -283,10 +288,10 @@ def download_all_referenced_images(request, **kwargs):
 
                             # remove MEDIA_ROOT to obtain image_file relative
                             # path and add the MEDIA_URL path into the file
-                            # path
+                            # path e.g img_url: /media/images/entries/img-1.png
                             img_url = file_path.replace(
                                 settings.MEDIA_ROOT,
-                                settings.MEDIA_URL)
+                                re.sub(r'/$', '', settings.MEDIA_URL))
                             html = html.replace(image, img_url)
                             html = re.sub(r"alt=\".*?\"", "", html)
                         # Take the first image set in the pull request

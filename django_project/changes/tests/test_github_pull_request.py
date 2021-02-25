@@ -258,6 +258,11 @@ class TestGithubDownloadImage(TestCase):
         )
         self.assertTrue(entry.image_file)
 
+        self.assertIn(
+            '106831433-dea95b80-66ca-11eb-8026-6823084d726e',
+            entry.image_file.name
+        )
+
         image_file_dirname = os.path.dirname(entry.image_file.name)
         image_file_upload_to = re.sub(r'^/', '', image_file_dirname)
         image_file_url = settings.MEDIA_URL + image_file_upload_to
