@@ -273,4 +273,3 @@ class TestGithubDownloadImage(TestCase):
             os.path.dirname(entry.image_file.url),
             image_file_url,
         )
-
