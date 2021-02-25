@@ -2,9 +2,12 @@
 
 import unittest
 import logging
+import os
+import re
 
 from unittest import mock
 
+from django.conf import settings
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from django.urls import reverse
@@ -247,16 +250,27 @@ class TestGithubDownloadImage(TestCase):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
 
-        entry = self.Entry.objects.first()
+        entry = self.Entry.objects.last()
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             str(response.content, encoding='utf8'),
             {'status': 'success'}
         )
         self.assertTrue(entry.image_file)
-        self.assertEqual(entry.image_file.name, '')
-        self.assertTrue(entry.image_file.name.startswith('images/entries/'))
-        self.assertTrue(entry.image_file.url.startswith(
-            '/media/images/entries/'))
-        self.assertNotIn('<img  src="" />', entry.description)
-        self.assertIn('this should be in description', entry.description)
+
+        image_file_dirname = os.path.dirname(entry.image_file.name)
+        image_file_upload_to = re.sub(r'^/', '', image_file_dirname)
+        image_file_url = settings.MEDIA_URL + image_file_upload_to
+
+        # check if upload_to give the same path
+        self.assertEqual(
+            entry.image_file.field.upload_to,
+            image_file_upload_to
+        )
+
+        # check if upload_to give the same path
+        self.assertEqual(
+            os.path.dirname(entry.image_file.url),
+            image_file_url,
+        )
+
