@@ -272,8 +272,7 @@ def download_all_referenced_images(request, **kwargs):
                                 # create a unique filename:
                                 # add sufix -n in filename prior to extension
                                 # e.g /home/web/media/images/entries/img-1.png
-                                file_path = \
-                                    img_name + '-' + str(n) + '.' + extension
+                                file_path = f'{img_name}-{n}.{extension}'
                                 found = os.path.exists(file_path)
                         with open(file_path, 'wb+') as handle:
                             response = requests.get(image, stream=True)
