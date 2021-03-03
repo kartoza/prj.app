@@ -8,13 +8,19 @@ from io import BytesIO
 from collections import OrderedDict
 from django.conf import settings
 from django.urls import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import (
+    FileResponse,
+    Http404,
+    HttpResponse,
+    HttpResponseRedirect
+)
 from django.views.generic import (
     DetailView,
     CreateView,
     UpdateView,
     DeleteView,
     ListView,
+    View
 )
 from django.shortcuts import get_object_or_404, render_to_response
 from django.utils.translation import ugettext_lazy as _
@@ -565,3 +571,23 @@ def download_multiple_worksheet(request, **kwargs):
         'attachment; filename={}-worksheet {}.zip'.format(
             project.name, downloaded_module)
     return zip_response
+
+
+class WorksheetSampleData(View):
+    """Download sample data."""
+
+    def get(self, request, *args, **kwargs):
+        numbering = self.request.GET.get('q', '')
+        project = get_object_or_404(Project, slug=self.kwargs['project_slug'])
+        worksheet = get_object_or_404(Worksheet, pk=self.kwargs['pk'])
+        zip_file = worksheet.external_data
+        if not zip_file:
+            raise Http404("Sample data does not exist.")
+        name, extension = os.path.splitext(zip_file.name)
+        response = FileResponse(
+            zip_file,
+            content_type="application/x-zip-compressed")
+        response['Content-Disposition'] = \
+            'attachment; filename=%s%s%s' % (
+                project.name, numbering, extension)
+        return response
