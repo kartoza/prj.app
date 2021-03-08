@@ -279,23 +279,23 @@ class Project(models.Model):
 
     is_lessons = models.BooleanField(
         help_text=_('Whether this Project has Lessons.'),
-        default=False
+        default=True
     )
     is_sustaining_members = models.BooleanField(
         help_text=_('Whether this Project has Sustaining Members.'),
-        default=False
+        default=True
     )
     is_teams = models.BooleanField(
         help_text=_('Whether this Project has Teams.'),
-        default=False
+        default=True
     )
     is_changelogs = models.BooleanField(
         help_text=_('Whether this Project has Changelogs.'),
-        default=False
+        default=True
     )
     is_certification = models.BooleanField(
         help_text=_('Whether this Project has Certification.'),
-        default=False
+        default=True
     )
 
     # noinspection PyClassicStyleClass
