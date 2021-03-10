@@ -97,7 +97,7 @@ class TestViews(TestCase):
         client = Client()
         client.login(username='timlinux', password='password')
         response = client.get(reverse('project-update', kwargs={
-            'slug': self.test_project.slug
+            'slug': self.test_project.slug,
         }))
         self.assertEqual(response.status_code, 200)
         expected_templates = [
@@ -154,6 +154,35 @@ class TestViews(TestCase):
             'project/new_detail.html'
         ]
         self.assertEqual(response.template_name, expected_templates)
+        self.assertContains(response, '<h3>Lessons</h3>')
+        self.assertContains(response, '<h3>Certification</h3>')
+        self.assertContains(response, '<h3>Project Teams</h3>')
+        self.assertContains(response, '<h3>Release Changelogs</h3>')
+        self.assertContains(response, '<h3>Sustaining Members</h3>')
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_ProjectDetailView_with_features_not_checked(self):
+        self.test_project.is_lessons = False
+        self.test_project.is_sustaining_members = False
+        self.test_project.is_teams = False
+        self.test_project.is_changelogs = False
+        self.test_project.is_certification = False
+        self.test_project.save()
+
+        client = Client()
+        response = client.get(reverse('project-detail', kwargs={
+            'slug': self.test_project.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+        expected_templates = [
+            'project/new_detail.html'
+        ]
+        self.assertEqual(response.template_name, expected_templates)
+        self.assertNotContains(response, '<h3>Lessons</h3>')
+        self.assertNotContains(response, '<h3>Certification</h3>')
+        self.assertNotContains(response, '<h3>Project Teams</h3>')
+        self.assertNotContains(response, '<h3>Release Changelogs</h3>')
+        self.assertNotContains(response, '<h3>Sustaining Members</h3>')
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_ProjectDeleteView_with_login(self):

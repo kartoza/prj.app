@@ -277,6 +277,27 @@ class Project(models.Model):
         blank=True
     )
 
+    is_lessons = models.BooleanField(
+        help_text=_('Whether this Project has Lessons.'),
+        default=True
+    )
+    is_sustaining_members = models.BooleanField(
+        help_text=_('Whether this Project has Sustaining Members.'),
+        default=True
+    )
+    is_teams = models.BooleanField(
+        help_text=_('Whether this Project has Teams.'),
+        default=True
+    )
+    is_changelogs = models.BooleanField(
+        help_text=_('Whether this Project has Changelogs.'),
+        default=True
+    )
+    is_certification = models.BooleanField(
+        help_text=_('Whether this Project has Certification.'),
+        default=True
+    )
+
     # noinspection PyClassicStyleClass
     class Meta:
         """Meta class for project."""
