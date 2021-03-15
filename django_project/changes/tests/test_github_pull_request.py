@@ -2,12 +2,11 @@
 
 import unittest
 import logging
-import os
 import re
 
 from unittest import mock
+from urllib.parse import urlparse
 
-from django.conf import settings
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from django.urls import reverse
@@ -258,23 +257,10 @@ class TestGithubDownloadImage(TestCase):
         )
         self.assertTrue(entry.image_file)
 
-        self.assertIn(
-            '106831433-dea95b80-66ca-11eb-8026-6823084d726e',
-            entry.image_file.name
-        )
-
-        image_file_dirname = os.path.dirname(entry.image_file.name)
-        image_file_upload_to = re.sub(r'^/', '', image_file_dirname)
-        image_file_url = settings.MEDIA_URL + image_file_upload_to
-
-        # check if upload_to give the same path
-        self.assertEqual(
-            entry.image_file.field.upload_to,
-            image_file_upload_to
-        )
-
-        # check if upload_to give the same path
-        self.assertEqual(
-            os.path.dirname(entry.image_file.url),
-            image_file_url,
-        )
+        # extract path from url
+        image_path = urlparse(entry.image_file.url).path
+        #  check if it gives the correct path
+        rgx = ('/media/images/entries/'
+               '106831433-dea95b80-66ca-11eb-8026-6823084d726e-\d+.png')
+        is_match = re.match(rgx, image_path)
+        self.assertIsNotNone(is_match, msg=f'image_file.url is {image_path}')

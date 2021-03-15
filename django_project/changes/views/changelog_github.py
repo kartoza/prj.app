@@ -5,6 +5,8 @@ import requests
 import markdown
 import warnings
 
+from urllib.parse import urljoin
+
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
 from django.conf import settings
@@ -266,13 +268,12 @@ def download_all_referenced_images(request, **kwargs):
                             n = 0
                             while found:
                                 n += 1
-                                img_name = file_path_original.rsplit('.', 1)[0]
-                                extension = \
-                                    file_path_original.rsplit('.', 1)[-1]
+                                img_name, ext = file_path_original.rsplit(
+                                    '.', 1)
                                 # create a unique filename:
                                 # add sufix -n in filename prior to extension
                                 # e.g /home/web/media/images/entries/img-1.png
-                                file_path = f'{img_name}-{n}.{extension}'
+                                file_path = f'{img_name}-{n}.{ext}'
                                 found = os.path.exists(file_path)
                         with open(file_path, 'wb+') as handle:
                             response = requests.get(image, stream=True)
@@ -285,12 +286,14 @@ def download_all_referenced_images(request, **kwargs):
                                     break
                                 handle.write(block)
 
-                            # remove MEDIA_ROOT to obtain image_file relative
-                            # path and add the MEDIA_URL path into the file
+                            # get image name from relative path
+                            # e.g image_name = images/entries/img-1.png
+                            image_name = os.path.relpath(
+                                file_path,
+                                settings.MEDIA_ROOT)
+                            # reconstruct img_url
                             # path e.g img_url: /media/images/entries/img-1.png
-                            img_url = file_path.replace(
-                                settings.MEDIA_ROOT,
-                                re.sub(r'/$', '', settings.MEDIA_URL))
+                            img_url = urljoin(settings.MEDIA_URL, image_name)
                             html = html.replace(image, img_url)
                             html = re.sub(r"alt=\".*?\"", "", html)
                         # Take the first image set in the pull request
