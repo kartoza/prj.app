@@ -12,8 +12,8 @@ from changes.models.entry import Entry
 def get_ImageField_and_ImageField(model):
     result = []
     for field in model._meta.fields:
-        if (field.get_internal_type() == 'ImageField'
-                or field.get_internal_type() == 'FileField'):
+        if (field.get_internal_type() == 'ImageField' or
+                field.get_internal_type() == 'FileField'):
             result.append((
                 model._meta.app_label,
                 model.__name__,
@@ -86,7 +86,7 @@ def get_all_media():
     )
 
 
-def get_all_entries_images():
+def get_all_Entry_images():
     """Get all images referenced by Entry instance
 
     There are images downloaded to Media, but not being referenced in
@@ -146,6 +146,59 @@ def get_all_entries_images():
     )
 
 
+def get_unused_media(is_Entry=False):
+    all_media = []
+    unused_media = []
+
+    all_media_size = 0
+    unused_media_size = 0
+
+    if is_Entry:
+        # Entry media instances
+        (referenced_github_images,
+         entry_image_field_images,
+         entry_all_media_images,
+         github_image_size,
+         entry_image_field_size,
+         entry_all_media_size) = get_all_Entry_images()
+
+        referenced_image = referenced_github_images + entry_image_field_images
+        for image in entry_all_media_images:
+            if image not in referenced_image:
+                unused_media.append(image)
+                try:
+                    unused_media_size += os.stat(image).st_size
+                except FileNotFoundError:
+                    unused_media_size += 0
+
+        all_media = entry_all_media_images
+        all_media_size = entry_all_media_size
+
+        return (all_media, unused_media, all_media_size, unused_media_size)
+
+    # another
+    (image_and_file_files,
+     image_and_file_size,
+     all_media_files,
+     all_media_size) = get_all_media()
+
+    for media in all_media_files:
+        if media not in image_and_file_files:
+            unused_media.append(media)
+            try:
+                unused_media_size += os.stat(media).st_size
+            except FileNotFoundError:
+                unused_media_size += 0
+
+    all_media = all_media_files
+
+    return (all_media, unused_media, all_media_size, unused_media_size)
+
+
+def get_input(text):
+    return input(text)
+
+
 class Command(BaseCommand):
     help = 'Remove all media that are not referenced by a valid project'
 
@@ -155,84 +208,53 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
 
         # get all media exclude Entry
-        (image_and_file_files,
-         image_and_file_size,
-         all_media_files,
-         all_media_size) = get_all_media()
+        (all_media,
+         unused_media,
+         all_media_size,
+         unused_media_size) = get_unused_media()
 
-        all_unused_files = []
-        all_unused_files_size = 0
-        for media in all_media_files:
-            if media not in image_and_file_files:
-                all_unused_files.append(media)
-                try:
-                    all_unused_files_size += os.stat(media).st_size
-                except FileNotFoundError:
-                    all_unused_files_size += 0
 
         # get Entry images
-        (referenced_github_images,
-         entry_image_field_images,
-         entry_all_media_images,
-         github_image_size,
-         entry_image_field_size,
-         entry_all_media_size) = get_all_entries_images()
-
-        referenced_image = referenced_github_images + entry_image_field_images
-        entry_unused_image = []
-        entry_unused_image_size = 0
-        for image in entry_all_media_images:
-            if image not in referenced_image:
-                entry_unused_image.append(image)
-                try:
-                    entry_unused_image_size += os.stat(image).st_size
-                except FileNotFoundError:
-                    entry_unused_image_size += 0
+        (all_entries_media,
+         unused_entries_media,
+         all_entries_size,
+         unused_entries_size) = get_unused_media(is_Entry=True)
 
         self.stdout.write('=' * 79)
         self.stdout.write('Entry\'s Media')
         self.stdout.write('-' * 30)
         self.stdout.write(
-            f'GitHub images: {len(set(referenced_github_images))} files, '
-            f'ImageField images: {len(set(entry_image_field_images))} files, '
-            f'and '
-            f'All media images: {len(set(entry_all_media_images))} files.'
-        )
-        self.stdout.write(
-            f'GitHub images: {round(github_image_size/1000000, 2)} MB, '
-            f'ImageField images: {round(entry_image_field_size/1000000, 2)} MB, '
-            f'All media images: {round(entry_all_media_size/1000000, 2)} MB.'
+            f'All Entry media : {len(all_entries_media)} files '
+            f'{round(all_entries_size / 1000000, 2)} MB.\n'
+            f'Unused Entry media : {len(unused_entries_media)} files '
+            f'{round(unused_entries_size / 1000000, 2)} MB.'
         )
         self.stdout.write('\n')
         self.stdout.write('All Media (exclude Entry model instance)')
         self.stdout.write('-' * 30)
         self.stdout.write(
-            f'ImageField and FileField: {len(set(image_and_file_files))} '
-            f'files, '
-            f'All files in the related folder: {len(set(all_media_files))} '
-            f'files.'
-        )
-        self.stdout.write(
-            f'ImageField and FileField: {round(image_and_file_size / 1000000, 2)} MB, '
-            f'All files in the related folder: {round(all_media_size / 1000000, 2)} MB.'
+            f'All Entry media : {len(all_media)} files '
+            f'{round(all_media_size / 1000000, 2)} MB.\n'
+            f'Unused Entry media : {len(unused_media)} files '
+            f'{round(unused_media_size / 1000000, 2)} MB.'
         )
 
-        confirmation = input(
+        confirmation = get_input(
             f'\nDelete unused media images and files: '
-            f'{len(entry_unused_image) + len(all_unused_files)} files, '
-            f'{round((entry_unused_image_size + all_unused_files_size)/1000000, 2)} '
+            f'{len(unused_entries_media) + len(unused_media)} files, '
+            f'{round((unused_entries_size + unused_media_size)/1000000, 2)} '
             f'MB? [Y] '
         )
 
         if confirmation.lower() == 'y':
             self.stdout.write('remove files...')
-            for image in entry_unused_image:
+            for image in unused_entries_media:
                 self.stdout.write(f'remove {image}')
                 try:
                     os.remove(image)
                 except FileNotFoundError:
                     continue
-            for image in all_unused_files:
+            for image in unused_media:
                 self.stdout.write(f'remove {image}')
                 try:
                     os.remove(image)
@@ -243,4 +265,3 @@ class Command(BaseCommand):
             )
         else:
             self.stdout.write('remove files aborted!')
-        exit()
