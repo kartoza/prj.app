@@ -36,7 +36,7 @@ xhtml2pdf==0.2b1
 django-modeltranslation==0.16.1
 django-colorfield==0.3.2
 WeasyPrint==0.42.3
-djangorestframework==3.10.3
+djangorestframework==3.11.2
 django-simple-history==2.8.0
 dj-stripe==2.1.1
 django-preferences==1.0.0
