@@ -10,6 +10,7 @@ from urllib.parse import urljoin
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from braces.views import LoginRequiredMixin
 from rest_framework import serializers
@@ -255,6 +256,18 @@ def download_all_referenced_images(request, **kwargs):
                 if len(images) > 0:
                     for i, image in enumerate(images):
                         filename = image.rsplit('/', 1)[-1]
+                        # Take the first image in the pull request
+                        # and set it as default for the entry and remove
+                        # it from the body
+                        if i == 0:
+                            response = requests.get(image)
+                            if response.status_code == 200:
+                                entry.image_file.save(
+                                    filename,
+                                    ContentFile(response.content), save=True)
+                                rgx = f'<img.*?{image}.*?/>'
+                                html = re.sub(rgx, '', html, 1)
+                                continue
                         folder_path = os.path.join(
                             settings.MEDIA_ROOT,
                             'images/entries')
@@ -296,17 +309,6 @@ def download_all_referenced_images(request, **kwargs):
                             img_url = urljoin(settings.MEDIA_URL, image_name)
                             html = html.replace(image, img_url)
                             html = re.sub(r"alt=\".*?\"", "", html)
-                        # Take the first image set in the pull request
-                        # and set it as default for the entry and remove
-                        # it from the body
-                        if i == 0:
-                            # remove MEDIA_URL and assign the value to
-                            # image_file
-                            entry.image_file = img_url.replace(
-                                settings.MEDIA_URL, '')
-                            html = html.replace(img_url, '')
-                            # remove image with empty source
-                            html = html.replace('<img  src="" />', '')
 
                 entry.description = html
                 entry.save()
