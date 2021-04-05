@@ -33,6 +33,12 @@
                        data-title="Download Checked Files as Zip" style="display: none">
                         <span>Download as Zip</span>
                     </a>
+                    {% if user_can_edit %}
+                    <a class="btn btn-default btn-mini tooltip-toggle" id="download-multiple-submit"
+                       data-title="Check Invalid Link">
+                        <span class="fa fa-link"></span>
+                    {% endif %}
+                    </a>
                     <a class="btn btn-default btn-mini tooltip-toggle" id="toggle-checklist-btn"
                        onclick="toggleCheckList(this)"
                        data-title="Download Multiple Module & Sample Files">
