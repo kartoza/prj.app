@@ -1,8 +1,7 @@
 # coding=utf-8
 """Test for lesson utilities."""
 
-from unittest.mock import patch
-from django.test import TestCase, override_settings
+from django.test import TestCase
 
 from lesson.tests.model_factories import (FurtherReadingF,
                                           SectionF,
@@ -79,9 +78,7 @@ class InvalidFurtherReadingURL(TestCase):
         self.assertTrue(result)
         self.assertEqual(result, url)
 
-    @patch('django.http.HttpRequest.build_absolute_uri',
-           side_effect=side_effect_build_absolute_uri)
-    def test_get_all_invalid_url(self, mock_build_absolute_uri):
+    def test_get_all_invalid_url(self):
         self.test_further_reading.text = (
             'Test for invalid link: '
             'http://www.example.com/this-page-is-not-exist/')
@@ -95,7 +92,7 @@ class InvalidFurtherReadingURL(TestCase):
         )
         self.assertEqual(
             result,
-            (['Test Invalid Link',
-              f'{worksheet_url} has invalid links or unavailable links: '
+            ([f'<a href="{worksheet_url}">{self.test_worksheet}</a> '
+              f'has invalid links or unavailable links: '
               f'http://www.example.com/this-page-is-not-exist/']),
             msg=f'{result}')

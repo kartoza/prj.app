@@ -8,7 +8,7 @@ import requests
 from unidecode import unidecode
 from urllib.parse import urlparse
 
-from django.http import Http404, HttpRequest, HttpResponse
+from django.http import Http404, HttpResponse
 from django.urls import reverse
 from django.utils.text import slugify
 
@@ -73,14 +73,12 @@ class GetInvalidFurtherReadingLink(object):
 
     def get_all_invalid_url(self):
         from lesson.models.worksheet import Worksheet
-        request = HttpRequest()
         worksheets = Worksheet.objects.all().filter(
             section__project=self.project,
             furtherreading__isnull=False
         )
         result = []
         for worksheet in worksheets:
-            result.append(f'{worksheet}')
             worksheet_url = self.get_worksheet_url(
                 worksheet_pk=worksheet.id,
                 section_slug=worksheet.section.slug,
@@ -93,11 +91,11 @@ class GetInvalidFurtherReadingLink(object):
                     invalid_url = self.check_if_url_invalid(url)
                     if invalid_url:
                         result.append(
-                            f'{request.build_absolute_uri(worksheet_url)} '
+                            f'<a href="{worksheet_url}">{worksheet}</a> '
                             f'has invalid links or unavailable links: '
                             f'{url}'
                         )
-            return result
+        return result
 
     def get_url_list(self, text):
         # https://www.geeksforgeeks.org/python-check-url-string/

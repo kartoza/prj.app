@@ -30,7 +30,7 @@ function getWorksheetListPage(){
     const urlParams = new URLSearchParams(window.location.search);
     var page = urlParams.get('page');
     if (page == null){
-        page = "1"change
+        page = "1"
     }
     var $checkedElements = $('.worksheet-checkbox:checked');
     var worksheets = {};
