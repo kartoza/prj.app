@@ -1,7 +1,9 @@
 # coding=utf-8
 """Further reading views."""
 
-from django.http import JsonResponse
+import json
+
+from django.http import JsonResponse, HttpResponse
 from django.urls import reverse
 from django.views.generic import (
     CreateView,
@@ -138,5 +140,26 @@ def get_invalid_FurtherReading_links(request, **kwargs):
     invalid_links_list = GetInvalidFurtherReadingLink(
         project).get_all_invalid_url()
 
+    return JsonResponse({
+        'data': invalid_links_list,
+        'project_slug': project_slug,
+        'project_name': project.name
+    })
 
-    return JsonResponse({'data': invalid_links_list})
+
+def print_invalid_FurterReading_links(request, **kwargs):
+    project_slug = kwargs.get('project_slug', None)
+    data = json.loads(request.GET.get('data'))
+
+    from changes.utils.render_to_pdf import render_to_pdf
+    pdf = render_to_pdf(
+        'further_reading/print_invalid_links.html', data)
+
+    response = HttpResponse(pdf, content_type='application/pdf')
+    filename = f'Invalid_FurtherReading_{project_slug}.pdf'
+    content = "inline; filename='%s'" % (filename)
+    download = request.GET.get("download")
+    if download:
+        content = "attachment; filename='%s'" % (filename)
+    response['Content-Disposition'] = content
+    return response

@@ -23,11 +23,15 @@ class InvalidFurtherReadingURL(TestCase):
 
     def setUp(self):
         # Create project
-        self.test_project = ProjectF.create()
+        self.test_project = ProjectF.create(
+            name = 'Test project'
+        )
 
         # Create section
         self.test_section = SectionF.create(
-            project=self.test_project)
+            project=self.test_project,
+            name='Test section'
+        )
         self.test_worksheet = WorksheetF.create(
             section=self.test_section,
             published=True,
@@ -85,14 +89,7 @@ class InvalidFurtherReadingURL(TestCase):
         self.test_further_reading.save()
         obj = GetInvalidFurtherReadingLink(self.test_project)
         result = obj.get_all_invalid_url()
-        worksheet_url = obj.get_worksheet_url(
-            self.test_worksheet.pk,
-            self.test_worksheet.section.slug,
-            self.test_worksheet.section.project.slug
-        )
+        self.assertEqual(result[0]['worksheet'], 'Test Invalid Link')
         self.assertEqual(
-            result,
-            ([f'<a href="{worksheet_url}">{self.test_worksheet}</a> '
-              f'has invalid links or unavailable links: '
-              f'http://www.example.com/this-page-is-not-exist/']),
-            msg=f'{result}')
+            result[0]['invalid_url'],
+            'http://www.example.com/this-page-is-not-exist/')

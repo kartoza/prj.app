@@ -88,12 +88,17 @@ class GetInvalidFurtherReadingLink(object):
             for obj in further_reading:
                 urls = self.get_url_list(obj.text)
                 for url in urls:
+                    ctx = {
+                        'worksheet_url': worksheet_url,
+                        'worksheet': worksheet.module,
+                        'invalid_url': url
+                    }
+                    if ctx in result:
+                        continue
                     invalid_url = self.check_if_url_invalid(url)
                     if invalid_url:
                         result.append(
-                            f'<a href="{worksheet_url}">{worksheet}</a> '
-                            f'has invalid links or unavailable links: '
-                            f'{url}'
+                            ctx
                         )
         return result
 
@@ -105,7 +110,12 @@ class GetInvalidFurtherReadingLink(object):
             r"(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)"
             r"|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
         url = re.findall(regex, text)
-        return [x[0] for x in url]
+        result = []
+        for x in url:
+            _ = x[0].replace('&nbsp', '')
+            _ = _.replace('&amp', '')
+            result.append(_)
+        return result
 
     def check_if_url_invalid(self, url):
         """Return invalid url"""
