@@ -90,7 +90,6 @@ class WorksheetDetailView(
         context['file_title'] = \
             context['worksheet'].section.name \
             + '-' + context['worksheet'].module
-        context['file_title'] = context['file_title'].encode("utf8")
 
         context['funded_by'] = self.object.funder_info_html()
         return context
@@ -128,7 +127,7 @@ class WorksheetPrintView(WorksheetDetailView):
         pdf_response = HttpResponse(content_type='application/pdf')
         pdf_response['Content-Disposition'] = \
             'filename={}. {}.pdf'.format(
-                numbering, context['file_title'].decode("utf-8"))
+                numbering, context['file_title'])
         # Need to improve for URL outside of the dev env.
         html_object = HTML(
             string=response.content,
@@ -152,7 +151,7 @@ class WorksheetPDFZipView(WorksheetDetailView):
         response = super(WorksheetPDFZipView, self).render_to_response(
             context, **response_kwargs)
         response.render()
-        file_title = context['file_title'].decode('utf-8')
+        file_title = context['file_title']
         # return response
         pdf_response = HttpResponse(content_type='application/pdf')
         pdf_response['Content-Disposition'] = \
