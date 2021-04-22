@@ -122,6 +122,20 @@ class TestGithubPullRequest(unittest.TestCase):
         self.assertEqual('myself.inc', funded_by)
         self.assertEqual('https://myself.me', url)
 
+        # Switch to "sponsored by", with markdown and capital letters,
+        body = (
+            'This is a new feature :\n\n'
+            '* SPONSORED BY myself.inc https://myself.me\n'
+            '* IT\n'
+            '* WILL\n'
+            '* ROCK'
+        )
+        content, funded_by, url = parse_funded_by(body)
+        self.assertEqual(
+            'This is a new feature :\n\n* IT\n* WILL\n* ROCK', content)
+        self.assertEqual('myself.inc', funded_by)
+        self.assertEqual('https://myself.me', url)
+
         # No name, only URL
         body = (
             'This is a new feature :\n'
