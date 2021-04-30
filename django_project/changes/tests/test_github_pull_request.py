@@ -142,7 +142,7 @@ class TestGithubPullRequest(unittest.TestCase):
             '* Funded by https://myself.me\n'
         )
         content, funded_by, url = parse_funded_by(body)
-        self.assertEqual('This is a new feature :\n', content)
+        self.assertEqual('This is a new feature :', content)
         self.assertEqual('', funded_by)
         self.assertEqual('https://myself.me', url)
 
@@ -155,6 +155,26 @@ class TestGithubPullRequest(unittest.TestCase):
         content, funded_by, url = parse_funded_by(body)
         self.assertEqual('This is a new feature :\n* Another line', content)
         self.assertEqual('', funded_by)
+        self.assertEqual('', url)
+
+        # With a separator and spaces, accents, this is
+        body = (
+            'This is a new feature.\n'
+            'THis is sponsored by : MÉTRôpole dé @LYÖN'
+        )
+        content, funded_by, url = parse_funded_by(body)
+        self.assertEqual('This is a new feature.', content)
+        self.assertEqual('MÉTRôpole dé @LYÖN', funded_by)
+        self.assertEqual('', url)
+
+        # With a separator, no spaces, this is
+        body = (
+            'This is a new feature.\n'
+            'This is sponsored by:Lyon\n'
+        )
+        content, funded_by, url = parse_funded_by(body)
+        self.assertEqual('This is a new feature.', content)
+        self.assertEqual('Lyon', funded_by)
         self.assertEqual('', url)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
