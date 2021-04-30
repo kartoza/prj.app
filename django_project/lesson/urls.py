@@ -22,6 +22,8 @@ from lesson.views.further_reading import (
     FurtherReadingCreateView,
     FurtherReadingDeleteView,
     FurtherReadingUpdateView,
+    get_invalid_FurtherReading_links,
+    print_invalid_FurterReading_links
 )
 from lesson.views.section import (
     SectionCreateView,
@@ -218,6 +220,15 @@ urlpatterns = [
               'delete/(?P<pk>[\w-]+)/$',
         view=AnswerDeleteView.as_view(),
         name='answer-delete'),
+
+    # Json invalid Further reading Link
+    url(regex='(?P<project_slug>[\w-]+)/lessons/invalid_further_reading/$',
+        view=get_invalid_FurtherReading_links,
+        name='invalid-further-reading-links'),
+    url(regex='(?P<project_slug>[\w-]+)/lessons/'
+              'print_invalid_further_reading/$',
+        view=print_invalid_FurterReading_links,
+        name='print_invalid-further-reading-links')
 ]
 
 # The original urlpatterns below will redirect to urlpatterns above

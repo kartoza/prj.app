@@ -1,0 +1,37 @@
+{% load tz %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    @page {
+      size: a4 portrait;
+      margin: 10mm;
+    }
+    h1 {
+        font-size: 24px;
+        margin-bottom: 0;
+    }
+    h3 {
+        font-size: 16px;
+        margin-top: 0;
+    }
+    li {
+        font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Invalid Further Reading Link: {{ project_name }} Worksheet</h1>
+  {% timezone "Africa/Johannesburg" %}
+    <h3>Generated at : {% now "jS F Y H:i" %} (SAST)</h3>
+{% endtimezone %}
+
+  <ol>
+    {% for d in data %}
+      <li>{{ loc }}{{ d.worksheet_url }} : <a href="{{ loc }}{{ d.worksheet_url }}">{{ d.worksheet }}</a> has invalid link or unavailable link: <b>{{ d.invalid_url }}</b></li>
+    {%  endfor %}
+  </ol>
+</body>
+</html>
