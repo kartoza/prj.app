@@ -199,16 +199,28 @@ img.more-about-image {
                         </th>
                     </tr>
                     {% for requirement in requirements %}
+                      {% if requirement.title.strip or requirement.value.strip %}
                         <tr>
                             <td style="background-color: #cdcdcd">
+                              {% if requirement.title %}
                               {{ requirement.title | base_markdown }}
+                              {% endif %}
+
+                              {% if requirement.title_notes %}
                               <div class="requirement-notes">{{ requirement.title_notes|base_markdown }}</div>
+                              {% endif %}
                             </td>
                             <td>
+                              {% if requirement.value %}
                               {{ requirement.value | base_markdown }}
+                              {% endif %}
+
+                              {% if requirement.value_notes %}
                               <div class="requirement-notes">{{ requirement.value_notes|base_markdown }}</div>
+                              {% endif %}
                             </td>
                         </tr>
+                      {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
