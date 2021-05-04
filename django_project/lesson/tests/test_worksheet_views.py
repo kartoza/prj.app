@@ -242,6 +242,9 @@ class TestViews(TestCase):
             self.assertIsNone(zip_file.testzip())
             self.assertIn('2. Test section zip-Test module zip/license.txt',
                           zip_file.namelist())
+            # ensure there's no zip inside zip
+            for name in zip_file.namelist():
+                self.assertFalse(name.endswith('.zip'))
             zip_file.close()
 
 
