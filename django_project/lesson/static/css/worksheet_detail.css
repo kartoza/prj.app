@@ -27,3 +27,8 @@ Inspired from the "details" class in organisation_detail.css
 .gi-big {
     font-size: 1.5em !important;
 }
+
+.monotone {
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+}
