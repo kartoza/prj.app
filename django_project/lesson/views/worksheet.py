@@ -188,7 +188,19 @@ class WorksheetPDFZipView(WorksheetDetailView):
             zip_path = os.path.join(
                 zip_subdir,
                 '{}. {}.zip'.format(numbering, file_title))
-            zf.write(zip_data_path, zip_path)
+            # if external_data is a zipfile, extract it before zip it
+            external_file_zf = zipfile.ZipFile(zip_data_path)
+            if external_file_zf:
+                for name in external_file_zf.namelist():
+                    if name.endswith('/'):
+                       continue
+                    if name.startswith('__MACOSX'):
+                        continue
+
+                    f = external_file_zf.read(name)
+                    zf.write(f, zip_path)
+            else:
+                zf.write(zip_data_path, zip_path)
 
         # license
         if context['worksheet'].license:
