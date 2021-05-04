@@ -193,12 +193,11 @@ class WorksheetPDFZipView(WorksheetDetailView):
             if external_file_zf:
                 for name in external_file_zf.namelist():
                     if name.endswith('/'):
-                       continue
+                        continue
                     if name.startswith('__MACOSX'):
                         continue
-
                     f = external_file_zf.read(name)
-                    zf.write(f, zip_path)
+                    zf.writestr(name, f)
             else:
                 zf.write(zip_data_path, zip_path)
 
