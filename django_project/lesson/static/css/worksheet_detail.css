@@ -19,3 +19,16 @@ Inspired from the "details" class in organisation_detail.css
     margin: 0 0 10px;
     font-size: 0.75em;
 }
+
+.btn-mini {
+    height: 3em !important;
+}
+
+.gi-big {
+    font-size: 1.5em !important;
+}
+
+.monotone {
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+}
