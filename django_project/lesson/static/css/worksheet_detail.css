@@ -23,3 +23,7 @@ Inspired from the "details" class in organisation_detail.css
 .btn-mini {
     height: 3em !important;
 }
+
+.gi-big {
+    font-size: 1.5em !important;
+}
