@@ -189,8 +189,8 @@ class WorksheetPDFZipView(WorksheetDetailView):
                 zip_subdir,
                 '{}. {}.zip'.format(numbering, file_title))
             # if external_data is a zipfile, extract it before zip it
-            external_file_zf = zipfile.ZipFile(zip_data_path)
-            if external_file_zf:
+            try:
+                external_file_zf = zipfile.ZipFile(zip_data_path)
                 for name in external_file_zf.namelist():
                     if name.endswith('/'):
                         continue
@@ -198,7 +198,7 @@ class WorksheetPDFZipView(WorksheetDetailView):
                         continue
                     f = external_file_zf.read(name)
                     zf.writestr(name, f)
-            else:
+            except Exception:
                 zf.write(zip_data_path, zip_path)
 
         # license
