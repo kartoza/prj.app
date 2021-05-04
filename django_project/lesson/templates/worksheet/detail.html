@@ -33,6 +33,13 @@
                         data-title="{% trans 'Back' %}">
                         <span class="glyphicon glyphicon-arrow-left"></span>
                     </a>
+                    {% if worksheet.external_data %}
+                    <a id="download-zip-button" class="btn btn-default btn-mini tooltip-toggle" target="_blank"
+                       href='{% url "worksheet-zip" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ module_number }}'
+                       data-title="Download {{ worksheet.module }} module and its sample data as ZIP">
+                        <span class="fa fa-download"></span>
+                    </a>
+                    {% endif %}
                     <a id="download-pdf-button" class="btn btn-default btn-mini tooltip-toggle" target="_blank"
                        href='{% url "worksheet-print" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ module_number }}'
                        data-title="{% blocktrans with module=worksheet.module %}Download {{ module }} as PDF{% endblocktrans %}">
