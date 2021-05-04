@@ -19,8 +19,3 @@ Inspired from the "details" class in organisation_detail.css
     margin: 0 0 10px;
     font-size: 0.75em;
 }
-
-/* Download button */
-#download-pdf-button, #download-zip-button {
-    padding: 2px 4px !important;
-}
