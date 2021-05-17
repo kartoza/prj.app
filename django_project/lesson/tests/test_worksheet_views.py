@@ -287,6 +287,12 @@ class TestViews(TestCase):
         self.test_worksheet.summary_image = self.image_uploaded
         self.test_worksheet.more_about_image = self.image_uploaded
         self.test_worksheet.module = 'Test module zip'
+        self.test_worksheet.save()
+
+        response = self.client.get(reverse(
+            'worksheet-sampledata', kwargs=self.kwargs_worksheet_full))
+        self.assertEqual(response.status_code, 404)
+
         self.test_worksheet.external_data = self.zip_uploaded
         self.test_worksheet.save()
         response = self.client.get(reverse(
