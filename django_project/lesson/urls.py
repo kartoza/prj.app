@@ -39,6 +39,7 @@ from lesson.views.worksheet import (
     WorksheetUpdateView,
     WorksheetDeleteView,
     WorksheetDetailView,
+    WorksheetDownloadSampleDataView,
     WorksheetPrintView,
     WorksheetOrderView,
     WorksheetOrderSubmitView,
@@ -220,6 +221,12 @@ urlpatterns = [
               'delete/(?P<pk>[\w-]+)/$',
         view=AnswerDeleteView.as_view(),
         name='answer-delete'),
+
+    # download sample data
+    url(regex='^(?P<project_slug>[\w-]+)/lesson/'
+              '(?P<section_slug>[\w-]+)/sample-data/(?P<pk>[\w-]+)/$',
+        view=WorksheetDownloadSampleDataView.as_view(),
+        name='worksheet-sampledata'),
 
     # Json invalid Further reading Link
     url(regex='(?P<project_slug>[\w-]+)/lessons/invalid_further_reading/$',
