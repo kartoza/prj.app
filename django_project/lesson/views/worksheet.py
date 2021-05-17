@@ -8,7 +8,7 @@ from io import BytesIO
 from collections import OrderedDict
 from django.conf import settings
 from django.urls import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.views.generic import (
     DetailView,
     CreateView,
@@ -264,6 +264,8 @@ class WorksheetDownloadSampleDataView(WorksheetDetailView):
             zip_response['Content-Disposition'] = \
                 'attachment; filename={}.zip'.format(file_title)
             return zip_response
+        else:
+            raise Http404("Sample data does not exist")
 
 
 class WorksheetCreateView(LoginRequiredMixin, WorksheetMixin, CreateView):
