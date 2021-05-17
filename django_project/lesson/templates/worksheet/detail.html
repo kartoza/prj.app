@@ -101,6 +101,7 @@
         <div class="row text-center">
             <!-- The video tag: -->
             {% video worksheet.youtube_link as youtube %}
+              <!-- Video aspect ratio 16:9 -->
               {% video youtube "large" %}
             {% endvideo %}
         </div>
@@ -698,5 +699,20 @@
                 $(this).find('.further-reading-action').hide();
             }
         );
+
+        // video aspect ratio must be 16:9
+        function videoAspect(){
+          let videoWidth = $('div.body-content').css('width').match(/[0-9]+/g)[0];
+          let videoUnit = $("div.body-content").css('width').match(/[a-zA-Z]+/g)[0];
+          videoWidth = parseInt(videoWidth);
+
+          let ratio = 16/9;
+          let videoHeight = Math.floor(videoWidth / ratio);
+          $('iframe').css('width', videoWidth + videoUnit);
+          $('iframe').css('height', videoHeight + videoUnit);
+        }
+
+        $('iframe').load(videoAspect)
+        $(window).on('resize', videoAspect)
     </script>
 {% endblock %}
