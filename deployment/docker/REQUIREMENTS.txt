@@ -44,3 +44,5 @@ pinax-notifications==5.0.3
 pinax-templates==2.0.2
 # rich text editor
 django-tinymce==3.2.0
+# django-gmailapi-backend
+django-gmailapi-backend==0.3.0
