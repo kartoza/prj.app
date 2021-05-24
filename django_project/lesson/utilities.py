@@ -76,7 +76,7 @@ class GetAllFurtherReadingLink(object):
         worksheets = Worksheet.objects.all().filter(
             section__project=self.project,
             furtherreading__isnull=False
-        )
+        ).distinct()
         result = []
         for worksheet in worksheets:
             worksheet_url = self.get_worksheet_url(
@@ -84,21 +84,21 @@ class GetAllFurtherReadingLink(object):
                 section_slug=worksheet.section.slug,
                 project_slug=worksheet.section.project.slug
             )
-            further_reading = worksheet.furtherreading_set.all()
+            further_reading = worksheet.furtherreading_set.all().distinct()
             for obj in further_reading:
                 urls = self.get_url_list(obj.text)
                 for url in urls:
                     ctx = {
                         'worksheet_url': worksheet_url,
                         'worksheet': worksheet.module,
-                        'invalid_url': url
+                        'further_reading_url': url
                     }
                     result.append(ctx)
         return result
 
     def get_url_list(self, text):
-        urls = re.findall(r'href=[\'"]?([^\'">]+)', text)
-        result = [url for url in urls]
+        urls = re.findall(r'href=[\'"]?\s*([^\'">]+)', text)
+        result = [url.strip() for url in urls]
         return result
 
     def get_worksheet_url(self, worksheet_pk, section_slug, project_slug):

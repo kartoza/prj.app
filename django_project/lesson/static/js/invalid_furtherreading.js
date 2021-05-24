@@ -4,19 +4,33 @@ function showInvalidLink(projectSlug){
     $("#loadingGif").css("display", "block");
     let url = `/${projectSlug}/lessons/invalid_further_reading/`
     let context;
+    let cleanedData = []
     $.ajax({
       url: url,
       success: function(data){
-        $("#loadingGif").css("display", "none");
-        data.data ? data.data.forEach(el => $("#invalidLinkList").append(`<li class="invalid-link"><a href="${el.worksheet_url}">${el.worksheet}</a> has invalid link or unavailable link: ${el.invalid_url}</li>`)) : $("#invalidLinkList").append(`<li class="invalid-link">No invalid link.</li>`);
-
-        let cleanedData = []
         data.data.forEach(el => {
-          cleanedData.push({
-            'worksheet_url':  el.worksheet_url.replace(/\&nbsp;/g, ''),
-            'worksheet': el.worksheet,
-            'invalid_url': el.invalid_url
-          })
+          $("#loadingGif").css("display", "block");
+          let url_checked = checkAbsoluteRelativePath(el.further_reading_url)
+            $.ajax({
+              url: is_url_exist_url + '?url_string=' + url_checked,
+              success: function (data) {
+                if (!data.is_url_exist) {
+                    $("#invalidLinkList").append(`<li class="invalid-link"><a href="${el.worksheet_url}">${el.worksheet}</a> has invalid link or unavailable link: ${el.further_reading_url}</li>`);
+                    cleanedData.push({
+                      'worksheet_url':  el.worksheet_url.replace(/\&nbsp;/g, ''),
+                      'worksheet': el.worksheet,
+                      'invalid_url': el.further_reading_url
+                    })
+                  }
+                $("#loadingGif").css("display", "none");
+              }
+            })
+        })
+
+
+
+        data.data.forEach(el => {
+
         })
         context = {
           'data': cleanedData,
@@ -49,3 +63,11 @@ function validURL(str) {
     '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
   return !!pattern.test(str);
 }
+
+console.log(is_url_exist_url + '?url_string=http://google.com')
+$.ajax({
+  url: is_url_exist_url + '?url_string=http://google.com',
+  success: function (data) {
+    console.log(data)
+  }
+})

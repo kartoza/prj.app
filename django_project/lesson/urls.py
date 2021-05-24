@@ -23,7 +23,8 @@ from lesson.views.further_reading import (
     FurtherReadingDeleteView,
     FurtherReadingUpdateView,
     get_invalid_FurtherReading_links,
-    print_invalid_FurterReading_links
+    print_invalid_FurterReading_links,
+    is_url_exist
 )
 from lesson.views.section import (
     SectionCreateView,
@@ -173,6 +174,9 @@ urlpatterns = [
               'delete/(?P<pk>[\w-]+)/$',
         view=FurtherReadingDeleteView.as_view(),
         name='further-reading-delete'),
+    url(regex='^(?P<project_slug>[\w-]+)/lesson/_is_url_exist$',
+        view=is_url_exist,
+        name='is_url_exist'),
     # Question
     url(regex='^(?P<project_slug>[\w-]+)/lesson/'
               '(?P<section_slug>[\w-]+)/worksheet/'

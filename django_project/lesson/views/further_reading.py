@@ -2,6 +2,7 @@
 """Further reading views."""
 
 import json
+import requests
 
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse
@@ -163,3 +164,18 @@ def print_invalid_FurterReading_links(request, **kwargs):
         content = "attachment; filename='%s'" % (filename)
     response['Content-Disposition'] = content
     return response
+
+
+def is_url_exist(request, **kwargs):
+    url_string = request.GET.get('url_string')
+    if not url_string:
+        return JsonResponse({'is_url_exist': False, 'url' : url_string})
+    try:
+        req = requests.head(url_string)
+    except requests.exceptions.SSLError:
+        req = requests.head(url_string, verify=False)
+    except Exception:
+        return JsonResponse({'is_url_exist': False, 'url' : url_string})
+    if req.status_code >= 400:
+        return JsonResponse({'is_url_exist': False, 'url' : url_string})
+    return JsonResponse({'is_url_exist': True, 'url' : url_string})
