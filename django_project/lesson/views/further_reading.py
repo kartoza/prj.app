@@ -19,7 +19,7 @@ from base.models.project import Project
 from lesson.models.further_reading import FurtherReading
 from lesson.models.worksheet import Worksheet
 from lesson.forms.further_reading import FurtherReadingForm
-from lesson.utilities import GetInvalidFurtherReadingLink
+from lesson.utilities import GetAllFurtherReadingLink
 
 
 class FurtherReadingMixin(object):
@@ -137,8 +137,8 @@ def get_invalid_FurtherReading_links(request, **kwargs):
     if not project:
         return JsonResponse({'data': None})
 
-    invalid_links_list = GetInvalidFurtherReadingLink(
-        project).get_all_invalid_url()
+    invalid_links_list = GetAllFurtherReadingLink(
+        project).get_all_url()
 
     return JsonResponse({
         'data': invalid_links_list,
