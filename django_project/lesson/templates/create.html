@@ -1,6 +1,6 @@
 {% extends "project_base.html" %}
 
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags %} {% load static %}
 
 {% block extra_head %}
     {{ Other }}
@@ -18,4 +18,7 @@
             {% crispy form %}
         </div>
     </section>
+
+    <script src="{% static "js/tinymce_config.js" %}"></script>
+
 {% endblock %}
