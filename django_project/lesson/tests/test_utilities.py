@@ -11,14 +11,6 @@ from base.tests.model_factories import ProjectF
 from lesson.utilities import GetAllFurtherReadingLink
 
 
-def side_effect_build_absolute_uri(value):
-    """Mocking build_absolute_uri side_effect.
-
-    Return the value which is the relative path instead of absolute path
-    """
-    return value
-
-
 class AllFurtherReadingURL(TestCase):
 
     def setUp(self):
@@ -53,16 +45,18 @@ class AllFurtherReadingURL(TestCase):
 
     def test_get_all_url_list(self):
         self.test_further_reading.text = (
-            'Test for link: https://changelog.kartoza.com/en/ '
-            'and '
-            'https://changelog.qgis.org/en/qgis/lessons/#introduction-qgis-1')
+            'Test for link: <a href="https://changelog.kartoza.com/en/">'
+            'https://changelog.kartoza.com/en/</a> and '
+            '<a href="https://changelog.qgis.org/en/qgis/lessons/'
+            '#introduction-qgis-1">link</a>. But this one won\'t included')
         self.test_further_reading.save()
         obj = GetAllFurtherReadingLink(self.test_project)
         result = obj.get_url_list(self.test_further_reading.text)
         self.assertEqual(
             result,
             ['https://changelog.kartoza.com/en/',
-             'https://changelog.qgis.org/en/qgis/lessons/#introduction-qgis-1']
+             'https://changelog.qgis.org/en/qgis/lessons/#introduction-qgis-1'
+             ], msg=result
         )
 
 

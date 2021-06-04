@@ -128,7 +128,7 @@ class FurtherReadingUpdateView(
         })
 
 
-def get_invalid_FurtherReading_links(request, **kwargs):
+def get_FurtherReading_links(request, **kwargs):
 
     project_slug = kwargs.get('project_slug', None)
     if not project_slug:
@@ -150,7 +150,9 @@ def get_invalid_FurtherReading_links(request, **kwargs):
 
 def print_invalid_FurterReading_links(request, **kwargs):
     project_slug = kwargs.get('project_slug', None)
-    data = json.loads(request.GET.get('data'))
+    data = request.GET.get('data')
+    if data:
+        data = json.loads(data)
 
     from changes.utils.render_to_pdf import render_to_pdf
     pdf = render_to_pdf(

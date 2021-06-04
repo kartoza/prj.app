@@ -2,45 +2,48 @@ function showInvalidLink(projectSlug){
     $("li.invalid-link").remove();
     $("#btnDownloadPDF").remove();
     $("#loadingGif").css("display", "block");
-    let url = `/${projectSlug}/lessons/invalid_further_reading/`
+    let url = `/${projectSlug}/lessons/_further_reading_links/`
     let context;
     let cleanedData = []
     $.ajax({
       url: url,
       success: function(data){
+        var promises = []
         data.data.forEach(el => {
-          $("#loadingGif").css("display", "block");
           let url_checked = checkAbsoluteRelativePath(el.further_reading_url)
-            $.ajax({
-              url: is_url_exist_url + '?url_string=' + url_checked,
-              success: function (data) {
-                if (!data.is_url_exist) {
-                    $("#invalidLinkList").append(`<li class="invalid-link"><a href="${el.worksheet_url}">${el.worksheet}</a> has invalid link or unavailable link: ${el.further_reading_url}</li>`);
-                    cleanedData.push({
-                      'worksheet_url':  el.worksheet_url.replace(/\&nbsp;/g, ''),
-                      'worksheet': el.worksheet,
-                      'invalid_url': el.further_reading_url
-                    })
-                  }
-                $("#loadingGif").css("display", "none");
+
+          var request = $.ajax({
+            url: is_url_exist_url + '?url_string=' + url_checked,
+            success: function (data) {
+              if (!data.is_url_exist) {
+                $("#invalidLinkList").append(`<li class="invalid-link"><a href="${el.worksheet_url}">${el.worksheet}</a> has invalid link or unavailable link: ${el.further_reading_url}</li>`);
+                cleanedData.push({
+                  'worksheet_url':  el.worksheet_url.replace(/\&nbsp;/g, ''),
+                  'worksheet': el.worksheet,
+                  'invalid_url': el.further_reading_url
+                });
               }
-            })
+            }
+          })
+          promises.push(request);
+        });
+
+        // waiting all ajax request in loop finished
+        $.when.apply(null, promises).done(function(){
+          console.log('done');
+          console.log(cleanedData);
+          context = {
+            'data': cleanedData,
+            'loc': window.location.origin,
+            'project_name': data.project_name
+          };
+
+          pdfUrl = `/${projectSlug}/lessons/print_invalid_further_reading/?data=${JSON.stringify(context)}`;
+          $("#downloadPDF").append(`<button type="button" class="btn btn-primary btn-sm" id="btnDownloadPDF" data-dismiss="modal"><span class="fa fa-download"></span></button>`);
+          $("#btnDownloadPDF").on("click", () => window.open(pdfUrl, "_blank"));
+          $("#loadingGif").css("display", "none");
         })
 
-
-
-        data.data.forEach(el => {
-
-        })
-        context = {
-          'data': cleanedData,
-          'loc': window.location.origin,
-          'project_name': data.project_name
-        };
-
-        pdfUrl = `/${projectSlug}/lessons/print_invalid_further_reading/?data=${JSON.stringify(context)}`;
-        $("#downloadPDF").append(`<button type="button" class="btn btn-primary btn-sm" id="btnDownloadPDF" data-dismiss="modal"><span class="fa fa-download"></span></button>`);
-        $("#btnDownloadPDF").on("click", () => window.open(pdfUrl, "_blank"));
       },
       error: function(){
         $("#loadingGif").css("display", "none");
