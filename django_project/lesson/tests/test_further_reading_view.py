@@ -51,7 +51,8 @@ class TestFurtherReadingInvalidLink(TestCase):
         self.test_further_reading.text = (
             'Test for link: <a href="https://changelog.kartoza.com/en/">'
             'https://changelog.kartoza.com/en/</a> and '
-            '<a href="https://changelog.qgis.org/should-error">link</a>. But this one won\'t included')
+            '<a href="https://changelog.qgis.org/should-error">link</a>. '
+            'But this one won\'t included')
         self.test_further_reading.save()
         self.client.login(username='sumsum', password='password')
 
@@ -76,7 +77,7 @@ class TestFurtherReadingInvalidLink(TestCase):
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_is_url_exist(self):
-        url = reverse('is_url_exist',  kwargs=self.kwargs_project)
+        url = reverse('is_url_exist', kwargs=self.kwargs_project)
         url_exist = 'https://changelog.kartoza.com/en/'
         url_not_exist = 'https://should-error.not-exist.must.be/'
         response = self.client.get(url + '?url_string=' + url_exist)
@@ -92,7 +93,7 @@ class TestFurtherReadingInvalidLink(TestCase):
                       kwargs=self.kwargs_project)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEquals(
-            response.get('Content-Disposition'),
-            'inline; filename=Invalid_FurtherReading_test-project.pdf'
+        self.assertIn(
+            "filename='Invalid_FurtherReading_test-project.pdf'",
+            response.get('Content-Disposition')
         )

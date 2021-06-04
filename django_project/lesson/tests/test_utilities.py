@@ -58,5 +58,3 @@ class AllFurtherReadingURL(TestCase):
              'https://changelog.qgis.org/en/qgis/lessons/#introduction-qgis-1'
              ], msg=result
         )
-
-

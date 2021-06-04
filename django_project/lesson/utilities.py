@@ -3,10 +3,8 @@
 
 import json
 import re
-import requests
 
 from unidecode import unidecode
-from urllib.parse import urlparse
 
 from django.http import Http404, HttpResponse
 from django.urls import reverse
