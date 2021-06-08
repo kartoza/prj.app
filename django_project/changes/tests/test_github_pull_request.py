@@ -4,6 +4,8 @@ import unittest
 import logging
 import re
 
+from unittest import mock
+
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from django.urls import reverse
@@ -15,6 +17,27 @@ from changes.tests.model_factories import (
     EntryF,
     VersionF)
 from core.model_factories import UserF
+
+from changes.views import create_entry_from_github_pr
+from changes.models import Entry
+
+
+def mocked_request_get_github(*args, **kwargs):
+    class MockResponse:
+        def __init__(self, json_data, status_code):
+            self.json_data = json_data
+            self.status_code = status_code
+
+        def json(self):
+            return self.json_data
+
+    if args[0] == 'https://api.github.com/users/qgis':
+        return MockResponse({
+            'html_url': 'https://github.com/qgis',
+            'name': 'name'
+        }, 200)
+
+    return MockResponse(None, 404)
 
 
 class TestGithubPullRequest(unittest.TestCase):
@@ -103,13 +126,27 @@ class TestGithubPullRequest(unittest.TestCase):
         self.assertEqual('myself.inc', funded_by)
         self.assertEqual('https://myself.me', url)
 
+        # Switch to "sponsored by", with markdown and capital letters,
+        body = (
+            'This is a new feature :\n\n'
+            '* SPONSORED BY myself.inc https://myself.me\n'
+            '* IT\n'
+            '* WILL\n'
+            '* ROCK'
+        )
+        content, funded_by, url = parse_funded_by(body)
+        self.assertEqual(
+            'This is a new feature :\n\n* IT\n* WILL\n* ROCK', content)
+        self.assertEqual('myself.inc', funded_by)
+        self.assertEqual('https://myself.me', url)
+
         # No name, only URL
         body = (
             'This is a new feature :\n'
             '* Funded by https://myself.me\n'
         )
         content, funded_by, url = parse_funded_by(body)
-        self.assertEqual('This is a new feature :\n', content)
+        self.assertEqual('This is a new feature :', content)
         self.assertEqual('', funded_by)
         self.assertEqual('https://myself.me', url)
 
@@ -124,6 +161,57 @@ class TestGithubPullRequest(unittest.TestCase):
         self.assertEqual('', funded_by)
         self.assertEqual('', url)
 
+        # With a separator and spaces, accents, this is
+        body = (
+            'This is a new feature.\n'
+            'THis is sponsored by : MÉTRôpole dé @LYÖN'
+        )
+        content, funded_by, url = parse_funded_by(body)
+        self.assertEqual('This is a new feature.', content)
+        self.assertEqual('MÉTRôpole dé @LYÖN', funded_by)
+        self.assertEqual('', url)
+
+        # With a separator, no spaces, this is
+        body = (
+            'This is a new feature.\n'
+            'This is sponsored by:Lyon\n'
+        )
+        content, funded_by, url = parse_funded_by(body)
+        self.assertEqual('This is a new feature.', content)
+        self.assertEqual('Lyon', funded_by)
+        self.assertEqual('', url)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    @mock.patch('requests.get', side_effect=mocked_request_get_github)
+    def test_create_entry_from_github_pr_timeout(self, mock_request):
+        RESULT_RESPONSE_GITHUB = [
+            {
+                'name': 'name',
+                'body': '## Description\r\n',
+                'html_url': 'https://github.com/kartoza/prj.app/issues/1309',
+                'repository_url':
+                    'https://api.github.com/repos/qgis/QGIS-Django',
+                'title': 'Reorder expression operators',
+                'updated_at': '2021-02-21T22:45:33Z',
+                'url': 'https://api.github.com/repos/qgis/QGIS/issues/41692',
+                'user': {
+                    'html_url': 'https://github.com/qgis',
+                    'url': 'https://api.github.com/users/qgis'
+                }
+            }
+        ]
+
+        create_entry_from_github_pr(
+            self.version,
+            self.category,
+            RESULT_RESPONSE_GITHUB,
+            self.user
+        )
+
+        self.entry_created = Entry.objects.filter(author=self.user).all()
+        self.assertEqual(len(self.entry_created), 1)
+        self.assertEqual(
+            self.entry_created[0].developer_url, 'https://github.com/qgis')
 
 class TestGithubDownloadImage(TestCase):
     """Tests that Category views work."""
