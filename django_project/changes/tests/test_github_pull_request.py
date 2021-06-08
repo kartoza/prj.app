@@ -213,6 +213,7 @@ class TestGithubPullRequest(unittest.TestCase):
         self.assertEqual(
             self.entry_created[0].developer_url, 'https://github.com/qgis')
 
+
 class TestGithubDownloadImage(TestCase):
     """Tests that Category views work."""
 
