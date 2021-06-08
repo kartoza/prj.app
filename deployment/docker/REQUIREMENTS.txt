@@ -30,7 +30,7 @@ pytz==2020.5
 django-allauth==0.44.0
 # support special characters
 Unidecode==0.4.20
-Pillow==8.1.1
+Pillow==8.2.0
 reportlab==3.5.34
 xhtml2pdf==0.2b1
 django-modeltranslation==0.16.1
