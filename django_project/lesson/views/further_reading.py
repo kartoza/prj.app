@@ -2,6 +2,7 @@
 """Further reading views."""
 
 import json
+import requests
 
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse
@@ -19,7 +20,7 @@ from base.models.project import Project
 from lesson.models.further_reading import FurtherReading
 from lesson.models.worksheet import Worksheet
 from lesson.forms.further_reading import FurtherReadingForm
-from lesson.utilities import GetInvalidFurtherReadingLink
+from lesson.utilities import GetAllFurtherReadingLink
 
 
 class FurtherReadingMixin(object):
@@ -127,7 +128,7 @@ class FurtherReadingUpdateView(
         })
 
 
-def get_invalid_FurtherReading_links(request, **kwargs):
+def get_FurtherReading_links(request, **kwargs):
 
     project_slug = kwargs.get('project_slug', None)
     if not project_slug:
@@ -137,8 +138,8 @@ def get_invalid_FurtherReading_links(request, **kwargs):
     if not project:
         return JsonResponse({'data': None})
 
-    invalid_links_list = GetInvalidFurtherReadingLink(
-        project).get_all_invalid_url()
+    invalid_links_list = GetAllFurtherReadingLink(
+        project).get_all_url()
 
     return JsonResponse({
         'data': invalid_links_list,
@@ -149,7 +150,9 @@ def get_invalid_FurtherReading_links(request, **kwargs):
 
 def print_invalid_FurterReading_links(request, **kwargs):
     project_slug = kwargs.get('project_slug', None)
-    data = json.loads(request.GET.get('data'))
+    data = request.GET.get('data')
+    if data:
+        data = json.loads(data)
 
     from changes.utils.render_to_pdf import render_to_pdf
     pdf = render_to_pdf(
@@ -163,3 +166,18 @@ def print_invalid_FurterReading_links(request, **kwargs):
         content = "attachment; filename='%s'" % (filename)
     response['Content-Disposition'] = content
     return response
+
+
+def is_url_exist(request, **kwargs):
+    url_string = request.GET.get('url_string')
+    if not url_string:
+        return JsonResponse({'is_url_exist': False, 'url': url_string})
+    try:
+        req = requests.head(url_string)
+    except requests.exceptions.SSLError:
+        req = requests.head(url_string, verify=False)
+    except Exception:
+        return JsonResponse({'is_url_exist': False, 'url': url_string})
+    if req.status_code >= 400:
+        return JsonResponse({'is_url_exist': False, 'url': url_string})
+    return JsonResponse({'is_url_exist': True, 'url': url_string})

@@ -3,10 +3,8 @@
 
 import json
 import re
-import requests
 
 from unidecode import unidecode
-from urllib.parse import urlparse
 
 from django.http import Http404, HttpResponse
 from django.urls import reverse
@@ -67,16 +65,16 @@ def re_order_features(request, features):
     return HttpResponse('')
 
 
-class GetInvalidFurtherReadingLink(object):
+class GetAllFurtherReadingLink(object):
     def __init__(self, project):
         self.project = project
 
-    def get_all_invalid_url(self):
+    def get_all_url(self):
         from lesson.models.worksheet import Worksheet
         worksheets = Worksheet.objects.all().filter(
             section__project=self.project,
             furtherreading__isnull=False
-        )
+        ).distinct()
         result = []
         for worksheet in worksheets:
             worksheet_url = self.get_worksheet_url(
@@ -84,60 +82,22 @@ class GetInvalidFurtherReadingLink(object):
                 section_slug=worksheet.section.slug,
                 project_slug=worksheet.section.project.slug
             )
-            further_reading = worksheet.furtherreading_set.all()
+            further_reading = worksheet.furtherreading_set.all().distinct()
             for obj in further_reading:
                 urls = self.get_url_list(obj.text)
                 for url in urls:
                     ctx = {
                         'worksheet_url': worksheet_url,
                         'worksheet': worksheet.module,
-                        'invalid_url': url
+                        'further_reading_url': url
                     }
-                    if ctx in result:
-                        continue
-                    invalid_url = self.check_if_url_invalid(url)
-                    if invalid_url:
-                        result.append(
-                            ctx
-                        )
+                    result.append(ctx)
         return result
 
     def get_url_list(self, text):
-        # https://www.geeksforgeeks.org/python-check-url-string/
-        regex = (
-            r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)"
-            r"(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+"
-            r"(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)"
-            r"|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
-        url = re.findall(regex, text)
-        result = []
-        for x in url:
-            _ = x[0].replace('&nbsp', '')
-            _ = _.replace('&amp', '')
-            result.append(_)
+        urls = re.findall(r'href=[\'"]?\s*([^\'">]+)', text)
+        result = [url.strip() for url in urls]
         return result
-
-    def check_if_url_invalid(self, url):
-        """Return invalid url"""
-
-        try:
-            parsed_url = urlparse(url)  # e.g https://plugins.qgis.org/
-            if not (all([parsed_url.scheme,  # e.g http
-                         parsed_url.netloc])):  # e.g www.qgis.org
-                return url
-        except Exception:
-            return url
-
-        # Check if url is exist
-        try:
-            req = requests.head(url)
-        except requests.exceptions.SSLError:
-            req = requests.head(url, verify=False)
-        except Exception:
-            return url
-        if req.status_code >= 400:
-            return url
-        return None
 
     def get_worksheet_url(self, worksheet_pk, section_slug, project_slug):
         return reverse('worksheet-detail', kwargs={

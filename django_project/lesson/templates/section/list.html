@@ -8,6 +8,7 @@
 {% block js_head %}
     <script>
     var worksheets_download_url = '{% url "download-multiple-worksheets" project_slug=project.slug %}'
+    var is_url_exist_url = '{% url "is_url_exist" project_slug=project.slug %}'
     </script>
     <script src="{% static 'js/download_multiple_files.js' %}"></script>
     <script src="{% static 'js/invalid_furtherreading.js' %}"></script>
