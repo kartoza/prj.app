@@ -36,6 +36,9 @@ Inspired from the "details" class in organisation_detail.css
 /*
 Answered question
 */
+.answer{
+    cursor: pointer;
+}
 .answer.clicked{
     background: lightslategray;
     border-radius: 10px;
