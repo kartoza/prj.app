@@ -496,7 +496,7 @@
             </div>
         </div>
         <div class="text-right">
-          <button type="button" class="btn" onclick="submitAnswer(this)" style="background-image: linear-gradient(to bottom,{{ worksheet.section.project.accent_color }} 0,{{ worksheet.section.project.accent_color }} 100%); color: snow" >Submit Answer</button>
+          <button type="button" id="submitAnswer" class="btn" onclick="submitAnswer(this)" style="background-image: linear-gradient(to bottom,{{ worksheet.section.project.accent_color }} 0,{{ worksheet.section.project.accent_color }} 100%); color: snow" >Submit Answer</button>
         </div>
     </div>
 
@@ -719,6 +719,7 @@
         // select answer
         function addClassClicked(that){
           var $element = $(that);
+          if ($('#submitAnswer').hasClass('submitted')) return false;
           $element.closest('.answer-list').find('.answer').removeClass('clicked');
           $element.find('.answer').addClass('clicked');
         }
@@ -730,6 +731,8 @@
           $('.answer-incorrect.clicked').addClass('submitted');
           $('.answer-correct-tick').addClass('fa fa-check').css('color', 'green');
           $('.answer-incorrect-tick.clicked').addClass('fa fa-times').css('color', 'red');
+          $('.answer').css('cursor','not-allowed');
+          $('#submitAnswer').addClass('submitted');
         }
     </script>
 {% endblock %}
