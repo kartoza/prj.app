@@ -438,17 +438,21 @@
                                         </div>
                                 </div>
                                 {% endif %}
-                                <ol type="a">
+                                <ol type="a" class="answer-list">
                                     {% for answer in answers %}
                                      <div class="row col-lg-12">
                                         <li style="margin-bottom: 10px">
                                             {% if user_can_edit %}
                                                 {# We insert a tick for the correct answer and if the user is allowed and we display explanations. #}
-                                                <div class="col-lg-10">
+                                                <div class="col-lg-10 answer-options" onclick="addClassClicked(this)">
                                                     {% if answer.is_correct %}
                                                         <span class="question-answer-action" style="display:none;">&#10004;</span>
-                                                    {%  endif %}
-                                                    {{ answer.answer }}{{ answer|is_translation_up_to_date }}
+                                                        <span class="answer answer-correct">{{ answer.answer }}{{ answer|is_translation_up_to_date }}</span>
+                                                        <span class="answer-correct-tick"></span>
+                                                    {%  else %}
+                                                      <span class="answer answer-incorrect">{{ answer.answer }}{{ answer|is_translation_up_to_date }}</span>
+                                                      <span class="answer answer-incorrect-tick"></span>
+                                                    {% endif %}
                                                     {% if answer.answer_explanation %}
                                                         <span class="question-answer-action" style="display:none;">: <em>{{ answer.answer_explanation | base_markdown }}</em></span>
                                                     {% endif %}
@@ -467,7 +471,17 @@
                                                             </a>
                                                         </div>
                                                 </div>
-                                                {% else %}
+                                            {% elif user.is_authenticated %}
+                                                <div class="col-lg-10 answer-options" onclick="addClassClicked(this)">
+                                                    {% if answer.is_correct %}
+                                                        <span class="answer answer-correct">{{ answer.answer }}</span>
+                                                        <span class="answer-correct-tick"></span>
+                                                    {%  else %}
+                                                      <span class="answer answer-incorrect">{{ answer.answer }}</span>
+                                                      <span class="answer answer-incorrect-tick"></span>
+                                                    {% endif %}
+                                                </div>
+                                            {% else %}
                                                     {{ answer.answer }}
                                                 {% endif %}
                                             </li>
@@ -480,6 +494,9 @@
                     {% endfor %}
                 </ol>
             </div>
+        </div>
+        <div class="text-right">
+          <button type="button" class="btn" onclick="submitAnswer(this)" style="background-image: linear-gradient(to bottom,{{ worksheet.section.project.accent_color }} 0,{{ worksheet.section.project.accent_color }} 100%); color: snow" >Submit Answer</button>
         </div>
     </div>
 
@@ -698,5 +715,21 @@
                 $(this).find('.further-reading-action').hide();
             }
         );
+
+        // select answer
+        function addClassClicked(that){
+          var $element = $(that);
+          $element.closest('.answer-list').find('.answer').removeClass('clicked');
+          $element.find('.answer').addClass('clicked');
+        }
+
+        // submit answer
+        function submitAnswer(that){
+          var $element = $(that);
+          $('.answer-correct').addClass('submitted');
+          $('.answer-incorrect.clicked').addClass('submitted');
+          $('.answer-correct-tick').addClass('fa fa-check').css('color', 'green');
+          $('.answer-incorrect-tick.clicked').addClass('fa fa-times').css('color', 'red');
+        }
     </script>
 {% endblock %}
