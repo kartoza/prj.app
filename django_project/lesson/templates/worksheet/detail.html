@@ -496,9 +496,11 @@
                 </ol>
             </div>
         </div>
+      {% if questions %}
         <div class="text-right">
           <button type="button" id="submitAnswer" class="btn" onclick="submitAnswer(this)" style="background-image: linear-gradient(to bottom,{{ worksheet.section.project.accent_color }} 0,{{ worksheet.section.project.accent_color }} 100%); color: snow" >Submit Answers</button>
         </div>
+      {% endif %}
     </div>
 
     {# Further reading #}
