@@ -27,6 +27,11 @@
     <link rel="stylesheet" href="{% static 'chosen/chosen.min.css' %}">
     <script src="{% static 'chosen/chosen.jquery.min.js' %}"></script>
 
+    <!-- Cookie disclaimer -->
+    <script type="text/javascript" id="cookieinfo" src="{% static 'cookieinfo/cookieinfo.min.js' %}" data-bg="#1c2028"
+      data-fg="#FFFFFF" data-link="#22961c" data-cookie="CookieInfoScript" data-text-align="left" data-close-text="Got it!">
+    </script>
+
     {% block js_head %}{% endblock js_head %}
     {% block css_head %}{% endblock css_head %}
     {% if the_project.gitter_room %}
