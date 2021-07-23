@@ -61,7 +61,7 @@ class CourseType(models.Model):
         blank=True
     )
 
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField()
     certifying_organisation = models.ForeignKey(CertifyingOrganisation,
                                                 on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -70,7 +70,10 @@ class CourseType(models.Model):
     # noinspection PyClassicStyleClass.
     class Meta:
         ordering = ['name']
-        unique_together = ['name', 'certifying_organisation']
+        unique_together = [
+            ('name', 'certifying_organisation'),
+            ('slug', 'certifying_organisation')
+        ]
 
     def save(self, *args, **kwargs):
         if not self.pk:

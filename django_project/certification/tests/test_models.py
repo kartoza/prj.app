@@ -1,7 +1,9 @@
 # coding=utf-8
 """Test for models."""
 
+from django.db import IntegrityError
 from django.test import TestCase
+from certification.models.course_type import CourseType
 from certification.tests.model_factories import (
     CertificateF,
     AttendeeF,
@@ -265,7 +267,11 @@ class TestCourseType(TestCase):
     def setUp(self):
         """Set up before test."""
 
-        pass
+        self.certifying_org_1 = CertifyingOrganisationF.create()
+        self.certifying_org_2 = CertifyingOrganisationF.create()
+        self.course_long_name = ('The course name with a very very long '
+                            'string with more than 50 chars. '
+                            'The slug is designed to have 50 max char')
 
     def test_Course_Type_create(self):
         """Test course type model creation."""
@@ -298,6 +304,59 @@ class TestCourseType(TestCase):
         for key, val in new_model_data.items():
             self.assertEqual(model.__dict__.get(key), val)
             self.assertTrue(model.name == 'new Course Type name')
+
+    def test_CourseType_unique_together_should_not_create_same_slug_org(self):
+        """Test CourseType unique_together.
+
+        This should not create an instance with same slug and same
+        Certifying organisation
+        """
+
+        # delete all CourseType for testing purpose
+        CourseType.objects.all().delete()
+        self.assertEqual(CourseType.objects.count(), 0)
+
+        course_type_1 = CourseTypeF.create(
+            name=self.course_long_name,
+            certifying_organisation=self.certifying_org_1
+        )
+        self.assertEqual(CourseType.objects.count(), 1)
+
+        with self.assertRaises(IntegrityError):
+            CourseTypeF.create(
+                name=self.course_long_name,
+                certifying_organisation=self.certifying_org_1
+            )
+
+    def test_CourseType_unique_together_should_create_same_slug_diff_org(self):
+        """Test CourseType unique_together.
+
+        This should create an instance with same slug with different
+        Certifying organisation
+        """
+
+        # delete all CourseType for testing purpose
+        CourseType.objects.all().delete()
+        self.assertEqual(CourseType.objects.count(), 0)
+
+        course_type_1 = CourseTypeF.create(
+            name=self.course_long_name,
+            certifying_organisation=self.certifying_org_1
+        )
+        self.assertEqual(CourseType.objects.count(), 1)
+
+        course_type_2 = CourseTypeF.create(
+            name=self.course_long_name,
+            certifying_organisation=self.certifying_org_2
+        )
+
+        # The slug will be same for max 50 chars course name, even though
+        # we apply mechanism to avoid duplicate name in .save() method
+        self.assertEqual(course_type_2.slug, course_type_1.slug)
+        self.assertEqual(
+            CourseType.objects.filter(slug=course_type_1.slug).count(),
+            2
+        )
 
 
 class TestCourseConvener(TestCase):
