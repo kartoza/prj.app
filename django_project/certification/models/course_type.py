@@ -61,7 +61,7 @@ class CourseType(models.Model):
         blank=True
     )
 
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField()
     certifying_organisation = models.ForeignKey(CertifyingOrganisation,
                                                 on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)

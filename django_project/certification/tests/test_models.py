@@ -299,6 +299,18 @@ class TestCourseType(TestCase):
             self.assertEqual(model.__dict__.get(key), val)
             self.assertTrue(model.name == 'new Course Type name')
 
+    def test_create_CourseType_non_unique_slug(self):
+        """Test create CourseType instances with the same name.
+
+        The duplicate slug must be allowed.
+        """
+        long_name = 'Very long long course type name, more than 50 characters'
+        course_type_1 = CourseTypeF.create(name=long_name)
+        self.assertEqual(len(course_type_1.slug), 50)
+        course_type_2 = CourseTypeF.create(name=long_name)
+        self.assertEqual(course_type_1.slug, course_type_2.slug)
+        self.assertNotEqual(course_type_1.pk, course_type_2.pk)
+
 
 class TestCourseConvener(TestCase):
     """Test course convener model."""

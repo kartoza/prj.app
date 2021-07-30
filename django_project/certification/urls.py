@@ -139,16 +139,16 @@ urlpatterns = [
         name='coursetype-create'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/coursetype/'
-              '(?P<slug>[\w-]+)/update/$',
+              '(?P<pk>[\w-]+)/update/$',
         view=CourseTypeUpdateView.as_view(),
         name='coursetype-update'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/coursetype/'
-              '(?P<slug>[\w-]+)/delete/$',
+              '(?P<pk>[\w-]+)/delete/$',
         view=CourseTypeDeleteView.as_view(),
         name='coursetype-delete'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
-              '(?P<organisation_slug>[\w-]+)/coursetype/(?P<slug>[\w-]+)/$',
+              '(?P<organisation_slug>[\w-]+)/coursetype/(?P<pk>[\w-]+)/$',
         view=CourseTypeDetailView.as_view(),
         name='coursetype-detail'),
 
