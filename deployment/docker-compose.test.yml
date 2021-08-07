@@ -1,0 +1,48 @@
+version: '3'
+volumes:
+  postgres-data:
+  db-backups:
+  static-data:
+  media-data:
+  reports-data:
+  nginx-conf:
+services:
+  db:
+    image: kartoza/postgis:9.6-2.4
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - db-backups:/backups
+    environment:
+      - USERNAME=${DATABASE_USERNAME}
+      - PASS=${DATABASE_PASSWORD}
+      - ALLOW_IP_RANGE=0.0.0.0/0
+    restart: unless-stopped
+
+  uwsgi: &uwsgi-common
+    image: kartoza/projecta-uwsgi
+    environment:
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
+      - VIRTUAL_PORT=${VIRTUAL_PORT}
+    volumes:
+      - static-data:/home/web/static:rw
+      - media-data:/home/web/media:rw
+      - reports-data:/home/web/reports
+    links:
+      - db:db
+    restart: unless-stopped
+    user: root
+
+  devweb:
+    <<: *uwsgi-common
+    volumes:
+      - ../django_project:/home/web/django_project
+      - ../.git:/home/web/.git
+      - ./logs:/var/log
+      - ../.flake8:/home/web/django_project/.flake8
+      - ../codecov.yml:/home/web/django_project/codecov.yml
+      - ./docker/REQUIREMENTS-dev.txt:/home/web/django_project/REQUIREMENTS-dev.txt

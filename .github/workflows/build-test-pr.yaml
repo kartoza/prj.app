@@ -1,0 +1,43 @@
+name: pr-test
+on:
+  pull_request:
+    branches:
+      - develop
+jobs:
+  docker-test:
+    runs-on: ubuntu-20.04
+    env:
+      DATABASE_NAME: docker
+      DATABASE_USERNAME: docker
+      DATABASE_PASSWORD: gis
+      DATABASE_HOST: db
+      DJANGO_SETTINGS_MODULE: core.settings.test_docker
+      VIRTUAL_HOST: projecta.kartoza.com
+      VIRTUAL_PORT: 8080
+      DUMPPREFIX: PG_projecta
+      PGUSER: docker
+      PGPASSWORD: gis
+      PGPORT: 5432
+      PGHOST: db
+      PGDATABASE: docker
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build containers
+        run: docker-compose --file deployment/docker-compose.test.yml build
+      - name: Run db container
+        run: docker-compose --file deployment/docker-compose.test.yml up -d db
+      - name: Run devweb container
+        run: docker-compose --file deployment/docker-compose.test.yml up --no-deps -d devweb
+      - name: Install additional requirements
+        run: docker-compose -f deployment/docker-compose.test.yml exec -T devweb bash -c 'pip install -r REQUIREMENTS-dev.txt'
+      - name: Run coverage test
+        run: docker-compose -f deployment/docker-compose.test.yml exec -T devweb bash -c 'coverage run manage.py test --settings=core.settings.test_docker'
+      - name: Run coverage report
+        run: docker-compose -f deployment/docker-compose.test.yml exec -T devweb bash -c 'coverage xml'
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Run flake8
+        run: docker-compose -f deployment/docker-compose.test.yml exec -T devweb bash -c 'flake8 .'
