@@ -39,10 +39,12 @@ services:
 
   devweb:
     <<: *uwsgi-common
+    build:
+      context: docker
+      dockerfile: Dockerfile-dev
     volumes:
       - ../django_project:/home/web/django_project
       - ../.git:/home/web/.git
       - ./logs:/var/log
       - ../.flake8:/home/web/django_project/.flake8
       - ../codecov.yml:/home/web/django_project/codecov.yml
-      - ./docker/REQUIREMENTS-dev.txt:/home/web/django_project/REQUIREMENTS-dev.txt

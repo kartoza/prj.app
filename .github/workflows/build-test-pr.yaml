@@ -29,8 +29,6 @@ jobs:
         run: docker-compose --file deployment/docker-compose.test.yml up -d db
       - name: Run devweb container
         run: docker-compose --file deployment/docker-compose.test.yml up --no-deps -d devweb
-      - name: Install additional requirements
-        run: docker-compose -f deployment/docker-compose.test.yml exec -T devweb bash -c 'pip install -r REQUIREMENTS-dev.txt'
       - name: Run coverage test
         run: docker-compose -f deployment/docker-compose.test.yml exec -T devweb bash -c 'coverage run manage.py test --settings=core.settings.test_docker'
       - name: Run coverage report
