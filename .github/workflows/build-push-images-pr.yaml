@@ -90,12 +90,8 @@ jobs:
           docker cp projecta_devweb_1:/home/web/django_project/coverage.xml ../coverage.xml
 
       - name: Upload coverage to codecov
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        if: env.CODECOV_TOKEN != ''
         uses: codecov/codecov-action@v2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
 
   docker-builder:
