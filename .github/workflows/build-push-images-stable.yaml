@@ -27,6 +27,9 @@ jobs:
           context: .
           file: deployment/docker/Dockerfile
           push: true
+          target: prod
           tags: ${{ secrets.DOCKERHUB_REPO }}/projecta-uwsgi:stable
+          cache-from: type=gha,scope=prod
+          cache-to: type=gha,scope=prod
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

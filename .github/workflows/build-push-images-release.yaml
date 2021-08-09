@@ -37,7 +37,10 @@ jobs:
           context: .
           file: deployment/docker/Dockerfile
           push: true
+          target: prod
           tags: ${{ secrets.DOCKERHUB_REPO }}/projecta-uwsgi:${{ github.event.inputs.tags }}
+          cache-from: type=gha,scope=prod
+          cache-to: type=gha,scope=prod
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
 
@@ -59,10 +62,13 @@ jobs:
 
       - name: Docker meta
         id: docker_meta
-        uses: crazy-max/ghaction-docker-meta@v1
+        uses: docker/metadata-action@v3
         with:
           images: ${{ secrets.DOCKERHUB_REPO }}/projecta-uwsgi
-          tag-match: \d{1,3}.\d{1,3}.\d{1,3}
+          tags: |
+            type=semver,pattern=\d.\d.\d
+            type=ref,event=branch
+            type=ref,event=pr
 
       - name: Build and push
         id: docker_build
@@ -71,6 +77,11 @@ jobs:
           context: .
           file: deployment/docker/Dockerfile
           push: true
+          target: prod
           tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          cache-from: type=gha,scope=prod
+          cache-to: type=gha,scope=prod
+
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

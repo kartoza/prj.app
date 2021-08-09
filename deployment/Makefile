@@ -50,6 +50,13 @@ db:
 	@echo "------------------------------------------------------------------"
 	@docker-compose up -d db
 
+wait-db:
+	@docker-compose exec -T db su - postgres -c "until pg_isready; do sleep 5; done"
+
+create-test-db:
+	@docker-compose exec -T db su - postgres -c "psql -c 'create database test_db;'"
+	@docker-compose exec -T db su - postgres -c "psql -d test_db -c 'create extension postgis;'"
+
 nginx:
 	@echo
 	@echo "------------------------------------------------------------------"
