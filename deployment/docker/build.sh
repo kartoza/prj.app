@@ -1,3 +1,4 @@
 #!/bin/sh
-cd ../../
-docker build -t kartoza/projecta-uwsgi -f deployment/docker/Dockerfile .
+pushd ../../
+docker build -t kartoza/projecta-uwsgi -f deployment/docker/Dockerfile --target prod .
+popd

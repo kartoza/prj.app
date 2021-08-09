@@ -38,6 +38,7 @@ services:
     build:
       context: ${PWD}/../
       dockerfile: deployment/docker/Dockerfile
+      target: prod
     volumes:
       - ../django_project:/home/web/django_project
       - ./logs:/var/log
@@ -52,8 +53,9 @@ services:
   devweb:
     image: kartoza/project-uwsgi:dev-latest
     build:
-      context: docker
-      dockerfile: Dockerfile-dev
+      context: ${PWD}/../
+      dockerfile: deployment/docker/Dockerfile
+      target: dev
     volumes:
       - ../django_project:/home/web/django_project
       - ./logs:/var/log
