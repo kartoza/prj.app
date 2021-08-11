@@ -2,3 +2,5 @@ coverage:
   range: 50..75
   round: down
   precision: 2
+fixes:
+  - "/home/web/django_project/::django_project/"

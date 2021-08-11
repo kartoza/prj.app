@@ -1,0 +1,9 @@
+version: '3'
+services:
+  uwsgi: &uwsgi-common
+    image: ${APP_IMAGE}:prod
+
+  devweb:
+    image: ${APP_IMAGE}:dev
+    environment:
+      DJANGO_SETTINGS_MODULE: core.settings.test_docker

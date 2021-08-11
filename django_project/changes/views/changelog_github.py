@@ -126,7 +126,7 @@ class FetchGithubPRs(APIView):
 
         try:
             results.extend(response.json()['items'])
-        except:
+        except Exception:
             return Response([])
 
         header_link = response.links
@@ -139,7 +139,7 @@ class FetchGithubPRs(APIView):
                         'Authorization': 'token {}'.format(GIT_TOKEN)})
                 try:
                     results.extend(response.json()['items'])
-                except:
+                except Exception:
                     pass
 
         create_entry_from_github_pr(version, category, results, user)
@@ -185,7 +185,7 @@ class FetchRepoLabels(LoginRequiredMixin, APIView):
                         'Authorization': 'token {}'.format(GIT_TOKEN)})
                 try:
                     results.extend(response.json())
-                except:
+                except Exception:
                     pass
         return Response(results)
 
@@ -209,7 +209,7 @@ class FetchCategory(LoginRequiredMixin, APIView):
             categories = Category.objects.filter(project=project)
             serializer = CategorySerializer(categories, many=True)
             return Response(serializer.data)
-        except:
+        except Exception:
             return Response([])
 
 

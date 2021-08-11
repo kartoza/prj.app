@@ -67,6 +67,7 @@ class Specification(TranslationMixin):
 
     # noinspection PyClassicStyleClass.
     class Meta:
+
         """Meta class for specification."""
 
         app_label = 'lesson'
