@@ -1,0 +1,3 @@
+__MACOSX
+.git
+__pycache__
