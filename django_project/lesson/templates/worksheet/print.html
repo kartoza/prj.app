@@ -168,7 +168,9 @@ img.more-about-image {
         <img src="{{ worksheet.summary_image.file }}"
              id="summaryImage">
     {% endif %}
+
     {% if worksheet.exercise_goal or worksheet.exercise_task %}
+      {% if worksheet.page_break_before_exercise %}<div class="page-break"></div>{% endif %}
         <h3>{% trans 'You try:' %}</h3>
     {% endif %}
     {% if worksheet.exercise_goal %}
@@ -179,7 +181,9 @@ img.more-about-image {
     {% if worksheet.exercise_task %}
         <p>{{ worksheet.exercise_task | base_markdown }}</p>
     {% endif %}
+
     {% if requirements.count > 0 %}
+      {% if worksheet.page_break_before_requirement_table %}<div class="page-break"></div>{% endif %}
         <aside>
             <table>
                 <tbody>
@@ -226,14 +230,18 @@ img.more-about-image {
             </table>
         </aside>
     {% endif %}
+
     {% if worksheet.exercise_image %}
+      {% if worksheet.page_break_before_exercise_image %}<div class="page-break"></div>{% endif %}
         <img id="{{ worksheet.exercise_image }}"
              class="exercise-image"
              src="{{ worksheet.exercise_image.file }}"
              alt=""/>
     {% endif %}
 </section>
+
 {% if worksheet.more_about_text or worksheet.more_about_image %}
+  {% if worksheet.page_break_before_more_about %}<div class="page-break"></div>{% endif %}
     <section>
         <div class="icon-project-color icon-section">
             <img class="icon-section" src="{{ "img/info.png" | local_static_filepath }}">
@@ -250,7 +258,9 @@ img.more-about-image {
         {% endif %}
     </section>
 {% endif %}
+
 {% if questions %}
+  {% if worksheet.page_break_before_question%}<div class="page-break"></div>{% endif %}
     <section>
         <div class="icon-project-color icon-section">
             <img class="icon-section" src="{{ "img/check.png" | local_static_filepath }}">
@@ -278,6 +288,7 @@ img.more-about-image {
 {% endif %}
 
 {% if worksheet.youtube_link %}
+  {% if worksheet.page_break_before_youtube_link %}<div class="page-break"></div>{% endif %}
     <section>
         <div class="icon-project-color icon-section">
             <img class="icon-section" src="{{ "img/youtube.png" | local_static_filepath }}">
@@ -293,6 +304,7 @@ img.more-about-image {
 {% endif %}
 
 {% if further_reading %}
+  {% if worksheet.page_break_before_further_reading %}<div class="page-break"></div>{% endif %}
     <section>
         <div class="icon-project-color icon-section">
             <img class="icon-section" src="{{ "img/book.png" | local_static_filepath }}">

@@ -65,7 +65,14 @@ class TestSection(TestCase):
             'exercise_task': u'new task',
             'more_about_text': u'new more text',
             'more_about_image': u'new more image',
-            'published': True
+            'published': True,
+            'page_break_before_exercise': True,
+            'page_break_before_requirement_table': True,
+            'page_break_before_exercise_image': True,
+            'page_break_before_more_about': True,
+            'page_break_before_question': True,
+            'page_break_before_youtube_link': True,
+            'page_break_before_further_reading': True
         }
         model.__dict__.update(new_model_data)
         model.save()
