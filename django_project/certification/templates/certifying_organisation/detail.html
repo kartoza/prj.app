@@ -473,7 +473,7 @@
     {% for coursetype in coursetypes %}
         <tr style="border-bottom: 1px solid #e9e9e9;">
             <td class="list">
-                <a href="{% url 'coursetype-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=coursetype.slug %}">
+                <a href="{% url 'coursetype-detail' project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug pk=coursetype.pk %}">
                     {{ coursetype.name }}</a>
             </td>
 
@@ -481,12 +481,12 @@
                 <td width="20%">
                     <div class="btn-group pull-right button-action">
                         <a class="btn btn-default btn-xs btn-delete tooltip-toggle"
-                           href='{% url "coursetype-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=coursetype.slug %}'
+                           href='{% url "coursetype-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug pk=coursetype.pk %}'
                            data-title="Delete {{ coursetype.name }}">
                             <span class="glyphicon glyphicon-minus"></span>
                         </a>
                         <a class="btn btn-default btn-xs tooltip-toggle"
-                           href='{% url "coursetype-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=coursetype.slug %}'
+                           href='{% url "coursetype-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug pk=coursetype.pk %}'
                            data-title="Edit {{ coursetype.name }}">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>

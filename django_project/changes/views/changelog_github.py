@@ -5,9 +5,12 @@ import requests
 import markdown
 import warnings
 
+from urllib.parse import urljoin
+
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from braces.views import LoginRequiredMixin
 from rest_framework import serializers
@@ -41,7 +44,9 @@ def create_entry_from_github_pr(version, category, data, user):
             headers={'Authorization': 'token {}'.format(GIT_TOKEN)})
 
         name = ''
+        developer_url = ''
         if response.status_code == 200:
+            developer_url = response.json()['html_url']
             name = response.json()['name']
             if not name:
                 name = response.json()['login']
@@ -54,7 +59,7 @@ def create_entry_from_github_pr(version, category, data, user):
                 category=category,
                 title=item['title'],
                 description=content,
-                developer_url=item['user']['url'],
+                developer_url=developer_url,
                 developed_by=name,
                 funded_by=funded_by,
                 funder_url=funded_by_url,
@@ -121,7 +126,7 @@ class FetchGithubPRs(APIView):
 
         try:
             results.extend(response.json()['items'])
-        except:
+        except Exception:
             return Response([])
 
         header_link = response.links
@@ -134,7 +139,7 @@ class FetchGithubPRs(APIView):
                         'Authorization': 'token {}'.format(GIT_TOKEN)})
                 try:
                     results.extend(response.json()['items'])
-                except:
+                except Exception:
                     pass
 
         create_entry_from_github_pr(version, category, results, user)
@@ -180,7 +185,7 @@ class FetchRepoLabels(LoginRequiredMixin, APIView):
                         'Authorization': 'token {}'.format(GIT_TOKEN)})
                 try:
                     results.extend(response.json())
-                except:
+                except Exception:
                     pass
         return Response(results)
 
@@ -204,7 +209,7 @@ class FetchCategory(LoginRequiredMixin, APIView):
             categories = Category.objects.filter(project=project)
             serializer = CategorySerializer(categories, many=True)
             return Response(serializer.data)
-        except:
+        except Exception:
             return Response([])
 
 
@@ -251,6 +256,18 @@ def download_all_referenced_images(request, **kwargs):
                 if len(images) > 0:
                     for i, image in enumerate(images):
                         filename = image.rsplit('/', 1)[-1]
+                        # Take the first image in the pull request
+                        # and set it as default for the entry and remove
+                        # it from the body
+                        if i == 0:
+                            response = requests.get(image)
+                            if response.status_code == 200:
+                                entry.image_file.save(
+                                    filename,
+                                    ContentFile(response.content), save=True)
+                                rgx = f'<img.*?{image}.*?/>'
+                                html = re.sub(rgx, '', html, 1)
+                                continue
                         folder_path = os.path.join(
                             settings.MEDIA_ROOT,
                             'images/entries')
@@ -258,15 +275,18 @@ def download_all_referenced_images(request, **kwargs):
                             folder_path, '{}'.format(filename))
                         found = os.path.exists(file_path)
                         if found:
+                            # file_path
+                            # e.g /home/web/media/images/entries/img.png
                             file_path_original = file_path
                             n = 0
                             while found:
                                 n += 1
-                                img_name = file_path_original.rsplit('.', 1)[0]
-                                extension = \
-                                    file_path_original.rsplit('.', 1)[-1]
-                                file_path = \
-                                    img_name + '-' + str(n) + '.' + extension
+                                img_name, ext = file_path_original.rsplit(
+                                    '.', 1)
+                                # create a unique filename:
+                                # add sufix -n in filename prior to extension
+                                # e.g /home/web/media/images/entries/img-1.png
+                                file_path = f'{img_name}-{n}.{ext}'
                                 found = os.path.exists(file_path)
                         with open(file_path, 'wb+') as handle:
                             response = requests.get(image, stream=True)
@@ -278,17 +298,17 @@ def download_all_referenced_images(request, **kwargs):
                                 if not block:
                                     break
                                 handle.write(block)
-                            img_url = file_path.replace('/home/web', '')
+
+                            # get image name from relative path
+                            # e.g image_name = images/entries/img-1.png
+                            image_name = os.path.relpath(
+                                file_path,
+                                settings.MEDIA_ROOT)
+                            # reconstruct img_url
+                            # path e.g img_url: /media/images/entries/img-1.png
+                            img_url = urljoin(settings.MEDIA_URL, image_name)
                             html = html.replace(image, img_url)
                             html = re.sub(r"alt=\".*?\"", "", html)
-                        if i == 0:
-                            # Take the first image set in the pull request
-                            # and set it as default for the entry and remove
-                            # it from the body
-                            entry.image_file = img_url.replace('/media', '')
-                            html = html.replace(img_url, '')
-                            # remove image with empty source
-                            html = html.replace('<img  src="" />', '')
 
                 entry.description = html
                 entry.save()

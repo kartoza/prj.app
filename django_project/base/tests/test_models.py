@@ -53,6 +53,11 @@ class TestProjectCRUD(TestCase):
             'project_url': u'http://foo.org',
             'slug': u'new-project-slug',
             'gitter_room': u'test/new',
+            'is_lessons': True,
+            'is_sustaining_members': True,
+            'is_teams': True,
+            'is_changelogs': True,
+            'is_certification': True
         }
         model.__dict__.update(new_model_data)
         model.save()

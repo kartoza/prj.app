@@ -50,6 +50,13 @@ db:
 	@echo "------------------------------------------------------------------"
 	@docker-compose up -d db
 
+wait-db:
+	@docker-compose exec -T db su - postgres -c "until pg_isready; do sleep 5; done"
+
+create-test-db:
+	@docker-compose exec -T db su - postgres -c "psql -c 'create database test_db;'"
+	@docker-compose exec -T db su - postgres -c "psql -d test_db -c 'create extension postgis;'"
+
 nginx:
 	@echo
 	@echo "------------------------------------------------------------------"
@@ -318,7 +325,7 @@ devweb-runserver: devweb
 	@echo "------------------------------------------------------------------"
 	@docker-compose exec devweb python manage.py runserver 0.0.0.0:8080
 
-test: devweb flake8 coverage
+test-local: devweb flake8 coverage
 
 build-devweb: db
 	@echo
@@ -343,9 +350,9 @@ flake8:
 
 coverage:
 	@echo "-----------"
-	@echo "coverage test"
+	@echo "coverage local test"
 	@echo "-----------"
-	@docker-compose exec devweb coverage run manage.py test
+	@docker-compose exec devweb coverage run manage.py test --settings=core.settings.test_docker
 	@docker-compose exec devweb coverage report
 
 update-translation-strings:
@@ -399,7 +406,7 @@ help:
 	@echo "* **deploy** ."
 	@echo "* **devweb** - create an ssh container derived from uwsgi that can be used as a remote interpreter for PyCharm. See [development notes](README-dev.md)."
 	@echo "* **devweb-runserver** - force run ssh container, only if not use a remote interpreter."
-	@echo "* **test** - run flake8 and coverage test in development environment."
+	@echo "* **test-local** - run flake8 and coverage test on local development environment."
 	@echo "* **enable-machine** - "
 	@echo "* **kill** - kills all running containers. Does not remove them."
 	@echo "* **logs** - view the logs of all running containers. Note that you can also view individual logs in the deployment/logs directory."

@@ -31,12 +31,19 @@
                     <a class="btn btn-default btn-mini tooltip-toggle"
                         href='{% url "section-list" project_slug=worksheet.section.project.slug %}#{{ worksheet.section.slug }}'
                         data-title="{% trans 'Back' %}">
-                        <span class="glyphicon glyphicon-arrow-left"></span>
+                        <span class="glyphicon glyphicon-arrow-left gi-big"></span>
                     </a>
+                    {% if worksheet.external_data %}
+                    <a id="download-zip-button" class="btn btn-default btn-mini tooltip-toggle" target="_blank"
+                       href='{% url "worksheet-zip" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ module_number }}'
+                       data-title="Download {{ worksheet.module }} module and its sample data as ZIP">
+                        <img src="{% static "img/zip_download_icon_new.png" %}" width="30" class="monotone" />
+                    </a>
+                    {% endif %}
                     <a id="download-pdf-button" class="btn btn-default btn-mini tooltip-toggle" target="_blank"
                        href='{% url "worksheet-print" project_slug=worksheet.section.project.slug section_slug=worksheet.section.slug pk=worksheet.pk %}?q={{ module_number }}'
                        data-title="{% blocktrans with module=worksheet.module %}Download {{ module }} as PDF{% endblocktrans %}">
-                        <span class="glyphicon glyphicon-download"></span>
+                        <img src="{% static "img/pdf_download_icon_new.png" %}" width="30" class="monotone" />
                     </a>
                     {% if user_can_edit %}
                         <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
@@ -53,40 +60,42 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4">
-            {% if worksheet.section.project.image_file %}
-                <img src="{{ worksheet.section.project.image_file.url }}"
-                     style="
-                        display: block;
-                        height:auto;
-                        width:auto;
-                        max-height:100px;
-                        max-width:100px;">
-            {% elif not worksheet.published %}
-                <div class="text-center" style="
-                        display: block;
-                        height:100px;
-                        width:100px;
-                        color: white;
-                        background-color: grey">
-                  Your Project Image will be displayed here.
-                </div>
-            {% endif %}
-        </div>
-        <div class="col-lg-8" style="text-align:right;">
-            <h2>
-                <strong>
-                    {% trans 'Section' %} : {{ section_number }}. {{ worksheet.section.name }}
-                </strong>
-                {{ worksheet.section|is_translation_up_to_date }}
-            </h2>
-            <h3 style="margin-top:-10px;margin-bottom:20px;">
-                <i>
-                    {% trans 'Module' %} : {{ module_number }}. {{ worksheet.module }}
-                </i>
-                {{ worksheet|is_translation_up_to_date }}
-              {% if not worksheet.published %}<small>[draft]</small>{% endif %}
-            </h3>
+        <div class="col-lg-12 ">
+            <div style="float: left">
+                {% if worksheet.section.project.image_file %}
+                    <img src="{{ worksheet.section.project.image_file.url }}"
+                         style="
+                            display: block;
+                            height:auto;
+                            width:auto;
+                            max-height:100px;
+                            max-width:100px;">
+                {% elif not worksheet.published %}
+                    <div class="text-center" style="
+                            display: block;
+                            height:100px;
+                            width:100px;
+                            color: white;
+                            background-color: grey">
+                      Your Project Image will be displayed here.
+                    </div>
+                {% endif %}
+            </div>
+            <div class="text-center">
+                <h2>
+                    <strong>
+                        {% trans 'Section' %} : {{ section_number }}. {{ worksheet.section.name }}
+                    </strong>
+                    {{ worksheet.section|is_translation_up_to_date }}
+                </h2>
+                <h3 style="margin-top:-10px;margin-bottom:20px;">
+                    <i>
+                        {% trans 'Module' %} : {{ module_number }}. {{ worksheet.module }}
+                    </i>
+                    {{ worksheet|is_translation_up_to_date }}
+                  {% if not worksheet.published %}<small>[draft]</small>{% endif %}
+                </h3>
+            </div>
         </div>
     </div>
 
@@ -351,7 +360,8 @@
     <div class="container">
         <div class="row details-worksheet question-answer" style="margin-top:10px;">
             {% if questions %}
-                <div class="col-lg-1">
+                <div class="col-lg-1" data-toggle="tooltip-question" data-placement="top"
+                           title="Click on the answers to select it and click on the 'Submit Answers' button to reveal the correct answers">
                   <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
                       <img src="{% static "img/check.png" %}" style="height:50px;width:50px">
                   </div>
@@ -366,7 +376,7 @@
             {% elif not worksheet.published %}
                 <div class="col-lg-1">
                   <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
-                      <img src="{% static "img/check.png" %}" style="height:50px;width:50px">
+                      <img src="{% static "img/check.png" %}" style="height:50px;width:50px" title="tetetettette">
                   </div>
                 </div>
                 <div class="col-lg-8">
@@ -431,17 +441,21 @@
                                         </div>
                                 </div>
                                 {% endif %}
-                                <ol type="a">
+                                <ol type="a" class="answer-list">
                                     {% for answer in answers %}
                                      <div class="row col-lg-12">
-                                        <li style="margin-bottom: 10px">
+                                        <li style="margin-bottom: 10px; font-size: 0.9em; font-style: italic;">
                                             {% if user_can_edit %}
                                                 {# We insert a tick for the correct answer and if the user is allowed and we display explanations. #}
-                                                <div class="col-lg-10">
+                                                <div class="col-lg-10 answer-options" onclick="addClassClicked(this)">
                                                     {% if answer.is_correct %}
                                                         <span class="question-answer-action" style="display:none;">&#10004;</span>
-                                                    {%  endif %}
-                                                    {{ answer.answer }}{{ answer|is_translation_up_to_date }}
+                                                        <span class="answer answer-correct">{{ answer.answer }}{{ answer|is_translation_up_to_date }}</span>
+                                                        <span class="answer-correct-tick"></span>
+                                                    {%  else %}
+                                                      <span class="answer answer-incorrect">{{ answer.answer }}{{ answer|is_translation_up_to_date }}</span>
+                                                      <span class="answer answer-incorrect-tick"></span>
+                                                    {% endif %}
                                                     {% if answer.answer_explanation %}
                                                         <span class="question-answer-action" style="display:none;">: <em>{{ answer.answer_explanation | base_markdown }}</em></span>
                                                     {% endif %}
@@ -460,7 +474,17 @@
                                                             </a>
                                                         </div>
                                                 </div>
-                                                {% else %}
+                                            {% elif user.is_authenticated %}
+                                                <div class="col-lg-10 answer-options" onclick="addClassClicked(this)">
+                                                    {% if answer.is_correct %}
+                                                        <span class="answer answer-correct">{{ answer.answer }}</span>
+                                                        <span class="answer-correct-tick"></span>
+                                                    {%  else %}
+                                                      <span class="answer answer-incorrect">{{ answer.answer }}</span>
+                                                      <span class="answer answer-incorrect-tick"></span>
+                                                    {% endif %}
+                                                </div>
+                                            {% else %}
                                                     {{ answer.answer }}
                                                 {% endif %}
                                             </li>
@@ -474,6 +498,11 @@
                 </ol>
             </div>
         </div>
+      {% if questions %}
+        <div class="text-right">
+          <button type="button" id="submitAnswer" class="btn" onclick="submitAnswer(this)" style="background-image: linear-gradient(to bottom,{{ worksheet.section.project.accent_color }} 0,{{ worksheet.section.project.accent_color }} 100%); color: snow" >Submit Answers</button>
+        </div>
+      {% endif %}
     </div>
 
     {# Further reading #}
@@ -691,5 +720,29 @@
                 $(this).find('.further-reading-action').hide();
             }
         );
+
+        // select answer
+        function addClassClicked(that){
+          var $element = $(that);
+          if ($('#submitAnswer').hasClass('submitted')) return false;
+          $element.closest('.answer-list').find('.answer').removeClass('clicked');
+          $element.find('.answer').addClass('clicked');
+        }
+
+        // submit answer
+        function submitAnswer(that){
+          var $element = $(that);
+          $('.answer-correct').addClass('submitted');
+          $('.answer-incorrect.clicked').addClass('submitted');
+          $('.answer-correct-tick').addClass('fa fa-check').css('color', 'green');
+          $('.answer-incorrect-tick.clicked').addClass('fa fa-times').css('color', 'red');
+          $('.answer').css('cursor','not-allowed');
+          $('#submitAnswer').addClass('submitted');
+        }
+
+        // tooltip
+        $(document).ready(function(){
+          $('[data-toggle="tooltip-question"]').tooltip();
+        });
     </script>
 {% endblock %}

@@ -151,6 +151,54 @@ I made a general overview screencast describing this process here:
 Tim write stuff here....
 
 
+## Setup Github OAuth
+To configure OAuth application on Github, go to [https://github.com/settings/developers](https://github.com/settings/developers) and click on your project or create a new project at [https://github.com/settings/applications/new](https://github.com/settings/applications/new)
+
+It is mandatory to fill out Application Name, Homepage URL, and Authorization callback URL:
+- **Application Name**: changelog.kartoza.com
+- **Homepage URL**: https://changelog.kartoza.com
+- **Authorization callback URL**: https://changelog.kartoza.com/accounts/github/login/callback/ 
+
+  ![image (1)](https://user-images.githubusercontent.com/40058076/103614680-2a4dd580-4f64-11eb-8dca-0466f17a5849.png)
+
+
+
+Click the `Update application` button and generate Client secret by click on `Generate a new client secret` button.
+
+![image (3)](https://user-images.githubusercontent.com/40058076/103614687-2d48c600-4f64-11eb-85b7-f6145db9f139.png)
+
+
+
+Now you have `Client ID` and `Client Secret`
+
+![image (2)](https://user-images.githubusercontent.com/40058076/103614683-2b7f0280-4f64-11eb-9010-ddbc378bafe8.png)
+
+
+
+Go to django admin site: Home > Sites > Sites, and click on `Add Site` button:
+- **Domain name**: changelog.kartoza.com
+- **Display name**: changelog.kartoza.com
+
+  ![doc_001](https://user-images.githubusercontent.com/40058076/103616775-04c2cb00-4f68-11eb-9fd3-0eef6569f92c.png)
+
+
+
+Go to django admin site: Home > Social Accounts > Social applications and `Add social application` button:
+- **Provider**: Github
+- **Name**: https://changelog.kartoza.com
+- **Client id**: your `Client ID`
+- **Secret key**: your `Client secret`
+- **Choosen sites**: changelog.kartoza.com
+
+  ![doc_002](https://user-images.githubusercontent.com/40058076/103617160-b530cf00-4f68-11eb-9d97-0dfbcf4e6536.png)
+
+
+
+Go to your website, login with Github and you'll be redirected to the Github authorize page.
+
+![image (4)](https://user-images.githubusercontent.com/40058076/103614651-17d39c00-4f64-11eb-97b7-6181133e4c86.png)
+
+
 ## Developer FAQ
 
 **Q**: I get ``ImportError: Could not import settings core.settings.dev_docker``

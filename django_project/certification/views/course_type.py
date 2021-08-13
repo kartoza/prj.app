@@ -301,16 +301,15 @@ class CourseTypeDetailView(
         :rtype: QuerySet
         :raises: Http404
         """
-
         if queryset is None:
             queryset = self.get_queryset()
-            slug = self.kwargs.get('slug', None)
+            pk = self.kwargs.get('pk', None)
             organisation_slug = self.kwargs.get('organisation_slug', None)
-            if slug and organisation_slug:
+            if pk and organisation_slug:
                 certifying_organisation = \
                     CertifyingOrganisation.objects.get(slug=organisation_slug)
                 obj = queryset.get(
-                    certifying_organisation=certifying_organisation, slug=slug)
+                    certifying_organisation=certifying_organisation, pk=pk)
                 return obj
             else:
                 raise Http404('Sorry! We could not find your course type!')

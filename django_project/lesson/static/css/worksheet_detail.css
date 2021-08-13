@@ -19,3 +19,41 @@ Inspired from the "details" class in organisation_detail.css
     margin: 0 0 10px;
     font-size: 0.75em;
 }
+
+.btn-mini {
+    height: 3em !important;
+}
+
+.gi-big {
+    font-size: 1.5em !important;
+}
+
+.monotone {
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+}
+
+/*
+Answered question
+*/
+.answer{
+    cursor: pointer;
+}
+.answer.clicked{
+    background: lightslategray;
+    border-radius: 10px;
+    padding: 5px;
+}
+.answer.answer-incorrect-tick{
+    background: none;
+}
+.answer-correct.submitted{
+    background: #c0d9ac;
+    border-radius: 10px;
+    padding: 5px;
+}
+.answer-incorrect.clicked.submitted{
+    background: #f8a89d;
+    border-radius: 10px;
+    padding: 5px;
+}

@@ -8,8 +8,11 @@ def parse_funded_by(content: str) -> tuple:
 
     It returns the content but without the funder in it if was found.
     """
-    token = 'funded by'
-    funded_regex = r'^{}'.format(token)
+    token = (
+        'funded by', 'sponsored by', 'this is funded by',
+        'this is sponsored by',
+    )
+    funded_regex = r'^({})([\s:]*)'.format('|'.join(token))
     url_regex = r'(https?://\S+)'
 
     new_content = []
@@ -41,6 +44,7 @@ def parse_funded_by(content: str) -> tuple:
                 new_content.append(line)
 
         content = '\n'.join(new_content)
+        content = content.strip()
         return content, funded_by, funded_by_url
 
     except Exception:

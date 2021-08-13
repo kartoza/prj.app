@@ -8,8 +8,10 @@
 {% block js_head %}
     <script>
     var worksheets_download_url = '{% url "download-multiple-worksheets" project_slug=project.slug %}'
+    var is_url_exist_url = '{% url "is_url_exist" project_slug=project.slug %}'
     </script>
     <script src="{% static 'js/download_multiple_files.js' %}"></script>
+    <script src="{% static 'js/invalid_furtherreading.js' %}"></script>
 {% endblock js_head %}
 
 {% block css_head %}
@@ -32,6 +34,13 @@
                        onclick="downloadCheckedFiles()"
                        data-title="Download Checked Files as Zip" style="display: none">
                         <span>Download as Zip</span>
+                    </a>
+                    {% if user_can_edit %}
+                    <a class="btn btn-default btn-mini tooltip-toggle" data-toggle="modal" data-target="#invalidFurtherReadingModal"
+                       onclick="showInvalidLink('{{ project.slug }}')"
+                       data-title="Check Invalid Link" id="invalidFurtherReading">
+                        <span class="fa fa-link"></span>
+                    {% endif %}
                     </a>
                     <a class="btn btn-default btn-mini tooltip-toggle" id="toggle-checklist-btn"
                        onclick="toggleCheckList(this)"
@@ -66,6 +75,30 @@
     {% for section, worksheets in worksheets.items %}
         {% include 'section/includes/section-list-detail.html' %}
     {%  endfor %}
+
+    <!-- Create modal for displaying FurtherReading invalid link -->
+    <div class="modal fade" id="invalidFurtherReadingModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" >
+            <div class="modal-content" >
+                <div class="modal-header">
+                  <h4 class="modal-title">Invalid Further Reading Links</h4>
+                </div>
+                <div class="modal-body" >
+                    <div  class="text-center" id="loadingGif" style="display: none;" >
+                      <img src="{% static 'gif/loading.gif' %}" width="50px"/>
+                    </div>
+
+                    <ul id="invalidLinkList"></ul>
+                </div>
+
+                <div class="modal-footer">
+                    <div id="downloadPDF"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row" style="margin-left: 400pt;">
             {% if is_paginated %}
               <ul class="pagination">

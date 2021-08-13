@@ -4,10 +4,13 @@
 import json
 import os
 import zipfile
+import re
+
 from unidecode import unidecode
 
 from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponse
+from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
@@ -84,3 +87,44 @@ def validate_zipfile(file) -> bool:
                       "'%s' directory" % (forbidden_dir,))
                 )
     return True
+
+class GetAllFurtherReadingLink(object):
+    def __init__(self, project):
+        self.project = project
+
+    def get_all_url(self):
+        from lesson.models.worksheet import Worksheet
+        worksheets = Worksheet.objects.all().filter(
+            section__project=self.project,
+            furtherreading__isnull=False
+        ).distinct()
+        result = []
+        for worksheet in worksheets:
+            worksheet_url = self.get_worksheet_url(
+                worksheet_pk=worksheet.id,
+                section_slug=worksheet.section.slug,
+                project_slug=worksheet.section.project.slug
+            )
+            further_reading = worksheet.furtherreading_set.all().distinct()
+            for obj in further_reading:
+                urls = self.get_url_list(obj.text)
+                for url in urls:
+                    ctx = {
+                        'worksheet_url': worksheet_url,
+                        'worksheet': worksheet.module,
+                        'further_reading_url': url
+                    }
+                    result.append(ctx)
+        return result
+
+    def get_url_list(self, text):
+        urls = re.findall(r'href=[\'"]?\s*([^\'">]+)', text)
+        result = [url.strip() for url in urls]
+        return result
+
+    def get_worksheet_url(self, worksheet_pk, section_slug, project_slug):
+        return reverse('worksheet-detail', kwargs={
+            'pk': worksheet_pk,
+            'section_slug': section_slug,
+            'project_slug': project_slug
+        })

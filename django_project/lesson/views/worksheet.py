@@ -90,7 +90,6 @@ class WorksheetDetailView(
         context['file_title'] = \
             context['worksheet'].section.name \
             + '-' + context['worksheet'].module
-        context['file_title'] = context['file_title'].encode("utf8")
 
         context['funded_by'] = self.object.funder_info_html()
         return context
@@ -128,7 +127,7 @@ class WorksheetPrintView(WorksheetDetailView):
         pdf_response = HttpResponse(content_type='application/pdf')
         pdf_response['Content-Disposition'] = \
             'filename={}. {}.pdf'.format(
-                numbering, context['file_title'].decode("utf-8"))
+                numbering, context['file_title'])
         # Need to improve for URL outside of the dev env.
         html_object = HTML(
             string=response.content,
@@ -152,7 +151,7 @@ class WorksheetPDFZipView(WorksheetDetailView):
         response = super(WorksheetPDFZipView, self).render_to_response(
             context, **response_kwargs)
         response.render()
-        file_title = context['file_title'].decode('utf-8')
+        file_title = context['file_title']
         # return response
         pdf_response = HttpResponse(content_type='application/pdf')
         pdf_response['Content-Disposition'] = \
@@ -189,7 +188,18 @@ class WorksheetPDFZipView(WorksheetDetailView):
             zip_path = os.path.join(
                 zip_subdir,
                 '{}. {}.zip'.format(numbering, file_title))
-            zf.write(zip_data_path, zip_path)
+            # if external_data is a zipfile, extract it before zip it
+            try:
+                external_file_zf = zipfile.ZipFile(zip_data_path)
+                for name in external_file_zf.namelist():
+                    if name.endswith('/'):
+                        continue
+                    if name.startswith('__MACOSX'):
+                        continue
+                    f = external_file_zf.read(name)
+                    zf.writestr(name, f)
+            except Exception:
+                zf.write(zip_data_path, zip_path)
 
         # license
         if context['worksheet'].license:
