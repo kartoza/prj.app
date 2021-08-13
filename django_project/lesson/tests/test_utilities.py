@@ -107,4 +107,3 @@ class TestGetIgnoreFileList(SimpleTestCase):
                 get_ignore_file_list(ZIP_IGNORE_FILE),
                 ['__MACOSX', '.git', '__pycache__', 'test']
             )
-

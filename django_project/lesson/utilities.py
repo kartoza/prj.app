@@ -78,7 +78,7 @@ def validate_zipfile(file) -> bool:
 
     try:
         zip = zipfile.ZipFile(file)
-    except:
+    except Exception:
         raise ValidationError(_("Could not unzip file."))
 
     ignore_list = get_ignore_file_list(ZIP_IGNORE_FILE)
@@ -106,7 +106,7 @@ def get_ignore_file_list(ignore_file) -> list:
             for file in files:
                 ignore = file.strip()
                 if ignore:
-                  result.append(ignore)
+                    result.append(ignore)
         return result
     except FileNotFoundError:
         return []
