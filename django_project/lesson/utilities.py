@@ -2,15 +2,23 @@
 """Tools for the lesson app."""
 
 import json
+import os
+import zipfile
 import re
 
 from unidecode import unidecode
 
+from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponse
 from django.urls import reverse
 from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
 
 from core.settings.contrib import STOP_WORDS
+
+
+ZIP_IGNORE_FILE = os.path.join(
+    os.path.dirname(__file__), 'zip_ignore_files.txt')
 
 
 def custom_slug(name):
@@ -63,6 +71,45 @@ def re_order_features(request, features):
             feature.save()
 
     return HttpResponse('')
+
+
+def validate_zipfile(file) -> bool:
+    """Validate the zipfile upon upload in a worksheet."""
+
+    try:
+        zip = zipfile.ZipFile(file)
+    except Exception:
+        raise ValidationError(_("Could not unzip file."))
+
+    ignore_list = get_ignore_file_list(ZIP_IGNORE_FILE)
+    for zname in zip.namelist():
+        if zname.find('..') != -1 or zname.find(os.path.sep) == 0:
+            raise ValidationError(
+                _('For security reasons, zip file cannot contain path '
+                  'informations')
+            )
+        for forbidden_dir in ignore_list:
+            if forbidden_dir in zname.split('/'):
+                raise ValidationError(
+                    _("For security reasons, zip file cannot contain "
+                      "'%s' directory" % (forbidden_dir,))
+                )
+    return True
+
+
+def get_ignore_file_list(ignore_file) -> list:
+    """Read the zip_ignore_files.txt and put the content into a list."""
+    try:
+        result = []
+        with open(ignore_file) as f:
+            files = f.readlines()
+            for file in files:
+                ignore = file.strip()
+                if ignore:
+                    result.append(ignore)
+        return result
+    except FileNotFoundError:
+        return []
 
 
 class GetAllFurtherReadingLink(object):
