@@ -39,7 +39,7 @@ class TestWorksheetForm(TestCase):
     def test_not_valid_zipfile_clean_external_data_return_file(self):
         form = WorksheetForm(
             self.data,
-            {'external_data':  self.dummy_uploadedfile},
+            {'external_data': self.dummy_uploadedfile},
             section=self.test_section)
         self.assertEqual(form.is_valid(), False)
 
@@ -47,6 +47,6 @@ class TestWorksheetForm(TestCase):
     def test_valid_zipfile_clean_external_data_return_file(self, mock):
         form = WorksheetForm(
             self.data,
-            {'external_data':  self.dummy_uploadedfile},
+            {'external_data': self.dummy_uploadedfile},
             section=self.test_section)
         self.assertEqual(form.is_valid(), True)
