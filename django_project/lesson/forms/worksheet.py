@@ -117,12 +117,10 @@ class WorksheetForm(TranslationModelForm):
         return instance
 
     def clean_external_data(self):
-        """
-        validate the zipfile during uploading
-        """
+        """validate the zipfile during uploading."""
 
         file = self.cleaned_data['external_data']
-        if validate_zipfile(file):
+        if file and validate_zipfile(file):
             return file
 
 

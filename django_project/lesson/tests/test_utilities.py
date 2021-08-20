@@ -11,6 +11,7 @@ from lesson.tests.model_factories import (FurtherReadingF,
 from base.tests.model_factories import ProjectF
 from lesson.utilities import validate_zipfile
 from lesson.utilities import GetAllFurtherReadingLink
+from lesson.utilities import get_ignore_file_list, ZIP_IGNORE_FILE
 
 
 class TestZipfileValidation(SimpleTestCase):
@@ -20,6 +21,11 @@ class TestZipfileValidation(SimpleTestCase):
             mock_ZipFile.return_value.namelist.return_value = ('file.py',)
             validation = validate_zipfile(mock_ZipFile)
             self.assertTrue(validation)
+
+    def test_validate_zipfile_include_parent_dir_path(self):
+        with mock.patch('lesson.utilities.zipfile.ZipFile') as mock_ZipFile:
+            mock_ZipFile.return_value.namelist.return_value = ('..',)
+            self.assertRaises(ValidationError, validate_zipfile, mock_ZipFile)
 
     def test_validate_zipfile_include_git(self):
         with mock.patch('lesson.utilities.zipfile.ZipFile') as mock_ZipFile:
@@ -99,7 +105,6 @@ class TestGetIgnoreFileList(SimpleTestCase):
         self.test_data = '__MACOSX\n.git\n__pycache__\n\ttest'
 
     def test_get_ignore_file_list(self):
-        from lesson.utilities import get_ignore_file_list, ZIP_IGNORE_FILE
         with mock.patch('builtins.open',
                         mock.mock_open(read_data=self.test_data),
                         create=True):
@@ -107,3 +112,6 @@ class TestGetIgnoreFileList(SimpleTestCase):
                 get_ignore_file_list(ZIP_IGNORE_FILE),
                 ['__MACOSX', '.git', '__pycache__', 'test']
             )
+
+    def test_get_ignore_file_list_file_not_found(self):
+        self.assertEqual(get_ignore_file_list('no_file'), [])
