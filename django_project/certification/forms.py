@@ -331,7 +331,8 @@ class CourseForm(forms.ModelForm):
         super(CourseForm, self).__init__(*args, **kwargs)
         self.fields['course_convener'].queryset = \
             CourseConvener.objects.filter(
-                certifying_organisation=self.certifying_organisation, is_active=True)
+                certifying_organisation=self.certifying_organisation,
+                is_active=True)
         self.fields['course_convener'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.user.get_full_name(), obj)
         self.fields['course_type'].queryset = \
