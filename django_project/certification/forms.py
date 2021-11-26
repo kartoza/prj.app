@@ -156,6 +156,7 @@ class CourseConvenerForm(forms.ModelForm):
             'user',
             'degree',
             'signature',
+            'is_active',
         )
 
     def __init__(self, *args, **kwargs):
@@ -171,6 +172,7 @@ class CourseConvenerForm(forms.ModelForm):
                 Field('user', css_class='form-control chosen-select'),
                 Field('degree', css_class='form-control'),
                 Field('signature', css_class='form-control'),
+                Field('is_active', css_class='checkbox-primary'),
             )
         )
         self.helper.layout = layout

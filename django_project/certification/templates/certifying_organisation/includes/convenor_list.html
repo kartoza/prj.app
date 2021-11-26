@@ -1,0 +1,50 @@
+      <tr style="border-bottom: 1px solid #e9e9e9;">
+        <td class="list">
+        <div class="col-lg-10">
+        {% if courseconvener.is_active %}
+            {% if courseconvener.user.first_name %}
+                {{ courseconvener.user.first_name }} {{ courseconvener.user.last_name }}
+            {% else %}
+                {{ courseconvener.user }}
+            {% endif %}
+        {% elif user_can_delete %}
+          <span style="font-style: italic; font-size: 0.8em; color: #777">
+            {% if courseconvener.user.first_name %}
+                {{ courseconvener.user.first_name }} {{ courseconvener.user.last_name }}
+            {% else %}
+                {{ courseconvener.user }}
+            {% endif %}
+          </span>
+          <span style="font-size: 0.7em; color: #777"> [inactive]</span>
+        {% endif %}
+        </div>
+        </td>
+        {% if user_can_delete %}
+        <td>
+            <div class="btn-group pull-right button-action">
+              {% if courseconvener.course_set.exists %}
+                <a class="btn btn-default btn-xs btn-disabled tooltip-toggle"
+                   {% if courseconvener.is_active %}
+                    data-title="Cannot delete this Convener. Please deactivate the Convener in Edit menu."
+                   {% else %}
+                    data-title="Cannot delete this Convener. You can reactivate the Convener in Edit menu."
+                   {% endif %}
+                  >
+                  <span class="glyphicon glyphicon-minus"></span>
+                </a>
+              {% else %}
+                <a class="btn btn-default btn-xs btn-delete tooltip-toggle"
+                   href='{% url "courseconvener-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=courseconvener.slug %}'
+                   data-title="Delete {{ courseconvener.user.first_name }} {{ courseconvener.user.last_name }} <{{ courseconvener.user }}>">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                {% endif %}
+                <a class="btn btn-default btn-xs tooltip-toggle"
+                   href='{% url "courseconvener-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=courseconvener.slug %}'
+                   data-title="Edit {{ courseconvener.user.first_name }} {{ courseconvener.user.last_name }} <{{ courseconvener.user }}>">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </div>
+        </td>
+        {% endif %}
+      </tr>
