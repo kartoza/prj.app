@@ -427,4 +427,3 @@ class TestValidateEmailAddress(TestCase):
         msg = f'{email} is not a valid email address'
         with self.assertRaisesMessage(ValidationError, msg):
             validate_email_address(email)
-
