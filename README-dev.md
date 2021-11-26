@@ -33,9 +33,9 @@ When it's done, you can continue with this command:
 Linux and MacOS:
 
 ```
+cp docker-compose.override.example.yml docker-compose.override.yml
 make build-devweb
 make devweb
-cp docker-compose.override.example.yml docker-compose.override.yml
 ```
 
 In case you don't get some not installed packages, you can run this 
@@ -54,6 +54,7 @@ repeatable steps:
 Windows:
 
 ```
+copy docker-compose.override.example.yml docker-compose.override.yml
 make-devbuild.bat
 make-devweb.bat
 ```
