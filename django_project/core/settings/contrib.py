@@ -139,3 +139,11 @@ STRIPE_LIVE_MODE = False  # Change to True in production
 # Get it from the section in the Stripe dashboard where you added the
 # webhook endpoint
 DJSTRIPE_WEBHOOK_SECRET = os.environ.get('DJSTRIPE_WEBHOOK_SECRET', 'whsec_x')
+
+INSTALLED_APPS += [
+    'gmailapi_backend',
+]
+# django-gmailapi-backend
+GMAIL_API_CLIENT_ID = os.environ.get('GMAIL_API_CLIENT_ID', '')
+GMAIL_API_CLIENT_SECRET = os.environ.get('GMAIL_API_CLIENT_SECRET', '')
+GMAIL_API_REFRESH_TOKEN = os.environ.get('GMAIL_API_REFRESH_TOKEN', '')
