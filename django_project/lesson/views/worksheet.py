@@ -8,7 +8,7 @@ from io import BytesIO
 from collections import OrderedDict
 from django.conf import settings
 from django.urls import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.views.generic import (
     DetailView,
     CreateView,
@@ -216,6 +216,56 @@ class WorksheetPDFZipView(WorksheetDetailView):
             'attachment; filename={}. {}.zip'.format(
                 numbering, file_title)
         return zip_response
+
+
+class WorksheetDownloadSampleDataView(WorksheetDetailView):
+    def render_to_response(self, context, **response_kwargs):
+        context = self.get_context_data()
+        file_title = (f"{context['worksheet'].section.name}"
+                      f"-{context['worksheet'].module}")
+        s = BytesIO()
+        zf = zipfile.ZipFile(s, "w")
+
+        if context['worksheet'].external_data:
+            data_path = context['worksheet'].external_data.url
+            zip_data_path = settings.MEDIA_ROOT + data_path[6:]
+
+            try:
+                external_file_zf = zipfile.ZipFile(zip_data_path)
+                for name in external_file_zf.namelist():
+                    if name.endswith('.zip'):
+                        try:
+                            filebytes = BytesIO(external_file_zf.read(name))
+                            subzip = zipfile.ZipFile(filebytes)
+                            for name_subzip in subzip.namelist():
+                                if name_subzip.endswith('/'):
+                                    continue
+                                if name_subzip.startswith('__MACOSX'):
+                                    continue
+                                f_subzip = subzip.read(name_subzip)
+                                zf.writestr(name_subzip, f_subzip)
+                        except Exception:
+                            pass
+                    else:
+                        if name.endswith('/'):
+                            continue
+                        if name.startswith('__MACOSX'):
+                            continue
+                        f = external_file_zf.read(name)
+                        zf.writestr(name, f)
+
+            except Exception:
+                zf.write(zip_data_path, file_title)
+
+            zf.close()
+
+            zip_response = HttpResponse(
+                s.getvalue(), content_type="application/x-zip-compressed")
+            zip_response['Content-Disposition'] = \
+                'attachment; filename={}.zip'.format(file_title)
+            return zip_response
+        else:
+            raise Http404("Sample data does not exist")
 
 
 class WorksheetCreateView(LoginRequiredMixin, WorksheetMixin, CreateView):
