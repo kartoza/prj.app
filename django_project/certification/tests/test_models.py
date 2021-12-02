@@ -1,6 +1,7 @@
 # coding=utf-8
 """Test for models."""
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from certification.tests.model_factories import (
     CertificateF,
@@ -415,3 +416,14 @@ class TestStatus(TestCase):
         for key, val in new_model_data.items():
             self.assertEqual(model.__dict__.get(key), val)
             self.assertTrue(model.name == 'new Status name')
+
+
+class TestValidateEmailAddress(TestCase):
+    """Test validate_email_address function."""
+
+    def test_validation_failed_must_raise_ValidationError(self):
+        from certification.models import validate_email_address
+        email = 'email@wrongdomain'
+        msg = f'{email} is not a valid email address'
+        with self.assertRaisesMessage(ValidationError, msg):
+            validate_email_address(email)

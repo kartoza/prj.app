@@ -38,10 +38,11 @@ def validate_email_address(value):
     try:
         validate_email(value)
         return True
-    except ValidationError(
+    except ValidationError:
+        raise ValidationError(
             _('%(value)s is not a valid email address'),
-            params={'value': value},):
-        return False
+            params={'value': value},
+        )
 
 
 class ApprovedSponsorManager(models.Manager):

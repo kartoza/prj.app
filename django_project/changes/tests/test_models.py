@@ -1,7 +1,10 @@
 # coding=utf-8
 """Tests for models."""
 from datetime import datetime
+
+from django.core.exceptions import ValidationError
 from django.test import TestCase
+
 from changes.tests.model_factories import (
     CategoryF,
     EntryF,
@@ -460,3 +463,14 @@ class TestSponsorshipPeriodCRUD(TestCase):
 
         # check if deleted
         self.assertTrue(model.pk is None)
+
+
+class TestValidateEmailAddress(TestCase):
+    """Test validate_email_address function."""
+
+    def test_validation_failed_must_raise_ValidationError(self):
+        from changes.models import validate_email_address
+        email = 'email@wrongdomain'
+        msg = f'{email} is not a valid email address'
+        with self.assertRaisesMessage(ValidationError, msg):
+            validate_email_address(email)
