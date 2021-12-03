@@ -5,6 +5,7 @@ import factory
 
 from certification.models import (
     Certificate,
+    CertificateType,
     Attendee,
     Course,
     CourseType,
@@ -79,6 +80,18 @@ class CourseTypeF(factory.django.DjangoModelFactory):
     coursetype_link = factory.sequence(lambda n: u'Course type link %s' % n)
     certifying_organisation = factory.SubFactory(CertifyingOrganisationF)
     author = factory.SubFactory(UserF)
+
+
+class CertificateTypeF(factory.django.DjangoModelFactory):
+    class Meta:
+        model = CertificateType
+
+    name = factory.sequence(lambda n: 'Test certificate type name %s' % n)
+    description = factory.sequence(
+        lambda n: 'Description certificate type %s' % n)
+    printed_text = factory.sequence(
+        lambda n: 'Wording certificate type %s' % n)
+    order = factory.sequence(lambda n: n)
 
 
 class CourseF(factory.django.DjangoModelFactory):

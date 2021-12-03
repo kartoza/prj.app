@@ -1,10 +1,12 @@
 # coding=utf-8
 """Test for models."""
 
+from django.db.utils import IntegrityError
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from certification.tests.model_factories import (
     CertificateF,
+    CertificateTypeF,
     AttendeeF,
     CourseF,
     CourseTypeF,
@@ -119,6 +121,61 @@ class TestCertificate(TestCase):
 
         # check if deleted.
         self.assertTrue(model.pk is None)
+
+
+class TestCertificateType(TestCase):
+    """Test Certificate models."""
+
+    def test_CRUD_CertificateType(self):
+        from certification.models.certificate_type import CertificateType
+        CertificateType.objects.all().delete()
+
+        # initial
+        self.assertEqual(CertificateType.objects.all().count(), 0)
+
+        # create model
+        model = CertificateTypeF.create()
+        self.assertEqual(CertificateType.objects.all().count(), 1)
+
+        # read model
+        self.assertIsNotNone(model.id)
+        self.assertIn('Test certificate type name', model.name)
+        self.assertIn('Description certificate type', model.description)
+        self.assertIn('Wording certificate type', model.printed_text)
+        self.assertIsNotNone(model.order)
+        self.assertEqual(model.__str__(), model.name)
+
+        #
+        model.name = 'Update certificate type  name'
+        model.save()
+        self.assertEqual(model.name, 'Update certificate type  name')
+
+        model.delete()
+        self.assertIsNone(model.id)
+        self.assertEqual(CertificateType.objects.all().count(), 0)
+
+    def test_order_field_must_be_unique(self):
+        model_1 = CertificateTypeF.create(order=1)
+        msg = ('duplicate key value violates unique constraint '
+               '"certification_certificatetype_order_key"')
+        with self.assertRaisesMessage(IntegrityError, msg):
+            CertificateTypeF.create(order=1)
+
+    def test_order_field_can_be_null(self):
+        model_1 = CertificateTypeF.create(order=1)
+        model_2 = CertificateTypeF.create(order=2)
+
+        self.assertEqual(model_1.order, 1)
+        self.assertEqual(model_2.order, 2)
+
+        model_1.order = None
+        model_1.save()
+
+        model_2.order = 1
+        model_2.save()
+
+        self.assertEqual(model_1.order, None)
+        self.assertEqual(model_2.order, 1)
 
 
 class TestAttendee(TestCase):
