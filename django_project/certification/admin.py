@@ -4,6 +4,7 @@
 from django.contrib.gis import admin
 from simple_history.admin import SimpleHistoryAdmin
 from certification.models.certificate import Certificate
+from certification.models.certificate_type import CertificateType
 from certification.models.course import Course
 from certification.models.training_center import TrainingCenter
 from certification.models.course_convener import CourseConvener
@@ -32,6 +33,13 @@ class CertificateAdmin(admin.ModelAdmin):
         if ordering:
             query_set = query_set.order_by(*ordering)
         return query_set
+
+
+class CertificateTypeAdmin(admin.ModelAdmin):
+    """CertificateType admin model."""
+
+    list_display = ('name', 'printed_text')
+    search_fields = ('name', 'printed_text')
 
 
 class AttendeeAdmin(admin.ModelAdmin):
@@ -163,6 +171,7 @@ class StatusAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Certificate, CertificateAdmin)
+admin.site.register(CertificateType, CertificateTypeAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(CourseType, CourseTypeAdmin)
