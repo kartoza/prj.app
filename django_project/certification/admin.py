@@ -38,8 +38,10 @@ class CertificateAdmin(admin.ModelAdmin):
 class CertificateTypeAdmin(admin.ModelAdmin):
     """CertificateType admin model."""
 
-    list_display = ('name', 'printed_text')
+    list_display = ('name', 'printed_text', 'order')
+    list_editable = ('order', )
     search_fields = ('name', 'printed_text')
+    ordering = ('order', )
 
 
 class AttendeeAdmin(admin.ModelAdmin):

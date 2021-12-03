@@ -9,7 +9,8 @@ class CertificateType(models.Model):
         help_text=_('Certificate type.'),
         max_length=200,
         null=False,
-        blank=False
+        blank=False,
+        unique=True,
     )
 
     description = models.TextField(

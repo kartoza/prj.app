@@ -154,8 +154,15 @@ class TestCertificateType(TestCase):
         self.assertIsNone(model.id)
         self.assertEqual(CertificateType.objects.all().count(), 0)
 
+    def test_name_field_must_be_unique(self):
+        CertificateTypeF.create(name="We are twin")
+        msg = ('duplicate key value violates unique constraint '
+               '"certification_certificatetype_name_key"')
+        with self.assertRaisesMessage(IntegrityError, msg):
+            CertificateTypeF.create(name="We are twin")
+
     def test_order_field_must_be_unique(self):
-        model_1 = CertificateTypeF.create(order=1)
+        CertificateTypeF.create(order=1)
         msg = ('duplicate key value violates unique constraint '
                '"certification_certificatetype_order_key"')
         with self.assertRaisesMessage(IntegrityError, msg):
