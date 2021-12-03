@@ -1,24 +1,30 @@
 {% load i18n %}
-<div class="pagination">
+<nav aria-label="Pagination">
+  <ul class="pagination">
     {% if page_obj.has_previous %}
-        <a href="?{{ page_obj.previous_page_number.querystring }}" class="prev">&lsaquo;&lsaquo; {% trans "previous" %}</a>
+      <li class="page-item"><a class="page-link" href="?{{ page_obj.previous_page_number.querystring }}" class="prev">&lsaquo;&lsaquo; {% trans "previous" %}</a></li>
     {% else %}
-        <span class="disabled prev">&lsaquo;&lsaquo; {% trans "previous" %}</span>
+      <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">&lsaquo;&lsaquo; {% trans "previous" %}</a></li>
     {% endif %}
+
     {% for page in page_obj.pages %}
-        {% if page %}
-            {% ifequal page page_obj.number %}
-                <span class="current page">{{ page }}</span>
-            {% else %}
-                <a href="?{{ page.querystring }}" class="page">{{ page }}</a>
-            {% endifequal %}
+      {% if page %}
+        {% ifequal page page_obj.number %}
+          <li class="page-item active"><a class="page-link" href="#">{{ page }}<span class="sr-only">(current)</span></a></li>
         {% else %}
-            ...
-        {% endif %}
+          <li class="page-item"><a class="page-link" href="?{{ page.querystring }}">{{ page }}</a></li>
+        {% endifequal %}
+      {% else %}
+         ...
+      {% endif %}
+      </li>
+
     {% endfor %}
     {% if page_obj.has_next %}
-        <a href="?{{ page_obj.next_page_number.querystring }}" class="next">{% trans "next" %} &rsaquo;&rsaquo;</a>
+      <li class="page-item"><a class="page-link" href="?{{ page_obj.next_page_number.querystring }}" class="next">{% trans "next" %} &rsaquo;&rsaquo;</a></li>
     {% else %}
-        <span class="disabled next">{% trans "next" %} &rsaquo;&rsaquo;</span>
+      <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">{% trans "next" %} &rsaquo;&rsaquo;</a></li>
     {% endif %}
-</div>
+
+  </ul>
+</nav>

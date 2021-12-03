@@ -99,6 +99,7 @@
                 <input type="hidden" name="end_date" value="">
                 <input type="hidden" name="template_certificate" value="">
                 <input type="hidden" name="trained_competence" value="">
+                <input type="hidden" name="certificate_type" value="">
                 <input id="preview-certificate" type="submit" class="btn btn-default" value="Preview Certificate" form="preview-form">
             </form>
             <p id="error-submit" style="color: darkred; font-weight: bold"></p>
@@ -130,6 +131,9 @@
             }else if($('input[id=id_end_date]').val() === ''){
                 $('#error-submit').html('Please choose end date.');
                 return false
+            }else if($('select[id=id_certificate_type]').val() === ''){
+                $('#error-submit').html('Please choose certificate type.');
+                return false
             }
 
             $('#preview-form input[name=course_convener]').val($('select[name=course_convener]').val());
@@ -138,6 +142,7 @@
             $('#preview-form input[name=start_date]').val($('input[id=id_start_date]').val());
             $('#preview-form input[name=end_date]').val($('input[id=id_end_date]').val());
             $('#preview-form input[name=trained_competence]').val($('input[id=id_trained_competence]').val());
+            $('#preview-form input[name=certificate_type]').val($('select[id=id_certificate_type]').val());
         }
 
         //check if browser supports file api and filereader features

@@ -32,6 +32,7 @@ import djstripe.models
 import djstripe.settings
 from ..models import (
     Certificate,
+    CertificateType,
     Course,
     Attendee,
     CertifyingOrganisation,
@@ -234,7 +235,8 @@ class CertificateDetailView(DetailView):
 
 
 def generate_pdf(
-        pathname, project, course, attendee, certificate, current_site):
+        pathname, project, course, attendee, certificate, current_site,
+        wording='Has attended and completed the course:'):
     """Create the PDF object, using the response object as its file."""
 
     # Register new font
@@ -348,7 +350,7 @@ def generate_pdf(
             attendee.surname))
     page.setFont('Noto-Regular', 16)
     page.drawCentredString(
-        center, 370, 'Has attended and completed the course:')
+        center, 370, wording)
     page.setFont('Noto-Bold', 20)
     page.drawCentredString(
             center, 335, course.course_type.name)
@@ -456,7 +458,9 @@ def certificate_pdf_view(request, **kwargs):
             os.makedirs(makepath)
 
         generate_pdf(
-            pathname, project, course, attendee, certificate, current_site)
+            pathname, project, course, attendee, certificate, current_site,
+            course.certificate_type.wording
+        )
         try:
             return FileResponse(open(pathname, 'rb'),
                                 content_type='application/pdf')
@@ -691,7 +695,9 @@ def regenerate_certificate(request, **kwargs):
 
         current_site = request.META['HTTP_HOST']
         generate_pdf(
-            pathname, project, course, attendee, certificate, current_site)
+            pathname, project, course, attendee, certificate, current_site,
+            course.certificate_type.wording
+        )
         try:
             return FileResponse(open(pathname, 'rb'),
                                 content_type='application/pdf')
@@ -843,7 +849,8 @@ def regenerate_all_certificate(request, **kwargs):
                     '/home/web/media',
                     'pdf/{}/{}'.format(project_folder, filename))
             generate_pdf(
-                pathname, project, course, key, value, current_site)
+                pathname, project, course, key, value, current_site,
+                course.certificate_type.wording)
 
         messages.success(request, 'All certificates are updated', 'regenerate')
         return HttpResponseRedirect(url)
@@ -914,6 +921,7 @@ def preview_certificate(request, **kwargs):
     organisation_slug = kwargs.pop('organisation_slug')
 
     convener_id = request.POST.get('course_convener', None)
+    certificate_type_id = request.POST.get('certificate_type', None)
     if convener_id is not None:
         # Get all posted data.
         course_convener = CourseConvener.objects.get(id=convener_id)
@@ -948,8 +956,16 @@ def preview_certificate(request, **kwargs):
 
         current_site = request.META['HTTP_HOST']
 
-        generate_pdf(
-            response, project, course, attendee, certificate, current_site)
+        if certificate_type_id:
+            certificate_type = CertificateType.objects.get(
+                id=certificate_type_id)
+            generate_pdf(
+                response, project, course, attendee, certificate, current_site,
+                certificate_type.wording
+            )
+        else:
+            generate_pdf(
+                response, project, course, attendee, certificate, current_site)
 
     else:
         # When preview page is refreshed, the data is gone so user needs to

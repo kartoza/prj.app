@@ -213,3 +213,8 @@
 .form-actions {
     padding-bottom: 50px;
 }
+
+/* CERTIFYING ORGANISATION FORM */
+div#div_id_organisation_owners {
+    margin-bottom: 350px;
+}

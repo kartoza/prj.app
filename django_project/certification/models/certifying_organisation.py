@@ -64,7 +64,16 @@ class UnapprovedCertifyingOrganisationManager(models.Manager):
 
         return super(
             UnapprovedCertifyingOrganisationManager, self).get_queryset(
-        ).filter(approved=False, rejected=False)
+        ).filter(approved=False, rejected=False).extra(
+            select={
+                'submit_date': (
+                    'SELECT history_date '
+                    'FROM certification_historicalcertifyingorganisation '
+                    'WHERE id=certification_certifyingorganisation.id '
+                    'ORDER BY history_date ASC LIMIT 1'
+                )
+            }
+        )
 
 
 def validate_email_address(value):

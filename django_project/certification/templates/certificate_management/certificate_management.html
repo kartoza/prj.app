@@ -1,0 +1,130 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block extra_js %}
+{% endblock %}
+
+{% block content %}
+  <style>
+    .table tbody:first-of-type tr {
+      background-color: transparent;
+    }
+    li.order {
+      cursor: move;
+    }
+    li.order:hover {
+        background-color: #d7e5f0;
+    }
+    .checklist-archived {
+        background-color: #EEEEEE;
+        color: #777777;
+    }
+  </style>
+
+  <div class="container" style="text-align: center">
+    <h1>Certification Management</h1>
+  </div>
+
+<!------------------------------Certificate Type------------------------------>
+  <div class="page-header">
+    <h1 class="text-muted">Certificate Types</h1>
+  </div>
+
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">Certificate Type</th>
+      <th scope="col">Wording</th>
+      <th scope="col">Apply</th>
+    </tr>
+    </thead>
+    <tbody>
+    <form action="{% url 'certificate-type-update' project_slug %}" method="post">
+    {% csrf_token %}
+    {% for cer_type in certificate_types %}
+      <tr {% if cer_type.id in certificate_types_applied %}style="background-color: #d7e5f0" {% endif %}>
+        <td>{{ cer_type.name }}</td>
+        <td>{{ cer_type.wording }}</td>
+        <td>
+            <input type="checkbox" name="certificate_types" value="{{ cer_type.name }}"
+              {% if cer_type.id in certificate_types_applied %}checked{% endif %}
+            >
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <input class="btn btn-primary" type="submit" value="save">
+  </form>
+
+
+<!----------------------------Checklist Application---------------------------->
+  <div class="page-header">
+    <h1 class="text-muted">Checklist Application</h1>
+    <!--- order update notification --->
+    <span id="order-saved" hidden class="alert alert-success" style="font-size: 9pt; padding: 3px;font-style: italic;">
+      order saved</span>
+    <span id="order-not-saved" hidden class="alert alert-danger" style="font-size: 9pt; padding: 3px;font-style: italic;">
+      order not saved</span>
+    <!--- order update notification --->
+    <span id="archive-saved" hidden class="alert alert-success" style="font-size: 9pt; padding: 3px;font-style: italic;">
+      archive item updated</span>
+    <span id="archive-not-saved" hidden class="alert alert-danger" style="font-size: 9pt; padding: 3px;font-style: italic;">
+      archive item not updated</span>
+
+  </div>
+
+
+  <div class="text-right">
+    <a class="btn btn-default btn-mini tooltip-toggle"
+       href='{% url "certificate-checklist-create" project_slug %}'
+       data-title="Create new checklist item">
+       {% show_button_icon "add" %}
+    </a>
+  </div>
+  <div>
+    {# To submit order use change category.js #}
+    <ul id="sortable" data-url="{% url 'certificate-checklist-update' project_slug %}">
+      {% for checklist in certificate_checklists %}
+      <li class="row order {% if checklist.is_archived %}checklist-archived{% endif %}" style="margin-top:10px;" id="{{ checklist.id }}-{{ checklist.question }}">
+        <div class="col-lg-8">
+          <div class="flex">
+            <span class="glyphicon glyphicon-option-vertical"></span>
+            {{ checklist.question }}
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="btn-group pull-right">
+            <a class="btn btn-default btn-mini tooltip-toggletooltip-toggle"
+               href='#' data-title="Delete item">
+              <span class="glyphicon glyphicon-minus"></span>
+            </a>
+            <a class="btn btn-default btn-mini tooltip-toggle"
+               href='' data-title="Edit item">
+              <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+            {% if not checklist.is_archived %}
+            <a class="btn btn-default btn-mini tooltip-toggle archive"
+               href='' data-title="Archive item">
+              <span class="fa fa-archive"></span>
+            </a>
+            {% else %}
+            <a class="btn btn-default btn-mini tooltip-toggle activate"
+               href='' data-title="Activate item">
+              <span class="fa fa-check-circle-o"></span>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+
+
+{% endblock %}
+
+{% block inline-js %}
+  <script></script>
+{% endblock %}

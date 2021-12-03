@@ -5,6 +5,8 @@ import factory
 
 from certification.models import (
     Certificate,
+    CertificateType,
+    ProjectCertificateType,
     Attendee,
     Course,
     CourseType,
@@ -81,6 +83,19 @@ class CourseTypeF(factory.django.DjangoModelFactory):
     author = factory.SubFactory(UserF)
 
 
+class CertificateTypeF(factory.django.DjangoModelFactory):
+    """CertificateType model factory."""
+
+    class Meta:
+        model = CertificateType
+
+    name = factory.sequence(lambda n: 'Test certificate type name %s' % n)
+    description = factory.sequence(
+        lambda n: 'Description certificate type %s' % n)
+    wording = factory.sequence(
+        lambda n: 'Wording certificate type %s' % n)
+
+
 class CourseF(factory.django.DjangoModelFactory):
     """Course model factory."""
 
@@ -97,6 +112,7 @@ class CourseF(factory.django.DjangoModelFactory):
     course_type = factory.SubFactory(CourseTypeF)
     training_center = factory.SubFactory(TrainingCenterF)
     author = factory.SubFactory(UserF)
+    certificate_type = factory.SubFactory(CertificateTypeF)
 
 
 class AttendeeF(factory.django.DjangoModelFactory):
@@ -122,6 +138,16 @@ class CourseAttendeeF(factory.django.DjangoModelFactory):
     course = factory.SubFactory(CourseF)
     author = factory.SubFactory(UserF)
     attendee = factory.SubFactory(AttendeeF)
+
+
+class ProjectCertificateTypeF(factory.django.DjangoModelFactory):
+    """ProjectCertificateType model factory."""
+
+    class Meta:
+        model = ProjectCertificateType
+
+    project = factory.SubFactory(ProjectF)
+    certificate_type = factory.SubFactory(CertificateTypeF)
 
 
 class CertificateF(factory.django.DjangoModelFactory):

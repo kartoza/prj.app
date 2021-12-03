@@ -18,9 +18,13 @@ from crispy_forms.layout import (
     Fieldset,
     Submit,
     Field,
+    HTML
 )
 from .models import (
     CertifyingOrganisation,
+    CertifyingOrganisationChecklist,
+    CertificateType,
+    CertificateChecklist,
     CourseConvener,
     CourseType,
     TrainingCenter,
@@ -68,6 +72,27 @@ class CertifyingOrganisationForm(forms.ModelForm):
         form_title = 'New Certifying Organisation for %s' % self.project.name
         self.helper = FormHelper()
         self.helper.include_media = False
+        self.RESPONSE_NAME_PREFIX = 'checklist-response'
+
+        # additional layout for checklist questions
+        self.certificate_checklists = CertificateChecklist.objects.filter(
+                is_archived=False, is_additional_response_enabled=True).all()
+        checklist_questions = []
+        if CertificateChecklist.objects.filter(
+                is_archived=False,
+                is_additional_response_enabled=True).exists():
+            checklist_questions.append(
+                HTML('<legend>Please answer the following questions</legend>')
+            )
+        for _ in self.certificate_checklists:
+            checklist_questions.append(
+                Field(
+                    f'{self.RESPONSE_NAME_PREFIX}_{_.id}',
+                    css_class='form-control',
+                    label=f'{_.question}'
+                )
+            )
+
         layout = Layout(
             Fieldset(
                 form_title,
@@ -79,8 +104,9 @@ class CertifyingOrganisationForm(forms.ModelForm):
                 Field('organisation_phone', css_class='form-control'),
                 Field('logo', css_class='form-control'),
                 Field('organisation_owners', css_class='form-control'),
+                *checklist_questions,
                 Field('project', css_class='form-control'),
-                css_id='project-form')
+                css_id='project-form'),
         )
         self.helper.layout = layout
         self.helper.html5_required = False
@@ -90,12 +116,40 @@ class CertifyingOrganisationForm(forms.ModelForm):
         self.fields['organisation_owners'].initial = [self.user]
         self.fields['project'].initial = self.project
         self.fields['project'].widget = forms.HiddenInput()
+        # additional fields for checklist questions
+        for cl in self.certificate_checklists:
+            field_name = f'{self.RESPONSE_NAME_PREFIX}_{cl.id}'
+            self.fields[field_name] = forms.CharField(
+                widget=forms.Textarea(),
+                label=f'{cl.question}'
+            )
+            if (self.instance and
+                    cl.certifyingorganisationchecklist_set.filter(
+                        certifying_organisation=self.instance).exists()):
+                applicant_resp = cl.certifyingorganisationchecklist_set.filter(
+                    certifying_organisation=self.instance
+                ).last().applicant_response
+                self.fields[field_name].initial = applicant_resp
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
         instance = super(CertifyingOrganisationForm, self).save(commit=False)
         instance.save()
         self.save_m2m()
+        # save the checklist_response
+        for cl in self.certificate_checklists:
+            cert_org_cl, _ = (
+                CertifyingOrganisationChecklist.objects.get_or_create(
+                    question=cl, certifying_organisation=instance
+                )
+            )
+            if cl.is_additional_response_enabled:
+                field_name = f'{self.RESPONSE_NAME_PREFIX}_{cl.id}'
+                response_text = None
+                if self.cleaned_data[field_name]:
+                    response_text = self.cleaned_data[field_name]
+                cert_org_cl.applicant_response = response_text
+                cert_org_cl.save()
         return instance
 
 
@@ -303,6 +357,7 @@ class CourseForm(forms.ModelForm):
             'end_date',
             'template_certificate',
             'certifying_organisation',
+            'certificate_type',
         )
 
     def __init__(self, *args, **kwargs):
@@ -322,6 +377,7 @@ class CourseForm(forms.ModelForm):
                 Field('start_date', css_class='form-control'),
                 Field('end_date', css_class='form-control'),
                 Field('template_certificate', css_class='form-control'),
+                Field('certificate_type', css_class='form-control'),
             )
         )
         self.helper.layout = layout
@@ -342,6 +398,10 @@ class CourseForm(forms.ModelForm):
             self.certifying_organisation
         self.fields['certifying_organisation'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Submit'))
+        self.fields['certificate_type'].queryset = \
+            CertificateType.objects.filter(
+                projectcertificatetype__project=
+                self.certifying_organisation.project)
 
     def save(self, commit=True):
         instance = super(CourseForm, self).save(commit=False)

@@ -29,6 +29,7 @@ INSTALLED_APPS += [
     'preferences',
     'pinax.notifications',
     'tinymce',  # rich text editor
+    'django_sorting_bootstrap',
 ]
 
 # Add preferences to context_processors

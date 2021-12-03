@@ -1,0 +1,168 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% load custom_markup %}
+{% load staticfiles %}
+
+{% block title %}Certifying Organisation - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Review Certifying Organisation</h1>
+{% endblock page_title %}
+
+{% block js_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/organisation_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+    <style>
+        .about-link:hover {
+            color: darkblue !important;
+            text-decoration: none !important;
+        }
+    </style>
+
+
+    <div class="row">
+        <div class="col-lg-8 text-muted">
+            <h1>{{ certifyingorganisation.name }}</h1><br/>
+        </div>
+
+        {# Only organisation owners or staff can edit #}
+        <div class="col-lg-4">
+
+            <div class="pull-right">
+            <a class="glyphicon glyphicon-info-sign tooltip-toggle about-link"
+               style="font-size: 14pt; padding: 7px; color: #D3D3D3; display: inline-block; vertical-align: middle"
+               data-title="About Certification"
+               href="{% url 'about' certifyingorganisation.project.slug %}"
+            ></a>
+
+
+            <div class="btn-group">
+                {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
+                <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                   href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                   data-title="Delete {{ certifyingorganisation.name }}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                <a class="btn btn-default btn-mini tooltip-toggle"
+                   href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                   data-title="Edit {{ certifyingorganisation.name }}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                {% endif %}
+                 <a class="btn btn-default btn-mini tooltip-toggle"
+                    href='{% url "pending-certifyingorganisation-list" certifyingorganisation.project.slug %}'
+                    data-title="Back">
+                     <span class="glyphicon glyphicon-arrow-left"></span>
+                 </a>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container row">
+    <div class="details col-lg-12" style="margin-bottom: 20px">
+        <span class="grey-italic col-lg-4">Organisation name</span><span class="col-lg-8">{{ certifyingorganisation.name }}</span><br/>
+        <span class="grey-italic col-lg-4">Address</span><span class="col-lg-8">{{ certifyingorganisation.address }}</span><br/>
+        <span class="grey-italic col-lg-4">Country</span><span class="col-lg-8">{{ certifyingorganisation.country.name }}</span><br/>
+        <span class="grey-italic col-lg-4">Email</span><span class="col-lg-8">{{ certifyingorganisation.organisation_email }}</span><br/>
+        <span class="grey-italic col-lg-4">Phone</span><span class="col-lg-8">{{ certifyingorganisation.organisation_phone }}</span><br/>
+        <span class="grey-italic col-lg-4">Organisation owners</span>
+        <span class="col-lg-8">
+        {% for organisation_owners in certifyingorganisation.organisation_owners.all %}
+            {% if organisation_owners.first_name %}
+                {{ organisation_owners.first_name }} {{ organisation_owners.last_name }}{{ ", " }}
+            {% else %}
+                {{ organisation_owners }}{{ ", " }}
+            {% endif %}
+        {% endfor %}</span><br/>
+     <span class="grey-italic col-lg-4 pull-left float-left">Organisation URL</span>
+        <span class="col-lg-8"><a href='{{ certifyingorganisation.url }}' style="font-size: 10pt;">
+            {{ certifyingorganisation.url }}</a>
+        </span><br/>
+    </div>
+
+    </div>
+
+    <div class="course-details">
+        <div class="menu-wrapper menu-wrapper-head">
+            <table>
+                <tr>
+                    <th><h2 class="custom-heading">Reviews</h2></th>
+                </tr>
+            </table>
+        </div>
+        <div class="menu-wrapper menu-wrapper-body" style="padding: 25px">
+            <table class="course table-striped" style="width: 100%;">
+                {% for checklist in certification_checklists %}
+                <tr>
+                    <td class="checklist_value" style="vertical-align: top;">
+                      {% for check in certification_checklists_applied %}
+                          {% if checklist.id == check.question.id and check.is_checked %}
+                              <i class="fa fa-check-square fa-lg" aria-hidden="true" style="color: green"></i>
+                          {% elif checklist.id == check.question.id and check.is_checked != None and check.is_checked == False %}
+                              <i class="fa fa-remove fa-lg" aria-hidden="true" style="color: red"></i>
+                          {% endif %}
+                      {% endfor %}
+                    </td>
+                    <td>{{ checklist.question }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <div class="course-details">
+        <div class="menu-wrapper menu-wrapper-head">
+            <table>
+                <tr>
+                    <th><h2 class="custom-heading">Histories</h2></th>
+                </tr>
+            </table>
+        </div>
+        <div class="menu-wrapper menu-wrapper-body" style="padding: 25px">
+            <table class="course table-striped" style="width: 100%;">
+                <tr>
+                    <th>Date</th>
+                    <th>Remarks</th>
+                    <th>Reviewer</th>
+                </tr>
+                {% for history in certifyingorganisation.history.all %}
+                <tr>
+                    <td>{{ history.history_date }}</td>
+                    <td>{{ history.remarks }}</td>
+                    <td>{{ history.history_user.get_full_name }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <script>
+        $('.btn-delete').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-danger')
+            },
+            function (){
+                $(this).removeClass('btn-danger').addClass('btn-default')
+            }
+        );
+        $('.btn-view').hover(
+            function (){
+                $(this).removeClass('btn-default').addClass('btn-primary')
+            },
+            function (){
+                $(this).removeClass('btn-primary').addClass('btn-default')
+            }
+        );
+        $('.checklist_value').each(function(){
+            if ($(this).find('i').length === 0) {
+                $(this).html('<i class="fa fa-square-o fa-lg" aria-hidden="true"></i>')
+            }
+        })
+    </script>
+{% endblock %}

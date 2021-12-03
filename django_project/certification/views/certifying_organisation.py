@@ -1,10 +1,12 @@
 # coding=utf-8
 from base.models import Project
 from django.contrib import messages
+from django.contrib.postgres.search import SearchVector
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.shortcuts import get_list_or_404
 from django.db.models import Q
+from django.db.models.functions import Lower
 from django.http import HttpResponse
 from django.views.generic import (
     ListView,
@@ -26,7 +28,9 @@ from ..models import (
     CourseConvener,
     Course,
     CourseAttendee,
-    CertifyingOrganisationCertificate)
+    CertificateChecklist,
+    CertifyingOrganisationCertificate,
+    CertifyingOrganisationChecklist)
 from ..forms import CertifyingOrganisationForm
 from certification.utilities import check_slug
 
@@ -80,6 +84,42 @@ class CertifyingOrganisationMixin(object):
 
     model = CertifyingOrganisation
     form_class = CertifyingOrganisationForm
+
+    def get_checklists_value(self, kwargs):
+        checklists = {}
+        for d in kwargs['data']:
+            if 'checklist_' in d:
+                checklist_id = d.split('_')[1]
+                checklists.update({checklist_id: kwargs['data'][d]})
+        return checklists
+
+    def create_certifyingorganisation_checklist(self, checklists):
+        for checklist in checklists:
+            try:
+                question = CertificateChecklist.objects.get(id=int(checklist))
+                is_checked = True if checklists[checklist] == 'true' else False
+                CertifyingOrganisationChecklist.objects.create(
+                    question=question,
+                    certifying_organisation=self.object,
+                    is_checked=is_checked
+                )
+            except CertificateChecklist.DoesNotExist:
+                pass
+
+    def update_certifyingorganisation_checklist(self, checklists):
+        for checklist in checklists:
+            try:
+                question = CertificateChecklist.objects.get(id=int(checklist))
+                is_checked = True if checklists[checklist] == 'true' else False
+                ch, _ = CertifyingOrganisationChecklist.objects.get_or_create(
+                    question=question,
+                    certifying_organisation=self.object,
+                )
+                ch.is_checked = is_checked
+                ch.save()
+
+            except CertificateChecklist.DoesNotExist:
+                pass
 
 
 class JSONCertifyingOrganisationListView(
@@ -634,6 +674,10 @@ class CertifyingOrganisationUpdateView(
         :returns: URL
         :rtype: HttpResponse
         """
+        if not self.object.approved:
+            return reverse('pending-certifyingorganisation-list', kwargs={
+                'project_slug': self.object.project.slug
+            })
         return reverse('certifyingorganisation-detail', kwargs={
             'slug': self.object.slug,
             'project_slug': self.object.project.slug
@@ -643,24 +687,149 @@ class CertifyingOrganisationUpdateView(
         """Check that there is no referential integrity error when saving."""
 
         try:
-            return super(
-                CertifyingOrganisationUpdateView, self).form_valid(form)
+            super(CertifyingOrganisationUpdateView, self).form_valid(form)
+            return HttpResponseRedirect(self.get_success_url())
         except IntegrityError:
             return ValidationError(
                 'ERROR: Certifying Organisation by '
                 'this name is already exists!')
 
 
+class CertifyingOrganisationReviewView(
+    LoginRequiredMixin,
+    CertifyingOrganisationMixin,
+    DetailView):
+    """Review view for Certifying Organisation."""
+
+    context_object_name = 'certifyingorganisation'
+    template_name = 'certifying_organisation/review.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+
+        context = super(
+            CertifyingOrganisationReviewView, self).get_context_data()
+
+        context['certification_checklists'] = (
+            self.object.project.certificatechecklist_set.filter(
+                is_archived=False))
+        context['certification_checklists_applied'] = (
+            CertifyingOrganisationChecklist.objects.filter(
+                certifying_organisation=self.object
+            )
+        )
+
+        # lets set some default permission flags for checks in template.
+        context['user_can_create'] = False
+        context['user_can_delete'] = False
+
+        project_slug = self.kwargs.get('project_slug', None)
+
+        context['project_slug'] = project_slug
+        context['the_project'] = Project.objects.get(slug=project_slug)
+        context['project'] = context['the_project']
+
+        if self.request.user.is_staff:
+            context['user_can_create'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user in context[
+            'the_project'].certification_managers.all():
+            context['user_can_create'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user == context['project'].owner:
+            context['user_can_create'] = True
+            context['user_can_delete'] = True
+
+        if self.request.user in \
+                self.object.organisation_owners.all():
+            context['user_can_create'] = True
+            context['user_can_delete'] = True
+        return context
+
+    def get_queryset(self):
+        """Get the queryset for this view.
+
+        :returns: Queryset which is filtered to only show
+                    approved Certifying Organisation.
+        :rtype: QuerySet
+        """
+        if self.request.user.is_staff:
+            queryset = CertifyingOrganisation.objects.all()
+        else:
+            queryset = CertifyingOrganisation.objects.filter(
+                Q(project=self.object.project) &
+                (Q(project__owner=self.request.user) |
+                 Q(organisation_owners=self.request.user) |
+                 Q(project__certification_managers=self.request.user))
+            ).distinct()
+        return queryset
+
+    def get_object(self, queryset=None):
+        """Get the object for this view.
+
+        Because Certifying Organisation slugs are unique within a Project,
+        we need to make sure that we fetch the correct
+        Certifying Organisation from the correct Project
+
+        :param queryset: A query set
+        :type queryset: QuerySet
+
+        :returns: Queryset which is filtered to only show a project
+        :rtype: QuerySet
+        :raises: Http404
+        """
+
+        if queryset is None:
+            queryset = self.get_queryset()
+            slug = self.kwargs.get('slug', None)
+            project_slug = self.kwargs.get('project_slug', None)
+            if slug and project_slug:
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                except Project.DoesNotExist:
+                    raise Http404('Sorry! We could not find '
+                                  'your Project!')
+                try:
+                    obj = queryset.get(project=project, slug=slug)
+                except CertifyingOrganisation.DoesNotExist:
+                    raise Http404('Sorry! We could not find '
+                                  'your Certifying Organisation!')
+                return obj
+            else:
+                raise Http404('Sorry! We could not find '
+                              'your Certifying Organisation!')
+
+
+class CertifyingOrganisationSearchMixin(object):
+    """Mixin class to provide search in ListView."""
+
+    def get_queryset_search(self, qs):
+        q = self.request.GET.get('q')
+        if q:
+            qs = qs.annotate(search=SearchVector('name')).filter(search=q)
+        return qs
+
+
 class PendingCertifyingOrganisationListView(
         LoginRequiredMixin,
         CertifyingOrganisationMixin,
         PaginationMixin,
+        CertifyingOrganisationSearchMixin,
         ListView):
     """List view for pending certifying organisation."""
 
     context_object_name = 'certifyingorganisations'
     template_name = 'certifying_organisation/pending-list.html'
-    paginate_by = 10
+    paginate_by = 20
 
     def __init__(self):
         """
@@ -693,6 +862,8 @@ class PendingCertifyingOrganisationListView(
             context['the_project'] = \
                 Project.objects.get(slug=self.project_slug)
             context['project'] = context['the_project']
+        if "sort_by" in self.request.GET:
+            context["current_sort_field"] = self.request.GET.get("sort_by")
         return context
 
     # noinspection PyAttributeOutsideInit
@@ -721,7 +892,15 @@ class PendingCertifyingOrganisationListView(
                              Q(organisation_owners=self.request.user) |
                              Q(project__certification_managers=
                                self.request.user))).distinct()
-                return queryset
+                if 'sort_by' in self.request.GET:
+                    sort_by = self.request.GET.get('sort_by')
+                    if sort_by == 'name':
+                        queryset = queryset.order_by(Lower('name'))
+                    elif sort_by == '-name':
+                        queryset = queryset.order_by(Lower('name').desc())
+                    else:
+                        queryset = queryset.order_by(sort_by)
+                return self.get_queryset_search(queryset)
             else:
                 raise Http404(
                     'Sorry! We could not find your Certifying Organisation!')

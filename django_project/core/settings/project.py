@@ -59,6 +59,7 @@ PIPELINE['JAVASCRIPT']['project'] = {
         'js/entry.js',
         'js/category.js',
         'js/form.js',
+        'js/certificate-checklist.js'
     ),
     'output_filename': 'js/project.js',
 }

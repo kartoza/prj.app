@@ -9,6 +9,7 @@ from .views import (
     CertifyingOrganisationDetailView,
     CertifyingOrganisationListView,
     CertifyingOrganisationUpdateView,
+    CertifyingOrganisationReviewView,
     PendingCertifyingOrganisationListView,
     ApproveCertifyingOrganisationView,
     reject_certifying_organisation,
@@ -30,6 +31,10 @@ from .views import (
     CourseUpdateView,
     CourseDeleteView,
     CourseDetailView,
+
+    # CourseType
+    ProjectCertificateTypeView,
+    updateProjectCertificateView,
 
     # Training Center.
     TrainingCenterCreateView,
@@ -58,6 +63,13 @@ from .views import (
     generate_all_certificate,
     preview_certificate,
     CertificateRevokeView,
+
+    # Certificate Checklist
+    CertificateChecklistCreateView,
+    CertificateChecklistUpdateView,
+
+    # Certificate Management
+    CertificateManagementTemplateView,
 
     # Certificate for certifying organisation.
     OrganisationCertificateCreateView,
@@ -131,6 +143,10 @@ urlpatterns = [
               '(?P<slug>[\w-]+)/update/$',
         view=CertifyingOrganisationUpdateView.as_view(),
         name='certifyingorganisation-update'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<slug>[\w-]+)/review/$',
+        view=CertifyingOrganisationReviewView.as_view(),
+        name='certifyingorganisation-review'),
 
     # Course Type.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
@@ -234,6 +250,27 @@ urlpatterns = [
               '(?P<id>[\w-]+)/$',
         view=OrganisationCertificateDetailView.as_view(),
         name='detail-certificate-organisation'),
+
+    # Certificate Type.
+    url(regex='^(?P<project_slug>[\w-]+)/certificate-types/$',
+        view=ProjectCertificateTypeView.as_view(),
+        name='certificate-type-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/certificate-types/update/$',
+        view=updateProjectCertificateView,
+        name='certificate-type-update'),
+
+    # Certificate Checklist
+    url(regex='^(?P<project_slug>[\w-]+)/certificate-checklist/create/$',
+        view=CertificateChecklistCreateView.as_view(),
+        name='certificate-checklist-create'),
+    url(regex='^(?P<project_slug>[\w-]+)/certificate-checklist/submit-order/$',
+        view=CertificateChecklistUpdateView.as_view(),
+        name='certificate-checklist-update'),
+
+    # Certificate Management
+    url(regex='^(?P<project_slug>[\w-]+)/certificate-management/$',
+        view=CertificateManagementTemplateView.as_view(),
+        name='certificate-management'),
 
     # Certificate.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
