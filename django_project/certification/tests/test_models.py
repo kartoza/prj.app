@@ -16,6 +16,14 @@ from certification.tests.model_factories import (
     CourseAttendeeF,
     StatusF
 )
+from certification.models.certificate_type import CertificateType
+
+
+class SetUpMixin:
+    def setUp(self):
+        """Set up before each test."""
+        # Delete CertificateType created from migration 0007_certificate_type
+        CertificateType.objects.all().delete()
 
 
 class TestCertifyingOrganisation(TestCase):
@@ -97,21 +105,19 @@ class TestCertifyingOrganisation(TestCase):
             self.assertEqual(model.__dict__.get(key), val)
 
 
-class TestCertificate(TestCase):
+class CertificateSetUp(SetUpMixin, TestCase):
     """Test certificate model."""
-
-    def setUp(self):
-        """Set up before test."""
-
-        pass
 
     def test_Certificate_create(self):
         """Test certificate model creation."""
-
-        model = CertificateF.create()
+        certificate_type = CertificateTypeF.create()
+        model = CertificateF.create(
+            certificate_type=certificate_type
+        )
 
         # check if PK exists.
         self.assertTrue(model.pk is not None)
+        self.assertIsNotNone(model.certificate_type)
 
     def test_Certificate_delete(self):
         """Test certificate model deletion."""
@@ -122,14 +128,17 @@ class TestCertificate(TestCase):
         # check if deleted.
         self.assertTrue(model.pk is None)
 
+    def test_certificate_type_must_not_null(self):
+        msg = ('null value in column "certificate_type_id" '
+               'violates not-null constraint')
+        with self.assertRaisesMessage(IntegrityError, msg):
+            CertificateF.create(certificate_type=None)
 
-class TestCertificateType(TestCase):
+
+class CertificateTypeSetUp(SetUpMixin, TestCase):
     """Test Certificate models."""
 
     def test_CRUD_CertificateType(self):
-        from certification.models.certificate_type import CertificateType
-        CertificateType.objects.all().delete()
-
         # initial
         self.assertEqual(CertificateType.objects.all().count(), 0)
 

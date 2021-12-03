@@ -82,18 +82,6 @@ class CourseTypeF(factory.django.DjangoModelFactory):
     author = factory.SubFactory(UserF)
 
 
-class CertificateTypeF(factory.django.DjangoModelFactory):
-    class Meta:
-        model = CertificateType
-
-    name = factory.sequence(lambda n: 'Test certificate type name %s' % n)
-    description = factory.sequence(
-        lambda n: 'Description certificate type %s' % n)
-    printed_text = factory.sequence(
-        lambda n: 'Wording certificate type %s' % n)
-    order = factory.sequence(lambda n: n)
-
-
 class CourseF(factory.django.DjangoModelFactory):
     """Course model factory."""
 
@@ -137,6 +125,18 @@ class CourseAttendeeF(factory.django.DjangoModelFactory):
     attendee = factory.SubFactory(AttendeeF)
 
 
+class CertificateTypeF(factory.django.DjangoModelFactory):
+    class Meta:
+        model = CertificateType
+
+    name = factory.sequence(lambda n: 'Test certificate type name %s' % n)
+    description = factory.sequence(
+        lambda n: 'Description certificate type %s' % n)
+    printed_text = factory.sequence(
+        lambda n: 'Wording certificate type %s' % n)
+    order = factory.sequence(lambda n: n)
+
+
 class CertificateF(factory.django.DjangoModelFactory):
     """Certificate model factory."""
 
@@ -147,6 +147,7 @@ class CertificateF(factory.django.DjangoModelFactory):
     course = factory.SubFactory(CourseF)
     attendee = factory.SubFactory(AttendeeF)
     author = factory.SubFactory(UserF)
+    certificate_type = factory.SubFactory(CertificateTypeF)
 
 
 class StatusF(factory.django.DjangoModelFactory):
