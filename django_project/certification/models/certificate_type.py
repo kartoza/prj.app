@@ -3,6 +3,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from base.models.project import Project
+
 
 class CertificateType(models.Model):
     name = models.CharField(
@@ -38,3 +40,16 @@ class CertificateType(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ProjectCertificateType(models.Model):
+    """A model to store a certificate type linked to a project"""
+
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE
+    )
+    certificate_type = models.ForeignKey(
+        CertificateType,
+        on_delete=models.CASCADE
+    )
