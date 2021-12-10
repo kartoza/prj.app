@@ -22,7 +22,7 @@ class CertificateType(models.Model):
         blank=True,
     )
 
-    printed_text = models.CharField(
+    wording = models.CharField(
         help_text=_(
             'Wording that will be placed on certificate. '
             'e.g. "Has attended and completed".'

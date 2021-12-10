@@ -1,0 +1,43 @@
+{% extends "project_base.html" %}
+
+{% block extra_js %}
+{% endblock %}
+
+{% block content %}
+  <style>
+    .table tbody:first-of-type tr {
+      background-color: transparent;
+    }
+  </style>
+
+  <div class="page-header">
+    <h1 class="text-muted">Certificate Types</h1>
+  </div>
+
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">Certificate Type</th>
+      <th scope="col">Wording</th>
+      <th scope="col">Apply</th>
+    </tr>
+    </thead>
+    <tbody>
+    <form action="{% url 'certificate-type-update' project_slug %}" method="post">
+    {% csrf_token %}
+    {% for cer_type in certificate_types %}
+      <tr {% if cer_type.id in certificate_types_applied %}style="background-color: #d7e5f0" {% endif %}>
+        <td>{{ cer_type.name }}</td>
+        <td>{{ cer_type.wording }}</td>
+        <td>
+            <input type="checkbox" name="certificate_types" value="{{ cer_type.name }}"
+              {% if cer_type.id in certificate_types_applied %}checked{% endif %}
+            >
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <input class="btn btn-primary" type="submit" value="save">
+  </form>
+{% endblock %}

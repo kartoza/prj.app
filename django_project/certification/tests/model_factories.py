@@ -132,7 +132,7 @@ class CertificateTypeF(factory.django.DjangoModelFactory):
     name = factory.sequence(lambda n: 'Test certificate type name %s' % n)
     description = factory.sequence(
         lambda n: 'Description certificate type %s' % n)
-    printed_text = factory.sequence(
+    wording = factory.sequence(
         lambda n: 'Wording certificate type %s' % n)
     order = factory.sequence(lambda n: n)
 

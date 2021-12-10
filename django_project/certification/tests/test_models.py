@@ -150,7 +150,7 @@ class CertificateTypeSetUp(SetUpMixin, TestCase):
         self.assertIsNotNone(model.id)
         self.assertIn('Test certificate type name', model.name)
         self.assertIn('Description certificate type', model.description)
-        self.assertIn('Wording certificate type', model.printed_text)
+        self.assertIn('Wording certificate type', model.wording)
         self.assertIsNotNone(model.order)
         self.assertEqual(model.__str__(), model.name)
 
