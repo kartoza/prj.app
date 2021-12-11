@@ -18,7 +18,7 @@ def set_existing_certificate_type_value(apps, shcema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('certification', '0009_projectcertificatetype'),
+        ('certification', '0008_projectcertificatetype'),
     ]
 
     operations = [

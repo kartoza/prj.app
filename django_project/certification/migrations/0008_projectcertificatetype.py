@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('base', '0006_auto_20210308_0244'),
-        ('certification', '0008_certificate_certificate_type'),
+        ('certification', '0007_certificatetype'),
     ]
 
     operations = [

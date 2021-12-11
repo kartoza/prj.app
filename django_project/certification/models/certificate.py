@@ -55,8 +55,6 @@ class Certificate(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     attendee = models.ForeignKey(Attendee, on_delete=models.CASCADE)
-    certificate_type = models.ForeignKey(CertificateType,
-                                         on_delete=models.PROTECT)
     objects = models.Manager()
 
     class Meta:
