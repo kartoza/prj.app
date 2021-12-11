@@ -303,6 +303,7 @@ class CourseForm(forms.ModelForm):
             'end_date',
             'template_certificate',
             'certifying_organisation',
+            'certificate_type',
         )
 
     def __init__(self, *args, **kwargs):
@@ -322,6 +323,7 @@ class CourseForm(forms.ModelForm):
                 Field('start_date', css_class='form-control'),
                 Field('end_date', css_class='form-control'),
                 Field('template_certificate', css_class='form-control'),
+                Field('certificate_type', css_class='form-control'),
             )
         )
         self.helper.layout = layout
