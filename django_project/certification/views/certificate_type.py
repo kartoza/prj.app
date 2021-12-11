@@ -37,7 +37,7 @@ class ProjectCertificateTypeView(LoginRequiredMixin, ListView):
             objects.filter(project=project).values_list(
             'certificate_type', flat=True)
         return context
-    
+
     def get_queryset(self):
         """Return certificate_types for a project."""
 
