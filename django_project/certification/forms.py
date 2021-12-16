@@ -347,9 +347,8 @@ class CourseForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Submit'))
         self.fields['certificate_type'].queryset = \
             CertificateType.objects.filter(
-                projectcertificatetype__project=self.certifying_organisation.
-                    project
-            )
+                projectcertificatetype__project=
+                self.certifying_organisation.project)
 
     def save(self, commit=True):
         instance = super(CourseForm, self).save(commit=False)
