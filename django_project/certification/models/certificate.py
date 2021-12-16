@@ -9,7 +9,6 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from .course import Course
 from .attendee import Attendee
-from .certificate_type import CertificateType
 
 
 def increment_id(project):

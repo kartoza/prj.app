@@ -654,8 +654,7 @@ def regenerate_certificate(request, **kwargs):
     organisation_slug = kwargs.pop('organisation_slug', None)
     course_slug = kwargs.pop('course_slug', None)
     pk = kwargs.pop('pk')
-    course = Course.objects.get(
-        slug=course_slug).select_related('certificate_type')
+    course = Course.objects.get(slug=course_slug)
     attendee = Attendee.objects.get(pk=pk)
     project = Project.objects.get(slug=project_slug)
     certificate = Certificate.objects.get(course=course, attendee=attendee)
@@ -782,8 +781,7 @@ def regenerate_all_certificate(request, **kwargs):
     project_slug = kwargs.pop('project_slug', None)
     course_slug = kwargs.pop('course_slug', None)
     organisation_slug = kwargs.get('organisation_slug', None)
-    course = Course.objects.get(
-        slug=course_slug).select_related('certificate_type')
+    course = Course.objects.get(slug=course_slug)
     project = Project.objects.get(slug=project_slug)
     certifying_organisation = \
         CertifyingOrganisation.objects.get(slug=organisation_slug)
@@ -923,8 +921,8 @@ def preview_certificate(request, **kwargs):
     organisation_slug = kwargs.pop('organisation_slug')
 
     convener_id = request.POST.get('course_convener', None)
-    # certificate_type_name = request.POST.get('certificate_type', None)
-    # certificate_type = CertificateType.objects.get(name=certificate_type_name)
+    certificate_type_id = request.POST.get('certificate_type', None)
+    certificate_type = CertificateType.objects.get(id=certificate_type_id)
     if convener_id is not None:
         # Get all posted data.
         course_convener = CourseConvener.objects.get(id=convener_id)
@@ -960,7 +958,9 @@ def preview_certificate(request, **kwargs):
         current_site = request.META['HTTP_HOST']
 
         generate_pdf(
-            response, project, course, attendee, certificate, current_site)
+            response, project, course, attendee, certificate, current_site,
+            certificate_type.wording
+        )
 
     else:
         # When preview page is refreshed, the data is gone so user needs to
