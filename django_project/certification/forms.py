@@ -21,6 +21,8 @@ from crispy_forms.layout import (
 )
 from .models import (
     CertifyingOrganisation,
+    CertificateType,
+    ProjectCertificateType,
     CourseConvener,
     CourseType,
     TrainingCenter,
@@ -344,6 +346,9 @@ class CourseForm(forms.ModelForm):
             self.certifying_organisation
         self.fields['certifying_organisation'].widget = forms.HiddenInput()
         self.helper.add_input(Submit('submit', 'Submit'))
+        self.fields['certificate_type'].queryset = CertificateType.objects.filter(
+            projectcertificatetype__project=self.certifying_organisation.project
+        )
 
     def save(self, commit=True):
         instance = super(CourseForm, self).save(commit=False)
