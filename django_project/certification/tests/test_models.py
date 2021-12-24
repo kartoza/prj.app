@@ -110,14 +110,10 @@ class CertificateSetUp(SetUpMixin, TestCase):
 
     def test_Certificate_create(self):
         """Test certificate model creation."""
-        certificate_type = CertificateTypeF.create()
-        model = CertificateF.create(
-            certificate_type=certificate_type
-        )
+        model = CertificateF.create()
 
         # check if PK exists.
         self.assertTrue(model.pk is not None)
-        self.assertIsNotNone(model.certificate_type)
 
     def test_Certificate_delete(self):
         """Test certificate model deletion."""
@@ -128,11 +124,6 @@ class CertificateSetUp(SetUpMixin, TestCase):
         # check if deleted.
         self.assertTrue(model.pk is None)
 
-    def test_certificate_type_must_not_null(self):
-        msg = ('null value in column "certificate_type_id" '
-               'violates not-null constraint')
-        with self.assertRaisesMessage(IntegrityError, msg):
-            CertificateF.create(certificate_type=None)
 
 
 class CertificateTypeSetUp(SetUpMixin, TestCase):
@@ -151,7 +142,6 @@ class CertificateTypeSetUp(SetUpMixin, TestCase):
         self.assertIn('Test certificate type name', model.name)
         self.assertIn('Description certificate type', model.description)
         self.assertIn('Wording certificate type', model.wording)
-        self.assertIsNotNone(model.order)
         self.assertEqual(model.__str__(), model.name)
 
         #

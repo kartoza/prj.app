@@ -9,7 +9,8 @@ from certification.tests.model_factories import (
     CertifyingOrganisationF,
     CourseConvenerF,
     TrainingCenterF,
-    CourseTypeF
+    CourseTypeF,
+    CertificateTypeF
 )
 
 
@@ -46,6 +47,7 @@ class TestCertificatePreview(TestCase):
         self.convener = CourseConvenerF.create()
         self.training_center = TrainingCenterF.create()
         self.course_type = CourseTypeF.create()
+        self.certificate_type = CertificateTypeF.create()
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):

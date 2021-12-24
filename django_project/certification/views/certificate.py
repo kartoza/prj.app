@@ -922,7 +922,6 @@ def preview_certificate(request, **kwargs):
 
     convener_id = request.POST.get('course_convener', None)
     certificate_type_id = request.POST.get('certificate_type', None)
-    certificate_type = CertificateType.objects.get(id=certificate_type_id)
     if convener_id is not None:
         # Get all posted data.
         course_convener = CourseConvener.objects.get(id=convener_id)
@@ -957,10 +956,16 @@ def preview_certificate(request, **kwargs):
 
         current_site = request.META['HTTP_HOST']
 
-        generate_pdf(
-            response, project, course, attendee, certificate, current_site,
-            certificate_type.wording
-        )
+        if certificate_type_id:
+            certificate_type = CertificateType.objects.get(
+                id=certificate_type_id)
+            generate_pdf(
+                response, project, course, attendee, certificate, current_site,
+                certificate_type.wording
+            )
+        else:
+            generate_pdf(
+                response, project, course, attendee, certificate, current_site)
 
     else:
         # When preview page is refreshed, the data is gone so user needs to
