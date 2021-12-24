@@ -1,12 +1,10 @@
 from bs4 import BeautifulSoup as Soup
 from django.shortcuts import reverse
 from django.test import TestCase, override_settings
-from django.test.client import Client
 
 from base.tests.model_factories import ProjectF
 from core.model_factories import UserF
 from certification.tests.model_factories import (
-    CertifyingOrganisationF,
     CertificateTypeF,
     ProjectCertificateTypeF
 )
