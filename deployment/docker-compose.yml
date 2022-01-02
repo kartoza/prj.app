@@ -54,6 +54,11 @@ services:
       - db:db
     restart: unless-stopped
     user: root
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
 
   dbbackups:
     image: kartoza/pg-backup:9.6
