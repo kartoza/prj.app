@@ -957,12 +957,17 @@ def preview_certificate(request, **kwargs):
         current_site = request.META['HTTP_HOST']
 
         if certificate_type_id:
-            certificate_type = CertificateType.objects.get(
-                id=certificate_type_id)
-            generate_pdf(
-                response, project, course, attendee, certificate, current_site,
-                certificate_type.wording
-            )
+            try:
+                certificate_type = CertificateType.objects.get(
+                    id=certificate_type_id)
+                generate_pdf(
+                    response, project, course, attendee, certificate,
+                    current_site, certificate_type.wording
+                )
+            except CertificateType.DoesNotExist:
+                generate_pdf(
+                    response, project, course, attendee, certificate,
+                    current_site)
         else:
             generate_pdf(
                 response, project, course, attendee, certificate, current_site)

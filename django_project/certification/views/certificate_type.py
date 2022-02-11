@@ -42,8 +42,7 @@ class ProjectCertificateTypeView(LoginRequiredMixin, ListView):
         """Return certificate_types for a project."""
 
         project = get_object_or_404(Project, slug=self.kwargs['project_slug'])
-        qs = ProjectCertificateType.objects.filter(project=project)
-        return qs
+        return ProjectCertificateType.objects.filter(project=project)
 
 
 def updateProjectCertificateView(request, project_slug):
