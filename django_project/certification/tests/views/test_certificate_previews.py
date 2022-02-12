@@ -1,6 +1,5 @@
 # coding=utf-8
-import mock.mock
-from unittest.mock import patch, call
+from unittest.mock import patch
 from django.urls import reverse
 from django.test import TestCase, override_settings
 from django.test.client import Client
