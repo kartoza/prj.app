@@ -52,6 +52,12 @@ class CourseConvener(models.Model):
         null=True
     )
 
+    is_active = models.BooleanField(
+        help_text=_('Inactive Convener will not be available in your '
+                    'organisation list.'),
+        default=True
+    )
+
     class Meta:
         ordering = ['user']
 

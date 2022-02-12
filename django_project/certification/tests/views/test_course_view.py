@@ -11,7 +11,8 @@ from certification.tests.model_factories import (
     CertifyingOrganisationF,
     CertificateTypeF,
     ProjectCertificateTypeF,
-    CourseF
+    CourseF,
+    CourseConvenerF
 )
 
 
@@ -189,3 +190,108 @@ class TestCourseView(TestCase):
             'slug': self.certifying_organisation.slug,
         })
         self.assertRedirects(response, expected_url)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_inactive_convener_should_not_be_in_the_course_convener_list(self):
+        convener = UserF.create(**{
+            'username': 'convener',
+            'password': 'password',
+            'first_name': 'Pretty',
+            'last_name': 'Smart',
+            'is_staff': True
+        })
+        convener_inactive = UserF.create(**{
+            'username': 'inactive_convener',
+            'password': 'password',
+            'first_name': 'Wonder',
+            'last_name': 'Woman',
+            'is_staff': True
+        })
+        CourseConvenerF.create(
+            user=convener,
+            certifying_organisation=self.certifying_organisation
+        )
+        CourseConvenerF.create(
+            user=convener_inactive,
+            certifying_organisation=self.certifying_organisation,
+            is_active=False
+        )
+        self.client.login(username='anita', password='password')
+        response = self.client.get(reverse('course-create', kwargs={
+            'project_slug': self.project.slug,
+            'organisation_slug': self.certifying_organisation.slug,
+        }))
+        self.assertContains(response, 'Pretty Smart')
+        self.assertNotContains(response, 'Wonder Woman')
+        self.assertNotContains(response, 'inactive_convener')
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_inactive_convener_should_not_be_in_normal_user_detail_page(self):
+        convener = UserF.create(**{
+            'username': 'convener',
+            'password': 'password',
+            'first_name': 'Pretty',
+            'last_name': 'Smart',
+            'is_staff': True
+        })
+        convener_inactive = UserF.create(**{
+            'username': 'inactive_convener',
+            'password': 'password',
+            'first_name': 'Wonder',
+            'last_name': 'Woman',
+            'is_staff': True
+        })
+        CourseConvenerF.create(
+            user=convener,
+            certifying_organisation=self.certifying_organisation
+        )
+        CourseConvenerF.create(
+            user=convener_inactive,
+            certifying_organisation=self.certifying_organisation,
+            is_active=False
+        )
+        response = self.client.get(
+            reverse('certifyingorganisation-detail', kwargs={
+                'project_slug': self.project.slug,
+                'slug': self.certifying_organisation.slug,
+            })
+        )
+        self.assertContains(response, 'Pretty Smart')
+        self.assertNotContains(response, 'Wonder Woman')
+        self.assertNotContains(response, '[inactive]')
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_inactive_convener_should_be_in_normal_user_detail_page(self):
+        convener = UserF.create(**{
+            'username': 'convener',
+            'password': 'password',
+            'first_name': 'Pretty',
+            'last_name': 'Smart',
+            'is_staff': True
+        })
+        convener_inactive = UserF.create(**{
+            'username': 'inactive_convener',
+            'password': 'password',
+            'first_name': 'Wonder',
+            'last_name': 'Woman',
+            'is_staff': True
+        })
+        CourseConvenerF.create(
+            user=convener,
+            certifying_organisation=self.certifying_organisation
+        )
+        CourseConvenerF.create(
+            user=convener_inactive,
+            certifying_organisation=self.certifying_organisation,
+            is_active=False
+        )
+        self.client.login(username='anita', password='password')
+        response = self.client.get(
+            reverse('certifyingorganisation-detail', kwargs={
+                'project_slug': self.project.slug,
+                'slug': self.certifying_organisation.slug,
+            })
+        )
+        self.assertContains(response, 'Pretty Smart')
+        self.assertContains(response, 'Wonder Woman')
+        self.assertContains(response, '[inactive]')
