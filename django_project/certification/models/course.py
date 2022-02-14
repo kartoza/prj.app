@@ -20,6 +20,7 @@ from .certifying_organisation import CertifyingOrganisation
 from .course_type import CourseType
 from certification.utilities import check_slug
 from .training_center import TrainingCenter
+from certification.models.certificate_type import CertificateType
 
 logger = logging.getLogger(__name__)
 
@@ -86,6 +87,8 @@ class Course(models.Model):
                                         on_delete=models.CASCADE)
     certifying_organisation = models.ForeignKey(CertifyingOrganisation,
                                                 on_delete=models.CASCADE)
+    certificate_type = models.ForeignKey(
+        CertificateType, on_delete=models.PROTECT, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     objects = models.Manager()
 

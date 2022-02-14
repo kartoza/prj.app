@@ -1,10 +1,12 @@
 # coding=utf-8
 """Test for models."""
 
+from django.db.utils import IntegrityError
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from certification.tests.model_factories import (
     CertificateF,
+    CertificateTypeF,
     AttendeeF,
     CourseF,
     CourseTypeF,
@@ -14,6 +16,14 @@ from certification.tests.model_factories import (
     CourseAttendeeF,
     StatusF
 )
+from certification.models.certificate_type import CertificateType
+
+
+class SetUpMixin:
+    def setUp(self):
+        """Set up before each test."""
+        # Delete CertificateType created from migration 0007_certificate_type
+        CertificateType.objects.all().delete()
 
 
 class TestCertifyingOrganisation(TestCase):
@@ -95,17 +105,11 @@ class TestCertifyingOrganisation(TestCase):
             self.assertEqual(model.__dict__.get(key), val)
 
 
-class TestCertificate(TestCase):
+class CertificateSetUp(SetUpMixin, TestCase):
     """Test certificate model."""
-
-    def setUp(self):
-        """Set up before test."""
-
-        pass
 
     def test_Certificate_create(self):
         """Test certificate model creation."""
-
         model = CertificateF.create()
 
         # check if PK exists.
@@ -119,6 +123,65 @@ class TestCertificate(TestCase):
 
         # check if deleted.
         self.assertTrue(model.pk is None)
+
+
+
+class CertificateTypeSetUp(SetUpMixin, TestCase):
+    """Test Certificate models."""
+
+    def test_CRUD_CertificateType(self):
+        # initial
+        self.assertEqual(CertificateType.objects.all().count(), 0)
+
+        # create model
+        model = CertificateTypeF.create()
+        self.assertEqual(CertificateType.objects.all().count(), 1)
+
+        # read model
+        self.assertIsNotNone(model.id)
+        self.assertIn('Test certificate type name', model.name)
+        self.assertIn('Description certificate type', model.description)
+        self.assertIn('Wording certificate type', model.wording)
+        self.assertEqual(model.__str__(), model.name)
+
+        #
+        model.name = 'Update certificate type  name'
+        model.save()
+        self.assertEqual(model.name, 'Update certificate type  name')
+
+        model.delete()
+        self.assertIsNone(model.id)
+        self.assertEqual(CertificateType.objects.all().count(), 0)
+
+    def test_name_field_must_be_unique(self):
+        CertificateTypeF.create(name="We are twin")
+        msg = ('duplicate key value violates unique constraint '
+               '"certification_certificatetype_name_key"')
+        with self.assertRaisesMessage(IntegrityError, msg):
+            CertificateTypeF.create(name="We are twin")
+
+    def test_order_field_must_be_unique(self):
+        CertificateTypeF.create(order=1)
+        msg = ('duplicate key value violates unique constraint '
+               '"certification_certificatetype_order_key"')
+        with self.assertRaisesMessage(IntegrityError, msg):
+            CertificateTypeF.create(order=1)
+
+    def test_order_field_can_be_null(self):
+        model_1 = CertificateTypeF.create(order=1)
+        model_2 = CertificateTypeF.create(order=2)
+
+        self.assertEqual(model_1.order, 1)
+        self.assertEqual(model_2.order, 2)
+
+        model_1.order = None
+        model_1.save()
+
+        model_2.order = 1
+        model_2.save()
+
+        self.assertEqual(model_1.order, None)
+        self.assertEqual(model_2.order, 1)
 
 
 class TestAttendee(TestCase):

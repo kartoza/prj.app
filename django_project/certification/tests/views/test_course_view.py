@@ -1,5 +1,7 @@
 # coding=utf-8
 import logging
+from bs4 import BeautifulSoup as Soup
+
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from django.urls import reverse
@@ -7,6 +9,8 @@ from certification.tests.model_factories import (
     ProjectF,
     UserF,
     CertifyingOrganisationF,
+    CertificateTypeF,
+    ProjectCertificateTypeF,
     CourseF,
     CourseConvenerF
 )
@@ -42,6 +46,11 @@ class TestCourseView(TestCase):
         self.course = CourseF.create(
             certifying_organisation=self.certifying_organisation
         )
+        self.certificate_type = CertificateTypeF.create()
+        self.project_cert_type = ProjectCertificateTypeF.create(
+            project=self.project,
+            certificate_type=self.certificate_type
+        )
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
@@ -55,6 +64,24 @@ class TestCourseView(TestCase):
         self.certifying_organisation.delete()
         self.project.delete()
         self.user.delete()
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_create_course_must_showing_CertificateTypes(self):
+        self.client.login(username='anita', password='password')
+        response = self.client.get(reverse('course-create', kwargs={
+            'project_slug': self.project.slug,
+            'organisation_slug': self.certifying_organisation.slug,
+        }))
+        self.assertEqual(response.status_code, 200)
+        soup = Soup(response.content, "html5lib")
+        cert_type_option = soup.find(
+            'select',
+            {'id': 'id_certificate_type'}
+        ).find_all('option')
+        self.assertIn(
+            self.certificate_type.name,
+            [cert_type.text for cert_type in cert_type_option]
+        )
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_detail_view(self):

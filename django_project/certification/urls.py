@@ -31,6 +31,10 @@ from .views import (
     CourseDeleteView,
     CourseDetailView,
 
+    # CourseType
+    ProjectCertificateTypeView,
+    updateProjectCertificateView,
+
     # Training Center.
     TrainingCenterCreateView,
     TrainingCenterDetailView,
@@ -234,6 +238,15 @@ urlpatterns = [
               '(?P<id>[\w-]+)/$',
         view=OrganisationCertificateDetailView.as_view(),
         name='detail-certificate-organisation'),
+
+    # Certificate Type.
+    url(regex='^(?P<project_slug>[\w-]+)/certificate-types/$',
+        view=ProjectCertificateTypeView.as_view(),
+        name='certificate-type-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/certificate-types/update/$',
+        view=updateProjectCertificateView,
+        name='certificate-type-update'),
+
 
     # Certificate.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
