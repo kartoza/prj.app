@@ -85,6 +85,9 @@
             color: darkblue !important;
             text-decoration: none !important;
         }
+        .btn-disabled, .btn-disabled:hover {
+            color: #d3d3d3
+        }
     </style>
 
     {% if messages %}
@@ -536,34 +539,7 @@
     </td></tr>
 
     {% for courseconvener in courseconveners %}
-        <tr style="border-bottom: 1px solid #e9e9e9;">
-        <td class="list">
-        <div class="col-lg-10">
-            {% if courseconvener.user.first_name %}
-                {{ courseconvener.user.first_name }} {{ courseconvener.user.last_name }}
-            {% else %}
-                {{ courseconvener.user }}
-            {% endif %}
-        </div>
-        </td>
-
-        {% if user_can_delete %}
-        <td>
-            <div class="btn-group pull-right button-action">
-                <a class="btn btn-default btn-xs btn-delete tooltip-toggle"
-                   href='{% url "courseconvener-delete" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=courseconvener.slug %}'
-                   data-title="Delete {{ courseconvener.user.first_name }} {{ courseconvener.user.last_name }} <{{ courseconvener.user }}>">
-                    <span class="glyphicon glyphicon-minus"></span>
-                </a>
-                <a class="btn btn-default btn-xs tooltip-toggle"
-                   href='{% url "courseconvener-update" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug slug=courseconvener.slug %}'
-                   data-title="Edit {{ courseconvener.user.first_name }} {{ courseconvener.user.last_name }} <{{ courseconvener.user }}>">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                </a>
-            </div>
-        </td>
-        {% endif %}
-        </tr>
+      {% include 'certifying_organisation/includes/convenor_list.html' %}
     {%  endfor %}
     </table>
     </div>

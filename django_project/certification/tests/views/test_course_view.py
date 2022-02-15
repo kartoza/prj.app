@@ -1,5 +1,7 @@
 # coding=utf-8
 import logging
+from bs4 import BeautifulSoup as Soup
+
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from django.urls import reverse
@@ -7,7 +9,10 @@ from certification.tests.model_factories import (
     ProjectF,
     UserF,
     CertifyingOrganisationF,
-    CourseF
+    CertificateTypeF,
+    ProjectCertificateTypeF,
+    CourseF,
+    CourseConvenerF
 )
 
 
@@ -41,6 +46,11 @@ class TestCourseView(TestCase):
         self.course = CourseF.create(
             certifying_organisation=self.certifying_organisation
         )
+        self.certificate_type = CertificateTypeF.create()
+        self.project_cert_type = ProjectCertificateTypeF.create(
+            project=self.project,
+            certificate_type=self.certificate_type
+        )
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
@@ -54,6 +64,24 @@ class TestCourseView(TestCase):
         self.certifying_organisation.delete()
         self.project.delete()
         self.user.delete()
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_create_course_must_showing_CertificateTypes(self):
+        self.client.login(username='anita', password='password')
+        response = self.client.get(reverse('course-create', kwargs={
+            'project_slug': self.project.slug,
+            'organisation_slug': self.certifying_organisation.slug,
+        }))
+        self.assertEqual(response.status_code, 200)
+        soup = Soup(response.content, "html5lib")
+        cert_type_option = soup.find(
+            'select',
+            {'id': 'id_certificate_type'}
+        ).find_all('option')
+        self.assertIn(
+            self.certificate_type.name,
+            [cert_type.text for cert_type in cert_type_option]
+        )
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_detail_view(self):
@@ -162,3 +190,108 @@ class TestCourseView(TestCase):
             'slug': self.certifying_organisation.slug,
         })
         self.assertRedirects(response, expected_url)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_inactive_convener_should_not_be_in_the_course_convener_list(self):
+        convener = UserF.create(**{
+            'username': 'convener',
+            'password': 'password',
+            'first_name': 'Pretty',
+            'last_name': 'Smart',
+            'is_staff': True
+        })
+        convener_inactive = UserF.create(**{
+            'username': 'inactive_convener',
+            'password': 'password',
+            'first_name': 'Wonder',
+            'last_name': 'Woman',
+            'is_staff': True
+        })
+        CourseConvenerF.create(
+            user=convener,
+            certifying_organisation=self.certifying_organisation
+        )
+        CourseConvenerF.create(
+            user=convener_inactive,
+            certifying_organisation=self.certifying_organisation,
+            is_active=False
+        )
+        self.client.login(username='anita', password='password')
+        response = self.client.get(reverse('course-create', kwargs={
+            'project_slug': self.project.slug,
+            'organisation_slug': self.certifying_organisation.slug,
+        }))
+        self.assertContains(response, 'Pretty Smart')
+        self.assertNotContains(response, 'Wonder Woman')
+        self.assertNotContains(response, 'inactive_convener')
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_inactive_convener_should_not_be_in_normal_user_detail_page(self):
+        convener = UserF.create(**{
+            'username': 'convener',
+            'password': 'password',
+            'first_name': 'Pretty',
+            'last_name': 'Smart',
+            'is_staff': True
+        })
+        convener_inactive = UserF.create(**{
+            'username': 'inactive_convener',
+            'password': 'password',
+            'first_name': 'Wonder',
+            'last_name': 'Woman',
+            'is_staff': True
+        })
+        CourseConvenerF.create(
+            user=convener,
+            certifying_organisation=self.certifying_organisation
+        )
+        CourseConvenerF.create(
+            user=convener_inactive,
+            certifying_organisation=self.certifying_organisation,
+            is_active=False
+        )
+        response = self.client.get(
+            reverse('certifyingorganisation-detail', kwargs={
+                'project_slug': self.project.slug,
+                'slug': self.certifying_organisation.slug,
+            })
+        )
+        self.assertContains(response, 'Pretty Smart')
+        self.assertNotContains(response, 'Wonder Woman')
+        self.assertNotContains(response, '[inactive]')
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_inactive_convener_should_be_in_normal_user_detail_page(self):
+        convener = UserF.create(**{
+            'username': 'convener',
+            'password': 'password',
+            'first_name': 'Pretty',
+            'last_name': 'Smart',
+            'is_staff': True
+        })
+        convener_inactive = UserF.create(**{
+            'username': 'inactive_convener',
+            'password': 'password',
+            'first_name': 'Wonder',
+            'last_name': 'Woman',
+            'is_staff': True
+        })
+        CourseConvenerF.create(
+            user=convener,
+            certifying_organisation=self.certifying_organisation
+        )
+        CourseConvenerF.create(
+            user=convener_inactive,
+            certifying_organisation=self.certifying_organisation,
+            is_active=False
+        )
+        self.client.login(username='anita', password='password')
+        response = self.client.get(
+            reverse('certifyingorganisation-detail', kwargs={
+                'project_slug': self.project.slug,
+                'slug': self.certifying_organisation.slug,
+            })
+        )
+        self.assertContains(response, 'Pretty Smart')
+        self.assertContains(response, 'Wonder Woman')
+        self.assertContains(response, '[inactive]')

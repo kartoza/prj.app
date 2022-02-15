@@ -210,6 +210,7 @@ class CourseConvenerForm(forms.ModelForm):
             'user',
             'degree',
             'signature',
+            'is_active',
         )
 
     def __init__(self, *args, **kwargs):
@@ -225,6 +226,7 @@ class CourseConvenerForm(forms.ModelForm):
                 Field('user', css_class='form-control chosen-select'),
                 Field('degree', css_class='form-control'),
                 Field('signature', css_class='form-control'),
+                Field('is_active', css_class='checkbox-primary'),
             )
         )
         self.helper.layout = layout
@@ -385,7 +387,8 @@ class CourseForm(forms.ModelForm):
         super(CourseForm, self).__init__(*args, **kwargs)
         self.fields['course_convener'].queryset = \
             CourseConvener.objects.filter(
-                certifying_organisation=self.certifying_organisation)
+                certifying_organisation=self.certifying_organisation,
+                is_active=True)
         self.fields['course_convener'].label_from_instance = \
             lambda obj: "%s <%s>" % (obj.user.get_full_name(), obj)
         self.fields['course_type'].queryset = \

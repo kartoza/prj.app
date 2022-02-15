@@ -253,7 +253,8 @@ class CertifyingOrganisationDetailView(
             certifying_organisation=certifying_organisation)
         context['num_coursetype'] = context['coursetypes'].count()
         context['courseconveners'] = CourseConvener.objects.filter(
-            certifying_organisation=certifying_organisation)
+            certifying_organisation=certifying_organisation
+        ).prefetch_related('course_set')
         context['num_courseconvener'] = context['courseconveners'].count()
         context['courses'] = Course.objects.filter(
             certifying_organisation=certifying_organisation).order_by(

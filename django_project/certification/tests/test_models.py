@@ -400,6 +400,7 @@ class TestCourseConvener(TestCase):
             self.assertEqual(model.__dict__.get(key), val)
             self.assertTrue(model.title == 'new Course Convener Title')
             self.assertTrue(model.degree == 'new Course Convener Degree')
+            self.assertTrue(model.is_active)
 
         # check if PK exists.
         self.assertTrue(model.pk is not None)
