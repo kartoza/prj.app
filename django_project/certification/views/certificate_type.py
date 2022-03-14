@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView
@@ -14,6 +14,17 @@ class ProjectCertificateTypeView(LoginRequiredMixin, ListView):
     context_object_name = 'project_certificate_types'
     template_name = 'certificate_type/list.html'
     model = ProjectCertificateType
+
+    def dispatch(self, request, *args, **kwargs):
+        """Ensure user has permission to access this view."""
+        project = get_object_or_404(Project, slug=self.kwargs['project_slug'])
+        manager = project.certification_managers.all()
+        if not request.user.is_staff and request.user not in manager:
+            raise Http404('Sorry! You have to be staff or certification '
+                          'manager to open this page.')
+        return super(ProjectCertificateTypeView, self).dispatch(
+            request, *args, **kwargs
+        )
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template."""
