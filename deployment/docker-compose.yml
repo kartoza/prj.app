@@ -54,6 +54,11 @@ services:
       - db:db
     restart: unless-stopped
     user: root
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
 
   dbbackups:
     image: kartoza/pg-backup:9.6
@@ -85,6 +90,11 @@ services:
     links:
       - uwsgi:uwsgi
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
 
   # This is the entry point for a development server.
   # Run with --no-deps to run attached to the services
