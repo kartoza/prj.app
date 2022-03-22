@@ -83,7 +83,7 @@ class IsCertificationManager(BasePermission):
 
 
 class ActivateChecklist(APIView):
-    permission_classes = [IsAdminUser|IsCertificationManager]
+    permission_classes = [IsAdminUser | IsCertificationManager]
 
     def post(self, request, project_slug):
         """
