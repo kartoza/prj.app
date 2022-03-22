@@ -15,6 +15,7 @@ from certification.models.certifying_organisation import CertifyingOrganisation
 from certification.models.organisation_certificate import \
     CertifyingOrganisationCertificate
 from certification.models.status import Status
+from certification.models.checklist import Checklist
 
 
 class CertificateAdmin(admin.ModelAdmin):
@@ -172,6 +173,10 @@ class StatusAdmin(admin.ModelAdmin):
     list_display = ('name', 'project', 'order')
 
 
+class ChecklistAdmin(admin.ModelAdmin):
+    list_display = ('project', 'question', 'active')
+
+
 admin.site.register(Certificate, CertificateAdmin)
 admin.site.register(CertificateType, CertificateTypeAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
@@ -184,3 +189,4 @@ admin.site.register(CourseAttendee, CourseAttendeeAdmin)
 admin.site.register(
     CertifyingOrganisationCertificate, CertifyingOrganisationCertificateAdmin)
 admin.site.register(Status, StatusAdmin)
+admin.site.register(Checklist, ChecklistAdmin)

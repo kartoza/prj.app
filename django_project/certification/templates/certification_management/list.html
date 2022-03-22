@@ -8,10 +8,26 @@
     .table tbody:first-of-type tr {
       background-color: transparent;
     }
+    .checklist-container {
+        padding-top: 20px;
+    }
+    .checklist-container .btn {
+        font-size: 8pt;
+    }
+    .checklist-container .row {
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #dddddd;
+    }
+
+    .checklist-container .disabled {
+        background-color: #c8c8c8;
+    }
   </style>
 
   <div class="page-header">
-    <h1 class="text-muted">Certificate Types</h1>
+    <h1 class="text-muted">Certification Management</h1>
   </div>
 
   <table class="table">
@@ -40,4 +56,14 @@
   </table>
   <input class="btn btn-primary" type="submit" value="Save">
   </form>
+
+  <div class="checklist-container">
+    {% for checklist_row in checklist %}
+        <div class="row {% if not checklist_row.approved %}disabled{% endif %}">
+            <div class="col-lg-1">=</div>
+            <div class="col-lg-4">{{ checklist_row.question }}</div>
+            <div class="col-lg-4">{% if checklist_row.active %}<div class="btn btn-warning" {% if not checklist_row.approved %}disabled{% endif %}>Archive</div>{% else %}<div class="btn btn-success">Activate</div>{% endif %} </div>
+        </div>
+    {% endfor %}
+  </div>
 {% endblock %}
