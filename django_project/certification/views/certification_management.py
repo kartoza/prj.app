@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -107,4 +109,30 @@ class ArchiveChecklist(APIView):
         checklist = get_object_or_404(Checklist, id=checklist_id)
         checklist.active = False
         checklist.save()
+        return Response({'updated': True})
+
+
+class UpdateChecklistOrder(APIView):
+    permission_classes = [IsAdminUser | IsCertificationManager]
+
+    def post(self, request, project_slug):
+        """
+        Update order of checklist
+
+        post data : checklist_order = [
+            {
+                'id': 1,
+                'order': 1
+            },...
+        ]
+        """
+        checklist_order = request.POST.get('checklist_order', '[]')
+        checklist_order = json.loads(checklist_order)
+        for checklist_data in checklist_order:
+            try:
+                checklist = Checklist.objects.get(id=checklist_data['id'])
+                checklist.order = checklist_data['order']
+                checklist.save()
+            except Checklist.DoesNotExist:
+                continue
         return Response({'updated': True})

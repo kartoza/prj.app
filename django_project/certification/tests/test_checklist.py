@@ -1,3 +1,5 @@
+import json
+
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from django.urls import reverse
@@ -40,7 +42,8 @@ class TestCertificationChecklist(TestCase):
         self.user_manager.set_password('password')
         self.user_manager.save()
         self.project.certification_managers.add(self.user_manager)
-        self.checklist = ChecklistF.create(active=False, project=self.project)
+        self.checklist = ChecklistF.create(
+            active=False, project=self.project, order=1)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def tearDown(self):
@@ -108,3 +111,35 @@ class TestCertificationChecklist(TestCase):
         )
         checklist = Checklist.objects.get(id=self.checklist.id)
         self.assertFalse(checklist.active)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_manager_update_checklist_order(self):
+        second_checklist = ChecklistF.create(
+            active=True,
+            project=self.project,
+            order=5
+        )
+        post_data = {
+            'checklist_order': json.dumps([{
+                'id': self.checklist.id,
+                'order': 2
+            },{
+                'id': second_checklist.id,
+                'order': 1
+            }])
+        }
+        # As manager
+        self.client.login(username='manager', password='password')
+        url = reverse('update-checklist-order', kwargs={
+            'project_slug': self.project.slug
+        })
+
+        response = self.client.post(url, post_data)
+        self.assertEqual(
+            response.status_code,
+            200
+        )
+        checklist = Checklist.objects.get(id=self.checklist.id)
+        checklist_second = Checklist.objects.get(id=second_checklist.id)
+        self.assertEqual(checklist.order, 2)
+        self.assertEqual(checklist_second.order, 1)

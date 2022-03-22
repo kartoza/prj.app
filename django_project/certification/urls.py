@@ -36,6 +36,7 @@ from .views import (
     update_project_certificate_view,
     ActivateChecklist,
     ArchiveChecklist,
+    UpdateChecklistOrder,
 
     # Training Center.
     TrainingCenterCreateView,
@@ -251,6 +252,9 @@ urlpatterns = [
     url(regex='^(?P<project_slug>[\w-]+)/archive-checklist/$',
         view=ArchiveChecklist.as_view(),
         name='archive-checklist'),
+    url(regex='^(?P<project_slug>[\w-]+)/update-checklist-order/$',
+        view=UpdateChecklistOrder.as_view(),
+        name='update-checklist-order'),
     url(regex='^(?P<project_slug>[\w-]+)/certificate-types/update/$',
         view=update_project_certificate_view,
         name='certificate-type-update'),
