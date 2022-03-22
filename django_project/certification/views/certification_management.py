@@ -90,8 +90,6 @@ class ActivateChecklist(APIView):
         Activate a checklist, only managers and superuser can do this action.
         """
         checklist_id = request.POST.get('checklist_id', None)
-        if not checklist_id:
-            checklist_id = request.data.get('checklist_id', None)
         checklist = get_object_or_404(Checklist, id=checklist_id)
         checklist.active = True
         checklist.save()
@@ -106,8 +104,6 @@ class ArchiveChecklist(APIView):
         Archive a checklist, only managers and superuser can do this action.
         """
         checklist_id = request.POST.get('checklist_id', None)
-        if not checklist_id:
-            checklist_id = request.data.get('checklist_id', None)
         checklist = get_object_or_404(Checklist, id=checklist_id)
         checklist.active = False
         checklist.save()
