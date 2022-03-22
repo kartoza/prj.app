@@ -123,7 +123,7 @@ class TestCertificationChecklist(TestCase):
             'checklist_order': json.dumps([{
                 'id': self.checklist.id,
                 'order': 2
-            },{
+            }, {
                 'id': second_checklist.id,
                 'order': 1
             }])
