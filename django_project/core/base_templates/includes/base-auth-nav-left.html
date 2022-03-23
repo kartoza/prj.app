@@ -188,7 +188,7 @@
                 <li><a href="{% url 'validate-certificate-organisation' the_project.slug %}">Verify certificate for Certifying Organisation</a></li>
                 <li><a href="{% url 'validate-certificate' the_project.slug %}">Verify certificate for Attendee</a></li>
                 {% if user.is_staff or user in the_project.certification_managers.all %}
-                  <li><a href="{% url 'certificate-type-list' the_project.slug %}">Manage Certificate Type</a></li>
+                  <li><a href="{% url 'certification-management-view' the_project.slug %}">Certification Management</a></li>
                 {% endif %}
             </ul>
         </li>

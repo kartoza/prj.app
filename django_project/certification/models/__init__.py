@@ -13,3 +13,4 @@ from certification.models.course_convener import *
 from certification.models.certificate_type import *
 from certification.models.certificate import *
 from certification.models.organisation_certificate import *
+from certification.models.checklist import *

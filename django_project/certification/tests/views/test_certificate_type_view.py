@@ -48,7 +48,7 @@ class TestCertificateTypesView(TestCase):
 
         self.client.post('/set_language/', data={'language': 'en'})
         self.client.force_login(self.user_staff)
-        url = reverse('certificate-type-list', kwargs={
+        url = reverse('certification-management-view', kwargs={
             'project_slug': self.project.slug
         })
         response = self.client.get(url)
@@ -69,7 +69,7 @@ class TestCertificateTypesView(TestCase):
     def test_certificate_type_user_is_manager(self):
         self.client.post('/set_language/', data={'language': 'en'})
         self.client.force_login(self.user_manager)
-        url = reverse('certificate-type-list', kwargs={
+        url = reverse('certification-management-view', kwargs={
             'project_slug': self.project.slug
         })
         response = self.client.get(url)
@@ -79,7 +79,7 @@ class TestCertificateTypesView(TestCase):
     def test_certificate_type_non_manager_should_return404(self):
         self.client.post('/set_language/', data={'language': 'en'})
         self.client.force_login(self.user)
-        url = reverse('certificate-type-list', kwargs={
+        url = reverse('certification-management-view', kwargs={
             'project_slug': self.project.slug
         })
         response = self.client.get(url)
@@ -125,7 +125,7 @@ class TestCertificateTypesView(TestCase):
         self.assertRedirects(
             response,
             expected_url=reverse(
-                'certificate-type-list',
+                'certification-management-view',
                 kwargs={'project_slug': self.project.slug}
             ),
             status_code=302,
