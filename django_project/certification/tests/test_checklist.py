@@ -53,7 +53,7 @@ class TestCertificationChecklist(TestCase):
         :return:
         """
         self.project.delete()
-        self.checklist.delete()
+        Checklist.objects.all().delete()
         self.user.delete()
 
     @override_settings(VALID_DOMAIN=['testserver', ])
@@ -143,3 +143,33 @@ class TestCertificationChecklist(TestCase):
         checklist_second = Checklist.objects.get(id=second_checklist.id)
         self.assertEqual(checklist.order, 2)
         self.assertEqual(checklist_second.order, 1)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_error_create_checklist(self):
+        self.client.login(username='test', password='password')
+        post_data = {
+            'question': 'test2',
+            'project': self.project.id,
+        }
+        response = self.client.post(
+            reverse('certificate-checklist-create', kwargs={
+                'project_slug': self.project.slug,
+            }), post_data)
+        self.assertEqual(response.status_code, 403)
+        checklist = Checklist.objects.filter(question='test2')
+        self.assertFalse(checklist.exists())
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_success_create_checklist(self):
+        self.client.login(username='manager', password='password')
+        post_data = {
+            'question': 'test2',
+            'project': self.project.id,
+        }
+        response = self.client.post(
+            reverse('certificate-checklist-create', kwargs={
+                'project_slug': self.project.slug,
+            }), post_data)
+        self.assertEqual(response.status_code, 302)
+        checklist = Checklist.objects.filter(question='test2')
+        self.assertTrue(checklist.exists())

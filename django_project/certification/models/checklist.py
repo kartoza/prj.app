@@ -14,8 +14,7 @@ class Checklist(models.Model):
 
     order = models.IntegerField(
         blank=True,
-        null=True,
-        unique=True
+        null=True
     )
 
     question = models.TextField(
