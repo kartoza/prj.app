@@ -1,10 +1,7 @@
 from crispy_forms.helper import FormHelper
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError
 from django import forms
 from django.db.models import Max
-from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import CreateView
 
