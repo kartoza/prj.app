@@ -24,6 +24,26 @@
             }
           });
         });
+
+        function activate(checklistId, elm) {
+          let div = $(elm);
+          $.post("{% url "activate-checklist" project_slug=project_slug %}", {
+                'checklist_id': checklistId
+              }, function(data){
+                $('.badge-updated').stop(true, true).show().fadeOut(2000);
+                div.removeClass('btn-success').addClass('btn-warning').html('Archive').attr("onclick", `archive(${checklistId}, this)`);
+          })
+        }
+
+        function archive(checklistId, elm) {
+          let div = $(elm);
+          $.post("{% url "archive-checklist" project_slug=project_slug %}", {
+                'checklist_id': checklistId
+              }, function(data){
+                $('.badge-updated').stop(true, true).show().fadeOut(2000);
+                div.removeClass('btn-warning').addClass('btn-success').html('Activate').attr("onclick", `activate(${checklistId}, this)`);
+          })
+        }
     </script>
 {% endblock %}
 
@@ -90,6 +110,7 @@
   <div style="display: flex; flex-direction: row; align-items: center">
      <h3>Certification Checklist</h3><div class="badge badge-success badge-updated">Updated</div>
   </div>
+  <a href="{% url "certificate-checklist-create" project_slug=project_slug %}" class="btn btn-default" style="display:flex; width: fit-content"><span class="ui-icon ui-icon-plus"></span> Add new checklist</a>
   <div class="checklist-container" id="checklist-sortable">
     {% for checklist_row in checklist %}
          {% if checklist_row.approved %}
@@ -97,7 +118,7 @@
                 <div class="col-lg-1"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>
                 <div class="col-lg-4">{{ checklist_row.question }}</div>
                 <div class="col-lg-4">{% if checklist_row.active %}
-                    <div class="btn btn-warning" {% if not checklist_row.approved %}disabled{% endif %}>Archive</div>{% else %}<div class="btn btn-success">Activate</div>{% endif %} </div>
+                    <div class="btn btn-warning" onclick="archive({{ checklist_row.id }}, this)">Archive</div>{% else %}<div class="btn btn-success" onclick="activate({{ checklist_row.id }}, this)">Activate</div>{% endif %} </div>
             </div>
         {% endif %}
     {% endfor %}
