@@ -1,15 +1,36 @@
 {% extends "project_base.html" %}
 
-{% block extra_js %}
+{% block js_head %}
+    <script>
+        $(function() {
+          $("#checklist-sortable").sortable({
+            update: function (event, ui) {
+              let idsInOrder = $("#checklist-sortable").sortable("toArray");
+              let checklistPostData = [];
+              let order = 1;
+              for (let checklistId of idsInOrder) {
+                let id = checklistId.split('-')[1];
+                checklistPostData.push({
+                  'id': id,
+                  'order': order
+                })
+                order += 1;
+              }
+              $.post("{% url "update-checklist-order" project_slug=project_slug %}", {
+                'checklist_order': JSON.stringify(checklistPostData)
+              }, function(data){
+                $('.badge-updated').stop(true, true).show().fadeOut(2000);
+              })
+            }
+          });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
   <style>
     .table tbody:first-of-type tr {
       background-color: transparent;
-    }
-    .checklist-container {
-        padding-top: 20px;
     }
     .checklist-container .btn {
         font-size: 8pt;
@@ -23,6 +44,15 @@
 
     .checklist-container .disabled {
         background-color: #c8c8c8;
+    }
+
+    h3 {
+        margin-bottom: 25px;
+        margin-right: 10px;
+    }
+
+    .badge-updated {
+        display: none;
     }
   </style>
 
@@ -57,13 +87,30 @@
   <input class="btn btn-primary" type="submit" value="Save">
   </form>
 
-  <div class="checklist-container">
+  <div style="display: flex; flex-direction: row; align-items: center">
+     <h3>Certification Checklist</h3><div class="badge badge-success badge-updated">Updated</div>
+  </div>
+  <div class="checklist-container" id="checklist-sortable">
     {% for checklist_row in checklist %}
-        <div class="row {% if not checklist_row.approved %}disabled{% endif %}">
-            <div class="col-lg-1">=</div>
-            <div class="col-lg-4">{{ checklist_row.question }}</div>
-            <div class="col-lg-4">{% if checklist_row.active %}<div class="btn btn-warning" {% if not checklist_row.approved %}disabled{% endif %}>Archive</div>{% else %}<div class="btn btn-success">Activate</div>{% endif %} </div>
-        </div>
+         {% if checklist_row.approved %}
+            <div class="row" id="checklist-{{ checklist_row.id }}">
+                <div class="col-lg-1"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>
+                <div class="col-lg-4">{{ checklist_row.question }}</div>
+                <div class="col-lg-4">{% if checklist_row.active %}
+                    <div class="btn btn-warning" {% if not checklist_row.approved %}disabled{% endif %}>Archive</div>{% else %}<div class="btn btn-success">Activate</div>{% endif %} </div>
+            </div>
+        {% endif %}
     {% endfor %}
   </div>
+
+  <h4 style="margin-top: 40px; font-weight: bold">Unapproved Checklist</h4>
+    <div class="checklist-container unapproved-checklist-container">
+        {% for checklist_row in checklist %}
+            {% if not checklist_row.approved %}
+                <div class="row disabled">
+                    <div class="col-lg-4">{{ checklist_row.question }}</div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 {% endblock %}

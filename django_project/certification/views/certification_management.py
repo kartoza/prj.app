@@ -41,7 +41,7 @@ class CertificationManagementView(LoginRequiredMixin, ListView):
         """
         checklist = Checklist.objects.filter(
             project=project
-        )
+        ).order_by('order')
         return checklist
 
     def get_context_data(self, **kwargs):
