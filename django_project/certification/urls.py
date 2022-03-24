@@ -78,7 +78,10 @@ from .views import (
 
     # About.
     AboutView,
-    TopUpView
+    TopUpView,
+
+    CheckoutSessionSuccessView,
+    CreateCheckoutSessionView
 )
 from .api_views.course import (
     GetUpcomingCourseProject,
@@ -371,4 +374,14 @@ urlpatterns = [
               '(?P<organisation_slug>[\w-]+)/feed/past-course/$',
         view=GetPastCourseOrganisation.as_view(),
         name='feed-past-course'),
+
+    # Checkout
+    url(
+        '^checkout/$',
+        CreateCheckoutSessionView.as_view(),
+        name="checkout",
+    ),
+    url("^checkout-success/$",
+        CheckoutSessionSuccessView.as_view(),
+        name="checkout-success"),
 ]

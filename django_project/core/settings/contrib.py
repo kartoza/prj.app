@@ -139,3 +139,4 @@ STRIPE_LIVE_MODE = False  # Change to True in production
 # Get it from the section in the Stripe dashboard where you added the
 # webhook endpoint
 DJSTRIPE_WEBHOOK_SECRET = os.environ.get('DJSTRIPE_WEBHOOK_SECRET', 'whsec_x')
+DJSTRIPE_FOREIGN_KEY_TO_FIELD = "djstripe_id"
