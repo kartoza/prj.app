@@ -25,7 +25,8 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from braces.views import LoginRequiredMixin
-from djstripe.models import Customer
+from djstripe.enums import PaymentIntentStatus
+from djstripe.models import Customer, PaymentIntent
 from djstripe import settings as djstripe_settings
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
@@ -1318,6 +1319,75 @@ class CheckoutSessionSuccessView(TemplateView):
 
     template_name = "checkout_success.html"
 
+    def get(self, request, *args, **kwargs):
+        session = (
+            stripe.checkout.Session.retrieve(
+                self.request.GET.get('session_id'))
+        )
+        if session['payment_status'] == 'paid':
+            try:
+                payment_intent = PaymentIntent.objects.get(
+                    id=session.id
+                )
+                if (
+                        payment_intent.status ==
+                        PaymentIntentStatus.requires_payment_method):
+                    user = self.request.user
+
+                    organisation = CertifyingOrganisation.objects.get(
+                        id=session['metadata']['organisation_id']
+                    )
+                    total_credits = int(
+                        session['metadata']['credits_quantity']
+                    )
+                    cost_of_credits = payment_intent.amount / 100
+
+                    organisation.organisation_credits += total_credits
+                    organisation.save()
+                    organisation_owners = (
+                        organisation.organisation_owners.all()
+                    )
+
+                    project = organisation.project
+
+                    send_notification(
+                        users=[self.request.user] + list(organisation_owners),
+                        label=NOTICE_TOP_UP_SUCCESS,
+                        extra_context={
+                            'author': self.request.user,
+                            'top_up_credits': total_credits,
+                            'currency': (
+                                project.get_credit_cost_currency_display()
+                            ),
+                            'payment_amount': cost_of_credits,
+                            'certifying_organisation': organisation,
+                            'total_credits': organisation.organisation_credits
+                        },
+                        request_user=user
+                    )
+
+                    messages.success(
+                        self.request,
+                        'Your purchase of <b>{}</b>'
+                        ' credits has been'
+                        ' successful'.format(
+                            total_credits
+                        ),
+                        'credits_top_up'
+                    )
+
+                    payment_intent.status = PaymentIntentStatus.succeeded
+                    payment_intent.save()
+                    return HttpResponseRedirect(
+                        reverse("certifyingorganisation-detail", kwargs={
+                            'project_slug': organisation.project.slug,
+                            'slug': organisation.slug
+                        }))
+            except PaymentIntent.DoesNotExist:
+                pass
+
+            return HttpResponseRedirect('/')
+
 
 class CreateCheckoutSessionView(LoginRequiredMixin, TemplateView):
     """
@@ -1354,6 +1424,8 @@ class CreateCheckoutSessionView(LoginRequiredMixin, TemplateView):
         success_url = self.request.build_absolute_uri(
             reverse("checkout-success")
         )
+        success_url += '?session_id={CHECKOUT_SESSION_ID}'
+
         cancel_url = self.request.build_absolute_uri(reverse("top-up", kwargs={
             'project_slug': org.project.slug,
             'organisation_slug': org.slug
@@ -1368,7 +1440,9 @@ class CreateCheckoutSessionView(LoginRequiredMixin, TemplateView):
         # note that it needs to have an email field.
         id = self.request.user.id
         metadata = {
-            f"{djstripe_settings.SUBSCRIBER_CUSTOMER_KEY}": id
+            f"{djstripe_settings.SUBSCRIBER_CUSTOMER_KEY}": id,
+            "organisation_id": org.id,
+            "credits_quantity": unit
         }
 
         try:
@@ -1429,6 +1503,16 @@ class CreateCheckoutSessionView(LoginRequiredMixin, TemplateView):
                 cancel_url=cancel_url,
                 metadata=metadata,
             )
+
+        # Create payment intent
+        PaymentIntent.objects.create(
+            id=session.id,
+            amount=total,
+            amount_received=0,
+            amount_capturable=0,
+            payment_method_types=['card'],
+            status=PaymentIntentStatus.requires_payment_method
+        )
 
         context["CHECKOUT_SESSION_ID"] = session.id
 
