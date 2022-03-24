@@ -1327,7 +1327,7 @@ class CheckoutSessionSuccessView(TemplateView):
         if session['payment_status'] == 'paid':
             try:
                 payment_intent = PaymentIntent.objects.get(
-                    id=session.id
+                    id=session['id']
                 )
                 if (
                         payment_intent.status ==
@@ -1412,7 +1412,13 @@ class CreateCheckoutSessionView(LoginRequiredMixin, TemplateView):
         unit = int(self.request.GET.get('unit', '0'))
         total = int(self.request.GET.get('total', '0')) * 100
 
-        org = CertifyingOrganisation.objects.get(id=org_id)
+        try:
+            org = CertifyingOrganisation.objects.get(id=org_id)
+        except CertifyingOrganisation.DoesNotExist:
+            raise Http404()
+
+        if unit == 0 or total == 0:
+            raise Http404()
 
         description = f'Top up credits for {org.name}'
 
@@ -1431,7 +1437,10 @@ class CreateCheckoutSessionView(LoginRequiredMixin, TemplateView):
             'organisation_slug': org.slug
         }))
 
-        logo = self.request.build_absolute_uri(org.project.image_file.url)
+        try:
+            logo = self.request.build_absolute_uri(org.project.image_file.url)
+        except ValueError:
+            logo = ''
 
         # get the id of the Model instance of
         # djstripe_settings.get_subscriber_model()

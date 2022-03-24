@@ -5,8 +5,20 @@ import datetime
 from django.conf import settings
 from django import VERSION as DJANGO_VERSION
 from django.contrib.auth.models import User
+from djstripe.models import Customer
+
 if DJANGO_VERSION[:2] >= (1, 4):
     from django.utils import timezone
+
+
+class CustomerF(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = Customer
+
+    name = factory.Sequence(lambda n: "name%s" % n)
+    balance = factory.Sequence(lambda n: n)
+    delinquent = False
 
 
 # noinspection PyProtectedMember
