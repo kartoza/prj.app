@@ -63,9 +63,9 @@ class CertificateCheckoutTest(TestCase):
         self.project.delete()
         self.certifying_organisation.delete()
         self.user.delete()
-        raw = Customer.objects.raw(
-            "DELETE FROM djstripe_customer WHERE djstripe_customer.id = '{}'"
-                .format(
+        Customer.objects.raw(
+            "DELETE FROM djstripe_customer WHERE "
+            "djstripe_customer.id = '{}'".format(
                     self.customer.id))
 
     @override_settings(VALID_DOMAIN=['testserver', ])
