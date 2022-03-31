@@ -1411,7 +1411,7 @@ class CreateCheckoutSessionView(LoginRequiredMixin, TemplateView):
         org_id = self.request.GET.get('org', None)
         unit = int(self.request.GET.get('unit', '0'))
         total = int(self.request.GET.get('total', '0')) * 100
-        unit_amount = total / unit
+        unit_amount = int(total / unit)
 
         try:
             org = CertifyingOrganisation.objects.get(id=org_id)
