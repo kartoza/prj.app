@@ -1411,6 +1411,7 @@ class CreateCheckoutSessionView(LoginRequiredMixin, TemplateView):
         org_id = self.request.GET.get('org', None)
         unit = int(self.request.GET.get('unit', '0'))
         total = int(self.request.GET.get('total', '0')) * 100
+        unit_amount = total / unit
 
         try:
             org = CertifyingOrganisation.objects.get(id=org_id)
@@ -1468,7 +1469,7 @@ class CreateCheckoutSessionView(LoginRequiredMixin, TemplateView):
                     {
                         "price_data": {
                             "currency": "eur",
-                            "unit_amount": total,
+                            "unit_amount": unit_amount,
                             "product_data": {
                                 "name": "Top up credits",
                                 "images": [logo],
@@ -1497,7 +1498,7 @@ class CreateCheckoutSessionView(LoginRequiredMixin, TemplateView):
                     {
                         "price_data": {
                             "currency": "usd",
-                            "unit_amount": total,
+                            "unit_amount": unit_amount,
                             "product_data": {
                                 "name": "Top up credits",
                                 "images": [logo],
