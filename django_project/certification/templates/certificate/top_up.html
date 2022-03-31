@@ -124,7 +124,7 @@
        if (isNaN(totalToPay)) {
            alert('error calculating total payment');
        }
-       window.location = `/checkout/?unit=${creditAmount}&total=${totalToPay}&org=${org}`
+       window.location = `{% url 'checkout' %}?unit=${creditAmount}&total=${totalToPay}&org=${org}`;
     });
 
     function stripeSourceHandler(source) {
