@@ -2,6 +2,7 @@
 from base.models import Project
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.utils.html import escape
 from django.urls import reverse
 from django.shortcuts import get_list_or_404
 from django.db.models import Q
@@ -18,6 +19,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from braces.views import LoginRequiredMixin
+from django_datatables_view.base_datatable_view import BaseDatatableView
 from pure_pagination.mixins import PaginationMixin
 from ..models import (
     CertifyingOrganisation,
@@ -231,23 +233,26 @@ class CertifyingOrganisationDetailView(
         context['the_project'] = Project.objects.get(slug=project_slug)
         context['project'] = context['the_project']
 
+        user_can_create = certifying_organisation.approved
+        user_can_delete = certifying_organisation.approved
+
         if self.request.user.is_staff:
-            context['user_can_create'] = True
-            context['user_can_delete'] = True
+            context['user_can_create'] = user_can_create
+            context['user_can_delete'] = user_can_delete
 
         if self.request.user in context[
             'the_project'].certification_managers.all():
-            context['user_can_create'] = True
-            context['user_can_delete'] = True
+            context['user_can_create'] = user_can_create
+            context['user_can_delete'] = user_can_delete
 
         if self.request.user == context['project'].owner:
-            context['user_can_create'] = True
-            context['user_can_delete'] = True
+            context['user_can_create'] = user_can_create
+            context['user_can_delete'] = user_can_delete
 
         if self.request.user in \
                 certifying_organisation.organisation_owners.all():
-            context['user_can_create'] = True
-            context['user_can_delete'] = True
+            context['user_can_create'] = user_can_create
+            context['user_can_delete'] = user_can_delete
         return context
 
     def get_queryset(self):
@@ -258,7 +263,7 @@ class CertifyingOrganisationDetailView(
         :rtype: QuerySet
         """
 
-        qs = CertifyingOrganisation.approved_objects.all()
+        qs = CertifyingOrganisation.objects.all()
         return qs
 
     def get_object(self, queryset=None):
@@ -651,43 +656,48 @@ class CertifyingOrganisationUpdateView(
                 'ERROR: Certifying Organisation by '
                 'this name is already exists!')
 
-from django_datatables_view.base_datatable_view import BaseDatatableView
-from django.utils.html import escape
 
 class PendingCertifyingOrganisationJson(BaseDatatableView):
     model = CertifyingOrganisation
-    columns = ['name', 'organisation_email', 'user']
-    order_columns = ['name', 'user']
+    columns = ['name', 'org_name', 'can_approve', 'project_slug',
+               'org_slug', 'country_name', 'can_edit']
+    order_columns = ['name']
     max_display_length = 100
+
+    def get_initial_queryset(self):
+        return CertifyingOrganisation.objects.filter(approved=False)
 
     def render_column(self, row, column):
         # We want to render user as a custom column
-        if column == 'user':
-            # escape HTML for security reasons
+        if column == 'org_name':
+            return escape('{0}'.format(row.name))
+        elif column == 'project_slug':
+            return escape('{0}'.format(row.project.slug))
+        elif column == 'org_slug':
             return escape('{0}'.format(row.slug))
+        elif column == 'country_name':
+            return escape('{0}'.format(row.country.name))
+        elif column == 'can_approve':
+            return (
+                not row.approved and self.request.user.is_staff or
+                self.request.user == row.project.owner or
+                self.request.user in row.project.certification_managers.all()
+            )
+        elif column == 'can_edit':
+            return (
+                not row.approved and self.request.user.is_staff or
+                self.request.user == row.project.owner or
+                self.request.user == row.organisation_owners.all() or
+                self.request.user in row.project.certification_managers.all()
+            )
         else:
             return super(PendingCertifyingOrganisationJson, self
                          ).render_column(row, column)
 
     def filter_queryset(self, qs):
-        # use parameters passed in GET request to filter queryset
-
-        # simple example:
         search = self.request.GET.get('search[value]', None)
         if search:
             qs = qs.filter(name__istartswith=search)
-
-        # more advanced example using extra parameters
-        # filter_customer = self.request.GET.get('customer', None)
-        #
-        # if filter_customer:
-        #     customer_parts = filter_customer.split(' ')
-        #     qs_params = None
-        #     for part in customer_parts:
-        #         q = Q(customer_firstname__istartswith=part) | Q(
-        #             customer_lastname__istartswith=part)
-        #         qs_params = qs_params | q if qs_params else q
-        #     qs = qs.filter(qs_params)
         return qs
 
 

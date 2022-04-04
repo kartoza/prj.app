@@ -5,6 +5,8 @@ import datetime
 from io import BytesIO
 import os
 import zipfile
+
+import stripe
 from PIL import Image
 import re
 from decimal import Decimal
@@ -23,6 +25,9 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from braces.views import LoginRequiredMixin
+from djstripe.enums import PaymentIntentStatus
+from djstripe.models import Customer, PaymentIntent
+from djstripe import settings as djstripe_settings
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.utils import ImageReader
@@ -47,6 +52,8 @@ from changes import (
     NOTICE_TOP_UP_SUCCESS
 )
 from helpers.notification import send_notification
+
+stripe.api_key = djstripe_settings.STRIPE_SECRET_KEY
 
 
 class CertificateMixin(object):
@@ -1303,3 +1310,220 @@ class CertificateRevokeView(
 
         return super(
             CertificateRevokeView, self).delete(request, *args, **kwargs)
+
+
+class CheckoutSessionSuccessView(TemplateView):
+    """
+    Template View for showing Checkout Payment Success
+    """
+
+    template_name = "checkout_success.html"
+
+    def get(self, request, *args, **kwargs):
+        session = (
+            stripe.checkout.Session.retrieve(
+                self.request.GET.get('session_id'))
+        )
+        if session['payment_status'] == 'paid':
+            try:
+                payment_intent = PaymentIntent.objects.get(
+                    id=session['id']
+                )
+                if (
+                        payment_intent.status ==
+                        PaymentIntentStatus.requires_payment_method):
+                    user = self.request.user
+
+                    organisation = CertifyingOrganisation.objects.get(
+                        id=session['metadata']['organisation_id']
+                    )
+                    total_credits = int(
+                        session['metadata']['credits_quantity']
+                    )
+                    cost_of_credits = payment_intent.amount / 100
+
+                    organisation.organisation_credits += total_credits
+                    organisation.save()
+                    organisation_owners = (
+                        organisation.organisation_owners.all()
+                    )
+
+                    project = organisation.project
+
+                    send_notification(
+                        users=[self.request.user] + list(organisation_owners),
+                        label=NOTICE_TOP_UP_SUCCESS,
+                        extra_context={
+                            'author': self.request.user,
+                            'top_up_credits': total_credits,
+                            'currency': (
+                                project.get_credit_cost_currency_display()
+                            ),
+                            'payment_amount': cost_of_credits,
+                            'certifying_organisation': organisation,
+                            'total_credits': organisation.organisation_credits
+                        },
+                        request_user=user
+                    )
+
+                    messages.success(
+                        self.request,
+                        'Your purchase of <b>{}</b>'
+                        ' credits has been'
+                        ' successful'.format(
+                            total_credits
+                        ),
+                        'credits_top_up'
+                    )
+
+                    payment_intent.status = PaymentIntentStatus.succeeded
+                    payment_intent.save()
+                    return HttpResponseRedirect(
+                        reverse("certifyingorganisation-detail", kwargs={
+                            'project_slug': organisation.project.slug,
+                            'slug': organisation.slug
+                        }))
+            except PaymentIntent.DoesNotExist:
+                pass
+
+            return HttpResponseRedirect('/')
+
+
+class CreateCheckoutSessionView(LoginRequiredMixin, TemplateView):
+    """
+     * Create a Stripe Checkout Session (for a new and a returning customer)
+     * Add SUBSCRIBER_CUSTOMER_KEY to metadata to populate customer
+     * Fill out Payment Form and Complete Payment
+    Redirects the User to Stripe Checkout Session.
+    This does a logged in purchase for a new and a returning customer using
+    Stripe Checkout
+    """
+
+    template_name = "checkout.html"
+
+    def get_context_data(self, **kwargs):
+        """
+        Creates and returns a Stripe Checkout Session
+        """
+        # Get Parent Context
+        context = super().get_context_data(**kwargs)
+
+        org_id = self.request.GET.get('org', None)
+        unit = int(self.request.GET.get('unit', '0'))
+        total = int(self.request.GET.get('total', '0')) * 100
+        unit_amount = int(total / unit)
+
+        try:
+            org = CertifyingOrganisation.objects.get(id=org_id)
+        except CertifyingOrganisation.DoesNotExist:
+            raise Http404()
+
+        if unit == 0 or total == 0:
+            raise Http404()
+
+        description = f'Top up credits for {org.name}'
+
+        # to initialise Stripe.js on the front end
+        context[
+            "STRIPE_PUBLIC_KEY"
+        ] = djstripe_settings.STRIPE_PUBLIC_KEY
+
+        success_url = self.request.build_absolute_uri(
+            reverse("checkout-success")
+        )
+        success_url += '?session_id={CHECKOUT_SESSION_ID}'
+
+        cancel_url = self.request.build_absolute_uri(reverse("top-up", kwargs={
+            'project_slug': org.project.slug,
+            'organisation_slug': org.slug
+        }))
+
+        try:
+            logo = self.request.build_absolute_uri(org.project.image_file.url)
+        except ValueError:
+            logo = ''
+
+        # get the id of the Model instance of
+        # djstripe_settings.get_subscriber_model()
+        # here we have assumed it is the Django User model.
+        # It could be a Team, Company model too.
+        # note that it needs to have an email field.
+        id = self.request.user.id
+        metadata = {
+            f"{djstripe_settings.SUBSCRIBER_CUSTOMER_KEY}": id,
+            "organisation_id": org.id,
+            "credits_quantity": unit
+        }
+
+        try:
+            # Retrieve the Stripe Customer.
+            customer = Customer.objects.get(subscriber=self.request.user)
+            session = stripe.checkout.Session.create(
+                payment_method_types=["card"],
+                customer=customer.id,
+                payment_intent_data={
+                    "setup_future_usage": "off_session",
+                    "metadata": metadata,
+                },
+                line_items=[
+                    {
+                        "price_data": {
+                            "currency": "eur",
+                            "unit_amount": unit_amount,
+                            "product_data": {
+                                "name": "Top up credits",
+                                "images": [logo],
+                                "description": description,
+                            },
+                        },
+                        "quantity": unit,
+                    },
+                ],
+                mode="payment",
+                success_url=success_url,
+                cancel_url=cancel_url,
+                metadata=metadata,
+            )
+
+        except Customer.DoesNotExist:
+            print("Customer Object not in DB.")
+
+            session = stripe.checkout.Session.create(
+                payment_method_types=["card"],
+                payment_intent_data={
+                    "setup_future_usage": "off_session",
+                    "metadata": metadata,
+                },
+                line_items=[
+                    {
+                        "price_data": {
+                            "currency": "usd",
+                            "unit_amount": unit_amount,
+                            "product_data": {
+                                "name": "Top up credits",
+                                "images": [logo],
+                                "description": description,
+                            },
+                        },
+                        "quantity": unit,
+                    },
+                ],
+                mode="payment",
+                success_url=success_url,
+                cancel_url=cancel_url,
+                metadata=metadata,
+            )
+
+        # Create payment intent
+        PaymentIntent.objects.create(
+            id=session.id,
+            amount=total,
+            amount_received=0,
+            amount_capturable=0,
+            payment_method_types=['card'],
+            status=PaymentIntentStatus.requires_payment_method
+        )
+
+        context["CHECKOUT_SESSION_ID"] = session.id
+
+        return context

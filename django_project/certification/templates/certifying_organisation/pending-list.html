@@ -4,6 +4,7 @@
 {% block title %}Certifying Organisations - {{ block.super }}{% endblock %}
 
 {% block extra_head %}
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block page_title %}
@@ -79,91 +80,104 @@
         {% endif %}
     {% endifequal %}
 
-    {% for certifyingorganisation in certifyingorganisations %}
-        <script>console.debug("{{ certifyingorganisation }}");</script>
-        <script>
-            function toggleDetails(id) {
-                $('#'+id).children().toggle();
-                $('#'+id).next().toggle();
-            }
-        </script>
-        <div class="row" style="margin-top:10px;">
-            <div class="col-lg-10">
+    <table id="dataTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Organization</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Organization</th>
+                <th>Action</th>
+            </tr>
+        </tfoot>
+    </table>
 
-                <h3>{{ certifyingorganisation.name }}</h3>
-                <p id="{{ certifyingorganisation.pk }}" style="color: grey" onclick="toggleDetails(this.id)">
-                    <span style="font-size: 8pt" class="glyphicon glyphicon-triangle-right"></span>
-                    <span style="font-size: 8pt; display: none" class="glyphicon glyphicon-triangle-bottom"></span>
-                    <span>Show details</span>
-                    <span style="display: none">Hide details</span><br/>
-                </p>
-                <div style="color: grey; display: none">
-                    <span class="grey-italic col-lg-4">Organisation name</span><span class="col-lg-8">{{ certifyingorganisation.name }}</span><br/>
-                    <span class="grey-italic col-lg-4">Address</span><span class="col-lg-8">{{ certifyingorganisation.address }}</span><br/>
-                    <span class="grey-italic col-lg-4">Country</span><span class="col-lg-8">{{ certifyingorganisation.country.name }}</span><br/>
-                    <span class="grey-italic col-lg-4">Email</span><span class="col-lg-8">{{ certifyingorganisation.organisation_email }}</span><br/>
-                    <span class="grey-italic col-lg-4">Phone</span><span class="col-lg-8">{{ certifyingorganisation.organisation_phone }}</span><br/>
-                    <span class="grey-italic col-lg-4">Link</span><span class="col-lg-8"><a href="{{ certifyingorganisation.url }}">{{ certifyingorganisation.url }}</a></span><br/>
-
-                    <span class="grey-italic col-lg-4">Organisation owners</span>
-                    <span class="col-lg-8">{% for organisation_owners in certifyingorganisation.organisation_owners.all %}
-                    {% if organisation_owners.first_name %}
-                        {{ organisation_owners.first_name }} {{ organisation_owners.last_name }}{{ ", " }}
-                    {% else %}
-                        {{ organisation_owners }}{{ ", " }}
-                    {% endif %}
-                    {% endfor %}</span>
-                </div>
-
-            </div>
-            <div class="col-lg-2">
-                <div class="btn-group pull-right">
-                    {% if not certifyingorganisation.approved and user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all %}
-                        <a class="btn btn-default btn-mini btn-approved tooltip-toggle"
-                           href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                            data-title="Approve {{ certifyingorganisation.name }}">
-                            <span class="glyphicon glyphicon-thumbs-up"></span>
-                        </a>
-                        <a class="btn btn-default btn-delete btn-mini tooltip-toggle btn-reject"
-                           organisation_name="{{ certifyingorganisation.name }}"
-                           organisation_country="{{ certifyingorganisation.country.name }}"
-                           organisation_slug="{{ certifyingorganisation.slug }}"
-                           organisation_project_slug="{{ certifyingorganisation.project.slug }}"
-                            data-title="Reject {{ certifyingorganisation.name }}">
-                            <span class="glyphicon glyphicon-thumbs-down"></span>
-                        </a>
-                    {% endif %}
-                    {% if not certifyingorganisation.approved and user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all or user in certifyingorganisation.organisation_owners.all %}
-                        <a class="btn btn-default btn-mini tooltip-toggle"
-                            href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                            data-title="Edit {{ certifyingorganisation.name }}">
-                        <span class="glyphicon glyphicon-pencil"></span>
-                        </a>
-                        <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                           href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                            data-title="Delete {{ certifyingorganisation.name }}">
-                            <span class="glyphicon glyphicon-minus"></span>
-                        </a>
-                    {% endif %}
-                </div>
-                {% if not certifyingorganisation.approved and user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all %}
-                <div class="status-wrapper tooltip-toggle"
-                     organisation_name="{{ certifyingorganisation.name }}"
-                     organisation_country="{{ certifyingorganisation.country.name }}"
-                     organisation_slug="{{ certifyingorganisation.slug }}"
-                     organisation_project_slug="{{ certifyingorganisation.project.slug }}"
-                     organisation_status="{{ certifyingorganisation.status.id }}"
-                     organisation_remarks="{{ certifyingorganisation.remarks }}"
-                     data-title="Click to edit">
-                    <b>Status</b>: <span class="status-info">{{ certifyingorganisation.status }}</span><br/>
-                    <b>Remarks</b>: <span class="remarks-info">{{ certifyingorganisation.remarks }}</span>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-    {% endfor %}
-    <hr/>
-    {% include "_pagination.html" %}
+{#    {% for certifyingorganisation in certifyingorganisations %}#}
+{#        <script>#}
+{#            function toggleDetails(id) {#}
+{#                $('#'+id).children().toggle();#}
+{#                $('#'+id).next().toggle();#}
+{#            }#}
+{#        </script>#}
+{#        <div class="row" style="margin-top:10px;">#}
+{#            <div class="col-lg-10">#}
+{##}
+{#                <h3>{{ certifyingorganisation.name }}</h3>#}
+{#                <p id="{{ certifyingorganisation.pk }}" style="color: grey" onclick="toggleDetails(this.id)">#}
+{#                    <span style="font-size: 8pt" class="glyphicon glyphicon-triangle-right"></span>#}
+{#                    <span style="font-size: 8pt; display: none" class="glyphicon glyphicon-triangle-bottom"></span>#}
+{#                    <span>Show details</span>#}
+{#                    <span style="display: none">Hide details</span><br/>#}
+{#                </p>#}
+{#                <div style="color: grey; display: none">#}
+{#                    <span class="grey-italic col-lg-4">Organisation name</span><span class="col-lg-8">{{ certifyingorganisation.name }}</span><br/>#}
+{#                    <span class="grey-italic col-lg-4">Address</span><span class="col-lg-8">{{ certifyingorganisation.address }}</span><br/>#}
+{#                    <span class="grey-italic col-lg-4">Country</span><span class="col-lg-8">{{ certifyingorganisation.country.name }}</span><br/>#}
+{#                    <span class="grey-italic col-lg-4">Email</span><span class="col-lg-8">{{ certifyingorganisation.organisation_email }}</span><br/>#}
+{#                    <span class="grey-italic col-lg-4">Phone</span><span class="col-lg-8">{{ certifyingorganisation.organisation_phone }}</span><br/>#}
+{#                    <span class="grey-italic col-lg-4">Link</span><span class="col-lg-8"><a href="{{ certifyingorganisation.url }}">{{ certifyingorganisation.url }}</a></span><br/>#}
+{##}
+{#                    <span class="grey-italic col-lg-4">Organisation owners</span>#}
+{#                    <span class="col-lg-8">{% for organisation_owners in certifyingorganisation.organisation_owners.all %}#}
+{#                    {% if organisation_owners.first_name %}#}
+{#                        {{ organisation_owners.first_name }} {{ organisation_owners.last_name }}{{ ", " }}#}
+{#                    {% else %}#}
+{#                        {{ organisation_owners }}{{ ", " }}#}
+{#                    {% endif %}#}
+{#                    {% endfor %}</span>#}
+{#                </div>#}
+{##}
+{#            </div>#}
+{#            <div class="col-lg-2">#}
+{#                <div class="btn-group pull-right">#}
+{#                    {% if not certifyingorganisation.approved and user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all %}#}
+{#                        <a class="btn btn-default btn-mini btn-approved tooltip-toggle"#}
+{#                           href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'#}
+{#                            data-title="Approve {{ certifyingorganisation.name }}">#}
+{#                            <span class="glyphicon glyphicon-thumbs-up"></span>#}
+{#                        </a>#}
+{#                        <a class="btn btn-default btn-delete btn-mini tooltip-toggle btn-reject"#}
+{#                           organisation_name="{{ certifyingorganisation.name }}"#}
+{#                           organisation_country="{{ certifyingorganisation.country.name }}"#}
+{#                           organisation_slug="{{ certifyingorganisation.slug }}"#}
+{#                           organisation_project_slug="{{ certifyingorganisation.project.slug }}"#}
+{#                            data-title="Reject {{ certifyingorganisation.name }}">#}
+{#                            <span class="glyphicon glyphicon-thumbs-down"></span>#}
+{#                        </a>#}
+{#                    {% endif %}#}
+{#                    {% if not certifyingorganisation.approved and user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all or user in certifyingorganisation.organisation_owners.all %}#}
+{#                        <a class="btn btn-default btn-mini tooltip-toggle"#}
+{#                            href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'#}
+{#                            data-title="Edit {{ certifyingorganisation.name }}">#}
+{#                        <span class="glyphicon glyphicon-pencil"></span>#}
+{#                        </a>#}
+{#                        <a class="btn btn-default btn-mini btn-delete tooltip-toggle"#}
+{#                           href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'#}
+{#                            data-title="Delete {{ certifyingorganisation.name }}">#}
+{#                            <span class="glyphicon glyphicon-minus"></span>#}
+{#                        </a>#}
+{#                    {% endif %}#}
+{#                </div>#}
+{#                {% if not certifyingorganisation.approved and user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all %}#}
+{#                <div class="status-wrapper tooltip-toggle"#}
+{#                     organisation_name="{{ certifyingorganisation.name }}"#}
+{#                     organisation_country="{{ certifyingorganisation.country.name }}"#}
+{#                     organisation_slug="{{ certifyingorganisation.slug }}"#}
+{#                     organisation_project_slug="{{ certifyingorganisation.project.slug }}"#}
+{#                     organisation_status="{{ certifyingorganisation.status.id }}"#}
+{#                     organisation_remarks="{{ certifyingorganisation.remarks }}"#}
+{#                     data-title="Click to edit">#}
+{#                    <b>Status</b>: <span class="status-info">{{ certifyingorganisation.status }}</span><br/>#}
+{#                    <b>Remarks</b>: <span class="remarks-info">{{ certifyingorganisation.remarks }}</span>#}
+{#                </div>#}
+{#                {% endif %}#}
+{#            </div>#}
+{#        </div>#}
+{#    {% endfor %}#}
+{#    {% include "_pagination.html" %}#}
 
     <!-- Modal -->
     <div class="modal fade" id="rejectionModal" role="dialog">
@@ -232,9 +246,93 @@
         </div>
     </div>
 
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
     <script>
+      $(document).ready(function () {
+        $('#dataTable').dataTable({
+          "processing": true,
+          "serverSide": true,
+          "length": 100,
+          "pageLength": 100,
+          "ajax": "{% url "pending-certifyingorganisation-list-json" project_slug=the_project %}",
+          "columnDefs": [{"render": createActionBtns, "data": null, "targets": [1]}],
+          "initComplete": function (settings, json) {
+            $('.btn-approved').hover(
+              function () {
+                $(this).removeClass('btn-default').addClass('btn-success')
+              },
+              function () {
+                $(this).removeClass('btn-success').addClass('btn-default')
+              }
+            );
+            $('.btn-reject').click(function () {
+                $('#rejected-organisation-name').html($(this).attr('organisation_name'));
+                $('#rejected-organisation-country').html($(this).attr('organisation_country'));
+                $('[name=rejected-organisation-slug]').val($(this).attr('organisation_slug'));
+                $('[name=rejected-organisation-project-slug]').val($(this).attr('organisation_project_slug'));
+                $('#rejectionModal').modal('show')
+            });
+            $('.tooltip-toggle').tooltip(
+              {container: 'body'}
+            );
+
+          }
+        });
+      })
+
+      function createActionBtns() {
+        let btn = '';
+        let row = arguments[0];
+        let orgName = row[1];
+        let canApprove = row[2];
+        let projectSlug = row[3];
+        let orgSlug = row[4];
+        let countryName = row[5];
+        let canUpdate = row[6];
+        let approveUrl = "{% url "certifyingorganisation-approve" project_slug=1 slug=2 %}".replace(/1/, projectSlug).replace(/2/, orgSlug);
+        let updateUrl = "{% url "certifyingorganisation-update" project_slug=1 slug=2 %}".replace(/1/, projectSlug).replace(/2/, orgSlug);
+        let deleteUrl = "{% url "certifyingorganisation-delete" project_slug=1 slug=2 %}".replace(/1/, projectSlug).replace(/2/, orgSlug);
+        if (canApprove) {
+          btn = (
+            `<a class="btn btn-default btn-mini btn-approved tooltip-toggle"` +
+                `href="${approveUrl}" data-title="Approve ${orgName}">` +
+                `<span class="glyphicon glyphicon-thumbs-up">` +
+                `</span>` +
+            `</a>` +
+            `<a class="btn btn-default btn-delete btn-mini tooltip-toggle btn-reject"` +
+                `organisation_name="${orgName}"` +
+                `organisation_slug="${orgSlug}"` +
+                `organisation_country="${countryName}"` +
+                `organisation_project_slug="${projectSlug}"` +
+                `data-title="Reject ${orgName}">` +
+                `<span class="glyphicon glyphicon-thumbs-down"></span>` +
+            `</a>`
+          )
+        }
+        if (canUpdate) {
+            btn += (
+              `<a class="btn btn-default btn-mini tooltip-toggle"
+                    href='${updateUrl}'
+                    data-title="Edit ${orgName}">
+                <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                   href='${deleteUrl}'
+                    data-title="Delete ${orgName}">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>`
+            )
+        }
+        return btn;
+      }
+
+      function myFunc() {
+        console.log("Button was clicked!!!");
+      }
+
         $(document).click(function () {
-            $('.messages').fadeOut('fast')
+            $('.messages').fadeOut('fast');
         });
         $('.btn-delete').hover(
             function (){
@@ -244,22 +342,9 @@
                 $(this).removeClass('btn-danger').addClass('btn-default')
             }
         );
-        $('.btn-approved').hover(
-            function (){
-                $(this).removeClass('btn-default').addClass('btn-success')
-            },
-            function (){
-                $(this).removeClass('btn-success').addClass('btn-default')
-            }
-        );
 
-        $('.btn-reject').click(function () {
-            $('#rejected-organisation-name').html($(this).attr('organisation_name'));
-            $('#rejected-organisation-country').html($(this).attr('organisation_country'));
-            $('[name=rejected-organisation-slug]').val($(this).attr('organisation_slug'));
-            $('[name=rejected-organisation-project-slug]').val($(this).attr('organisation_project_slug'));
-            $('#rejectionModal').modal('show')
-        });
+
+
 
         $('.status-wrapper').click(function () {
             var initial_status = $(this).attr('organisation_status');

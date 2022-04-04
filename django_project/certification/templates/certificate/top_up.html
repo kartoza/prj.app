@@ -47,7 +47,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="total-payment">Total Payment : {{ the_project.get_credit_cost_currency_display }} <span id="total-amount">0</span></div>
-                            The amount is payed directly
+                            The amount is paid directly
                         </div>
                         <div class="col-md-4" style="padding-top: 8px">
                             <button type="submit" class="btn btn-success"
@@ -69,6 +69,8 @@
     const $creditAmount = $('#creditAmount');
     const $form = $('#top-up-form');
     const creditCost = {{ the_project.credit_cost }};
+    const projectId = {{ the_project.id }};
+    const org = {{ cert_organisation.id }};
     const $totalAmount = $('#total-amount');
     let payButtonDisabled = true;
     let totalPayment = 0;
@@ -122,8 +124,7 @@
        if (isNaN(totalToPay)) {
            alert('error calculating total payment');
        }
-
-       showPaymentModal();
+       window.location = `{% url 'checkout' %}?unit=${creditAmount}&total=${totalToPay}&org=${org}`;
     });
 
     function stripeSourceHandler(source) {
