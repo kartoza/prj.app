@@ -106,13 +106,80 @@
         </div>
     {% endif %}
 
-    <div class="row">
+    <!-- Modal -->
+    <div class="modal fade" id="rejectionModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><b>Rejection Form</b></h4>
+                </div>
+                <div class="modal-body">
+                    <p>You are going to reject this organisation below:</p>
+                    <ul>
+                        <li><span>Organisation: </span><span class="rejection-form-info" id="rejected-organisation-name"></span></li>
+                        <li><span>Country: </span><span class="rejection-form-info" id="rejected-organisation-country"></span></li>
+                    </ul>
+                    <form id="rejectionForm" role="form">
+                        <label>Please indicate your reason of this rejection.</label><br>
+                        <input name="status" class="form-control" value="Rejected, because ">
+                        <input name="rejected-organisation-slug" hidden>
+                        <input name="rejected-organisation-project-slug" hidden>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" onclick="closeRejectionForm()">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitRejectionForm()">Submit</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="updateStatusModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><b>Update Status Form</b></h4>
+                </div>
+                <div class="modal-body">
+                    <p>You are going to update the status of this organisation below:</p>
+                    <ul>
+                        <li><span>Organisation: </span><span class="status-form-info" id="status-organisation-name"></span></li>
+                        <li><span>Country: </span><span class="status-form-info" id="status-organisation-country"></span></li>
+                    </ul>
+                    <form id="updateStatusForm" role="form">
+                        <label>Status:</label><br>
+                        <select name="update-status" class="form-control">
+                        </select><br/>
+                        <label>Remarks:</label><br>
+                        <input name="update-remarks" class="form-control">
+                        <input name="status-organisation-slug" hidden>
+                        <input name="status-organisation-project-slug" hidden>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" onclick="closeUpdateStatusForm()">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitUpdateStatusForm()">Submit</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- End modal -->
+
+    <div class="row" style="display: flex">
         <div class="col-lg-8">
             <h1>{{ certifyingorganisation.name }}</h1><br/>
         </div>
 
         {# Only organisation owners or staff can edit #}
-        <div class="col-lg-4">
+        <div class="col-lg-4 tools-container">
 
             <div class="pull-right">
             <a class="glyphicon glyphicon-info-sign tooltip-toggle about-link"
@@ -139,19 +206,19 @@
                         <i class="fa fa-rss" style="color: grey"></i>
                     </a>
                 {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
-                <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                   href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                   data-title="Delete {{ certifyingorganisation.name }}">
-                    <span class="glyphicon glyphicon-minus"></span>
-                </a>
-                <a class="btn btn-default btn-mini tooltip-toggle"
-                   href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                   data-title="Edit {{ certifyingorganisation.name }}">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                </a>
+                    <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                       href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                       data-title="Delete {{ certifyingorganisation.name }}">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                       data-title="Edit {{ certifyingorganisation.name }}">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
                 {% endif %}
                  <a class="btn btn-default btn-mini tooltip-toggle"
-                    href='{% url "certifyingorganisation-list" certifyingorganisation.project.slug %}'
+                    href='{% if certifyingorganisation.approved %}{% url "certifyingorganisation-list" certifyingorganisation.project.slug %}{% else %}{% url "pending-certifyingorganisation-list" certifyingorganisation.project.slug %}{% endif %}'
                     data-title="Back">
                      <span class="glyphicon glyphicon-arrow-left"></span>
                  </a>
@@ -161,65 +228,139 @@
     </div>
 
     <div class="container row">
-    <div class="details col-lg-5" style="margin-bottom: 20px">
-        <span class="grey-italic col-lg-4">Organisation name</span><span class="col-lg-8">{{ certifyingorganisation.name }}</span><br/>
-        <span class="grey-italic col-lg-4">Address</span><span class="col-lg-8">{{ certifyingorganisation.address }}</span><br/>
-        <span class="grey-italic col-lg-4">Country</span><span class="col-lg-8">{{ certifyingorganisation.country.name }}</span><br/>
-        <span class="grey-italic col-lg-4">Email</span><span class="col-lg-8">{{ certifyingorganisation.organisation_email }}</span><br/>
-        <span class="grey-italic col-lg-4">Phone</span><span class="col-lg-8">{{ certifyingorganisation.organisation_phone }}</span><br/>
-        <span class="grey-italic col-lg-4">Organisation owners</span>
-        <span class="col-lg-8">
-        {% for organisation_owners in certifyingorganisation.organisation_owners.all %}
-            {% if organisation_owners.first_name %}
-                {{ organisation_owners.first_name }} {{ organisation_owners.last_name }}{{ ", " }}
-            {% else %}
-                {{ organisation_owners }}{{ ", " }}
-            {% endif %}
-        {% endfor %}</span><br/>
-     <span class="grey-italic col-lg-4 pull-left float-left">Organisation URL</span>
-        <span class="col-lg-8"><a href='{{ certifyingorganisation.url }}' style="font-size: 10pt;">
-            {{ certifyingorganisation.url }}</a>
-        </span><br/>
+    <div class="details col-lg-6 col-md-6 col-sm-12" style="margin-bottom: 20px">
+        <div class="content-container">
+            <div class="title">Organisation name</div>
+            <div class="content">{{ certifyingorganisation.name }}</div>
+        </div>
+        <div class="content-container">
+            <div class="title">Address</div>
+            <div class="content">{{ certifyingorganisation.address }}</div>
+        </div>
+        <div class="content-container">
+            <div class="title">Country</div>
+            <div class="content">{{ certifyingorganisation.country.name }}</div>
+        </div>
+        <div class="content-container">
+            <div class="title">Email</div>
+            <div class="content">{{ certifyingorganisation.organisation_email }}</div>
+        </div>
+        <div class="content-container">
+            <div class="title">Phone</div>
+            <div class="content">{{ certifyingorganisation.organisation_phone }}</div>
+        </div>
+        <div class="content-container">
+            <div class="title">Organisation owners</div>
+            <div class="content">
+                {% for organisation_owners in certifyingorganisation.organisation_owners.all %}
+                    {% if organisation_owners.first_name %}
+                        {{ organisation_owners.first_name }}
+                        {{ organisation_owners.last_name }}{{ ", " }}
+                    {% else %}
+                        {{ organisation_owners }}{{ ", " }}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="content-container">
+            <div class="title">Organisation URL</div>
+            <div class="content">
+                {% if certifyingorganisation.url %}
+                <a href='{{ certifyingorganisation.url }}' style="font-size: 10pt;">
+                    {{ certifyingorganisation.url }}</a>
+                {% else %}
+                -
+                {% endif %}
+            </div>
+        </div>
     </div>
-    <div class="col-lg-6">
     {% if certifyingorganisation.approved %}
-    <div class="col-lg-4 pull-right" style="padding-right: 0">
-        <h4 class="panel-heading" style="padding-left:0; padding-right: 0">
-            Training Centers</h4>
-        <h3 class="panel-body">{{ num_trainingcenter }}</h3>
-    </div>
+    <div class="col-lg-6 ">
 
-    <div class="col-lg-3 pull-right" style="padding: 0">
-        <h4 class="panel-heading">Attendees</h4>
-        <h3 class="panel-body">{{ num_attendees }}</h3>
-    </div>
-    {% endif %}
-
-    {% if user_can_create %}
-    <div class="panel-wrap col-lg-4 pull-right">
-        <h4 class="panel-heading" style="padding-left: 30%; text-align: left">Credits
-                <a class="btn btn-default btn-xs tooltip-toggle btn-top-up button-action" style="position: absolute; float: right; margin-left: 5px;"
-                   href= '{% url "top-up" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
-                   data-title="Top up credits">
-                <i class="glyphicon glyphicon-shopping-cart"></i></a>
-        </h4>
-        {% if certifyingorganisation.organisation_credits >= certifyingorganisation.project.certificate_credit %}
-        <h3 class="panel-body tooltip-toggle"
-            data-title="Available credits to issue certificate"
-            data-placement="left"
-        >{{ certifyingorganisation.organisation_credits }}
-        </h3>
-        {% else %}
-        <h3 class="panel-body tooltip-toggle"
-            data-title="Your credits is insufficient to issue more certificates, please top up"
-            data-placement="left"
-            style="color: indianred"
-        >{{ certifyingorganisation.organisation_credits }}
-        </h3>
+        {% if user_can_create %}
+        <div class="panel-wrap col-lg-12">
+            <a href="{% url "top-up" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}" class="btn btn-success top-up-btn">
+                Top up credits <i class="glyphicon glyphicon-shopping-cart"></i>
+            </a>
+            {% if certifyingorganisation.organisation_credits <= 0 %}
+            <div class="insufficient-credit">Your credits is insufficient to issue more certificates, please top up.</div>
+            {% endif %}
+            <h4 class="panel-heading">Credits
+            </h4>
+            {% if certifyingorganisation.organisation_credits >= certifyingorganisation.project.certificate_credit %}
+            <h3 class="panel-body tooltip-toggle"
+                data-title="Available credits to issue certificate"
+                data-placement="left"
+            >{{ certifyingorganisation.organisation_credits }}
+            </h3>
+            {% else %}
+            <h3 class="panel-body tooltip-toggle"
+                data-title="Your credits is insufficient to issue more certificates, please top up"
+                data-placement="left"
+                style="color: indianred; "
+            >{{ certifyingorganisation.organisation_credits }}
+            </h3>
+            {% endif %}
+        </div>
         {% endif %}
+
+        <div class="col-lg-12">
+            <h4 class="panel-heading" style="padding-left:0; padding-right: 0">
+                Training Centers</h4>
+            <h3 class="panel-body">{{ num_trainingcenter }}</h3>
+        </div>
+
+        <div class="col-lg-12">
+            <h4 class="panel-heading">Attendees</h4>
+            <h3 class="panel-body">{{ num_attendees }}</h3>
+        </div>
+
     </div>
+    {% else %}
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="org-status">
+                <div class="content-container">
+                    <div class="title">Status</div>
+                    <div class="content">{% if certifyingorganisation.status %}{{ certifyingorganisation.status }}{% else %}-{% endif %}</div>
+                </div>
+                <div class="content-container">
+                    <div class="title">Remarks</div>
+                    <div class="content">{% if certifyingorganisation.remarks %}{{ certifyingorganisation.remarks }}{% else %}-{% endif %}</div>
+                </div>
+                {% if user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all %}
+                    {% if 'approved' not in available_status %}
+                    <a class="btn btn-success btn-mini btn-approved tooltip-toggle"
+                       href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                       data-title="Approve {{ certifyingorganisation.name }}">
+                        <span class="glyphicon glyphicon-thumbs-up"></span> Approve
+                    </a>
+                    {% endif %}
+                    {% if 'rejected' not in available_status %}
+                    <a class="btn btn-danger btn-mini tooltip-toggle btn-reject"
+                       organisation_name="{{ certifyingorganisation.name }}"
+                       organisation_country="{{ certifyingorganisation.country.name }}"
+                       organisation_slug="{{ certifyingorganisation.slug }}"
+                       organisation_project_slug="{{ certifyingorganisation.project.slug }}"
+                       data-title="Reject {{ certifyingorganisation.name }}">
+                        <span class="glyphicon glyphicon-thumbs-down"></span> Reject
+                    </a>
+                    {% endif %}
+                    <a class="btn btn-default btn-mini btn-update-status tooltip-toggle"
+                        href='#'
+                        organisation_name="{{ certifyingorganisation.name }}"
+                        organisation_country="{{ certifyingorganisation.country.name }}"
+                        organisation_slug="{{ certifyingorganisation.slug }}"
+                        organisation_project_slug="{{ certifyingorganisation.project.slug }}"
+                        organisation_status="{{ certifyingorganisation.status.id }}"
+                        organisation_remarks="{{ certifyingorganisation.remarks }}"
+                        data-title="Update {{ certifyingorganisation.name }}">
+                            Update status
+                    </a>
+                {% endif %}
+            </div>
+        </div>
     {% endif %}
-    </div>
+
     </div>
 
     {% if certifyingorganisation.approved %}
@@ -269,8 +410,8 @@
     <table>
     <tr><td>
         <h5>No courses are defined, but you can <a
-                    class="btn btn-default btn-mini"
-                    href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'>create one</a>.</h5>
+            class="btn btn-default btn-mini"
+            href='{% url 'course-create' certifyingorganisation.project.slug certifyingorganisation.slug %}'>create one</a>.</h5>
     </td></tr>
     </table>
     </div>
@@ -550,9 +691,92 @@
     </div>
     </div>
 
+
     {% endif %}
 
     <script>
+        let pendingListUrl = "{% url "pending-certifyingorganisation-list" certifyingorganisation.project.slug %}";
+        function closeRejectionForm() {
+            $('.rejection-form-info').html('');
+            document.forms['rejectionForm'].reset();
+            $('#rejectionModal').modal('hide')
+        }
+        function closeUpdateStatusForm() {
+            $('.status-form-info').html('');
+            document.forms['updateStatusForm'].reset();
+            $('#updateStatusModal').modal('hide')
+        }
+
+        function submitRejectionForm() {
+            let organisation_slug = $('[name=rejected-organisation-slug]').val();
+            let organisation_project_slug = $('[name=rejected-organisation-project-slug]').val();
+            $.ajax({
+                url: '/{{ LANGUAGE_CODE }}/' + organisation_project_slug + '/reject-certifyingorganisation/' + organisation_slug + '/',
+                data: {
+                    'remarks': $('[name=status]').val()
+                },
+                success: function(){
+                     location.href = pendingListUrl;
+                }
+            });
+        }
+        function submitUpdateStatusForm() {
+            var organisation_slug = $('[name=status-organisation-slug]').val();
+            var organisation_project_slug = $('[name=status-organisation-project-slug]').val();
+            $.ajax({
+                url: '/{{ LANGUAGE_CODE }}/' + organisation_project_slug + '/update-status-certifyingorganisation/' + organisation_slug + '/',
+                method: 'POST',
+                data: {
+                    'status': $('[name=update-status]').val(),
+                    'remarks': $('[name=update-remarks]').val()
+                },
+                dataType: 'json',
+                success: function(data){
+                    if (data['status'] === 'rejected') {
+                        location.href = pendingListUrl;
+                    } else {
+                        location.reload()
+                    }
+                }
+            });
+        }
+
+        $('.btn-reject').click(function () {
+            $('#rejected-organisation-name').html($(this).attr('organisation_name'));
+            $('#rejected-organisation-country').html($(this).attr('organisation_country'));
+            $('[name=rejected-organisation-slug]').val($(this).attr('organisation_slug'));
+            $('[name=rejected-organisation-project-slug]').val($(this).attr('organisation_project_slug'));
+            $('#rejectionModal').modal('show')
+        });
+
+         $('.btn-update-status').click(function () {
+            var initial_status = $(this).attr('organisation_status');
+            var project_slug = $(this).attr('organisation_project_slug');
+            $.ajax({
+                url: '/{{ LANGUAGE_CODE }}/' + project_slug + '/get-status-list/',
+                method: 'GET',
+                success: function (data) {
+                    var $selectStatus = $('[name="update-status"]');
+                    $selectStatus.empty();
+                    $selectStatus.append('<option value="">--------------------------</option>');
+                    for(var i=0; i<data.length; i++){
+                        if(data[i].id === parseInt(initial_status)){
+                            $selectStatus.append('<option value=' + data[i].id + ' selected>' + data[i].name + '</option>')
+                        }else {
+                            $selectStatus.append('<option value=' + data[i].id + '>' + data[i].name + '</option>')
+                        }
+
+                    }
+                }
+            });
+            $('#status-organisation-name').html($(this).attr('organisation_name'));
+            $('#status-organisation-country').html($(this).attr('organisation_country'));
+            $('[name=status-organisation-slug]').val($(this).attr('organisation_slug'));
+            $('[name=status-organisation-project-slug]').val(project_slug);
+            $('[name=update-remarks]').val($(this).attr('organisation_remarks'));
+            $('#updateStatusModal').modal('show')
+        });
+
         $('.btn-delete').hover(
             function (){
                 $(this).removeClass('btn-default').addClass('btn-danger')

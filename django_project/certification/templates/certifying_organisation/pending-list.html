@@ -34,6 +34,10 @@
         .status-wrapper:hover {
             background-color: lightgray;
         }
+        .badge-warning {
+            background: #ffc107;
+            color: black;
+        }
     </style>
 
     {% if messages %}
@@ -84,12 +88,14 @@
         <thead>
             <tr>
                 <th>Organization</th>
+                <th>Status</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tfoot>
             <tr>
                 <th>Organization</th>
+                <th>Status</th>
                 <th>Action</th>
             </tr>
         </tfoot>
@@ -256,7 +262,11 @@
           "length": 100,
           "pageLength": 100,
           "ajax": "{% url "pending-certifyingorganisation-list-json" project_slug=the_project %}",
-          "columnDefs": [{"render": createActionBtns, "data": null, "targets": [1]}],
+          "columnDefs": [
+            {"bSortable": false, "aTargets": [1, 2] },
+            {"render": createActionBtns, "data": null, "targets": [2]},
+            {"render": showStatus, "data": null, "targets": [1]},
+          ],
           "initComplete": function (settings, json) {
             $('.btn-approved').hover(
               function () {
@@ -281,6 +291,12 @@
         });
       })
 
+      function showStatus() {
+        let row = arguments[0];
+        let status = `<span class="badge badge-warning">${row[7]}</span>`;
+        return status;
+      }
+
       function createActionBtns() {
         let btn = '';
         let row = arguments[0];
@@ -294,21 +310,21 @@
         let updateUrl = "{% url "certifyingorganisation-update" project_slug=1 slug=2 %}".replace(/1/, projectSlug).replace(/2/, orgSlug);
         let deleteUrl = "{% url "certifyingorganisation-delete" project_slug=1 slug=2 %}".replace(/1/, projectSlug).replace(/2/, orgSlug);
         if (canApprove) {
-          btn = (
-            `<a class="btn btn-default btn-mini btn-approved tooltip-toggle"` +
-                `href="${approveUrl}" data-title="Approve ${orgName}">` +
-                `<span class="glyphicon glyphicon-thumbs-up">` +
-                `</span>` +
-            `</a>` +
-            `<a class="btn btn-default btn-delete btn-mini tooltip-toggle btn-reject"` +
-                `organisation_name="${orgName}"` +
-                `organisation_slug="${orgSlug}"` +
-                `organisation_country="${countryName}"` +
-                `organisation_project_slug="${projectSlug}"` +
-                `data-title="Reject ${orgName}">` +
-                `<span class="glyphicon glyphicon-thumbs-down"></span>` +
-            `</a>`
-          )
+          {#btn = (#}
+          {#  `<a class="btn btn-default btn-mini btn-approved tooltip-toggle"` +#}
+          {#      `href="${approveUrl}" data-title="Approve ${orgName}">` +#}
+          {#      `<span class="glyphicon glyphicon-thumbs-up">` +#}
+          {#      `</span>` +#}
+          {#  `</a>` +#}
+          {#  `<a class="btn btn-default btn-delete btn-mini tooltip-toggle btn-reject"` +#}
+          {#      `organisation_name="${orgName}"` +#}
+          {#      `organisation_slug="${orgSlug}"` +#}
+          {#      `organisation_country="${countryName}"` +#}
+          {#      `organisation_project_slug="${projectSlug}"` +#}
+          {#      `data-title="Reject ${orgName}">` +#}
+          {#      `<span class="glyphicon glyphicon-thumbs-down"></span>` +#}
+          {#  `</a>`#}
+          {#)#}
         }
         if (canUpdate) {
             btn += (
@@ -327,10 +343,6 @@
         return btn;
       }
 
-      function myFunc() {
-        console.log("Button was clicked!!!");
-      }
-
         $(document).click(function () {
             $('.messages').fadeOut('fast');
         });
@@ -342,8 +354,6 @@
                 $(this).removeClass('btn-danger').addClass('btn-default')
             }
         );
-
-
 
 
         $('.status-wrapper').click(function () {
