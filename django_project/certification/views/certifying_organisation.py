@@ -1,4 +1,6 @@
 # coding=utf-8
+from django.db.models.functions import Lower
+
 from base.models import Project
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -6,7 +8,7 @@ from django.utils.html import escape
 from django.urls import reverse
 from django.shortcuts import get_list_or_404
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, request
 from django.views.generic import (
     ListView,
     CreateView,
@@ -231,6 +233,12 @@ class CertifyingOrganisationDetailView(
         context['num_attendees'] = context['attendee'].count()
         context['project_slug'] = project_slug
         context['the_project'] = Project.objects.get(slug=project_slug)
+
+        context['available_status'] = (
+            context['the_project'].status_set.all().values_list(
+                Lower('name'), flat=True
+            )
+        )
         context['project'] = context['the_project']
 
         user_can_create = certifying_organisation.approved
@@ -263,7 +271,7 @@ class CertifyingOrganisationDetailView(
         :rtype: QuerySet
         """
 
-        qs = CertifyingOrganisation.objects.all()
+        qs = CertifyingOrganisation.objects.filter(rejected=False)
         return qs
 
     def get_object(self, queryset=None):
@@ -660,17 +668,22 @@ class CertifyingOrganisationUpdateView(
 class PendingCertifyingOrganisationJson(BaseDatatableView):
     model = CertifyingOrganisation
     columns = ['name', 'org_name', 'can_approve', 'project_slug',
-               'org_slug', 'country_name', 'can_edit']
+               'org_slug', 'country_name', 'can_edit',
+               'status', 'remarks']
     order_columns = ['name']
     max_display_length = 100
 
     def get_initial_queryset(self):
-        return CertifyingOrganisation.objects.filter(approved=False)
+        return CertifyingOrganisation.objects.filter(
+            approved=False, rejected=False)
 
     def render_column(self, row, column):
         # We want to render user as a custom column
         if column == 'org_name':
             return escape('{0}'.format(row.name))
+        elif column == 'status' or column == 'remarks':
+            column_value = getattr(row, column)
+            return escape('{0}'.format(column_value if column_value else ''))
         elif column == 'project_slug':
             return escape('{0}'.format(row.project.slug))
         elif column == 'org_slug':
@@ -778,6 +791,45 @@ class PendingCertifyingOrganisationListView(
         return self.queryset
 
 
+def send_approved_email(
+        certifying_organisation: CertifyingOrganisation,
+        site: request):
+    for organisation_owner in \
+            certifying_organisation.organisation_owners.all():
+        data = {
+            'owner_firstname': organisation_owner.first_name,
+            'owner_lastname': organisation_owner.last_name,
+            'organisation_name': certifying_organisation.name,
+            'project_name': certifying_organisation.project.name,
+            'project_owner_firstname':
+                certifying_organisation.project.owner.first_name,
+            'project_owner_lastname':
+                certifying_organisation.project.owner.last_name,
+            'site': site,
+            'project_slug': certifying_organisation.project.slug,
+        }
+        send_mail(
+            u'Projecta - Your organisation is approved',
+            u'Dear {owner_firstname} {owner_lastname},\n\n'
+            u'Congratulations!\n'
+            u'Your certifying organisation has been approved. The '
+            u'following is the details of the newly approved organisation:'
+            u'\n'
+            u'Name of organisation: {organisation_name}\n'
+            u'Project: {project_name}\n'
+            u'You may now start creating your training center, '
+            u'course type, course convener and course.\n'
+            u'For further information please visit: '
+            u'{site}/en/{project_slug}/about/\n\n'
+            u'Sincerely,\n'
+            u'{project_owner_firstname} {project_owner_lastname}'
+                .format(**data),
+            certifying_organisation.project.owner.email,
+            [organisation_owner.email],
+            fail_silently=False,
+        )
+
+
 class ApproveCertifyingOrganisationView(
         CertifyingOrganisationMixin,
         RedirectView):
@@ -817,40 +869,11 @@ class ApproveCertifyingOrganisationView(
         certifyingorganisation.save()
 
         site = self.request.get_host()
-        for organisation_owner in \
-                certifyingorganisation.organisation_owners.all():
-            data = {
-                'owner_firstname': organisation_owner.first_name,
-                'owner_lastname': organisation_owner.last_name,
-                'organisation_name': certifyingorganisation.name,
-                'project_name': certifyingorganisation.project.name,
-                'project_owner_firstname':
-                    certifyingorganisation.project.owner.first_name,
-                'project_owner_lastname':
-                    certifyingorganisation.project.owner.last_name,
-                'site': site,
-                'project_slug': project_slug,
-            }
-            send_mail(
-                u'Projecta - Your organisation is approved',
-                u'Dear {owner_firstname} {owner_lastname},\n\n'
-                u'Congratulations!\n'
-                u'Your certifying organisation has been approved. The '
-                u'following is the details of the newly approved organisation:'
-                u'\n'
-                u'Name of organisation: {organisation_name}\n'
-                u'Project: {project_name}\n'
-                u'You may now start creating your training center, '
-                u'course type, course convener and course.\n'
-                u'For further information please visit: '
-                u'{site}/en/{project_slug}/about/\n\n'
-                u'Sincerely,\n'
-                u'{project_owner_firstname} {project_owner_lastname}'
-                .format(**data),
-                certifyingorganisation.project.owner.email,
-                [organisation_owner.email],
-                fail_silently=False,
-            )
+
+        send_approved_email(
+            certifyingorganisation,
+            site
+        )
 
         return reverse(self.pattern_name, kwargs={
             'project_slug': project_slug
@@ -874,6 +897,45 @@ class AboutView(TemplateView):
         project_slug = self.kwargs.get('project_slug')
         context['the_project'] = Project.objects.get(slug=project_slug)
         return context
+
+
+def send_rejection_email(certifying_organisation, site, schema = 'http'):
+    """Send notification to owner that the organisation has been rejected"""
+    for organisation_owner in \
+            certifying_organisation.organisation_owners.all():
+        data = {
+            'owner_firstname': organisation_owner.first_name,
+            'owner_lastname': organisation_owner.last_name,
+            'organisation_name': certifying_organisation.name,
+            'project_name': certifying_organisation.project.name,
+            'project_owner_firstname':
+                certifying_organisation.project.owner.first_name,
+            'project_owner_lastname':
+                certifying_organisation.project.owner.last_name,
+            'site': site,
+            'project_slug': certifying_organisation.project.slug,
+            'status': certifying_organisation.status,
+            'schema': schema
+        }
+        send_mail(
+            u'Projecta - Your organisation is not approved',
+            u'Dear {owner_firstname} {owner_lastname},\n\n'
+            u'We are sorry that your certifying organisation '
+            u'has not been approved. \nThe '
+            u'following is the details of your organisation:'
+            u'\n\n'
+            u'Name of organisation: {organisation_name}\n'
+            u'Project: {project_name}\n'
+            u'Status: {status}\n\n'
+            u'For further information please visit: '
+            u'{schema}://{site}/en/{project_slug}/about/\n\n'
+            u'Sincerely,\n'
+            u'{project_owner_firstname} {project_owner_lastname}'
+                .format(**data),
+            certifying_organisation.project.owner.email,
+            [organisation_owner.email],
+            fail_silently=False,
+        )
 
 
 def reject_certifying_organisation(request, **kwargs):
@@ -907,41 +969,12 @@ def reject_certifying_organisation(request, **kwargs):
 
         schema = request.is_secure() and "https" or "http"
         site = request.get_host()
-        for organisation_owner in \
-                certifyingorganisation.organisation_owners.all():
-            data = {
-                'owner_firstname': organisation_owner.first_name,
-                'owner_lastname': organisation_owner.last_name,
-                'organisation_name': certifyingorganisation.name,
-                'project_name': certifyingorganisation.project.name,
-                'project_owner_firstname':
-                    certifyingorganisation.project.owner.first_name,
-                'project_owner_lastname':
-                    certifyingorganisation.project.owner.last_name,
-                'site': site,
-                'project_slug': project_slug,
-                'status': certifyingorganisation.status,
-                'schema': schema
-            }
-            send_mail(
-                u'Projecta - Your organisation is not approved',
-                u'Dear {owner_firstname} {owner_lastname},\n\n'
-                u'We are sorry that your certifying organisation '
-                u'has not been approved. \nThe '
-                u'following is the details of your organisation:'
-                u'\n\n'
-                u'Name of organisation: {organisation_name}\n'
-                u'Project: {project_name}\n'
-                u'Status: {status}\n\n'
-                u'For further information please visit: '
-                u'{schema}://{site}/en/{project_slug}/about/\n\n'
-                u'Sincerely,\n'
-                u'{project_owner_firstname} {project_owner_lastname}'
-                .format(**data),
-                certifyingorganisation.project.owner.email,
-                [organisation_owner.email],
-                fail_silently=False,
-            )
+
+        send_rejection_email(
+            certifyingorganisation,
+            site,
+            schema
+        )
 
         url = reverse(pattern_name, kwargs={
             'project_slug': project_slug

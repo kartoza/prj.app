@@ -19,7 +19,6 @@
 .details {
     border: 1px solid lightgrey;
     padding: 20px;
-    width: 50%;
     border-radius: 5px;
     font-family: inherit;
     font-size: 12pt;
@@ -82,7 +81,8 @@ table {
     border: 1px solid lightgrey;
     background-color: #f5f5f5;
     margin: 0 auto;
-    text-align: center
+    text-align: center;
+    font-size: 12pt;
 }
 .panel-body {
     border: 1px solid lightgrey;
@@ -106,4 +106,43 @@ table {
 
 .panel-right {
     width: 12% !important;
+}
+.org-status {
+    padding: 20px;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    line-height: 175%
+}
+
+.title {
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+.content-container {
+    padding-bottom: 5px;
+}
+
+.top-up-btn {
+    height: 50px;
+    font-size: 20px;
+    padding-top: 8px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.insufficient-credit {
+    padding: 10px 20px;
+    text-align: center;
+    background: #ffc107;
+    color: black;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+.tools-container {
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    justify-content: center;
 }
