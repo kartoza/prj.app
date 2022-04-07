@@ -43,5 +43,5 @@ django-preferences==1.0.0
 pinax-notifications==5.0.3
 pinax-templates==2.0.2
 # rich text editor
-django-tinymce==3.2.0
+django-tinymce==3.4.0
 django-datatables-view==1.19.1
