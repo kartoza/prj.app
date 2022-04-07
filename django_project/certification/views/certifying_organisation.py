@@ -822,8 +822,8 @@ def send_approved_email(
             u'For further information please visit: '
             u'{site}/en/{project_slug}/about/\n\n'
             u'Sincerely,\n'
-            u'{project_owner_firstname} {project_owner_lastname}'
-                .format(**data),
+            u'{project_owner_firstname} {project_owner_lastname}'.format(
+                **data),
             certifying_organisation.project.owner.email,
             [organisation_owner.email],
             fail_silently=False,
@@ -930,8 +930,8 @@ def send_rejection_email(certifying_organisation, site, schema = 'http'):
             u'For further information please visit: '
             u'{schema}://{site}/en/{project_slug}/about/\n\n'
             u'Sincerely,\n'
-            u'{project_owner_firstname} {project_owner_lastname}'
-                .format(**data),
+            u'{project_owner_firstname} {project_owner_lastname}'.format(
+                **data),
             certifying_organisation.project.owner.email,
             [organisation_owner.email],
             fail_silently=False,

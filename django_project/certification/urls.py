@@ -109,7 +109,8 @@ urlpatterns = [
               'list/$',
         view=PendingCertifyingOrganisationListView.as_view(),
         name='pending-certifyingorganisation-list'),
-    url(regex='^(?P<project_slug>[\w-]+)/pending-certifyingorganisation-json/$',
+    url(regex='^(?P<project_slug>[\w-]+)/'
+              'pending-certifyingorganisation-json/$',
         view=PendingCertifyingOrganisationJson.as_view(),
         name='pending-certifyingorganisation-list-json'),
     url(regex='^(?P<project_slug>[\w-]+)/approve-certifyingorganisation/'
