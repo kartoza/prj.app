@@ -36,3 +36,6 @@ class Status(models.Model):
 
     def __unicode__(self):
         return '{}'.format(self.name)
+
+    def __str__(self):
+        return '{}'.format(self.name)

@@ -51,14 +51,17 @@ def sustaining_member_context(request):
     if not user or user.is_anonymous:
         return context_data
     if hasattr(request, 'resolver_match'):
-        project_slug = request.resolver_match.kwargs.get('project_slug')
-        if not project_slug:
-            project_slug = request.resolver_match.kwargs.get('slug')
         try:
-            project = Project.objects.get(
-                slug=project_slug
-            )
-        except Project.DoesNotExist:
+            project_slug = request.resolver_match.kwargs.get('project_slug')
+            if not project_slug:
+                project_slug = request.resolver_match.kwargs.get('slug')
+            try:
+                project = Project.objects.get(
+                    slug=project_slug
+                )
+            except Project.DoesNotExist:
+                return context_data
+        except AttributeError:
             return context_data
     context_data['is_sustaining_member'] = active_sustaining_membership(
                 user,

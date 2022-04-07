@@ -10,6 +10,7 @@ from .views import (
     CertifyingOrganisationListView,
     CertifyingOrganisationUpdateView,
     PendingCertifyingOrganisationListView,
+    PendingCertifyingOrganisationJson,
     ApproveCertifyingOrganisationView,
     reject_certifying_organisation,
     RejectedCertifyingOrganisationListView,
@@ -108,6 +109,10 @@ urlpatterns = [
               'list/$',
         view=PendingCertifyingOrganisationListView.as_view(),
         name='pending-certifyingorganisation-list'),
+    url(regex='^(?P<project_slug>[\w-]+)/'
+              'pending-certifyingorganisation-json/$',
+        view=PendingCertifyingOrganisationJson.as_view(),
+        name='pending-certifyingorganisation-list-json'),
     url(regex='^(?P<project_slug>[\w-]+)/approve-certifyingorganisation/'
               '(?P<slug>[\w-]+)/$',
         view=ApproveCertifyingOrganisationView.as_view(),
