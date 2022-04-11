@@ -2,6 +2,11 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from simple_history.models import HistoricalRecords
 
+CHECKLIST_CHOICES = (
+    ('organization_owner', 'Organization Owner'),
+    ('reviewer', 'Reviewer'),
+)
+
 
 class Checklist(models.Model):
 
@@ -46,6 +51,13 @@ class Checklist(models.Model):
         max_length=500,
         null=True,
         blank=True
+    )
+
+    target = models.CharField(
+        choices=CHECKLIST_CHOICES,
+        max_length=100,
+        blank=True,
+        default=''
     )
 
     history = HistoricalRecords()

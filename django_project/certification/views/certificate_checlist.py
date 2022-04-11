@@ -16,6 +16,7 @@ class CertificateChecklistForm(forms.ModelForm):
         fields = (
             'question',
             'show_text_box',
+            'target',
             'project'
         )
 
@@ -28,6 +29,7 @@ class CertificateChecklistForm(forms.ModelForm):
         super(CertificateChecklistForm, self).__init__(*args, **kwargs)
         self.fields['project'].initial = self.project
         self.fields['project'].widget = forms.HiddenInput()
+        self.fields['target'].required = True
 
     def save(self, commit=True):
         instance = super(CertificateChecklistForm, self).save(commit=False)

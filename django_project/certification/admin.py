@@ -174,7 +174,7 @@ class StatusAdmin(admin.ModelAdmin):
 
 
 class ChecklistAdmin(admin.ModelAdmin):
-    list_display = ('project', 'question', 'active')
+    list_display = ('project', 'question', 'target', 'active')
 
 
 admin.site.register(Certificate, CertificateAdmin)

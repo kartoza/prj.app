@@ -30,7 +30,7 @@ from ..models import (
     CourseConvener,
     Course,
     CourseAttendee,
-    CertifyingOrganisationCertificate)
+    CertifyingOrganisationCertificate, Checklist)
 from ..forms import CertifyingOrganisationForm
 from certification.utilities import check_slug
 
@@ -261,6 +261,11 @@ class CertifyingOrganisationDetailView(
                 certifying_organisation.organisation_owners.all():
             context['user_can_create'] = user_can_create
             context['user_can_delete'] = user_can_delete
+
+        context['available_checklist'] = Checklist.objects.filter(
+            project=context['the_project'],
+            target='reviewer'
+        )
         return context
 
     def get_queryset(self):
