@@ -177,6 +177,7 @@
             <!-- Modal content -->
             <form method="post" id="checklistForm" action="{% url "update-checklist-reviewer" project_slug=project_slug %}">
                 {% csrf_token %}
+                <input type="hidden" name="organisation" value="{{ certifyingorganisation.id }}"/>
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -185,21 +186,23 @@
                             {% for checklist in available_checklist %}
                                 <hr/>
                                 <div class="inline-form">
-                                    <div class="form-label">{{ checklist.question }}</div>
+                                    <div class="form-label">{% if checklist.organisation_checklist.0.checklist_question %}{{ checklist.organisation_checklist.0.checklist_question }}{% else %}{{ checklist.question }}{% endif %}</div>
+                                    {% if checklist.id in submitted_checklist %}
+                                        <div>Hello</div>
+                                    {% endif %}
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="checklist-{{ checklist.id  }}" id="yes-{{ checklist.id }}"
-                                               value="yes">
-                                        <label class="form-check-label" for="yes-{{ checklist.id }}">Yes</label>
+                                        <input class="form-check-input" type="radio" name="checklist-{{ checklist.id  }}" id="yes-{{ checklist.id }}" {% if checklist.organisation_checklist.0.checked %}checked{% endif %} value="yes">
+                                        <label class="form-check-label" for="yes-{{ checklist.id }}" >Yes</label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="checklist-{{ checklist.id  }}" id="no-{{ checklist.id }}"
-                                               value="no">
+                                               {% if not checklist.organisation_checklist.0.checked %}checked{% endif %} value="no">
                                         <label class="form-check-label" for="no-{{ checklist.id }}">No</label>
                                     </div>
                                 </div>
                                 {% if checklist.show_text_box %}
                                 <div>
-                                    <textarea class="form-control" name="textarea-{{ checklist.id }}" rows="3"></textarea>
+                                    <textarea class="form-control" name="textarea-{{ checklist.id }}" rows="3">{{ checklist.organisation_checklist.0.text_box_content }}</textarea>
                                 </div>
                                 {% endif %}
                             {% endfor %}
@@ -370,7 +373,8 @@
                     <div class="content">{% if certifyingorganisation.remarks %}{{ certifyingorganisation.remarks }}{% else %}-{% endif %}</div>
                 </div>
                 {% if user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all %}
-                    <a class="btn btn-default btn-warning btn-checklist-form">0/{{ available_checklist.count }} Checklist</a>
+                    <a class="btn btn-default {% if checked_checklist == available_checklist|length %}btn-success{% else %}btn-warning{% endif %} btn-checklist-form">
+                        <i class="fa fa-list" aria-hidden="true"></i> {{ checked_checklist }}/{{ available_checklist|length }} Checklist</a>
                     {% if 'approved' not in available_status %}
                     <a class="btn btn-success btn-mini btn-approved tooltip-toggle"
                        href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'

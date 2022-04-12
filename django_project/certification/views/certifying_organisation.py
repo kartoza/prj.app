@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from django.utils.html import escape
 from django.urls import reverse
 from django.shortcuts import get_list_or_404
-from django.db.models import Q
+from django.db.models import Q, F, Prefetch
 from django.http import HttpResponse, request
 from django.views.generic import (
     ListView,
@@ -30,9 +30,10 @@ from ..models import (
     CourseConvener,
     Course,
     CourseAttendee,
-    CertifyingOrganisationCertificate, Checklist)
+    CertifyingOrganisationCertificate, Checklist, OrganisationChecklist)
 from ..forms import CertifyingOrganisationForm
 from certification.utilities import check_slug
+from ..serializers.checklist_serializer import ChecklistSerializer
 
 
 class JSONResponseMixin(object):
@@ -262,10 +263,24 @@ class CertifyingOrganisationDetailView(
             context['user_can_create'] = user_can_create
             context['user_can_delete'] = user_can_delete
 
-        context['available_checklist'] = Checklist.objects.filter(
-            project=context['the_project'],
-            target='reviewer'
+        context['available_checklist'] = ChecklistSerializer(
+            Checklist.objects.filter(
+                project=context['the_project'],
+                target='reviewer',
+                active=True
+            ).prefetch_related(
+                Prefetch('organisationchecklist_set', queryset=OrganisationChecklist.objects.filter(
+                    organisation=certifying_organisation
+                ))
+            ), many=True).data
+
+        context['submitted_checklist'] = OrganisationChecklist.objects.filter(
+            organisation=certifying_organisation
         )
+        context['checked_checklist'] = context['submitted_checklist'].filter(
+            checked=True
+        ).count()
+
         return context
 
     def get_queryset(self):
