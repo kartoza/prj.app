@@ -38,6 +38,7 @@ class CertificateChecklistForm(forms.ModelForm):
         max_order = Checklist.objects.filter(
             project=self.project
         ).aggregate(Max('order'))
+        instance.approved = True
         if isinstance(max_order['order__max'], int):
             instance.order = max_order['order__max'] + 1
 

@@ -105,30 +105,21 @@ class CertifyingOrganisationForm(forms.ModelForm):
             if 'checklist-' in key:
                 checklist_id = key.split('-')[1]
                 if checklist_id not in checklist_data:
-                    checklist_data[checklist_id] = {
-                        'checked': True if value == 'yes' else False
-                    }
-                else:
-                    checklist_data[checklist_id]['checked'] = (
-                        True if value == 'yes' else False
-                    )
+                    checklist_data[checklist_id] = {}
+                checklist_data[checklist_id]['checked'] = (
+                    True if value == 'yes' else False
+                )
             if 'textarea-' in key:
                 checklist_id = key.split('-')[1]
                 if checklist_id not in checklist_data:
-                    checklist_data[checklist_id] = {
-                        'text': value
-                    }
-                else:
-                    checklist_data[checklist_id]['text'] = (
-                        value
-                    )
+                    checklist_data[checklist_id] = {}
+                checklist_data[checklist_id]['text'] = (
+                    value
+                )
             if checklist_id:
-                try:
-                    checklist = Checklist.objects.get(
-                        id=checklist_id
-                    )
-                except Checklist.DoesNotExist:
-                    continue
+                checklist = Checklist.objects.get(
+                    id=checklist_id
+                )
                 checklist_data[checklist_id]['question'] = (
                     checklist.question
                 )

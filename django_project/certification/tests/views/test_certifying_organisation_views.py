@@ -105,7 +105,8 @@ class TestCertifyingOrganisationView(TestCase):
             'organisation_phone': '1111111',
             'organisation_owners': self.user.id,
             'project': self.project.id,
-            f'checklist-{checklist.id}': 'yes'
+            f'checklist-{checklist.id}': 'yes',
+            f'textarea-{checklist.id}': 'test',
         }
         response = client.post(
             reverse('certifyingorganisation-create', kwargs={

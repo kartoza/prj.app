@@ -280,7 +280,8 @@ class CertifyingOrganisationDetailView(
             ), many=True).data
 
         context['submitted_checklist'] = OrganisationChecklist.objects.filter(
-            organisation=certifying_organisation
+            organisation=certifying_organisation,
+            checklist__active=True
         )
         context['checked_checklist'] = context['submitted_checklist'].filter(
             checked=True
