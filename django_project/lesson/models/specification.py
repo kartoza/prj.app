@@ -64,7 +64,6 @@ class Specification(TranslationMixin):
         max_length=200,
     )
 
-
     # noinspection PyClassicStyleClass.
     class Meta:
 

@@ -2,6 +2,8 @@
 """Urls for certification apps."""
 
 from django.conf.urls import url
+
+from .api_views.checklist import UpdateChecklistReviewer
 from .views import (
     # Certifying Organisation.
     CertifyingOrganisationCreateView,
@@ -379,6 +381,10 @@ urlpatterns = [
               '(?P<organisation_slug>[\w-]+)/feed/past-course/$',
         view=GetPastCourseOrganisation.as_view(),
         name='feed-past-course'),
+
+    url(regex='^(?P<project_slug>[\w-]+)/update-checklist-reviewer/$',
+        view=UpdateChecklistReviewer.as_view(),
+        name='update-checklist-reviewer'),
 
     # Checkout
     url(

@@ -9,7 +9,7 @@ from certification.tests.model_factories import (
     ProjectF,
     UserF,
     CertifyingOrganisationF,
-    StatusF
+    StatusF, ChecklistF
 )
 
 
@@ -65,6 +65,26 @@ class TestCertifyingOrganisationView(TestCase):
             'project_slug': self.project.slug,
             'slug': self.certifying_organisation.slug
         }))
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_detail_view_pending(self):
+        client = Client()
+        client.login(username='anita', password='password')
+        pending_certifying_organisation = CertifyingOrganisationF.create(
+            project=self.project,
+            approved=True
+        )
+        self.checklist = ChecklistF.create(
+            project=self.project,
+            target='reviewer',
+            active=True
+        )
+        response = client.get(reverse('certifyingorganisation-detail', kwargs={
+            'project_slug': self.project.slug,
+            'slug': pending_certifying_organisation.slug
+        }))
+        self.assertTrue(len(response.context_data['available_checklist']) > 0)
         self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
