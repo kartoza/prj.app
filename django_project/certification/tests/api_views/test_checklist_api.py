@@ -2,7 +2,9 @@ from django.test import TestCase, override_settings, Client
 
 from core.model_factories import UserF
 from base.tests.model_factories import ProjectF
-from certification.tests.model_factories import CertifyingOrganisationF, ChecklistF
+from certification.tests.model_factories import (
+    CertifyingOrganisationF, ChecklistF
+)
 from certification.models.organisation_checklist import OrganisationChecklist
 
 
@@ -51,7 +53,7 @@ class TestChecklistApi(TestCase):
             project=self.project
         )
         data = {
-            f'organisation': self.certifying_organisation.id,
+            'organisation': self.certifying_organisation.id,
             f'checklist-{self.checklist.id}': 'yes'
         }
         self.client.login(username='admin', password='password')

@@ -179,7 +179,7 @@ class ChecklistAdmin(admin.ModelAdmin):
 
 
 class OrganisationChecklistAdmin(admin.ModelAdmin):
-    list_display = ('organisation', 'checklist_question', 
+    list_display = ('organisation', 'checklist_question',
                     'checked', 'checklist_target')
     raw_id_fields = ('organisation', 'submitter', )
 
