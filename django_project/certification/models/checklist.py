@@ -2,9 +2,12 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from simple_history.models import HistoricalRecords
 
+ORGANIZATION_OWNER = 'organization_owner'
+REVIEWER = 'reviewer'
+
 CHECKLIST_CHOICES = (
-    ('organization_owner', 'Organization Owner'),
-    ('reviewer', 'Reviewer'),
+    (ORGANIZATION_OWNER, 'Organization Owner'),
+    (REVIEWER, 'Reviewer'),
 )
 
 

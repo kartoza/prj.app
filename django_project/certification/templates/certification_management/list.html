@@ -3,9 +3,9 @@
 {% block js_head %}
     <script>
         $(function() {
-          $("#checklist-sortable").sortable({
+          $(".checklist-sortable").sortable({
             update: function (event, ui) {
-              let idsInOrder = $("#checklist-sortable").sortable("toArray");
+              let idsInOrder = $(event.target).sortable("toArray");
               let checklistPostData = [];
               let order = 1;
               for (let checklistId of idsInOrder) {
@@ -111,27 +111,50 @@
      <h3>Certification Checklist</h3><div class="badge badge-success badge-updated">Updated</div>
   </div>
   <a href="{% url "certificate-checklist-create" project_slug=project_slug %}" class="btn btn-default" style="display:flex; width: fit-content"><span class="ui-icon ui-icon-plus"></span> Add new checklist</a>
-  <div class="checklist-container" id="checklist-sortable">
-    {% for checklist_row in checklist %}
-         {% if checklist_row.approved %}
-            <div class="row" id="checklist-{{ checklist_row.id }}">
-                <div class="col-lg-1"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>
-                <div class="col-lg-4">{{ checklist_row.question }}</div>
-                <div class="col-lg-4">{% if checklist_row.active %}
-                    <div class="btn btn-warning" onclick="archive({{ checklist_row.id }}, this)">Archive</div>{% else %}<div class="btn btn-success" onclick="activate({{ checklist_row.id }}, this)">Activate</div>{% endif %} </div>
-            </div>
-        {% endif %}
-    {% endfor %}
-  </div>
 
-  <h4 style="margin-top: 40px; font-weight: bold">Unapproved Checklist</h4>
-    <div class="checklist-container unapproved-checklist-container">
+    <br/>
+    <h4>Reviewer</h4>
+    <div class="checklist-container checklist-sortable">
         {% for checklist_row in checklist %}
-            {% if not checklist_row.approved %}
-                <div class="row disabled">
+            {% if checklist_row.approved and checklist_row.target == 'reviewer' %}
+                <div class="row" id="checklist-{{ checklist_row.id }}">
+                    <div class="col-lg-1"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>
                     <div class="col-lg-4">{{ checklist_row.question }}</div>
+                    <div class="col-lg-4">{% if checklist_row.active %}
+                        <div class="btn btn-warning" onclick="archive({{ checklist_row.id }}, this)">Archive
+                        </div>{% else %}
+                        <div class="btn btn-success" onclick="activate({{ checklist_row.id }}, this)">Activate
+                        </div>{% endif %} </div>
                 </div>
             {% endif %}
         {% endfor %}
     </div>
+    <br/>
+    <h4>Organization Owner</h4>
+    <div class="checklist-container checklist-sortable">
+        {% for checklist_row in checklist %}
+            {% if checklist_row.approved and checklist_row.target == 'organization_owner' %}
+                <div class="row" id="checklist-{{ checklist_row.id }}">
+                    <div class="col-lg-1"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>
+                    <div class="col-lg-4">{{ checklist_row.question }}</div>
+                    <div class="col-lg-4">{% if checklist_row.active %}
+                        <div class="btn btn-warning" onclick="archive({{ checklist_row.id }}, this)">Archive
+                        </div>{% else %}
+                        <div class="btn btn-success" onclick="activate({{ checklist_row.id }}, this)">Activate
+                        </div>{% endif %} </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+{#  <h4 style="margin-top: 40px; font-weight: bold">Unapproved Checklist</h4>#}
+{#    <div class="checklist-container unapproved-checklist-container">#}
+{#        {% for checklist_row in checklist %}#}
+{#            {% if not checklist_row.approved %}#}
+{#                <div class="row disabled">#}
+{#                    <div class="col-lg-4">{{ checklist_row.question }}</div>#}
+{#                </div>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{#    </div>#}
 {% endblock %}

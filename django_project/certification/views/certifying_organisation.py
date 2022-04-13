@@ -30,7 +30,9 @@ from ..models import (
     CourseConvener,
     Course,
     CourseAttendee,
-    CertifyingOrganisationCertificate, Checklist, OrganisationChecklist)
+    CertifyingOrganisationCertificate,
+    Checklist, OrganisationChecklist,
+    REVIEWER, ORGANIZATION_OWNER)
 from ..forms import CertifyingOrganisationForm
 from certification.utilities import check_slug
 from ..serializers.checklist_serializer import ChecklistSerializer
@@ -88,7 +90,7 @@ class CertifyingOrganisationMixin(object):
 
 
 class JSONCertifyingOrganisationListView(
-        CertifyingOrganisationMixin, JSONResponseMixin, ListView):
+    CertifyingOrganisationMixin, JSONResponseMixin, ListView):
     context_object_name = 'certifyingorganisation'
 
     def dispatch(self, request, *args, **kwargs):
@@ -126,9 +128,9 @@ class JSONCertifyingOrganisationListView(
 
 
 class CertifyingOrganisationListView(
-        CertifyingOrganisationMixin,
-        PaginationMixin,
-        ListView):
+    CertifyingOrganisationMixin,
+    PaginationMixin,
+    ListView):
     """List view for Certifying Organisation."""
 
     context_object_name = 'certifyingorganisations'
@@ -155,10 +157,11 @@ class CertifyingOrganisationListView(
         if project_slug:
             context['the_project'] = Project.objects.get(slug=project_slug)
             context['project'] = context['the_project']
-            context['certificate_lists'] = \
+            context['certificate_lists'] = (
                 CertifyingOrganisationCertificate.objects.filter(
                     certifying_organisation__project=context['the_project']
-            ).values_list('certifying_organisation', flat=True)
+                ).values_list('certifying_organisation', flat=True)
+            )
         return context
 
     def get_queryset(self, queryset=None):
@@ -186,8 +189,8 @@ class CertifyingOrganisationListView(
 
 
 class CertifyingOrganisationDetailView(
-        CertifyingOrganisationMixin,
-        DetailView):
+    CertifyingOrganisationMixin,
+    DetailView):
     """Detail view for Certifying Organisation."""
 
     context_object_name = 'certifyingorganisation'
@@ -266,7 +269,7 @@ class CertifyingOrganisationDetailView(
         context['available_checklist'] = ChecklistSerializer(
             Checklist.objects.filter(
                 project=context['the_project'],
-                target='reviewer',
+                target=REVIEWER,
                 active=True
             ).prefetch_related(
                 Prefetch(
@@ -277,7 +280,8 @@ class CertifyingOrganisationDetailView(
             ), many=True).data
 
         context['submitted_checklist'] = OrganisationChecklist.objects.filter(
-            organisation=certifying_organisation
+            organisation=certifying_organisation,
+            checklist__active=True
         )
         context['checked_checklist'] = context['submitted_checklist'].filter(
             checked=True
@@ -334,9 +338,9 @@ class CertifyingOrganisationDetailView(
 
 # noinspection PyAttributeOutsideInit
 class CertifyingOrganisationDeleteView(
-        LoginRequiredMixin,
-        CertifyingOrganisationMixin,
-        DeleteView):
+    LoginRequiredMixin,
+    CertifyingOrganisationMixin,
+    DeleteView):
     """Delete view for Certifying Organisation."""
 
     context_object_name = 'certifyingorganisation'
@@ -361,7 +365,7 @@ class CertifyingOrganisationDeleteView(
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         return super(
-            CertifyingOrganisationDeleteView, self)\
+            CertifyingOrganisationDeleteView, self) \
             .get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -383,7 +387,7 @@ class CertifyingOrganisationDeleteView(
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         return super(
-            CertifyingOrganisationDeleteView, self)\
+            CertifyingOrganisationDeleteView, self) \
             .post(request, *args, **kwargs)
 
     def get_success_url(self):
@@ -444,15 +448,15 @@ class CustomSuccessMessageMixin(object):
 
 # noinspection PyAttributeOutsideInit
 class CertifyingOrganisationCreateView(
-        CustomSuccessMessageMixin,
-        LoginRequiredMixin,
-        CertifyingOrganisationMixin,
-        CreateView):
+    CustomSuccessMessageMixin,
+    LoginRequiredMixin,
+    CertifyingOrganisationMixin,
+    CreateView):
     """Create view for Certifying Organisation."""
 
     context_object_name = 'certifyingorganisation'
     template_name = 'certifying_organisation/create.html'
-    success_message = 'Your organisation is successfully registered. '\
+    success_message = 'Your organisation is successfully registered. ' \
                       'It is now waiting for an approval.'
     message_extra_tags = 'organisation_submitted'
 
@@ -486,6 +490,12 @@ class CertifyingOrganisationCreateView(
         context['certifyingorganisations'] = \
             self.get_queryset().filter(project=self.project)
         context['the_project'] = self.project
+        context['available_checklist'] = ChecklistSerializer(
+            Checklist.objects.filter(
+                project=context['the_project'],
+                target=ORGANIZATION_OWNER,
+                active=True
+            ), many=True).data
         return context
 
     def form_valid(self, form):
@@ -598,9 +608,9 @@ class CertifyingOrganisationCreateView(
 
 # noinspection PyAttributeOutsideInit
 class CertifyingOrganisationUpdateView(
-        LoginRequiredMixin,
-        CertifyingOrganisationMixin,
-        UpdateView):
+    LoginRequiredMixin,
+    CertifyingOrganisationMixin,
+    UpdateView):
     """Update view for Certifying Organisation."""
 
     context_object_name = 'certifyingorganisation'
@@ -737,10 +747,10 @@ class PendingCertifyingOrganisationJson(BaseDatatableView):
 
 
 class PendingCertifyingOrganisationListView(
-        LoginRequiredMixin,
-        CertifyingOrganisationMixin,
-        PaginationMixin,
-        ListView):
+    LoginRequiredMixin,
+    CertifyingOrganisationMixin,
+    PaginationMixin,
+    ListView):
     """List view for pending certifying organisation."""
 
     context_object_name = 'certifyingorganisations'
@@ -769,7 +779,7 @@ class PendingCertifyingOrganisationListView(
         :rtype: dict
         """
 
-        context = super(PendingCertifyingOrganisationListView, self)\
+        context = super(PendingCertifyingOrganisationListView, self) \
             .get_context_data(**kwargs)
         context['num_certifyingorganisations'] = self.get_queryset().count()
         context['unapproved'] = True
@@ -853,8 +863,8 @@ def send_approved_email(
 
 
 class ApproveCertifyingOrganisationView(
-        CertifyingOrganisationMixin,
-        RedirectView):
+    CertifyingOrganisationMixin,
+    RedirectView):
     """Redirect view for approving Certifying Organisation."""
 
     permanent = False
@@ -921,7 +931,7 @@ class AboutView(TemplateView):
         return context
 
 
-def send_rejection_email(certifying_organisation, site, schema = 'http'):
+def send_rejection_email(certifying_organisation, site, schema='http'):
     """Send notification to owner that the organisation has been rejected"""
     for organisation_owner in \
             certifying_organisation.organisation_owners.all():
@@ -1007,10 +1017,10 @@ def reject_certifying_organisation(request, **kwargs):
 
 
 class RejectedCertifyingOrganisationListView(
-        LoginRequiredMixin,
-        CertifyingOrganisationMixin,
-        PaginationMixin,
-        ListView):
+    LoginRequiredMixin,
+    CertifyingOrganisationMixin,
+    PaginationMixin,
+    ListView):
     """List view for pending certifying organisation."""
 
     context_object_name = 'certifyingorganisations'
@@ -1039,7 +1049,7 @@ class RejectedCertifyingOrganisationListView(
         :rtype: dict
         """
 
-        context = super(RejectedCertifyingOrganisationListView, self)\
+        context = super(RejectedCertifyingOrganisationListView, self) \
             .get_context_data(**kwargs)
         context['project_slug'] = self.project_slug
         if self.project_slug:

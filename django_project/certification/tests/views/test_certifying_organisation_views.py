@@ -5,6 +5,10 @@ from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from django.urls import reverse
+
+from certification.models import (
+    ORGANIZATION_OWNER, REVIEWER, OrganisationChecklist
+)
 from certification.tests.model_factories import (
     ProjectF,
     UserF,
@@ -68,6 +72,56 @@ class TestCertifyingOrganisationView(TestCase):
         self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_create_view(self):
+        client = Client()
+        client.login(username='anita', password='password')
+        ChecklistF.create(
+            project=self.project,
+            target=ORGANIZATION_OWNER,
+            active=True
+        )
+        response = client.get(
+            reverse('certifyingorganisation-create', kwargs={
+                'project_slug': self.project.slug
+            }))
+        self.assertTrue(len(response.context_data['available_checklist']) > 0)
+        self.assertEqual(response.context_data['the_project'], self.project)
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_create_view_post(self):
+        client = Client()
+        client.login(username='anita', password='password')
+        checklist = ChecklistF.create(
+            project=self.project,
+            target=ORGANIZATION_OWNER,
+            active=True
+        )
+        post_data = {
+            'name': 'org_name',
+            'organisation_email': 'org@test.com',
+            'address': 'city',
+            'country': 'ID',
+            'organisation_phone': '1111111',
+            'organisation_owners': self.user.id,
+            'project': self.project.id,
+            f'checklist-{checklist.id}': 'yes',
+            f'textarea-{checklist.id}': 'test',
+        }
+        response = client.post(
+            reverse('certifyingorganisation-create', kwargs={
+                'project_slug': self.project.slug
+            }), post_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            OrganisationChecklist.objects.filter(
+                submitter=self.user,
+                checklist=checklist,
+                checked=True
+            ).exists()
+        )
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_detail_view_pending(self):
         client = Client()
         client.login(username='anita', password='password')
@@ -77,7 +131,7 @@ class TestCertifyingOrganisationView(TestCase):
         )
         self.checklist = ChecklistF.create(
             project=self.project,
-            target='reviewer',
+            target=REVIEWER,
             active=True
         )
         response = client.get(reverse('certifyingorganisation-detail', kwargs={

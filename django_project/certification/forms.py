@@ -29,7 +29,7 @@ from .models import (
     CourseAttendee,
     Attendee,
     Certificate,
-    CertifyingOrganisationCertificate
+    CertifyingOrganisationCertificate, Checklist, OrganisationChecklist
 )
 
 
@@ -97,6 +97,53 @@ class CertifyingOrganisationForm(forms.ModelForm):
         instance = super(CertifyingOrganisationForm, self).save(commit=False)
         instance.save()
         self.save_m2m()
+
+        # Check checklist
+        checklist_data = {}
+        for key, value in self.data.items():
+            checklist_id = ''
+            if 'checklist-' in key:
+                checklist_id = key.split('-')[1]
+                if checklist_id not in checklist_data:
+                    checklist_data[checklist_id] = {}
+                checklist_data[checklist_id]['checked'] = (
+                    True if value == 'yes' else False
+                )
+            if 'textarea-' in key:
+                checklist_id = key.split('-')[1]
+                if checklist_id not in checklist_data:
+                    checklist_data[checklist_id] = {}
+                checklist_data[checklist_id]['text'] = (
+                    value
+                )
+            if checklist_id:
+                checklist = Checklist.objects.get(
+                    id=checklist_id
+                )
+                checklist_data[checklist_id]['question'] = (
+                    checklist.question
+                )
+        for key, value in checklist_data.items():
+            checklist = Checklist.objects.get(id=key)
+            organisation = CertifyingOrganisation.objects.get(
+                id=instance.id
+            )
+            org_checklist, created = (
+                OrganisationChecklist.objects.get_or_create(
+                    organisation=organisation,
+                    checklist=checklist
+                )
+            )
+            if created:
+                org_checklist.submitter = self.user
+                org_checklist.checklist_question = value['question']
+                org_checklist.checklist_target = checklist.target
+
+            org_checklist.checked = value['checked']
+            if 'text' in value:
+                org_checklist.text_box_content = value['text']
+            org_checklist.save()
+
         return instance
 
 
