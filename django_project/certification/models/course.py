@@ -9,7 +9,6 @@ from django.conf.global_settings import MEDIA_ROOT
 from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 import logging
@@ -55,13 +54,13 @@ class Course(models.Model):
     start_date = models.DateField(
         _('Start date'),
         help_text=_('Course start date'),
-        default=timezone.now
+        default=datetime.date.today
     )
 
     end_date = models.DateField(
         _('End date'),
         help_text=_('Course end date'),
-        default=timezone.now
+        default=datetime.date.today
     )
 
     slug = models.CharField(

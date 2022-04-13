@@ -4,7 +4,7 @@
 
 {% block js_head %}
     <script type="text/javascript" src="/static/js/jsi18n.js"></script>
-    <script type="text/javascript" src="/static/grappelli/jquery/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script type="text/javascript" src="/static/grappelli/jquery/ui/jquery-ui.min.js"></script>
     <script type="text/javascript" src="/static/grappelli/js/grappelli.js"></script>
     <script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
@@ -35,6 +35,30 @@
         <div class='container'>
             {% csrf_token %}
             {% crispy form %}
+            <div class="checklist-container">
+                {% for checklist in available_checklist %}
+                     <hr/>
+                    <div class="inline-form">
+                        <div class="form-label">{{ checklist.question }}</div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="checklist-{{ checklist.id }}"
+                                   id="yes-{{ checklist.id }}" value="yes">
+                            <label class="form-check-label" for="yes-{{ checklist.id }}">Yes</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="checklist-{{ checklist.id }}"
+                                   id="no-{{ checklist.id }}" value="no">
+                            <label class="form-check-label" for="no-{{ checklist.id }}">No</label>
+                        </div>
+                    </div>
+                    {% if checklist.show_text_box %}
+                        <div>
+                            <textarea class="form-control" name="textarea-{{ checklist.id }}"
+                                      rows="3"></textarea>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
             {% for form in inlines %}
                 {% crispy form %}
             {% endfor %}
@@ -42,10 +66,27 @@
     </section>
 
     <script>
-     $('legend').append('<div class="pull-right"><a href={% url "about" the_project.slug %} class="glyphicon glyphicon-info-sign tooltip-toggle about-icon"'+
-                  'style="font-size: 14pt; padding: 7px; color: #7F7F98; display: inline-block; vertical-align: middle"'+
-                  'data-title="About"></a></div>');
-    $('#div_id_name').prepend('<div class="info-text">Click the <span class="glyphicon glyphicon-info-sign"></span> icon for details on how the certification programme works.</div>')
+        let availableChecklistLength = {{ available_checklist | length }};
+        let checklistAvailable = availableChecklistLength > 0;
+        $(function () {
+            $('#project-form').after($('.checklist-container'));
+            if (checklistAvailable) {
+                $('#submit-id-submit').attr('disabled', 'disabled');
+            }
+            $('.form-check').change(() => {
+                let allChecked = [];
+                $('.checklist-container :radio:checked').each(function(){
+                   allChecked.push($(this).val());
+                });
+                if (allChecked.length === availableChecklistLength) {
+                    $('#submit-id-submit').attr('disabled', false);
+                }
+            })
+        });
+        $('legend').append('<div class="pull-right"><a href={% url "about" the_project.slug %} class="glyphicon glyphicon-info-sign tooltip-toggle about-icon"' +
+            'style="font-size: 14pt; padding: 7px; color: #7F7F98; display: inline-block; vertical-align: middle"' +
+            'data-title="About"></a></div>');
+        $('#div_id_name').prepend('<div class="info-text">Click the <span class="glyphicon glyphicon-info-sign"></span> icon for details on how the certification programme works.</div>')
     </script>
 
 {% endblock %}

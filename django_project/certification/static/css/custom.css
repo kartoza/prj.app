@@ -74,3 +74,14 @@ textarea.form-control {
     max-width: 366px !important;
 
 }
+
+.inline-form {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.inline-form .form-check {
+    padding-left: 20px;
+}
