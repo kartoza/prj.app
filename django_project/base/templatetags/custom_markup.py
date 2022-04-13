@@ -11,7 +11,7 @@ register = template.Library()
 @register.filter(name='base_markdown', is_safe=True)
 @stringfilter
 def base_markdown(value):
-    extensions = ["nl2br", "markdown.extensions.tables", ]
+    extensions = ["nl2br", "markdown.extensions.tables", "fenced_code"]
     html_output = markdown.markdown(
         force_unicode(value),
         extensions=extensions,
