@@ -12,12 +12,15 @@ from certification.models.organisation_checklist import OrganisationChecklist
 
 
 class UpdateChecklistReviewer(LoginRequiredMixin, APIView):
-    """API for updating checklist submitted by organization reviewer."""
+    """
+    API for submitting new checklist or updating existing one
+    that was done by reviewer.
+    """
 
     def post(self, request, project_slug):
         post_data = request.POST.dict()
         organisation_id = post_data.get('organisation', None)
-        # Checklist data
+
         cleaned_data = {}
         organisation = None
         for key, value in post_data.items():
@@ -30,7 +33,7 @@ class UpdateChecklistReviewer(LoginRequiredMixin, APIView):
                     }
                 else:
                     cleaned_data[checklist_id]['checked'] = (
-                        value
+                        True if value == 'yes' else False
                     )
             if 'textarea-' in key:
                 if not checklist_id:
@@ -59,9 +62,11 @@ class UpdateChecklistReviewer(LoginRequiredMixin, APIView):
             organisation = CertifyingOrganisation.objects.get(
                 id=organisation_id
             )
-            org_checklist, created = OrganisationChecklist.objects.get_or_create(
-                organisation=organisation,
-                checklist=checklist
+            org_checklist, created = (
+                OrganisationChecklist.objects.get_or_create(
+                    organisation=organisation,
+                    checklist=checklist
+                )
             )
             if created:
                 org_checklist.submitter = self.request.user

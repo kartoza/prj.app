@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from django.utils.html import escape
 from django.urls import reverse
 from django.shortcuts import get_list_or_404
-from django.db.models import Q, F, Prefetch
+from django.db.models import Q, Prefetch
 from django.http import HttpResponse, request
 from django.views.generic import (
     ListView,
@@ -269,9 +269,11 @@ class CertifyingOrganisationDetailView(
                 target='reviewer',
                 active=True
             ).prefetch_related(
-                Prefetch('organisationchecklist_set', queryset=OrganisationChecklist.objects.filter(
-                    organisation=certifying_organisation
-                ))
+                Prefetch(
+                    'organisationchecklist_set',
+                    queryset=OrganisationChecklist.objects.filter(
+                        organisation=certifying_organisation
+                    ))
             ), many=True).data
 
         context['submitted_checklist'] = OrganisationChecklist.objects.filter(

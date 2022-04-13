@@ -16,4 +16,6 @@ class ChecklistSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Checklist
-        fields = ['id', 'question', 'show_text_box', 'target', 'organisation_checklist']
+        fields = [
+            'id', 'question', 'show_text_box',
+            'target', 'organisation_checklist']
