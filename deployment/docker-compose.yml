@@ -50,7 +50,6 @@ services:
       - media-data:/home/web/media:rw
       - reports-data:/home/web/reports
     links:
-      - smtp:smtp
       - db:db
     restart: unless-stopped
     user: root

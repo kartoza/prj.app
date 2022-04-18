@@ -1,5 +1,5 @@
 {% extends "project_base.html" %}
-
+{% load i18n %}
 {% block js_head %}
     <script>
         $(function() {
@@ -77,7 +77,10 @@
   </style>
 
   <div class="page-header">
-    <h1 class="text-muted">Certification Management</h1>
+    <h1 class="text-muted">{% trans 'Certification Manager Dashboard' %}</h1>
+  </div>
+  <div style="display: flex; flex-direction: row; align-items: center">
+     <h3>{% trans 'Certification Type' %}</h3>
   </div>
 
   <table class="table">
