@@ -266,22 +266,23 @@ class CertifyingOrganisationDetailView(
             context['user_can_create'] = user_can_create
             context['user_can_delete'] = user_can_delete
 
+        checklist_questions = Checklist.objects.filter(
+            project=context['the_project'],
+            target=REVIEWER,
+            active=True
+        ).prefetch_related(
+            Prefetch(
+                'organisationchecklist_set',
+                queryset=OrganisationChecklist.objects.filter(
+                    organisation=certifying_organisation
+                ))
+        )
         context['available_checklist'] = ChecklistSerializer(
-            Checklist.objects.filter(
-                project=context['the_project'],
-                target=REVIEWER,
-                active=True
-            ).prefetch_related(
-                Prefetch(
-                    'organisationchecklist_set',
-                    queryset=OrganisationChecklist.objects.filter(
-                        organisation=certifying_organisation
-                    ))
-            ), many=True).data
+            checklist_questions, many=True).data
 
         context['submitted_checklist'] = OrganisationChecklist.objects.filter(
             organisation=certifying_organisation,
-            checklist__active=True
+            checklist__in=checklist_questions
         )
         context['checked_checklist'] = context['submitted_checklist'].filter(
             checked=True
@@ -523,6 +524,7 @@ class CertifyingOrganisationCreateView(
                     'project_name': self.project.name,
                     'site': site,
                     'project_slug': self.project_slug,
+                    'org': self.object.slug,
                     'organisation_name': self.object.name,
                     'organisation_country': self.object.country.name,
                 }
@@ -538,8 +540,8 @@ class CertifyingOrganisationCreateView(
                     u'Country: {organisation_country}\n'
                     u'You may review and approve the organisation by '
                     u'following this link:\n'
-                    u'{site}/en/{project_slug}/pending-certifyingorganisation/'
-                    u'list/\n\n'
+                    u'{site}/en/{project_slug}/certifyingorganisation/{org}/'
+                    u'\n\n'
                     u'Sincerely,\n\n\n\n\n'
                     u'------------------------------------------------------\n'
                     u'This is an auto-generated email from the system.'

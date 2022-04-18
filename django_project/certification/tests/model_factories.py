@@ -16,7 +16,7 @@ from certification.models import (
     CourseAttendee,
     Status,
     CertifyingOrganisationCertificate,
-    Checklist,
+    Checklist, OrganisationChecklist,
 )
 from core.model_factories import UserF
 from base.tests.model_factories import ProjectF
@@ -179,3 +179,13 @@ class ChecklistF(factory.django.DjangoModelFactory):
 
     question = factory.sequence(lambda n: u'Test question %s' % n)
     project = factory.SubFactory(ProjectF)
+
+
+class OrganisationChecklistF(factory.django.DjangoModelFactory):
+    class Meta:
+        model = OrganisationChecklist
+
+    checklist = factory.SubFactory(ChecklistF)
+    organisation = factory.SubFactory(CertifyingOrganisationF)
+    checklist_question = factory.sequence(
+        lambda n: 'Question %s' % n)
