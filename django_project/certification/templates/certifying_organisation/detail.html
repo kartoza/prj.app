@@ -88,6 +88,42 @@
         .btn-disabled, .btn-disabled:hover {
             color: #d3d3d3
         }
+        .timeline {
+            margin-top: 20px;
+            margin-left: 10px;
+        }
+        .timeline .time {
+            font-weight: bold;
+        }
+
+        .timeline ul, .timeline li {
+            list-style: none;
+            padding: 0;
+        }
+
+        .timeline li {
+            padding-bottom: 1.5rem;
+            border-left: 2px solid #8f8f8f;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .timeline li:last-child {
+            border-left: 1px solid rgba(255, 255, 255, 0);
+            padding-bottom: 0;
+        }
+
+        .timeline li:before {
+            content: "";
+            width: 15px;
+            height: 15px;
+            background: #e8e8e8;
+            border: 2px solid #707070;
+            border-radius: 50%;
+            position: absolute;
+            left: -8.5px;
+            top: 0px;
+        }
     </style>
 
     {% if messages %}
@@ -402,6 +438,20 @@
                     </a>
                 {% endif %}
             </div>
+
+            <div class="timeline">
+                <ul>
+                    {% for history_data in history %}
+                    <li>
+                        <div class="time">{{ history_data.history_date }}</div>
+                        <p>{% if history_data.history_type == '+' %}
+                            Created {% else %}
+                            Updated {% endif %} by {{ history_data.history_user }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
         </div>
     {% endif %}
 

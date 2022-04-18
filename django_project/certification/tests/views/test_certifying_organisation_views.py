@@ -162,6 +162,8 @@ class TestCertifyingOrganisationView(TestCase):
             len(response.context_data['available_checklist']), 1)
         self.assertEqual(
             len(response.context_data['submitted_checklist']), 1)
+        self.assertEqual(
+            len(response.context_data['history']), 1)
         self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
