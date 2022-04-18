@@ -1,6 +1,7 @@
 # coding=utf-8
 import logging
 from io import StringIO
+from django.core import mail
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.test.client import Client
@@ -13,7 +14,7 @@ from certification.tests.model_factories import (
     ProjectF,
     UserF,
     CertifyingOrganisationF,
-    StatusF, ChecklistF
+    StatusF, ChecklistF, OrganisationChecklistF
 )
 
 
@@ -97,8 +98,9 @@ class TestCertifyingOrganisationView(TestCase):
             target=ORGANIZATION_OWNER,
             active=True
         )
+        org_slug = 'org_name'
         post_data = {
-            'name': 'org_name',
+            'name': org_slug,
             'organisation_email': 'org@test.com',
             'address': 'city',
             'country': 'ID',
@@ -120,6 +122,9 @@ class TestCertifyingOrganisationView(TestCase):
                 checked=True
             ).exists()
         )
+        self.assertIn(
+            f'/en/{self.project.slug}/certifyingorganisation/{org_slug}/',
+            mail.outbox[0].body)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_detail_view_pending(self):
@@ -134,11 +139,29 @@ class TestCertifyingOrganisationView(TestCase):
             target=REVIEWER,
             active=True
         )
+        checklist_owner = ChecklistF.create(
+            project=self.project,
+            target=ORGANIZATION_OWNER,
+            active=True
+        )
+        OrganisationChecklistF.create(
+            checklist=self.checklist,
+            organisation=pending_certifying_organisation,
+            checked=True
+        )
+        OrganisationChecklistF.create(
+            checklist=checklist_owner,
+            organisation=pending_certifying_organisation,
+            checked=True
+        )
         response = client.get(reverse('certifyingorganisation-detail', kwargs={
             'project_slug': self.project.slug,
             'slug': pending_certifying_organisation.slug
         }))
-        self.assertTrue(len(response.context_data['available_checklist']) > 0)
+        self.assertEqual(
+            len(response.context_data['available_checklist']), 1)
+        self.assertEqual(
+            len(response.context_data['submitted_checklist']), 1)
         self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
