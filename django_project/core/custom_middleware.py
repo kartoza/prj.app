@@ -26,8 +26,7 @@ class NavContextMiddleware(MiddlewareBase):
     """
     Adds the required navigation variables to each response
     """
-    @staticmethod
-    def process_template_response(request, response):
+    def process_template_response(self, request, response):
         """
         Add 'the_project', 'the_entry', 'the_version' to context for the
             navigation.

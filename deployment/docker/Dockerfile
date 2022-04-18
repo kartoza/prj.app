@@ -1,12 +1,19 @@
 #--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
 # Note this base image is based on debian
-FROM kartoza/django-base:3.7 as prod
+FROM python:3.10 as prod
 MAINTAINER Tim Sutton<tim@kartoza.com>
 
-#RUN  ln -s /bin/true /sbin/initctl
+RUN  export DEBIAN_FRONTEND=noninteractive
+ENV  DEBIAN_FRONTEND noninteractive
+RUN  dpkg-divert --local --rename --add /sbin/initctl
 
 # Pandoc needed to generate rst dumps, uic compressor needed for django-pipeline
-RUN apt-get update -y && apt-get -y --force-yes install yui-compressor gettext
+RUN apt-get update -y && \
+    apt-get -y install python3-gdal python3-geoip sudo curl rpl && \
+    apt-get -y --force-yes install yui-compressor gettext && \
+    apt-get -y --purge autoremove make libc-dev musl-dev g++ && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf ~/.cache/pip
 RUN wget https://github.com/jgm/pandoc/releases/download/1.17.1/pandoc-1.17.1-2-amd64.deb
 RUN dpkg -i pandoc-1.17.1-2-amd64.deb && rm pandoc-1.17.1-2-amd64.deb
 

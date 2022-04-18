@@ -16,7 +16,7 @@ from django.views.generic import (
     DeleteView,
     ListView,
 )
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext_lazy as _
 
 from braces.views import LoginRequiredMixin
@@ -569,7 +569,8 @@ def download_multiple_worksheet(request, **kwargs):
         context = get_context_data(pk)
         context['section_number'] = numbering.split('.')[0]
         context['module_number'] = numbering
-        response = render_to_response('worksheet/print.html', context=context)
+        response = render(
+            request, 'worksheet/print.html', context=context)
 
         pdf_response = HttpResponse(content_type='application/pdf')
         pdf_response['Content-Disposition'] = \
