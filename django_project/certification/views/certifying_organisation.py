@@ -288,6 +288,9 @@ class CertifyingOrganisationDetailView(
             checked=True
         ).count()
 
+        # Get history data
+        context['history'] = certifying_organisation.history.all()
+
         return context
 
     def get_queryset(self):
