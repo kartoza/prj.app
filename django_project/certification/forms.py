@@ -59,6 +59,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
             'country',
             'organisation_phone',
             'logo',
+            'owner_message',
             'organisation_owners',
             'project',
         )
@@ -66,7 +67,12 @@ class CertifyingOrganisationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         self.project = kwargs.pop('project')
-        form_title = 'New Certifying Organisation for %s' % self.project.name
+        form_title = kwargs.pop('form_title', None)
+        show_owner_message = kwargs.pop('show_owner_message', None)
+        if not form_title:
+            form_title = (
+                'New Certifying Organisation for %s' % self.project
+            )
         self.helper = FormHelper()
         self.helper.include_media = False
         layout = Layout(
@@ -79,6 +85,7 @@ class CertifyingOrganisationForm(forms.ModelForm):
                 Field('country', css_class='form-control chosen-select'),
                 Field('organisation_phone', css_class='form-control'),
                 Field('logo', css_class='form-control'),
+                Field('owner_message', css_class='form-control'),
                 Field('organisation_owners', css_class='form-control'),
                 Field('project', css_class='form-control'),
                 css_id='project-form')
@@ -91,10 +98,29 @@ class CertifyingOrganisationForm(forms.ModelForm):
         self.fields['organisation_owners'].initial = [self.user]
         self.fields['project'].initial = self.project
         self.fields['project'].widget = forms.HiddenInput()
+        if show_owner_message:
+            self.fields['owner_message'].label = (
+                'Message to validator'
+            )
+            self.fields['owner_message'].help_text = ''
+        else:
+            self.fields['owner_message'].widget = (
+                forms.HiddenInput()
+            )
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def save(self, commit=True):
         instance = super(CertifyingOrganisationForm, self).save(commit=False)
+
+        if (
+            not instance.approved and
+                instance.status and
+                instance.status.name.lower() == 'pending'
+        ):
+            if instance.owner_message:
+                instance.status = None
+                instance.remarks = ''
+
         instance.save()
         self.save_m2m()
 

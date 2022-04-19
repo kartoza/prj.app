@@ -248,23 +248,29 @@ class CertifyingOrganisationDetailView(
         user_can_create = certifying_organisation.approved
         user_can_delete = certifying_organisation.approved
 
-        if self.request.user.is_staff:
-            context['user_can_create'] = user_can_create
-            context['user_can_delete'] = user_can_delete
-
-        if self.request.user in context[
-            'the_project'].certification_managers.all():
-            context['user_can_create'] = user_can_create
-            context['user_can_delete'] = user_can_delete
-
-        if self.request.user == context['project'].owner:
-            context['user_can_create'] = user_can_create
-            context['user_can_delete'] = user_can_delete
+        if (
+            self.request.user.is_staff or
+            self.request.user in context['the_project'].certification_managers.all() or
+            self.request.user == context['project'].owner
+        ):
+            user_can_create = True
+            user_can_delete = True
 
         if self.request.user in \
                 certifying_organisation.organisation_owners.all():
-            context['user_can_create'] = user_can_create
-            context['user_can_delete'] = user_can_delete
+            if (
+                certifying_organisation.approved or
+                certifying_organisation.rejected or
+                (
+                    certifying_organisation.status and
+                    certifying_organisation.status.name.lower() == 'pending'
+                )
+            ):
+                user_can_create = True
+                user_can_delete = True
+
+        context['user_can_delete'] = user_can_delete
+        context['user_can_create'] = user_can_create
 
         checklist_questions = Checklist.objects.filter(
             project=context['the_project'],
@@ -632,9 +638,18 @@ class CertifyingOrganisationUpdateView(
             CertifyingOrganisationUpdateView, self).get_form_kwargs()
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
+        show_owner_message = False
+        certifying_organisation = self.get_queryset().first()
+        if (
+                certifying_organisation and
+                self.request.user in
+                certifying_organisation.organisation_owners.all()):
+            show_owner_message = True
         kwargs.update({
             'user': self.request.user,
-            'project': self.project
+            'project': self.project,
+            'form_title': 'Update Certifying Organisation',
+            'show_owner_message': show_owner_message
         })
         return kwargs
 
@@ -650,6 +665,7 @@ class CertifyingOrganisationUpdateView(
 
         context = super(
             CertifyingOrganisationUpdateView, self).get_context_data(**kwargs)
+        context['certifyingorganisation'] = self.get_queryset().first()
         context['certifyingorganisations'] = self.get_queryset() \
             .filter(project=self.project)
         context['the_project'] = self.project
@@ -704,7 +720,8 @@ class CertifyingOrganisationUpdateView(
 
 class PendingCertifyingOrganisationJson(BaseDatatableView):
     model = CertifyingOrganisation
-    columns = ['name', 'org_name', 'can_approve', 'project_slug',
+    columns = ['name', 'creation_date', 'update_date',
+               'org_name', 'can_approve', 'project_slug',
                'org_slug', 'country_name', 'can_edit',
                'status', 'remarks']
     order_columns = ['name']
@@ -727,6 +744,10 @@ class PendingCertifyingOrganisationJson(BaseDatatableView):
             return escape('{0}'.format(row.slug))
         elif column == 'country_name':
             return escape('{0}'.format(row.country.name))
+        elif column == 'creation_date':
+            return escape('{0}'.format(row.creation_date))
+        elif column == 'update_date':
+            return escape('{0}'.format(row.update_date))
         elif column == 'can_approve':
             return (
                 not row.approved and self.request.user.is_staff or
@@ -746,6 +767,13 @@ class PendingCertifyingOrganisationJson(BaseDatatableView):
 
     def filter_queryset(self, qs):
         search = self.request.GET.get('search[value]', None)
+        ready = self.request.GET.get('ready', 'false') == 'true'
+
+        if not ready:
+            qs = qs.filter(status__name__icontains='pending')
+        else:
+            qs = qs.exclude(status__name__icontains='pending')
+
         if search:
             qs = qs.filter(name__istartswith=search)
         return qs

@@ -88,14 +88,16 @@
         <thead>
             <tr>
                 <th>Organization</th>
-                <th>Status</th>
+                <th>Creation Date</th>
+                <th>Update Date</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tfoot>
             <tr>
                 <th>Organization</th>
-                <th>Status</th>
+                <th>Creation Date</th>
+                <th>Update Date</th>
                 <th>Action</th>
             </tr>
         </tfoot>
@@ -253,19 +255,34 @@
     </div>
 
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.11.5/dataRender/datetime.js"></script>
     <script>
+      const FROM_PATTERN = 'YYYY-MM-DD HH:mm:ss.SSSSZ';
+      const TO_PATTERN   = 'DD/MM/YYYY';
       $(document).ready(function () {
+         const urlParams = new URLSearchParams(window.location.search);
+         const readyString = urlParams.get('ready')
+          let ready = ''
+          if (readyString) {
+              ready = urlParams.get('ready').toLowerCase() === 'true';
+          }
         $('#dataTable').dataTable({
           "processing": true,
           "serverSide": true,
           "length": 100,
           "pageLength": 100,
-          "ajax": "{% url "pending-certifyingorganisation-list-json" project_slug=the_project %}",
+          "order": [
+            [0, "desc"]
+          ],
+          "ajax": "{% url "pending-certifyingorganisation-list-json" project_slug=the_project %}?ready=" + ready,
           "columnDefs": [
-            {"bSortable": false, "aTargets": [1, 2] },
-            {"render": createActionBtns, "data": null, "targets": [2]},
-            {"render": showStatus, "data": null, "targets": [1]},
+            {"bSortable": false, "aTargets": [1,2,3] },
+              {
+                  render: $.fn.dataTable.render.moment(FROM_PATTERN, TO_PATTERN),
+                  targets: [1,2]
+                },
+            {"render": createActionBtns, "data": null, "targets": [3]},
           ],
           "initComplete": function (settings, json) {
             $('.btn-approved').hover(
@@ -300,32 +317,12 @@
       function createActionBtns() {
         let btn = '';
         let row = arguments[0];
-        let orgName = row[1];
-        let canApprove = row[2];
-        let projectSlug = row[3];
-        let orgSlug = row[4];
-        let countryName = row[5];
-        let canUpdate = row[6];
-        let approveUrl = "{% url "certifyingorganisation-approve" project_slug=1 slug=2 %}".replace(/1/, projectSlug).replace(/2/, orgSlug);
+        let orgName = row[3];
+        let projectSlug = row[5];
+        let orgSlug = row[6];
+        let canUpdate = row[8];
         let updateUrl = "{% url "certifyingorganisation-update" project_slug=1 slug=2 %}".replace(/1/, projectSlug).replace(/2/, orgSlug);
         let deleteUrl = "{% url "certifyingorganisation-delete" project_slug=1 slug=2 %}".replace(/1/, projectSlug).replace(/2/, orgSlug);
-        if (canApprove) {
-          {#btn = (#}
-          {#  `<a class="btn btn-default btn-mini btn-approved tooltip-toggle"` +#}
-          {#      `href="${approveUrl}" data-title="Approve ${orgName}">` +#}
-          {#      `<span class="glyphicon glyphicon-thumbs-up">` +#}
-          {#      `</span>` +#}
-          {#  `</a>` +#}
-          {#  `<a class="btn btn-default btn-delete btn-mini tooltip-toggle btn-reject"` +#}
-          {#      `organisation_name="${orgName}"` +#}
-          {#      `organisation_slug="${orgSlug}"` +#}
-          {#      `organisation_country="${countryName}"` +#}
-          {#      `organisation_project_slug="${projectSlug}"` +#}
-          {#      `data-title="Reject ${orgName}">` +#}
-          {#      `<span class="glyphicon glyphicon-thumbs-down"></span>` +#}
-          {#  `</a>`#}
-          {#)#}
-        }
         if (canUpdate) {
             btn += (
               `<a class="btn btn-default btn-mini tooltip-toggle"

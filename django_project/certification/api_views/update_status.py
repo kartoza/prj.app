@@ -47,6 +47,8 @@ class UpdateStatusOrganisation(LoginRequiredMixin, APIView):
                             site,
                             schema
                         )
+
+                    certifyingorganisation.owner_message = ''
                 except Status.DoesNotExist:
                     return HttpResponse(
                         'Status object does not exist.',
