@@ -250,7 +250,9 @@ class CertifyingOrganisationDetailView(
 
         if (
             self.request.user.is_staff or
-            self.request.user in context['the_project'].certification_managers.all() or
+
+            self.request.user in context[
+                'the_project'].certification_managers.all() or
             self.request.user == context['project'].owner
         ):
             user_can_create = True
@@ -815,7 +817,9 @@ class PendingCertifyingOrganisationListView(
         context = super(PendingCertifyingOrganisationListView, self) \
             .get_context_data(**kwargs)
         context['num_certifyingorganisations'] = self.get_queryset().count()
-        context['pending'] = self.request.GET.get('ready', '').lower() == 'false'
+        context['pending'] = (
+            self.request.GET.get('ready', '').lower() == 'false'
+        )
         context['project_slug'] = self.project_slug
         if self.project_slug:
             context['the_project'] = \

@@ -66,17 +66,24 @@ class TestUpdateStatus(TestCase):
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_update_status_pending(self):
+        certifying_organisation = CertifyingOrganisationF.create(
+            project=self.project,
+            approved=False,
+            rejected=False,
+            owner_message='test'
+        )
+        certifying_organisation.organisation_owners.set([self.user])
         self.client.login(username='admin', password='password')
         response = self.client.post(
             reverse('certifyingorganisation-update-status', kwargs={
                 'project_slug': self.project.slug,
-                'slug': self.certifying_organisation.slug
+                'slug': certifying_organisation.slug
             }), {
                 'status': self.pending_status.id,
                 'remarks': 'remarks'
             })
         certifying_organisation = CertifyingOrganisation.objects.get(
-            id=self.certifying_organisation.id
+            id=certifying_organisation.id
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
@@ -86,6 +93,10 @@ class TestUpdateStatus(TestCase):
         self.assertEqual(
             certifying_organisation.status,
             self.pending_status
+        )
+        self.assertEqual(
+            certifying_organisation.owner_message,
+            ''
         )
 
     @override_settings(VALID_DOMAIN=['testserver', ])
