@@ -815,7 +815,7 @@ class PendingCertifyingOrganisationListView(
         context = super(PendingCertifyingOrganisationListView, self) \
             .get_context_data(**kwargs)
         context['num_certifyingorganisations'] = self.get_queryset().count()
-        context['unapproved'] = True
+        context['pending'] = self.request.GET.get('ready', '').lower() == 'false'
         context['project_slug'] = self.project_slug
         if self.project_slug:
             context['the_project'] = \

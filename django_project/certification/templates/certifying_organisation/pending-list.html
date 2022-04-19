@@ -52,7 +52,7 @@
 
     <div class="page-header">
         <h1 class="text-muted">
-            {% if unapproved %}Unapproved {% endif %}
+            {% if pending %} Pending {% else %}Unapproved {% endif %}
             Certifying Organisations
             {% if user.is_authenticated %}
                 <div class="pull-right btn-group">
@@ -273,7 +273,7 @@
           "length": 100,
           "pageLength": 100,
           "order": [
-            [0, "desc"]
+            [0, "asc"]
           ],
           "ajax": "{% url "pending-certifyingorganisation-list-json" project_slug=the_project %}?ready=" + ready,
           "columnDefs": [
