@@ -166,6 +166,14 @@ class CertifyingOrganisation(models.Model):
         blank=True
     )
 
+    owner_message = models.TextField(
+        help_text=_(
+            'Message from owner of this organisation.'
+        ),
+        null=True,
+        blank=True
+    )
+
     history = HistoricalRecords()
 
     slug = models.SlugField()
@@ -201,6 +209,14 @@ class CertifyingOrganisation(models.Model):
 
     def __str__(self):
         return '%s - %s' % (self.project.name, self.name)
+
+    @property
+    def creation_date(self):
+        return self.history.earliest().history_date
+
+    @property
+    def update_date(self):
+        return self.history.latest().history_date
 
     def get_absolute_url(self):
         """Return URL to certifying organisation detail page.

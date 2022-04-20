@@ -283,7 +283,7 @@
                        data-title="Feed for List of Past Courses">
                         <i class="fa fa-rss" style="color: grey"></i>
                     </a>
-                {% if user in certifyingorganisation.organisation_owners.all or user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_manager.all %}
+                {% if user_can_delete %}
                     <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                        href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                        data-title="Delete {{ certifyingorganisation.name }}">
@@ -296,7 +296,11 @@
                     </a>
                 {% endif %}
                  <a class="btn btn-default btn-mini tooltip-toggle"
-                    href='{% if certifyingorganisation.approved %}{% url "certifyingorganisation-list" certifyingorganisation.project.slug %}{% else %}{% url "pending-certifyingorganisation-list" certifyingorganisation.project.slug %}{% endif %}'
+                    href='{% if certifyingorganisation.approved %}
+                            {% url "certifyingorganisation-list" certifyingorganisation.project.slug %}
+                          {% else %}
+                            {% url "pending-certifyingorganisation-list" certifyingorganisation.project.slug %}?ready={% if certifyingorganisation.status.name == 'Pending' %}false{% else %}true{% endif %}
+                          {% endif %}'
                     data-title="Back">
                      <span class="glyphicon glyphicon-arrow-left"></span>
                  </a>
@@ -544,7 +548,6 @@
                 {{ course.course_convener.user }}
             {% endif %}
         </td>
-
         {% if user_can_delete %}
         <td style="padding-right: 0">
              <div class="btn-group pull-right button-action">
