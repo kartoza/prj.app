@@ -1,6 +1,5 @@
 # coding=utf-8
 from django.db.models.functions import Lower
-from django.utils import timezone
 from rest_framework.views import APIView
 
 from base.models import Project
@@ -106,7 +105,10 @@ class CertifyingOrganisationUserTestMixin(UserPassesTestMixin, APIView):
         )
 
         session = self.request.GET.get('s', None)
-        if user in certifying_organisation.organisation_owners.all():
+        if (
+            user in
+            certifying_organisation.project.certification_managers.all()
+        ):
             return True
 
         if user == certifying_organisation.project.owner:
@@ -295,6 +297,7 @@ class CertifyingOrganisationDetailView(
         user_can_create = False
         user_can_delete = False
         user_can_update_status = False
+        user_can_invite_external_reviewer = False
 
         if (
             self.request.user.is_staff or
@@ -305,6 +308,7 @@ class CertifyingOrganisationDetailView(
             user_can_create = True
             user_can_delete = True
             user_can_update_status = True
+            user_can_invite_external_reviewer = True
 
         if self.request.user in \
                 certifying_organisation.organisation_owners.all():
@@ -320,12 +324,22 @@ class CertifyingOrganisationDetailView(
                 user_can_delete = True
 
         if session:
-            if session.expire_date > timezone.now():
-                user_can_update_status = True
+            try:
+                external_reviewer = ExternalReviewer.objects.get(
+                    session_key=session.session_key,
+                    certifying_organisation=certifying_organisation
+                )
+                if not external_reviewer.session_expired:
+                    user_can_update_status = True
+            except ExternalReviewer.DoesNotExist:
+                pass
 
         context['user_can_delete'] = user_can_delete
         context['user_can_create'] = user_can_create
         context['user_can_update_status'] = user_can_update_status
+        context['user_can_invite_external_reviewer'] = (
+            user_can_invite_external_reviewer
+        )
 
         checklist_questions = Checklist.objects.filter(
             project=context['the_project'],

@@ -208,6 +208,29 @@
         </div>
     </div>
 
+    <div class="modal fade" id="inviteReviewerModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><b>Invite External Reviewer</b></h4>
+                </div>
+                <div class="modal-body">
+                    <form id="inviteExternalReviewerForm" role="form">
+                        <label>Email:</label><br>
+                        <input name="update-remarks" class="form-control">
+                        <input name="status-organisation-slug" hidden>
+                        <input name="status-organisation-project-slug" hidden>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" onclick="closeUpdateStatusForm()">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitUpdateStatusForm()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="checklistModal" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content -->
@@ -441,6 +464,14 @@
                         organisation_remarks="{{ certifyingorganisation.remarks }}"
                         data-title="Update {{ certifyingorganisation.name }}">
                             Update status
+                    </a>
+                {% endif %}
+                {% if user_can_invite_external_reviewer %}
+                     <a class="btn btn-default btn-mini btn-invite tooltip-toggle"
+                        href='#'
+                        data-org-slug="{{ certifyingorganisation.project.slug }}"
+                        data-title="Invite External Reviewer">
+                            Invite External Reviewer
                     </a>
                 {% endif %}
             </div>
@@ -879,6 +910,10 @@
 
         $('.btn-checklist-form').click(function () {
             $('#checklistModal').modal('show');
+        });
+
+        $('.btn-invite').click(function () {
+            $('#inviteReviewerModal').modal('show')
         });
 
          $('.btn-update-status').click(function () {
