@@ -272,7 +272,10 @@ urlpatterns = [
     url(regex='^(?P<project_slug>[\w-]+)/certificate-checklist/create/',
         view=CertificateChecklistCreateView.as_view(),
         name='certificate-checklist-create'),
-
+    url(regex='^(?P<project_slug>[\w-]+)/update-checklist-reviewer/'
+              '(?P<slug>[\w-]+)/',
+        view=UpdateChecklistReviewer.as_view(),
+        name='update-checklist-reviewer'),
 
     # Certificate.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
@@ -381,10 +384,6 @@ urlpatterns = [
               '(?P<organisation_slug>[\w-]+)/feed/past-course/$',
         view=GetPastCourseOrganisation.as_view(),
         name='feed-past-course'),
-
-    url(regex='^(?P<project_slug>[\w-]+)/update-checklist-reviewer/$',
-        view=UpdateChecklistReviewer.as_view(),
-        name='update-checklist-reviewer'),
 
     # Checkout
     url(

@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from core.model_factories import UserF
 from .model_factories import ChecklistF, ProjectF, Checklist
+from ..models import ORGANIZATION_OWNER
 
 
 class TestCertificationChecklist(TestCase):
@@ -165,6 +166,7 @@ class TestCertificationChecklist(TestCase):
         post_data = {
             'question': 'test2',
             'project': self.project.id,
+            'target': ORGANIZATION_OWNER
         }
         response = self.client.post(
             reverse('certificate-checklist-create', kwargs={

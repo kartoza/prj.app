@@ -8,7 +8,7 @@ from certification.models.certifying_organisation import CertifyingOrganisation
 from certification.tests.model_factories import (
     StatusF,
     CertifyingOrganisationF,
-    ProjectF
+    ProjectF, ExternalReviewerF
 )
 
 
@@ -62,7 +62,7 @@ class TestUpdateStatus(TestCase):
                 'project_slug': self.project.slug,
                 'slug': self.certifying_organisation.slug
             }), {})
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_update_status_pending(self):
@@ -125,3 +125,33 @@ class TestUpdateStatus(TestCase):
         self.assertIn(
             'Your organisation is approved',
             mail.outbox[0].subject)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_update_status_external_reviewer(self):
+        from django.contrib.sessions.backends.db import SessionStore
+        s = SessionStore()
+        s.create()
+        ExternalReviewerF.create(
+            session_key=s.session_key,
+            email='external@email.com',
+            certifying_organisation=self.certifying_organisation
+        )
+        url = reverse('certifyingorganisation-update-status', kwargs={
+            'project_slug': self.project.slug,
+            'slug': self.certifying_organisation.slug
+        }) + '?s=' + s.session_key
+        url = url.replace('/en-us/', '/en/')
+        response = self.client.post(
+            url, {
+                'status': self.pending_status.id,
+                'remarks': 'remarks'
+            })
+        self.assertEqual(response.status_code, 200)
+        certifying_organisation = CertifyingOrganisation.objects.get(
+            id=self.certifying_organisation.id
+        )
+        self.assertIn(
+            'Status updated to Pending by external '
+            'reviewer (external@email.com)',
+            certifying_organisation.history.latest().history_change_reason
+        )

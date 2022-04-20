@@ -16,7 +16,7 @@ from certification.models import (
     CourseAttendee,
     Status,
     CertifyingOrganisationCertificate,
-    Checklist, OrganisationChecklist,
+    Checklist, OrganisationChecklist, ExternalReviewer,
 )
 from core.model_factories import UserF
 from base.tests.model_factories import ProjectF
@@ -189,3 +189,18 @@ class OrganisationChecklistF(factory.django.DjangoModelFactory):
     organisation = factory.SubFactory(CertifyingOrganisationF)
     checklist_question = factory.sequence(
         lambda n: 'Question %s' % n)
+
+
+class ExternalReviewerF(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ExternalReviewer
+
+    certifying_organisation = factory.SubFactory(
+        CertifyingOrganisationF
+    )
+    session_key = factory.Sequence(
+        lambda n: 'session %s' % n
+    )
+    email = factory.Sequence(
+        lambda n: 'email%s@email.com' % n
+    )

@@ -58,3 +58,13 @@ class OrganisationChecklist(models.Model):
         help_text='User who submitted the checklist.',
         on_delete=models.SET_NULL
     )
+
+    external_submitter = models.ForeignKey(
+        'certification.ExternalReviewer',
+        related_name='checklist_external_submitter',
+        blank=True,
+        null=True,
+        help_text='External reviewer who submitted'
+                  ' the checklist.',
+        on_delete=models.SET_NULL
+    )

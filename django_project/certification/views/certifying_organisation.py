@@ -1,5 +1,7 @@
 # coding=utf-8
 from django.db.models.functions import Lower
+from django.utils import timezone
+from rest_framework.views import APIView
 
 from base.models import Project
 from django.contrib import messages
@@ -20,8 +22,9 @@ from django.views.generic import (
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, UserPassesTestMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
+from django.contrib.sessions.models import Session
 from pure_pagination.mixins import PaginationMixin
 from ..models import (
     CertifyingOrganisation,
@@ -32,7 +35,7 @@ from ..models import (
     CourseAttendee,
     CertifyingOrganisationCertificate,
     Checklist, OrganisationChecklist,
-    REVIEWER, ORGANIZATION_OWNER)
+    REVIEWER, ORGANIZATION_OWNER, ExternalReviewer)
 from ..forms import CertifyingOrganisationForm
 from certification.utilities import check_slug
 from ..serializers.checklist_serializer import ChecklistSerializer
@@ -87,6 +90,42 @@ class CertifyingOrganisationMixin(object):
 
     model = CertifyingOrganisation
     form_class = CertifyingOrganisationForm
+
+
+class CertifyingOrganisationUserTestMixin(UserPassesTestMixin, APIView):
+    """Mixin class to provide update access to certifying organisation"""
+    external_reviewer = None
+
+    def test_func(self, user):
+        if user.is_staff:
+            return True
+
+        certifying_organisation = (
+            CertifyingOrganisation.objects.get(
+                slug=self.kwargs.get('slug', None))
+        )
+
+        session = self.request.GET.get('s', None)
+        if user in certifying_organisation.organisation_owners.all():
+            return True
+
+        if user == certifying_organisation.project.owner:
+            return True
+
+        if user.is_anonymous and session:
+            try:
+                session = Session.objects.get(
+                    pk=session
+                )
+                self.external_reviewer = ExternalReviewer.objects.get(
+                    session_key=session.pk,
+                    certifying_organisation=certifying_organisation
+                )
+                return not self.external_reviewer.session_expired
+            except (Session.DoesNotExist, ExternalReviewer.DoesNotExist):
+                pass
+
+        return False
 
 
 class JSONCertifyingOrganisationListView(
@@ -209,32 +248,40 @@ class CertifyingOrganisationDetailView(
         context = super(
             CertifyingOrganisationDetailView, self).get_context_data(**kwargs)
 
-        # lets set some default permission flags for checks in template.
-        context['user_can_create'] = False
-        context['user_can_delete'] = False
-
-        certifying_organisation = context['certifyingorganisation']
-        context['trainingcenters'] = TrainingCenter.objects.filter(
-            certifying_organisation=certifying_organisation)
-        context['num_trainingcenter'] = context['trainingcenters'].count()
-        context['coursetypes'] = CourseType.objects.filter(
-            certifying_organisation=certifying_organisation)
-        context['num_coursetype'] = context['coursetypes'].count()
-        context['courseconveners'] = CourseConvener.objects.filter(
-            certifying_organisation=certifying_organisation
-        ).prefetch_related('course_set')
-        context['num_courseconvener'] = context['courseconveners'].count()
-        context['courses'] = Course.objects.filter(
-            certifying_organisation=certifying_organisation).order_by(
-            '-start_date'
-        )
-        context['num_course'] = context['courses'].count()
+        certifying_organisation = self.object
         project_slug = self.kwargs.get('project_slug', None)
-        context['attendee'] = CourseAttendee.objects.filter(
-            course__in=context['courses'],
-            attendee__certifying_organisation=certifying_organisation
-        )
-        context['num_attendees'] = context['attendee'].count()
+
+        # Check session key
+        session_key = self.request.GET.get('s', None)
+        session = None
+        if session_key:
+            try:
+                session = Session.objects.get(pk=session_key)
+            except Session.DoesNotExist:
+                pass
+
+        if certifying_organisation.approved:
+            context['trainingcenters'] = TrainingCenter.objects.filter(
+                certifying_organisation=certifying_organisation)
+            context['num_trainingcenter'] = context['trainingcenters'].count()
+            context['coursetypes'] = CourseType.objects.filter(
+                certifying_organisation=certifying_organisation)
+            context['num_coursetype'] = context['coursetypes'].count()
+            context['courseconveners'] = CourseConvener.objects.filter(
+                certifying_organisation=certifying_organisation
+            ).prefetch_related('course_set')
+            context['num_courseconvener'] = context['courseconveners'].count()
+            context['courses'] = Course.objects.filter(
+                certifying_organisation=certifying_organisation).order_by(
+                '-start_date'
+            )
+            context['num_course'] = context['courses'].count()
+            context['attendee'] = CourseAttendee.objects.filter(
+                course__in=context['courses'],
+                attendee__certifying_organisation=certifying_organisation
+            )
+            context['num_attendees'] = context['attendee'].count()
+
         context['project_slug'] = project_slug
         context['the_project'] = Project.objects.get(slug=project_slug)
 
@@ -245,18 +292,19 @@ class CertifyingOrganisationDetailView(
         )
         context['project'] = context['the_project']
 
-        user_can_create = certifying_organisation.approved
-        user_can_delete = certifying_organisation.approved
+        user_can_create = False
+        user_can_delete = False
+        user_can_update_status = False
 
         if (
             self.request.user.is_staff or
-
             self.request.user in context[
                 'the_project'].certification_managers.all() or
             self.request.user == context['project'].owner
         ):
             user_can_create = True
             user_can_delete = True
+            user_can_update_status = True
 
         if self.request.user in \
                 certifying_organisation.organisation_owners.all():
@@ -271,8 +319,13 @@ class CertifyingOrganisationDetailView(
                 user_can_create = True
                 user_can_delete = True
 
+        if session:
+            if session.expire_date > timezone.now():
+                user_can_update_status = True
+
         context['user_can_delete'] = user_can_delete
         context['user_can_create'] = user_can_create
+        context['user_can_update_status'] = user_can_update_status
 
         checklist_questions = Checklist.objects.filter(
             project=context['the_project'],
