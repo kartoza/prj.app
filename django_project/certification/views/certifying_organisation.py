@@ -641,7 +641,7 @@ class CertifyingOrganisationUpdateView(
         self.project_slug = self.kwargs.get('project_slug', None)
         self.project = Project.objects.get(slug=self.project_slug)
         show_owner_message = False
-        certifying_organisation = self.get_queryset().first()
+        certifying_organisation = self.object
         if (
                 certifying_organisation and
                 self.request.user in
@@ -667,7 +667,7 @@ class CertifyingOrganisationUpdateView(
 
         context = super(
             CertifyingOrganisationUpdateView, self).get_context_data(**kwargs)
-        context['certifyingorganisation'] = self.get_queryset().first()
+        context['certifyingorganisation'] = self.object
         context['certifyingorganisations'] = self.get_queryset() \
             .filter(project=self.project)
         context['the_project'] = self.project

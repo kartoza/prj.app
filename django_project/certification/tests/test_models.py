@@ -49,6 +49,8 @@ class TestCertifyingOrganisation(TestCase):
         self.assertTrue(model.organisation_phone is not None)
         self.assertTrue(model.approved is not None)
         self.assertTrue(model.project is not None)
+        self.assertTrue(model.creation_date is not None)
+        self.assertTrue(model.update_date is not None)
 
     def test_Certifying_Organisation_delete(self):
         """Test course type model creation."""

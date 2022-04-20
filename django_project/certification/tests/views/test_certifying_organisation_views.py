@@ -73,6 +73,70 @@ class TestCertifyingOrganisationView(TestCase):
         self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_list_pending_view(self):
+        client = Client()
+        client.login(username='anita', password='password')
+        response = client.get(
+            reverse('pending-certifyingorganisation-list',
+                    kwargs={
+                        'project_slug': self.project.slug
+                    }) + '?ready=false')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['pending'], True)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_list_pending_json(self):
+        client = Client()
+        client.login(username='anita', password='password')
+
+        pending_status = StatusF.create(
+            name='pending'
+        )
+        pending_certifying_organisation = CertifyingOrganisationF.create(
+            name='test organisation pending',
+            project=self.project,
+            approved=False,
+            status=pending_status
+        )
+        response = client.get(
+            reverse('pending-certifyingorganisation-list-json',
+                    kwargs={
+                        'project_slug': self.project.slug
+                    }) + '?ready=false')
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(
+            len(json_response['data']),
+            1
+        )
+        self.assertEqual(
+            json_response['data'][0][1],
+            str(pending_certifying_organisation.creation_date)
+        )
+        self.assertEqual(
+            json_response['data'][0][2],
+            str(pending_certifying_organisation.update_date)
+        )
+        self.assertIn(
+            pending_certifying_organisation.name,
+            json_response['data'][0][0]
+        )
+        response = client.get(
+            reverse('pending-certifyingorganisation-list-json',
+                    kwargs={
+                        'project_slug': self.project.slug
+                    }) + '?ready=true')
+        json_response = response.json()
+        self.assertEqual(
+            len(json_response['data']),
+            1
+        )
+        self.assertIn(
+            self.pending_certifying_organisation.name,
+            json_response['data'][0][0]
+        )
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_create_view(self):
         client = Client()
         client.login(username='anita', password='password')
@@ -127,12 +191,38 @@ class TestCertifyingOrganisationView(TestCase):
             mail.outbox[0].body)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_update_view(self):
+        client = Client()
+        client.login(username='anita', password='password')
+        pending_certifying_organisation = CertifyingOrganisationF.create(
+            project=self.project,
+            approved=False
+        )
+        pending_certifying_organisation.organisation_owners.set(
+            [self.user]
+        )
+        response = client.get(
+            reverse('certifyingorganisation-update', kwargs={
+                'slug': pending_certifying_organisation.slug,
+                'project_slug': self.project.slug,
+            }))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Message to validator', response.content)
+        self.assertEqual(
+            response.context_data['certifyingorganisation'],
+            pending_certifying_organisation
+        )
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_detail_view_pending(self):
         client = Client()
         client.login(username='anita', password='password')
         pending_certifying_organisation = CertifyingOrganisationF.create(
             project=self.project,
             approved=True
+        )
+        pending_certifying_organisation.organisation_owners.set(
+            [self.user]
         )
         self.checklist = ChecklistF.create(
             project=self.project,
@@ -164,6 +254,10 @@ class TestCertifyingOrganisationView(TestCase):
             len(response.context_data['submitted_checklist']), 1)
         self.assertEqual(
             len(response.context_data['history']), 1)
+        self.assertEqual(
+            response.context_data['user_can_create'], True)
+        self.assertEqual(
+            response.context_data['user_can_delete'], True)
         self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])

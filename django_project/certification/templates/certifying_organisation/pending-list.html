@@ -275,7 +275,7 @@
           "order": [
             [0, "asc"]
           ],
-          "ajax": "{% url "pending-certifyingorganisation-list-json" project_slug=the_project %}?ready=" + ready,
+          "ajax": "{% url "pending-certifyingorganisation-list-json" project_slug=the_project.slug %}?ready=" + ready,
           "columnDefs": [
             {"bSortable": false, "aTargets": [1,2,3] },
               {
