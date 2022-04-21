@@ -2,7 +2,10 @@ import re
 
 from braces.views import UserPassesTestMixin
 from django.contrib.sessions.backends.db import SessionStore
+from django.core.mail import send_mail
 from django.http.response import Http404
+from django.conf import settings
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -49,6 +52,48 @@ class InviteReviewerApiView(UserPassesTestMixin, APIView):
             s['email'] = email
             s['external_reviewer'] = external_reviewer.id
             s.create()
+
+            # Send email
+            site = request.get_host()
+            schema = request.is_secure() and "https" or "http"
+
+            data = {
+                'email': email,
+                'invitation_text': (
+                    self.certifying_organisation.project.
+                    external_reviewer_invitation
+                ),
+                'organisation_name': self.certifying_organisation.name,
+                'project_name': self.certifying_organisation.project.name,
+                'project_owner_firstname':
+                    self.certifying_organisation.project.owner.first_name,
+                'project_owner_lastname':
+                    self.certifying_organisation.project.owner.last_name,
+                'site': site,
+                'project_slug': self.certifying_organisation.project.slug,
+                'slug': self.certifying_organisation.slug,
+                'schema': schema,
+                'session_key': s.session_key
+            }
+            send_mail(
+                u'Changelog - You have been invited as a reviewer',
+                u'Dear {email},\n\n'
+                u'{invitation_text}'
+                u'\n\n'
+                u'Detail organisation :\n'
+                u'Name of organisation: {organisation_name}\n'
+                u'Project: {project_name}\n'
+                u'\n\n'
+                u'To review the organisation please follow this link: '
+                u'{schema}://{site}/en/{project_slug}/'
+                u'certifyingorganisation/{slug}/?s={session_key}\n\n'
+                u'Sincerely,\n'
+                u'{project_owner_firstname} {project_owner_lastname}'.format(
+                    **data),
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
+                fail_silently=False,
+            )
 
             external_reviewer.session_key = s.session_key
             external_reviewer.save()

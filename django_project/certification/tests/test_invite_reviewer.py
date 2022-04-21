@@ -1,4 +1,4 @@
-
+from django.core import mail
 from django.test import TestCase, override_settings
 from django.test.client import Client
 from django.urls import reverse
@@ -100,6 +100,12 @@ class TestInviteReviewer(TestCase):
         self.assertTrue(
             json_response['created']
         )
+        self.assertIn(
+            'You have been invited as a reviewer',
+            mail.outbox[0].subject)
+        self.assertEqual(
+            data['email'],
+            mail.outbox[0].to[0])
 
         # Project owner
         self.client.login(

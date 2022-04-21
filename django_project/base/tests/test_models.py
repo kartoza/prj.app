@@ -28,6 +28,9 @@ class TestProjectCRUD(TestCase):
         # check if name exists
         self.assertTrue(model.name is not None)
 
+        self.assertTrue(
+            model.external_reviewer_invitation is not None)
+
     def test_Project_read(self):
         """
         Tests Project model read

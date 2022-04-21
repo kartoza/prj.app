@@ -142,3 +142,5 @@ STRIPE_LIVE_MODE = False  # Change to True in production
 # webhook endpoint
 DJSTRIPE_WEBHOOK_SECRET = os.environ.get('DJSTRIPE_WEBHOOK_SECRET', 'whsec_x')
 DJSTRIPE_FOREIGN_KEY_TO_FIELD = "djstripe_id"
+
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'tim@kartoza.com')

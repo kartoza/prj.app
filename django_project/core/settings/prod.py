@@ -37,7 +37,6 @@ DEBUG = TEMPLATE_DEBUG = False
 
 SERVER_EMAIL = os.environ.get('SERVER_EMAIL', 'tim@kartoza.com')
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'kartoza.com')
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'tim@kartoza.com')
 
 # Set stripe to live mode
 STRIPE_LIVE_MODE = ast.literal_eval(os.environ.get('STRIPE_LIVE_MODE', 'True'))
