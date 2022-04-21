@@ -1,5 +1,8 @@
+import re
+
 from braces.views import UserPassesTestMixin
 from django.contrib.sessions.backends.db import SessionStore
+from django.http.response import Http404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -30,6 +33,10 @@ class InviteReviewerApiView(UserPassesTestMixin, APIView):
 
     def post(self, request, project_slug, slug):
         email = request.POST.get('email', None)
+        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+
+        if not re.fullmatch(regex, email):
+            raise Http404('Invalid email address')
 
         external_reviewer, created = ExternalReviewer.objects.get_or_create(
             email=email,

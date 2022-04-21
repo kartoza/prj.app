@@ -72,6 +72,18 @@ class TestInviteReviewer(TestCase):
         self.assertTrue(response.status_code, 302)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_invite_reviewer_invalid_email(self):
+        data = {
+            'email': 'error'
+        }
+        self.client.login(
+            username=self.superuser.username,
+            password='password'
+        )
+        response = self.client.post(self.url, data)
+        self.assertTrue(response.status_code, 404)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_invite_reviewer_access(self):
         data = {
             'email': 'test@gmail.com'

@@ -216,16 +216,15 @@
                     <h4 class="modal-title"><b>Invite External Reviewer</b></h4>
                 </div>
                 <div class="modal-body">
+                    <div id="ie-badge" class="badge badge-success" style="margin-bottom: 10px;display: none"></div>
                     <form id="inviteExternalReviewerForm" role="form">
                         <label>Email:</label><br>
-                        <input name="update-remarks" class="form-control">
-                        <input name="status-organisation-slug" hidden>
-                        <input name="status-organisation-project-slug" hidden>
+                        <input name="reviewer-email" class="form-control">
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" onclick="closeUpdateStatusForm()">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="submitUpdateStatusForm()">Submit</button>
+                    <button type="button" class="btn btn-default" onclick="closeInviteExternalReviewer()">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitInviteExternalReviewer(this)">Submit</button>
                 </div>
             </div>
         </div>
@@ -844,6 +843,78 @@
             )
         }
 
+        function validateEmail(mail) {
+            return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)
+        }
+
+
+        $('.btn-invite').click(function () {
+            document.forms['inviteExternalReviewerForm'].reset();
+            $('#ie-badge').hide();
+            $('#inviteReviewerModal').modal('show')
+        });
+
+        function closeInviteExternalReviewer() {
+            document.forms['inviteExternalReviewerForm'].reset();
+            $('#inviteReviewerModal').modal('hide')
+        }
+
+        function submitInviteExternalReviewer(elm) {
+
+            let url = "{% url "invite-external-reviewer" certifyingorganisation.project.slug certifyingorganisation.slug %}";
+
+            // Check email
+            let emailInput = $('[name=reviewer-email]');
+            let submitButton = $(elm);
+            let cancelButton = submitButton.prev();
+            let email = emailInput.val();
+            let emailValid = validateEmail(email);
+            if (!emailValid) {
+                alert('Please enter a valid email address.')
+                return
+            }
+
+            emailInput.attr('disabled', true);
+            submitButton.attr('disabled', true);
+            cancelButton.attr('disabled', true);
+
+            let badge = $('#ie-badge');
+            badge.removeClass('badge-success');
+            badge.removeClass('badge-danger');
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: {
+                    'email': email
+                },
+                dataType: 'json',
+                success: function(data){
+                    if (data['created']) {
+                        badge.addClass('badge-success');
+                        badge.html('Reviewer successfully invited!');
+                    } else {
+                        badge.html('Reviewer is already invited.')
+                    }
+
+                    badge.show();
+
+                    emailInput.attr('disabled', false);
+                    submitButton.attr('disabled', false);
+                    cancelButton.attr('disabled', false);
+                },
+                error: function () {
+                    badge.addClass('badge-error');
+                    badge.html('Error inviting reviewer');
+                    badge.show();
+
+                    emailInput.attr('disabled', false);
+                    submitButton.attr('disabled', false);
+                    cancelButton.attr('disabled', false);
+                }
+            });
+        }
+
         function closeRejectionForm() {
             $('.rejection-form-info').html('');
             document.forms['rejectionForm'].reset();
@@ -912,9 +983,6 @@
             $('#checklistModal').modal('show');
         });
 
-        $('.btn-invite').click(function () {
-            $('#inviteReviewerModal').modal('show')
-        });
 
          $('.btn-update-status').click(function () {
             var initial_status = $(this).attr('organisation_status');
