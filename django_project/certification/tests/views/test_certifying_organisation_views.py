@@ -276,6 +276,23 @@ class TestCertifyingOrganisationView(TestCase):
         self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_detail_view_pending_external_reviewer(self):
+        s = SessionStore()
+        s.create()
+        ExternalReviewerF.create(
+            certifying_organisation=self.pending_certifying_organisation,
+            email='er1@email.com',
+            session_key=s.session_key
+        )
+        response = self.client.get(
+            reverse('certifyingorganisation-detail', kwargs={
+                'project_slug': self.project.slug,
+                'slug': self.pending_certifying_organisation.slug
+            }).replace('en-us', 'en') + f'?s={s.session_key}')
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context_data['user_can_update_status'])
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_detail_view_object_does_not_exist(self):
         client = Client()
         response = client.get(reverse('certifyingorganisation-detail', kwargs={
