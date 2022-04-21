@@ -96,22 +96,19 @@ class CertifyingOrganisationUserTestMixin(UserPassesTestMixin, APIView):
     external_reviewer = None
 
     def test_func(self, user):
-        if user.is_staff:
-            return True
-
         certifying_organisation = (
             CertifyingOrganisation.objects.get(
                 slug=self.kwargs.get('slug', None))
         )
 
         session = self.request.GET.get('s', None)
-        if (
-            user in
-            certifying_organisation.project.certification_managers.all()
-        ):
-            return True
 
-        if user == certifying_organisation.project.owner:
+        if (
+            user.is_staff or
+            user in
+            certifying_organisation.project.certification_managers.all() or
+            user == certifying_organisation.project.owner
+        ):
             return True
 
         if user.is_anonymous and session:

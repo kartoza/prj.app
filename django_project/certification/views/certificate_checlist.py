@@ -77,11 +77,6 @@ class CertificateChecklistCreateView(
             'project_slug': self.project_slug
         })
 
-    def form_invalid(self, form):
-        return super(CertificateChecklistCreateView, self).form_invalid(
-            form
-        )
-
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.
 

@@ -61,6 +61,17 @@ class TestInviteReviewer(TestCase):
         self.assertTrue(response.status_code, 400)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_invite_reviewer_invalid_organisation(self):
+        url = self.url.replace(
+            self.certifying_organisation.slug,
+            'no-org'
+        )
+        response = self.client.post(
+            url, {}
+        )
+        self.assertTrue(response.status_code, 302)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_invite_reviewer_access(self):
         data = {
             'email': 'test@gmail.com'
