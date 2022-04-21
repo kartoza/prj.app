@@ -55,8 +55,26 @@ class TestChecklistApi(TestCase):
         self.checklist = ChecklistF.create(
             project=self.project
         )
+        checklist_2 = ChecklistF.create(
+            project=self.project,
+            show_text_box=True
+        )
+        checklist_3 = ChecklistF.create(
+            project=self.project,
+            show_text_box=True
+        )
+        checklist_4 = ChecklistF.create(
+            project=self.project,
+            show_text_box=True
+        )
         data = {
-            f'checklist-{self.checklist.id}': 'yes'
+            f'checklist-{self.checklist.id}': 'yes',
+            f'textarea-{checklist_2.id}': 'test',
+            f'checklist-99999': 'yes',
+            f'textarea-{checklist_3.id}': 'test',
+            f'checklist-{checklist_3.id}': 'yes',
+            f'checklist-{checklist_4.id}': 'yes',
+            f'textarea-{checklist_4.id}': 'test',
         }
         self.client.login(username='admin', password='password')
         response = self.client.post(self.api_url, data)

@@ -51,6 +51,7 @@ class UpdateChecklistReviewer(CertifyingOrganisationUserTestMixin):
                         id=checklist_id
                     )
                 except Checklist.DoesNotExist:
+                    del cleaned_data[checklist_id]
                     continue
                 cleaned_data[checklist_id]['question'] = (
                     checklist.question
@@ -74,7 +75,8 @@ class UpdateChecklistReviewer(CertifyingOrganisationUserTestMixin):
                 org_checklist.checklist_question = value['question']
                 org_checklist.checklist_target = checklist.target
 
-            org_checklist.checked = value['checked']
+            if 'checked' in value:
+                org_checklist.checked = value['checked']
             if 'text' in value:
                 org_checklist.text_box_content = value['text']
 
@@ -104,9 +106,4 @@ class UpdateChecklistReviewer(CertifyingOrganisationUserTestMixin):
             if self.external_reviewer:
                 redirect_url += f'?s={self.external_reviewer.session_key}'
 
-            return redirect(redirect_url)
-        else:
-            return HttpResponse(
-                'Organisation does not exist.',
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        return redirect(redirect_url)

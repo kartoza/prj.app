@@ -4,7 +4,7 @@ from django.test.client import Client
 from django.urls import reverse
 
 from core.model_factories import UserF
-from .model_factories import ProjectF, CertifyingOrganisationF
+from certification.tests.model_factories import ProjectF, CertifyingOrganisationF
 
 
 class TestInviteReviewer(TestCase):

@@ -56,6 +56,24 @@ class TestGetStatus(TestCase):
         )
 
     @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_get_status_no_project(self):
+        user = UserF.create(**{
+            'username': 'admin',
+            'password': 'password',
+            'email': 'test@test.com',
+            'is_staff': True
+        })
+        user.set_password('password')
+        user.save()
+        self.client.login(
+            username='admin',
+            password='password'
+        )
+        response = self.client.get(
+            self.api_url.replace(self.project.slug, 'error'))
+        self.assertTrue(response.status_code, 400)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_get_status_with_session(self):
         session = SessionStore()
         session.create()
