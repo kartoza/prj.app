@@ -1,7 +1,6 @@
 from braces.views import UserPassesTestMixin
 from django.http.response import Http404, HttpResponseRedirect
 from django.urls import reverse
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from base.models import Project

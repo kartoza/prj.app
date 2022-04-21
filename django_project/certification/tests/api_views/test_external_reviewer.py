@@ -1,9 +1,6 @@
-from braces.views import UserPassesTestMixin
 from django.test import TestCase, Client
 from django.test.utils import override_settings
 from django.urls import reverse
-from rest_framework.views import APIView
-
 from base.models import Project
 from base.tests.model_factories import ProjectF
 from core.model_factories import UserF
