@@ -35,7 +35,7 @@ class ExternalReviewer(models.Model):
                 session.expire_date
             )
         except Session.DoesNotExist:
-            return '-'
+            return True
 
     def __str__(self):
         return self.email

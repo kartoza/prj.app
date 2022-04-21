@@ -1,6 +1,8 @@
 # coding=utf-8
 import logging
 from io import StringIO
+
+from django.contrib.sessions.backends.db import SessionStore
 from django.core import mail
 from django.core.management import call_command
 from django.test import TestCase, override_settings
@@ -14,7 +16,7 @@ from certification.tests.model_factories import (
     ProjectF,
     UserF,
     CertifyingOrganisationF,
-    StatusF, ChecklistF, OrganisationChecklistF
+    StatusF, ChecklistF, OrganisationChecklistF, ExternalReviewerF
 )
 
 
@@ -221,6 +223,17 @@ class TestCertifyingOrganisationView(TestCase):
             project=self.project,
             approved=True
         )
+        s = SessionStore()
+        s.create()
+        ExternalReviewerF.create(
+            certifying_organisation=pending_certifying_organisation,
+            email='er1@email.com',
+            session_key=s.session_key
+        )
+        ExternalReviewerF.create(
+            certifying_organisation=pending_certifying_organisation,
+            email='er2@email.com'
+        )
         pending_certifying_organisation.organisation_owners.set(
             [self.user]
         )
@@ -258,6 +271,8 @@ class TestCertifyingOrganisationView(TestCase):
             response.context_data['user_can_create'], True)
         self.assertEqual(
             response.context_data['user_can_delete'], True)
+        self.assertEqual(
+            len(response.context_data['external_reviewers']), 1)
         self.assertEqual(response.status_code, 200)
 
     @override_settings(VALID_DOMAIN=['testserver', ])

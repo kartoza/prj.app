@@ -259,6 +259,16 @@ class CertifyingOrganisationDetailView(
             except Session.DoesNotExist:
                 pass
 
+        external_reviewers = ExternalReviewer.objects.filter(
+            certifying_organisation=certifying_organisation
+        ).order_by('id')
+        context['external_reviewers'] = []
+        for external_reviewer in external_reviewers:
+            if not external_reviewer.session_expired:
+                context['external_reviewers'].append(
+                    external_reviewer
+                )
+
         if certifying_organisation.approved:
             context['trainingcenters'] = TrainingCenter.objects.filter(
                 certifying_organisation=certifying_organisation)

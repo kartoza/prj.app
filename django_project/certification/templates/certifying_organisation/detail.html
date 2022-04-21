@@ -433,6 +433,16 @@
                     <div class="title">Remarks</div>
                     <div class="content">{% if certifyingorganisation.remarks %}{{ certifyingorganisation.remarks }}{% else %}-{% endif %}</div>
                 </div>
+                <div class="content-container">
+                    <div class="title">External Reviewers</div>
+                    <div class="content">
+                        <ul id="list-external-reviewer">
+                            {% for external_reviewer in external_reviewers %}
+                                <li>{{ external_reviewer.email }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
                 {% if user_can_update_status %}
                     <a class="btn btn-default {% if checked_checklist == available_checklist|length %}btn-success{% else %}btn-warning{% endif %} btn-checklist-form">
                         <i class="fa fa-list" aria-hidden="true"></i> {{ checked_checklist }}/{{ available_checklist|length }} Checklist</a>
@@ -890,9 +900,13 @@
                 },
                 dataType: 'json',
                 success: function(data){
+                    document.forms['inviteExternalReviewerForm'].reset();
                     if (data['created']) {
                         badge.addClass('badge-success');
                         badge.html('Reviewer successfully invited!');
+                        $('#list-external-reviewer').append(
+                            `<li>${email}</li>`
+                        )
                     } else {
                         badge.html('Reviewer is already invited.')
                     }

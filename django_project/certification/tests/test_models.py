@@ -517,5 +517,4 @@ class TestExternalReviewer(TestCase):
         self.assertFalse(model.session_expired)
 
         model_with_no_session = ExternalReviewerF.create()
-        self.assertTrue(
-            model_with_no_session.session_expired == '-')
+        self.assertTrue(model_with_no_session.session_expired)
