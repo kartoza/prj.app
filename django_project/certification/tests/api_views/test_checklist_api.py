@@ -70,7 +70,7 @@ class TestChecklistApi(TestCase):
         data = {
             f'checklist-{self.checklist.id}': 'yes',
             f'textarea-{checklist_2.id}': 'test',
-            f'checklist-99999': 'yes',
+            'checklist-99999': 'yes',
             f'textarea-{checklist_3.id}': 'test',
             f'checklist-{checklist_3.id}': 'yes',
             f'checklist-{checklist_4.id}': 'yes',
