@@ -2,7 +2,7 @@
 [run]
 branch = True
 source = .
-omit = */tests/*,*migrations/*
+omit = */tests/*,*migrations/*,*admin.py
 
 [report]
 # Regexes for lines to exclude from consideration
