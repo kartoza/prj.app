@@ -99,6 +99,7 @@ from .api_views.training_center import (
     GetTrainingCenterOrganisationLocation
 )
 from .api_views.invite_reviewer import InviteReviewerApiView
+from .api_views.external_reviewer import UpdateExternalReviewerText
 
 
 urlpatterns = [
@@ -281,6 +282,9 @@ urlpatterns = [
               '(?P<slug>[\w-]+)/',
         view=InviteReviewerApiView.as_view(),
         name='invite-external-reviewer'),
+    url(regex='^(?P<project_slug>[\w-]+)/update-external-reviewer-text/',
+        view=UpdateExternalReviewerText.as_view(),
+        name='update-external-reviewer-text'),
 
     # Certificate.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'

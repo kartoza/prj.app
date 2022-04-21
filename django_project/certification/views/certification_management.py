@@ -57,6 +57,9 @@ class CertificationManagementView(LoginRequiredMixin, ListView):
                 Project.objects.get(slug=self.project_slug)
             context['project'] = context['the_project']
             context['checklist'] = self.get_checklist(context['project'])
+            context['external_reviewer_text'] = (
+                context['the_project'].external_reviewer_invitation
+            )
 
         # certificate types
         context['certificate_types'] = CertificateType.objects.all().order_by(
@@ -66,6 +69,7 @@ class CertificationManagementView(LoginRequiredMixin, ListView):
         context['certificate_types_applied'] = ProjectCertificateType.\
             objects.filter(project=project).values_list(
             'certificate_type', flat=True)
+
         return context
 
     def get_queryset(self):

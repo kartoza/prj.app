@@ -22,6 +22,10 @@ exclude_lines =
     if 0:
     if __name__ == .__main__.:
 
+    # Ignore imports
+    from
+    import
+
 ignore_errors = True
 precision = 2
 show_missing = True

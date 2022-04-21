@@ -224,7 +224,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" onclick="closeInviteExternalReviewer()">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="submitInviteExternalReviewer(this)">Submit</button>
+                    <button id="btn-submit-invite" type="button" class="btn btn-primary" onclick="submitInviteExternalReviewer(this)">Submit</button>
                 </div>
             </div>
         </div>
@@ -868,6 +868,11 @@
             document.forms['inviteExternalReviewerForm'].reset();
             $('#inviteReviewerModal').modal('hide')
         }
+
+        $('#inviteReviewerModal').submit(function (e) {
+            e.preventDefault();
+            $('#btn-submit-invite').click();
+        })
 
         function submitInviteExternalReviewer(elm) {
 
