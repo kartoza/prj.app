@@ -32,6 +32,12 @@ class Checklist(models.Model):
                   ' Have you contributed to documentation?'
     )
 
+    help_text = models.CharField(
+        max_length=256,
+        blank=True,
+        null=True
+    )
+
     active = models.BooleanField(
         default=False
     )

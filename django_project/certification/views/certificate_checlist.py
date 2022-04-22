@@ -16,6 +16,7 @@ class CertificateChecklistForm(forms.ModelForm):
         fields = (
             'question',
             'show_text_box',
+            'help_text',
             'target',
             'project'
         )
@@ -76,21 +77,6 @@ class CertificateChecklistCreateView(
         return reverse('certification-management-view', kwargs={
             'project_slug': self.project_slug
         })
-
-    def get_context_data(self, **kwargs):
-        """Get the context data which is passed to a template.
-
-        :param kwargs: Any arguments to pass to the superclass.
-        :type kwargs: dict
-
-        :returns: Context data which will be passed to the template.
-        :rtype: dict
-        """
-
-        context = super(
-            CertificateChecklistCreateView, self).get_context_data(**kwargs)
-        context['project'] = Project.objects.get(slug=self.project_slug)
-        return context
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.

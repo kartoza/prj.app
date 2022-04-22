@@ -90,7 +90,6 @@
                 <th>Organization</th>
                 <th>Creation Date</th>
                 <th>Update Date</th>
-                <th>Action</th>
             </tr>
         </thead>
         <tfoot>
@@ -98,7 +97,6 @@
                 <th>Organization</th>
                 <th>Creation Date</th>
                 <th>Update Date</th>
-                <th>Action</th>
             </tr>
         </tfoot>
     </table>
@@ -277,12 +275,11 @@
           ],
           "ajax": "{% url "pending-certifyingorganisation-list-json" project_slug=the_project.slug %}?ready=" + ready,
           "columnDefs": [
-            {"bSortable": false, "aTargets": [1,2,3] },
+              {"bSortable": false, "aTargets": [1, 2]},
               {
                   render: $.fn.dataTable.render.moment(FROM_PATTERN, TO_PATTERN),
-                  targets: [1,2]
-                },
-            {"render": createActionBtns, "data": null, "targets": [3]},
+                  targets: [1, 2]
+              },
           ],
           "initComplete": function (settings, json) {
             $('.btn-approved').hover(
