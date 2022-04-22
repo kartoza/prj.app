@@ -2,7 +2,7 @@
 [run]
 branch = True
 source = .
-omit = */tests/*,*migrations/*
+omit = */tests/*,*migrations/*,*admin.py
 
 [report]
 # Regexes for lines to exclude from consideration
@@ -21,6 +21,10 @@ exclude_lines =
     # Don't complain if non-runnable code isn't run:
     if 0:
     if __name__ == .__main__.:
+
+    # Ignore imports
+    from
+    import
 
 ignore_errors = True
 precision = 2

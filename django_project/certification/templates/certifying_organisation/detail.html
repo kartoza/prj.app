@@ -208,10 +208,32 @@
         </div>
     </div>
 
+    <div class="modal fade" id="inviteReviewerModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><b>Invite External Reviewer</b></h4>
+                </div>
+                <div class="modal-body">
+                    <div id="ie-badge" class="badge badge-success" style="margin-bottom: 10px;display: none"></div>
+                    <form id="inviteExternalReviewerForm" role="form">
+                        <label>Email:</label><br>
+                        <input name="reviewer-email" class="form-control">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" onclick="closeInviteExternalReviewer()">Cancel</button>
+                    <button id="btn-submit-invite" type="button" class="btn btn-primary" onclick="submitInviteExternalReviewer(this)">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="checklistModal" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content -->
-            <form method="post" id="checklistForm" action="{% url "update-checklist-reviewer" project_slug=project_slug %}">
+            <form method="post" id="checklistForm" action="{% url "update-checklist-reviewer" project_slug=project_slug slug=certifyingorganisation.slug %}">
                 {% csrf_token %}
                 <input type="hidden" name="organisation" value="{{ certifyingorganisation.id }}"/>
                 <div class="modal-content">
@@ -268,6 +290,7 @@
 
 
             <div class="btn-group">
+                {% if certifyingorganisation.approved %}
                 <a class="btn btn-default btn-mini tooltip-toggle rss-icon"
                        href='{% url "feed-training-center" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}' target="_blank"
                        data-title="GeoJSON Feed for List of Training Center">
@@ -283,6 +306,7 @@
                        data-title="Feed for List of Past Courses">
                         <i class="fa fa-rss" style="color: grey"></i>
                     </a>
+                {% endif %}
                 {% if user_can_delete %}
                     <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                        href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
@@ -409,7 +433,17 @@
                     <div class="title">Remarks</div>
                     <div class="content">{% if certifyingorganisation.remarks %}{{ certifyingorganisation.remarks }}{% else %}-{% endif %}</div>
                 </div>
-                {% if user.is_staff or user == project.owner or user in certifyingorganisation.project.certification_managers.all %}
+                <div class="content-container">
+                    <div class="title">External Reviewers</div>
+                    <div class="content">
+                        <ul id="list-external-reviewer">
+                            {% for external_reviewer in external_reviewers %}
+                                <li>{{ external_reviewer.email }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% if user_can_update_status %}
                     <a class="btn btn-default {% if checked_checklist == available_checklist|length %}btn-success{% else %}btn-warning{% endif %} btn-checklist-form">
                         <i class="fa fa-list" aria-hidden="true"></i> {{ checked_checklist }}/{{ available_checklist|length }} Checklist</a>
                     {% if 'approved' not in available_status %}
@@ -441,6 +475,14 @@
                             Update status
                     </a>
                 {% endif %}
+                {% if user_can_invite_external_reviewer %}
+                     <a class="btn btn-default btn-mini btn-invite tooltip-toggle"
+                        href='#'
+                        data-org-slug="{{ certifyingorganisation.project.slug }}"
+                        data-title="Invite External Reviewer">
+                            Invite External Reviewer
+                    </a>
+                {% endif %}
             </div>
 
             <div class="timeline">
@@ -448,9 +490,15 @@
                     {% for history_data in history %}
                     <li>
                         <div class="time">{{ history_data.history_date }}</div>
-                        <p>{% if history_data.history_type == '+' %}
-                            Created {% else %}
-                            Updated {% endif %} by {{ history_data.history_user }}</p>
+                        <p>
+                        {% if history_data.history_change_reason %}
+                            {{ history_data.history_change_reason }}
+                        {% else %}
+                            {% if history_data.history_type == '+' %}
+                                Created {% else %}
+                                Updated {% endif %} by {{ history_data.history_user }}
+                        {% endif %}
+                        </p>
                     </li>
                     {% endfor %}
                 </ul>
@@ -793,6 +841,99 @@
 
     <script>
         let pendingListUrl = "{% url "pending-certifyingorganisation-list" certifyingorganisation.project.slug %}";
+        const urlParams = new URLSearchParams(window.location.search);
+        const s = urlParams.get('s');
+
+        if (s) {
+            let $checklistForm = $('#checklistForm');
+            let checklistFormUrl = $checklistForm.attr('action');
+            $checklistForm.attr(
+                'action',
+                checklistFormUrl += '?s=' + s
+            )
+        }
+
+        function validateEmail(mail) {
+            return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)
+        }
+
+
+        $('.btn-invite').click(function () {
+            document.forms['inviteExternalReviewerForm'].reset();
+            $('#ie-badge').hide();
+            $('#inviteReviewerModal').modal('show')
+        });
+
+        function closeInviteExternalReviewer() {
+            document.forms['inviteExternalReviewerForm'].reset();
+            $('#inviteReviewerModal').modal('hide')
+        }
+
+        $('#inviteReviewerModal').submit(function (e) {
+            e.preventDefault();
+            $('#btn-submit-invite').click();
+        })
+
+        function submitInviteExternalReviewer(elm) {
+
+            let url = "{% url "invite-external-reviewer" certifyingorganisation.project.slug certifyingorganisation.slug %}";
+
+            // Check email
+            let emailInput = $('[name=reviewer-email]');
+            let submitButton = $(elm);
+            let cancelButton = submitButton.prev();
+            let email = emailInput.val();
+            let emailValid = validateEmail(email);
+            if (!emailValid) {
+                alert('Please enter a valid email address.')
+                return
+            }
+
+            emailInput.attr('disabled', true);
+            submitButton.attr('disabled', true);
+            cancelButton.attr('disabled', true);
+
+            let badge = $('#ie-badge');
+            badge.removeClass('badge-success');
+            badge.removeClass('badge-danger');
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: {
+                    'email': email
+                },
+                dataType: 'json',
+                success: function(data){
+                    document.forms['inviteExternalReviewerForm'].reset();
+                    if (data['created']) {
+                        badge.addClass('badge-success');
+                        badge.html('Reviewer successfully invited!');
+                        $('#list-external-reviewer').append(
+                            `<li>${email}</li>`
+                        )
+                    } else {
+                        badge.html('Reviewer is already invited.')
+                    }
+
+                    badge.show();
+
+                    emailInput.attr('disabled', false);
+                    submitButton.attr('disabled', false);
+                    cancelButton.attr('disabled', false);
+                },
+                error: function () {
+                    badge.addClass('badge-error');
+                    badge.html('Error inviting reviewer');
+                    badge.show();
+
+                    emailInput.attr('disabled', false);
+                    submitButton.attr('disabled', false);
+                    cancelButton.attr('disabled', false);
+                }
+            });
+        }
+
         function closeRejectionForm() {
             $('.rejection-form-info').html('');
             document.forms['rejectionForm'].reset();
@@ -827,8 +968,12 @@
         function submitUpdateStatusForm() {
             var organisation_slug = $('[name=status-organisation-slug]').val();
             var organisation_project_slug = $('[name=status-organisation-project-slug]').val();
+            let url = '/{{ LANGUAGE_CODE }}/' + organisation_project_slug + '/update-status-certifyingorganisation/' + organisation_slug + '/'
+            if (s) {
+                url += `?s=${s}`
+            }
             $.ajax({
-                url: '/{{ LANGUAGE_CODE }}/' + organisation_project_slug + '/update-status-certifyingorganisation/' + organisation_slug + '/',
+                url: url,
                 method: 'POST',
                 data: {
                     'status': $('[name=update-status]').val(),
@@ -857,11 +1002,16 @@
             $('#checklistModal').modal('show');
         });
 
+
          $('.btn-update-status').click(function () {
             var initial_status = $(this).attr('organisation_status');
             var project_slug = $(this).attr('organisation_project_slug');
+            let url = '/{{ LANGUAGE_CODE }}/' + project_slug + '/get-status-list/';
+            if (s) {
+                url += `?s=${s}`
+            }
             $.ajax({
-                url: '/{{ LANGUAGE_CODE }}/' + project_slug + '/get-status-list/',
+                url: url,
                 method: 'GET',
                 success: function (data) {
                     var $selectStatus = $('[name="update-status"]');
@@ -881,7 +1031,7 @@
             $('#status-organisation-country').html($(this).attr('organisation_country'));
             $('[name=status-organisation-slug]').val($(this).attr('organisation_slug'));
             $('[name=status-organisation-project-slug]').val(project_slug);
-            $('[name=update-remarks]').val($(this).attr('organisation_remarks'));
+            $('[name=update-remarks]').val($(this).attr('organisation_remarks') !== 'None' ? $(this).attr('organisation_remarks') : '');
             $('#updateStatusModal').modal('show')
         });
 

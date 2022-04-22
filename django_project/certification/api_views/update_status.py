@@ -1,14 +1,16 @@
 # coding=utf-8
-from braces.views import LoginRequiredMixin
 from django.http import HttpResponse
 from rest_framework import status
-from rest_framework.views import APIView, Response
+from rest_framework.views import Response
 from ..models.certifying_organisation import CertifyingOrganisation
 from ..models.status import Status
-from ..views import send_rejection_email, send_approved_email
+from ..views import (
+    send_rejection_email, send_approved_email,
+    CertifyingOrganisationUserTestMixin
+)
 
 
-class UpdateStatusOrganisation(LoginRequiredMixin, APIView):
+class UpdateStatusOrganisation(CertifyingOrganisationUserTestMixin):
     """API to update the status of an organisation."""
 
     def post(self, request, project_slug, slug):
@@ -54,6 +56,29 @@ class UpdateStatusOrganisation(LoginRequiredMixin, APIView):
                         'Status object does not exist.',
                         status=status.HTTP_400_BAD_REQUEST
                     )
+
+            change_reason = 'Status updated to {} '.format(
+                status_name.capitalize()
+            )
+            change_reason += 'by {} '
+            if remarks:
+                change_reason += 'with remarks : {}'.format(
+                    remarks
+                )
+
+            if self.external_reviewer:
+                change_reason = change_reason.format(
+                    f'external reviewer '
+                    f'({self.external_reviewer.email})'
+                )
+            else:
+                change_reason = change_reason.format(
+                    self.request.user.username
+                )
+
+            certifyingorganisation._change_reason = (
+                change_reason
+            )
 
             certifyingorganisation.save()
             return Response({

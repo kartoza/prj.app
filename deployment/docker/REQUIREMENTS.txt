@@ -17,7 +17,7 @@ requests==2.27.1
 django-hashedfilenamestorage==2.3
 # pypandoc is an interface for pandoc converter
 pypandoc==1.4
-beautifulsoup4==4.6.0
+beautifulsoup4==4.11.1
 # disqus
 django-disqus==0.5
 # custom slugify

@@ -2,162 +2,234 @@
 {% load i18n %}
 {% block js_head %}
     <script>
-        $(function() {
-          $(".checklist-sortable").sortable({
-            update: function (event, ui) {
-              let idsInOrder = $(event.target).sortable("toArray");
-              let checklistPostData = [];
-              let order = 1;
-              for (let checklistId of idsInOrder) {
-                let id = checklistId.split('-')[1];
-                checklistPostData.push({
-                  'id': id,
-                  'order': order
-                })
-                order += 1;
-              }
-              $.post("{% url "update-checklist-order" project_slug=project_slug %}", {
-                'checklist_order': JSON.stringify(checklistPostData)
-              }, function(data){
-                $('.badge-updated').stop(true, true).show().fadeOut(2000);
-              })
-            }
-          });
+        $(function () {
+            $(".checklist-sortable").sortable({
+                update: function (event, ui) {
+                    let idsInOrder = $(event.target).sortable("toArray");
+                    let checklistPostData = [];
+                    let order = 1;
+                    for (let checklistId of idsInOrder) {
+                        let id = checklistId.split('-')[1];
+                        checklistPostData.push({
+                            'id': id,
+                            'order': order
+                        })
+                        order += 1;
+                    }
+                    $.post("{% url "update-checklist-order" project_slug=project_slug %}", {
+                        'checklist_order': JSON.stringify(checklistPostData)
+                    }, function (data) {
+                        $('.badge-updated').stop(true, true).show().fadeOut(2000);
+                    })
+                }
+            });
         });
 
         function activate(checklistId, elm) {
-          let div = $(elm);
-          $.post("{% url "activate-checklist" project_slug=project_slug %}", {
+            let div = $(elm);
+            $.post("{% url "activate-checklist" project_slug=project_slug %}", {
                 'checklist_id': checklistId
-              }, function(data){
+            }, function (data) {
                 $('.badge-updated').stop(true, true).show().fadeOut(2000);
                 div.removeClass('btn-success').addClass('btn-warning').html('Archive').attr("onclick", `archive(${checklistId}, this)`);
-          })
+            })
         }
 
         function archive(checklistId, elm) {
-          let div = $(elm);
-          $.post("{% url "archive-checklist" project_slug=project_slug %}", {
+            let div = $(elm);
+            $.post("{% url "archive-checklist" project_slug=project_slug %}", {
                 'checklist_id': checklistId
-              }, function(data){
+            }, function (data) {
                 $('.badge-updated').stop(true, true).show().fadeOut(2000);
                 div.removeClass('btn-warning').addClass('btn-success').html('Activate').attr("onclick", `activate(${checklistId}, this)`);
-          })
+            })
         }
     </script>
 {% endblock %}
 
 {% block content %}
-  <style>
-    .table tbody:first-of-type tr {
-      background-color: transparent;
-    }
-    .checklist-container .btn {
-        font-size: 8pt;
-    }
-    .checklist-container .row {
-        display: flex;
-        align-items: center;
-        padding: 10px 0;
-        border-bottom: 1px solid #dddddd;
-    }
+    <style>
+        .table tbody:first-of-type tr {
+            background-color: transparent;
+        }
 
-    .checklist-container .disabled {
-        background-color: #c8c8c8;
-    }
+        .checklist-container .btn {
+            font-size: 8pt;
+        }
 
-    h3 {
-        margin-bottom: 25px;
-        margin-right: 10px;
-    }
+        .checklist-container .row {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #dddddd;
+        }
 
-    .badge-updated {
-        display: none;
-    }
-  </style>
+        .checklist-container .disabled {
+            background-color: #c8c8c8;
+        }
 
-  <div class="page-header">
-    <h1 class="text-muted">{% trans 'Certification Manager Dashboard' %}</h1>
-  </div>
-  <div style="display: flex; flex-direction: row; align-items: center">
-     <h3>{% trans 'Certification Type' %}</h3>
-  </div>
+        h3 {
+            margin-bottom: 25px;
+            margin-right: 10px;
+        }
 
-  <table class="table">
-    <thead>
-    <tr>
-      <th scope="col">Certificate Type</th>
-      <th scope="col">Wording</th>
-      <th scope="col">Apply</th>
-    </tr>
-    </thead>
-    <tbody>
-    <form action="{% url 'certificate-type-update' project_slug %}" method="post">
-    {% csrf_token %}
-    {% for cer_type in certificate_types %}
-      <tr {% if cer_type.id in certificate_types_applied %}style="background-color: #d7e5f0" {% endif %}>
-        <td>{{ cer_type.name }}</td>
-        <td>{{ cer_type.wording }}</td>
-        <td>
-            <input type="checkbox" name="certificate_types" value="{{ cer_type.name }}"
-              {% if cer_type.id in certificate_types_applied %}checked{% endif %}
-            >
-        </td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-  <input class="btn btn-primary" type="submit" value="Save">
-  </form>
+        .badge-updated {
+            margin-left: 10px;
+            margin-top: -8px;
+            display: none;
+        }
 
-  <div style="display: flex; flex-direction: row; align-items: center">
-     <h3>Certification Checklist</h3><div class="badge badge-success badge-updated">Updated</div>
-  </div>
-  <a href="{% url "certificate-checklist-create" project_slug=project_slug %}" class="btn btn-default" style="display:flex; width: fit-content"><span class="ui-icon ui-icon-plus"></span> Add new checklist</a>
+        .management-section {
+            margin-top: 20px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+        }
 
-    <br/>
-    <h4>Reviewer</h4>
-    <div class="checklist-container checklist-sortable">
-        {% for checklist_row in checklist %}
-            {% if checklist_row.approved and checklist_row.target == 'reviewer' %}
-                <div class="row" id="checklist-{{ checklist_row.id }}">
-                    <div class="col-lg-1"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>
-                    <div class="col-lg-4">{{ checklist_row.question }}</div>
-                    <div class="col-lg-4">{% if checklist_row.active %}
-                        <div class="btn btn-warning" onclick="archive({{ checklist_row.id }}, this)">Archive
-                        </div>{% else %}
-                        <div class="btn btn-success" onclick="activate({{ checklist_row.id }}, this)">Activate
-                        </div>{% endif %} </div>
-                </div>
-            {% endif %}
-        {% endfor %}
-    </div>
-    <br/>
-    <h4>Organization Owner</h4>
-    <div class="checklist-container checklist-sortable">
-        {% for checklist_row in checklist %}
-            {% if checklist_row.approved and checklist_row.target == 'organization_owner' %}
-                <div class="row" id="checklist-{{ checklist_row.id }}">
-                    <div class="col-lg-1"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>
-                    <div class="col-lg-4">{{ checklist_row.question }}</div>
-                    <div class="col-lg-4">{% if checklist_row.active %}
-                        <div class="btn btn-warning" onclick="archive({{ checklist_row.id }}, this)">Archive
-                        </div>{% else %}
-                        <div class="btn btn-success" onclick="activate({{ checklist_row.id }}, this)">Activate
-                        </div>{% endif %} </div>
-                </div>
-            {% endif %}
-        {% endfor %}
+        .management-section-header {
+            background-color: #efefef;
+            border-bottom: 1px solid #cccccc;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding-left: 20px;
+            padding-top: 20px;
+            padding-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .management-section-body {
+            padding: 20px;
+        }
+
+        .section-header-buttons {
+            margin-left: auto;
+            margin-right: 10px;
+            margin-top: -10px;
+        }
+    </style>
+
+    <div class="page-header">
+        <h1 class="text-muted">{% trans 'Certification Manager Dashboard' %}</h1>
     </div>
 
-{#  <h4 style="margin-top: 40px; font-weight: bold">Unapproved Checklist</h4>#}
-{#    <div class="checklist-container unapproved-checklist-container">#}
-{#        {% for checklist_row in checklist %}#}
-{#            {% if not checklist_row.approved %}#}
-{#                <div class="row disabled">#}
-{#                    <div class="col-lg-4">{{ checklist_row.question }}</div>#}
-{#                </div>#}
-{#            {% endif %}#}
-{#        {% endfor %}#}
-{#    </div>#}
+
+    <div class="management-section">
+
+        <form action="{% url 'certificate-type-update' project_slug %}" method="post">
+            {% csrf_token %}
+            <div class="management-section-header">
+                <p>{% trans 'Certification Type' %}</p>
+                <div class="section-header-buttons">
+                    <button class="submit btn btn-default"
+                       style="display:flex; width: fit-content"><span class="ui-icon ui-icon-check"></span> Save</button>
+                </div>
+            </div>
+
+            <div class="management-section-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Certificate Type</th>
+                        <th scope="col">Wording</th>
+                        <th scope="col">Apply</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for cer_type in certificate_types %}
+                        <tr {% if cer_type.id in certificate_types_applied %}style="background-color: #d7e5f0" {% endif %}>
+                            <td>{{ cer_type.name }}</td>
+                            <td>{{ cer_type.wording }}</td>
+                            <td>
+                                <input type="checkbox" name="certificate_types" value="{{ cer_type.name }}"
+                                       {% if cer_type.id in certificate_types_applied %}checked{% endif %}
+                                >
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+
+    <div class="management-section">
+
+
+        <div class="management-section-header">
+            <p>Certification Checklist</p>
+            <div class="badge badge-success badge-updated">Updated</div>
+            <div class="section-header-buttons">
+                <a href="{% url "certificate-checklist-create" project_slug=project_slug %}" class="btn btn-default"
+                   style="display:flex; width: fit-content"><span class="ui-icon ui-icon-plus"></span> Add new checklist</a>
+            </div>
+        </div>
+
+        <div class="management-section-body">
+            <br/>
+            <h4>Reviewer</h4>
+            <div class="checklist-container checklist-sortable">
+                {% for checklist_row in checklist %}
+                    {% if checklist_row.approved and checklist_row.target == 'reviewer' %}
+                        <div class="row" id="checklist-{{ checklist_row.id }}">
+                            <div class="col-lg-1"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>
+                            <div class="col-lg-4">{{ checklist_row.question }}</div>
+                            <div class="col-lg-4">{% if checklist_row.active %}
+                                <div class="btn btn-warning" onclick="archive({{ checklist_row.id }}, this)">Archive
+                                </div>{% else %}
+                                <div class="btn btn-success" onclick="activate({{ checklist_row.id }}, this)">Activate
+                                </div>{% endif %} </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <br/>
+            <h4>Organization Owner</h4>
+            <div class="checklist-container checklist-sortable">
+                {% for checklist_row in checklist %}
+                    {% if checklist_row.approved and checklist_row.target == 'organization_owner' %}
+                        <div class="row" id="checklist-{{ checklist_row.id }}">
+                            <div class="col-lg-1"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>
+                            <div class="col-lg-4">{{ checklist_row.question }}</div>
+                            <div class="col-lg-4">{% if checklist_row.active %}
+                                <div class="btn btn-warning" onclick="archive({{ checklist_row.id }}, this)">Archive
+                                </div>{% else %}
+                                <div class="btn btn-success" onclick="activate({{ checklist_row.id }}, this)">Activate
+                                </div>{% endif %} </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="management-section">
+
+        <form action="{% url 'update-external-reviewer-text' project_slug %}" method="post">
+            {% csrf_token %}
+            <div class="management-section-header">
+                <p>External Reviewer</p>
+                <div class="section-header-buttons">
+                    <button class="submit btn btn-default"
+                       style="display:flex; width: fit-content"><span class="ui-icon ui-icon-check"></span> Save</button>
+                </div>
+            </div>
+
+            <div class="management-section-body">
+                <label for="exampleFormControlTextarea1">Invitation Email Text</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" name="text"
+                          rows="3">{{ external_reviewer_text }}</textarea>
+            </div>
+        </form>
+    </div>
+
+    {#  <h4 style="margin-top: 40px; font-weight: bold">Unapproved Checklist</h4>#}
+    {#    <div class="checklist-container unapproved-checklist-container">#}
+    {#        {% for checklist_row in checklist %}#}
+    {#            {% if not checklist_row.approved %}#}
+    {#                <div class="row disabled">#}
+    {#                    <div class="col-lg-4">{{ checklist_row.question }}</div>#}
+    {#                </div>#}
+    {#            {% endif %}#}
+    {#        {% endfor %}#}
+    {#    </div>#}
 {% endblock %}

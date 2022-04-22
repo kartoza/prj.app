@@ -98,6 +98,8 @@ from .api_views.training_center import (
     GetTrainingCenterProjectLocation,
     GetTrainingCenterOrganisationLocation
 )
+from .api_views.invite_reviewer import InviteReviewerApiView
+from .api_views.external_reviewer import UpdateExternalReviewerText
 
 
 urlpatterns = [
@@ -272,7 +274,17 @@ urlpatterns = [
     url(regex='^(?P<project_slug>[\w-]+)/certificate-checklist/create/',
         view=CertificateChecklistCreateView.as_view(),
         name='certificate-checklist-create'),
-
+    url(regex='^(?P<project_slug>[\w-]+)/update-checklist-reviewer/'
+              '(?P<slug>[\w-]+)/',
+        view=UpdateChecklistReviewer.as_view(),
+        name='update-checklist-reviewer'),
+    url(regex='^(?P<project_slug>[\w-]+)/invite-external-reviewer/'
+              '(?P<slug>[\w-]+)/',
+        view=InviteReviewerApiView.as_view(),
+        name='invite-external-reviewer'),
+    url(regex='^(?P<project_slug>[\w-]+)/update-external-reviewer-text/',
+        view=UpdateExternalReviewerText.as_view(),
+        name='update-external-reviewer-text'),
 
     # Certificate.
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
@@ -381,10 +393,6 @@ urlpatterns = [
               '(?P<organisation_slug>[\w-]+)/feed/past-course/$',
         view=GetPastCourseOrganisation.as_view(),
         name='feed-past-course'),
-
-    url(regex='^(?P<project_slug>[\w-]+)/update-checklist-reviewer/$',
-        view=UpdateChecklistReviewer.as_view(),
-        name='update-checklist-reviewer'),
 
     # Checkout
     url(

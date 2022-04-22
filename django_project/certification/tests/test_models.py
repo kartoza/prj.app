@@ -14,7 +14,7 @@ from certification.tests.model_factories import (
     CertifyingOrganisationF,
     TrainingCenterF,
     CourseAttendeeF,
-    StatusF
+    StatusF, ExternalReviewerF
 )
 from certification.models.certificate_type import CertificateType
 
@@ -493,3 +493,28 @@ class TestValidateEmailAddress(TestCase):
         msg = f'{email} is not a valid email address'
         with self.assertRaisesMessage(ValidationError, msg):
             validate_email_address(email)
+
+
+class TestExternalReviewer(TestCase):
+
+    def test_External_Reviewer_create(self):
+        """Test external reviewer model creation."""
+
+        model = ExternalReviewerF.create()
+
+        # check if PK exists.
+        self.assertTrue(model.pk is not None)
+
+    def test_External_Reviewer_expire(self):
+        from django.contrib.sessions.backends.db import SessionStore
+
+        s = SessionStore()
+        s.create()
+        model = ExternalReviewerF.create(
+            session_key=s.session_key
+        )
+
+        self.assertFalse(model.session_expired)
+
+        model_with_no_session = ExternalReviewerF.create()
+        self.assertTrue(model_with_no_session.session_expired)

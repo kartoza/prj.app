@@ -298,6 +298,16 @@ class Project(models.Model):
         default=True
     )
 
+    external_reviewer_invitation = models.TextField(
+        help_text=_(
+            'Standard text for external reviewer of what '
+            'they are expected to do.'),
+        default='You have been invited to review this organisation.',
+        max_length=10000,
+        blank=True,
+        null=True
+    )
+
     # noinspection PyClassicStyleClass
     class Meta:
         """Meta class for project."""
@@ -318,9 +328,6 @@ class Project(models.Model):
             self.slug = slugify(new_list)[:50]
 
         super(Project, self).save(*args, **kwargs)
-
-    def __unicode__(self):
-        return u'%s' % self.name
 
     def __str__(self):
         return '{}'.format(self.name)
@@ -349,7 +356,7 @@ class Project(models.Model):
         return self.versions()[:settings.PROJECT_VERSION_LIST_SIZE]
 
     @staticmethod
-    def pagination_threshold(self):
+    def pagination_threshold():
         """Find out how many versions to list per page.
 
         :returns: The count of items to show per page as defined in

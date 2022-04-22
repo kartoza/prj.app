@@ -17,6 +17,7 @@ from certification.models.organisation_certificate import \
 from certification.models.status import Status
 from certification.models.checklist import Checklist
 from certification.models.organisation_checklist import OrganisationChecklist
+from certification.models.external_reviewer import ExternalReviewer
 
 
 class CertificateAdmin(admin.ModelAdmin):
@@ -184,6 +185,14 @@ class OrganisationChecklistAdmin(admin.ModelAdmin):
     raw_id_fields = ('organisation', 'submitter', )
 
 
+class ExternalReviewerAdmin(admin.ModelAdmin):
+    list_display = (
+        'certifying_organisation',
+        'email',
+        'session_expired'
+    )
+
+
 admin.site.register(Certificate, CertificateAdmin)
 admin.site.register(CertificateType, CertificateTypeAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
@@ -198,3 +207,4 @@ admin.site.register(
 admin.site.register(Status, StatusAdmin)
 admin.site.register(Checklist, ChecklistAdmin)
 admin.site.register(OrganisationChecklist, OrganisationChecklistAdmin)
+admin.site.register(ExternalReviewer, ExternalReviewerAdmin)
