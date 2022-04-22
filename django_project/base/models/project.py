@@ -329,9 +329,6 @@ class Project(models.Model):
 
         super(Project, self).save(*args, **kwargs)
 
-    def __unicode__(self):
-        return u'%s' % self.name
-
     def __str__(self):
         return '{}'.format(self.name)
 
@@ -359,7 +356,7 @@ class Project(models.Model):
         return self.versions()[:settings.PROJECT_VERSION_LIST_SIZE]
 
     @staticmethod
-    def pagination_threshold(self):
+    def pagination_threshold():
         """Find out how many versions to list per page.
 
         :returns: The count of items to show per page as defined in

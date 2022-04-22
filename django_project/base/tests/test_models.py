@@ -1,8 +1,12 @@
 # coding=utf-8
 from django.test import TestCase
+from django.test.utils import override_settings
+from django.urls import reverse
+
 from base.tests.model_factories import ProjectF
 from django.core.exceptions import ValidationError
 from base.models.project import Project
+from changes.tests.model_factories import VersionF
 
 
 class TestProjectCRUD(TestCase):
@@ -31,17 +35,64 @@ class TestProjectCRUD(TestCase):
         self.assertTrue(
             model.external_reviewer_invitation is not None)
 
+    @override_settings(PROJECT_VERSION_LIST_SIZE=2)
     def test_Project_read(self):
         """
         Tests Project model read
         """
         model = ProjectF.create(
             name='Custom Project',
-            slug='custom-project'
+            slug='custom-project',
+            external_reviewer_invitation='test',
+            approved=True
+        )
+        version2 = VersionF.create(
+            name='version_2',
+            project=model,
+            padded_version='2'
+        )
+        version = VersionF.create(
+            name='version_1',
+            project=model,
+            padded_version='1'
         )
 
         self.assertTrue(model.name == 'Custom Project')
         self.assertTrue(model.slug == 'custom-project')
+        self.assertEqual(
+            'test',
+            model.external_reviewer_invitation)
+        self.assertTrue(
+            str(model),
+            model.name
+        )
+        self.assertTrue(
+            model.get_absolute_url(),
+            reverse('project-detail', kwargs={'slug': model.slug})
+        )
+        self.assertIn(
+            version,
+            model.versions()
+        )
+        self.assertIn(
+            version2,
+            model.latest_versions()
+        )
+        self.assertEqual(
+            model.pagination_threshold(),
+            2
+        )
+        self.assertTrue(
+            model.pagination_threshold_exceeded()
+        )
+        version.delete()
+        self.assertFalse(
+            model.pagination_threshold_exceeded()
+        )
+        self.assertNotIn(
+            model,
+            Project.unapproved_objects.all()
+        )
 
     def test_Project_update(self):
         """
