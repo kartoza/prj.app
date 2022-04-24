@@ -18,4 +18,5 @@ class ChecklistSerializer(serializers.ModelSerializer):
         model = Checklist
         fields = [
             'id', 'question', 'show_text_box',
-            'target', 'organisation_checklist']
+            'target', 'organisation_checklist',
+            'help_text']
