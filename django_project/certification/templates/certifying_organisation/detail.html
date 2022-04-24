@@ -382,6 +382,24 @@
                 {% endif %}
             </div>
         </div>
+        <hr/>
+        <div class="content-container">
+            {% for question in submitted_checklist %}
+                {% if question.checklist_target == 'organization_owner' %}
+                    <div>
+                        {{ question.checklist_question }} :
+                            {% if question.checked %}
+                                <i class="fa fa-check-circle" aria-hidden="true" style="color: green"></i>
+                            {% else %}
+                                <i class="fa fa-times-circle" aria-hidden="true" style="color: red"></i>
+                            {% endif %}
+                    </div>
+                    {% if question.text_box_content %}
+                        <div>{{ question.text_box_content | base_markdown }}</div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
     </div>
     {% if certifyingorganisation.approved %}
     <div class="col-lg-6 ">
