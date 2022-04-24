@@ -5,6 +5,13 @@ from django.contrib.sessions.models import Session
 
 class ExternalReviewer(models.Model):
 
+    name = models.CharField(
+        max_length=512,
+        null=True,
+        blank=True,
+        help_text='External reviewer name'
+    )
+
     session_key = models.CharField(
         null=False,
         blank=False,

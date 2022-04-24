@@ -519,6 +519,10 @@ class TestExternalReviewer(TestCase):
 
         model_with_no_session = ExternalReviewerF.create()
         self.assertTrue(model_with_no_session.session_expired)
+        self.assertTrue(
+            str(model),
+            model.email
+        )
 
 
 class TestChecklist(TestCase):

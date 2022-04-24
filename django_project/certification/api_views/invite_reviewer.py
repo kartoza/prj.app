@@ -36,12 +36,14 @@ class InviteReviewerApiView(UserPassesTestMixin, APIView):
 
     def post(self, request, project_slug, slug):
         email = request.POST.get('email', None)
+        name = request.POST.get('name')
         regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
         if not re.fullmatch(regex, email):
             raise Http404('Invalid email address')
 
         external_reviewer, created = ExternalReviewer.objects.get_or_create(
+            name=name,
             email=email,
             certifying_organisation=self.certifying_organisation
         )
@@ -58,6 +60,7 @@ class InviteReviewerApiView(UserPassesTestMixin, APIView):
             schema = request.is_secure() and "https" or "http"
 
             data = {
+                'name': name,
                 'email': email,
                 'invitation_text': (
                     self.certifying_organisation.project.
@@ -77,7 +80,7 @@ class InviteReviewerApiView(UserPassesTestMixin, APIView):
             }
             send_mail(
                 u'Changelog - You have been invited as a reviewer',
-                u'Dear {email},\n\n'
+                u'Dear {name},\n\n'
                 u'{invitation_text}'
                 u'\n\n'
                 u'Detail organisation :\n'
