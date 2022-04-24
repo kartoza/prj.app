@@ -53,14 +53,15 @@ class CertificateChecklistCreateView(
 
     model = Checklist
     form_class = CertificateChecklistForm
+    project = None
 
     context_object_name = 'checklist'
     template_name = 'certificate_checklist/create.html'
 
     def test_func(self):
         project_slug = self.kwargs.get('project_slug', None)
-        project = Project.objects.get(slug=project_slug)
-        return project.certification_managers.filter(
+        self.project = Project.objects.get(slug=project_slug)
+        return self.project.certification_managers.filter(
             id=self.request.user.id
         ).exists() or self.request.user.is_superuser
 
@@ -77,6 +78,13 @@ class CertificateChecklistCreateView(
         return reverse('certification-management-view', kwargs={
             'project_slug': self.project_slug
         })
+
+    def get_context_data(self, **kwargs):
+        ctx = super(
+            CertificateChecklistCreateView, self
+        ).get_context_data(**kwargs)
+        ctx['project'] = self.project
+        return ctx
 
     def get_form_kwargs(self):
         """Get keyword arguments from form.

@@ -1,5 +1,6 @@
 {% extends "project_base.html" %}
 {% load i18n %}
+{% block title %}Certification Management{% endblock %}
 {% block js_head %}
     <script>
         $(function () {
@@ -164,8 +165,10 @@
             <p>Certification Checklist</p>
             <div class="badge badge-success badge-updated">Updated</div>
             <div class="section-header-buttons">
-                <a href="{% url "certificate-checklist-create" project_slug=project_slug %}" class="btn btn-default"
-                   style="display:flex; width: fit-content"><span class="ui-icon ui-icon-plus"></span> Add new checklist</a>
+                <a class="btn btn-default btn-mini tooltip-toggle" href="{% url "certificate-checklist-create" project_slug=project_slug %}"
+                   data-title="Add new question" data-original-title="" title="">
+                            <span class="glyphicon glyphicon-asterisk"></span>
+                </a>
             </div>
         </div>
 

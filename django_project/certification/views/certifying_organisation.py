@@ -8,7 +8,7 @@ from django.core.mail import send_mail
 from django.utils.html import escape
 from django.urls import reverse
 from django.shortcuts import get_list_or_404
-from django.db.models import Q, Prefetch, Max, Min
+from django.db.models import Q, Prefetch
 from django.http import HttpResponse, request
 from django.views.generic import (
     ListView,
