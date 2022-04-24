@@ -106,6 +106,11 @@
             margin-right: 10px;
             margin-top: -10px;
         }
+
+        .help-text {
+            display: inherit;
+            font-size: 10px;
+        }
     </style>
 
     <div class="page-header">
@@ -172,7 +177,10 @@
                     {% if checklist_row.approved and checklist_row.target == 'reviewer' %}
                         <div class="row" id="checklist-{{ checklist_row.id }}">
                             <div class="col-lg-1"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>
-                            <div class="col-lg-4">{{ checklist_row.question }}</div>
+                            <div class="col-lg-4">
+                                {{ checklist_row.question }}
+                                <span class="small help-text">{% if checklist_row.help_text %}{{ checklist_row.help_text }}{% endif %}</span>
+                            </div>
                             <div class="col-lg-4">{% if checklist_row.active %}
                                 <div class="btn btn-warning" onclick="archive({{ checklist_row.id }}, this)">Archive
                                 </div>{% else %}
@@ -189,7 +197,9 @@
                     {% if checklist_row.approved and checklist_row.target == 'organization_owner' %}
                         <div class="row" id="checklist-{{ checklist_row.id }}">
                             <div class="col-lg-1"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>
-                            <div class="col-lg-4">{{ checklist_row.question }}</div>
+                            <div class="col-lg-4">{{ checklist_row.question }}
+                                <span class="small help-text">{% if checklist_row.help_text %}{{ checklist_row.help_text }}{% endif %}</span>
+                            </div>
                             <div class="col-lg-4">{% if checklist_row.active %}
                                 <div class="btn btn-warning" onclick="archive({{ checklist_row.id }}, this)">Archive
                                 </div>{% else %}
