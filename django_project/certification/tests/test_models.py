@@ -14,9 +14,10 @@ from certification.tests.model_factories import (
     CertifyingOrganisationF,
     TrainingCenterF,
     CourseAttendeeF,
-    StatusF, ExternalReviewerF
+    StatusF, ExternalReviewerF, ChecklistF
 )
 from certification.models.certificate_type import CertificateType
+from core.model_factories import UserF
 
 
 class SetUpMixin:
@@ -518,3 +519,55 @@ class TestExternalReviewer(TestCase):
 
         model_with_no_session = ExternalReviewerF.create()
         self.assertTrue(model_with_no_session.session_expired)
+        self.assertTrue(
+            str(model),
+            model.email
+        )
+
+
+class TestChecklist(TestCase):
+    """Test checklist model."""
+
+    def setUp(self):
+        """Set up before test."""
+
+        pass
+
+    def test_Checklist_create(self):
+        """Test checklist model creation."""
+
+        model = ChecklistF.create()
+
+        history = model.history.earliest()
+        user = UserF.create()
+        history.history_user = user
+        history.save()
+
+        # check if PK exists.
+        self.assertTrue(model.pk is not None)
+
+        # check if model attributes exists.
+        self.assertEqual(model.creator, user)
+
+        self.assertEqual(
+            str(model),
+            model.question
+        )
+
+        self.assertEqual(
+            model.target,
+            ''
+        )
+
+        history.delete()
+
+        self.assertIsNone(model.creator)
+
+    def test_Checklist_delete(self):
+        """Test checklist model deletion."""
+
+        model = ChecklistF.create()
+        model.delete()
+
+        # check if deleted.
+        self.assertTrue(model.pk is None)

@@ -218,6 +218,9 @@
                 <div class="modal-body">
                     <div id="ie-badge" class="badge badge-success" style="margin-bottom: 10px;display: none"></div>
                     <form id="inviteExternalReviewerForm" role="form">
+                        <label>Name:</label><br/>
+                        <input name="reviewer-name" class="form-control">
+                        <br/>
                         <label>Email:</label><br>
                         <input name="reviewer-email" class="form-control">
                     </form>
@@ -438,7 +441,7 @@
                     <div class="content">
                         <ul id="list-external-reviewer">
                             {% for external_reviewer in external_reviewers %}
-                                <li>{{ external_reviewer.email }}</li>
+                                <li>{% if external_reviewer.name %}<strong>{{ external_reviewer.name }}</strong> - {% endif %}{{ external_reviewer.email }}</li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -880,15 +883,22 @@
 
             // Check email
             let emailInput = $('[name=reviewer-email]');
+            let nameInput = $('[name=reviewer-name]');
             let submitButton = $(elm);
             let cancelButton = submitButton.prev();
             let email = emailInput.val();
             let emailValid = validateEmail(email);
+            let name = nameInput.val();
             if (!emailValid) {
                 alert('Please enter a valid email address.')
                 return
             }
+            if (!name) {
+                alert('Please enter external reviewer name.')
+                return
+            }
 
+            nameInput.attr('disabled', true);
             emailInput.attr('disabled', true);
             submitButton.attr('disabled', true);
             cancelButton.attr('disabled', true);
@@ -901,7 +911,8 @@
                 url: url,
                 method: 'POST',
                 data: {
-                    'email': email
+                    'email': email,
+                    'name': name
                 },
                 dataType: 'json',
                 success: function(data){
@@ -918,6 +929,7 @@
 
                     badge.show();
 
+                    nameInput.attr('disabled', false);
                     emailInput.attr('disabled', false);
                     submitButton.attr('disabled', false);
                     cancelButton.attr('disabled', false);
@@ -927,6 +939,7 @@
                     badge.html('Error inviting reviewer');
                     badge.show();
 
+                    nameInput.attr('disabled', false);
                     emailInput.attr('disabled', false);
                     submitButton.attr('disabled', false);
                     cancelButton.attr('disabled', false);

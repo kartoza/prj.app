@@ -34,6 +34,8 @@ services:
       - PASS=${DATABASE_PASSWORD}
       - ALLOW_IP_RANGE=0.0.0.0/0
     restart: unless-stopped
+    ports:
+      - "7543:5432"
 
   uwsgi: &uwsgi-common
     image: kartoza/projecta-uwsgi

@@ -146,6 +146,17 @@ class TestCertificationChecklist(TestCase):
         self.assertEqual(checklist_second.order, 1)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_create_checklist_view(self):
+        self.client.login(username='super', password='password')
+        response = self.client.get(
+            reverse('certificate-checklist-create', kwargs={
+                'project_slug': self.project.slug,
+            }).replace('en-us', 'en'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.context_data['project'], self.project)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_error_create_checklist(self):
         self.client.login(username='test', password='password')
         post_data = {

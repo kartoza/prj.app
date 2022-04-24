@@ -57,6 +57,10 @@
                                       rows="3"></textarea>
                         </div>
                     {% endif %}
+
+                    {% if checklist.help_text %}
+                        <div class="help-block">{{ checklist.help_text }}</div>
+                    {% endif %}
                 {% endfor %}
             </div>
             {% for form in inlines %}

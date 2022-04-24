@@ -1,7 +1,7 @@
 {% extends "project_base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
-
+{% block title %}New question{% endblock title %}
 {% block page_title %}
     <h1>Add Checklist</h1>
 {% endblock page_title %}
@@ -9,7 +9,7 @@
 {% block content %}
     <section id="forms">
        <div class='container'>
-            <h3>New Checklist for {{ project.name }}</h3>
+            <h3>New Question for {{ project.name }}</h3>
             <hr/>
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}

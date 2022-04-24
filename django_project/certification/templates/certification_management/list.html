@@ -1,5 +1,6 @@
 {% extends "project_base.html" %}
 {% load i18n %}
+{% block title %}Certification Management{% endblock %}
 {% block js_head %}
     <script>
         $(function () {
@@ -106,6 +107,11 @@
             margin-right: 10px;
             margin-top: -10px;
         }
+
+        .help-text {
+            display: inherit;
+            font-size: 10px;
+        }
     </style>
 
     <div class="page-header">
@@ -159,8 +165,10 @@
             <p>Certification Checklist</p>
             <div class="badge badge-success badge-updated">Updated</div>
             <div class="section-header-buttons">
-                <a href="{% url "certificate-checklist-create" project_slug=project_slug %}" class="btn btn-default"
-                   style="display:flex; width: fit-content"><span class="ui-icon ui-icon-plus"></span> Add new checklist</a>
+                <a class="btn btn-default btn-mini tooltip-toggle" href="{% url "certificate-checklist-create" project_slug=project_slug %}"
+                   data-title="Add new question" data-original-title="" title="">
+                            <span class="glyphicon glyphicon-asterisk"></span>
+                </a>
             </div>
         </div>
 
@@ -172,7 +180,10 @@
                     {% if checklist_row.approved and checklist_row.target == 'reviewer' %}
                         <div class="row" id="checklist-{{ checklist_row.id }}">
                             <div class="col-lg-1"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>
-                            <div class="col-lg-4">{{ checklist_row.question }}</div>
+                            <div class="col-lg-4">
+                                {{ checklist_row.question }}
+                                <span class="small help-text">{% if checklist_row.help_text %}{{ checklist_row.help_text }}{% endif %}</span>
+                            </div>
                             <div class="col-lg-4">{% if checklist_row.active %}
                                 <div class="btn btn-warning" onclick="archive({{ checklist_row.id }}, this)">Archive
                                 </div>{% else %}
@@ -189,7 +200,9 @@
                     {% if checklist_row.approved and checklist_row.target == 'organization_owner' %}
                         <div class="row" id="checklist-{{ checklist_row.id }}">
                             <div class="col-lg-1"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>
-                            <div class="col-lg-4">{{ checklist_row.question }}</div>
+                            <div class="col-lg-4">{{ checklist_row.question }}
+                                <span class="small help-text">{% if checklist_row.help_text %}{{ checklist_row.help_text }}{% endif %}</span>
+                            </div>
                             <div class="col-lg-4">{% if checklist_row.active %}
                                 <div class="btn btn-warning" onclick="archive({{ checklist_row.id }}, this)">Archive
                                 </div>{% else %}
