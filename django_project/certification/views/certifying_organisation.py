@@ -364,9 +364,10 @@ class CertifyingOrganisationDetailView(
 
         context['submitted_checklist'] = OrganisationChecklist.objects.filter(
             organisation=certifying_organisation,
-            checklist__in=checklist_questions
         )
+
         context['checked_checklist'] = context['submitted_checklist'].filter(
+            checklist__in=checklist_questions,
             checked=True
         ).count()
 

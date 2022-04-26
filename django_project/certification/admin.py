@@ -183,6 +183,7 @@ class OrganisationChecklistAdmin(admin.ModelAdmin):
     list_display = ('organisation', 'checklist_question',
                     'checked', 'checklist_target')
     raw_id_fields = ('organisation', 'submitter', )
+    list_filter = ('checklist_target', )
 
 
 class ExternalReviewerAdmin(admin.ModelAdmin):
