@@ -6,7 +6,7 @@ django-crispy-forms==1.8.1
 django-braces==1.15.0
 django-model-utils==4.2.0
 django-pipeline==2.0.8
-django-pure-pagination==0.3.0
+git+https://github.com/dimasciput/django-pure-pagination.git
 django-reversion==5.0.0
 markdown==3.1.1
 
