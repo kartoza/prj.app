@@ -1,0 +1,4 @@
+{% autoescape off %}
+{% load i18n %}
+{% blocktrans %}{{ notice }}{% endblocktrans %} for {{ sustaining_member.name }}
+{% endautoescape %}
