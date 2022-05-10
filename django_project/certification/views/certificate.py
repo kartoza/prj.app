@@ -1497,7 +1497,7 @@ class CreateCheckoutSessionView(LoginRequiredMixin, TemplateView):
                 line_items=[
                     {
                         "price_data": {
-                            "currency": "usd",
+                            "currency": "eur",
                             "unit_amount": unit_amount,
                             "product_data": {
                                 "name": "Top up credits",
