@@ -638,7 +638,7 @@ def email_all_attendees(request, **kwargs):
                 '{course_slug}/print/{pk}/\n\n'
                 'Sincerely,\n{convener_firstname} {convener_lastname}'
                 ''.format(**data),
-                course.course_convener.user.email,
+                settings.DEFAULT_FROM_EMAIL,
                 [attendee.email],
                 fail_silently=False,
             )
