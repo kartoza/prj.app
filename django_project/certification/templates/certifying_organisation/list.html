@@ -86,56 +86,7 @@
         {% endif %}
     {% endifequal %}
 
-    {% for certifyingorganisation in certifyingorganisations %}
-        <li class="row order" style="list-style-type: none; margin-top:10px; margin-left: 10px; margin-right: 1px" id="{{ certifyingorganisation.id }}-{{ certifyingorganisation.name }}">
-            <div class="col-lg-8">
-                <a class="pull-left" style="font-size: larger"
-                   href="{% url 'certifyingorganisation-detail' project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}">
-                {{ certifyingorganisation.name }}
-                </a>
-            </div>
-
-        {# Only staff can add/edit organisations #}
-        {% if user.is_staff or user in certifyingorganisation.organisation_owners.all or user == certifyingorganisation.project.owner or user in certifyingorganisation.project.certification_managers.all %}
-            <div class="col-lg-4" style="padding: 0">
-                <div class="btn-group pull-right tooltip-toggle">
-                    {%  if not certifyingorganisation.approved %}
-                        <a class="btn btn-success btn-mini"
-                           href='{% url "certifyingorganisation-approve" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                            data-title="Approve {{ certifyingorganisation.name }}">
-                            <span class="glyphicon glyphicon-thumbs-up"></span>
-                        </a>
-                    {% endif %}
-                    <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
-                       href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                        data-title="Delete {{ certifyingorganisation.name }}">
-                        <span class="glyphicon glyphicon-minus"></span>
-                    </a>
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                       href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                        data-title="Update {{ certifyingorganisation.name }}">
-                        <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
-                    {% if certifyingorganisation.pk in certificate_lists %}
-                        <a class="btn btn-default btn-mini tooltip-toggle"
-                           href='{% url "print-certificate-organisation" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
-                            data-title="Print Certificate for {{ certifyingorganisation.name }}">
-                            <span class="glyphicon glyphicon-print"></span>
-                        </a>
-                    {% else %}
-                        <a class="btn btn-default btn-mini tooltip-toggle"
-                           href='{% url "issue-certificate-organisation" project_slug=certifyingorganisation.project.slug organisation_slug=certifyingorganisation.slug %}'
-                            data-title="Issue Cert ificate for {{ certifyingorganisation.name }}">
-                            <span class="glyphicon glyphicon-check"></span>
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-        {% endif %}
-        </li>
-    {%  endfor %}
-
-    <hr />
+    {% include 'certifying_organisation/includes/certifying-organisation-datatable.html' with approved=True %}
 
     <script>
         $('.btn-delete').hover(

@@ -101,10 +101,10 @@ class TestCertifyingOrganisationView(TestCase):
             status=pending_status
         )
         response = client.get(
-            reverse('pending-certifyingorganisation-list-json',
+            reverse('certifyingorganisation-list-json',
                     kwargs={
                         'project_slug': self.project.slug
-                    }) + '?ready=false')
+                    }) + '?ready=False&approved=False')
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
         self.assertEqual(
@@ -124,10 +124,10 @@ class TestCertifyingOrganisationView(TestCase):
             json_response['data'][0][0]
         )
         response = client.get(
-            reverse('pending-certifyingorganisation-list-json',
+            reverse('certifyingorganisation-list-json',
                     kwargs={
                         'project_slug': self.project.slug
-                    }) + '?ready=true')
+                    }) + '?ready=True')
         json_response = response.json()
         self.assertEqual(
             len(json_response['data']),
@@ -135,6 +135,43 @@ class TestCertifyingOrganisationView(TestCase):
         )
         self.assertIn(
             self.pending_certifying_organisation.name,
+            json_response['data'][0][0]
+        )
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_list_approved_json(self):
+        client = Client()
+        client.login(username='anita', password='password')
+        approved_certifying_organisation = CertifyingOrganisationF.create(
+            name='test organisation pending',
+            project=self.project,
+            approved=True
+        )
+        response = client.get(
+            reverse('certifyingorganisation-list-json',
+                    kwargs={
+                        'project_slug': self.project.slug
+                    }) + '?approved=True')
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(
+            len(json_response['data']),
+            2
+        )
+        self.assertEqual(
+            json_response['data'][1][1],
+            str(approved_certifying_organisation.creation_date)
+        )
+        self.assertEqual(
+            json_response['data'][1][2],
+            str(approved_certifying_organisation.update_date)
+        )
+        self.assertIn(
+            approved_certifying_organisation.name,
+            json_response['data'][1][0]
+        )
+        self.assertIn(
+            self.certifying_organisation.name,
             json_response['data'][0][0]
         )
 
@@ -264,7 +301,7 @@ class TestCertifyingOrganisationView(TestCase):
         self.assertEqual(
             len(response.context_data['available_checklist']), 1)
         self.assertEqual(
-            len(response.context_data['submitted_checklist']), 1)
+            len(response.context_data['submitted_checklist']), 2)
         self.assertEqual(
             len(response.context_data['history']), 1)
         self.assertEqual(

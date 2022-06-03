@@ -1,4 +1,6 @@
 # coding=utf-8
+import ast
+
 from django.db.models.functions import Lower
 from rest_framework.views import APIView
 
@@ -795,7 +797,7 @@ class CertifyingOrganisationUpdateView(
                 'this name is already exists!')
 
 
-class PendingCertifyingOrganisationJson(BaseDatatableView):
+class CertifyingOrganisationJson(BaseDatatableView):
     model = CertifyingOrganisation
     columns = ['name', 'creation_date', 'update_date',
                'org_name', 'can_approve', 'project_slug',
@@ -805,8 +807,7 @@ class PendingCertifyingOrganisationJson(BaseDatatableView):
     max_display_length = 100
 
     def get_initial_queryset(self):
-        return CertifyingOrganisation.objects.filter(
-            approved=False, rejected=False)
+        return CertifyingOrganisation.objects.all()
 
     def render_column(self, row, column):
         # We want to render user as a custom column
@@ -839,17 +840,27 @@ class PendingCertifyingOrganisationJson(BaseDatatableView):
                 self.request.user in row.project.certification_managers.all()
             )
         else:
-            return super(PendingCertifyingOrganisationJson, self
+            return super(CertifyingOrganisationJson, self
                          ).render_column(row, column)
 
     def filter_queryset(self, qs):
         search = self.request.GET.get('search[value]', None)
-        ready = self.request.GET.get('ready', 'false') == 'true'
+        ready = ast.literal_eval(
+            self.request.GET.get('ready', 'False'))
+        approved = ast.literal_eval(
+            self.request.GET.get('approved', 'False'))
+        rejected = ast.literal_eval(
+            self.request.GET.get('rejected', 'False'))
 
-        if not ready:
-            qs = qs.filter(status__name__icontains='pending')
+        qs = qs.filter(rejected=rejected, approved=approved)
+
+        if approved:
+            qs = qs.filter(enabled=True)
         else:
-            qs = qs.exclude(status__name__icontains='pending')
+            if not ready:
+                qs = qs.filter(status__name__icontains='pending')
+            else:
+                qs = qs.exclude(status__name__icontains='pending')
 
         if search:
             qs = qs.filter(name__istartswith=search)
