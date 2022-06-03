@@ -1,0 +1,53 @@
+<link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+
+<table id="dataTable" class="display" style="width:100%">
+    <thead>
+    <tr>
+        <th>Organization</th>
+        <th>Creation Date</th>
+        <th>Update Date</th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <th>Organization</th>
+        <th>Creation Date</th>
+        <th>Update Date</th>
+    </tr>
+    </tfoot>
+</table>
+
+
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.11.5/dataRender/datetime.js"></script>
+<script>
+    const FROM_PATTERN = 'YYYY-MM-DD HH:mm:ss.SSSSZ';
+    const TO_PATTERN = 'DD/MM/YYYY';
+    $(document).ready(function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const readyString = urlParams.get('ready')
+        let ready = ''
+        if (readyString) {
+            ready = urlParams.get('ready').toLowerCase() === 'true';
+        }
+        ready = ready ? 'True' : 'False'
+        $('#dataTable').dataTable({
+            "processing": true,
+            "serverSide": true,
+            "length": 100,
+            "pageLength": 100,
+            "order": [
+                [0, "asc"]
+            ],
+            "ajax": "{% url "certifyingorganisation-list-json" project_slug=the_project.slug %}?approved={{ approved }}&ready=" + ready,
+            "columnDefs": [
+                {"bSortable": false, "aTargets": [1, 2]},
+                {
+                    render: $.fn.dataTable.render.moment(FROM_PATTERN, TO_PATTERN),
+                    targets: [1, 2]
+                },
+            ]
+        });
+    })
+</script>
