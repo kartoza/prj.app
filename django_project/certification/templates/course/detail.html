@@ -159,6 +159,11 @@
            href='{% url 'courseattendee-create' project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
             data-title="Add Course Attendees">
             {% show_button_icon "add" %}</a>
+
+        <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus btn-download-table-csv"
+           href='#'
+           data-title="Download table as CSV">
+            <span class="glyphicon glyphicon-th-list"></span></a>
          <a id='upload-attendee' class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
            href='{% url "upload-attendee" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug slug=course.slug %}'
             data-title="Import Attendees from CSV file.">
@@ -191,10 +196,11 @@
 
     {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner or user in course.certifying_organisation.project.certification_managers.all %}
         <div style="margin: 0 25px">
-    <table>
+    <table class="course-attendees-table">
         <tr>
             <th style="width: 50%">Name</th>
             <th style="text-align: center">Certificate Issued?</th>
+            <th style="text-align: center">Certificate Number</th>
             {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner or user in course.certifying_organisation.project.certification_managers.all %}
             <th style="text-align: right">Actions</th>
             {% endif %}
@@ -202,13 +208,24 @@
 
         {% for attendee in attendees %}
             <tr><td>{{ attendee.attendee }}</td>
+                {% with certificate=certificates|get_item:attendee.attendee.pk %}
                 <td style="text-align: center">
-                    {% if attendee.attendee.pk in certificates %}
+                    {% if certificate %}
                         <span class="glyphicon glyphicon-ok tooltip-toggle" data-title="Certificate Issued"></span>
+                        <span style="display: none;">Yes</span>
                     {% else %}
                         <span class="glyphicon glyphicon-remove tooltip-toggle" data-title="No Certificate Issued"></span>
+                        <span style="display: none;">No</span>
                     {% endif %}
                 </td>
+                <td style="text-align: center">
+                    {% if attendee.attendee.pk in certificates %}
+                        {{ certificate }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                {% endwith %}
                 {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner or user in course.certifying_organisation.project.certification_managers.all %}
                 <td  style="text-align: center">
                     <div class="btn-group pull-right">
@@ -297,6 +314,24 @@
     </div>
 
     <script>
+        function convertArrayToCSV(array) {
+            let csvStr = '';
+            let headers = [];
+            for (let i = 0; i < array.length; i++) {
+                let line = '';
+                for (let index in array[i]) {
+                    if (!headers.includes(index)) {
+                        headers.push(index)
+                    }
+                    line += line !== '' ? ',' : '';
+                    line += array[i][index]
+                }
+                csvStr += line + '\r\n';
+            }
+            csvStr = headers.join(',') + '\r\n' + csvStr
+            return csvStr
+        }
+
         $(document).click(function () {
             $('.messages').fadeOut('fast')
         });
@@ -341,6 +376,30 @@
                 $(this).removeClass('btn-success').addClass('btn-default')
             }
         );
+        $('.btn-download-table-csv').click(function (e) {
+            const table = document.querySelector('.course-attendees-table');
+            const arr = [...table.rows].map(r => [...r.querySelectorAll('td, th')].map(td => td.textContent.replace(/\n/g, "").trim()));
+            let csv = '';
+            for (let array of arr) {
+                array.pop();
+                csv += array.join(',');
+                csv += '\r\n';
+            }
+            let uri = 'data:text/csv;charset=utf-8,' + decodeURIComponent(csv);
+            let link = document.createElement('a');
+            link.href = uri;
+            link.download = 'Course attendees.csv';
+
+            const clickHandler = () => {
+                setTimeout(() => {
+                    URL.revokeObjectURL(uri);
+                    this.removeEventListener('click', clickHandler);
+                }, 150);
+            };
+            link.addEventListener('click', clickHandler, false);
+            link.click();
+            return link;
+        })
     </script>
 
 {% endblock %}
