@@ -472,7 +472,8 @@ class CourseDetailView(CourseMixin, DetailView):
             if certificate:
                 course_attendee.editable = (
                     certificate.issue_date and
-                    certificate.issue_date + timedelta(days=7) > datetime.today().date()
+                    certificate.issue_date +
+                    timedelta(days=7) > datetime.today().date()
                 )
             else:
                 course_attendee.editable = True

@@ -311,6 +311,10 @@ class AttendeeUpdateView(LoginRequiredMixin, UpdateView):
             attendee=self.get_object()
         ).first()
         if certificate:
-            if not certificate.issue_date or certificate.issue_date + timedelta(days=7) <= datetime.today().date():
+            if (
+                not certificate.issue_date or
+                certificate.issue_date +
+                    timedelta(days=7) <= datetime.today().date()
+            ):
                 return HttpResponseForbidden('Course is not editable.')
         return super(AttendeeUpdateView, self).get(request, *args, **kwargs)
