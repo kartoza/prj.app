@@ -1,4 +1,5 @@
 # coding=utf-8
+import datetime
 import logging
 from bs4 import BeautifulSoup as Soup
 
@@ -12,7 +13,7 @@ from certification.tests.model_factories import (
     CertificateTypeF,
     ProjectCertificateTypeF,
     CourseF,
-    CourseConvenerF
+    CourseConvenerF, AttendeeF, CertificateF, CourseAttendeeF
 )
 
 
@@ -86,12 +87,41 @@ class TestCourseView(TestCase):
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_detail_view(self):
         client = Client()
+        attendee = AttendeeF.create()
+        CourseAttendeeF.create(
+            attendee=attendee,
+            course=self.course
+        )
+        CertificateF.create(
+            attendee=attendee,
+            course=self.course,
+            issue_date=datetime.datetime.now()
+        )
+
+        old_attendee = AttendeeF.create()
+        CourseAttendeeF.create(
+            attendee=old_attendee,
+            course=self.course
+        )
+        cert = CertificateF.create(
+            attendee=old_attendee,
+            course=self.course
+        )
+        cert.issue_date = datetime.datetime.now() - datetime.timedelta(days=7)
+        cert.save()
+
         response = client.get(reverse('course-detail', kwargs={
             'project_slug': self.project.slug,
             'organisation_slug': self.certifying_organisation.slug,
             'slug': self.course.slug
         }))
         self.assertEqual(response.status_code, 200)
+        course_attendees = response.context_data['attendees']
+        for course_attendee in course_attendees:
+            if course_attendee.attendee_id == attendee.id:
+                self.assertTrue(course_attendee.editable)
+            else:
+                self.assertFalse(course_attendee.editable)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_detail_with_duplicates(self):

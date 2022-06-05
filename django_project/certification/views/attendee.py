@@ -1,6 +1,8 @@
 # coding=utf-8
 import io
 import csv
+from datetime import timedelta, datetime
+
 from django.db import transaction
 from django.http import HttpResponseForbidden
 from django.urls import reverse
@@ -8,7 +10,7 @@ from django.views.generic import (
     CreateView, FormView, UpdateView)
 from braces.views import LoginRequiredMixin, FormMessagesMixin
 from certification.models import (
-    Attendee, CertifyingOrganisation, CourseAttendee, Course
+    Attendee, CertifyingOrganisation, CourseAttendee, Course, Certificate
 )
 from certification.forms import (
     AttendeeForm, CsvAttendeeForm, UpdateAttendeeForm)
@@ -304,6 +306,11 @@ class AttendeeUpdateView(LoginRequiredMixin, UpdateView):
     def get(self, request, *args, **kwargs):
         self.course_slug = self.kwargs.get('course_slug', None)
         course = Course.objects.get(slug=self.course_slug)
-        if not course.editable:
-            return HttpResponseForbidden('Course is not editable.')
+        certificate = Certificate.objects.filter(
+            course=course,
+            attendee=self.get_object()
+        ).first()
+        if certificate:
+            if not certificate.issue_date or certificate.issue_date + timedelta(days=7) <= datetime.today().date():
+                return HttpResponseForbidden('Course is not editable.')
         return super(AttendeeUpdateView, self).get(request, *args, **kwargs)

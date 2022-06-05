@@ -25,6 +25,7 @@ class CertificateAdmin(admin.ModelAdmin):
 
     list_display = ('certificateID', 'course')
     search_fields = ('certificateID', 'course__name',)
+    readonly_fields = ('issue_date',)
 
     def queryset(self, request):
         """Ensure we use the correct manager.
