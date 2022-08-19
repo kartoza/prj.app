@@ -1,4 +1,6 @@
 # coding=utf-8
+from datetime import timedelta, datetime
+
 from django.urls import reverse
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
@@ -457,8 +459,26 @@ class CourseDetailView(CourseMixin, DetailView):
         self.course = Course.objects.get(slug=self.slug)
         context = super(
             CourseDetailView, self).get_context_data(**kwargs)
-        context['attendees'] = \
+
+        attendees = (
             CourseAttendee.objects.filter(course=self.course)
+        )
+        for course_attendee in attendees:
+            course_attendee.editable = False
+            certificate = Certificate.objects.filter(
+                course=self.course,
+                attendee=course_attendee.attendee
+            ).first()
+            if certificate:
+                course_attendee.editable = (
+                    certificate.issue_date and
+                    certificate.issue_date +
+                    timedelta(days=7) > datetime.today().date()
+                )
+            else:
+                course_attendee.editable = True
+        context['attendees'] = attendees
+
         context['certificates'] = dict(
             Certificate.objects.filter(
                 course=self.course

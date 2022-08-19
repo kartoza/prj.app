@@ -51,6 +51,12 @@ class Certificate(models.Model):
         default=False
     )
 
+    issue_date = models.DateField(
+        auto_now_add=True,
+        blank=True,
+        null=True
+    )
+
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     attendee = models.ForeignKey(Attendee, on_delete=models.CASCADE)

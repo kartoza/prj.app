@@ -9,9 +9,61 @@ from certification.tests.model_factories import (
     CourseF,
     CourseConvenerF,
     CourseTypeF,
+    AttendeeF,
+    CertificateF
 )
 from core.model_factories import UserF
 import logging
+
+
+class TestAttendeeView(TestCase):
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def setUp(self) -> None:
+        self.client = Client()
+        self.client.post(
+            '/set_language/', data={'language': 'en'})
+        self.project = ProjectF.create()
+        self.certifying_organisation = CertifyingOrganisationF.create(
+            project=self.project)
+        self.training_center = TrainingCenterF.create(
+            certifying_organisation=self.certifying_organisation)
+        self.course_convener = CourseConvenerF.create(
+            certifying_organisation=self.certifying_organisation)
+        self.course_type = CourseTypeF.create(
+            certifying_organisation=self.certifying_organisation)
+        self.course = CourseF.create(
+            certifying_organisation=self.certifying_organisation,
+            training_center=self.training_center,
+            course_convener=self.course_convener,
+            course_type=self.course_type
+        )
+        self.user = UserF.create(**{
+            'username': 'user',
+            'password': 'password',
+            'is_staff': True
+        })
+        self.user.set_password('password')
+        self.user.save()
+        self.attendee = AttendeeF.create(
+            certifying_organisation=self.certifying_organisation)
+        self.certificate = CertificateF.create(
+            course=self.course,
+            attendee=self.attendee,
+            author=self.user)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_AttendeeUpdateView_with_login(self):
+        status = self.client.login(username='user', password='password')
+        self.assertTrue(status)
+        url = reverse('attendee-update', kwargs={
+            'project_slug': self.project.slug,
+            'organisation_slug': self.certifying_organisation.slug,
+            'course_slug': self.course.slug,
+            'pk': self.attendee.pk
+        })
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
 
 class TestCourseAttendeeView(TestCase):

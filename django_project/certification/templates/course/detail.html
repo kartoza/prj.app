@@ -229,7 +229,7 @@
                 {% if user in course.certifying_organisation.organisation_owners.all or user.is_staff or user == course.course_convener.user or user == project.owner or user in course.certifying_organisation.project.certification_managers.all %}
                 <td  style="text-align: center">
                     <div class="btn-group pull-right">
-                        {% if course.editable %}
+                        {% if attendee.editable %}
                             <a class="btn btn-default btn-xs btn-print tooltip-toggle"
                                 href='{% url "attendee-update" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug pk=attendee.attendee.pk %}'
                                 data-title="Edit Attendee">
@@ -238,7 +238,7 @@
                         {% else %}
                             <a class="btn btn-default btn-xs btn-print tooltip-toggle" disabled
                                 href='#'
-                                data-title="Edit attendee is only available 7 days after the completion of the course.">
+                                data-title="Edit attendee is only available 7 days after the certificate is issued.">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </a>
                         {% endif %}
