@@ -62,8 +62,10 @@
                 <div class="panel panel-default custom-panel screenshot-panel left-panel">
                  <div class="slider-display-container">
                 {% for screenshot in screenshots %}
+                    {% if screenshot.screenshot %}
                     <img class="content-slides slider-animate-opacity"
                                  src="{{ screenshot.screenshot.url }}" height="400px" width="auto" style="margin: 0 auto">
+                    {% endif %}
                 {% endfor %}
                      <button class="slider-button slider-display-left" onclick="plusDivs(-1)">&#10094;</button>
                      <button class="slider-button slider-display-right" onclick="plusDivs(1)">&#10095;</button>
