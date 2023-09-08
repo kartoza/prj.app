@@ -12,7 +12,11 @@ RUN apt-get update -y && \
     apt-get -y install python3-gdal python3-geoip sudo curl rpl && \
     apt-get -y --force-yes install yui-compressor gettext && \
     apt-get -y --purge autoremove make libc-dev musl-dev g++ && \
-    rm -rf /var/lib/apt/lists/* && \
+    apt-get install -y nodejs npm && \
+    npm install -g yuglify && \
+    apt-get remove -y npm && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* /root/.npm /root/.cache && \
     rm -rf ~/.cache/pip
 RUN wget https://github.com/jgm/pandoc/releases/download/1.17.1/pandoc-1.17.1-2-amd64.deb
 RUN dpkg -i pandoc-1.17.1-2-amd64.deb && rm pandoc-1.17.1-2-amd64.deb
