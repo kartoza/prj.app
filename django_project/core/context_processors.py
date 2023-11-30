@@ -21,6 +21,27 @@ def add_intercom_app_id(request):
     else:
         return {}
 
+# noinspection PyPep8Naming
+def add_matomo_variables(request):
+    """Add our matomo vars to the context
+
+    :param request: Http Request obj
+
+    """
+    try:
+        from core.settings.private import MATOMO_SITE_ID
+        from core.settings.private import MATOMO_URL
+    except ImportError:
+        MATOMO_SITE_ID = None
+        MATOMO_URL = None
+
+    if MATOMO_SITE_ID and MATOMO_URL:
+        return {'matomo_site_id': MATOMO_SITE_ID, 'matomo_url': MATOMO_URL}
+    else:
+        return {}
+
+
+
 
 def stripe_public_key(request):
     """Return stripe public key.

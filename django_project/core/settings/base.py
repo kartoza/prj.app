@@ -106,6 +106,7 @@ TEMPLATES = [
                 # Already defined Django-related contexts
                 'django.contrib.auth.context_processors.auth',
                 'core.context_processors.add_intercom_app_id',
+                'core.context_processors.add_matomo_variables',
                 'core.context_processors.stripe_public_key',
                 'core.context_processors.sustaining_member_context',
                 'django.template.context_processors.i18n',
