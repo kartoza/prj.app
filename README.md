@@ -87,6 +87,13 @@ If you wish to make use of [intercom.io](https://www.intercom.io), include a
 `private.py` file in `core.settings` with your `INTERCOM_APP_ID` as a string.
 The necessary code snippet is already included in `project_base.html`.
 
+**matomo.org**
+
+If you wish to make use of [matomo.org](https://www.matomo.org), include a
+`private.py` file in `core.settings` with your `MATOMO_SITE_ID` and `MATOMO_URL` as a string.
+The necessary code snippet is already included in `project_base.html`.
+
+
 **google authentication**
 
 In social auth to use the google authentication you need to go to:
