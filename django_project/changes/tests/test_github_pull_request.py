@@ -181,6 +181,22 @@ class TestGithubPullRequest(unittest.TestCase):
         self.assertEqual('Lyon', funded_by)
         self.assertEqual('', url)
 
+    def test_funded_by_markdown_url(self):
+        """ Test parsing the PR content with a markdown URL. """
+        # With URL written as markdown
+        body = (
+            'This is a new feature :\n\n'
+            '* Funded by [myself](https://my.self.inc)\n'
+            '* IT\n'
+            '* WILL\n'
+            '* ROCK'
+        )
+        content, funded_by, url = parse_funded_by(body)
+        self.assertEqual(
+            'This is a new feature :\n\n* IT\n* WILL\n* ROCK', content)
+        self.assertEqual('myself', funded_by)
+        self.assertEqual('https://my.self.inc', url)
+
     @override_settings(VALID_DOMAIN=['testserver', ])
     @mock.patch('requests.get', side_effect=mocked_request_get_github)
     def test_create_entry_from_github_pr_timeout(self, mock_request):
