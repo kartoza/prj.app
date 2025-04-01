@@ -434,3 +434,15 @@ class TestCertifyingOrganisationView(TestCase):
         self.assertEquals(self.certifying_organisation.status.name, 'Approved')
         self.assertEquals(
             self.pending_certifying_organisation.status.name, 'Pending')
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_auto_reject_command(self):
+        out = StringIO()
+        call_command('reject_pending_organisations', '--days=0', stdout=out)
+        self.certifying_organisation.refresh_from_db()
+        self.pending_certifying_organisation.refresh_from_db()
+        self.assertEquals(
+            self.pending_certifying_organisation.status.name, 'Rejected'
+        )
+        self.assertTrue(
+            self.pending_certifying_organisation.rejected)
