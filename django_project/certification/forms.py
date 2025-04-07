@@ -367,6 +367,18 @@ class TrainingCenterForm(geoforms.ModelForm):
 class CourseForm(forms.ModelForm):
 
     # noinspection PyClassicStyleClass.
+    # Override the `trained_competence` field to add a character limit
+    trained_competence = forms.CharField(
+        max_length=120,
+        help_text=(
+            'Trained competence e.g. Plugin development '
+            '(max 120 characters).'
+        ),
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'maxlength': '120'}
+        ),
+    )
+
     class Meta:
         model = Course
         fields = (
