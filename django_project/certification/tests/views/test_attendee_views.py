@@ -10,7 +10,8 @@ from certification.tests.model_factories import (
     CourseConvenerF,
     CourseTypeF,
     AttendeeF,
-    CertificateF
+    CertificateF,
+    CertificateTypeF
 )
 from core.model_factories import UserF
 import logging
@@ -38,6 +39,8 @@ class TestAttendeeView(TestCase):
             course_convener=self.course_convener,
             course_type=self.course_type
         )
+        self.certificate_type = CertificateTypeF.create()
+
         self.user = UserF.create(**{
             'username': 'user',
             'password': 'password',
@@ -50,7 +53,9 @@ class TestAttendeeView(TestCase):
         self.certificate = CertificateF.create(
             course=self.course,
             attendee=self.attendee,
-            author=self.user)
+            author=self.user,
+            certificate_type=self.certificate_type
+        )
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_AttendeeUpdateView_with_login(self):

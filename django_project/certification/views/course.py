@@ -484,6 +484,11 @@ class CourseDetailView(CourseMixin, DetailView):
                 course=self.course
             ).values_list('attendee', 'certificateID')
         )
+        context['certificates_types'] = dict(
+            Certificate.objects.filter(
+                course=self.course
+            ).values_list('attendee', 'certificate_type__name')
+        )
         context['paid_certificates'] = \
             Certificate.objects.filter(
                 course=self.course, is_paid=True).values_list(

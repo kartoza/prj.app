@@ -562,6 +562,7 @@ class CertificateForm(forms.ModelForm):
         fields = (
             'course',
             'attendee',
+            'certificate_type',
             'is_paid',
         )
 
@@ -569,6 +570,7 @@ class CertificateForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         self.course = kwargs.pop('course')
         self.attendee = kwargs.pop('attendee')
+        self.certificate_type = kwargs.pop('certificate_type')
         organisation_credits = \
             self.course.certifying_organisation.organisation_credits
         cost = self.course.certifying_organisation.project.certificate_credit
@@ -580,6 +582,8 @@ class CertificateForm(forms.ModelForm):
         self.fields['course'].widget = forms.HiddenInput()
         self.fields['attendee'].initial = self.attendee
         self.fields['attendee'].widget = forms.HiddenInput()
+        self.fields['certificate_type'].initial = self.certificate_type
+        self.fields['certificate_type'].widget = forms.HiddenInput()
         if remaining_credits >= 0:
             self.fields['is_paid'].initial = True
         else:
@@ -605,6 +609,7 @@ class CertificateForm(forms.ModelForm):
         instance.author = self.user
         instance.course = self.course
         instance.attendee = self.attendee
+        instance.certificate_type = self.certificate_type
         instance.save()
         return instance
 

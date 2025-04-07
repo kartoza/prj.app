@@ -14,6 +14,7 @@ from certification.tests.model_factories import (
     CertifyingOrganisationF,
     CourseConvenerF,
     CertificateF,
+    CertificateTypeF,
     TrainingCenterF,
     CourseTypeF,
     AttendeeF
@@ -73,10 +74,12 @@ class TestCertificateView(TestCase):
             training_center=self.training_center
         )
         self.attendee = AttendeeF.create()
+        self.certificate_type = CertificateTypeF.create()
         self.certificate = CertificateF.create(
             course=self.course,
             attendee=self.attendee,
-            author=self.user
+            author=self.user,
+            certificate_type=self.certificate_type
         )
 
     @override_settings(VALID_DOMAIN=['testserver', ])

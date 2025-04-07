@@ -68,6 +68,7 @@ from .views import (
     generate_all_certificate,
     preview_certificate,
     CertificateRevokeView,
+    GetCertificateTypeList,
 
     # Certificate for certifying organisation.
     OrganisationCertificateCreateView,
@@ -263,6 +264,9 @@ urlpatterns = [
     url(regex='^(?P<project_slug>[\w-]+)/update-checklist-order/$',
         view=UpdateChecklistOrder.as_view(),
         name='update-checklist-order'),
+    url(regex='^(?P<project_slug>[\w-]+)/certificate-types-list/$',
+        view=GetCertificateTypeList.as_view(),
+        name='certificate-types-list'),
     url(regex='^(?P<project_slug>[\w-]+)/certificate-types/update/$',
         view=update_project_certificate_view,
         name='certificate-type-update'),
@@ -285,7 +289,8 @@ urlpatterns = [
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<organisation_slug>[\w-]+)/course/'
               '(?P<course_slug>[\w-]+)/courseattendee/'
-              '(?P<pk>[\w-]+)/create-certificate/$',
+              '(?P<pk>[\w-]+)/create-certificate/'
+              '(?P<certificate_type_pk>[\w-]+)/$',
         view=CertificateCreateView.as_view(),
         name='certificate-create'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'

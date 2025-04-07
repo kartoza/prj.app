@@ -25,7 +25,7 @@ web:
 	@# Dont confuse this with the dbbackup make command below
 	@# This one runs the postgis-backup cron container
 	@# We add --no-recreate so that it does not destroy & recreate the db container
-	# @docker compose up --no-recreate --no-deps -d dbbackups
+	@docker compose up --no-recreate --no-deps -d dbbackups
 
 permissions:
 	# Probably we want something more granular here....
@@ -322,6 +322,20 @@ devweb-runserver: devweb
 	@echo "Running in DEVELOPMENT mode"
 	@echo "------------------------------------------------------------------"
 	@docker compose exec devweb python manage.py runserver 0.0.0.0:8081
+
+devweb-updatemigrations:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Update migrations in DEVELOPMENT mode"
+	@echo "------------------------------------------------------------------"
+	@docker compose exec devweb python manage.py makemigrations
+
+devweb-migrate:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Migrate in DEVELOPMENT mode"
+	@echo "------------------------------------------------------------------"
+	@docker compose exec devweb python manage.py migrate
 
 test-local: devweb flake8 coverage
 

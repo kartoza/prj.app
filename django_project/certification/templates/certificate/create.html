@@ -12,8 +12,9 @@
     <div class="container">
         <h3>Are you sure you want to issue this certificate?</h3>
         <div style="border: 2px solid #f5f5f5; padding: 15px; width: 60%; font-size: 12pt">
-            <span class="col-lg-2" style="color: grey">Attendee</span><span class="col-lg-10"> {{ attendee }}</span></br>
-            <span class="col-lg-2" style="color: grey">Course</span><span class="col-lg-10"> {{ course.name }}</span></br>
+            <span class="col-lg-3" style="color: grey">Attendee</span><span class="col-lg-9"> {{ attendee }}</span></br>
+            <span class="col-lg-3" style="color: grey">Course</span><span class="col-lg-9"> {{ course.name }}</span></br>
+            <span class="col-lg-3" style="color: grey">Certificate type</span><span class="col-lg-9"> {{ certificate_type.name }}</span></br></br>
         </div>
         <h4>Your organisation credits will be deducted by {{ course.certifying_organisation.project.certificate_credit }}</h4>
     </div>

@@ -161,6 +161,7 @@ class CertificateF(factory.django.DjangoModelFactory):
     course = factory.SubFactory(CourseF)
     attendee = factory.SubFactory(AttendeeF)
     author = factory.SubFactory(UserF)
+    certificate_type = factory.SubFactory(CertificateTypeF)
 
 
 class StatusF(factory.django.DjangoModelFactory):

@@ -1,5 +1,5 @@
 [flake8]
-exclude = */docs/*,*/.tox/*,*/.venv/*,*/.pycharm_helpers/*,*/migrations/*,docs/*,fabfile.py,*/__init__.py,django_project/core/settings/*.py
+exclude = */docs/*,*/.tox/*,*/.venv/*,*/.pycharm_helpers/*,*/migrations/*,docs/*,fabfile.py,*/__init__.py,django_project/core/settings/*.py,venv/*
 max-line-length = 79
 
 # E12x continuation line indentation

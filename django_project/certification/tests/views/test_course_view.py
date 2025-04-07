@@ -13,7 +13,10 @@ from certification.tests.model_factories import (
     CertificateTypeF,
     ProjectCertificateTypeF,
     CourseF,
-    CourseConvenerF, AttendeeF, CertificateF, CourseAttendeeF
+    CourseConvenerF,
+    AttendeeF,
+    CertificateF,
+    CourseAttendeeF
 )
 
 
@@ -95,6 +98,7 @@ class TestCourseView(TestCase):
         CertificateF.create(
             attendee=attendee,
             course=self.course,
+            certificate_type=self.certificate_type,
             issue_date=datetime.datetime.now()
         )
 
@@ -105,7 +109,8 @@ class TestCourseView(TestCase):
         )
         cert = CertificateF.create(
             attendee=old_attendee,
-            course=self.course
+            course=self.course,
+            certificate_type=self.certificate_type
         )
         cert.issue_date = datetime.datetime.now() - datetime.timedelta(days=7)
         cert.save()

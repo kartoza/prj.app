@@ -100,6 +100,8 @@ class CertificateCreateView(
             CertificateCreateView, self).get_context_data(**kwargs)
         context['course'] = Course.objects.get(slug=self.course_slug)
         context['attendee'] = Attendee.objects.get(pk=self.pk)
+        context['certificate_type'] = CertificateType.objects.get(
+            pk=self.certificate_type_pk)
         return context
 
     def get_form_kwargs(self):
@@ -113,13 +115,17 @@ class CertificateCreateView(
         self.project_slug = self.kwargs.get('project_slug', None)
         self.organisation_slug = self.kwargs.get('organisation_slug', None)
         self.course_slug = self.kwargs.get('course_slug', None)
+        self.certificate_type_pk = self.kwargs.get('certificate_type_pk', None)
         self.pk = self.kwargs.get('pk', None)
         self.course = Course.objects.get(slug=self.course_slug)
         self.attendee = Attendee.objects.get(pk=self.pk)
+        self.certificate_type = CertificateType.objects.get(
+            pk=self.certificate_type_pk)
         kwargs.update({
             'user': self.request.user,
             'course': self.course,
             'attendee': self.attendee,
+            'certificate_type': self.certificate_type
         })
         return kwargs
 
@@ -464,9 +470,13 @@ def certificate_pdf_view(request, **kwargs):
         if not os.path.exists(makepath):
             os.makedirs(makepath)
 
+        certificate_type = course.certificate_type
+        if certificate.certificate_type:
+            certificate_type = certificate.certificate_type
+
         generate_pdf(
             pathname, project, course, attendee, certificate, current_site,
-            course.certificate_type.wording
+            certificate_type.wording
         )
         try:
             return FileResponse(open(pathname, 'rb'),
@@ -701,9 +711,13 @@ def regenerate_certificate(request, **kwargs):
             os.makedirs(makepath)
 
         current_site = request.META['HTTP_HOST']
+        certificate_type = course.certificate_type
+        if certificate.certificate_type:
+            certificate_type = certificate.certificate_type
+
         generate_pdf(
             pathname, project, course, attendee, certificate, current_site,
-            course.certificate_type.wording
+            certificate_type.wording
         )
         try:
             return FileResponse(open(pathname, 'rb'),
@@ -718,6 +732,7 @@ def regenerate_certificate(request, **kwargs):
             'has_pending_organisations': has_pending,
             'attendee': attendee,
             'id': certificate.certificateID,
+            'certificate_type': certificate.certificate_type,
             'course': course})
 
 
@@ -855,9 +870,13 @@ def regenerate_all_certificate(request, **kwargs):
                 os.path.join(
                     '/home/web/media',
                     'pdf/{}/{}'.format(project_folder, filename))
+            certificate_type = course.certificate_type
+            if value.certificate_type:
+                certificate_type = value.certificate_type
+
             generate_pdf(
                 pathname, project, course, key, value, current_site,
-                course.certificate_type.wording)
+                certificate_type.wording)
 
         messages.success(request, 'All certificates are updated', 'regenerate')
         return HttpResponseRedirect(url)

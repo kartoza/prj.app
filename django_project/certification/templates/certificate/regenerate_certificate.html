@@ -12,14 +12,18 @@
             <h4 style="font-size: 16pt">Are you sure you want to regenerate pdf of this certificate?</h4>
             <div class="row">
                 <div class="col-lg-8" style="border: 2px solid #f5f5f5; padding: 20px 10px 10px 10px; font-size: 12pt; margin-top: 15px">
-                    <div class="col-lg-2">
+                    <div class="col-lg-3">
                         <span>ID</span><br/>
                         <span>Attendee</span><br/>
-                        <span>Course</span></div>
-                    <div class="col-lg-10">
+                        <span>Certificate type</span><br/>
+                        <span>Course</span>
+                    </div>
+                    <div class="col-lg-9">
                         <span>{{ id }}</span><br/>
                         <span>{{ attendee.firstname }} {{ attendee.surname |default_if_none:"" }}</span><br/>
-                        <span>{{ course.certifying_organisation.project }} - {{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})</span></div>
+                        <span>{{ certificate_type.name|default:course.certificate_type.name }}</span><br/>
+                        <span>{{ course.certifying_organisation.project }} - {{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})</span>
+                    </div>
                 </div>
             </div>
             <h5>Note: If you regenerate this certificate, the current certificate will be deleted and unrecoverable.</h5>

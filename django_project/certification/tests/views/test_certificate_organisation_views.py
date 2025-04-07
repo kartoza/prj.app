@@ -10,6 +10,7 @@ from certification.tests.model_factories import (
     CertifyingOrganisationF,
     CourseConvenerF,
     CertificateF,
+    CertificateTypeF,
     TrainingCenterF,
     CourseTypeF,
     AttendeeF,
@@ -66,10 +67,12 @@ class TestCertificateOrganisationView(TestCase):
             training_center=self.training_center
         )
         self.attendee = AttendeeF.create()
+        self.certificate_type = CertificateTypeF.create()
         self.certificate = CertificateF.create(
             course=self.course,
             attendee=self.attendee,
-            author=self.user
+            author=self.user,
+            certificate_type=self.certificate_type
         )
         self.certifying_organisation_certificate = (
             CertifyingOrganisationCertificateF.create(
