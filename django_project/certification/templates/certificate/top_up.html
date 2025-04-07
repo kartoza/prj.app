@@ -39,8 +39,15 @@
                 <div class="form-group">
                     <div class="form-group">
                         <label for="creditAmount">Credits</label>
-                        <input type="number" class="form-control"
-                               id="creditAmount" placeholder="Credits" name="total-credits">
+                        <input 
+                            type="number" 
+                            class="form-control"
+                            id="creditAmount" 
+                            placeholder="Credits" 
+                            name="total-credits" 
+                            min="0" 
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                        >
                     </div>
                 </div>
                 <div class="payment-container">
