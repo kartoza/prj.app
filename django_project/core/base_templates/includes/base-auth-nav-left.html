@@ -185,8 +185,10 @@
                 <li><a href="{% url 'about' the_project.slug %}">Learn about Certification</a></li>
                 <li><a href="{% url 'certifyingorganisation-create' the_project.slug %}">{% trans 'Sign Up for Certification!' %}</a></li>
                 <li><a href="{% url 'certifyingorganisation-list' the_project.slug %}">Approved Organisations</a></li>
-                <li><a href="{% url 'pending-certifyingorganisation-list' the_project.slug %}?ready=False">Pending Organisations</a></li>
-                <li><a href="{% url 'pending-certifyingorganisation-list' the_project.slug %}?ready=True">Pending Organisations - Ready</a></li>
+                {% if user.is_staff %}
+                    <li><a href="{% url 'pending-certifyingorganisation-list' the_project.slug %}?ready=False">Pending Organisations</a></li>
+                    <li><a href="{% url 'pending-certifyingorganisation-list' the_project.slug %}?ready=True">Pending Organisations - Ready</a></li>
+                {% endif %}
                 <li><a href="{% url 'validate-certificate-organisation' the_project.slug %}">Verify certificate for Certifying Organisation</a></li>
                 <li><a href="{% url 'validate-certificate' the_project.slug %}">Verify certificate for Attendee</a></li>
                 {% if user.is_staff or user in the_project.certification_managers.all %}

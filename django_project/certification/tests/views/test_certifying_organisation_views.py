@@ -43,6 +43,14 @@ class TestCertifyingOrganisationView(TestCase):
         })
         self.user.set_password('password')
         self.user.save()
+        self.simple_user = UserF.create(**{
+            'username': 'user',
+            'password': 'password',
+            'is_staff': False
+        })
+
+        self.simple_user.set_password('password')
+        self.simple_user.save()
         self.project = ProjectF.create()
         self.certifying_organisation = CertifyingOrganisationF.create(
             project=self.project
@@ -85,6 +93,17 @@ class TestCertifyingOrganisationView(TestCase):
                     }) + '?ready=false')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['pending'], True)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_list_pending_view_non_staff(self):
+        client = Client()
+        client.login(username='user', password='password')
+        response = client.get(
+            reverse('pending-certifyingorganisation-list',
+                    kwargs={
+                        'project_slug': self.project.slug
+                    }) + '?ready=false')
+        self.assertEqual(response.status_code, 403)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
     def test_list_pending_json(self):
