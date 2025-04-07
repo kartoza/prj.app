@@ -1,0 +1,63 @@
+{% extends "project_base.html" %}
+{% load thumbnail %}
+{% load custom_markup %}
+{% block title %}Archived Certifying Organisations - {{ block.super }}{% endblock %}
+
+{% block page_title %}
+    <h1>Archived Certifying Organisations</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <style>
+        .success {
+            text-align: center;
+            font-family: inherit;
+            color: inherit;
+            background: #adffd2;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #96ffc5;
+        }
+        .badge-warning {
+            background: #ffc107;
+            color: black;
+        }
+    </style>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            {% if 'organisation_submitted' in message.tags %}
+                <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="page-header">
+        <h1 class="text-muted">
+            Archived Certifying Organisations
+            {% if user.is_authenticated %}
+                <div class="pull-right btn-group">
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "certifyingorganisation-create" project_slug %}'
+                       data-title="Create New Certifying Organisation">
+                        {% show_button_icon "add" %}</a>
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                       href='{% url "certifyingorganisation-list" project_slug %}'
+                       data-title="Back">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                </div>
+            {% endif %}
+        </h1>
+    </div>
+
+    {% include 'certifying_organisation/includes/certifying-organisation-datatable.html' with is_archived=True %}
+
+    <script>
+        $(document).click(function () {
+            $('.messages').fadeOut('fast');
+        });
+    </script>
+{% endblock %}

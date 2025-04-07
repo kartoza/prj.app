@@ -50,7 +50,8 @@ class ApprovedCertifyingOrganisationManager(models.Manager):
 
         return super(
             ApprovedCertifyingOrganisationManager, self).get_queryset().filter(
-                approved=True)
+                approved=True,
+                is_archived=False)
 
 
 class UnapprovedCertifyingOrganisationManager(models.Manager):
@@ -64,7 +65,25 @@ class UnapprovedCertifyingOrganisationManager(models.Manager):
 
         return super(
             UnapprovedCertifyingOrganisationManager, self).get_queryset(
-        ).filter(approved=False, rejected=False)
+        ).filter(
+            approved=False,
+            rejected=False,
+            is_archived=False
+        )
+
+
+class ArchivedCertifyingOrganisationManager(models.Manager):
+    """Custom training centre manager.
+
+    Shows only archived certifying organisation.
+    """
+
+    def get_queryset(self):
+        """Query set generator. """
+
+        return super(
+            ArchivedCertifyingOrganisationManager, self).get_queryset(
+        ).filter(is_archived=True)
 
 
 def validate_email_address(value):
@@ -151,6 +170,11 @@ class CertifyingOrganisation(models.Model):
         default=False
     )
 
+    is_archived = models.BooleanField(
+        help_text=_('Is this organisation archived?'),
+        default=False
+    )
+
     status = models.ForeignKey(
         Status,
         null=True,
@@ -182,6 +206,7 @@ class CertifyingOrganisation(models.Model):
     objects = models.Manager()
     approved_objects = ApprovedCertifyingOrganisationManager()
     unapproved_objects = UnapprovedCertifyingOrganisationManager()
+    archived_objects = ArchivedCertifyingOrganisationManager()
 
     # noinspection PyClassicStyleClass.
     class Meta:

@@ -14,6 +14,8 @@ from .views import (
     PendingCertifyingOrganisationListView,
     CertifyingOrganisationJson,
     ApproveCertifyingOrganisationView,
+    ArchivedCertifyingOrganisationListView,
+    CertifyingOrganisationArchivingView,
     reject_certifying_organisation,
 
     # Course Type.
@@ -108,6 +110,10 @@ urlpatterns = [
         name='about'),
 
     # Certifying Organisation management
+    url(regex='^(?P<project_slug>[\w-]+)/archived-certifyingorganisation/'
+              'list/$',
+        view=ArchivedCertifyingOrganisationListView.as_view(),
+        name='archived-certifyingorganisation-list'),
     url(regex='^(?P<project_slug>[\w-]+)/pending-certifyingorganisation/'
               'list/$',
         view=PendingCertifyingOrganisationListView.as_view(),
@@ -135,6 +141,11 @@ urlpatterns = [
               '(?P<slug>[\w-]+)/$',
         view=CertifyingOrganisationDetailView.as_view(),
         name='certifyingorganisation-detail'),
+    url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
+              '(?P<slug>[\w-]+)/archiving/'
+              '(?P<toogle_archive>[\w-]+)/$',
+        view=CertifyingOrganisationArchivingView.as_view(),
+        name='certifyingorganisation-toogle-archive'),
     url(regex='^(?P<project_slug>[\w-]+)/certifyingorganisation/'
               '(?P<slug>[\w-]+)/delete/$',
         view=CertifyingOrganisationDeleteView.as_view(),

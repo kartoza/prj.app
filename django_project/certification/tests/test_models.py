@@ -88,6 +88,9 @@ class TestCertifyingOrganisation(TestCase):
         self.assertTrue(
             model.approved == 'True'
         )
+        self.assertTrue(
+            model.is_archived == 'False'
+        )
 
     def test_Certifying_Organisation_update(self):
         """Test certifying organisation update."""
@@ -99,6 +102,20 @@ class TestCertifyingOrganisation(TestCase):
             'organisation_phone': u'new organisation phone',
             'address': u'new address',
             'approved': False,
+        }
+        model.__dict__.update(new_model_data)
+        model.save()
+
+        # check if updated.
+        for key, val in new_model_data.items():
+            self.assertEqual(model.__dict__.get(key), val)
+
+    def test_Certifying_Organisation_deactivate(self):
+        """Test certifying organisation deactivate."""
+
+        model = CertifyingOrganisationF.create()
+        new_model_data = {
+            'is_archived': True,
         }
         model.__dict__.update(new_model_data)
         model.save()

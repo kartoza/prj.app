@@ -35,6 +35,7 @@ class CertifyingOrganisationF(factory.django.DjangoModelFactory):
     address = factory.sequence(lambda n: u'Test address %s' % n)
     project = factory.SubFactory(ProjectF)
     approved = True
+    is_archived = False
 
 
 class CertifyingOrganisationCertificateF(factory.django.DjangoModelFactory):

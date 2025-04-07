@@ -311,15 +311,29 @@
                     </a>
                 {% endif %}
                 {% if user_can_delete %}
+                    <a class="btn btn-default btn-mini tooltip-toggle"
+                    href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
+                    data-title="Edit {{ certifyingorganisation.name }}">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    {% if certifyingorganisation.is_archived %}
+                        <a class="btn btn-default btn-mini btn-primary tooltip-toggle"
+                        href='{% url "certifyingorganisation-toogle-archive" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug toogle_archive="unarchive" %}'
+                        data-title="Activate {{ certifyingorganisation.name }}">
+                            <span class="glyphicon glyphicon-ok-circle"></span>
+                        </a>
+
+                    {% else %}
+                        <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
+                        href='{% url "certifyingorganisation-toogle-archive" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug toogle_archive="archive" %}'
+                        data-title="Deactivate {{ certifyingorganisation.name }}">
+                            <span class="glyphicon glyphicon-ban-circle"></span>
+                        </a>
+                    {% endif %}
                     <a class="btn btn-default btn-mini btn-delete tooltip-toggle"
                        href='{% url "certifyingorganisation-delete" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
                        data-title="Delete {{ certifyingorganisation.name }}">
                         <span class="glyphicon glyphicon-minus"></span>
-                    </a>
-                    <a class="btn btn-default btn-mini tooltip-toggle"
-                       href='{% url "certifyingorganisation-update" project_slug=certifyingorganisation.project.slug slug=certifyingorganisation.slug %}'
-                       data-title="Edit {{ certifyingorganisation.name }}">
-                        <span class="glyphicon glyphicon-pencil"></span>
                     </a>
                 {% endif %}
                  <a class="btn btn-default btn-mini tooltip-toggle"

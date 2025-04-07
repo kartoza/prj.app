@@ -1,0 +1,71 @@
+{% extends "project_base.html" %}
+{% load custom_markup %}
+
+{% block title %}Certifying Organisation Archiving - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block page_title %}
+    <h1>Certifying Organisation Archiving</h1>
+{% endblock page_title %}
+
+{% block content %}
+    <form action="" id="toogle-confirmation" method="post">{% csrf_token %}
+        <div class="alert row">
+            <div class="col-lg-10">
+                <p class="lead">
+                    Are you sure you want to {% if toogle_archive == 'archive' %}deactivate{% else %}activate{% endif %}
+                    the certifying organisation listed below?
+                    {% if toogle_archive == 'archive' %}
+                        It will be listed in the Archived Organisations list.
+                    {% endif %}
+                </p>
+            </div>
+            <div class="col-lg-2">
+                <div class="btn-group pull-right">
+                    {% if toogle_archive == 'archive' %}
+                        <a class="btn btn-danger btn-sm tooltip-toggle"
+                        href="#"
+                        onClick="$('#toogle-confirmation').submit()"
+                        data-title="Deactivate {{ certifyingorganisation.name }}">
+                            <span class="glyphicon glyphicon-ban-circle"></span>
+                        </a>
+                    {% else %} 
+                        <a class="btn btn-primary btn-sm tooltip-toggle"
+                        href="#"
+                        onClick="$('#toogle-confirmation').submit()"
+                        data-title="Activate {{ certifyingorganisation.name }}">
+                            <span class="glyphicon glyphicon-ok-circle"></span>
+                        </a>
+                    {% endif %}
+                    <a class="btn btn-default btn-sm tooltip-toggle"
+                       href='{% url "certifyingorganisation-list" certifyingorganisation.project.slug %}'
+                       data-title="Cancel">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Certifying Organisation: {{ certifyingorganisation.name }}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8" style="font-size: 12pt">
+                <span class="col-lg-3">Address</span><span class="col-lg-9">: {{ certifyingorganisation.address }}<br/></span>
+                <span class="col-lg-3">Country</span><span class="col-lg-9">: {{ certifyingorganisation.country.name }}<br/></span>
+                <span class="col-lg-3">Email</span><span class="col-lg-9">: {{ certifyingorganisation.organisation_email }}<br/></span>
+                <span class="col-lg-3">Phone</span><span class="col-lg-9">: {{ certifyingorganisation.organisation_phone }}<br/></span>
+                <span class="col-lg-3">Organisation owners</span><span class="col-lg-9">: {% for organisation_owners in certifyingorganisation.organisation_owners.all %}
+                    {% if organisation_owners.first_name %}
+                        {{ organisation_owners.first_name }} {{ organisation_owners.last_name }}{{ ", " }}
+                    {% else %}
+                        {{ organisation_owners }}{{ ", " }}
+                    {% endif %}
+                    {% endfor %}</span>
+            </div>
+        </div>
+    </form>
+{% endblock %}

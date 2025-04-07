@@ -426,6 +426,70 @@ class TestCertifyingOrganisationView(TestCase):
         self.assertEqual(response.data[0]['name'], status_object.name)
 
     @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_get_archive_view(self):
+        client = Client()
+        client.login(username='anita', password='password')
+        response = client.get(
+            reverse('certifyingorganisation-toogle-archive', kwargs={
+                'project_slug': self.project.slug,
+                'slug': self.certifying_organisation.slug,
+                'toogle_archive': 'archive'
+            }))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('archive', response.context['toogle_archive'])
+        self.assertEqual(
+            response.context['certifyingorganisation'],
+            self.certifying_organisation
+        )
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_get_unarchive_view(self):
+        client = Client()
+        client.login(username='anita', password='password')
+        response = client.get(
+            reverse('certifyingorganisation-toogle-archive', kwargs={
+                'project_slug': self.project.slug,
+                'slug': self.certifying_organisation.slug,
+                'toogle_archive': 'unarchive'
+            }))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('unarchive', response.context['toogle_archive'])
+        self.assertEqual(
+            response.context['certifyingorganisation'],
+            self.certifying_organisation
+        )
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_post_archive_view(self):
+        client = Client()
+        client.login(username='anita', password='password')
+        response = client.post(
+            reverse('certifyingorganisation-toogle-archive', kwargs={
+                'project_slug': self.project.slug,
+                'slug': self.certifying_organisation.slug,
+                'toogle_archive': 'archive'
+            }))
+        self.assertEqual(response.status_code, 302)
+        self.certifying_organisation.refresh_from_db()
+        self.assertTrue(self.certifying_organisation.is_archived)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
+    def test_post_unarchive_view(self):
+        client = Client()
+        client.login(username='anita', password='password')
+        self.certifying_organisation.is_archived = True
+        self.certifying_organisation.save()
+        response = client.post(
+            reverse('certifyingorganisation-toogle-archive', kwargs={
+                'project_slug': self.project.slug,
+                'slug': self.certifying_organisation.slug,
+                'toogle_archive': 'unarchive'
+            }))
+        self.assertEqual(response.status_code, 302)
+        self.certifying_organisation.refresh_from_db()
+        self.assertFalse(self.certifying_organisation.is_archived)
+
+    @override_settings(VALID_DOMAIN=['testserver', ])
     def test_update_status_command(self):
         out = StringIO()
         call_command('set_status_existing_organisation', stdout=out)

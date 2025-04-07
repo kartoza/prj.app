@@ -32,6 +32,16 @@
             ready = urlParams.get('ready').toLowerCase() === 'true';
         }
         ready = ready ? 'True' : 'False'
+        const approved = '{{ approved }}'
+        let approvedParam = ''
+        if (approved) {
+            approvedParam = '&approved=' + approved
+        }
+        const is_archived = '{{ is_archived }}'
+        let isArchivedParam = ''
+        if (is_archived) {
+            isArchivedParam = '&is_archived=' + is_archived
+        }
         $('#dataTable').dataTable({
             "processing": true,
             "serverSide": true,
@@ -40,7 +50,7 @@
             "order": [
                 [0, "asc"]
             ],
-            "ajax": "{% url "certifyingorganisation-list-json" project_slug=the_project.slug %}?approved={{ approved }}&ready=" + ready,
+            "ajax": `{% url "certifyingorganisation-list-json" project_slug=the_project.slug %}?ready=${ready}${approvedParam}${isArchivedParam}`,
             "columnDefs": [
                 {"bSortable": false, "aTargets": [1, 2]},
                 {
