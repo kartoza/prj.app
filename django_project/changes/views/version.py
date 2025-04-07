@@ -66,7 +66,6 @@ class VersionListView(VersionMixin, PaginationMixin, ListView):
     """List view for Version."""
     context_object_name = 'versions'
     template_name = 'version/list.html'
-    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         """Get the context data which is passed to a template.

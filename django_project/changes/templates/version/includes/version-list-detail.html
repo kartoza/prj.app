@@ -15,9 +15,6 @@
             <a href="{% url 'version-detail' project_slug=version.project.slug slug=version.slug %}">
                 {{ version.name }}
             </a>
-            {% if version.release_date %}
-             <small>released {{ version.release_date }}</small>
-            {% endif %}
         </h3>
     </div>
 
