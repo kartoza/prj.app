@@ -174,11 +174,20 @@
             data-title="Download all issued certificates from this course">
             <span class="glyphicon glyphicon-download-alt"></span>
             </a>
-        <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
-           href='{% url "generate-all-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
-            data-title="Generate all certificate for this course">
+        {% if course.certifying_organisation.organisation_credits >= attendees.count and attendees.count > 0 %}
+            <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
+            href='{% url "generate-all-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
+                data-title="Generate all certificate for this course"
+            >
+        {% elif course.certifying_organisation.organisation_credits > 0 and attendees.count == 0 %}
+            <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus" disabled
+            data-title="No attendees to generate certificates.">
+        {% else %}
+            <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus" disabled
+                data-title="Top up credits to generate all certificates.">
+        {% endif %}
             <i class="glyphicon glyphicon-folder-open"></i>
-            </a>
+        </a>
         <a class="btn btn-default btn-sm tooltip-toggle btn-info-focus"
            href='{% url "regenerate-all-certificate" project_slug=course.certifying_organisation.project.slug organisation_slug=course.certifying_organisation.slug course_slug=course.slug %}'
             data-title="Re-generate all PDF certificate for this course">

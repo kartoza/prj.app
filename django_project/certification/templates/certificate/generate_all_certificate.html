@@ -21,28 +21,24 @@
 
     <div>
         <div class="container">
-            <h4 style="font-size: 16pt">Are you sure you want to regenerate pdf of these certificates?</h4>
+            <h4 style="font-size: 16pt">Are you sure you want to generate pdf of these certificates?</h4>
             <div class="row">
                 <div class="col-lg-8">
                 <h4>Course: {{ course.certifying_organisation.project }} - {{ course.course_type.name }} ({{ course.start_date }} to {{ course.end_date }})</h4>
                 <table>
                 <tr>
-                <th>Certificate ID</th>
-                <th>Attendee</th>
+                <th>Name</th>
                 </tr>
-                {% for key, value in certificates.items %}
-                    {% if value.is_paid %}
-                        <tr>
-                            <td>{{ value.certificateID}}</td>
-                            <td>{{ key.firstname}} {{ key.surname|default_if_none:"" }}</td>
-                        </tr>
-                    {% endif %}
+                {% for attendee in attendees %}
+                    <tr>
+                        <td>{{ attendee.attendee.firstname|default_if_none:""}} {{ attendee.attendee.surname|default_if_none:""}}</td>
+                    </tr>
                 {% endfor %}
                 </table>
                 </div>
             </div>
-            <h5>Note: If you regenerate these certificates, the current certificates will be deleted and unrecoverable.</h5>
-             <form id="regenerate-all" action="." method="POST">
+            <h5>Note: Generating these certificates will deduct credits from your account.</h5>
+             <form id="generate-all" action="." method="POST">
                  {% csrf_token %}
                  <input type="submit" value="Submit" class="btn btn-primary">
              </form>
