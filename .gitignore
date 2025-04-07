@@ -126,3 +126,4 @@ deployment/btsync-media.env.PRODUCTION
 # These don't get versioned since they are generated on the fly 
 deployment/docker/Dockerfile-prod
 deployment/docker/projecta.tar.gz
+.vscode-extensions

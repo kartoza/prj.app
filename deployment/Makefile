@@ -271,7 +271,7 @@ mediasync:
 dbsync:
 	@echo
 	@echo "------------------------------------------------------------------"
-	@echo "Syncing database files from live server"
+	@echo "syncing database files from live server"
 	@echo "------------------------------------------------------------------"
 	-@ssh changelog.kartoza.com "cd /home/projecta/deployment; make dbbackup"
 	@rsync -av --progress changelog.kartoza.com:/home/projecta/deployment/backups/ backups
