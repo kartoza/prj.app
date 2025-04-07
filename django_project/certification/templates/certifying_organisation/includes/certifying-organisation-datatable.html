@@ -42,7 +42,7 @@
             ],
             "ajax": "{% url "certifyingorganisation-list-json" project_slug=the_project.slug %}?approved={{ approved }}&ready=" + ready,
             "columnDefs": [
-                {"bSortable": false, "aTargets": [1, 2]},
+                {"bSortable": true, "aTargets": [1, 2]},
                 {
                     render: $.fn.dataTable.render.moment(FROM_PATTERN, TO_PATTERN),
                     targets: [1, 2]
